@@ -290,7 +290,7 @@ private:
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
     virtual void finishParsingChildren();
 
-    virtual void copyNonAttributeProperties(const Element* source);
+    virtual void copyNonAttributePropertiesFromElement(const Element&);
 
     virtual void attach();
 

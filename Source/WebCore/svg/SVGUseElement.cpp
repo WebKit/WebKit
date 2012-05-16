@@ -766,8 +766,8 @@ void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
         // 'svg' element will use values of 100% for these attributes.
         RefPtr<SVGSVGElement> svgElement = SVGSVGElement::create(SVGNames::svgTag, referencedDocument());
 
-        // Transfer all attributes from <symbol> to the new <svg> element
-        svgElement->setAttributesFromElement(*toElement(element));
+        // Transfer all data (attributes, etc.) from <symbol> to the new <svg> element.
+        svgElement->cloneDataFromElement(*toElement(element));
 
         // Only clone symbol children, and add them to the new <svg> element
         for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
@@ -898,7 +898,7 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
     ASSERT(from);
     ASSERT(to);
 
-    to->setAttributesFromElement(*from);
+    to->cloneDataFromElement(*from);
 
     to->removeAttribute(SVGNames::xAttr);
     to->removeAttribute(SVGNames::yAttr);

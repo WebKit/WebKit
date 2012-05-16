@@ -790,14 +790,16 @@ private:
     Node* m_next;
     RenderObject* m_renderer;
 
-protected:
-    bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
-    void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
-    void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
+public:
     bool isStyleAttributeValid() const { return getFlag(IsStyleAttributeValidFlag); }
     void setIsStyleAttributeValid(bool f) { setFlag(f, IsStyleAttributeValidFlag); }
     void setIsStyleAttributeValid() const { setFlag(IsStyleAttributeValidFlag); }
     void clearIsStyleAttributeValid() { clearFlag(IsStyleAttributeValidFlag); }
+
+protected:
+    bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
+    void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
+    void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
 
 #if ENABLE(SVG)
     bool areSVGAttributesValid() const { return getFlag(AreSVGAttributesValidFlag); }

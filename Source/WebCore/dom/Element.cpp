@@ -178,19 +178,13 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
     // This is a sanity check as HTML overloads some of the DOM methods.
     ASSERT(isHTMLElement() == clone->isHTMLElement());
 
-    clone->setAttributesFromElement(*this);
-    clone->copyNonAttributeProperties(this);
-
+    clone->cloneDataFromElement(*this);
     return clone.release();
 }
 
 PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren()
 {
     return document()->createElement(tagQName(), false);
-}
-
-void Element::copyNonAttributeProperties(const Element*)
-{
 }
 
 PassRefPtr<Attr> Element::detachAttribute(size_t index)
@@ -2116,5 +2110,21 @@ PassRefPtr<RenderStyle> Element::customStyleForRenderer()
     return 0;
 }
 
+
+void Element::cloneAttributesFromElement(const Element& other)
+{
+    if (ElementAttributeData* attributeData = other.updatedAttributeData())
+        ensureUpdatedAttributeData()->cloneDataFrom(*attributeData, other, *this);
+    else if (m_attributeData) {
+        m_attributeData->clearAttributes(this);
+        m_attributeData.clear();
+    }
+}
+
+void Element::cloneDataFromElement(const Element& other)
+{
+    cloneAttributesFromElement(other);
+    copyNonAttributePropertiesFromElement(other);
+}
 
 } // namespace WebCore

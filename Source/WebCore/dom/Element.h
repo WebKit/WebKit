@@ -251,10 +251,15 @@ public:
     ElementAttributeData* updatedAttributeData() const;
     ElementAttributeData* ensureUpdatedAttributeData() const;
 
-    void setAttributesFromElement(const Element&);
+    // Clones attributes only.
+    void cloneAttributesFromElement(const Element&);
+
+    // Clones all attribute-derived data, including subclass specifics (through copyNonAttributeProperties.)
+    void cloneDataFromElement(const Element&);
+
     bool hasEquivalentAttributes(const Element* other) const;
 
-    virtual void copyNonAttributeProperties(const Element* source);
+    virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
     virtual void attach();
     virtual void detach();
@@ -560,12 +565,6 @@ inline ElementAttributeData* Element::ensureUpdatedAttributeData() const
 {
     updateInvalidAttributes();
     return ensureAttributeData();
-}
-
-inline void Element::setAttributesFromElement(const Element& other)
-{
-    if (ElementAttributeData* attributeData = other.updatedAttributeData())
-        ensureUpdatedAttributeData()->setAttributes(*attributeData, this);
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)

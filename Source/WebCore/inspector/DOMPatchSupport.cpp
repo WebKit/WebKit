@@ -180,7 +180,7 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
             }
         }
 
-        // FIXME: Create a function in Element for copying properties. setAttributesFromElement() is close but not enough for this case.
+        // FIXME: Create a function in Element for copying properties. cloneDataFromElement() is close but not enough for this case.
         if (newElement->hasAttributesWithoutUpdate()) {
             size_t numAttrs = newElement->attributeCount();
             for (size_t i = 0; i < numAttrs; ++i) {

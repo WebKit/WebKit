@@ -825,17 +825,17 @@ bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
     return m_inputType->sizeShouldIncludeDecoration(defaultSize, preferredSize);
 }
 
-void HTMLInputElement::copyNonAttributeProperties(const Element* source)
+void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& source)
 {
-    const HTMLInputElement* sourceElement = static_cast<const HTMLInputElement*>(source);
+    const HTMLInputElement& sourceElement = static_cast<const HTMLInputElement&>(source);
 
-    m_valueIfDirty = sourceElement->m_valueIfDirty;
+    m_valueIfDirty = sourceElement.m_valueIfDirty;
     m_wasModifiedByUser = false;
-    setChecked(sourceElement->m_isChecked);
-    m_reflectsCheckedAttribute = sourceElement->m_reflectsCheckedAttribute;
-    m_isIndeterminate = sourceElement->m_isIndeterminate;
+    setChecked(sourceElement.m_isChecked);
+    m_reflectsCheckedAttribute = sourceElement.m_reflectsCheckedAttribute;
+    m_isIndeterminate = sourceElement.m_isIndeterminate;
 
-    HTMLTextFormControlElement::copyNonAttributeProperties(source);
+    HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 
     setFormControlValueMatchesRenderer(false);
     updateInnerTextValue();

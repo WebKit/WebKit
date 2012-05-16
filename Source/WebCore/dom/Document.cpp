@@ -914,8 +914,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         if (ec)
             return 0;
 
-        newElement->setAttributesFromElement(*oldElement);
-        newElement->copyNonAttributeProperties(oldElement);
+        newElement->cloneDataFromElement(*oldElement);
 
         if (deep) {
             for (Node* oldChild = oldElement->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {

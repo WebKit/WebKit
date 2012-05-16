@@ -1108,25 +1108,6 @@ void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, CSSPropertyID pro
     style->setProperty(propertyID, cssValuePool().createColorValue(parsedColor.rgb()));
 }
 
-void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
-{
-    ASSERT(sourceElement);
-    ASSERT(sourceElement->isStyledElement());
-
-    const StyledElement* source = static_cast<const StyledElement*>(sourceElement);
-    if (!source->inlineStyle())
-        return;
-
-    StylePropertySet* inlineStyle = ensureAttributeData()->ensureMutableInlineStyle(this);
-    inlineStyle->copyPropertiesFrom(*source->inlineStyle());
-    inlineStyle->setCSSParserMode(source->inlineStyle()->cssParserMode());
-
-    setIsStyleAttributeValid(source->isStyleAttributeValid());
-
-    Element::copyNonAttributeProperties(sourceElement);
-}
-
-
 } // namespace WebCore
 
 #ifndef NDEBUG

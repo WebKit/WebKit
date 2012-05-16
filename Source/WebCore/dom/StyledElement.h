@@ -57,6 +57,10 @@ public:
 
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) { }
 
+    // May be called by ElementAttributeData::cloneDataFrom().
+    enum ShouldReparseStyleAttribute { DoNotReparseStyleAttribute = 0, ReparseStyleAttribute = 1 };
+    void styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute = ReparseStyleAttribute);
+
 protected:
     StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
         : Element(name, document, type)
@@ -65,7 +69,6 @@ protected:
 
     virtual void attributeChanged(const Attribute&) OVERRIDE;
     virtual void parseAttribute(const Attribute&);
-    virtual void copyNonAttributeProperties(const Element*);
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 

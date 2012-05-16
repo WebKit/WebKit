@@ -168,19 +168,25 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     setNeedsStyleRecalc();
 }
 
+void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute shouldReparse)
+{
+    if (shouldReparse) {
+        if (newStyleString.isNull())
+            destroyInlineStyle();
+        else if (document()->contentSecurityPolicy()->allowInlineStyle())
+            ensureAttributeData()->updateInlineStyleAvoidingMutation(this, newStyleString);
+        setIsStyleAttributeValid();
+    }
+    setNeedsStyleRecalc();
+    InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
+}
+
 void StyledElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == classAttr)
         classAttributeChanged(attribute.value());
-    else if (attribute.name() == styleAttr) {
-        if (attribute.isNull())
-            destroyInlineStyle();
-        else if (document()->contentSecurityPolicy()->allowInlineStyle())
-            ensureAttributeData()->updateInlineStyleAvoidingMutation(this, attribute.value());
-        setIsStyleAttributeValid();
-        setNeedsStyleRecalc();
-        InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
-    }
+    else if (attribute.name() == styleAttr)
+        styleAttributeChanged(attribute.value());
 }
 
 void StyledElement::inlineStyleChanged()

@@ -653,7 +653,7 @@ void InspectorDOMAgent::setNodeName(ErrorString* errorString, int nodeId, const 
         return;
 
     // Copy over the original node's attributes.
-    newElem->setAttributesFromElement(*toElement(oldNode));
+    newElem->cloneAttributesFromElement(*toElement(oldNode));
 
     // Copy over the original node's children.
     Node* child;

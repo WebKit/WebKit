@@ -113,7 +113,7 @@ private:
     void detachAttributesFromElement(Element*);
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
-    void setAttributes(const ElementAttributeData& other, Element*);
+    void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
     void clearAttributes(Element*);
     void replaceAttribute(size_t index, const Attribute&, Element*);
 

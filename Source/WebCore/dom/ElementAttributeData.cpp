@@ -252,28 +252,36 @@ size_t ElementAttributeData::getAttributeItemIndexSlowCase(const String& name, b
     return notFound;
 }
 
-void ElementAttributeData::setAttributes(const ElementAttributeData& other, Element* element)
+void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement)
 {
-    ASSERT(element);
+    const AtomicString& oldID = targetElement.getIdAttribute();
+    const AtomicString& newID = sourceElement.getIdAttribute();
 
-    // If assigning the map changes the id attribute, we need to call
-    // updateId.
-    Attribute* oldId = getAttributeItem(element->document()->idAttributeName());
-    Attribute* newId = other.getAttributeItem(element->document()->idAttributeName());
+    if (!oldID.isNull() || !newID.isNull())
+        targetElement.updateId(oldID, newID);
 
-    if (oldId || newId)
-        element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
+    const AtomicString& oldName = targetElement.getNameAttribute();
+    const AtomicString& newName = sourceElement.getNameAttribute();
 
-    Attribute* oldName = getAttributeItem(HTMLNames::nameAttr);
-    Attribute* newName = other.getAttributeItem(HTMLNames::nameAttr);
+    if (!oldName.isNull() || !newName.isNull())
+        targetElement.updateName(oldName, newName);
 
-    if (oldName || newName)
-        element->updateName(oldName ? oldName->value() : nullAtom, newName ? newName->value() : nullAtom);
+    clearAttributes(&targetElement);
+    m_attributes = sourceData.m_attributes;
+    for (unsigned i = 0; i < m_attributes.size(); ++i) {
+        if (targetElement.isStyledElement() && m_attributes[i].name() == HTMLNames::styleAttr) {
+            static_cast<StyledElement&>(targetElement).styleAttributeChanged(m_attributes[i].value(), StyledElement::DoNotReparseStyleAttribute);
+            continue;
+        }
+        targetElement.attributeChanged(m_attributes[i]);
+    }
 
-    clearAttributes(element);
-    m_attributes = other.m_attributes;
-    for (unsigned i = 0; i < m_attributes.size(); ++i)
-        element->attributeChanged(m_attributes[i]);
+    if (targetElement.isStyledElement() && sourceData.m_inlineStyleDecl) {
+        StylePropertySet* inlineStyle = ensureMutableInlineStyle(static_cast<StyledElement*>(&targetElement));
+        inlineStyle->copyPropertiesFrom(*sourceData.m_inlineStyleDecl);
+        inlineStyle->setCSSParserMode(sourceData.m_inlineStyleDecl->cssParserMode());
+        targetElement.setIsStyleAttributeValid(sourceElement.isStyleAttributeValid());
+    }
 }
 
 void ElementAttributeData::clearAttributes(Element* element)
