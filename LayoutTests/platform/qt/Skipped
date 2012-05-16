@@ -187,7 +187,6 @@ fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/multiple-shadowroot-adopt.html
 fast/dom/shadow/selections-in-shadow.html
-fast/dom/shadow/selection-in-shadow.html
 fast/dom/shadow/selection-shouldnt-expose-shadow-dom.html
 fast/dom/shadow/shadow-boundary-events.html
 fast/dom/shadow/shadow-content-crash.html

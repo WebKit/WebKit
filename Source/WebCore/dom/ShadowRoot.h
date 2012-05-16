@@ -76,7 +76,7 @@ public:
 
     Element* activeElement() const;
 
-    DOMSelection* selection();
+    DOMSelection* selection() const;
 
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }

@@ -31,19 +31,20 @@
 
 namespace WebCore {
 
-TreeScopeAdjuster::TreeScopeAdjuster(TreeScope* treeScope)
+TreeScopeAdjuster::TreeScopeAdjuster(const TreeScope* treeScope)
     : m_treeScope(treeScope)
 {
 }
 
 Node* TreeScopeAdjuster::ancestorInThisScope(Node* node)
 {
-    do {
+    while (node) {
         if (node->treeScope() == treeScope())
             return node;
         if (!node->isInShadowTree())
             return 0;
-    } while ((node = node->shadowAncestorNode()));
+        node = node->shadowAncestorNode();
+    }
 
     return 0;
 }

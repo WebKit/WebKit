@@ -149,11 +149,9 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
-DOMSelection* ShadowRoot::selection()
+DOMSelection* ShadowRoot::selection() const
 {
-    if (document())
-        return document()->getSelection();
-    return 0;
+    return getSelection();
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const

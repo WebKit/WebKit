@@ -40,6 +40,7 @@ namespace WebCore {
 
     class Frame;
     class Node;
+    class Position;
     class Range;
     class TreeScope;
     class VisibleSelection;
@@ -98,6 +99,9 @@ namespace WebCore {
 
         // Convenience method for accessors, does not NULL check m_frame.
         const VisibleSelection& visibleSelection() const;
+
+        Node* shadowAdjustedNode(const Position&) const;
+        int shadowAdjustedOffset(const Position&) const;
 
         bool isValidForPosition(Node*) const;
     };

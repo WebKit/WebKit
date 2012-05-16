@@ -35,9 +35,9 @@ class TreeScope;
 
 class TreeScopeAdjuster {
 public:
-    explicit TreeScopeAdjuster(TreeScope*);
+    explicit TreeScopeAdjuster(const TreeScope*);
 
-    inline TreeScope* treeScope() const { return m_treeScope; }
+    inline const TreeScope* treeScope() const { return m_treeScope; }
 
     Node* ancestorInThisScope(Node*);
 
@@ -45,7 +45,7 @@ public:
     Position adjustPositionAfter(const Position&);
 
 private:
-    TreeScope* m_treeScope;
+    const TreeScope* m_treeScope;
 };
 
 } // namespace WebCore

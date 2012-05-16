@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>selection-of-shadowroot</title>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/dom/resources/event-sender-util.js"></script>
+<script src="../../fast/dom/resources/shadow-test-driver.js"></script>
+<script src="../../fast/dom/shadow/resources/polyfill.js"></script>
+<script src="../../fast/dom/shadow/resources/shadow-dom-util.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+<pre id="console"></pre>
+
+<script>
+var treeScopes = new Array();
+treeScopes.push(document);
+
+function indent(level) {
+    var v = "";
+    while (level--)
+        v = v + "&nbsp;&nbsp;&nbsp;&nbsp;";
+    return v;
+}
+
+function createComplexShadowTree(container) {
+    function createInnerShadowDOM(shadowRoot, id, name, indentLevel) {
+        shadowRoot.innerHTML = 
+            "<div title='DIV1 IN " + name + "'>" + indent(indentLevel) + "DIV 1 (" + name + ")</div>" +
+            "<div>" + indent(indentLevel) + "<div title='SHADOW HOST IN " + name + "'>DIV HOST (" + name + ")</div></div>" +
+            "<div title='DIV2 IN " + name + "'>" + indent(indentLevel) + "DIV 2 (" + name + ")</div>" +
+            "<shadow>SHADOW FALLBACK</shadow>" +
+            "<div title='DIV3 IN " + name + "'>" + indent(indentLevel) + "DIV 3 (" + name + ")</div>";
+
+        var hostInShadowRoot = shadowRoot.firstChild.nextSibling;
+        var nestedShadowRoot = new WebKitShadowRoot(hostInShadowRoot);
+        nestedShadowRoot.title = 'NESTED SHADOW ROOT IN ' + name;
+        treeScopes.push(nestedShadowRoot);
+
+        nestedShadowRoot.innerHTML =
+            "<div title='DIV 1 IN NESTED SHADOW DOM OF " + name + "'>" + indent(indentLevel) + "DIV 1 IN NESTED SHADOW (" + name + ")</div>" + 
+            "<shadow>NESTED SHADOW FALLBACK</shadow>" + 
+            "<div id='" + id + "' title='DIV 2 IN NESTED SHADOW DOM OF " + name + "'>" + indent(indentLevel) + "DIV 2 IN NESTED SHADOW (" + name + ")</div>";
+    }
+
+    container.innerHTML = 
+        "<div title='DIV BEFORE HOST ELEMENT'>BEFORE HOST</div>" +
+        "<div><div title='HOST ELEMENT'>HOST</div></div>" +
+        "<div title='DIV AFTER HOST ELEMENT'>AFTER HOST</div>";
+
+    var host = container.firstChild.nextSibling;
+
+    var olderShadowRoot = new WebKitShadowRoot(host);
+    olderShadowRoot.title = 'OLDER SHADOW ROOT';
+    treeScopes.push(olderShadowRoot);
+
+    var youngerShadowRoot = new WebKitShadowRoot(host);
+    youngerShadowRoot.title = 'YOUNGER SHADOW ROOT';
+    treeScopes.push(youngerShadowRoot);
+
+    createInnerShadowDOM(olderShadowRoot, 'older', 'OLDER SHADOW ROOT', 2);
+    createInnerShadowDOM(youngerShadowRoot, 'younger', 'YOUNGER SHADOW ROOT', 1);
+}
+
+var container = document.getElementById('container');
+createComplexShadowTree(container);
+
+for (var k = 0; k < treeScopes.length; ++k) {
+    if (!treeScopes[k].getSelection) {
+        treeScopes[k].getSelection = (function(self, k) {
+            return function() { return self.selection; }
+        })(treeScopes[k], k);
+    }
+}
+
+debug('In this test, we create a complex Shadow DOM and try to drag from a div in nested shadow root of older shadow root to a div in nested shadow root of younger shadow root. Then we get selection from the following TreeScopes:');
+for (var k = 0; k < treeScopes.length; ++k) {
+    if (treeScopes[k] == document)
+        debug(" * treeScopes[" + k + "] = document");
+    else
+        debug(" * treeScopes[" + k + "] = " + treeScopes[k].title);
+}
+
+debug('and check selection.anchorNode, selection.focusNode, selection.baseNode, and selection.extentNode are null or in the same treescope.');
+debug('');
+
+var older = getElementByIdConsideringShadowDOM(document, 'older');
+var younger = getElementByIdConsideringShadowDOM(document, 'younger');
+dragFromTo(older, younger);
+
+debug('Dragged from (' + older.title + ') to (' + younger.title + ')');
+debug('');
+
+debug("treeScopes[0] is document");
+shouldBe("internals.treeScopeRootNode(treeScopes[0].getSelection().anchorNode)", "document");
+shouldBe("internals.treeScopeRootNode(treeScopes[0].getSelection().focusNode)", "document");
+shouldBe("internals.treeScopeRootNode(treeScopes[0].getSelection().baseNode)", "document");
+shouldBe("internals.treeScopeRootNode(treeScopes[0].getSelection().extentNode)", "document");
+debug('');
+
+debug("treeScopes[1] is " + treeScopes[1].title);
+shouldBe("internals.treeScopeRootNode(treeScopes[1].getSelection().anchorNode)", "treeScopes[1]");
+shouldBe("internals.treeScopeRootNode(treeScopes[1].getSelection().focusNode)", "treeScopes[1]");
+shouldBe("internals.treeScopeRootNode(treeScopes[1].getSelection().baseNode)", "treeScopes[1]");
+shouldBe("internals.treeScopeRootNode(treeScopes[1].getSelection().extentNode)", "treeScopes[1]");
+debug('');
+
+debug("treeScopes[2] is " + treeScopes[2].title);
+debug('Since treeScope[2] is outside of selection start point, no node should not be taken.');
+shouldBe("treeScopes[2].getSelection().anchorNode", "null");
+shouldBe("treeScopes[2].getSelection().focusNode", "null");
+shouldBe("treeScopes[2].getSelection().baseNode", "null");
+shouldBe("treeScopes[2].getSelection().extentNode", "null");
+debug('');
+
+debug("treeScopes[3] is " + treeScopes[3].title);
+shouldBe("internals.treeScopeRootNode(treeScopes[3].getSelection().anchorNode)", "treeScopes[3]");
+shouldBe("internals.treeScopeRootNode(treeScopes[3].getSelection().focusNode)", "treeScopes[3]");
+shouldBe("internals.treeScopeRootNode(treeScopes[3].getSelection().baseNode)", "treeScopes[3]");
+shouldBe("internals.treeScopeRootNode(treeScopes[3].getSelection().extentNode)", "treeScopes[3]");
+debug('');
+
+debug("treeScopes[4] is " + treeScopes[4].title);
+debug('Since treeScope[4] is outside of selection start point, no node should not be taken.');
+shouldBe("treeScopes[4].getSelection().anchorNode", "null");
+shouldBe("treeScopes[4].getSelection().focusNode", "null");
+shouldBe("treeScopes[4].getSelection().baseNode", "null");
+shouldBe("treeScopes[4].getSelection().extentNode", "null");
+debug('');
+
+window.getSelection().removeAllRanges();
+
+while (container.firstChild)
+    container.removeChild(container.firstChild);
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+
+</html>

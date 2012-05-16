@@ -1,3 +1,36 @@
+2012-05-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        ShadowRoot.selection should return the seleciton whose range is in a shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=82698
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch contains 2 tests:
+        - Generates a complex HTML tree having a ShadowRoot, an older ShadowRoot, a nested ShadowRoot,
+        nested ShadowRoot in an older ShadowRoot, etc., and try to drag from a nested shadow root of
+        older shadow root to a nested shadow root of younger shadow root. Then checks nodes of Shadowroot.selection
+        are in the same tree scope or null.
+        - Generates a ShadowDOM which is not inserted into a document, and confirms nodes taken from
+        the selection are all null.
+
+        Also, this patch deprecates old shadowRoot.selection tests, because they test to check
+        window.getSelection() and shadowRoot.selection is the same. This behavior is changed by this patch.
+
+        * editing/shadow/selection-of-orphan-shadowroot-expected.txt: Added.
+        * editing/shadow/selection-of-orphan-shadowroot.html: Added.
+        * editing/shadow/selection-of-shadowroot-expected.txt: Added.
+        * editing/shadow/selection-of-shadowroot.html: Added.
+        * fast/dom/resources/event-sender-util.js:
+        (mouseMoveToElem):
+        (dragFromTo):
+        * fast/dom/shadow/resources/shadow-dom-util.js: Added.
+        (getElementByIdConsideringShadowDOM.iter):
+        (getElementByIdConsideringShadowDOM):
+        * fast/dom/shadow/selection-in-shadow.html: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/shadow/selection-in-shadow-expected.txt: Removed.
+        * platform/chromium/fast/dom/shadow/selection-in-shadow-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-05-16  Andras Becsi  <andras.becsi@nokia.com>
 
         [WTR] Visited link tracking is not disabled properly
