@@ -613,10 +613,6 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
-# https://bugs.webkit.org/show_bug.cgi?id=36467
-fast/loader/stateobjects/replacestate-in-iframe.html
-
 # Tests failing with other ports too.
 # https://bugs.webkit.org/show_bug.cgi?id=40272
 canvas/philip/tests/2d.imageData.object.round.html
