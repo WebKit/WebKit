@@ -1,3 +1,17 @@
+2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: debugger browser tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=86624
+
+        Reviewed by Vsevolod Vlasov.
+
+        Use WebInspector.panels.scripts._scriptMapping instead of
+        WebInspector.panels.scripts._presentationModel as the latter
+        has been deleted.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.nonAnonymousUISourceCodes_):
+
 2012-05-16  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Add WebKit API to access inner text value of input element

@@ -649,7 +649,7 @@ TestSuite.prototype.nonAnonymousUISourceCodes_ = function()
         return !!uiSourceCode.url;
     }
 
-    var uiSourceCodes = WebInspector.panels.scripts._presentationModel.uiSourceCodes();
+    var uiSourceCodes = WebInspector.panels.scripts._scriptMapping.uiSourceCodes();
     return uiSourceCodes.filter(filterOutAnonymous);
 };
 
