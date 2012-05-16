@@ -1,3 +1,28 @@
+2012-04-10  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to intruding float not removed from next siblings.
+        https://bugs.webkit.org/show_bug.cgi?id=83301
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/block/float/intruding-float-not-removed-from-next-sibling-crash.html
+
+        markSiblingsWithFloatsForLayout currently only handled overhanging floats and made
+        checks for those by checking if logicalBottomForFloat > our logicalHeight. We need
+        to take care of intruding floats as well, since these can intrude into the neighbouring
+        blocks too. So, generalized the function to check all our next siblings if they contains
+        that float (one getting removed) and if yes, mark it and all its descendants for layout.
+        This fixes the crash.
+
+        For performance, we change the looping condition to iterate over the next sibling
+        blocks first and finding which ones can contain floats and then check it against
+        our floating object list. Currently, it is the other way around and is less
+        performant due to repeated calls to isRenderBlock(), isFloatingOrPositioned()
+        and avoidFloats().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+
 2012-04-09  Abhishek Arya  <inferno@chromium.org>
 
         ASSERTION FAILED: !attached() in Node::attach.
