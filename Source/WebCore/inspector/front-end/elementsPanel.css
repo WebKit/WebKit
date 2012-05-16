@@ -246,13 +246,17 @@
 .styles-section .properties li.not-parsed-ok img.exclamation-mark {
     content: url(Images/warningIcon.png);
     opacity: 0.75;
+    position: relative;
+    float: left;
     width: 12px;
     height: 10px;
     margin: 0 6px 0 0;
-    padding: 0 1px;
+    left: -38px; /* outdent to compensate for the top-level property indent */
+    padding-left: 2px;
     vertical-align: baseline;
     -webkit-user-select: none;
     cursor: default;
+    z-index: 1;
 }
 
 .styles-section .header {
@@ -320,11 +324,33 @@
 
 .styles-section .properties li {
     margin-left: 12px;
-    white-space: nowrap;
+    padding-left: 22px;
+    white-space: normal;
     text-overflow: ellipsis;
     overflow: hidden;
     cursor: auto;
 }
+
+.styles-section .properties li .webkit-css-property {
+    margin-left: -22px; /* outdent the first line of longhand properties (in an expanded shorthand) to compensate for the "padding-left" shift in .styles-section .properties li */
+}
+
+.styles-section.expanded .properties > li {
+    padding-left: 38px;
+}
+
+.styles-section .properties > li .webkit-css-property {
+    margin-left: -38px; /* outdent the first line of the top-level properties to compensate for the "padding-left" shift in .styles-section .properties > li */
+}
+
+.styles-section .properties > li.child-editing {
+    padding-left: 8px;
+}
+
+.styles-section .properties > li.child-editing .webkit-css-property {
+    margin-left: -8px;
+}
+
 .styles-section.matched-styles .properties li {
     margin-left: 0 !important;
 }
@@ -403,7 +429,7 @@
     position: relative;
     z-index: 1;
     width: 18px;
-    left: -2px;
+    left: -40px; /* original -2px + (-38px) to compensate for the first line outdent */
 }
 
 .styles-section.matched-styles .properties ol.expanded {
