@@ -1,3 +1,18 @@
+2012-05-16  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] The FCC shows up on an empty input field
+        https://bugs.webkit.org/show_bug.cgi?id=86657
+
+        Reviewed by Antonio Gomes.
+
+        Turn off the caret by sending a caret changed notification with empty caret.
+        PR #120620
+
+        Reviewed Internally by Mike Fenton.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+
 2012-05-16  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Don't reset the default font families in WebSettings

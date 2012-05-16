@@ -942,9 +942,12 @@ void SelectionHandler::caretPositionChanged()
     DEBUG_SELECTION(LogLevelInfo, "SelectionHandler::caretPositionChanged");
 
     WebCore::IntRect caretLocation;
+    // If the input field is empty, we always turn off the caret.
     // If the input field is not active, we must be turning off the caret.
-    if (!m_webPage->m_inputHandler->isInputMode() && m_caretActive) {
-        m_caretActive = false;
+    bool emptyInputField = m_webPage->m_inputHandler->elementText().isEmpty();
+    if (emptyInputField || (!m_webPage->m_inputHandler->isInputMode() && m_caretActive)) {
+        if (!emptyInputField)
+            m_caretActive = false;
         // Send an empty caret change to turn off the caret.
         m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */);
         return;
