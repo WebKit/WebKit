@@ -517,8 +517,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
     
     if (isRootInlineBox()) {
         // Examine our root box.
-        LayoutUnit ascent = 0;
-        LayoutUnit descent = 0;
+        int ascent = 0;
+        int descent = 0;
         rootBox->ascentAndDescentForBox(rootBox, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
         if (strictMode || hasTextChildren() || (!checkChildren && hasTextDescendants())) {
             if (maxAscent < ascent || !setMaxAscent) {
@@ -549,8 +549,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
         // root box's baseline, and it is positive if the child box's baseline is below the root box's baseline.
         curr->setLogicalTop(rootBox->verticalPositionForBox(curr, verticalPositionCache));
         
-        LayoutUnit ascent = 0;
-        LayoutUnit descent = 0;
+        int ascent = 0;
+        int descent = 0;
         rootBox->ascentAndDescentForBox(curr, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
 
         LayoutUnit boxHeight = ascent + descent;

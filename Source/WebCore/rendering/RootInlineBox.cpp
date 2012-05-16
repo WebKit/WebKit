@@ -708,7 +708,7 @@ LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const
     return lineLayoutOverflow;
 }
 
-static void setAscentAndDescent(LayoutUnit& ascent, LayoutUnit& descent, LayoutUnit newAscent, LayoutUnit newDescent, bool& ascentDescentSet)
+static void setAscentAndDescent(int& ascent, int& descent, int newAscent, int newDescent, bool& ascentDescentSet)
 {
     if (!ascentDescentSet) {
         ascentDescentSet = true;
@@ -720,7 +720,7 @@ static void setAscentAndDescent(LayoutUnit& ascent, LayoutUnit& descent, LayoutU
     }
 }
 
-void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutUnit& ascent, LayoutUnit& descent,
+void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, int& ascent, int& descent,
                                            bool& affectsAscent, bool& affectsDescent) const
 {
     bool ascentDescentSet = false;
@@ -757,11 +757,11 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
         usedFonts->append(box->renderer()->style(isFirstLineStyle())->font().primaryFont());
         for (size_t i = 0; i < usedFonts->size(); ++i) {
             const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();
-            LayoutUnit usedFontAscent = fontMetrics.ascent(baselineType());
-            LayoutUnit usedFontDescent = fontMetrics.descent(baselineType());
-            LayoutUnit halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
-            LayoutUnit usedFontAscentAndLeading = usedFontAscent + halfLeading;
-            LayoutUnit usedFontDescentAndLeading = fontMetrics.lineSpacing() - usedFontAscentAndLeading;
+            int usedFontAscent = fontMetrics.ascent(baselineType());
+            int usedFontDescent = fontMetrics.descent(baselineType());
+            int halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
+            int usedFontAscentAndLeading = usedFontAscent + halfLeading;
+            int usedFontDescentAndLeading = fontMetrics.lineSpacing() - usedFontAscentAndLeading;
             if (includeFont) {
                 setAscentAndDescent(ascent, descent, usedFontAscent, usedFontDescent, ascentDescentSet);
                 setUsedFont = true;
@@ -779,8 +779,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
     // If leading is included for the box, then we compute that box.
     if (includeLeading && !setUsedFontWithLeading) {
-        LayoutUnit ascentWithLeading = box->baselinePosition(baselineType());
-        LayoutUnit descentWithLeading = box->lineHeight() - ascentWithLeading;
+        int ascentWithLeading = box->baselinePosition(baselineType());
+        int descentWithLeading = box->lineHeight() - ascentWithLeading;
         setAscentAndDescent(ascent, descent, ascentWithLeading, descentWithLeading, ascentDescentSet);
         
         // Examine the font box for inline flows and text boxes to see if any part of it is above the baseline.
@@ -792,8 +792,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     }
     
     if (includeFontForBox(box) && !setUsedFont) {
-        LayoutUnit fontAscent = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
-        LayoutUnit fontDescent = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
+        int fontAscent = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent();
+        int fontDescent = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent();
         setAscentAndDescent(ascent, descent, fontAscent, fontDescent, ascentDescentSet);
         affectsAscent = fontAscent - box->logicalTop() > 0;
         affectsDescent = fontDescent + box->logicalTop() > 0; 

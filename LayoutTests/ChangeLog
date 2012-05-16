@@ -1,3 +1,26 @@
+2012-05-16  Emil A Eklund  <eae@chromium.org>
+
+        Change ascents and descent back to ints for now
+        https://bugs.webkit.org/show_bug.cgi?id=86518
+
+        Reviewed by Eric Seidel.
+
+        Change ascents and descent calculation back to integers for now as it
+        looks like we'll need to support both the 1/60 and 1/1 implementations of
+        FractionalLayoutUnit for the immediate future to ensure that text is
+        rendered at the same offset and with the height regardless of the
+        ENABLE_SUBPIXEL_LAYOUT flag.
+
+        This ensures that most websites will look the same at 100% zoom
+        regardless of the flag and also allows us to the same test expectations
+        for the vast majority of layout tests.
+
+        Eventually we want to move those back to FractionalLayoutUnits as that
+        will result in more correct rendering.
+
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-05-16  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to first-letter not getting computed on RenderTableCell
