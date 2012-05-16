@@ -1,5 +1,23 @@
 2012-05-16  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116971
+
+    2012-05-14  Andreas Kling  <kling@webkit.org>
+
+            REGRESSION(r116796): Assertion failure in API tests
+            <http://webkit.org/b/86378>
+            <rdar://problem/10777218>
+
+            Reviewed by Anders Carlsson.
+
+            Invalidate the plugin work queue in ~WebContext to avoid hitting
+            the !m_isValid assertion in ~WorkQueue later on.
+
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::~WebContext):
+
+2012-05-16  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116796
 
     2012-05-11  Andreas Kling  <kling@webkit.org>
