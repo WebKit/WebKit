@@ -242,7 +242,6 @@ EXPORTS
         ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
-        ?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
-        ?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
-        ?webkitWillExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
-        ?webkitDidExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
+        ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
+        ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
+        ?resumeAnimations@AnimationController@WebCore@@QAEXXZ

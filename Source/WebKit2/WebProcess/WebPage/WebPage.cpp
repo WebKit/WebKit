@@ -2902,6 +2902,7 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
+#if USE(CG)
     if (coreFrame) {
 #if PLATFORM(MAC)
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
@@ -2933,6 +2934,7 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
         CGPDFContextEndPage(context.get());
         CGPDFContextClose(context.get());
     }
+#endif
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
@@ -2944,6 +2946,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
+#if USE(CG)
     if (coreFrame) {
 
 #if PLATFORM(MAC)
@@ -2983,6 +2986,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
         }
         CGPDFContextClose(context.get());
     }
+#endif
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }

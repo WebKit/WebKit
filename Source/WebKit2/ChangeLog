@@ -1,3 +1,15 @@
+2012-05-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build change after exported symbol
+        updates (r114790) and expansion of CG routines in WebPage
+        PDF output (r114476).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToPDF): Exclude CG use on WinCairo.
+        (WebKit::WebPage::drawPagesToPDF): Exclude CG use on WinCairo.
+        * win/WebKit2CFLite.def: Don't claim to export symbols we don't
+        provide (e.g., full screen API calls).
+
 2012-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get plugins to WebKit2 GTK+
