@@ -1,3 +1,21 @@
+2012-05-16  Jer Noble  <jer.noble@apple.com>
+
+        <video> elements with no video tracks report false for webkitSupportsFullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=86650
+
+        Reviewed by Eric Carlson.
+
+        Fix media-fullscreen.js to support the new FULLSCREEN_API events, if present.
+        Fix the media-fullscreen-inline.html test and unskip on Lion.
+
+        * media/media-fullscreen-inline-expected.txt:
+        * media/media-fullscreen-inline.html:
+        * media/media-fullscreen.js:
+        (fullscreenchange):
+        (loadedmetadata):
+        (addEventListeners):
+        * platform/mac-lion/Skipped:
+
 2012-05-16  Marcelo Lira <marcelo.lira@openbossa.org>
 
         [Qt][Mac]REGRESSION?(r89397) It made fast/css/custom-font-xheight.html crash
