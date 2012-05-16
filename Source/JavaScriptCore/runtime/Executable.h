@@ -43,8 +43,6 @@ namespace JSC {
     class LLIntOffsetsExtractor;
     class ProgramCodeBlock;
     class ScopeChainNode;
-
-    struct ExceptionInfo;
     
     enum CompilationKind { FirstCompilation, OptimizingCompilation };
 

@@ -1,3 +1,18 @@
+2012-05-15  Oliver Hunt  <oliver@apple.com>
+
+        Make error information available even if all we have is line number information.
+        https://bugs.webkit.org/show_bug.cgi?id=86547
+
+        Reviewed by Filip Pizlo.
+
+        We don't need expression information to generate useful line, file, and stack information,
+        so only require that we have line number info available.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * runtime/Executable.h:
+        (JSC):
+
 2012-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Block freeing thread should not free blocks when we are actively requesting them
