@@ -1,3 +1,16 @@
+2012-05-16  Rob Buis  <rbuis@rim.com>
+
+        SVGSVGElement checkIntersection and checkEnclosure Mem corruption
+        https://bugs.webkit.org/show_bug.cgi?id=67923
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add test to check that checkIntersection/checkEnclosure do not
+        crash when null is used for the element parameter.
+
+        * svg/custom/intersection-list-null-expected.txt: Added.
+        * svg/custom/intersection-list-null.svg: Added.
+
 2012-05-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unskip fast/animation/request-animation-frame-during-modal.html that was

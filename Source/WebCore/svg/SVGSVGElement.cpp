@@ -371,11 +371,15 @@ PassRefPtr<NodeList> SVGSVGElement::getEnclosureList(const FloatRect& rect, SVGE
 
 bool SVGSVGElement::checkIntersection(SVGElement* element, const FloatRect& rect) const
 {
+    if (!element)
+        return false;
     return RenderSVGModelObject::checkIntersection(element->renderer(), rect);
 }
 
 bool SVGSVGElement::checkEnclosure(SVGElement* element, const FloatRect& rect) const
 {
+    if (!element)
+        return false;
     return RenderSVGModelObject::checkEnclosure(element->renderer(), rect);
 }
 
