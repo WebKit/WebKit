@@ -1,3 +1,20 @@
+2012-04-02  Abhishek Arya  <inferno@chromium.org>
+
+        <select> shouldn't intrude as a run-in.
+        https://bugs.webkit.org/show_bug.cgi?id=82829
+
+        Reviewed by Tony Chang.
+
+        Matches Opera's behavior which also does not allow <select>
+        to intrude as a run-in into the neighbouring block.
+        IE and Firefox doesn't support run-ins, so can't compare behavior
+        with them.
+
+        Test: fast/runin/select-runin.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
 2012-04-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to intruding float not removed from next siblings.
