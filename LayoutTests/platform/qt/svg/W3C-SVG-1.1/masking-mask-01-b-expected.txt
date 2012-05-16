@@ -50,7 +50,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (200,228) size 105x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 105x16
           chunk 1 text run 1 at (200.00,240.00) startOffset 0 endOffset 20 width 105.00: "of various opacities"
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.7 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

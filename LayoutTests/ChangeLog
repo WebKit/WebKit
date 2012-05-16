@@ -1,3 +1,119 @@
+2012-05-16  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unreviewed gardening: updating expectations after r117259
+        https://bugs.webkit.org/show_bug.cgi?id=86463
+
+        * platform/qt/http/tests/misc/SVGFont-delayed-load-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/struct-cond-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-cond-03-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-08-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-08-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-03-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-04-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-04-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-05-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/qt/svg/custom/acid3-test-77-expected.txt: Added.
+        * platform/qt/svg/custom/altglyph-expected.png:
+        * platform/qt/svg/custom/altglyph-expected.txt:
+        * platform/qt/svg/custom/font-face-simple-expected.png:
+        * platform/qt/svg/custom/font-face-simple-expected.txt:
+        * platform/qt/svg/custom/global-constructors-expected.txt: Added.
+        * platform/qt/svg/custom/glyph-selection-lang-attribute-expected.png:
+        * platform/qt/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/qt/svg/custom/glyph-setting-d-attribute-expected.png:
+        * platform/qt/svg/custom/glyph-setting-d-attribute-expected.txt: Added.
+        * platform/qt/svg/custom/insertItemBefore-from-non-list-origin-expected.txt: Added.
+        * platform/qt/svg/custom/missing-xlink-expected.png: Added.
+        * platform/qt/svg/custom/missing-xlink-expected.txt: Added.
+        * platform/qt/svg/custom/path-bad-data-expected.png: Added.
+        * platform/qt/svg/custom/path-bad-data-expected.txt: Added.
+        * platform/qt/svg/custom/stroke-width-click-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/qt/svg/custom/svg-fonts-word-spacing-expected.txt: Added.
+        * platform/qt/svg/custom/visibility-override-filter-expected.png: Copied from LayoutTests/platform/qt/svg/custom/glyph-setting-d-attribute-expected.png.
+        * platform/qt/svg/custom/visibility-override-filter-expected.txt: Added.
+        * platform/qt/svg/dom/altGlyph-dom-expected.txt:
+        * platform/qt/svg/dom/baseVal-animVal-crash-expected.txt: Added.
+        * platform/qt/svg/dom/font-face-elements-expected.txt: Added.
+        * platform/qt/svg/text/kerning-expected.png:
+        * platform/qt/svg/text/kerning-expected.txt:
+        * platform/qt/svg/text/multichar-glyph-expected.png:
+        * platform/qt/svg/text/multichar-glyph-expected.txt:
+        * platform/qt/svg/text/text-altglyph-01-b-expected.png:
+        * platform/qt/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/qt/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/qt/svg/text/text-fonts-01-t-expected.txt: Added.
+        * platform/qt/svg/text/text-hkern-expected.png:
+        * platform/qt/svg/text/text-hkern-expected.txt:
+        * platform/qt/svg/text/text-hkern-on-vertical-text-expected.png:
+        * platform/qt/svg/text/text-intro-05-t-expected.png: Added.
+        * platform/qt/svg/text/text-intro-05-t-expected.txt: Added.
+        * platform/qt/svg/text/text-text-04-t-expected.png:
+        * platform/qt/svg/text/text-text-04-t-expected.txt:
+        * platform/qt/svg/text/text-text-05-t-expected.png:
+        * platform/qt/svg/text/text-text-05-t-expected.txt:
+        * platform/qt/svg/text/text-text-06-t-expected.png:
+        * platform/qt/svg/text/text-text-06-t-expected.txt:
+        * platform/qt/svg/text/text-tselect-02-f-expected.png: Added.
+        * platform/qt/svg/text/text-tselect-02-f-expected.txt: Added.
+        * platform/qt/svg/text/text-vkern-expected.png:
+        * platform/qt/svg/text/text-vkern-expected.txt:
+        * platform/qt/svg/text/text-vkern-on-horizontal-text-expected.png:
+
 2012-05-15  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Enable SVG Fonts by default

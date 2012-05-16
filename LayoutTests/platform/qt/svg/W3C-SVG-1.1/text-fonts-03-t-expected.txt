@@ -2,33 +2,33 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (15,32) size 403x190
+    RenderSVGContainer {g} at (15,32) size 403x188
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (15,42) size 259x25 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 259x25
-          chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 32 width 259.00: "font-family = \"Haettenschweiler\""
+      RenderSVGText {text} at (15,42) size 254x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 254x24
+          chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 32 width 254.00: "font-family = \"Haettenschweiler\""
       RenderSVGText {text} at (340,32) size 42x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 42x35
           chunk 1 text run 1 at (340.00,60.00) startOffset 0 endOffset 3 width 41.58: "ABC"
-      RenderSVGText {text} at (15,92) size 232x25 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 232x25
-          chunk 1 text run 1 at (15.00,110.00) startOffset 0 endOffset 28 width 232.00: "font-family = \"Charlesworth\""
+      RenderSVGText {text} at (15,92) size 222x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 222x24
+          chunk 1 text run 1 at (15.00,110.00) startOffset 0 endOffset 28 width 222.00: "font-family = \"Charlesworth\""
       RenderSVGText {text} at (340,82) size 78x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 78x35
           chunk 1 text run 1 at (340.00,110.00) startOffset 0 endOffset 3 width 77.14: "ABC"
-      RenderSVGText {text} at (15,142) size 231x25 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x25
-          chunk 1 text run 1 at (15.00,160.00) startOffset 0 endOffset 28 width 231.00: "font-family = \"Invalid Name\""
+      RenderSVGText {text} at (15,142) size 221x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 221x24
+          chunk 1 text run 1 at (15.00,160.00) startOffset 0 endOffset 28 width 221.00: "font-family = \"Invalid Name\""
       RenderSVGText {text} at (340,126) size 71x44 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 71x44
           chunk 1 text run 1 at (340.00,160.00) startOffset 0 endOffset 3 width 71.00: "ABC"
-      RenderSVGText {text} at (15,192) size 203x25 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 203x25
-          chunk 1 text run 1 at (15.00,210.00) startOffset 0 endOffset 27 width 203.00: "font-family = not specified"
-      RenderSVGText {text} at (340,176) size 73x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 73x46
-          chunk 1 text run 1 at (340.00,210.00) startOffset 0 endOffset 3 width 73.00: "ABC"
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.5 $"
+      RenderSVGText {text} at (15,192) size 205x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 205x24
+          chunk 1 text run 1 at (15.00,210.00) startOffset 0 endOffset 27 width 205.00: "font-family = not specified"
+      RenderSVGText {text} at (340,176) size 71x44 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 71x44
+          chunk 1 text run 1 at (340.00,210.00) startOffset 0 endOffset 3 width 71.00: "ABC"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

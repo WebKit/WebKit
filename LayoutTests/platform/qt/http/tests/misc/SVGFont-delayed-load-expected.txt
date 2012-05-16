@@ -1,0 +1,4 @@
+This tests that the onload handler for an iframe is delayed by a pending SVGFont load.
+
+PASS: the onload event did not fire.
+

@@ -6,13 +6,13 @@ layer at (0,0) size 480x360
       RenderSVGContainer {switch} at (30,20) size 420x130
         RenderSVGContainer {g} at (30,20) size 420x130
           RenderSVGRect {rect} at (30,20) size 420x130 [fill={[type=SOLID] [color=#FF0000]}] [x=30.00] [y=20.00] [width=420.00] [height=130.00]
-          RenderSVGText {text} at (76,80) size 328x27 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 328x27
-              chunk 1 (middle anchor) text run 1 at (76.00,100.00) startOffset 0 endOffset 35 width 328.00: "This viewer does more than SVG Tiny"
+          RenderSVGText {text} at (71,80) size 337x26 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 337x26
+              chunk 1 (middle anchor) text run 1 at (71.50,100.00) startOffset 0 endOffset 35 width 337.00: "This viewer does more than SVG Tiny"
       RenderSVGContainer {switch} at (30,160) size 420x130 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
         RenderSVGContainer {g} at (30,160) size 420x130
           RenderSVGRect {rect} at (30,160) size 420x130 [fill={[type=SOLID] [color=#00FF00]}] [x=30.00] [y=20.00] [width=420.00] [height=130.00]
-    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x53
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.9 $"
+    RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x51
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

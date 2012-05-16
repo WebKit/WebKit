@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           chunk 1 (vertical) text run 3 at (-3.00,32.00) startOffset 2 endOffset 3 height 10.00: "3"
           chunk 1 (vertical) text run 4 at (-3.00,48.00) startOffset 3 endOffset 4 height 10.00: "4"
       RenderSVGText {text} at (-5,0) size 10x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (3,0) size 4x10
+        RenderSVGInlineText {#text} at (3,0) size 3x10
           chunk 1 (vertical) text run 1 at (-3.00,0.00) startOffset 0 endOffset 1 height 10.00: "1"
         RenderSVGTSpan {tspan} at (0,0) size 8x26
           RenderSVGInlineText {#text} at (1,10) size 8x26

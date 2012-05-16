@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x292
-  RenderBlock {html} at (0,0) size 800x292
-    RenderBody {body} at (8,21) size 784x255
+layer at (0,0) size 800x291
+  RenderBlock {html} at (0,0) size 800x291
+    RenderBody {body} at (8,21) size 784x254
       RenderBlock {h1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 115x42
-          text run at (0,0) width 115: "Test for "
-        RenderInline {a} at (0,0) size 143x42 [color=#0000EE]
-          RenderText {#text} at (115,0) size 143x42
-            text run at (115,0) width 143: "Bug 42352"
-      RenderBlock {p} at (0,63) size 784x22
-        RenderText {#text} at (0,0) size 539x22
-          text run at (0,0) width 539: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
-      RenderBlock {p} at (0,101) size 784x18
-        RenderText {#text} at (0,1) size 37x16
-          text run at (0,1) width 37: "XXA"
-      RenderBlock {p} at (0,135) size 784x18
-        RenderText {#text} at (0,1) size 37x16
-          text run at (0,1) width 37: "XAX"
-      RenderBlock {p} at (0,169) size 784x18
-        RenderText {#text} at (0,1) size 37x16
-          text run at (0,1) width 37: "AXX"
-      RenderBlock {p} at (0,203) size 784x18
-        RenderText {#text} at (0,1) size 36x16
-          text run at (0,1) width 36: "XXX"
-      RenderBlock {p} at (0,237) size 784x18
+        RenderText {#text} at (0,0) size 128x42
+          text run at (0,0) width 128: "Test for "
+        RenderInline {a} at (0,0) size 162x42 [color=#0000EE]
+          RenderText {#text} at (128,0) size 162x42
+            text run at (128,0) width 162: "Bug 42352"
+      RenderBlock {p} at (0,63) size 784x21
+        RenderText {#text} at (0,0) size 554x21
+          text run at (0,0) width 554: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
+      RenderBlock {p} at (0,100) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "XXA"
+      RenderBlock {p} at (0,134) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "XAX"
+      RenderBlock {p} at (0,168) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "AXX"
+      RenderBlock {p} at (0,202) size 784x18
+        RenderText {#text} at (0,1) size 33x16
+          text run at (0,1) width 33: "XXX"
+      RenderBlock {p} at (0,236) size 784x18
         RenderText {#text} at (0,1) size 39x16
           text run at (0,1) width 39: "AAA"
