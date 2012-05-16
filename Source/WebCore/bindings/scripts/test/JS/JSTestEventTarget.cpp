@@ -150,9 +150,8 @@ bool JSTestEventTarget::getOwnPropertySlot(JSCell* cell, ExecState* exec, Proper
         slot.setCustom(thisObject, entry->propertyGetter());
         return true;
     }
-    bool ok;
-    unsigned index = propertyName.toUInt32(ok);
-    if (ok && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
         slot.setCustomIndex(thisObject, index, indexGetter);
         return true;
     }
@@ -174,9 +173,8 @@ bool JSTestEventTarget::getOwnPropertyDescriptor(JSObject* object, ExecState* ex
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
-    bool ok;
-    unsigned index = propertyName.toUInt32(ok);
-    if (ok && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
         PropertySlot slot;
         slot.setCustomIndex(thisObject, index, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);

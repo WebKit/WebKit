@@ -148,9 +148,8 @@ bool JSFloat64Array::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyN
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    bool ok;
-    unsigned index = propertyName.toUInt32(ok);
-    if (ok && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
         slot.setValue(thisObject->getByIndex(exec, index));
         return true;
     }
@@ -161,9 +160,8 @@ bool JSFloat64Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    bool ok;
-    unsigned index = propertyName.toUInt32(ok);
-    if (ok && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
         descriptor.setDescriptor(thisObject->getByIndex(exec, index), DontDelete);
         return true;
     }
@@ -191,9 +189,8 @@ void JSFloat64Array::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    bool ok;
-    unsigned index = propertyName.toUInt32(ok);
-    if (ok) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
         thisObject->indexSetter(exec, index, value);
         return;
     }
