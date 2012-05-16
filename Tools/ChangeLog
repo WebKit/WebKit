@@ -1,3 +1,9 @@
+2012-05-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-15  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Fix eventSender key providing
