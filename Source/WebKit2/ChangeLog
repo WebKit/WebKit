@@ -1,3 +1,15 @@
+2012-05-15  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Fix Qt5/Mac build after r117212 by adding missing NETSCAPE_PLUGIN_API guards
+        https://bugs.webkit.org/show_bug.cgi?id=86577
+
+        Reviewed by Andy Estes.
+
+        * Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp:
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * WebProcess/Plugins/Netscape/NetscapePluginNone.cpp:
+
 2012-05-15  Andy Estes  <aestes@apple.com>
 
         WebKit2 would fail to build on Windows if Netscape plug-ins were disabled.
