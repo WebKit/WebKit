@@ -1,3 +1,13 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] A few tests need expected result or rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=86595
+
+        Unreviewed EFL gardening. Add missing EFL text expectation for
+        media/video-frame-accurate-seek.html.
+
+        * platform/efl/media/video-frame-accurate-seek-expected.txt: Added.
+
 2012-05-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of UISourceCodeListChanged event.
