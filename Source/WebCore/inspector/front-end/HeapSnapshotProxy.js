@@ -300,57 +300,44 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
 WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
-    this._loading = false;
-    this._loaded = false;
+    this._onLoadCallbacks = [];
 }
 
 WebInspector.HeapSnapshotLoaderProxy.prototype = {
+    /**
+     * @param {function(WebInspector.HeapSnapshotProxy)} callback
+     */
     finishLoading: function(callback)
     {
-        if (!this._loading)
-            return false;
-        var loadCallbacks = this._onLoadCallbacks;
-        loadCallbacks.splice(0, 0, callback);
-        delete this._onLoadCallbacks;
-        this._loading = false;
-        this._loaded = true;
-        var self = this;
+        this._onLoadCallbacks.unshift(callback);
+
         function updateStaticData(snapshotProxy)
         {
             this.dispose();
-            snapshotProxy.updateStaticData(this._callLoadCallbacks.bind(this, loadCallbacks));
+            snapshotProxy.updateStaticData(callLoadCallbacks.bind(this));
+        }
+        function callLoadCallbacks(snapshotProxy)
+        {
+            for (var i = 0; i < this._onLoadCallbacks.length; ++i)
+                this._onLoadCallbacks[i](snapshotProxy);
+            this._onLoadCallbacks = null;
         }
         this.callFactoryMethod(updateStaticData.bind(this), "finishLoading", "WebInspector.HeapSnapshotProxy");
-        return true;
     },
 
-    _callLoadCallbacks: function(loadCallbacks, snapshotProxy)
-    {
-        for (var i = 0; i < loadCallbacks.length; ++i)
-            loadCallbacks[i](snapshotProxy);
-    },
-
-    get loaded()
-    {
-        return this._loaded;
-    },
-
+    /**
+     * @param {function(WebInspector.HeapSnapshotProxy)} callback
+     * @return {boolean}
+     */
     startLoading: function(callback)
     {
-        if (!this._loading) {
-            this._onLoadCallbacks = [callback];
-            this._loading = true;
-            return true;
-        } else {
-            this._onLoadCallbacks.push(callback);
-            return false;
-        }
+        var loadingHasJustStarted = !this._onLoadCallbacks.length;
+        this._onLoadCallbacks.push(callback);
+        return loadingHasJustStarted;
     },
 
     pushJSONChunk: function(chunk)
     {
-        if (!this._loading)
-            return;
         this.callMethod(null, "pushJSONChunk", chunk);
     }
 };
@@ -432,16 +419,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this.disposeWorker();
     },
 
-    finishLoading: function()
-    {
-        return false;
-    },
-
-    get loaded()
-    {
-        return !!this._objectId;
-    },
-
     get nodeCount()
     {
         return this._staticData.nodeCount;
@@ -465,12 +442,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
             callback(this);
         }
         this.callMethod(dataReceived.bind(this), "updateStaticData");
-    },
-
-    startLoading: function(callback)
-    {
-        setTimeout(callback.bind(null, this), 0);
-        return false;
     },
 
     get totalSize()

@@ -27,10 +27,10 @@ function test()
         InspectorTest.addResult("_finishHeapSnapshot " + uid);
         var panel = WebInspector.panels.profiles;
         var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        InspectorTest.addSniffer(profile._proxy, "_callLoadCallbacks", step2);
+        profile.load(step2.bind(this));
     }
 
-    function step2(loadCallbacks, snapshotProxy)
+    function step2(snapshotProxy)
     {
         InspectorTest.addResult("_callLoadCallbacks");
         var snapshot = snapshotProxy._worker._worker._dispatcher._objects[snapshotProxy._objectId];

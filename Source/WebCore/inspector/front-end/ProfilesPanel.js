@@ -645,18 +645,6 @@ WebInspector.ProfilesPanel.prototype = {
 
     /**
      * @param {number} uid
-     * @param {Function} callback
-     */
-    loadHeapSnapshot: function(uid, callback)
-    {
-        var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile)
-            return;
-        profile.load(callback);
-    },
-
-    /**
-     * @param {number} uid
      * @param {string} chunk
      */
     _addHeapSnapshotChunk: function(uid, chunk)

@@ -1,3 +1,13 @@
+2012-05-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: use separate fields for storing HeapSnapshotLoaderProxy and HeapSnapshotProxy
+        https://bugs.webkit.org/show_bug.cgi?id=86488
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/profiler/heap-snapshot-inspect-dom-wrapper.html: instead of sniffing a method
+        call we can use HeapProfileHeader.load directly.
+
 2012-05-16  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed chromium test expectations update
