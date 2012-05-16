@@ -1,3 +1,14 @@
+2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] EFL's LayoutTestController  evaluateScriptInIsolatedWorld implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83776
+
+        Reviewed by Tor Arne Vestbø.
+
+        Unskipped corresponding testcases.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] http/tests/misc/iframe-reparenting-id-collision.html can be unskipped

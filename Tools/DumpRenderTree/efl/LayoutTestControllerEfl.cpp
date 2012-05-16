@@ -724,9 +724,9 @@ void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned,
     notImplemented();
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned, JSObjectRef, JSStringRef)
+void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(browser->mainFrame(), worldID, globalObject, String(script->ustring().impl()));
 }
 
 void LayoutTestController::removeAllVisitedLinks()

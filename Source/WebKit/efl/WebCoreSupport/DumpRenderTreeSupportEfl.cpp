@@ -45,12 +45,14 @@
 #include <PageGroup.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
+#include <ScriptValue.h>
 #include <Settings.h>
 #include <TextIterator.h>
 #include <WebKitMutationObserver.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <workers/WorkerThread.h>
+#include <wtf/HashMap.h>
 
 unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkFrame)
 {
@@ -530,6 +532,49 @@ bool DumpRenderTreeSupportEfl::isTargetItem(const Ewk_History_Item* ewkHistoryIt
         return false;
 
     return historyItem->isTargetItem();
+}
+
+void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* ewkFrame, int worldID, JSObjectRef globalObject, const String& script)
+{
+    WebCore::Frame* coreFrame = EWKPrivate::coreFrame(ewkFrame);
+    if (!coreFrame)
+        return;
+
+    // Comment from mac: Start off with some guess at a frame and a global object, we'll try to do better...!
+    WebCore::JSDOMWindow* anyWorldGlobalObject = coreFrame->script()->globalObject(WebCore::mainThreadNormalWorld());
+
+    // Comment from mac: The global object is probably a shell object? - if so, we know how to use this!
+    JSC::JSObject* globalObjectObj = toJS(globalObject);
+    if (!strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell"))
+        anyWorldGlobalObject = static_cast<WebCore::JSDOMWindowShell*>(globalObjectObj)->window();
+
+    // Comment from mac: Get the frame from the global object we've settled on.
+    WebCore::Frame* globalFrame = anyWorldGlobalObject->impl()->frame();
+    if (!globalFrame)
+        return;
+
+    WebCore::ScriptController* proxy = globalFrame->script();
+    if (!proxy)
+        return;
+
+    static WTF::HashMap<int, WTF::RefPtr<WebCore::DOMWrapperWorld > > worldMap;
+
+    WTF::RefPtr<WebCore::DOMWrapperWorld> scriptWorld;
+    if (!worldID)
+        scriptWorld = WebCore::ScriptController::createWorld();
+    else {
+        WTF::HashMap<int, RefPtr<WebCore::DOMWrapperWorld > >::const_iterator it = worldMap.find(worldID);
+        if (it != worldMap.end())
+            scriptWorld = (*it).second;
+        else {
+            scriptWorld = WebCore::ScriptController::createWorld();
+            worldMap.set(worldID, scriptWorld);
+        }
+    }
+
+    // The code below is only valid for JSC, V8 specific code is to be added
+    // when V8 will be supported in EFL port. See Qt implemenation.
+    proxy->executeScriptInWorld(scriptWorld.get(), script, true);
 }
 
 void DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(bool enable)

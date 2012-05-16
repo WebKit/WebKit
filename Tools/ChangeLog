@@ -1,3 +1,15 @@
+2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] EFL's LayoutTestController  evaluateScriptInIsolatedWorld implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83776
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added missing implementation of LayoutTestController::evaluateScriptInIsolatedWorld().
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::evaluateScriptInIsolatedWorld):
+
 2012-05-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed. Add myself as a committer.

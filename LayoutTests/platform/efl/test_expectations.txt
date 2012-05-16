@@ -74,14 +74,11 @@ BUGWKEFL SKIP : storage/storageinfo-request-quota.html = FAIL
 // EFL's LayoutTestController does not implement originsWithLocalStorage.
 BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = FAIL
 
-// EFL's LayoutTestController does not implement evaluateScriptInIsolatedWorld.
-BUGWKEFL SKIP : http/tests/security/isolatedWorld = FAIL
-BUGWKEFL SKIP : storage/open-database-creation-callback-isolated-world.html = FAIL
-BUGWKEFL SKIP : storage/statement-error-callback-isolated-world.html = FAIL
-BUGWKEFL SKIP : storage/statement-success-callback-isolated-world.html = FAIL
-BUGWKEFL SKIP : storage/transaction-callback-isolated-world.html = FAIL
-BUGWKEFL SKIP : storage/transaction-error-callback-isolated-world.html = FAIL
-BUGWKEFL SKIP : storage/transaction-success-callback-isolated-world.html = FAIL
+// JSC does not support setIsolatedWorldSecurityOrigin.
+BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = FAIL
+
+//__worldID is undefined in isolated world
+BUGWKEFL SKIP : http/tests/security/isolatedWorld/didClearWindowObject.html = FAIL
 
 // EFL's LayoutTestController does not implement layerTreeAsText
 BUGWK82294 : compositing/animation/animation-compositing.html = TEXT
