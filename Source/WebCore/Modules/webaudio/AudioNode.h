@@ -83,7 +83,7 @@ public:
     // We handle our own ref-counting because of the threading issues and subtle nature of
     // how AudioNodes can continue processing (playing one-shot sound) after there are no more
     // JavaScript references to the object.
-    enum RefType { RefTypeNormal, RefTypeConnection, RefTypeDisabled };
+    enum RefType { RefTypeNormal, RefTypeConnection };
 
     // Can be called from main thread or context's audio thread.
     void ref(RefType refType = RefTypeNormal);
@@ -153,6 +153,8 @@ public:
     void silenceOutputs();
     void unsilenceOutputs();
 
+    void enableOutputsIfNecessary();
+    void disableOutputsIfNecessary();
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput(PassOwnPtr<AudioNodeInput>);
@@ -177,7 +179,6 @@ private:
     // Ref-counting
     volatile int m_normalRefCount;
     volatile int m_connectionRefCount;
-    volatile int m_disabledRefCount;
     
     bool m_isMarkedForDeletion;
     bool m_isDisabled;

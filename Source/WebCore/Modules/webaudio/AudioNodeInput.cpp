@@ -86,7 +86,7 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
     if (m_disabledOutputs.contains(output)) {
         m_disabledOutputs.remove(output);
         output->removeInput(this);
-        node()->deref(AudioNode::RefTypeDisabled); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
+        node()->deref(AudioNode::RefTypeConnection); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
         return;
     }
 
@@ -107,8 +107,8 @@ void AudioNodeInput::disable(AudioNodeOutput* output)
     m_outputs.remove(output);
     changedOutputs();
 
-    node()->ref(AudioNode::RefTypeDisabled);
-    node()->deref(AudioNode::RefTypeConnection); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
+    // Propagate disabled state to outputs.
+    node()->disableOutputsIfNecessary();
 }
 
 void AudioNodeInput::enable(AudioNodeOutput* output)
@@ -126,8 +126,8 @@ void AudioNodeInput::enable(AudioNodeOutput* output)
     m_disabledOutputs.remove(output);
     changedOutputs();
 
-    node()->ref(AudioNode::RefTypeConnection);
-    node()->deref(AudioNode::RefTypeDisabled); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
+    // Propagate enabled state to outputs.
+    node()->enableOutputsIfNecessary();
 }
 
 void AudioNodeInput::didUpdate()

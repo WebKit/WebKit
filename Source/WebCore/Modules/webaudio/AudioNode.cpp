@@ -47,7 +47,6 @@ AudioNode::AudioNode(AudioContext* context, float sampleRate)
     , m_lastNonSilentTime(-1)
     , m_normalRefCount(1) // start out with normal refCount == 1 (like WTF::RefCounted class)
     , m_connectionRefCount(0)
-    , m_disabledRefCount(0)
     , m_isMarkedForDeletion(false)
     , m_isDisabled(false)
 {
@@ -63,7 +62,7 @@ AudioNode::~AudioNode()
 {
 #if DEBUG_AUDIONODE_REFERENCES
     --s_nodeCount[nodeType()];
-    printf("%p: %d: AudioNode::~AudioNode() %d %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    printf("%p: %d: AudioNode::~AudioNode() %d %d\n", this, nodeType(), m_normalRefCount, m_connectionRefCount);
 #endif
 }
 
@@ -265,6 +264,44 @@ void AudioNode::unsilenceOutputs()
         output(i)->bus()->clearSilentFlag();
 }
 
+void AudioNode::enableOutputsIfNecessary()
+{
+    if (m_isDisabled && m_connectionRefCount > 0) {
+        ASSERT(isMainThread());
+        AudioContext::AutoLocker locker(context());
+
+        m_isDisabled = false;
+        for (unsigned i = 0; i < m_outputs.size(); ++i)
+            output(i)->enable();
+    }
+}
+
+void AudioNode::disableOutputsIfNecessary()
+{
+    // Disable outputs if appropriate. We do this if the number of connections is 0 or 1. The case
+    // of 0 is from finishDeref() where there are no connections left. The case of 1 is from
+    // AudioNodeInput::disable() where we want to disable outputs when there's only one connection
+    // left because we're ready to go away, but can't quite yet.
+    if (m_connectionRefCount <= 1 && !m_isDisabled) {
+        // Still may have JavaScript references, but no more "active" connection references, so put all of our outputs in a "dormant" disabled state.
+        // Garbage collection may take a very long time after this time, so the "dormant" disabled nodes should not bog down the rendering...
+
+        // As far as JavaScript is concerned, our outputs must still appear to be connected.
+        // But internally our outputs should be disabled from the inputs they're connected to.
+        // disable() can recursively deref connections (and call disable()) down a whole chain of connected nodes.
+
+        // FIXME: we special case the convolver and delay since they have a significant tail-time and shouldn't be disconnected simply
+        // because they no longer have any input connections. This needs to be handled more generally where AudioNodes have
+        // a tailTime attribute. Then the AudioNode only needs to remain "active" for tailTime seconds after there are no
+        // longer any active connections.
+        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay) {
+            m_isDisabled = true;
+            for (unsigned i = 0; i < m_outputs.size(); ++i)
+                output(i)->disable();
+        }
+    }
+}
+
 void AudioNode::ref(RefType refType)
 {
     switch (refType) {
@@ -274,28 +311,19 @@ void AudioNode::ref(RefType refType)
     case RefTypeConnection:
         atomicIncrement(&m_connectionRefCount);
         break;
-    case RefTypeDisabled:
-        atomicIncrement(&m_disabledRefCount);
-        break;
     default:
         ASSERT_NOT_REACHED();
     }
 
 #if DEBUG_AUDIONODE_REFERENCES
-    printf("%p: %d: AudioNode::ref(%d) %d %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    printf("%p: %d: AudioNode::ref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
 #endif
 
     // See the disabling code in finishDeref() below. This handles the case where a node
     // is being re-connected after being used at least once and disconnected.
     // In this case, we need to re-enable.
-    if (m_isDisabled && m_connectionRefCount > 0 && refType == RefTypeConnection) {
-        ASSERT(isMainThread());
-        AudioContext::AutoLocker locker(context());
-
-        m_isDisabled = false;
-        for (unsigned i = 0; i < m_outputs.size(); ++i)
-            output(i)->enable();
-    }
+    if (refType == RefTypeConnection)
+        enableOutputsIfNecessary();
 }
 
 void AudioNode::deref(RefType refType)
@@ -345,20 +373,16 @@ void AudioNode::finishDeref(RefType refType)
         ASSERT(m_connectionRefCount > 0);
         atomicDecrement(&m_connectionRefCount);
         break;
-    case RefTypeDisabled:
-        ASSERT(m_disabledRefCount > 0);
-        atomicDecrement(&m_disabledRefCount);
-        break;
     default:
         ASSERT_NOT_REACHED();
     }
     
 #if DEBUG_AUDIONODE_REFERENCES
-    printf("%p: %d: AudioNode::deref(%d) %d %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
+    printf("%p: %d: AudioNode::deref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
 #endif
 
     if (!m_connectionRefCount) {
-        if (!m_normalRefCount && !m_disabledRefCount) {
+        if (!m_normalRefCount) {
             if (!m_isMarkedForDeletion) {
                 // All references are gone - we need to go away.
                 for (unsigned i = 0; i < m_outputs.size(); ++i)
@@ -368,26 +392,8 @@ void AudioNode::finishDeref(RefType refType)
                 context()->markForDeletion(this);
                 m_isMarkedForDeletion = true;
             }
-        } else if (refType == RefTypeConnection) {
-            if (!m_isDisabled) {
-                // Still may have JavaScript references, but no more "active" connection references, so put all of our outputs in a "dormant" disabled state.
-                // Garbage collection may take a very long time after this time, so the "dormant" disabled nodes should not bog down the rendering...
-
-                // As far as JavaScript is concerned, our outputs must still appear to be connected.
-                // But internally our outputs should be disabled from the inputs they're connected to.
-                // disable() can recursively deref connections (and call disable()) down a whole chain of connected nodes.
-
-                // FIXME: we special case the convolver and delay since they have a significant tail-time and shouldn't be disconnected simply
-                // because they no longer have any input connections.  This needs to be handled more generally where AudioNodes have
-                // a tailTime attribute.  Then the AudioNode only needs to remain "active" for tailTime seconds after there are no
-                // longer any active connections.
-                if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay) {
-                    m_isDisabled = true;
-                    for (unsigned i = 0; i < m_outputs.size(); ++i)
-                        output(i)->disable();
-                }
-            }
-        }
+        } else if (refType == RefTypeConnection)
+            disableOutputsIfNecessary();
     }
 }
 
