@@ -1,3 +1,10 @@
+2012-05-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Unreviewed gardening, unskip a fixed test
+        https://bugs.webkit.org/show_bug.cgi?id=84434
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/loader/stateobjects/replacestate-in-iframe.html can be unskipped
