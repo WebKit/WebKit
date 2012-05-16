@@ -86,6 +86,9 @@ private:
     static void getKeyInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
     static void getKeyByRangeInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
 
+    PassRefPtr<IDBBackingStore> backingStore() const { return m_backingStore; }
+    int64_t databaseId() const { return m_databaseId; }
+
     static const int64_t InvalidId = 0;
 
     RefPtr<IDBBackingStore> m_backingStore;

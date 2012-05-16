@@ -59,7 +59,6 @@ public:
         return m_id;
     }
     void setId(int64_t id) { m_id = id; }
-    int64_t databaseId() const { return m_databaseId; }
 
     virtual String name() const { return m_name; }
     virtual String keyPath() const { return m_keyPath; }
@@ -104,6 +103,9 @@ private:
     static void removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void addIndexToMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void revertAutoIncrementKeyCache(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>);
+
+    PassRefPtr<IDBBackingStore> backingStore() const { return m_backingStore; }
+    int64_t databaseId() const { return m_databaseId; }
 
     RefPtr<IDBBackingStore> m_backingStore;
 
