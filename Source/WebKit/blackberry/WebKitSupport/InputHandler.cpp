@@ -56,6 +56,7 @@
 #include "WebSettings.h"
 
 #include <BlackBerryPlatformKeyboardEvent.h>
+#include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformSettings.h>
 #include <imf/events.h>

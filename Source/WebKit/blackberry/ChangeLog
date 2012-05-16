@@ -1,3 +1,13 @@
+2012-05-16  Genevieve Mak  <gmak@rim.com>
+
+        Add missing include that was causing build errors.
+        https://bugs.webkit.org/show_bug.cgi?id=86502
+
+        Reviewed by Rob Buis.
+        Reviewed Internally by Liam Quinn.
+
+        * WebKitSupport/InputHandler.cpp:
+
 2012-05-15  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [BlackBerry] Enhance an API of BackingStore::drawContents
