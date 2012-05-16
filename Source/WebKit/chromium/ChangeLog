@@ -1,3 +1,18 @@
+2012-05-15  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Add unit testing to WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=86421
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/WebTransformationMatrixTest.cpp: Added.
+        (WebKit):
+        (WebKit::printTransform):
+        (WebKit::initializeTestMatrix):
+        (WebKit::initializeTestMatrix2):
+        (WebKit::TEST):
+
 2012-05-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] Chromium port never sets USE(CG) so code behind it is dead

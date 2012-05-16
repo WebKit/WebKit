@@ -147,6 +147,7 @@
             'tests/WebPageSerializerTest.cpp',
             'tests/WebSocketDeflaterTest.cpp',
             'tests/WebSocketExtensionDispatcherTest.cpp',
+            'tests/WebTransformationMatrixTest.cpp',
             'tests/WebURLRequestTest.cpp',
             'tests/WebURLResponseTest.cpp',
             'tests/WebViewTest.cpp',
