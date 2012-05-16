@@ -1,0 +1,13 @@
+This tests copying and pasting text does not strip inline styles that overrides UA style rules.
+To manually test, copy and paste "hello world" below. The pasted text should be bolded.
+
+Before copy-paste:
+| <b>
+|   style="font-weight: normal"
+|   "<#selection-caret>hello world"
+
+After copy-paste:
+| <b>
+|   style="font-weight: normal; "
+|   "hello world<#selection-caret>"
+| <br>
