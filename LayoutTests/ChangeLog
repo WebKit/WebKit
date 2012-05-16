@@ -1,3 +1,18 @@
+2012-05-15  Li Yin  <li.yin@intel.com>
+
+        [Worker] Web Worker lacks test for posting structured data message.
+        https://bugs.webkit.org/show_bug.cgi?id=86556
+
+        Reviewed by David Levin.
+
+        From http://www.w3.org/TR/2012/CR-workers-20120501/#communicating-with-a-dedicated-worker
+        Structured data can be sent over the communication channel.
+
+        * fast/workers/resources/worker-structure-message.js: Added.
+        (self.onmessage):
+        * fast/workers/worker-structure-message-expected.txt: Added.
+        * fast/workers/worker-structure-message.html: Added.
+
 2012-05-15  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Fix eventSender key providing

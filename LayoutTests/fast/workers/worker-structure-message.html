@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test that pages and workers can send Structure Message to one another.</p>
+<p>On success, you will see a series of "PASS" messages, followed by "DONE".</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var worker = new Worker("resources/worker-structure-message.js");
+worker.onmessage = function(evt) {
+    log(evt.data);
+    if (evt.data.indexOf("FAIL") == 0) {
+        done();
+    }
+    worker.onmessage = function(evt) {
+        if (evt.data.operation == 'find-edges' &&
+            ArrayBuffer.prototype.isPrototypeOf(evt.data.input) &&
+            evt.data.input.byteLength == 20 &&
+            evt.data.threshold == 0.6) {
+                log("PASS: Receive correct structure message from Worker.");
+        }
+        else
+            log("FAIL: Receive error structure message from Worker.");
+        done();
+    }
+}
+
+var buf = new ArrayBuffer(20);
+worker.postMessage({
+    operation: 'find-edges',
+    input: buf,
+    threshold: 0.6
+});
+
+function done()
+{
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</body>
+</html>
