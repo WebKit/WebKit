@@ -66,25 +66,25 @@ bool SVGFEOffsetElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEOffsetElement::parseAttribute(Attribute* attr)
+void SVGFEOffsetElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::dxAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::dxAttr) {
         setDxBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::dyAttr) {
+    if (attribute.name() == SVGNames::dyAttr) {
         setDyBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::inAttr) {
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }

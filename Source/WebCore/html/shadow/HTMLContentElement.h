@@ -53,7 +53,7 @@ protected:
     HTMLContentElement(const QualifiedName&, Document*);
 
 private:
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 };
 
 }

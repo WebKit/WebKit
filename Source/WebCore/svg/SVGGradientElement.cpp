@@ -75,38 +75,38 @@ bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGGradientElement::parseAttribute(Attribute* attr)
+void SVGGradientElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGStyledElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGStyledElement::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::gradientUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+    if (attribute.name() == SVGNames::gradientUnitsAttr) {
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attribute.value());
         if (propertyValue > 0)
             setGradientUnitsBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::gradientTransformAttr) {
+    if (attribute.name() == SVGNames::gradientTransformAttr) {
         SVGTransformList newList;
-        newList.parse(attr->value());
+        newList.parse(attribute.value());
         detachAnimatedGradientTransformListWrappers(newList.size());
         setGradientTransformBaseValue(newList);
         return;
     }
 
-    if (attr->name() == SVGNames::spreadMethodAttr) {
-        SVGSpreadMethodType propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(attr->value());
+    if (attribute.name() == SVGNames::spreadMethodAttr) {
+        SVGSpreadMethodType propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(attribute.value());
         if (propertyValue > 0)
             setSpreadMethodBaseValue(propertyValue);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(attr))
+    if (SVGURIReference::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
 
     ASSERT_NOT_REACHED();

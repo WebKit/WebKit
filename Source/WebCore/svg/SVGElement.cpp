@@ -135,12 +135,12 @@ bool SVGElement::isOutermostSVGSVGElement() const
     return !parentNode()->isSVGElement();
 }
 
-void SVGElement::reportAttributeParsingError(SVGParsingError error, Attribute* attribute)
+void SVGElement::reportAttributeParsingError(SVGParsingError error, const Attribute& attribute)
 {
     if (error == NoError)
         return;
 
-    String errorString = "<" + tagName() + "> attribute " + attribute->name().toString() + "=\"" + attribute->value() + "\"";
+    String errorString = "<" + tagName() + "> attribute " + attribute.name().toString() + "=\"" + attribute.value() + "\"";
     SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
 
     if (error == NegativeValueForbiddenError) {
@@ -305,31 +305,31 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
     ensureRareSVGData()->setCorrespondingElement(correspondingElement);
 }
 
-void SVGElement::parseAttribute(Attribute* attr)
+void SVGElement::parseAttribute(const Attribute& attribute)
 {
     // standard events
-    if (attr->name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onclickAttr)
-        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onmousedownAttr)
-        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onmousemoveAttr)
-        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onmouseoutAttr)
-        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onmouseoverAttr)
-        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onmouseupAttr)
-        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == SVGNames::onfocusinAttr)
-        setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == SVGNames::onfocusoutAttr)
-        setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == SVGNames::onactivateAttr)
-        setAttributeEventListener(eventNames().DOMActivateEvent, createAttributeEventListener(this, attr));
+    if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onclickAttr)
+        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onmousedownAttr)
+        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onmousemoveAttr)
+        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onmouseoutAttr)
+        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onmouseoverAttr)
+        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onmouseupAttr)
+        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == SVGNames::onfocusinAttr)
+        setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == SVGNames::onfocusoutAttr)
+        setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == SVGNames::onactivateAttr)
+        setAttributeEventListener(eventNames().DOMActivateEvent, createAttributeEventListener(this, attribute));
     else
-        StyledElement::parseAttribute(attr);
+        StyledElement::parseAttribute(attribute);
 }
 
 void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>& propertyTypes)
@@ -501,10 +501,9 @@ bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childCont
     return false;
 }
 
-void SVGElement::attributeChanged(Attribute* attr)
+void SVGElement::attributeChanged(const Attribute& attribute)
 {
-    ASSERT(attr);
-    StyledElement::attributeChanged(attr);
+    StyledElement::attributeChanged(attribute);
 
     // When an animated SVG property changes through SVG DOM, svgAttributeChanged() is called, not attributeChanged().
     // Next time someone tries to access the XML attributes, the synchronization code starts. During that synchronization
@@ -514,15 +513,15 @@ void SVGElement::attributeChanged(Attribute* attr)
     if (isSynchronizingSVGAttributes())
         return;
 
-    if (isIdAttributeName(attr->name())) {
+    if (isIdAttributeName(attribute.name())) {
         document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
         document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
     }
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.
-    if (attr->name() != HTMLNames::styleAttr)
-        svgAttributeChanged(attr->name());
+    if (attribute.name() != HTMLNames::styleAttr)
+        svgAttributeChanged(attribute.name());
 }
 
 void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const

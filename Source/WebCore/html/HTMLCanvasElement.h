@@ -140,7 +140,7 @@ public:
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     void reset();

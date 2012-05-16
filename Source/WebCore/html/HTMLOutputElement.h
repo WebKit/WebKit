@@ -55,7 +55,7 @@ public:
 private:
     HTMLOutputElement(const QualifiedName&, Document*, HTMLFormElement*);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportLabels() const OVERRIDE { return true; }

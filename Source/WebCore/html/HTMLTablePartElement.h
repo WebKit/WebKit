@@ -40,7 +40,7 @@ protected:
     }
 
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
 
     HTMLTableElement* findParentTable() const;
 };

@@ -96,13 +96,13 @@ PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tag
     return adoptRef(new HTMLKeygenElement(tagName, document, form));
 }
 
-void HTMLKeygenElement::parseAttribute(Attribute* attr)
+void HTMLKeygenElement::parseAttribute(const Attribute& attribute)
 {
     // Reflect disabled attribute on the shadow select element
-    if (attr->name() == disabledAttr)
-        shadowSelect()->setAttribute(attr->name(), attr->value());
+    if (attribute.name() == disabledAttr)
+        shadowSelect()->setAttribute(attribute.name(), attribute.value());
 
-    HTMLFormControlElement::parseAttribute(attr);
+    HTMLFormControlElement::parseAttribute(attribute);
 }
 
 bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)

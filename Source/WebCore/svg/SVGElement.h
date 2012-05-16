@@ -119,10 +119,10 @@ public:
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual void finishParsingChildren();
-    virtual void attributeChanged(Attribute*) OVERRIDE;
+    virtual void attributeChanged(const Attribute&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     
     virtual void removedFrom(Node*) OVERRIDE;
@@ -130,7 +130,7 @@ protected:
     SVGElementRareData* rareSVGData() const;
     SVGElementRareData* ensureRareSVGData();
 
-    void reportAttributeParsingError(SVGParsingError, Attribute*);
+    void reportAttributeParsingError(SVGParsingError, const Attribute&);
 
 private:
     friend class SVGElementInstance;

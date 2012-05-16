@@ -95,15 +95,15 @@ bool SVGFEDropShadowElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEDropShadowElement::parseAttribute(Attribute* attr)
+void SVGFEDropShadowElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::stdDeviationAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setStdDeviationXBaseValue(x);
@@ -112,18 +112,18 @@ void SVGFEDropShadowElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::inAttr) {
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::dxAttr) {
-        setDxBaseValue(attr->value().toFloat());
+    if (attribute.name() == SVGNames::dxAttr) {
+        setDxBaseValue(attribute.value().toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::dyAttr) {
-        setDyBaseValue(attr->value().toFloat());
+    if (attribute.name() == SVGNames::dyAttr) {
+        setDyBaseValue(attribute.value().toFloat());
         return;
     }
 

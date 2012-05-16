@@ -70,24 +70,24 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
 }
 
-void HTMLStyleElement::parseAttribute(Attribute* attr)
+void HTMLStyleElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == titleAttr && m_sheet)
-        m_sheet->setTitle(attr->value());
-    else if (attr->name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
+    if (attribute.name() == titleAttr && m_sheet)
+        m_sheet->setTitle(attribute.value());
+    else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
 #if ENABLE(STYLE_SCOPED)
-    else if (attr->name() == scopedAttr) {
-        if (!attr->isNull() && !m_isRegisteredWithScopingNode && inDocument())
+    else if (attribute.name() == scopedAttr) {
+        if (!attribute.isNull() && !m_isRegisteredWithScopingNode && inDocument())
             registerWithScopingNode();
-        else if (attr->isNull() && m_isRegisteredWithScopingNode)
+        else if (attribute.isNull() && m_isRegisteredWithScopingNode)
             unregisterWithScopingNode();
     }
 #endif
     else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLStyleElement::finishParsingChildren()

@@ -106,60 +106,60 @@ bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFELightElement::parseAttribute(Attribute* attr)
+void SVGFELightElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGElement::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::azimuthAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::azimuthAttr) {
         setAzimuthBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::elevationAttr) {
+    if (attribute.name() == SVGNames::elevationAttr) {
         setElevationBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::xAttr) {
+    if (attribute.name() == SVGNames::xAttr) {
         setXBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::yAttr) {
+    if (attribute.name() == SVGNames::yAttr) {
         setYBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::zAttr) {
+    if (attribute.name() == SVGNames::zAttr) {
         setZBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::pointsAtXAttr) {
+    if (attribute.name() == SVGNames::pointsAtXAttr) {
         setPointsAtXBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::pointsAtYAttr) {
+    if (attribute.name() == SVGNames::pointsAtYAttr) {
         setPointsAtYBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::pointsAtZAttr) {
+    if (attribute.name() == SVGNames::pointsAtZAttr) {
         setPointsAtZBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::specularExponentAttr) {
+    if (attribute.name() == SVGNames::specularExponentAttr) {
         setSpecularExponentBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::limitingConeAngleAttr) {
+    if (attribute.name() == SVGNames::limitingConeAngleAttr) {
         setLimitingConeAngleBaseValue(value.toFloat());
         return;
     }

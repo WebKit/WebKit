@@ -41,7 +41,7 @@ public:
     bool hasExtension(const String&) const;
     bool isValid() const;
 
-    bool parseAttribute(Attribute*);
+    bool parseAttribute(const Attribute&);
     bool isKnownAttribute(const QualifiedName&);
 
     void addSupportedAttributes(HashSet<QualifiedName>&);

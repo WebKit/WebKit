@@ -102,47 +102,47 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
-void HTMLFrameElementBase::parseAttribute(Attribute* attr)
+void HTMLFrameElementBase::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == srcdocAttr)
+    if (attribute.name() == srcdocAttr)
         setLocation("about:srcdoc");
-    else if (attr->name() == srcAttr && !fastHasAttribute(srcdocAttr))
-        setLocation(stripLeadingAndTrailingHTMLSpaces(attr->value()));
-    else if (isIdAttributeName(attr->name())) {
+    else if (attribute.name() == srcAttr && !fastHasAttribute(srcdocAttr))
+        setLocation(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+    else if (isIdAttributeName(attribute.name())) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
-        HTMLFrameOwnerElement::parseAttribute(attr);
-        m_frameName = attr->value();
-    } else if (attr->name() == nameAttr) {
-        m_frameName = attr->value();
+        HTMLFrameOwnerElement::parseAttribute(attribute);
+        m_frameName = attribute.value();
+    } else if (attribute.name() == nameAttr) {
+        m_frameName = attribute.value();
         // FIXME: If we are already attached, this doesn't actually change the frame's name.
         // FIXME: If we are already attached, this doesn't check for frame name
         // conflicts and generate a unique frame name.
-    } else if (attr->name() == marginwidthAttr) {
-        m_marginWidth = attr->value().toInt();
+    } else if (attribute.name() == marginwidthAttr) {
+        m_marginWidth = attribute.value().toInt();
         // FIXME: If we are already attached, this has no effect.
-    } else if (attr->name() == marginheightAttr) {
-        m_marginHeight = attr->value().toInt();
+    } else if (attribute.name() == marginheightAttr) {
+        m_marginHeight = attribute.value().toInt();
         // FIXME: If we are already attached, this has no effect.
-    } else if (attr->name() == scrollingAttr) {
+    } else if (attribute.name() == scrollingAttr) {
         // Auto and yes both simply mean "allow scrolling." No means "don't allow scrolling."
-        if (equalIgnoringCase(attr->value(), "auto") || equalIgnoringCase(attr->value(), "yes"))
+        if (equalIgnoringCase(attribute.value(), "auto") || equalIgnoringCase(attribute.value(), "yes"))
             m_scrolling = document()->frameElementsShouldIgnoreScrolling() ? ScrollbarAlwaysOff : ScrollbarAuto;
-        else if (equalIgnoringCase(attr->value(), "no"))
+        else if (equalIgnoringCase(attribute.value(), "no"))
             m_scrolling = ScrollbarAlwaysOff;
         // FIXME: If we are already attached, this has no effect.
-    } else if (attr->name() == viewsourceAttr) {
-        m_viewSource = !attr->isNull();
+    } else if (attribute.name() == viewsourceAttr) {
+        m_viewSource = !attribute.isNull();
         if (contentFrame())
             contentFrame()->setInViewSourceMode(viewSourceMode());
-    } else if (attr->name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onbeforeunloadAttr) {
+    } else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
-        setAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(this, attr));
+        setAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(this, attribute));
     } else
-        HTMLFrameOwnerElement::parseAttribute(attr);
+        HTMLFrameOwnerElement::parseAttribute(attribute);
 }
 
 void HTMLFrameElementBase::setNameAndOpenURL()

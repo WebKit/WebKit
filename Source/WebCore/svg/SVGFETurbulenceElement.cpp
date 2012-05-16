@@ -88,29 +88,29 @@ bool SVGFETurbulenceElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFETurbulenceElement::parseAttribute(Attribute* attr)
+void SVGFETurbulenceElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::typeAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
         if (propertyValue > 0)
             setTypeBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::stitchTilesAttr) {
+    if (attribute.name() == SVGNames::stitchTilesAttr) {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(value);
         if (propertyValue > 0)
             setStitchTilesBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::baseFrequencyAttr) {
+    if (attribute.name() == SVGNames::baseFrequencyAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setBaseFrequencyXBaseValue(x);
@@ -119,12 +119,12 @@ void SVGFETurbulenceElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::seedAttr) {
+    if (attribute.name() == SVGNames::seedAttr) {
         setSeedBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::numOctavesAttr) {
+    if (attribute.name() == SVGNames::numOctavesAttr) {
         setNumOctavesBaseValue(value.string().toUIntStrict());
         return;
     }

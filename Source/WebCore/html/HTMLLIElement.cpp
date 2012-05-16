@@ -56,32 +56,32 @@ bool HTMLLIElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLLIElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLLIElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == typeAttr) {
-        if (attr->value() == "a")
+    if (attribute.name() == typeAttr) {
+        if (attribute.value() == "a")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
-        else if (attr->value() == "A")
+        else if (attribute.value() == "A")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
-        else if (attr->value() == "i")
+        else if (attribute.value() == "i")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
-        else if (attr->value() == "I")
+        else if (attribute.value() == "I")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
-        else if (attr->value() == "1")
+        else if (attribute.value() == "1")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyListStyleType, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyListStyleType, attribute.value());
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLLIElement::parseAttribute(Attribute* attr)
+void HTMLLIElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == valueAttr) {
+    if (attribute.name() == valueAttr) {
         if (renderer() && renderer()->isListItem())
-            parseValue(attr->value());
+            parseValue(attribute.value());
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLLIElement::attach()

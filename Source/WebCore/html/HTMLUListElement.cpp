@@ -54,12 +54,12 @@ bool HTMLUListElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLUListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLUListElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == typeAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyListStyleType, attr->value());
+    if (attribute.name() == typeAttr)
+        addPropertyToAttributeStyle(style, CSSPropertyListStyleType, attribute.value());
     else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
 }

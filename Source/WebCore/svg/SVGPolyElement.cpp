@@ -77,15 +77,15 @@ bool SVGPolyElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPolyElement::parseAttribute(Attribute* attr)
+void SVGPolyElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGStyledTransformableElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGStyledTransformableElement::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::pointsAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::pointsAttr) {
         SVGPointList newList;
         if (!pointsListFromSVGData(newList, value))
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
@@ -97,11 +97,11 @@ void SVGPolyElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGTests::parseAttribute(attr))
+    if (SVGTests::parseAttribute(attribute))
         return;
-    if (SVGLangSpace::parseAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
 
     ASSERT_NOT_REACHED();

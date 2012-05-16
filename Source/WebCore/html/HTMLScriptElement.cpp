@@ -58,20 +58,18 @@ void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange
     ScriptElement::childrenChanged();
 }
 
-void HTMLScriptElement::parseAttribute(Attribute* attr)
+void HTMLScriptElement::parseAttribute(const Attribute& attribute)
 {
-    const QualifiedName& attrName = attr->name();
-
-    if (attrName == srcAttr)
-        handleSourceAttribute(attr->value());
-    else if (attr->name() == asyncAttr)
+    if (attribute.name() == srcAttr)
+        handleSourceAttribute(attribute.value());
+    else if (attribute.name() == asyncAttr)
         handleAsyncAttribute();
-    else if (attrName == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attrName == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
+    else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
     else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(Node* insertionPoint)

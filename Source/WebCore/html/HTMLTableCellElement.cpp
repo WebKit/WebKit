@@ -82,36 +82,36 @@ bool HTMLTableCellElement::isPresentationAttribute(const QualifiedName& name) co
     return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
-void HTMLTableCellElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLTableCellElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == nowrapAttr) {
+    if (attribute.name() == nowrapAttr) {
         addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
-    } else if (attr->name() == widthAttr) {
-        if (!attr->value().isEmpty()) {
-            int widthInt = attr->value().toInt();
+    } else if (attribute.name() == widthAttr) {
+        if (!attribute.value().isEmpty()) {
+            int widthInt = attribute.value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
+                addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
         }
-    } else if (attr->name() == heightAttr) {
-        if (!attr->value().isEmpty()) {
-            int heightInt = attr->value().toInt();
+    } else if (attribute.name() == heightAttr) {
+        if (!attribute.value().isEmpty()) {
+            int heightInt = attribute.value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+                addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
         }
     } else
-        HTMLTablePartElement::collectStyleForAttribute(attr, style);
+        HTMLTablePartElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLTableCellElement::parseAttribute(Attribute* attr)
+void HTMLTableCellElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == rowspanAttr) {
+    if (attribute.name() == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
-    } else if (attr->name() == colspanAttr) {
+    } else if (attribute.name() == colspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else
-        HTMLTablePartElement::parseAttribute(attr);
+        HTMLTablePartElement::parseAttribute(attribute);
 }
 
 StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()

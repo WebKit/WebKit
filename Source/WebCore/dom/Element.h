@@ -241,7 +241,7 @@ public:
     NamedNodeMap* attributes() const;
 
     // This method is called whenever an attribute is added, changed or removed.
-    virtual void attributeChanged(Attribute*);
+    virtual void attributeChanged(const Attribute&);
 
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
@@ -302,8 +302,8 @@ public:
 
     void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
     void willRemoveAttribute(const QualifiedName&, const AtomicString& value);
-    void didAddAttribute(Attribute*);
-    void didModifyAttribute(Attribute*);
+    void didAddAttribute(const Attribute&);
+    void didModifyAttribute(const Attribute&);
     void didRemoveAttribute(const QualifiedName&);
 
     LayoutSize minimumSizeForResizing() const;

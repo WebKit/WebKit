@@ -55,19 +55,19 @@ bool HTMLDivElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLDivElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLDivElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+    if (attribute.name() == alignAttr) {
+        if (equalIgnoringCase(attribute.value(), "middle") || equalIgnoringCase(attribute.value(), "center"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalIgnoringCase(attr->value(), "left"))
+        else if (equalIgnoringCase(attribute.value(), "left"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalIgnoringCase(attr->value(), "right"))
+        else if (equalIgnoringCase(attribute.value(), "right"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
 }

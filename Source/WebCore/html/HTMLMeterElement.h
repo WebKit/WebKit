@@ -72,7 +72,7 @@ private:
     virtual bool recalcWillValidate() const { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     void didElementStateChange();
     void createShadowSubtree();

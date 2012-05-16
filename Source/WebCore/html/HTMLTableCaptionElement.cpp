@@ -51,13 +51,13 @@ bool HTMLTableCaptionElement::isPresentationAttribute(const QualifiedName& name)
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTableCaptionElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLTableCaptionElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == alignAttr) {
-        if (!attr->isEmpty())
-            addPropertyToAttributeStyle(style, CSSPropertyCaptionSide, attr->value());
+    if (attribute.name() == alignAttr) {
+        if (!attribute.isEmpty())
+            addPropertyToAttributeStyle(style, CSSPropertyCaptionSide, attribute.value());
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
 }

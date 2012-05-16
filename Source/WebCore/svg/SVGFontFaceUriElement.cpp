@@ -61,13 +61,13 @@ PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
     return src.release();
 }
 
-void SVGFontFaceUriElement::parseAttribute(Attribute* attr)
+void SVGFontFaceUriElement::parseAttribute(const Attribute& attribute)
 {
-    const QualifiedName& attrName = attr->name();
+    const QualifiedName& attrName = attribute.name();
     if (attrName == XLinkNames::hrefAttr)
         loadFont();
     else
-        SVGElement::parseAttribute(attr);
+        SVGElement::parseAttribute(attribute);
 }
 
 void SVGFontFaceUriElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

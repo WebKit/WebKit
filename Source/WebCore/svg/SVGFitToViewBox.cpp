@@ -88,17 +88,19 @@ AffineTransform SVGFitToViewBox::viewBoxToViewTransform(const FloatRect& viewBox
     return preserveAspectRatio.getCTM(viewBoxRect.x(), viewBoxRect.y(), viewBoxRect.width(), viewBoxRect.height(), viewWidth, viewHeight);
 }
 
-bool SVGFitToViewBox::parseAttribute(Document* document, Attribute* attr)
+bool SVGFitToViewBox::parseAttribute(Document* document, const Attribute& attribute)
 {
-    if (attr->name() == SVGNames::viewBoxAttr) {
+    if (attribute.name() == SVGNames::viewBoxAttr) {
         FloatRect viewBox;
-        if (!attr->value().isNull())
-            parseViewBox(document, attr->value(), viewBox);
+        if (!attribute.isNull())
+            parseViewBox(document, attribute.value(), viewBox);
         setViewBoxBaseValue(viewBox);
         return true;
-    } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+    }
+
+    if (attribute.name() == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatio preserveAspectRatio;
-        preserveAspectRatio.parse(attr->value());
+        preserveAspectRatio.parse(attribute.value());
         setPreserveAspectRatioBaseValue(preserveAspectRatio);
         return true;
     }

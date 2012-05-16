@@ -44,7 +44,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const { return false; }

@@ -185,26 +185,26 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseAttribute(Attribute* attr)
+void HTMLOptionElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == disabledAttr) {
+    if (attribute.name() == disabledAttr) {
         bool oldDisabled = m_disabled;
-        m_disabled = !attr->isNull();
+        m_disabled = !attribute.isNull();
         if (oldDisabled != m_disabled) {
             setNeedsStyleRecalc();
             if (renderer() && renderer()->style()->hasAppearance())
                 renderer()->theme()->stateChanged(renderer(), EnabledState);
         }
-    } else if (attr->name() == selectedAttr) {
+    } else if (attribute.name() == selectedAttr) {
         // FIXME: This doesn't match what the HTML specification says.
         // The specification implies that removing the selected attribute or
         // changing the value of a selected attribute that is already present
         // has no effect on whether the element is selected. Further, it seems
         // that we need to do more than just set m_isSelected to select in that
         // case; we'd need to do the other work from the setSelected function.
-        m_isSelected = !attr->isNull();
+        m_isSelected = !attribute.isNull();
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 String HTMLOptionElement::value() const

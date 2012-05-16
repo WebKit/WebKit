@@ -90,7 +90,7 @@ protected:
     virtual bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)
     {

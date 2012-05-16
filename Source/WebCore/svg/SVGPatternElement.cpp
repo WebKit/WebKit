@@ -109,45 +109,45 @@ bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPatternElement::parseAttribute(Attribute* attr)
+void SVGPatternElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::patternUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+    if (!isSupportedAttribute(attribute.name()))
+        SVGStyledElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::patternUnitsAttr) {
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attribute.value());
         if (propertyValue > 0)
             setPatternUnitsBaseValue(propertyValue);
         return;
-    } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
-        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+    } else if (attribute.name() == SVGNames::patternContentUnitsAttr) {
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attribute.value());
         if (propertyValue > 0)
             setPatternContentUnitsBaseValue(propertyValue);
         return;
-    } else if (attr->name() == SVGNames::patternTransformAttr) {
+    } else if (attribute.name() == SVGNames::patternTransformAttr) {
         SVGTransformList newList;
-        newList.parse(attr->value());
+        newList.parse(attribute.value());
         detachAnimatedPatternTransformListWrappers(newList.size());
         setPatternTransformBaseValue(newList);
         return;
-    } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGURIReference::parseAttribute(attr)
-             || SVGTests::parseAttribute(attr)
-             || SVGLangSpace::parseAttribute(attr)
-             || SVGExternalResourcesRequired::parseAttribute(attr)
-             || SVGFitToViewBox::parseAttribute(document(), attr)) {
+    } else if (attribute.name() == SVGNames::xAttr)
+        setXBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::yAttr)
+        setYBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::widthAttr)
+        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError, ForbidNegativeLengths));
+    else if (attribute.name() == SVGNames::heightAttr)
+        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError, ForbidNegativeLengths));
+    else if (SVGURIReference::parseAttribute(attribute)
+             || SVGTests::parseAttribute(attribute)
+             || SVGLangSpace::parseAttribute(attribute)
+             || SVGExternalResourcesRequired::parseAttribute(attribute)
+             || SVGFitToViewBox::parseAttribute(document(), attribute)) {
     } else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)

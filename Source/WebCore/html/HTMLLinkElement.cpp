@@ -127,36 +127,36 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-void HTMLLinkElement::parseAttribute(Attribute* attr)
+void HTMLLinkElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == relAttr) {
-        m_relAttribute = LinkRelAttribute(attr->value());
+    if (attribute.name() == relAttr) {
+        m_relAttribute = LinkRelAttribute(attribute.value());
         process();
-    } else if (attr->name() == hrefAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+    } else if (attribute.name() == hrefAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         m_url = url.isEmpty() ? KURL() : document()->completeURL(url);
         process();
-    } else if (attr->name() == typeAttr) {
-        m_type = attr->value();
+    } else if (attribute.name() == typeAttr) {
+        m_type = attribute.value();
         process();
-    } else if (attr->name() == sizesAttr) {
-        setSizes(attr->value());
+    } else if (attribute.name() == sizesAttr) {
+        setSizes(attribute.value());
         process();
-    } else if (attr->name() == mediaAttr) {
-        m_media = attr->value().string().lower();
+    } else if (attribute.name() == mediaAttr) {
+        m_media = attribute.value().string().lower();
         process();
-    } else if (attr->name() == disabledAttr)
-        setDisabledState(!attr->isNull());
-    else if (attr->name() == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
+    } else if (attribute.name() == disabledAttr)
+        setDisabledState(!attribute.isNull());
+    else if (attribute.name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
     else {
-        if (attr->name() == titleAttr && m_sheet)
-            m_sheet->setTitle(attr->value());
-        HTMLElement::parseAttribute(attr);
+        if (attribute.name() == titleAttr && m_sheet)
+            m_sheet->setTitle(attribute.value());
+        HTMLElement::parseAttribute(attribute);
     }
 }
 

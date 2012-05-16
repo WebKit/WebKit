@@ -34,11 +34,11 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
     m_zoomAndPan = zoomAndPan;
 }
 
-bool SVGZoomAndPan::parseAttribute(Attribute* attr)
+bool SVGZoomAndPan::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == SVGNames::zoomAndPanAttr) {
-        const UChar* start = attr->value().characters();
-        const UChar* end = start + attr->value().length();
+    if (attribute.name() == SVGNames::zoomAndPanAttr) {
+        const UChar* start = attribute.value().characters();
+        const UChar* end = start + attribute.value().length();
         parseZoomAndPan(start, end);
         return true;
     }

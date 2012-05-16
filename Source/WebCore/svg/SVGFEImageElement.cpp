@@ -126,25 +126,25 @@ bool SVGFEImageElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEImageElement::parseAttribute(Attribute* attr)
+void SVGFEImageElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+    if (attribute.name() == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatio preserveAspectRatio;
-        preserveAspectRatio.parse(attr->value());
+        preserveAspectRatio.parse(attribute.value());
         setPreserveAspectRatioBaseValue(preserveAspectRatio);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(attr))
+    if (SVGURIReference::parseAttribute(attribute))
         return;
-    if (SVGLangSpace::parseAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
 
     ASSERT_NOT_REACHED();

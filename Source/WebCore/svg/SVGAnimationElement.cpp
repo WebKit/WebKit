@@ -149,45 +149,45 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimationElement::parseAttribute(Attribute* attr)
+void SVGAnimationElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGSMILElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGSMILElement::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::valuesAttr) {
+    if (attribute.name() == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
-        attr->value().string().split(';', m_values);
+        attribute.value().string().split(';', m_values);
         for (unsigned i = 0; i < m_values.size(); ++i)
             m_values[i] = m_values[i].stripWhiteSpace();
         return;
     }
 
-    if (attr->name() == SVGNames::keyTimesAttr) {
-        parseKeyTimes(attr->value(), m_keyTimes, true);
+    if (attribute.name() == SVGNames::keyTimesAttr) {
+        parseKeyTimes(attribute.value(), m_keyTimes, true);
         return;
     }
 
-    if (attr->name() == SVGNames::keyPointsAttr) {
+    if (attribute.name() == SVGNames::keyPointsAttr) {
         if (hasTagName(SVGNames::animateMotionTag)) {
             // This is specified to be an animateMotion attribute only but it is simpler to put it here 
             // where the other timing calculatations are.
-            parseKeyTimes(attr->value(), m_keyPoints, false);
+            parseKeyTimes(attribute.value(), m_keyPoints, false);
         }
         return;
     }
 
-    if (attr->name() == SVGNames::keySplinesAttr) {
-        parseKeySplines(attr->value(), m_keySplines);
+    if (attribute.name() == SVGNames::keySplinesAttr) {
+        parseKeySplines(attribute.value(), m_keySplines);
         return;
     }
 
-    if (SVGTests::parseAttribute(attr))
+    if (SVGTests::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
 
     ASSERT_NOT_REACHED();

@@ -35,7 +35,7 @@ private:
     SVGFEMergeNodeElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)

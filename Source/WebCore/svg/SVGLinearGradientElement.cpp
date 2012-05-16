@@ -83,24 +83,24 @@ bool SVGLinearGradientElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGLinearGradientElement::parseAttribute(Attribute* attr)
+void SVGLinearGradientElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGGradientElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
+    if (!isSupportedAttribute(attribute.name()))
+        SVGGradientElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::x1Attr)
+        setX1BaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::y1Attr)
+        setY1BaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::x2Attr)
+        setX2BaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::y2Attr)
+        setY2BaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
     else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName)

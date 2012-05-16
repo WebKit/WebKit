@@ -94,27 +94,25 @@ void HTMLTrackElement::removedFrom(Node* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
 }
 
-void HTMLTrackElement::parseAttribute(Attribute* attribute)
+void HTMLTrackElement::parseAttribute(const Attribute& attribute)
 {
-    const QualifiedName& attrName = attribute->name();
-
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
-        if (attrName == srcAttr) {
-            if (!attribute->isEmpty() && mediaElement())
+        if (attribute.name() == srcAttr) {
+            if (!attribute.isEmpty() && mediaElement())
                 scheduleLoad();
             // 4.8.10.12.3 Sourcing out-of-band text tracks
             // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
-        } else if (attrName == kindAttr)
-            track()->setKind(attribute->value());
-        else if (attrName == labelAttr)
-            track()->setLabel(attribute->value());
-        else if (attrName == srclangAttr)
-            track()->setLanguage(attribute->value());
+        } else if (attribute.name() == kindAttr)
+            track()->setKind(attribute.value());
+        else if (attribute.name() == labelAttr)
+            track()->setLabel(attribute.value());
+        else if (attribute.name() == srclangAttr)
+            track()->setLanguage(attribute.value());
     }
 
-    if (attrName == onloadAttr)
+    if (attribute.name() == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
-    else if (attrName == onerrorAttr)
+    else if (attribute.name() == onerrorAttr)
         setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
     else
         HTMLElement::parseAttribute(attribute);

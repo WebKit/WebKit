@@ -59,16 +59,16 @@ bool SVGMPathElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGMPathElement::parseAttribute(Attribute* attr)
+void SVGMPathElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGElement::parseAttribute(attribute);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(attr))
+    if (SVGURIReference::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
 
     ASSERT_NOT_REACHED();

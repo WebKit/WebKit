@@ -71,9 +71,9 @@ public:
 private:
     HTMLTableElement(const QualifiedName&, Document*);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.

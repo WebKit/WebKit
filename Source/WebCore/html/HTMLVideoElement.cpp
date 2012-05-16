@@ -95,14 +95,14 @@ void HTMLVideoElement::detach()
         m_imageLoader.clear();
 }
 
-void HTMLVideoElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLVideoElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
-    else if (attr->name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+    if (attribute.name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
+    else if (attribute.name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
     else
-        HTMLMediaElement::collectStyleForAttribute(attr, style);
+        HTMLMediaElement::collectStyleForAttribute(attribute, style);
 }
 
 bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
@@ -112,11 +112,9 @@ bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLMediaElement::isPresentationAttribute(name);
 }
 
-void HTMLVideoElement::parseAttribute(Attribute* attr)
+void HTMLVideoElement::parseAttribute(const Attribute& attribute)
 {
-    const QualifiedName& attrName = attr->name();
-
-    if (attrName == posterAttr) {
+    if (attribute.name() == posterAttr) {
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
         HTMLMediaElement::setDisplayMode(Unknown);
         updateDisplayState();
@@ -133,7 +131,7 @@ void HTMLVideoElement::parseAttribute(Attribute* attr)
         }
 #endif
     } else
-        HTMLMediaElement::parseAttribute(attr);
+        HTMLMediaElement::parseAttribute(attribute);
 }
 
 bool HTMLVideoElement::supportsFullscreen() const

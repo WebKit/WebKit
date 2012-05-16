@@ -133,9 +133,9 @@ bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) con
     return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLTextAreaElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == wrapAttr) {
+    if (attribute.name() == wrapAttr) {
         if (shouldWrapText()) {
             addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
             addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
@@ -144,13 +144,13 @@ void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropert
             addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueNormal);
         }
     } else
-        HTMLTextFormControlElement::collectStyleForAttribute(attr, style);
+        HTMLTextFormControlElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLTextAreaElement::parseAttribute(Attribute* attr)
+void HTMLTextAreaElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == rowsAttr) {
-        int rows = attr->value().toInt();
+    if (attribute.name() == rowsAttr) {
+        int rows = attribute.value().toInt();
         if (rows <= 0)
             rows = defaultRows;
         if (m_rows != rows) {
@@ -158,8 +158,8 @@ void HTMLTextAreaElement::parseAttribute(Attribute* attr)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attr->name() == colsAttr) {
-        int cols = attr->value().toInt();
+    } else if (attribute.name() == colsAttr) {
+        int cols = attribute.value().toInt();
         if (cols <= 0)
             cols = defaultCols;
         if (m_cols != cols) {
@@ -167,13 +167,13 @@ void HTMLTextAreaElement::parseAttribute(Attribute* attr)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attr->name() == wrapAttr) {
+    } else if (attribute.name() == wrapAttr) {
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalIgnoringCase(attr->value(), "physical") || equalIgnoringCase(attr->value(), "hard") || equalIgnoringCase(attr->value(), "on"))
+        if (equalIgnoringCase(attribute.value(), "physical") || equalIgnoringCase(attribute.value(), "hard") || equalIgnoringCase(attribute.value(), "on"))
             wrap = HardWrap;
-        else if (equalIgnoringCase(attr->value(), "off"))
+        else if (equalIgnoringCase(attribute.value(), "off"))
             wrap = NoWrap;
         else
             wrap = SoftWrap;
@@ -182,12 +182,12 @@ void HTMLTextAreaElement::parseAttribute(Attribute* attr)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attr->name() == accesskeyAttr) {
+    } else if (attribute.name() == accesskeyAttr) {
         // ignore for the moment
-    } else if (attr->name() == maxlengthAttr)
+    } else if (attribute.name() == maxlengthAttr)
         setNeedsValidityCheck();
     else
-        HTMLTextFormControlElement::parseAttribute(attr);
+        HTMLTextFormControlElement::parseAttribute(attribute);
 }
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)

@@ -109,16 +109,16 @@ static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName& attrN
     return propertyNameToIdMap->get(attrName.localName().impl());
 }
 
-void SVGFontFaceElement::parseAttribute(Attribute* attr)
+void SVGFontFaceElement::parseAttribute(const Attribute& attribute)
 {    
-    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attr->name());
+    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attribute.name());
     if (propId > 0) {
-        m_fontFaceRule->properties()->setProperty(propId, attr->value(), false);
+        m_fontFaceRule->properties()->setProperty(propId, attribute.value(), false);
         rebuildFontFace();
         return;
     }
     
-    SVGElement::parseAttribute(attr);
+    SVGElement::parseAttribute(attribute);
 }
 
 unsigned SVGFontFaceElement::unitsPerEm() const

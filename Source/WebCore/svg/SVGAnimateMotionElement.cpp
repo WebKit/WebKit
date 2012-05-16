@@ -95,16 +95,16 @@ bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimateMotionElement::parseAttribute(Attribute* attr)
+void SVGAnimateMotionElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGAnimationElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGAnimationElement::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::pathAttr) {
+    if (attribute.name() == SVGNames::pathAttr) {
         m_path = Path();
-        buildPathFromString(attr->value(), m_path);
+        buildPathFromString(attribute.value(), m_path);
         return;
     }
 

@@ -696,38 +696,38 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         old->setValue(value);
 
     if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
-        didModifyAttribute(old);
+        didModifyAttribute(*old);
 }
 
-void Element::attributeChanged(Attribute* attr)
+void Element::attributeChanged(const Attribute& attribute)
 {
     document()->incDOMTreeVersion();
 
-    if (isIdAttributeName(attr->name())) {
+    if (isIdAttributeName(attribute.name())) {
         if (attributeData()) {
-            if (attr->isNull())
+            if (attribute.isNull())
                 attributeData()->setIdForStyleResolution(nullAtom);
             else if (document()->inQuirksMode())
-                attributeData()->setIdForStyleResolution(attr->value().lower());
+                attributeData()->setIdForStyleResolution(attribute.value().lower());
             else
-                attributeData()->setIdForStyleResolution(attr->value());
+                attributeData()->setIdForStyleResolution(attribute.value());
         }
         setNeedsStyleRecalc();
-    } else if (attr->name() == HTMLNames::nameAttr)
-        setHasName(!attr->isNull());
+    } else if (attribute.name() == HTMLNames::nameAttr)
+        setHasName(!attribute.isNull());
 
     if (!needsStyleRecalc() && document()->attached()) {
         StyleResolver* styleResolver = document()->styleResolverIfExists();
-        if (!styleResolver || styleResolver->hasSelectorForAttribute(attr->name().localName()))
+        if (!styleResolver || styleResolver->hasSelectorForAttribute(attribute.name().localName()))
             setNeedsStyleRecalc();
     }
 
-    invalidateNodeListsCacheAfterAttributeChanged(attr->name());
+    invalidateNodeListsCacheAfterAttributeChanged(attribute.name());
 
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    const QualifiedName& attrName = attr->name();
+    const QualifiedName& attrName = attribute.name();
     if (attrName == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
         document()->axObjectCache()->handleActiveDescendantChanged(renderer());
@@ -802,7 +802,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     // attributeChanged mutates m_attributeData.
     Vector<Attribute> clonedAttributes = m_attributeData->clonedAttributeVector();
     for (unsigned i = 0; i < clonedAttributes.size(); ++i)
-        attributeChanged(&clonedAttributes[i]);
+        attributeChanged(clonedAttributes[i]);
 }
 
 bool Element::hasAttributes() const
@@ -2025,25 +2025,23 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 #endif
 }
 
-void Element::didAddAttribute(Attribute* attr)
+void Element::didAddAttribute(const Attribute& attribute)
 {
-    attributeChanged(attr);
-    InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
+    attributeChanged(attribute);
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, attribute.localName(), attribute.value());
     dispatchSubtreeModifiedEvent();
 }
 
-void Element::didModifyAttribute(Attribute* attr)
+void Element::didModifyAttribute(const Attribute& attribute)
 {
-    attributeChanged(attr);
-    InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
+    attributeChanged(attribute);
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, attribute.localName(), attribute.value());
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name)
 {
-    Attribute dummyAttribute(name, nullAtom);
-    attributeChanged(&dummyAttribute);
-
+    attributeChanged(Attribute(name, nullAtom));
     InspectorInstrumentation::didRemoveDOMAttr(document(), this, name.localName());
     dispatchSubtreeModifiedEvent();
 }

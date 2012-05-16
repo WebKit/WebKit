@@ -398,29 +398,29 @@ void HTMLFormElement::reset()
     m_isInResetFunction = false;
 }
 
-void HTMLFormElement::parseAttribute(Attribute* attr)
+void HTMLFormElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == actionAttr)
-        m_attributes.parseAction(attr->value());
-    else if (attr->name() == targetAttr)
-        m_attributes.setTarget(attr->value());
-    else if (attr->name() == methodAttr)
-        m_attributes.updateMethodType(attr->value());
-    else if (attr->name() == enctypeAttr)
-        m_attributes.updateEncodingType(attr->value());
-    else if (attr->name() == accept_charsetAttr)
-        m_attributes.setAcceptCharset(attr->value());
-    else if (attr->name() == autocompleteAttr) {
+    if (attribute.name() == actionAttr)
+        m_attributes.parseAction(attribute.value());
+    else if (attribute.name() == targetAttr)
+        m_attributes.setTarget(attribute.value());
+    else if (attribute.name() == methodAttr)
+        m_attributes.updateMethodType(attribute.value());
+    else if (attribute.name() == enctypeAttr)
+        m_attributes.updateEncodingType(attribute.value());
+    else if (attribute.name() == accept_charsetAttr)
+        m_attributes.setAcceptCharset(attribute.value());
+    else if (attribute.name() == autocompleteAttr) {
         if (!shouldAutocomplete())
             document()->registerForPageCacheSuspensionCallbacks(this);
         else
             document()->unregisterForPageCacheSuspensionCallbacks(this);
-    } else if (attr->name() == onsubmitAttr)
-        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onresetAttr)
-        setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attr));
+    } else if (attribute.name() == onsubmitAttr)
+        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onresetAttr)
+        setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attribute));
     else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T* item)

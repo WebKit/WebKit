@@ -84,20 +84,20 @@ bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
-void HTMLObjectElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLObjectElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == borderAttr)
-        applyBorderAttributeToStyle(attr, style);
+    if (attribute.name() == borderAttr)
+        applyBorderAttributeToStyle(attribute, style);
     else
-        HTMLPlugInImageElement::collectStyleForAttribute(attr, style);
+        HTMLPlugInImageElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLObjectElement::parseAttribute(Attribute* attr)
+void HTMLObjectElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == formAttr)
+    if (attribute.name() == formAttr)
         formAttributeChanged();
-    else if (attr->name() == typeAttr) {
-        m_serviceType = attr->value().lower();
+    else if (attribute.name() == typeAttr) {
+        m_serviceType = attribute.value().lower();
         size_t pos = m_serviceType.find(";");
         if (pos != notFound)
             m_serviceType = m_serviceType.left(pos);
@@ -105,8 +105,8 @@ void HTMLObjectElement::parseAttribute(Attribute* attr)
             setNeedsWidgetUpdate(true);
         if (!isImageType() && m_imageLoader)
             m_imageLoader.clear();
-    } else if (attr->name() == dataAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+    } else if (attribute.name() == dataAttr) {
+        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         if (renderer()) {
             setNeedsWidgetUpdate(true);
             if (isImageType()) {
@@ -115,16 +115,16 @@ void HTMLObjectElement::parseAttribute(Attribute* attr)
                 m_imageLoader->updateFromElementIgnoringPreviousError();
             }
         }
-    } else if (attr->name() == classidAttr) {
-        m_classId = attr->value();
+    } else if (attribute.name() == classidAttr) {
+        m_classId = attribute.value();
         if (renderer())
             setNeedsWidgetUpdate(true);
-    } else if (attr->name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
+    } else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
     else
-        HTMLPlugInImageElement::parseAttribute(attr);
+        HTMLPlugInImageElement::parseAttribute(attribute);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)

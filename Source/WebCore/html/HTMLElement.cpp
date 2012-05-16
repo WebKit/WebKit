@@ -130,29 +130,27 @@ static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
     return CSSValueWebkitIsolate;
 }
 
-static unsigned parseBorderWidthAttribute(Attribute* attr)
+static unsigned parseBorderWidthAttribute(const Attribute& attribute)
 {
-    ASSERT(attr && attr->name() == borderAttr);
-
+    ASSERT(attribute.name() == borderAttr);
     unsigned borderWidth = 0;
-    if (!attr->value().isEmpty())
-        parseHTMLNonNegativeInteger(attr->value(), borderWidth);
-
+    if (!attribute.isEmpty())
+        parseHTMLNonNegativeInteger(attribute.value(), borderWidth);
     return borderWidth;
 }
 
-void HTMLElement::applyBorderAttributeToStyle(Attribute* attr, StylePropertySet* style)
+void HTMLElement::applyBorderAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
 {
-    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attr), CSSPrimitiveValue::CSS_PX);
+    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute), CSSPrimitiveValue::CSS_PX);
     addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
-void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StylePropertySet* style)
+void HTMLElement::mapLanguageAttributeToLocale(const Attribute& attribute, StylePropertySet* style)
 {
-    ASSERT(attribute && (attribute->name() == langAttr || attribute->name().matches(XMLNames::langAttr)));
-    if (!attribute->isEmpty()) {
+    ASSERT((attribute.name() == langAttr || attribute.name().matches(XMLNames::langAttr)));
+    if (!attribute.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute->value()));
+        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute.value()));
     } else {
         // The empty string means the language is explicitly unknown.
         addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
@@ -166,168 +164,168 @@ bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-void HTMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "middle"))
+    if (attribute.name() == alignAttr) {
+        if (equalIgnoringCase(attribute.value(), "middle"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
-    } else if (attr->name() == contenteditableAttr) {
-        if (attr->isEmpty() || equalIgnoringCase(attr->value(), "true")) {
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
+    } else if (attribute.name() == contenteditableAttr) {
+        if (attribute.isEmpty() || equalIgnoringCase(attribute.value(), "true")) {
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWrite);
             addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
             addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
-        } else if (equalIgnoringCase(attr->value(), "plaintext-only")) {
+        } else if (equalIgnoringCase(attribute.value(), "plaintext-only")) {
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
             addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
             addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
-        } else if (equalIgnoringCase(attr->value(), "false"))
+        } else if (equalIgnoringCase(attribute.value(), "false"))
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadOnly);
-    } else if (attr->name() == hiddenAttr) {
+    } else if (attribute.name() == hiddenAttr) {
         addPropertyToAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
-    } else if (attr->name() == draggableAttr) {
-        if (equalIgnoringCase(attr->value(), "true")) {
+    } else if (attribute.name() == draggableAttr) {
+        if (equalIgnoringCase(attribute.value(), "true")) {
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
-        } else if (equalIgnoringCase(attr->value(), "false"))
+        } else if (equalIgnoringCase(attribute.value(), "false"))
             addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
-    } else if (attr->name() == dirAttr) {
-        if (equalIgnoringCase(attr->value(), "auto"))
+    } else if (attribute.name() == dirAttr) {
+        if (equalIgnoringCase(attribute.value(), "auto"))
             addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
         else {
-            addPropertyToAttributeStyle(style, CSSPropertyDirection, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyDirection, attribute.value());
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
                 addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
         }
-    } else if (attr->name().matches(XMLNames::langAttr)) {
-        mapLanguageAttributeToLocale(attr, style);
-    } else if (attr->name() == langAttr) {
+    } else if (attribute.name().matches(XMLNames::langAttr)) {
+        mapLanguageAttributeToLocale(attribute, style);
+    } else if (attribute.name() == langAttr) {
         // xml:lang has a higher priority than lang.
         if (!fastHasAttribute(XMLNames::langAttr))
-            mapLanguageAttributeToLocale(attr, style);
+            mapLanguageAttributeToLocale(attribute, style);
     } else
-        StyledElement::collectStyleForAttribute(attr, style);
+        StyledElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLElement::parseAttribute(Attribute* attr)
+void HTMLElement::parseAttribute(const Attribute& attribute)
 {
-    if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
-        return StyledElement::parseAttribute(attr);
+    if (isIdAttributeName(attribute.name()) || attribute.name() == classAttr || attribute.name() == styleAttr)
+        return StyledElement::parseAttribute(attribute);
 
-    if (attr->name() == dirAttr)
-        dirAttributeChanged(attr);
-    else if (attr->name() == tabindexAttr) {
+    if (attribute.name() == dirAttr)
+        dirAttributeChanged(attribute);
+    else if (attribute.name() == tabindexAttr) {
         int tabindex = 0;
-        if (attr->isEmpty())
+        if (attribute.isEmpty())
             clearTabIndexExplicitly();
-        else if (parseHTMLInteger(attr->value(), tabindex)) {
+        else if (parseHTMLInteger(attribute.value(), tabindex)) {
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
 #if ENABLE(MICRODATA)
-    } else if (attr->name() == itempropAttr) {
-        setItemProp(attr->value());
-    } else if (attr->name() == itemrefAttr) {
-        setItemRef(attr->value());
-    } else if (attr->name() == itemtypeAttr) {
-        setItemType(attr->value());
+    } else if (attribute.name() == itempropAttr) {
+        setItemProp(attribute.value());
+    } else if (attribute.name() == itemrefAttr) {
+        setItemRef(attribute.value());
+    } else if (attribute.name() == itemtypeAttr) {
+        setItemType(attribute.value());
 #endif
     }
 // standard events
-    else if (attr->name() == onclickAttr) {
-        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oncontextmenuAttr) {
-        setAttributeEventListener(eventNames().contextmenuEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondblclickAttr) {
-        setAttributeEventListener(eventNames().dblclickEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmousedownAttr) {
-        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmousemoveAttr) {
-        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmouseoutAttr) {
-        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmouseoverAttr) {
-        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmouseupAttr) {
-        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onmousewheelAttr) {
-        setAttributeEventListener(eventNames().mousewheelEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onfocusAttr) {
-        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onfocusinAttr) {
-        setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onfocusoutAttr) {
-        setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onblurAttr) {
-        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onkeydownAttr) {
-        setAttributeEventListener(eventNames().keydownEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onkeypressAttr) {
-        setAttributeEventListener(eventNames().keypressEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onkeyupAttr) {
-        setAttributeEventListener(eventNames().keyupEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onscrollAttr) {
-        setAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onbeforecutAttr) {
-        setAttributeEventListener(eventNames().beforecutEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oncutAttr) {
-        setAttributeEventListener(eventNames().cutEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onbeforecopyAttr) {
-        setAttributeEventListener(eventNames().beforecopyEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oncopyAttr) {
-        setAttributeEventListener(eventNames().copyEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onbeforepasteAttr) {
-        setAttributeEventListener(eventNames().beforepasteEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onpasteAttr) {
-        setAttributeEventListener(eventNames().pasteEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragenterAttr) {
-        setAttributeEventListener(eventNames().dragenterEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragoverAttr) {
-        setAttributeEventListener(eventNames().dragoverEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragleaveAttr) {
-        setAttributeEventListener(eventNames().dragleaveEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondropAttr) {
-        setAttributeEventListener(eventNames().dropEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragstartAttr) {
-        setAttributeEventListener(eventNames().dragstartEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragAttr) {
-        setAttributeEventListener(eventNames().dragEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ondragendAttr) {
-        setAttributeEventListener(eventNames().dragendEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onselectstartAttr) {
-        setAttributeEventListener(eventNames().selectstartEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onsubmitAttr) {
-        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onerrorAttr) {
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onwebkitanimationstartAttr) {
-        setAttributeEventListener(eventNames().webkitAnimationStartEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onwebkitanimationiterationAttr) {
-        setAttributeEventListener(eventNames().webkitAnimationIterationEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onwebkitanimationendAttr) {
-        setAttributeEventListener(eventNames().webkitAnimationEndEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onwebkittransitionendAttr) {
-        setAttributeEventListener(eventNames().webkitTransitionEndEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oninputAttr) {
-        setAttributeEventListener(eventNames().inputEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oninvalidAttr) {
-        setAttributeEventListener(eventNames().invalidEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ontouchstartAttr) {
-        setAttributeEventListener(eventNames().touchstartEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ontouchmoveAttr) {
-        setAttributeEventListener(eventNames().touchmoveEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ontouchendAttr) {
-        setAttributeEventListener(eventNames().touchendEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == ontouchcancelAttr) {
-        setAttributeEventListener(eventNames().touchcancelEvent, createAttributeEventListener(this, attr));
+    else if (attribute.name() == onclickAttr) {
+        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == oncontextmenuAttr) {
+        setAttributeEventListener(eventNames().contextmenuEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondblclickAttr) {
+        setAttributeEventListener(eventNames().dblclickEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmousedownAttr) {
+        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmousemoveAttr) {
+        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmouseoutAttr) {
+        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmouseoverAttr) {
+        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmouseupAttr) {
+        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onmousewheelAttr) {
+        setAttributeEventListener(eventNames().mousewheelEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onfocusAttr) {
+        setAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onfocusinAttr) {
+        setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onfocusoutAttr) {
+        setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onblurAttr) {
+        setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onkeydownAttr) {
+        setAttributeEventListener(eventNames().keydownEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onkeypressAttr) {
+        setAttributeEventListener(eventNames().keypressEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onkeyupAttr) {
+        setAttributeEventListener(eventNames().keyupEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onscrollAttr) {
+        setAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onbeforecutAttr) {
+        setAttributeEventListener(eventNames().beforecutEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == oncutAttr) {
+        setAttributeEventListener(eventNames().cutEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onbeforecopyAttr) {
+        setAttributeEventListener(eventNames().beforecopyEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == oncopyAttr) {
+        setAttributeEventListener(eventNames().copyEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onbeforepasteAttr) {
+        setAttributeEventListener(eventNames().beforepasteEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onpasteAttr) {
+        setAttributeEventListener(eventNames().pasteEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragenterAttr) {
+        setAttributeEventListener(eventNames().dragenterEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragoverAttr) {
+        setAttributeEventListener(eventNames().dragoverEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragleaveAttr) {
+        setAttributeEventListener(eventNames().dragleaveEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondropAttr) {
+        setAttributeEventListener(eventNames().dropEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragstartAttr) {
+        setAttributeEventListener(eventNames().dragstartEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragAttr) {
+        setAttributeEventListener(eventNames().dragEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ondragendAttr) {
+        setAttributeEventListener(eventNames().dragendEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onselectstartAttr) {
+        setAttributeEventListener(eventNames().selectstartEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onsubmitAttr) {
+        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onerrorAttr) {
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onwebkitanimationstartAttr) {
+        setAttributeEventListener(eventNames().webkitAnimationStartEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onwebkitanimationiterationAttr) {
+        setAttributeEventListener(eventNames().webkitAnimationIterationEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onwebkitanimationendAttr) {
+        setAttributeEventListener(eventNames().webkitAnimationEndEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onwebkittransitionendAttr) {
+        setAttributeEventListener(eventNames().webkitTransitionEndEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == oninputAttr) {
+        setAttributeEventListener(eventNames().inputEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == oninvalidAttr) {
+        setAttributeEventListener(eventNames().invalidEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ontouchstartAttr) {
+        setAttributeEventListener(eventNames().touchstartEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ontouchmoveAttr) {
+        setAttributeEventListener(eventNames().touchmoveEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ontouchendAttr) {
+        setAttributeEventListener(eventNames().touchendEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == ontouchcancelAttr) {
+        setAttributeEventListener(eventNames().touchcancelEvent, createAttributeEventListener(this, attribute));
 #if ENABLE(FULLSCREEN_API)
-    } else if (attr->name() == onwebkitfullscreenchangeAttr) {
-        setAttributeEventListener(eventNames().webkitfullscreenchangeEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == onwebkitfullscreenerrorAttr) {
-        setAttributeEventListener(eventNames().webkitfullscreenerrorEvent, createAttributeEventListener(this, attr));
+    } else if (attribute.name() == onwebkitfullscreenchangeAttr) {
+        setAttributeEventListener(eventNames().webkitfullscreenchangeEvent, createAttributeEventListener(this, attribute));
+    } else if (attribute.name() == onwebkitfullscreenerrorAttr) {
+        setAttributeEventListener(eventNames().webkitfullscreenerrorEvent, createAttributeEventListener(this, attribute));
 #endif
     }
 }
@@ -600,14 +598,14 @@ void HTMLElement::insertAdjacentText(const String& where, const String& text, Ex
     insertAdjacent(where, textNode.get(), ec);
 }
 
-void HTMLElement::applyAlignmentAttributeToStyle(Attribute* attr, StylePropertySet* style)
+void HTMLElement::applyAlignmentAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
 {
     // Vertical alignment with respect to the current baseline of the text
     // right or left means floating images.
     int floatValue = CSSValueInvalid;
     int verticalAlignValue = CSSValueInvalid;
 
-    const AtomicString& alignment = attr->value();
+    const AtomicString& alignment = attribute.value();
     if (equalIgnoringCase(alignment, "absmiddle"))
         verticalAlignValue = CSSValueMiddle;
     else if (equalIgnoringCase(alignment, "absbottom"))
@@ -890,14 +888,14 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     return LTR;
 }
 
-void HTMLElement::dirAttributeChanged(Attribute* attribute)
+void HTMLElement::dirAttributeChanged(const Attribute& attribute)
 {
     Element* parent = parentElement();
 
     if (parent && parent->isHTMLElement() && parent->selfOrAncestorHasDirAutoAttribute())
         toHTMLElement(parent)->adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
-    if (equalIgnoringCase(attribute->value(), "auto"))
+    if (equalIgnoringCase(attribute.value(), "auto"))
         calculateAndAdjustDirectionality();
 }
 

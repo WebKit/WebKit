@@ -52,11 +52,10 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribute* attr)
+PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const Attribute& attribute)
 {
     ASSERT(node);
-    ASSERT(attr);
-    if (attr->isNull())
+    if (attribute.isNull())
         return 0;
 
     TextPosition position = TextPosition::minimumPosition();
@@ -72,16 +71,15 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
         sourceURL = node->document()->url().string();
     }
 
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, position, 0, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attribute.localName().string(), eventParameterName(node->isSVGElement()), attribute.value(), node, sourceURL, position, 0, mainThreadNormalWorld());
 }
 
-PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
+PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, const Attribute& attribute)
 {
     if (!frame)
         return 0;
 
-    ASSERT(attr);
-    if (attr->isNull())
+    if (attribute.isNull())
         return 0;
 
     ScriptController* scriptController = frame->script();
@@ -91,7 +89,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     TextPosition position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
     JSObject* wrapper = toJSDOMWindow(frame, mainThreadNormalWorld());
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, position, wrapper, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attribute.localName().string(), eventParameterName(frame->document()->isSVGDocument()), attribute.value(), 0, sourceURL, position, wrapper, mainThreadNormalWorld());
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* eventListener)

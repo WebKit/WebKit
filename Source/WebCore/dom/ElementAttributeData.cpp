@@ -180,7 +180,7 @@ void ElementAttributeData::addAttribute(const Attribute& attribute, Element* ele
     m_attributes.append(attribute);
 
     if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
-        element->didAddAttribute(const_cast<Attribute*>(&attribute));
+        element->didAddAttribute(attribute);
 }
 
 void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
@@ -273,7 +273,7 @@ void ElementAttributeData::setAttributes(const ElementAttributeData& other, Elem
     clearAttributes(element);
     m_attributes = other.m_attributes;
     for (unsigned i = 0; i < m_attributes.size(); ++i)
-        element->attributeChanged(&m_attributes[i]);
+        element->attributeChanged(m_attributes[i]);
 }
 
 void ElementAttributeData::clearAttributes(Element* element)
@@ -290,7 +290,7 @@ void ElementAttributeData::replaceAttribute(size_t index, const Attribute& attri
 
     element->willModifyAttribute(attribute.name(), m_attributes[index].value(), attribute.value());
     m_attributes[index] = attribute;
-    element->didModifyAttribute(const_cast<Attribute*>(&attribute));
+    element->didModifyAttribute(attribute);
 }
 
 PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const

@@ -77,27 +77,27 @@ bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFilterPrimitiveStandardAttributes::parseAttribute(Attribute* attr)
+void SVGFilterPrimitiveStandardAttributes::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
-    const AtomicString& value = attr->value();
+    const AtomicString& value = attribute.value();
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGStyledElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
+    if (!isSupportedAttribute(attribute.name()))
+        SVGStyledElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::yAttr)
+    else if (attribute.name() == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::widthAttr)
+    else if (attribute.name() == SVGNames::widthAttr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::heightAttr)
+    else if (attribute.name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::resultAttr)
+    else if (attribute.name() == SVGNames::resultAttr)
         setResultBaseValue(value);
     else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect*, const QualifiedName&)

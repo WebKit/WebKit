@@ -75,7 +75,7 @@ private:
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
 

@@ -94,35 +94,35 @@ bool SVGFESpecularLightingElement::isSupportedAttribute(const QualifiedName& att
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFESpecularLightingElement::parseAttribute(Attribute* attr)
+void SVGFESpecularLightingElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::inAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::surfaceScaleAttr) {
+    if (attribute.name() == SVGNames::surfaceScaleAttr) {
         setSurfaceScaleBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::specularConstantAttr) {
+    if (attribute.name() == SVGNames::specularConstantAttr) {
         setSpecularConstantBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::specularExponentAttr) {
+    if (attribute.name() == SVGNames::specularExponentAttr) {
         setSpecularExponentBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::kernelUnitLengthAttr) {
+    if (attribute.name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);

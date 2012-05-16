@@ -304,54 +304,54 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     return true;
 }
 
-void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLTableElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
-    else if (attr->name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
-    else if (attr->name() == borderAttr) {
-        int borderWidth = attr->isEmpty() ? 1 : attr->value().toInt();
+    if (attribute.name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
+    else if (attribute.name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
+    else if (attribute.name() == borderAttr) {
+        int borderWidth = attribute.isEmpty() ? 1 : attribute.value().toInt();
         addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, borderWidth, CSSPrimitiveValue::CSS_PX);
-    } else if (attr->name() == bordercolorAttr) {
-        if (!attr->isEmpty())
-            addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
-    } else if (attr->name() == bgcolorAttr)
-        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
-    else if (attr->name() == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+    } else if (attribute.name() == bordercolorAttr) {
+        if (!attribute.isEmpty())
+            addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
+    } else if (attribute.name() == bgcolorAttr)
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
+    else if (attribute.name() == backgroundAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         if (!url.isEmpty())
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
-    } else if (attr->name() == valignAttr) {
-        if (!attr->isEmpty())
-            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
-    } else if (attr->name() == cellspacingAttr) {
-        if (!attr->isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attr->value());
-    } else if (attr->name() == vspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attr->value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attr->value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
-    } else if (attr->name() == alignAttr) {
-        if (!attr->value().isEmpty()) {
-            if (equalIgnoringCase(attr->value(), "center")) {
+    } else if (attribute.name() == valignAttr) {
+        if (!attribute.isEmpty())
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
+    } else if (attribute.name() == cellspacingAttr) {
+        if (!attribute.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attribute.value());
+    } else if (attribute.name() == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
+    } else if (attribute.name() == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
+    } else if (attribute.name() == alignAttr) {
+        if (!attribute.value().isEmpty()) {
+            if (equalIgnoringCase(attribute.value(), "center")) {
                 addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
                 addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
-                addPropertyToAttributeStyle(style, CSSPropertyFloat, attr->value());
+                addPropertyToAttributeStyle(style, CSSPropertyFloat, attribute.value());
         }
-    } else if (attr->name() == rulesAttr) {
+    } else if (attribute.name() == rulesAttr) {
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addPropertyToAttributeStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
-    } else if (attr->name() == frameAttr) {
+    } else if (attribute.name() == frameAttr) {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
-        if (getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft)) {
+        if (getBordersFromFrameAttributeValue(attribute.value(), borderTop, borderRight, borderBottom, borderLeft)) {
             addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, CSSValueThin);
             addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
             addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
@@ -359,7 +359,7 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
             addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
 bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
@@ -369,48 +369,48 @@ bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTableElement::parseAttribute(Attribute* attr)
+void HTMLTableElement::parseAttribute(const Attribute& attribute)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (attr->name() == borderAttr)  {
+    if (attribute.name() == borderAttr)  {
         // FIXME: This attribute is a mess.
         m_borderAttr = true;
-        if (!attr->isNull()) {
-            int border = attr->isEmpty() ? 1 : attr->value().toInt();
+        if (!attribute.isNull()) {
+            int border = attribute.isEmpty() ? 1 : attribute.value().toInt();
             m_borderAttr = border;
         }
-    } else if (attr->name() == bordercolorAttr) {
-        m_borderColorAttr = !attr->isEmpty();
-    } else if (attr->name() == frameAttr) {
+    } else if (attribute.name() == bordercolorAttr) {
+        m_borderColorAttr = !attribute.isEmpty();
+    } else if (attribute.name() == frameAttr) {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
-        m_frameAttr = getBordersFromFrameAttributeValue(attr->value(), borderTop, borderRight, borderBottom, borderLeft);
-    } else if (attr->name() == rulesAttr) {
+        m_frameAttr = getBordersFromFrameAttributeValue(attribute.value(), borderTop, borderRight, borderBottom, borderLeft);
+    } else if (attribute.name() == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalIgnoringCase(attr->value(), "none"))
+        if (equalIgnoringCase(attribute.value(), "none"))
             m_rulesAttr = NoneRules;
-        else if (equalIgnoringCase(attr->value(), "groups"))
+        else if (equalIgnoringCase(attribute.value(), "groups"))
             m_rulesAttr = GroupsRules;
-        else if (equalIgnoringCase(attr->value(), "rows"))
+        else if (equalIgnoringCase(attribute.value(), "rows"))
             m_rulesAttr = RowsRules;
-        if (equalIgnoringCase(attr->value(), "cols"))
+        if (equalIgnoringCase(attribute.value(), "cols"))
             m_rulesAttr = ColsRules;
-        if (equalIgnoringCase(attr->value(), "all"))
+        if (equalIgnoringCase(attribute.value(), "all"))
             m_rulesAttr = AllRules;
-    } else if (attr->name() == cellpaddingAttr) {
-        if (!attr->value().isEmpty())
-            m_padding = max(0, attr->value().toInt());
+    } else if (attribute.name() == cellpaddingAttr) {
+        if (!attribute.value().isEmpty())
+            m_padding = max(0, attribute.value().toInt());
         else
             m_padding = 1;
-    } else if (attr->name() == colsAttr) {
+    } else if (attribute.name() == colsAttr) {
         // ###
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = 0;

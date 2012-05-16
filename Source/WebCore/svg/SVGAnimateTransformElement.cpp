@@ -58,15 +58,15 @@ bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimateTransformElement::parseAttribute(Attribute* attr)
+void SVGAnimateTransformElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGAnimateElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGAnimateElement::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::typeAttr) {
-        m_type = SVGTransformable::parseTransformType(attr->value());
+    if (attribute.name() == SVGNames::typeAttr) {
+        m_type = SVGTransformable::parseTransformType(attribute.value());
         if (m_type == SVGTransform::SVG_TRANSFORM_MATRIX)
             m_type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
         return;

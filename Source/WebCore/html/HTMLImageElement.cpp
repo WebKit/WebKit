@@ -85,47 +85,46 @@ bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLImageElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
-    else if (attr->name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
-    else if (attr->name() == borderAttr)
-        applyBorderAttributeToStyle(attr, style);
-    else if (attr->name() == vspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attr->value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attr->value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attr->value());
-    } else if (attr->name() == alignAttr)
-        applyAlignmentAttributeToStyle(attr, style);
-    else if (attr->name() == valignAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
+    if (attribute.name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
+    else if (attribute.name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
+    else if (attribute.name() == borderAttr)
+        applyBorderAttributeToStyle(attribute, style);
+    else if (attribute.name() == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
+    } else if (attribute.name() == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
+    } else if (attribute.name() == alignAttr)
+        applyAlignmentAttributeToStyle(attribute, style);
+    else if (attribute.name() == valignAttr)
+        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
     else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLImageElement::parseAttribute(Attribute* attr)
+void HTMLImageElement::parseAttribute(const Attribute& attribute)
 {
-    const QualifiedName& attrName = attr->name();
-    if (attrName == altAttr) {
+    if (attribute.name() == altAttr) {
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
-    } else if (attrName == srcAttr)
+    } else if (attribute.name() == srcAttr)
         m_imageLoader.updateFromElementIgnoringPreviousError();
-    else if (attrName == usemapAttr)
-        setIsLink(!attr->isNull());
-    else if (attrName == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
-    else if (attrName == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
-    else if (attrName == compositeAttr) {
-        if (!parseCompositeOperator(attr->value(), m_compositeOperator))
+    else if (attribute.name() == usemapAttr)
+        setIsLink(!attribute.isNull());
+    else if (attribute.name() == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == compositeAttr) {
+        if (!parseCompositeOperator(attribute.value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 String HTMLImageElement::altText() const

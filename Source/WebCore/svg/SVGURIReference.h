@@ -35,7 +35,7 @@ class SVGURIReference {
 public:
     virtual ~SVGURIReference() { }
 
-    bool parseAttribute(Attribute*);
+    bool parseAttribute(const Attribute&);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 

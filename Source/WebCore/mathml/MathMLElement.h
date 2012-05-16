@@ -43,7 +43,7 @@ protected:
 private:    
     virtual bool isMathMLElement() const { return true; }
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
 };
 
 inline MathMLElement* toMathMLElement(Element* element)

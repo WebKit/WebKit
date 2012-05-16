@@ -92,7 +92,7 @@ private:
     virtual const AtomicString& virtualLocalName() const { return localName(); }
     virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
 
-    Attribute* elementAttribute();
+    Attribute& elementAttribute();
 
     // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.

@@ -49,11 +49,10 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribute* attr)
+PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, const Attribute& attribute)
 {
     ASSERT(node);
-    ASSERT(attr);
-    if (attr->isNull())
+    if (attribute.isNull())
         return 0;
 
     // FIXME: Very strange: we initialize zero-based number with '1'.
@@ -68,16 +67,15 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
         sourceURL = node->document()->url().string();
     }
 
-    return V8LazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), sourceURL, position, node, WorldContextHandle(UseMainWorld));
+    return V8LazyEventListener::create(attribute.localName().string(), eventParameterName(node->isSVGElement()), attribute.value(), sourceURL, position, node, WorldContextHandle(UseMainWorld));
 }
 
-PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
+PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, const Attribute& attribute)
 {
     if (!frame)
         return 0;
 
-    ASSERT(attr);
-    if (attr->isNull())
+    if (attribute.isNull())
         return 0;
 
     ScriptController* scriptController = frame->script();
@@ -87,7 +85,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     TextPosition position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
 
-    return V8LazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), sourceURL, position, 0, WorldContextHandle(UseMainWorld));
+    return V8LazyEventListener::create(attribute.localName().string(), eventParameterName(frame->document()->isSVGDocument()), attribute.value(), sourceURL, position, 0, WorldContextHandle(UseMainWorld));
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* listener)

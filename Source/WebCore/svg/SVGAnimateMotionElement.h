@@ -37,7 +37,7 @@ private:
     virtual bool hasValidAttributeType();
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual void resetAnimatedType();
     virtual void clearAnimatedType(SVGElement* targetElement);

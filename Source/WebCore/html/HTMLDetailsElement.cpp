@@ -127,15 +127,15 @@ Element* HTMLDetailsElement::findMainSummary() const
     return static_cast<DetailsSummaryElement*>(shadow()->oldestShadowRoot()->firstChild())->fallbackSummary();
 }
 
-void HTMLDetailsElement::parseAttribute(Attribute* attr)
+void HTMLDetailsElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == openAttr) {
+    if (attribute.name() == openAttr) {
         bool oldValue = m_isOpen;
-        m_isOpen =  !attr->value().isNull();
+        m_isOpen =  !attribute.isNull();
         if (oldValue != m_isOpen)
             reattachIfAttached();
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 bool HTMLDetailsElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const

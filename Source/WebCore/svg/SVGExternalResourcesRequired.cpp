@@ -28,10 +28,10 @@
 
 namespace WebCore {
 
-bool SVGExternalResourcesRequired::parseAttribute(Attribute* attr)
+bool SVGExternalResourcesRequired::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
-        setExternalResourcesRequiredBaseValue(attr->value() == "true");
+    if (attribute.name() == SVGNames::externalResourcesRequiredAttr) {
+        setExternalResourcesRequiredBaseValue(attribute.value() == "true");
         return true;
     }
 

@@ -68,7 +68,7 @@ public:
     static void dispatchPendingLoadEvents();
 
 private:
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual bool shouldLoadLink();
     void process();

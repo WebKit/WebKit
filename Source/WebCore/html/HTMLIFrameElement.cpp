@@ -56,43 +56,43 @@ bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLIFrameElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
-    else if (attr->name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
-    else if (attr->name() == alignAttr)
-        applyAlignmentAttributeToStyle(attr, style);
-    else if (attr->name() == frameborderAttr) {
+    if (attribute.name() == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
+    else if (attribute.name() == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
+    else if (attribute.name() == alignAttr)
+        applyAlignmentAttributeToStyle(attribute, style);
+    else if (attribute.name() == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes. It simply adds
         // a presentational hint that the border should be off if set to zero.
-        if (!attr->isNull() && !attr->value().toInt()) {
+        if (!attribute.isNull() && !attribute.value().toInt()) {
             // Add a rule that nulls out our border width.
             addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
-        HTMLFrameElementBase::collectStyleForAttribute(attr, style);
+        HTMLFrameElementBase::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLIFrameElement::parseAttribute(Attribute* attr)
+void HTMLIFrameElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == nameAttr) {
-        const AtomicString& newName = attr->value();
+    if (attribute.name() == nameAttr) {
+        const AtomicString& newName = attribute.value();
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
             document->removeExtraNamedItem(m_name);
             document->addExtraNamedItem(newName);
         }
         m_name = newName;
-    } else if (attr->name() == sandboxAttr)
-        setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
-    else if (attr->name() == seamlessAttr) {
+    } else if (attribute.name() == sandboxAttr)
+        setSandboxFlags(attribute.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attribute.value()));
+    else if (attribute.name() == seamlessAttr) {
         // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
         if (contentDocument())
             contentDocument()->styleResolverChanged(DeferRecalcStyle);
     } else
-        HTMLFrameElementBase::parseAttribute(attr);
+        HTMLFrameElementBase::parseAttribute(attribute);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const NodeRenderingContext& context)

@@ -72,9 +72,9 @@ void HTMLOptGroupElement::childrenChanged(bool changedByParser, Node* beforeChan
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-void HTMLOptGroupElement::parseAttribute(Attribute* attr)
+void HTMLOptGroupElement::parseAttribute(const Attribute& attribute)
 {
-    HTMLElement::parseAttribute(attr);
+    HTMLElement::parseAttribute(attribute);
     recalcSelectOptions();
 }
 

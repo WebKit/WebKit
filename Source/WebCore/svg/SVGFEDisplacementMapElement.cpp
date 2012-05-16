@@ -73,39 +73,39 @@ bool SVGFEDisplacementMapElement::isSupportedAttribute(const QualifiedName& attr
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEDisplacementMapElement::parseAttribute(Attribute* attr)
+void SVGFEDisplacementMapElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::xChannelSelectorAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::xChannelSelectorAttr) {
         ChannelSelectorType propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
         if (propertyValue > 0)
             setXChannelSelectorBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::yChannelSelectorAttr) {
+    if (attribute.name() == SVGNames::yChannelSelectorAttr) {
         ChannelSelectorType propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
         if (propertyValue > 0)
             setYChannelSelectorBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::inAttr) {
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::in2Attr) {
+    if (attribute.name() == SVGNames::in2Attr) {
         setIn2BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::scaleAttr) {
+    if (attribute.name() == SVGNames::scaleAttr) {
         setScaleBaseValue(value.toFloat());
         return;
     }

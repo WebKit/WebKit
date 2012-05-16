@@ -43,8 +43,8 @@ namespace WebCore {
     class Frame;
     class Node;
 
-    PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node*, Attribute*);
-    PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame*, Attribute*);
+    PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node*, const Attribute&);
+    PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame*, const Attribute&);
     String eventListenerHandlerBody(Document*, EventListener*);
     bool eventListenerHandlerLocation(Document*, EventListener*, String& sourceName, int& lineNumber);
 

@@ -71,9 +71,9 @@ bool HTMLMeterElement::supportsFocus() const
     return Node::supportsFocus() && !disabled();
 }
 
-void HTMLMeterElement::parseAttribute(Attribute* attribute)
+void HTMLMeterElement::parseAttribute(const Attribute& attribute)
 {
-    if (attribute->name() == valueAttr || attribute->name() == minAttr || attribute->name() == maxAttr || attribute->name() == lowAttr || attribute->name() == highAttr || attribute->name() == optimumAttr)
+    if (attribute.name() == valueAttr || attribute.name() == minAttr || attribute.name() == maxAttr || attribute.name() == lowAttr || attribute.name() == highAttr || attribute.name() == optimumAttr)
         didElementStateChange();
     else
         LabelableElement::parseAttribute(attribute);

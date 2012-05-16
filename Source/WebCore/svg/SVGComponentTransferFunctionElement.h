@@ -78,7 +78,7 @@ protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
     
 private:

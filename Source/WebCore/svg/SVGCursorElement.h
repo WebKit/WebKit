@@ -51,7 +51,7 @@ private:
     virtual bool isValid() const { return SVGTests::isValid(); }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;

@@ -80,25 +80,25 @@ bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGCircleElement::parseAttribute(Attribute* attr)
+void SVGCircleElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGStyledTransformableElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::rAttr)
-        setRBaseValue(SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseAttribute(attr)
-             || SVGLangSpace::parseAttribute(attr)
-             || SVGExternalResourcesRequired::parseAttribute(attr)) {
+    if (!isSupportedAttribute(attribute.name()))
+        SVGStyledTransformableElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::cxAttr)
+        setCxBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::cyAttr)
+        setCyBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::rAttr)
+        setRBaseValue(SVGLength::construct(LengthModeOther, attribute.value(), parseError, ForbidNegativeLengths));
+    else if (SVGTests::parseAttribute(attribute)
+             || SVGLangSpace::parseAttribute(attribute)
+             || SVGExternalResourcesRequired::parseAttribute(attribute)) {
     } else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -210,15 +210,15 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
     ContainerNode::setActive(down, pause);
 }
 
-void HTMLAnchorElement::parseAttribute(Attribute* attr)
+void HTMLAnchorElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == hrefAttr) {
+    if (attribute.name() == hrefAttr) {
         bool wasLink = isLink();
-        setIsLink(!attr->isNull());
+        setIsLink(!attribute.isNull());
         if (wasLink != isLink())
             setNeedsStyleRecalc();
         if (isLink()) {
-            String parsedURL = stripLeadingAndTrailingHTMLSpaces(attr->value());
+            String parsedURL = stripLeadingAndTrailingHTMLSpaces(attribute.value());
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     prefetchDNS(document()->completeURL(parsedURL).host());
@@ -231,12 +231,12 @@ void HTMLAnchorElement::parseAttribute(Attribute* attr)
             }
         }
         invalidateCachedVisitedLinkHash();
-    } else if (attr->name() == nameAttr || attr->name() == titleAttr) {
+    } else if (attribute.name() == nameAttr || attribute.name() == titleAttr) {
         // Do nothing.
-    } else if (attr->name() == relAttr)
-        setRel(attr->value());
+    } else if (attribute.name() == relAttr)
+        setRel(attribute.value());
     else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)

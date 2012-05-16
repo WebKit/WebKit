@@ -45,46 +45,46 @@ bool HTMLTablePartElement::isPresentationAttribute(const QualifiedName& name) co
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLTablePartElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == bgcolorAttr)
-        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attr->value());
-    else if (attr->name() == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+    if (attribute.name() == bgcolorAttr)
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
+    else if (attribute.name() == backgroundAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         if (!url.isEmpty())
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
-    } else if (attr->name() == bordercolorAttr) {
-        if (!attr->value().isEmpty()) {
-            addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());
+    } else if (attribute.name() == bordercolorAttr) {
+        if (!attribute.value().isEmpty()) {
+            addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
             addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
         }
-    } else if (attr->name() == valignAttr) {
-        if (equalIgnoringCase(attr->value(), "top"))
+    } else if (attribute.name() == valignAttr) {
+        if (equalIgnoringCase(attribute.value(), "top"))
             addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
-        else if (equalIgnoringCase(attr->value(), "middle"))
+        else if (equalIgnoringCase(attribute.value(), "middle"))
             addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueMiddle);
-        else if (equalIgnoringCase(attr->value(), "bottom"))
+        else if (equalIgnoringCase(attribute.value(), "bottom"))
             addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBottom);
-        else if (equalIgnoringCase(attr->value(), "baseline"))
+        else if (equalIgnoringCase(attribute.value(), "baseline"))
             addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
-    } else if (attr->name() == alignAttr) {
-        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
+    } else if (attribute.name() == alignAttr) {
+        if (equalIgnoringCase(attribute.value(), "middle") || equalIgnoringCase(attribute.value(), "center"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalIgnoringCase(attr->value(), "absmiddle"))
+        else if (equalIgnoringCase(attribute.value(), "absmiddle"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
-        else if (equalIgnoringCase(attr->value(), "left"))
+        else if (equalIgnoringCase(attribute.value(), "left"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalIgnoringCase(attr->value(), "right"))
+        else if (equalIgnoringCase(attribute.value(), "right"))
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
-    } else if (attr->name() == heightAttr) {
-        if (!attr->value().isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
+    } else if (attribute.name() == heightAttr) {
+        if (!attribute.value().isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
 HTMLTableElement* HTMLTablePartElement::findParentTable() const

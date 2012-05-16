@@ -85,15 +85,15 @@ bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEGaussianBlurElement::parseAttribute(Attribute* attr)
+void SVGFEGaussianBlurElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::stdDeviationAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setStdDeviationXBaseValue(x);
@@ -102,7 +102,7 @@ void SVGFEGaussianBlurElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::inAttr) {
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }

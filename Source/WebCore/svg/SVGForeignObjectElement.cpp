@@ -85,28 +85,28 @@ bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGForeignObjectElement::parseAttribute(Attribute* attr)
+void SVGForeignObjectElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
-    const AtomicString& value = attr->value();
+    const AtomicString& value = attribute.value();
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGStyledTransformableElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
+    if (!isSupportedAttribute(attribute.name()))
+        SVGStyledTransformableElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::yAttr)
+    else if (attribute.name() == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::widthAttr)
+    else if (attribute.name() == SVGNames::widthAttr)
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::heightAttr)
+    else if (attribute.name() == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGTests::parseAttribute(attr)
-               || SVGLangSpace::parseAttribute(attr)
-               || SVGExternalResourcesRequired::parseAttribute(attr)) {
+    else if (SVGTests::parseAttribute(attribute)
+               || SVGLangSpace::parseAttribute(attribute)
+               || SVGExternalResourcesRequired::parseAttribute(attribute)) {
     } else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)

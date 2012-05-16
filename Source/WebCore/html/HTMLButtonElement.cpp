@@ -90,18 +90,18 @@ bool HTMLButtonElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLButtonElement::parseAttribute(Attribute* attr)
+void HTMLButtonElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == typeAttr) {
-        if (equalIgnoringCase(attr->value(), "reset"))
+    if (attribute.name() == typeAttr) {
+        if (equalIgnoringCase(attribute.value(), "reset"))
             m_type = RESET;
-        else if (equalIgnoringCase(attr->value(), "button"))
+        else if (equalIgnoringCase(attribute.value(), "button"))
             m_type = BUTTON;
         else
             m_type = SUBMIT;
         setNeedsWillValidateCheck();
     } else
-        HTMLFormControlElement::parseAttribute(attr);
+        HTMLFormControlElement::parseAttribute(attribute);
 }
 
 void HTMLButtonElement::defaultEventHandler(Event* event)

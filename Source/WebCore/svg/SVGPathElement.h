@@ -108,7 +108,7 @@ private:
     virtual bool supportsFocus() const { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual bool supportsMarkers() const { return true; }
 

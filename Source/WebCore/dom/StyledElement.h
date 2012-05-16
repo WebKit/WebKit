@@ -55,7 +55,7 @@ public:
 
     const SpaceSplitString& classNames() const;
 
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
+    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) { }
 
 protected:
     StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
@@ -63,8 +63,8 @@ protected:
     {
     }
 
-    virtual void attributeChanged(Attribute*) OVERRIDE;
-    virtual void parseAttribute(Attribute*);
+    virtual void attributeChanged(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const Attribute&);
     virtual void copyNonAttributeProperties(const Element*);
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }

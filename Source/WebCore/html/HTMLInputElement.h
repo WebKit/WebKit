@@ -283,9 +283,9 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
     virtual void finishParsingChildren();
 
     virtual void copyNonAttributeProperties(const Element* source);
@@ -341,7 +341,7 @@ private:
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif
-    void parseMaxLengthAttribute(Attribute*);
+    void parseMaxLengthAttribute(const Attribute&);
     void updateValueIfNeeded();
 
     // Returns null if this isn't associated with any radio button group.

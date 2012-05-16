@@ -81,39 +81,37 @@ bool HTMLEmbedElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
-void HTMLEmbedElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLEmbedElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == hiddenAttr) {
-        if (equalIgnoringCase(attr->value(), "yes") || equalIgnoringCase(attr->value(), "true")) {
+    if (attribute.name() == hiddenAttr) {
+        if (equalIgnoringCase(attribute.value(), "yes") || equalIgnoringCase(attribute.value(), "true")) {
             addPropertyToAttributeStyle(style, CSSPropertyWidth, 0, CSSPrimitiveValue::CSS_PX);
             addPropertyToAttributeStyle(style, CSSPropertyHeight, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
-        HTMLPlugInImageElement::collectStyleForAttribute(attr, style);
+        HTMLPlugInImageElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLEmbedElement::parseAttribute(Attribute* attr)
+void HTMLEmbedElement::parseAttribute(const Attribute& attribute)
 {
-    const AtomicString& value = attr->value();
-  
-    if (attr->name() == typeAttr) {
-        m_serviceType = value.string().lower();
+    if (attribute.name() == typeAttr) {
+        m_serviceType = attribute.value().string().lower();
         size_t pos = m_serviceType.find(";");
         if (pos != notFound)
             m_serviceType = m_serviceType.left(pos);
         if (!isImageType() && m_imageLoader)
             m_imageLoader.clear();
-    } else if (attr->name() == codeAttr)
-        m_url = stripLeadingAndTrailingHTMLSpaces(value.string());
-    else if (attr->name() == srcAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(value.string());
+    } else if (attribute.name() == codeAttr)
+        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+    else if (attribute.name() == srcAttr) {
+        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else
-        HTMLPlugInImageElement::parseAttribute(attr);
+        HTMLPlugInImageElement::parseAttribute(attribute);
 }
 
 void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)

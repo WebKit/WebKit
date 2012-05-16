@@ -61,12 +61,12 @@ bool HTMLOutputElement::supportsFocus() const
     return Node::supportsFocus() && !disabled();
 }
 
-void HTMLOutputElement::parseAttribute(Attribute* attr)
+void HTMLOutputElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == HTMLNames::forAttr)
-        setFor(attr->value());
+    if (attribute.name() == HTMLNames::forAttr)
+        setFor(attribute.value());
     else
-        HTMLFormControlElement::parseAttribute(attr);
+        HTMLFormControlElement::parseAttribute(attribute);
 }
 
 DOMSettableTokenList* HTMLOutputElement::htmlFor() const

@@ -65,18 +65,18 @@ bool SVGSymbolElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGSymbolElement::parseAttribute(Attribute* attr)
+void SVGSymbolElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGStyledElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGStyledElement::parseAttribute(attribute);
         return;
     }
 
-    if (SVGLangSpace::parseAttribute(attr))
+    if (SVGLangSpace::parseAttribute(attribute))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attr))
+    if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
-    if (SVGFitToViewBox::parseAttribute(document(), attr))
+    if (SVGFitToViewBox::parseAttribute(document(), attribute))
         return;
 
     ASSERT_NOT_REACHED();

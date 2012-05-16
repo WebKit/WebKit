@@ -61,42 +61,42 @@ bool HTMLOListElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLOListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
+void HTMLOListElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
-    if (attr->name() == typeAttr) {
-        if (attr->value() == "a")
+    if (attribute.name() == typeAttr) {
+        if (attribute.value() == "a")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
-        else if (attr->value() == "A")
+        else if (attribute.value() == "A")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
-        else if (attr->value() == "i")
+        else if (attribute.value() == "i")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
-        else if (attr->value() == "I")
+        else if (attribute.value() == "I")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
-        else if (attr->value() == "1")
+        else if (attribute.value() == "1")
             addPropertyToAttributeStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
     } else
-        HTMLElement::collectStyleForAttribute(attr, style);
+        HTMLElement::collectStyleForAttribute(attribute, style);
 }
 
-void HTMLOListElement::parseAttribute(Attribute* attr)
+void HTMLOListElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == startAttr) {
+    if (attribute.name() == startAttr) {
         int oldStart = start();
         bool canParse;
-        int parsedStart = attr->value().toInt(&canParse);
+        int parsedStart = attribute.value().toInt(&canParse);
         m_hasExplicitStart = canParse;
         m_start = canParse ? parsedStart : 0xBADBEEF;
         if (oldStart == start())
             return;
         updateItemValues();
-    } else if (attr->name() == reversedAttr) {
-        bool reversed = !attr->isNull();
+    } else if (attribute.name() == reversedAttr) {
+        bool reversed = !attribute.isNull();
         if (reversed == m_isReversed)
             return;
         m_isReversed = reversed;
         updateItemValues();
     } else
-        HTMLElement::parseAttribute(attr);
+        HTMLElement::parseAttribute(attribute);
 }
 
 void HTMLOListElement::setStart(int start)

@@ -54,7 +54,7 @@ public:
 private:
     SVGFontFaceElement(const QualifiedName&, Document*);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;

@@ -78,23 +78,23 @@ bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGCursorElement::parseAttribute(Attribute* attr)
+void SVGCursorElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (SVGTests::parseAttribute(attr)
-             || SVGExternalResourcesRequired::parseAttribute(attr)
-             || SVGURIReference::parseAttribute(attr)) {
+    if (!isSupportedAttribute(attribute.name()))
+        SVGElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::xAttr)
+        setXBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::yAttr)
+        setYBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
+    else if (SVGTests::parseAttribute(attribute)
+             || SVGExternalResourcesRequired::parseAttribute(attribute)
+             || SVGURIReference::parseAttribute(attribute)) {
     } else
         ASSERT_NOT_REACHED();
     
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGCursorElement::addClient(SVGElement* element)

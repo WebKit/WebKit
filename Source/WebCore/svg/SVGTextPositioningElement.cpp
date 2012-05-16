@@ -68,48 +68,48 @@ bool SVGTextPositioningElement::isSupportedAttribute(const QualifiedName& attrNa
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGTextPositioningElement::parseAttribute(Attribute* attr)
+void SVGTextPositioningElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGTextContentElement::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGTextContentElement::parseAttribute(attribute);
         return;
     }
 
-    if (attr->name() == SVGNames::xAttr) {
+    if (attribute.name() == SVGNames::xAttr) {
         SVGLengthList newList;
-        newList.parse(attr->value(), LengthModeWidth);
+        newList.parse(attribute.value(), LengthModeWidth);
         detachAnimatedXListWrappers(newList.size());
         setXBaseValue(newList);
         return;
     }
 
-    if (attr->name() == SVGNames::yAttr) {
+    if (attribute.name() == SVGNames::yAttr) {
         SVGLengthList newList;
-        newList.parse(attr->value(), LengthModeHeight);
+        newList.parse(attribute.value(), LengthModeHeight);
         detachAnimatedYListWrappers(newList.size());
         setYBaseValue(newList);
         return;
     }
 
-    if (attr->name() == SVGNames::dxAttr) {
+    if (attribute.name() == SVGNames::dxAttr) {
         SVGLengthList newList;
-        newList.parse(attr->value(), LengthModeWidth);
+        newList.parse(attribute.value(), LengthModeWidth);
         detachAnimatedDxListWrappers(newList.size());
         setDxBaseValue(newList);
         return;
     }
 
-    if (attr->name() == SVGNames::dyAttr) {
+    if (attribute.name() == SVGNames::dyAttr) {
         SVGLengthList newList;
-        newList.parse(attr->value(), LengthModeHeight);
+        newList.parse(attribute.value(), LengthModeHeight);
         detachAnimatedDyListWrappers(newList.size());
         setDyBaseValue(newList);
         return;
     }
 
-    if (attr->name() == SVGNames::rotateAttr) {
+    if (attribute.name() == SVGNames::rotateAttr) {
         SVGNumberList newList;
-        newList.parse(attr->value());
+        newList.parse(attribute.value());
         detachAnimatedRotateListWrappers(newList.size());
         setRotateBaseValue(newList);
         return;

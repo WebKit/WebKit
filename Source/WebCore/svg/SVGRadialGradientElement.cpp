@@ -87,26 +87,26 @@ bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGRadialGradientElement::parseAttribute(Attribute* attr)
+void SVGRadialGradientElement::parseAttribute(const Attribute& attribute)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attr->name()))
-        SVGGradientElement::parseAttribute(attr);
-    else if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::rAttr)
-        setRBaseValue(SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
+    if (!isSupportedAttribute(attribute.name()))
+        SVGGradientElement::parseAttribute(attribute);
+    else if (attribute.name() == SVGNames::cxAttr)
+        setCxBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::cyAttr)
+        setCyBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::rAttr)
+        setRBaseValue(SVGLength::construct(LengthModeOther, attribute.value(), parseError, ForbidNegativeLengths));
+    else if (attribute.name() == SVGNames::fxAttr)
+        setFxBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
+    else if (attribute.name() == SVGNames::fyAttr)
+        setFyBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
     else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attr);
+    reportAttributeParsingError(parseError, attribute);
 }
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)

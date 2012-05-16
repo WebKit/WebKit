@@ -86,13 +86,13 @@ void HTMLContentElement::setSelect(const AtomicString& selectValue)
     setAttribute(selectAttr, selectValue);
 }
 
-void HTMLContentElement::parseAttribute(Attribute* attr)
+void HTMLContentElement::parseAttribute(const Attribute& attribute)
 {
-    if (attr->name() == selectAttr) {
+    if (attribute.name() == selectAttr) {
         if (ShadowRoot* root = shadowTreeRootNode())
             root->owner()->setNeedsRedistributing();
     } else
-        InsertionPoint::parseAttribute(attr);
+        InsertionPoint::parseAttribute(attribute);
 }
 
 }

@@ -119,20 +119,20 @@ bool SVGFEConvolveMatrixElement::isSupportedAttribute(const QualifiedName& attrN
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
+void SVGFEConvolveMatrixElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::inAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::orderAttr) {
+    if (attribute.name() == SVGNames::orderAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y) && x >= 1 && y >= 1) {
             setOrderXBaseValue(x);
@@ -144,7 +144,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::edgeModeAttr) {
+    if (attribute.name() == SVGNames::edgeModeAttr) {
         EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
@@ -155,7 +155,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::kernelMatrixAttr) {
+    if (attribute.name() == SVGNames::kernelMatrixAttr) {
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedKernelMatrixListWrappers(newList.size());
@@ -163,7 +163,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::divisorAttr) {
+    if (attribute.name() == SVGNames::divisorAttr) {
         float divisor = value.toFloat();
         if (divisor)
             setDivisorBaseValue(divisor);
@@ -174,22 +174,22 @@ void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
         return;
     }
     
-    if (attr->name() == SVGNames::biasAttr) {
+    if (attribute.name() == SVGNames::biasAttr) {
         setBiasBaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::targetXAttr) {
+    if (attribute.name() == SVGNames::targetXAttr) {
         setTargetXBaseValue(value.string().toUIntStrict());
         return;
     }
 
-    if (attr->name() == SVGNames::targetYAttr) {
+    if (attribute.name() == SVGNames::targetYAttr) {
         setTargetYBaseValue(value.string().toUIntStrict());
         return;
     }
 
-    if (attr->name() == SVGNames::kernelUnitLengthAttr) {
+    if (attribute.name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y) && x > 0 && y > 0) {
             setKernelUnitLengthXBaseValue(x);
@@ -201,7 +201,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(Attribute* attr)
         return;
     }
 
-    if (attr->name() == SVGNames::preserveAlphaAttr) {
+    if (attribute.name() == SVGNames::preserveAlphaAttr) {
         if (value == "true")
             setPreserveAlphaBaseValue(true);
         else if (value == "false")

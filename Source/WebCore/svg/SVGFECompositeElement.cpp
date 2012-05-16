@@ -79,47 +79,47 @@ bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFECompositeElement::parseAttribute(Attribute* attr)
+void SVGFECompositeElement::parseAttribute(const Attribute& attribute)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attr);
+    if (!isSupportedAttribute(attribute.name())) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
         return;
     }
 
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::operatorAttr) {
+    const AtomicString& value = attribute.value();
+    if (attribute.name() == SVGNames::operatorAttr) {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);
         if (propertyValue > 0)
             set_operatorBaseValue(propertyValue);
         return;
     }
 
-    if (attr->name() == SVGNames::inAttr) {
+    if (attribute.name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::in2Attr) {
+    if (attribute.name() == SVGNames::in2Attr) {
         setIn2BaseValue(value);
         return;
     }
 
-    if (attr->name() == SVGNames::k1Attr) {
+    if (attribute.name() == SVGNames::k1Attr) {
         setK1BaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::k2Attr) {
+    if (attribute.name() == SVGNames::k2Attr) {
         setK2BaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::k3Attr) {
+    if (attribute.name() == SVGNames::k3Attr) {
         setK3BaseValue(value.toFloat());
         return;
     }
 
-    if (attr->name() == SVGNames::k4Attr) {
+    if (attribute.name() == SVGNames::k4Attr) {
         setK4BaseValue(value.toFloat());
         return;
     }
