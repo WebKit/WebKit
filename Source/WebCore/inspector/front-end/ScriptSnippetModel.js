@@ -81,7 +81,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         uiSourceCode.isEditable = true;
         this._uiSourceCodeForSnippet.put(snippet, uiSourceCode);
         this._snippetForUISourceCode.put(uiSourceCode, snippet);
-        this._snippetScriptMapping._uiSourceCodesAdded([uiSourceCode]);
+        this._snippetScriptMapping._fireUISourceCodeAdded(uiSourceCode);
         return uiSourceCode;
     },
 
@@ -95,7 +95,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         this._releaseSnippetScript(uiSourceCode);
         this._uiSourceCodeForSnippet.remove(snippet);
         this._snippetForUISourceCode.remove(uiSourceCode);
-        this._snippetScriptMapping._uiSourceCodesRemoved([uiSourceCode]);
+        this._snippetScriptMapping._fireUISourceCodeRemoved(uiSourceCode);
     },
 
     /**
@@ -219,7 +219,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         uiSourceCode.isSnippetEvaluation = true;
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);
-        this._snippetScriptMapping._uiSourceCodesAdded([uiSourceCode]);
+        this._snippetScriptMapping._fireUISourceCodeAdded(uiSourceCode);
         script.setSourceMapping(this._snippetScriptMapping);
     },
 
@@ -284,7 +284,8 @@ WebInspector.ScriptSnippetModel.prototype = {
         var removedUISourceCodes = this._releasedUISourceCodes();
         this._uiSourceCodeForScriptId = {};
         this._scriptForUISourceCode = new Map();
-        this._snippetScriptMapping._uiSourceCodesRemoved(removedUISourceCodes);
+        for (var i = 0; i < removedUISourceCodes.length; ++i)
+            this._snippetScriptMapping._fireUISourceCodeRemoved(removedUISourceCodes[i]);
     }
 }
 
@@ -347,21 +348,19 @@ WebInspector.SnippetScriptMapping.prototype = {
     },
 
     /**
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodes
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _uiSourceCodesAdded: function(uiSourceCodes)
+    _fireUISourceCodeAdded: function(uiSourceCode)
     {
-        var data = { removedItems: [], addedItems: uiSourceCodes };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     /**
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodes
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _uiSourceCodesRemoved: function(uiSourceCodes)
+    _fireUISourceCodeRemoved: function(uiSourceCode)
     {
-        var data = { removedItems: uiSourceCodes, addedItems: [] };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
     reset: function()

@@ -1,3 +1,13 @@
+2012-05-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of UISourceCodeListChanged event.
+        https://bugs.webkit.org/show_bug.cgi?id=86601
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
         [chromium] Layout tests under inspector/profiler are failing on chromium win

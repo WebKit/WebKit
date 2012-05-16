@@ -28,14 +28,6 @@ Dumping ScriptsNavigator 'Scripts' tab:
 Dumping ScriptsNavigator 'Content scripts' tab:
 Dumping ScriptsNavigator 'Scripts' tab:
   foo.js
-  source1.js
-  source2.js
-Dumping ScriptsNavigator 'Content scripts' tab:
-Source requested for source2.js
-Source requested for source1.js
-Source requested for compiled.js
-Dumping ScriptsNavigator 'Scripts' tab:
-  compiled.js
-  foo.js
+  source.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 

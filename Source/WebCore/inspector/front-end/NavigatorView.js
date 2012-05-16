@@ -126,32 +126,26 @@ WebInspector.NavigatorView.prototype = {
     },
 
     /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
+     * @param {WebInspector.UISourceCode} oldUISourceCode
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList)
+    replaceUISourceCode: function(oldUISourceCode, uiSourceCode)
     {
         var added = false;
         var selected = false;
-        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
-            var uiSourceCode = oldUISourceCodeList[i];
-            if (!this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
-                continue;
+        if (this._scriptTreeElementsByUISourceCode.get(oldUISourceCode)) {
             added = true;
 
-            if (this._lastSelectedUISourceCode === uiSourceCode)
+            if (this._lastSelectedUISourceCode === oldUISourceCode)
                 selected = true;
-            this._removeUISourceCode(uiSourceCode);
+            this._removeUISourceCode(oldUISourceCode);
         }
-        
+
         if (!added)
             return;
-            
-        for (var i = 0; i < uiSourceCodeList.length; ++i)
-            this.addUISourceCode(uiSourceCodeList[i]);
-
+        this.addUISourceCode(uiSourceCode);
         if (selected)
-            this.revealUISourceCode(uiSourceCodeList[0]);
+            this.revealUISourceCode(uiSourceCode);
     },
 
     /**

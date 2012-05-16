@@ -266,9 +266,9 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} oldUISourceCode
-     * @param {WebInspector.UISourceCode} newUISourceCode
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _replaceFileTab: function(oldUISourceCode, newUISourceCode)
+    replaceFile: function(oldUISourceCode, uiSourceCode)
     {
         var tabId = this._tabIds.get(oldUISourceCode);
         
@@ -277,37 +277,14 @@ WebInspector.TabbedEditorContainer.prototype = {
         
         delete this._files[this._tabIds.get(oldUISourceCode)]
         this._tabIds.remove(oldUISourceCode);
-        this._tabIds.put(newUISourceCode, tabId);
-        this._files[tabId] = newUISourceCode;
+        this._tabIds.put(uiSourceCode, tabId);
+        this._files[tabId] = uiSourceCode;
 
-        this._tabbedPane.changeTabTitle(tabId, this._titleForFile(newUISourceCode));
-        this._tabbedPane.changeTabView(tabId, this._delegate.viewForFile(newUISourceCode));
-        this._tabbedPane.changeTabTooltip(tabId, this._tooltipForFile(newUISourceCode));
+        this._tabbedPane.changeTabTitle(tabId, this._titleForFile(uiSourceCode));
+        this._tabbedPane.changeTabView(tabId, this._delegate.viewForFile(uiSourceCode));
+        this._tabbedPane.changeTabTooltip(tabId, this._tooltipForFile(uiSourceCode));
     },
 
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    replaceFiles: function(oldUISourceCodeList, uiSourceCodeList)
-    {
-        var mainFile;
-        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
-            var tabId = this._tabIds.get(oldUISourceCodeList[i]);
-            if (tabId && (!mainFile || this._tabbedPane.selectedTabId === tabId)) {
-                mainFile = oldUISourceCodeList[i];
-                break;
-            } 
-        }
-        
-        if (!mainFile)
-            return;
-        
-        this._replaceFileTab(mainFile, uiSourceCodeList[0]);
-        for (var i = 0; i < oldUISourceCodeList.length; ++i)
-            this._removeFileTab(oldUISourceCodeList[i]);
-    },
-    
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {boolean} isDirty

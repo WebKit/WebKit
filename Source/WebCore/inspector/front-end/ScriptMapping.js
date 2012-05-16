@@ -97,7 +97,9 @@ WebInspector.ScriptMapping = function()
 }
 
 WebInspector.ScriptMapping.Events = {
-    UISourceCodeListChanged: "ui-source-code-list-changed"
+    UISourceCodeAdded: "UISourceCodeAdded",
+    UISourceCodeReplaced: "UISourceCodeReplaced",
+    UISourceCodeRemoved: "UISourceCodeRemoved"
 }
 
 WebInspector.ScriptMapping.prototype = {

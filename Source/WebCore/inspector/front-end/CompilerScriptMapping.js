@@ -126,9 +126,10 @@ WebInspector.CompilerScriptMapping.prototype = {
 
         this._sourceMapForScriptId[script.scriptId] = sourceMap;
         this._scriptForSourceMap.put(sourceMap, script);
-        var data = { removedItems: [], addedItems: uiSourceCodeList };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
         script.setSourceMapping(this);
+
+        for (var i = 0; i < uiSourceCodeList.length; ++i)
+            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCodeList[i]);
     },
 
     /**
@@ -159,8 +160,9 @@ WebInspector.CompilerScriptMapping.prototype = {
 
     reset: function()
     {
-        var data = { removedItems: this.uiSourceCodeList(), addedItems: [] };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+        var uiSourceCodes = this.uiSourceCodeList();
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, uiSourceCodes[i]);
 
         this._sourceMapByURL = {};
         this._sourceMapForScriptId = {};

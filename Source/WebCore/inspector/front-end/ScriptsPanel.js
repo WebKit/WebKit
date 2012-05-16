@@ -169,9 +169,9 @@ WebInspector.ScriptsPanel = function(scriptMappingForTest)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
-    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
 
     var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
@@ -494,13 +494,12 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _uiSourceCodeReplaced: function(event)
     {
-        var oldUISourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.oldUISourceCodeList;
-        var uiSourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.uiSourceCodeList;
+        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
 
-        this._navigator.replaceUISourceCodes(oldUISourceCodeList, uiSourceCodeList);
-        this._editorContainer.replaceFiles(oldUISourceCodeList, uiSourceCodeList);
-        for (var i = 0; i < oldUISourceCodeList.length; ++i)
-            this._removeSourceFrame(oldUISourceCodeList[i]);
+        this._navigator.replaceUISourceCode(oldUISourceCode, uiSourceCode);
+        this._editorContainer.replaceFile(oldUISourceCode, uiSourceCode);
+        this._removeSourceFrame(oldUISourceCode);
     },
 
     _clearCurrentExecutionLine: function()

@@ -119,7 +119,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             this._rawSourceCodeForDocumentURL[script.sourceURL] = rawSourceCode;
 
         if (rawSourceCode.uiSourceCode())
-            this._uiSourceCodeChanged(rawSourceCode, null, rawSourceCode.uiSourceCode());
+            this._uiSourceCodeAdded(rawSourceCode, rawSourceCode.uiSourceCode());
         rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, this._handleUISourceCodeChanged, this);
     },
 
@@ -131,31 +131,51 @@ WebInspector.ResourceScriptMapping.prototype = {
         var rawSourceCode = /** @type {WebInspector.RawSourceCode} */ event.target;
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
         var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
-        this._uiSourceCodeChanged(rawSourceCode, oldUISourceCode, uiSourceCode);
+        if (!oldUISourceCode)
+            this._uiSourceCodeAdded(rawSourceCode, uiSourceCode);
+        else
+            this._uiSourceCodeReplaced(rawSourceCode, oldUISourceCode, uiSourceCode);
     },
 
     /**
      * @param {WebInspector.RawSourceCode} rawSourceCode
-     * @param {WebInspector.UISourceCode} removedItem
-     * @param {WebInspector.UISourceCode} addedItem
+     * @paran {WebInspector.UISourceCode} uiSourceCode
      */
-    _uiSourceCodeChanged: function(rawSourceCode, removedItem, addedItem)
+    _uiSourceCodeAdded: function(rawSourceCode, uiSourceCode)
     {
-        if (removedItem)
-            this._rawSourceCodeForUISourceCode.remove(removedItem);
-        if (addedItem)
-            this._rawSourceCodeForUISourceCode.put(addedItem, rawSourceCode);
+        this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
 
-        var scriptIds = [];
-        for (var i = 0; i < rawSourceCode._scripts.length; ++i) {
-            scriptIds.push(rawSourceCode._scripts[i].scriptId);
+        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
             rawSourceCode._scripts[i].setSourceMapping(this);
-        }
-        var removedItems = removedItem ? [removedItem] : [];
-        var addedItems = addedItem ? [addedItem] : [];
 
-        var data = { removedItems: removedItems, addedItems: addedItems };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @param {WebInspector.UISourceCode} oldUISourceCode
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _uiSourceCodeReplaced: function(rawSourceCode, oldUISourceCode, uiSourceCode)
+    {
+        this._rawSourceCodeForUISourceCode.remove(oldUISourceCode);
+        this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
+
+        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
+            rawSourceCode._scripts[i].setSourceMapping(this);
+
+        var data = { oldUISourceCode: uiSourceCode, uiSourceCode: uiSourceCode };
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, data);
+    },
+
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @paran {WebInspector.UISourceCode} uiSourceCode
+     */
+    _uiSourceCodeRemoved: function(rawSourceCode, uiSourceCode)
+    {
+        this._rawSourceCodeForUISourceCode.remove(uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
     /**
@@ -173,7 +193,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
             var rawSourceCode = this._rawSourceCodes[i];
-            this._uiSourceCodeChanged(rawSourceCode, rawSourceCode.uiSourceCode(), null);
+            this._uiSourceCodeRemoved(rawSourceCode, rawSourceCode.uiSourceCode());
             rawSourceCode.removeAllListeners();
         }
         this._rawSourceCodes = [];

@@ -43,19 +43,15 @@ WebInspector.DebuggerScriptMapping = function()
     this._mappings.push(this._compilerMapping);
     this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;
     this._mappings.push(this._snippetMapping);
-  
-    for (var i = 0; i < this._mappings.length; ++i)
-        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
+    for (var i = 0; i < this._mappings.length; ++i) {
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
+    }
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
-}
-
-WebInspector.DebuggerScriptMapping.Events = {
-    UISourceCodeAdded: "source-file-added",
-    UISourceCodeReplaced: "source-file-replaced",
-    UISourceCodeRemoved: "source-file-removed"
 }
 
 WebInspector.DebuggerScriptMapping.prototype = {
@@ -86,21 +82,25 @@ WebInspector.DebuggerScriptMapping.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _handleUISourceCodeListChanged: function(event)
+    _handleUISourceCodeAdded: function(event)
     {
-        var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
-        var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, event.data);
+    },
 
-        if (!removedItems.length) {
-            for (var i = 0; i < addedItems.length; ++i)
-                this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeAdded, addedItems[i]);
-        } else if (!addedItems.length) {
-            for (var i = 0; i < addedItems.length; ++i)
-                this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeRemoved, removedItems[i]);
-        } else {
-            var eventData = { uiSourceCodeList: addedItems, oldUISourceCodeList: removedItems };
-            this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeReplaced, eventData);
-        }
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleUISourceCodeReplaced: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, event.data);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleUISourceCodeRemoved: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, event.data);
     },
 
     /**
