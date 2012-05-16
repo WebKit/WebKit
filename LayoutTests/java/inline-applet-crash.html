@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+Test passes if it does not crash.
+<applet code=doesnotexist.class></applet>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKitJavaEnabled", "1");
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function walk(arr, currentPrefix, index, domNode) {
+    if (!domNode) 
+        return;
+
+    newPrefix = currentPrefix + "_" + index;
+    walk(arr, currentPrefix, index + 1, domNode.nextSibling);
+    walk(arr, newPrefix, 0, domNode.firstChild);
+}
+
+function crash() {
+    var temp = new Array();
+    walk(temp, "", 0, document.documentElement);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+ 
+setTimeout("crash();", 0);
+</script>
+</html>
