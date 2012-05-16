@@ -1,3 +1,13 @@
+2012-05-15  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Enable SVG Fonts by default
+        https://bugs.webkit.org/show_bug.cgi?id=86463
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/qt-4.8/Skipped: Skipped the relevant tests...
+        * platform/qt/Skipped: ... and unskipped them here.
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not implement setApplicationCacheOriginQuota

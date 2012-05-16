@@ -55,7 +55,17 @@ public:
         , bold(bold)
         , oblique(oblique)
         , isDeletedValue(false)
-    { }
+    {
+// This is necessary for SVG Fonts, which are only supported when using QRawFont.
+// It is used to construct the appropriate platform data to use as a fallback.
+#if HAVE(QRAWFONT)
+        QFont font;
+        font.setBold(bold);
+        font.setItalic(oblique);
+        rawFont = QRawFont::fromFont(font, QFontDatabase::Any);
+        rawFont.setPixelSize(size);
+#endif
+    }
 #if !HAVE(QRAWFONT)
     FontPlatformDataPrivate(const QFont& font)
         : font(font)

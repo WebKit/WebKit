@@ -134,7 +134,7 @@ void SVGFontElement::ensureGlyphCache()
 
             // Register ligatures, if needed, don't mix up with surrogate pairs though!
             if (unicode.length() > 1 && !U16_IS_SURROGATE(unicode[0]))
-                ligatures.append(unicode);
+                ligatures.append(unicode.string());
         } else if (child->hasTagName(SVGNames::hkernTag)) {
             SVGHKernElement* hkern = static_cast<SVGHKernElement*>(child);
             hkern->buildHorizontalKerningPair(m_horizontalKerningPairs);

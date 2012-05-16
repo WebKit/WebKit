@@ -48,7 +48,7 @@ bool SVGTextMetricsBuilder::advance()
     if (int(m_textPosition) >= m_run.charactersLength())
         return false;
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) && !HAVE(QRAWFONT)
     advanceComplexText();
 #else
     if (m_isComplexText)
@@ -62,7 +62,7 @@ bool SVGTextMetricsBuilder::advance()
 
 void SVGTextMetricsBuilder::advanceSimpleText()
 {
-#if PLATFORM(QT)
+#if PLATFORM(QT) && !HAVE(QRAWFONT)
     ASSERT_NOT_REACHED();
 #else
     unsigned metricsLength = m_simpleWidthIterator->advance(m_textPosition + 1);
@@ -115,7 +115,7 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_run = SVGTextMetrics::constructTextRun(text, text->characters(), 0, text->textLength());
     m_isComplexText = scaledFont.codePath(m_run) == Font::Complex;
 
-#if !PLATFORM(QT)
+#if !PLATFORM(QT) || HAVE(QRAWFONT)
     if (m_isComplexText)
         m_simpleWidthIterator.clear();
     else
