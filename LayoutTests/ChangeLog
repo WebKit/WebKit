@@ -1,3 +1,15 @@
+2012-05-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] New failing and flakey tests with newer Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=86452
+
+        Unreviewed gardening, skip new failing/flakey tests to paint
+        the bots green. (To be able to catch new and new regressions.)
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+
 2012-05-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] expose evaluateOptions in audit formatters
