@@ -88,6 +88,11 @@ void HTMLPlugInElement::detach()
     HTMLFrameOwnerElement::detach();
 }
 
+void HTMLPlugInElement::resetInstance()
+{
+    m_instance.clear();
+}
+
 PassScriptInstance HTMLPlugInElement::getInstance()
 {
     Frame* frame = document()->frame();

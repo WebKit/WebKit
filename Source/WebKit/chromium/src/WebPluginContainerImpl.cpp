@@ -234,6 +234,14 @@ void WebPluginContainerImpl::setParent(ScrollView* view)
         reportGeometry();
 }
 
+void WebPluginContainerImpl::setPlugin(WebPlugin* plugin)
+{
+    if (plugin != m_webPlugin) {
+        m_element->resetInstance();
+        m_webPlugin = plugin;
+    }
+}
+
 bool WebPluginContainerImpl::supportsPaginatedPrint() const
 {
     return m_webPlugin->supportsPaginatedPrint();

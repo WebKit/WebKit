@@ -112,7 +112,7 @@ public:
 
     // This cannot be null.
     WebPlugin* plugin() { return m_webPlugin; }
-    void setPlugin(WebPlugin* plugin) { m_webPlugin = plugin; }
+    void setPlugin(WebPlugin*);
 
     // Printing interface. The plugin can support custom printing
     // (which means it controls the layout, number of pages etc).

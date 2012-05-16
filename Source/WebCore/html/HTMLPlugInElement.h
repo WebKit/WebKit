@@ -40,6 +40,8 @@ class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
+    void resetInstance();
+
     PassScriptInstance getInstance();
 
     Widget* pluginWidget();
