@@ -67,6 +67,22 @@ static void addString(FeatureSet& set, const char* string)
     set.add(string);
 }
 
+class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
+public:
+    DOMImplementationSupportsTypeClient(bool needsHacks, const String& host)
+        : m_needsHacks(needsHacks)
+        , m_host(host)
+    {
+    }
+
+private:
+    virtual bool mediaPlayerNeedsSiteSpecificHacks() const OVERRIDE { return m_needsHacks; }
+    virtual String mediaPlayerDocumentHost() const OVERRIDE { return m_host; }
+
+    bool m_needsHacks;
+    String m_host;
+};
+
 #if ENABLE(SVG)
 
 static bool isSVG10Feature(const String &feature, const String &version)
@@ -387,7 +403,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 #if ENABLE(VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
     // Key system is not applicable here.
-    if (MediaPlayer::supportsType(ContentType(type), String()))
+    DOMImplementationSupportsTypeClient client(frame->settings() && frame->settings()->needsSiteSpecificQuirks(), url.host());
+    if (MediaPlayer::supportsType(ContentType(type), String(), &client))
          return MediaDocument::create(frame, url);
 #endif
 

@@ -617,7 +617,7 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
 
 String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySystem) const
 {
-    MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType), keySystem);
+    MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType), keySystem, this);
     String canPlay;
 
     // 4.8.10.3
@@ -3097,7 +3097,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* k
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is '%s' - key system is '%s'", type.utf8().data(), system.utf8().data());
 #endif
-            if (!MediaPlayer::supportsType(ContentType(type), system))
+            if (!MediaPlayer::supportsType(ContentType(type), system, this))
                 goto check_again;
         }
 
@@ -4383,6 +4383,17 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
 
     return frame->loader()->userAgent(m_currentSrc);
 
+}
+
+bool HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks() const
+{
+    Settings* settings = document()->settings();
+    return settings && settings->needsSiteSpecificQuirks();
+}
+
+String HTMLMediaElement::mediaPlayerDocumentHost() const
+{
+    return document()->url().host();
 }
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()

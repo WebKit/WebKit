@@ -180,6 +180,14 @@ public:
     virtual String mediaPlayerUserAgent() const { return String(); }
 };
 
+class MediaPlayerSupportsTypeClient {
+public:
+    virtual ~MediaPlayerSupportsTypeClient() { }
+
+    virtual bool mediaPlayerNeedsSiteSpecificHacks() const { return false; }
+    virtual String mediaPlayerDocumentHost() const { return String(); }
+};
+
 class MediaPlayer {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -192,7 +200,7 @@ public:
 
     // Media engine support.
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const ContentType&, const String& keySystem);
+    static MediaPlayer::SupportsType supportsType(const ContentType&, const String& keySystem, const MediaPlayerSupportsTypeClient*);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
     static void getSitesInMediaCache(Vector<String>&);
