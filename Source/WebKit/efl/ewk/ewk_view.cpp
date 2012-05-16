@@ -153,6 +153,79 @@ static const Evas_Smart_Cb_Description _ewk_view_callback_names[] = {
     { 0, 0 }
 };
 
+struct EditorCommand {
+    Ewk_Editor_Command ewkEditorCommand;
+    const char* editorCommandString;
+};
+
+/**
+ * @brief A table grouping Ewk_Editor_Command enums with corresponding command
+ * strings used by WebCore::EditorCommand, keeping both in sync.
+ *
+ * @internal
+ */
+static const EditorCommand editorCommands[] = {
+    { EWK_EDITOR_COMMAND_UNDO, "Undo" },
+    { EWK_EDITOR_COMMAND_REDO, "Redo" },
+    { EWK_EDITOR_COMMAND_TOGGLE_BOLD, "ToggleBold" },
+    { EWK_EDITOR_COMMAND_TOGGLE_ITALIC, "ToggleItalic" },
+    { EWK_EDITOR_COMMAND_TOGGLE_UNDERLINE, "ToggleUnderline" },
+    { EWK_EDITOR_COMMAND_TOGGLE_STRIKETHROUGH, "Strikethrough" },
+    { EWK_EDITOR_COMMAND_TOGGLE_SUBSCRIPT, "SubScript" },
+    { EWK_EDITOR_COMMAND_TOGGLE_SUPERSCRIPT, "SuperScript" },
+    { EWK_EDITOR_COMMAND_INDENT, "Indent" },
+    { EWK_EDITOR_COMMAND_OUTDENT, "Outdent" },
+    { EWK_EDITOR_COMMAND_INSERT_ORDEREDLIST, "InsertOrderedList" },
+    { EWK_EDITOR_COMMAND_INSERT_UNORDEREDLIST, "InsertUnorderedList" },
+    { EWK_EDITOR_COMMAND_INSERT_IMAGE, "InsertImage" },
+    { EWK_EDITOR_COMMAND_INSERT_TEXT, "InsertText" },
+    { EWK_EDITOR_COMMAND_INSERT_HTML, "InsertHTML" },
+    { EWK_EDITOR_COMMAND_INSERT_PARAGRAPH, "InsertParagraph" },
+    { EWK_EDITOR_COMMAND_INSERT_PARAGRAPH_SEPARATOR, "InsertNewLine" },
+    { EWK_EDITOR_COMMAND_INSERT_LINE_SEPARATOR, "InsertLineBreak" },
+    { EWK_EDITOR_COMMAND_BACK_COLOR, "BackColor" },
+    { EWK_EDITOR_COMMAND_FORE_COLOR, "ForeColor" },
+    { EWK_EDITOR_COMMAND_HILITE_COLOR, "HiliteColor" },
+    { EWK_EDITOR_COMMAND_FONT_SIZE, "FontSize" },
+    { EWK_EDITOR_COMMAND_ALIGN_CENTER, "AlignCenter" },
+    { EWK_EDITOR_COMMAND_ALIGN_JUSTIFIED, "AlignJustified" },
+    { EWK_EDITOR_COMMAND_ALIGN_LEFT, "AlignLeft" },
+    { EWK_EDITOR_COMMAND_ALIGN_RIGHT, "AlignRight" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_NEXT_CHAR, "MoveForward" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_PREVIOUS_CHAR, "MoveBackward" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_NEXT_WORD, "MoveWordForward" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_PREVIOUS_WORD, "MoveWordBackward" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_NEXT_LINE, "MoveDown" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_PREVIOUS_LINE, "MoveUp" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_BEGINNING_OF_LINE, "MoveToBeginningOfLine" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_END_OF_LINE, "MoveToEndOfLine" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_BEGINNING_OF_PARAGRAPH, "MoveToBeginningOfParagraph" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_END_OF_PARAGRAPH, "MoveToEndOfParagraph" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_BEGINNING_OF_DOCUMENT, "MoveToBeginningOfDocument" },
+    { EWK_EDITOR_COMMAND_MOVE_TO_END_OF_DOCUMENT, "MoveToEndOfDocument" },
+    { EWK_EDITOR_COMMAND_SELECT_NONE, "SelectNone" },
+    { EWK_EDITOR_COMMAND_SELECT_ALL, "SelectAll" },
+    { EWK_EDITOR_COMMAND_SELECT_PARAGRAPH, "SelectParagraph" },
+    { EWK_EDITOR_COMMAND_SELECT_SENTENCE, "SelectSentence" },
+    { EWK_EDITOR_COMMAND_SELECT_LINE, "SelectLine" },
+    { EWK_EDITOR_COMMAND_SELECT_WORD, "SelectWord" },
+    { EWK_EDITOR_COMMAND_SELECT_NEXT_CHAR, "MoveForwardAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_PREVIOUS_CHAR, "MoveBackwardAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_NEXT_WORD, "MoveWordForwardAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_PREVIOUS_WORD, "MoveWordBackwardAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_NEXT_LINE, "MoveDownAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_PREVIOUS_LINE, "MoveUpAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_START_OF_LINE, "MoveToBeginningOfLineAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_END_OF_LINE, "MoveToEndOfLineAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_START_OF_PARAGRAPH, "MoveToBeginningOfParagraphAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_END_OF_PARAGRAPH, "MoveToEndOfParagraphAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_START_OF_DOCUMENT, "MoveToBeginningOfDocumentAndModifySelection" },
+    { EWK_EDITOR_COMMAND_SELECT_END_OF_DOCUMENT, "MoveToEndOfDocumentAndModifySelection" },
+    { EWK_EDITOR_COMMAND_DELETE_WORD_BACKWARD, "DeleteWordBackward" },
+    { EWK_EDITOR_COMMAND_DELETE_WORD_FORWARD, "DeleteWordForward" },
+    { EWK_EDITOR_COMMAND_NONE, 0 } // EWK_EDITOR_COMMAND_NONE must be the last element.
+};
+
 /**
  * @brief Private data that is used internally by EFL WebKit
  * and should never be modified from outside.
@@ -1168,6 +1241,18 @@ static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data* smartData)
     return false;
 }
 
+static const char* _ewk_view_editor_command_string_get(Ewk_View_Private_Data* priv, Ewk_Editor_Command ewkCommand)
+{
+    static OwnPtr<Eina_Hash> editorCommandHash;
+
+    if (!editorCommandHash) {
+        editorCommandHash = adoptPtr(eina_hash_int32_new(0));
+        for (int i = 0; editorCommands[i].ewkEditorCommand != EWK_EDITOR_COMMAND_NONE; i++)
+            eina_hash_add(editorCommandHash.get(), &editorCommands[i].ewkEditorCommand, editorCommands[i].editorCommandString);
+    }
+    return reinterpret_cast<const char*>(eina_hash_find(editorCommandHash.get(), &ewkCommand));
+}
+
 Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(api, false);
@@ -1485,36 +1570,16 @@ char* ewk_view_selection_get(const Evas_Object* ewkView)
     return strdup(selectedString.data());
 }
 
-static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data* priv, const char* command, const char* value = 0)
-{
-    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(WTF::String::fromUTF8(value));
-}
-
-Eina_Bool ewk_view_execute_editor_command(Evas_Object* ewkView, const Ewk_Editor_Command command, const char* value)
+Eina_Bool ewk_view_editor_command_execute(const Evas_Object* ewkView, const Ewk_Editor_Command command, const char* value)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    switch (command) {
-    case EWK_EDITOR_COMMAND_INSERT_IMAGE:
-        return _ewk_view_editor_command(priv, "InsertImage", value);
-    case EWK_EDITOR_COMMAND_INSERT_TEXT:
-        return _ewk_view_editor_command(priv, "InsertText", value);
-    case EWK_EDITOR_COMMAND_SELECT_NONE:
-        return _ewk_view_editor_command(priv, "Unselect");
-    case EWK_EDITOR_COMMAND_SELECT_ALL:
-        return _ewk_view_editor_command(priv, "SelectAll");
-    case EWK_EDITOR_COMMAND_SELECT_PARAGRAPH:
-        return _ewk_view_editor_command(priv, "SelectParagraph");
-    case EWK_EDITOR_COMMAND_SELECT_SENTENCE:
-        return _ewk_view_editor_command(priv, "SelectSentence");
-    case EWK_EDITOR_COMMAND_SELECT_LINE:
-        return _ewk_view_editor_command(priv, "SelectLine");
-    case EWK_EDITOR_COMMAND_SELECT_WORD:
-        return _ewk_view_editor_command(priv, "SelectWord");
-    default:
+    const char* commandString = _ewk_view_editor_command_string_get(priv, command);
+    if (!commandString)
         return false;
-    }
+
+    return priv->page->focusController()->focusedOrMainFrame()->editor()->command(commandString).execute(WTF::String::fromUTF8(value));
 }
 
 Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_Event_Mouse_Down* downEvent)

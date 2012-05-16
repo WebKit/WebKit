@@ -1,3 +1,20 @@
+2012-05-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Add new commands for Ewk_Editor_Command.
+        https://bugs.webkit.org/show_bug.cgi?id=74921
+
+        Reviewed by Hajime Morita.
+
+        Add new commands for Ewk_Editor_Command enum and introduce new table to keep
+        enum and string values in sync.
+
+        * ewk/ewk_view.cpp: Added a table with EditorCommand struct elements.
+        (EditorCommand): Added structure consisting of enum and string value.
+        (_Ewk_View_Private_Data):
+        (_ewk_view_editor_command_string_get): Added.
+        (ewk_view_editor_command_execute):
+        * ewk/ewk_view.h: Ewk_Editor_Command enum extended.
+
 2012-05-15  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Enable Fullscreen API
