@@ -86,7 +86,8 @@ void TileCache::tileCacheLayerBoundsChanged()
 
 void TileCache::setNeedsDisplay()
 {
-    setNeedsDisplayInRect(IntRect(0, 0, std::numeric_limits<int>::max(), std::numeric_limits<int>::max()));
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        [it->second.get() setNeedsDisplay];
 }
 
 void TileCache::setNeedsDisplayInRect(const IntRect& rect)
