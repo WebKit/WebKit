@@ -4558,10 +4558,6 @@ svg/W3C-SVG-1.1/filters-turb-02-f.svg
 svg/custom/glyph-transformation-with-hkern.svg
 svg/foreignObject/text-tref-02-b.svg
 
-# [Qt][Mac]REGRESSION?(r89397) It made fast/css/custom-font-xheight.html crash
-# https://bugs.webkit.org/show_bug.cgi?id=63132
-fast/css/custom-font-xheight.html
-
 # Qt specific results committed in r89901, but fail on Qt-Mac platform
 editing/selection/extend-inside-transforms-backward.html
 editing/selection/extend-inside-transforms-forward.html

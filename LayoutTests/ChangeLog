@@ -1,3 +1,14 @@
+2012-05-16  Marcelo Lira <marcelo.lira@openbossa.org>
+
+        [Qt][Mac]REGRESSION?(r89397) It made fast/css/custom-font-xheight.html crash
+        https://bugs.webkit.org/show_bug.cgi?id=63132
+
+        Removed test from skipped list, since it now passes on mac.
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-mac/Skipped:
+
 2012-05-16  Emil A Eklund  <eae@chromium.org>
 
         Change ascents and descent back to ints for now
