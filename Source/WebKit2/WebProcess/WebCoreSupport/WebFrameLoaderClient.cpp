@@ -827,8 +827,12 @@ void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 void WebFrameLoaderClient::postProgressFinishedNotification()
 {
     if (WebPage* webPage = m_frame->page()) {
-        if (m_frame->isMainFrame())
+        if (m_frame->isMainFrame()) {
+            // Notify the bundle client.
+            webPage->injectedBundleLoaderClient().didFinishProgress(webPage);
+
             webPage->send(Messages::WebPageProxy::DidFinishProgress());
+        }
     }
 }
 

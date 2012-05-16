@@ -400,9 +400,6 @@ platform/qt/plugins/qt-qwidget-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
 
-# CONSOLE MESSAGE: line 4: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.dumpProgressFinishedCallback()')
-http/tests/loading/progress-finished-callback.html
-
 # Skipped because they were still failing after http://trac.webkit.org/changeset/106812 .
 # Check https://bugs.webkit.org/show_bug.cgi?id=62731 and https://bugs.webkit.org/show_bug.cgi?id=42333
 # for future reference.

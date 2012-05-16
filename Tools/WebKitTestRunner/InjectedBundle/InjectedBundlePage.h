@@ -53,6 +53,7 @@ private:
     static void didFailProvisionalLoadWithErrorForFrame(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*, const void*);
     static void didCommitLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didFinishLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
+    static void didFinishProgress(WKBundlePageRef, const void*);
     static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef,  WKTypeRef*, const void*);
     static void didFailLoadWithErrorForFrame(WKBundlePageRef, WKBundleFrameRef, WKErrorRef, WKTypeRef*, const void*);
     static void didReceiveTitleForFrame(WKBundlePageRef, WKStringRef title, WKBundleFrameRef, WKTypeRef*, const void*);
@@ -76,6 +77,7 @@ private:
     void didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef, WKErrorRef);
     void didCommitLoadForFrame(WKBundleFrameRef);
     void didFinishLoadForFrame(WKBundleFrameRef);
+    void didFinishProgress();
     void didFailLoadWithErrorForFrame(WKBundleFrameRef, WKErrorRef);
     void didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef);
     void didClearWindowForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);

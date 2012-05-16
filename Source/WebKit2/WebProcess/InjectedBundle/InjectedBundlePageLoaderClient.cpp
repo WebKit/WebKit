@@ -109,6 +109,14 @@ void InjectedBundlePageLoaderClient::didFinishLoadForFrame(WebPage* page, WebFra
     userData = adoptRef(toImpl(userDataToPass));
 }
 
+void InjectedBundlePageLoaderClient::didFinishProgress(WebPage* page)
+{
+    if (!m_client.didFinishProgress)
+        return;
+
+    m_client.didFinishProgress(toAPI(page), m_client.clientInfo);
+}
+
 void InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame(WebPage* page, WebFrame* frame, const ResourceError& error, RefPtr<APIObject>& userData)
 {
     if (!m_client.didFailLoadWithErrorForFrame)

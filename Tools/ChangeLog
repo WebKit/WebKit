@@ -1,3 +1,27 @@
+2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        Add didFinishProgress BundleUIClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=86541
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added support for dumpProgressFinishedCallback.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::didFinishProgress):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpProgressFinishedCallback):
+        (WTR::LayoutTestController::setShouldDumpProgressFinishedCallback):
+        (WTR::LayoutTestController::shouldDumpProgressFinishedCallback):
+        (LayoutTestController):
+
 2012-05-15  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Enable SVG Fonts by default

@@ -240,6 +240,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // willDisconnectDOMWindowExtensionFromGlobalObject
         0, // didReconnectDOMWindowExtensionToGlobalObject
         0, // willDestroyGlobalObjectForDOMWindowExtension
+        didFinishProgress, // didFinishProgress
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 
@@ -398,6 +399,11 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundlePageRef page, WKBundleFra
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(frame);
 }
 
+void InjectedBundlePage::didFinishProgress(WKBundlePageRef, const void *clientInfo)
+{
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishProgress();
+}
+
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishDocumentLoadForFrame(frame);
@@ -527,6 +533,17 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
 
     dumpFrameDescriptionSuitableForTestResult(frame);
     InjectedBundle::shared().stringBuilder()->append(" - didCommitLoadForFrame\n");
+}
+
+void InjectedBundlePage::didFinishProgress()
+{
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpProgressFinishedCallback())
+        return;
+
+    InjectedBundle::shared().stringBuilder()->append("postProgressFinishedNotification\n");
 }
 
 enum FrameNamePolicy { ShouldNotIncludeFrameName, ShouldIncludeFrameName };
