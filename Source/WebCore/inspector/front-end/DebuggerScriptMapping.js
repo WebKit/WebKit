@@ -31,8 +31,9 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @implements {WebInspector.UISourceCodeProject}
  */
-WebInspector.DebuggerPresentationModel = function()
+WebInspector.DebuggerScriptMapping = function()
 {
     this._mappings = [];
   
@@ -51,13 +52,13 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 }
 
-WebInspector.DebuggerPresentationModel.Events = {
+WebInspector.DebuggerScriptMapping.Events = {
     UISourceCodeAdded: "source-file-added",
     UISourceCodeReplaced: "source-file-replaced",
     UISourceCodeRemoved: "source-file-removed"
 }
 
-WebInspector.DebuggerPresentationModel.prototype = {
+WebInspector.DebuggerScriptMapping.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
@@ -92,13 +93,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         if (!removedItems.length) {
             for (var i = 0; i < addedItems.length; ++i)
-                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, addedItems[i]);
+                this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeAdded, addedItems[i]);
         } else if (!addedItems.length) {
             for (var i = 0; i < addedItems.length; ++i)
-                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, removedItems[i]);
+                this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeRemoved, removedItems[i]);
         } else {
             var eventData = { uiSourceCodeList: addedItems, oldUISourceCodeList: removedItems };
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, eventData);
+            this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeReplaced, eventData);
         }
     },
 
@@ -128,9 +129,4 @@ WebInspector.DebuggerPresentationModel.prototype = {
     }
 }
 
-WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @type {?WebInspector.DebuggerPresentationModel}
- */
-WebInspector.debuggerPresentationModel = null;
+WebInspector.DebuggerScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;

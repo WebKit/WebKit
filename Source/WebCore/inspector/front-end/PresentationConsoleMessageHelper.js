@@ -30,11 +30,13 @@
 
 /**
  * @constructor
+ * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
  */
-WebInspector.PresentationConsoleMessageHelper = function()
+WebInspector.PresentationConsoleMessageHelper = function(uiSourceCodeProject)
 {
     this._pendingConsoleMessages = {};
     this._presentationConsoleMessages = [];
+    this._uiSourceCodeProject = uiSourceCodeProject;
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
@@ -113,7 +115,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
         for (var i = 0; i < this._presentationConsoleMessages.length; ++i)
             this._presentationConsoleMessages[i].dispose();
         this._presentationConsoleMessages = [];
-        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
+        var uiSourceCodes = this._uiSourceCodeProject.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].consoleMessagesCleared();
     },

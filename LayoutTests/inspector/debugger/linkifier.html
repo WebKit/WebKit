@@ -33,7 +33,7 @@ function test()
                 break;
             }
         }
-        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
+        var uiSourceCodes = WebInspector.panels.scripts._scriptMapping.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === WebInspector.inspectedPageURL) {
                 uiSourceCode = uiSourceCodes[i];

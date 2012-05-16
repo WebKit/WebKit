@@ -18,7 +18,7 @@ function test()
         set: function(breakpoints) { persistentBreakpoints = breakpoints; }
     };
 
-    function createDebuggerPresentationModelMock()
+    function createDebuggerScriptMappingMock()
     {
         var model = new WebInspector.Object();
         model.breakpointsForUISourceCode = function() { return []; };
@@ -29,7 +29,7 @@ function test()
         model._addUISourceCode = function(uiSourceCode)
         {
             uiSourceCodes.push(uiSourceCode);
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
+            this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
         }
         model._reset = function(preservedItems)
         {
@@ -43,7 +43,7 @@ function test()
             for (var i = 0; i < newUISourceCodeList.length; ++i)
               uiSourceCodes.push(newUISourceCodeList[i]);
             var data = { oldUISourceCodeList: oldUISourceCodeList, uiSourceCodeList: newUISourceCodeList };
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, data);
+            this.dispatchEventToListeners(WebInspector.DebuggerScriptMapping.Events.UISourceCodeReplaced, data);
         }
         return model;
     }
@@ -62,20 +62,20 @@ function test()
     InspectorTest.runTestSuite([
         function testInitialLoad(next)
         {
-            var model = createDebuggerPresentationModelMock();
+            var mapping = createDebuggerScriptMappingMock();
             var uiSourceCode = createUISouceCode("foobar.js");
             var uiSourceCodeFoo = createUISouceCode("foo.js");
             var uiSourceCodeBar = createUISouceCode("bar.js");
             var uiSourceCodeBaz = createUISouceCode("baz.js");
 
-            model._addUISourceCode(uiSourceCode);
+            mapping._addUISourceCode(uiSourceCode);
 
-            var panel = new WebInspector.ScriptsPanel(model);
+            var panel = new WebInspector.ScriptsPanel(mapping);
             panel.show();
 
-            model._addUISourceCode(uiSourceCodeFoo);
-            model._addUISourceCode(uiSourceCodeBar);
-            model._addUISourceCode(uiSourceCodeBaz);
+            mapping._addUISourceCode(uiSourceCodeFoo);
+            mapping._addUISourceCode(uiSourceCodeBar);
+            mapping._addUISourceCode(uiSourceCodeBaz);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
@@ -88,21 +88,21 @@ function test()
 
         function testReset(next)
         {
-            var model = createDebuggerPresentationModelMock();
-            var panel = new WebInspector.ScriptsPanel(model);
+            var mapping = createDebuggerScriptMappingMock();
+            var panel = new WebInspector.ScriptsPanel(mapping);
             panel.show();
 
             var uiSourceCodeFoo = createUISouceCode("foo.js");
             var uiSourceCodeBar = createUISouceCode("bar.js");
             var uiSourceCodeBaz = createUISouceCode("baz.js");
 
-            model._addUISourceCode(uiSourceCodeFoo);
-            model._addUISourceCode(uiSourceCodeBar);
-            model._addUISourceCode(uiSourceCodeBaz);
+            mapping._addUISourceCode(uiSourceCodeFoo);
+            mapping._addUISourceCode(uiSourceCodeBar);
+            mapping._addUISourceCode(uiSourceCodeBaz);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
-            model._reset([uiSourceCodeBar]);
+            mapping._reset([uiSourceCodeBar]);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             panel.detach();
@@ -112,21 +112,21 @@ function test()
 
         function testSourceReplaced(next)
         {
-            var model = createDebuggerPresentationModelMock();
-            var panel = new WebInspector.ScriptsPanel(model);
+            var mapping = createDebuggerScriptMappingMock();
+            var panel = new WebInspector.ScriptsPanel(mapping);
             panel.show();
 
             var uiSourceCodeFoo = createUISouceCode("foo.js");
-            model._addUISourceCode(uiSourceCodeFoo);
+            mapping._addUISourceCode(uiSourceCodeFoo);
             var compiledSourceCode = createUISouceCode("compiled.js");
-            model._addUISourceCode(compiledSourceCode);
+            mapping._addUISourceCode(compiledSourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
             var source1SourceCode = createUISouceCode("source1.js");
             var source2SourceCode = createUISouceCode("source2.js");
-            model._replaceUISourceCodes([compiledSourceCode], [source1SourceCode, source2SourceCode]);
+            mapping._replaceUISourceCodes([compiledSourceCode], [source1SourceCode, source2SourceCode]);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
             InspectorTest.showScriptSourceOnScriptsPanel(panel, "source2.js", step2);
@@ -137,7 +137,7 @@ function test()
 
             function step3() {
                 // Unplug compiler source mapping.
-                model._replaceUISourceCodes([source1SourceCode, source2SourceCode], [compiledSourceCode]);
+                mapping._replaceUISourceCodes([source1SourceCode, source2SourceCode], [compiledSourceCode]);
                 InspectorTest.dumpScriptsNavigator(panel._navigator);
 
                 panel.detach();

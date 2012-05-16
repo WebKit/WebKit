@@ -232,3 +232,15 @@ WebInspector.UISourceCode.prototype = {
 }
 
 WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @interface
+ */
+WebInspector.UISourceCodeProject = function()
+{
+}
+
+WebInspector.UISourceCodeProject.prototype = {
+    /** @return {Array.<WebInspector.UISourceCode>} */ 
+    uiSourceCodes: function() { }
+}

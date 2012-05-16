@@ -654,23 +654,23 @@ WebInspector.OpenResourceDialog.prototype.__proto__ = WebInspector.SelectionDial
  * @constructor
  * @extends {WebInspector.OpenResourceDialog}
  * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
  */
-WebInspector.OpenScriptDialog = function(panel, presentationModel)
+WebInspector.OpenScriptDialog = function(panel, uiSourceCodeProject)
 {
-    WebInspector.OpenResourceDialog.call(this, presentationModel.uiSourceCodes());
+    WebInspector.OpenResourceDialog.call(this, uiSourceCodeProject.uiSourceCodes());
     this._panel = panel;
 }
 
 /**
  * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
  */
-WebInspector.OpenScriptDialog.install = function(panel, presentationModel, relativeToElement)
+WebInspector.OpenScriptDialog.install = function(panel, uiSourceCodeProject, relativeToElement)
 {
     function showOpenResourceDialog()
     {
-        WebInspector.OpenScriptDialog._show(panel, presentationModel, relativeToElement);
+        WebInspector.OpenScriptDialog._show(panel, uiSourceCodeProject, relativeToElement);
     }
 
     var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
@@ -679,15 +679,15 @@ WebInspector.OpenScriptDialog.install = function(panel, presentationModel, relat
 
 /**
  * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
  * @param {Element} relativeToElement
  */
-WebInspector.OpenScriptDialog._show = function(panel, presentationModel, relativeToElement)
+WebInspector.OpenScriptDialog._show = function(panel, uiSourceCodeProject, relativeToElement)
 {
     if (WebInspector.Dialog.currentInstance())
         return;
 
-    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenScriptDialog(panel, presentationModel));
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenScriptDialog(panel, uiSourceCodeProject));
     WebInspector.Dialog.show(relativeToElement, filteredItemSelectionDialog);
 }
 

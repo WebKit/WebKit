@@ -38,7 +38,7 @@ var WebInspector = {
         WebInspector.inspectorView.addEventListener(WebInspector.InspectorView.Events.PanelSelected, this._panelSelected, this);
 
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
-            this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
+            this.panels.scripts = new WebInspector.ScriptsPanel();
             this.panels.timeline = new WebInspector.TimelinePanel();
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.console = new WebInspector.ConsolePanel();
@@ -52,7 +52,7 @@ var WebInspector = {
         if (hiddenPanels.indexOf("network") === -1)
             this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
-            this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
+            this.panels.scripts = new WebInspector.ScriptsPanel();
         if (hiddenPanels.indexOf("styles") === -1 && WebInspector.experimentsSettings.showStylesPanel.isEnabled())
             this.panels.styles = new WebInspector.StylesPanel();
         if (hiddenPanels.indexOf("timeline") === -1)
@@ -382,8 +382,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.debuggerModel = new WebInspector.DebuggerModel();
     this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
-    this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
-    new WebInspector.DebuggerResourceBinding();
 
     this.drawer = new WebInspector.Drawer();
     this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());

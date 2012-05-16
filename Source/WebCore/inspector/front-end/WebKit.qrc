@@ -36,8 +36,8 @@
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
-    <file>DebuggerPresentationModel.js</file>
     <file>DebuggerResourceBinding.js</file>
+    <file>DebuggerScriptMapping.js</file>
     <file>Dialog.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>

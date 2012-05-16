@@ -31,9 +31,11 @@
 /**
  * @constructor
  * @implements {WebInspector.ResourceDomainModelBinding}
+ * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
  */
-WebInspector.DebuggerResourceBinding = function()
+WebInspector.DebuggerResourceBinding = function(uiSourceCodeProject)
 {
+    this._uiSourceCodeProject = uiSourceCodeProject;
     WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
 }
 
@@ -58,7 +60,7 @@ WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, ne
     var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
 
     /**
-     * @this {WebInspector.DebuggerPresentationModel}
+     * @this {WebInspector.DebuggerResourceBinding}
      * @param {?Protocol.Error} error
      */
     function didEditScriptSource(error)
@@ -113,7 +115,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
      */
     _uiSourceCodeForResource: function(resource)
     {
-        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
+        var uiSourceCodes = this._uiSourceCodeProject.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === resource.url)
                 return uiSourceCodes[i];

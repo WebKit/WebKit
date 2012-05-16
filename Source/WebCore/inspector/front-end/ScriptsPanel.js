@@ -28,8 +28,9 @@
  * @constructor
  * @implements {WebInspector.TabbedEditorContainerDelegate}
  * @extends {WebInspector.Panel}
+ * @param {WebInspector.DebuggerScriptMapping=} scriptMappingForTest
  */
-WebInspector.ScriptsPanel = function(presentationModel)
+WebInspector.ScriptsPanel = function(scriptMappingForTest)
 {
     WebInspector.Panel.call(this, "scripts");
     this.registerRequiredCSS("scriptsPanel.css");
@@ -37,9 +38,10 @@ WebInspector.ScriptsPanel = function(presentationModel)
     WebInspector.settings.pauseOnExceptionStateString = WebInspector.settings.createSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
     WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
     WebInspector.settings.debuggerSidebarHidden = WebInspector.settings.createSetting("debuggerSidebarHidden", false);
-    
-    this._presentationModel = presentationModel;
-    new WebInspector.PresentationConsoleMessageHelper();
+
+    this._scriptMapping = scriptMappingForTest || new WebInspector.DebuggerScriptMapping();
+    new WebInspector.PresentationConsoleMessageHelper(this._scriptMapping);
+    new WebInspector.DebuggerResourceBinding(this._scriptMapping);
 
     function viewGetter()
     {
@@ -77,7 +79,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedFiles");
     this._editorContainer.show(this.editorView.mainElement);
-    WebInspector.OpenScriptDialog.install(this, this._presentationModel, this.editorView.mainElement);
+    WebInspector.OpenScriptDialog.install(this, this._scriptMapping, this.editorView.mainElement);
 
     this._navigatorController = new WebInspector.NavigatorOverlayController(this, this.editorView, this._navigator.view, this._editorContainer.view);
 
@@ -167,15 +169,15 @@ WebInspector.ScriptsPanel = function(presentationModel)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    this._scriptMapping.addEventListener(WebInspector.DebuggerScriptMapping.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
 
     var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
 
-    WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope());
+    WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._scriptMapping));
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -229,7 +231,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _loadUISourceCodes: function()
     {
-        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        var uiSourceCodes = this._scriptMapping.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             this._uiSourceCodeAdded(uiSourceCodes[i]);
     },
@@ -450,7 +452,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _createSourceFrame: function(uiSourceCode)
     {
-        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, this._presentationModel, uiSourceCode);
+        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, uiSourceCode);
 
         sourceFrame._uiSourceCode = uiSourceCode;
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);
@@ -488,7 +490,7 @@ WebInspector.ScriptsPanel.prototype = {
     },
 
     /**
-     * @param {Event} event
+     * @param {WebInspector.Event} event
      */
     _uiSourceCodeReplaced: function(event)
     {
@@ -919,7 +921,7 @@ WebInspector.ScriptsPanel.prototype = {
     _toggleFormatSource: function()
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
-        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        var uiSourceCodes = this._scriptMapping.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
     },

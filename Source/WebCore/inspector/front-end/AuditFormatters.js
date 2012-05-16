@@ -94,7 +94,7 @@ WebInspector.AuditFormatters = {
 
     resourceLink: function(url, line)
     {
-        // FIXME: use WebInspector.DebuggerPresentationModel.Linkifier
+        // FIXME: use WebInspector.Linkifier
         return WebInspector.linkifyResourceAsNode(url, line, "console-message-url webkit-html-resource-link");
     },
 

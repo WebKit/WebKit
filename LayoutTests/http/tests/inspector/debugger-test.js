@@ -155,7 +155,7 @@ InspectorTest._resumedScript = function()
 
 InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callback)
 {
-    var uiSourceCodes = panel._presentationModel.uiSourceCodes();
+    var uiSourceCodes = panel._scriptMapping.uiSourceCodes();
     for (var i = 0; i < uiSourceCodes.length; ++i) {
         if (uiSourceCodes[i].parsedURL.lastPathComponent === scriptName) {
             panel.showUISourceCode(uiSourceCodes[i]);
