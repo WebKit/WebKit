@@ -321,10 +321,6 @@ css3/unicode-bidi-isolate-aharon-failing.html
 # https://bugs.webkit.org/show_bug.cgi?id=74504
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 
-# [Qt][WK2]REGRESSION(r110699): It made fast/animation/request-animation-frame-during-modal.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=81671
-fast/animation/request-animation-frame-during-modal.html
-
 # flakey svg tests
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml

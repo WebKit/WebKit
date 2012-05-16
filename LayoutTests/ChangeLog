@@ -1,3 +1,10 @@
+2012-05-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unskip fast/animation/request-animation-frame-during-modal.html that was
+        skipped due to r110699.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening: updating expectations after r117259

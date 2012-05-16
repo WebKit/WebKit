@@ -39,30 +39,13 @@ namespace WebCore {
 class RunLoop::TimerObject : public QObject {
     Q_OBJECT
 public:
-    TimerObject(RunLoop* runLoop)
-        : m_runLoop(runLoop)
-        , m_pendingPerformWorkInvocations(0)
+    TimerObject(RunLoop* runLoop) : m_runLoop(runLoop)
     {
         int methodIndex = metaObject()->indexOfMethod("performWork()");
         m_method = metaObject()->method(methodIndex);
     }
 
-    Q_SLOT void performWork() {
-        // It may happen that a secondary thread adds more method invocations via
-        // RunLoop::dispatch(), which will schedule a call to this function. If during
-        // performWork() event loop messages get processed, it may happen that this
-        // function is called again. In this case we should protected ourselves against
-        // recursive - and thus out-of-order - message dispatching and instead perform
-        // the work serially.
-        m_pendingPerformWorkInvocations++;
-        if (m_pendingPerformWorkInvocations > 1)
-            return;
-
-        while (m_pendingPerformWorkInvocations) {
-            m_runLoop->performWork();
-            m_pendingPerformWorkInvocations--;
-        }
-    }
+    Q_SLOT void performWork() { m_runLoop->performWork(); }
     inline void wakeUp() { m_method.invoke(this, Qt::QueuedConnection); }
 
 protected:
@@ -74,7 +57,6 @@ protected:
 private:
     RunLoop* m_runLoop;
     QMetaMethod m_method;
-    int m_pendingPerformWorkInvocations;
 };
 
 static QEventLoop* currentEventLoop;
