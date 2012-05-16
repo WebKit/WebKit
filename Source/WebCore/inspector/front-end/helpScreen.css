@@ -106,29 +106,43 @@ body:not(.platform-mac) .help-close-button {
     float: right;
 }
 
-.help-table {
+.help-container {
     width: 100%;
     -webkit-user-select: auto;
+    -webkit-column-width: 480px;
 }
 
-.help-column-table {
-    border-collapse: collapse;
+.help-block {
+    display: inline-block;
+    width: 480px;
+    padding-bottom: 9px;
 }
 
-.help-table > tr > th {
-    padding-top: 6px;
-    text-align: left;
-    color: rgb(221, 221, 0);
+#settings .help-container {
+    -webkit-column-width: 240px;
 }
 
-.help-table > tr > td {
-    white-space: nowrap;
-    vertical-align: top;
-    width: 50%;
+#settings .help-block {
+    width: 240px;
+}
+
+.help-line {
+    padding-bottom: 3px;
 }
 
 .help-key-cell {
+    display: inline-block;
+    width: 280px;
     text-align: right;
+}
+
+.help-cell {
+    display: inline;
+}
+
+.help-section-title {
+    font-weight: bold;
+    color: rgb(221, 221, 0);
 }
 
 .help-key {
@@ -154,7 +168,7 @@ body.platform-mac .help-key {
 }
 
 .help-content p {
-    margin: 5px 0 5px 0;
+    margin: 0 0 3px 0;
 }
 
 .help-content fieldset {
@@ -175,11 +189,6 @@ body.platform-mac .help-key {
 
 .help-content p.help-section {
     margin: 0 0 15px 0;
-}
-
-.help-section-title {
-    color: rgb(221, 221, 0);
-    text-align: left;
 }
 
 .settings-experiments-warning-subsection-warning {

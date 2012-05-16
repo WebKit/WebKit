@@ -55,7 +55,7 @@ WebInspector.HelpScreen = function(title)
 /**
  * @type {WebInspector.HelpScreen}
  */
-WebInspector.HelpScreen.visibleScreen_ = null;
+WebInspector.HelpScreen._visibleScreen = null;
 
 WebInspector.HelpScreen.prototype = {
     showModal: function()
