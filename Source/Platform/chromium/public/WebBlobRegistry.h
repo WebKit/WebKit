@@ -28,60 +28,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebBlobRegistry_h
+#define WebBlobRegistry_h
 
-#if ENABLE(BLOB)
+#include "WebCommon.h"
 
-#include "BlobRegistryProxy.h"
+namespace WebKit {
 
-#include "BlobData.h"
-#include "KURL.h"
-#include "ResourceHandle.h"
-#include "WebKit.h"
-#include "platform/WebURL.h"
-#include <public/Platform.h>
-#include <public/WebBlobData.h>
-#include <public/WebBlobRegistry.h>
-#include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
+class WebBlobData;
+class WebURL;
 
-// We are part of the WebKit implementation.
-using namespace WebKit;
+class WebBlobRegistry {
+public:
+    WEBKIT_EXPORT static WebBlobRegistry* create();
 
-namespace WebCore {
+    virtual ~WebBlobRegistry() { }
 
-BlobRegistry& blobRegistry()
-{
-    ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(BlobRegistryProxy, instance, ());
-    return instance;
-}
+    // Registers a blob URL referring to the specified blob data.
+    virtual void registerBlobURL(const WebURL&, WebBlobData&) = 0;
+    
+    // Registers a blob URL referring to the blob data identified by the specified srcURL.
+    virtual void registerBlobURL(const WebURL&, const WebURL& srcURL) = 0;
 
-BlobRegistryProxy::BlobRegistryProxy()
-    : m_webBlobRegistry(WebKit::Platform::current()->blobRegistry())
-{
-}
+    virtual void unregisterBlobURL(const WebURL&) = 0;
+};
 
-void BlobRegistryProxy::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
-{
-    if (m_webBlobRegistry) {
-        WebBlobData webBlobData(blobData);
-        m_webBlobRegistry->registerBlobURL(url, webBlobData);
-    }
-}
+} // namespace WebKit
 
-void BlobRegistryProxy::registerBlobURL(const KURL& url, const KURL& srcURL)
-{
-    if (m_webBlobRegistry)
-        m_webBlobRegistry->registerBlobURL(url, srcURL);
-}
-
-void BlobRegistryProxy::unregisterBlobURL(const KURL& url)
-{
-    if (m_webBlobRegistry)
-        m_webBlobRegistry->unregisterBlobURL(url);
-}
-
-} // namespace WebCore
-
-#endif
+#endif // WebBlobRegistry_h

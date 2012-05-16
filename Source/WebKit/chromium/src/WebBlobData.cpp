@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
-#include "platform/WebBlobData.h"
 
 #include "BlobData.h"
+#include <public/WebBlobData.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;

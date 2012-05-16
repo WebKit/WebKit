@@ -34,6 +34,8 @@
             'chromium/public/Platform.h',
             'chromium/public/WebAudioBus.h',
             'chromium/public/WebAudioDevice.h',
+            'chromium/public/WebBlobData.h',
+            'chromium/public/WebBlobRegistry.h',
             'chromium/public/WebCString.h',
             'chromium/public/WebCanvas.h',
             'chromium/public/WebClipboard.h',

@@ -28,31 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBlobRegistry_h
-#define WebBlobRegistry_h
-
-#include "WebCommon.h"
-
-namespace WebKit {
-
-class WebBlobData;
-class WebURL;
-
-class WebBlobRegistry {
-public:
-    WEBKIT_EXPORT static WebBlobRegistry* create();
-
-    virtual ~WebBlobRegistry() { }
-
-    // Registers a blob URL referring to the specified blob data.
-    virtual void registerBlobURL(const WebURL&, WebBlobData&) = 0;
-    
-    // Registers a blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const WebURL&, const WebURL& srcURL) = 0;
-
-    virtual void unregisterBlobURL(const WebURL&) = 0;
-};
-
-} // namespace WebKit
-
-#endif // WebBlobRegistry_h
+#include "../../../../Platform/chromium/public/WebBlobRegistry.h"

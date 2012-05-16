@@ -297,8 +297,6 @@
                 'public/platform/WebArrayBufferView.h',
                 'public/platform/WebAudioBus.h',
                 'public/platform/WebAudioDevice.h',
-                'public/platform/WebBlobData.h',
-                'public/platform/WebBlobRegistry.h',
                 'public/platform/WebCanvas.h',
                 'public/platform/WebColor.h',
                 'public/platform/WebCommon.h',

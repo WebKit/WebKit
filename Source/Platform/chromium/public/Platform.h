@@ -41,6 +41,7 @@
 namespace WebKit {
 
 class WebAudioBus;
+class WebBlobRegistry;
 class WebClipboard;
 class WebFileSystem;
 class WebMediaStreamCenter;
@@ -73,6 +74,12 @@ public:
     virtual double audioHardwareSampleRate() { return 0; }
     virtual size_t audioHardwareBufferSize() { return 0; }
     virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
+
+
+    // Blob ----------------------------------------------------------------
+
+    // Must return non-null.
+    virtual WebBlobRegistry* blobRegistry() { return 0; }
 
 
     // FileSystem ----------------------------------------------------------

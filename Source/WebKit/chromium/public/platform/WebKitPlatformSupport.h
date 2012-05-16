@@ -50,7 +50,6 @@ namespace WebKit {
 
 class WebApplicationCacheHost; // FIXME: Does this belong in platform?
 class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
-class WebBlobRegistry;
 class WebCookieJar;
 class WebFileUtilities;
 class WebIDBFactory; // FIXME: Does this belong in platform?
@@ -77,11 +76,6 @@ public:
 
     // May return null.
     virtual WebCookieJar* cookieJar() { return 0; }
-
-    // Blob ----------------------------------------------------------------
-
-    // Must return non-null.
-    virtual WebBlobRegistry* blobRegistry() { return 0; }
 
     // DOM Storage --------------------------------------------------
 
