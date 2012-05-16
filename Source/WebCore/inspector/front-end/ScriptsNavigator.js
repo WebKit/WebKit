@@ -132,7 +132,7 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {function()=} callback
+     * @param {function(boolean)=} callback
      */
     rename: function(uiSourceCode, callback)
     {

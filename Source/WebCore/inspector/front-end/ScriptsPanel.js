@@ -990,10 +990,19 @@ WebInspector.ScriptsPanel.prototype = {
             this._navigatorController.showNavigatorOverlay();
         this._navigator.rename(snippetJavaScriptSource, callback.bind(this));
     
-        function callback()
+        /**
+         * @param {boolean} committed
+         */
+        function callback(committed)
         {
             if (shouldHideNavigator)
                 this._navigatorController.hideNavigatorOverlay();
+
+            if (!committed) {
+                WebInspector.scriptSnippetModel.deleteScriptSnippet(snippetJavaScriptSource);
+                return;
+            }
+
             this._showSourceLine(snippetJavaScriptSource);
         }
     },

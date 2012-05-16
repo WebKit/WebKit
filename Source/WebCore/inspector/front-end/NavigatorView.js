@@ -243,7 +243,7 @@ WebInspector.NavigatorView.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {function()=} callback
+     * @param {function(boolean)=} callback
      */
     rename: function(uiSourceCode, callback)
     {
@@ -260,19 +260,22 @@ WebInspector.NavigatorView.prototype = {
                 this._fileRenamed(uiSourceCode, newTitle);
             else
                 this._updateScriptTitle(uiSourceCode);
-            afterEditing();
+            afterEditing(true);
         }
 
         function cancelHandler()
         {
-            afterEditing();
+            afterEditing(false);
         }
 
-        function afterEditing()
+        /**
+         * @param {boolean} committed
+         */
+        function afterEditing(committed)
         {
             WebInspector.markBeingEdited(scriptTreeElement.treeOutline.element, false);
             if (callback)
-                callback();
+                callback(committed);
         }
 
         var editingConfig = new WebInspector.EditingConfig(commitHandler.bind(this), cancelHandler.bind(this));
