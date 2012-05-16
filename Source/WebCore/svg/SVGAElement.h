@@ -40,9 +40,6 @@ class SVGAElement : public SVGStyledTransformableElement,
 public:
     static PassRefPtr<SVGAElement> create(const QualifiedName&, Document*);
 
-protected:
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
-
 private:
     SVGAElement(const QualifiedName&, Document*);
 

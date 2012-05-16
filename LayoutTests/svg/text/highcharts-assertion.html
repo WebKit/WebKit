@@ -1,0 +1,14 @@
+<html>
+<head>
+    <title>This test passes if it doesn't crash</title>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
+</head>
+<body>
+<svg>
+    <text y="50"><tspan> </tspan><script>document.body.offsetTop;</script><tspan>PASS</tspan></text>
+</svg>
+</body>
+</html

@@ -238,19 +238,6 @@ bool SVGAElement::childShouldCreateRenderer(const NodeRenderingContext& childCon
     return SVGElement::childShouldCreateRenderer(childContext);
 }
 
-void SVGAElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
-{
-    SVGStyledTransformableElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
-    if (changedByParser || !renderer())
-        return;
-
-    // Invalidate the TextPosition cache in SVGTextLayoutAttributesBuilder as it may now point
-    // to no-longer existing SVGTextPositioningElements and thus needs to be rebuilt.
-    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer()))
-        textRenderer->invalidateTextPositioningElements();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

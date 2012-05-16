@@ -43,14 +43,14 @@ class SVGTextLayoutAttributesBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributesBuilder);
 public:
     SVGTextLayoutAttributesBuilder();
-    void buildLayoutAttributesForWholeTree(RenderSVGText*);
+    bool buildLayoutAttributesForForSubtree(RenderSVGText*);
     void buildLayoutAttributesForTextRenderer(RenderSVGInlineText*);
 
-    void rebuildMetricsForWholeTree(RenderSVGText*);
     void rebuildMetricsForTextRenderer(RenderSVGInlineText*);
 
     // Invoked whenever the underlying DOM tree changes, so that m_textPositions is rebuild.
     void clearTextPositioningElements() { m_textPositions.clear(); }
+    unsigned numberOfTextPositioningElements() const { return m_textPositions.size(); }
 
 private:
     struct TextPosition {
@@ -66,9 +66,8 @@ private:
         unsigned length;
     };
 
-    bool buildLayoutAttributesIfNeeded(RenderSVGText*);
+    void buildCharacterDataMap(RenderSVGText*);
     void collectTextPositioningElements(RenderObject*, const UChar*& lastCharacter);
-    void buildLayoutAttributes(RenderSVGText*);
     void fillCharacterDataMap(const TextPosition&);
 
 private:

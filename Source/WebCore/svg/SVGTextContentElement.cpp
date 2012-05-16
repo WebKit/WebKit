@@ -321,19 +321,6 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     return static_cast<SVGTextContentElement*>(node);
 }
 
-void SVGTextContentElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
-{
-    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
-    if (changedByParser || !renderer())
-        return;
-
-    // Invalidate the TextPosition cache in SVGTextLayoutAttributesBuilder as it may now point
-    // to no-longer existing SVGTextPositioningElements and thus needs to be rebuilt.
-    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer()))
-        textRenderer->invalidateTextPositioningElements();
-}
-
 }
 
 #endif // ENABLE(SVG)

@@ -48,7 +48,6 @@ public:
 private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
-    virtual void willBeDestroyed();
     virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 

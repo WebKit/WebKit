@@ -36,6 +36,7 @@ class RenderSVGInlineText;
 class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement*);
+    virtual ~RenderSVGText();
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
@@ -48,17 +49,13 @@ public:
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
 
     bool needsReordering() const { return m_needsReordering; }
-
-    // Call this method when either the children of a DOM text element have changed, or the length of
-    // the text in any child element has changed.
-    void invalidateTextPositioningElements();
-
-    void layoutAttributesChanged(RenderObject*);
-    void layoutAttributesWillBeDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
-    void rebuildLayoutAttributes(bool performFullRebuild = false);
-    void rebuildLayoutAttributes(Vector<SVGTextLayoutAttributes*>& affectedAttributes);
-
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
+
+    void subtreeChildWasAdded(RenderObject*);
+    void subtreeChildWillBeRemoved(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
+    void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
+    void subtreeStyleDidChange(RenderSVGInlineText*);
+    void subtreeTextDidChange(RenderSVGInlineText*);
 
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
@@ -80,6 +77,8 @@ private:
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, ApplyContainerFlipOrNot = ApplyContainerFlip, bool* wasFixed = 0) const;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
+    virtual void removeChild(RenderObject*) OVERRIDE;
+    virtual void willBeDestroyed() OVERRIDE;
 
     virtual FloatRect objectBoundingBox() const { return frameRect(); }
     virtual FloatRect strokeBoundingBox() const;
@@ -90,6 +89,8 @@ private:
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
+
+    bool shouldHandleSubtreeMutations() const;
 
     bool m_needsReordering : 1;
     bool m_needsPositioningValuesUpdate : 1;

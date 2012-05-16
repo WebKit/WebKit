@@ -1,3 +1,19 @@
+2012-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION(r105057): Infinite loop inside SVGTextLayoutEngine::currentLogicalCharacterMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=83405
+
+        Reviewed by Darin Adler.
+
+        Add three new testcases covering the problem.
+
+        * svg/text/add-tspan-position-bug-expected.html: Added.
+        * svg/text/add-tspan-position-bug.html: Added.
+        * svg/text/highcharts-assertion-expected.txt: Added.
+        * svg/text/highcharts-assertion.html: Added.
+        * svg/text/modify-tspan-position-bug-expected.html: Added.
+        * svg/text/modify-tspan-position-bug.html: Added.
+
 2012-05-15  Abhishek Arya  <inferno@chromium.org>
 
         Crash in Document::nodeChildrenWillBeRemoved.

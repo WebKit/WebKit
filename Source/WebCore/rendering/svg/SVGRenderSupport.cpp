@@ -197,8 +197,10 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
                     // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
                     if (child->isSVGShape())
                         toRenderSVGShape(child)->setNeedsShapeUpdate();
-                    else if (child->isSVGText())
+                    else if (child->isSVGText()) {
+                        toRenderSVGText(child)->setNeedsTextMetricsUpdate();
                         toRenderSVGText(child)->setNeedsPositioningValuesUpdate();
+                    }
 
                     needsLayout = true;
                 }
