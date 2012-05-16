@@ -1,3 +1,11 @@
+2012-05-16  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for change in r117310.
+
+        * platform/chromium-mac/fast/block/float/overhanging-tall-block-expected.png:
+        * platform/chromium-mac/fast/block/float/overhanging-tall-block-expected.txt: Removed.
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-05-16  Peter Kasting  <pkasting@google.com>
 
         Fix bad expectation added in r117249.
