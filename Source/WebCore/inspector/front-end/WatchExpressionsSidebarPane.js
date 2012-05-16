@@ -138,6 +138,7 @@ WebInspector.WatchExpressionsSection = function()
 
     this.element.addEventListener("mousemove", this._mouseMove.bind(this), true);
     this.element.addEventListener("mouseout", this._mouseOut.bind(this), true);
+    this.element.addEventListener("dblclick", this._sectionDoubleClick.bind(this), false);
 }
 
 WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";
@@ -236,9 +237,20 @@ WebInspector.WatchExpressionsSection.prototype = {
         this.update();
     },
 
+    _sectionDoubleClick: function(event)
+    {
+        if (event.target !== this.element && event.target !== this.propertiesElement && event.target !== this.emptyElement)
+            return;
+        event.consume();
+        this.addNewExpressionAndEdit();
+    },
+
     updateExpression: function(element, value)
     {
-        this.watchExpressions[element.property.watchIndex] = value;
+        if (value === null)
+            delete this.watchExpressions[element.property.watchIndex];
+        else
+            this.watchExpressions[element.property.watchIndex] = value;
         this.saveExpressions();
         this.update();
     },
