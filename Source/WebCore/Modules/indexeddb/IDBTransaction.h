@@ -66,7 +66,7 @@ public:
     static const AtomicString& modeToString(unsigned short, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;
-    bool finished() const;
+    bool isFinished() const;
 
     const String& mode() const;
     IDBDatabase* db() const;

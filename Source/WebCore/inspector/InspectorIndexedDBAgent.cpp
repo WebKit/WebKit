@@ -361,7 +361,7 @@ static PassRefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(InspectorObject* keyRange
 
 static PassRefPtr<Key> keyFromIDBKey(IDBKey* idbKey)
 {
-    if (!idbKey || !idbKey->valid())
+    if (!idbKey || !idbKey->isValid())
         return 0;
 
     RefPtr<Key> key;

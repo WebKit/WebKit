@@ -177,7 +177,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::delete");
-    if (!key || !key->valid()) {
+    if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
@@ -231,7 +231,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::index");
-    if (m_transaction->finished()) {
+    if (m_transaction->isFinished()) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
@@ -324,7 +324,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, Pa
 
 void IDBObjectStore::transactionFinished()
 {
-    ASSERT(m_transaction->finished());
+    ASSERT(m_transaction->isFinished());
 
     // Break reference cycles.
     m_indexMap.clear();

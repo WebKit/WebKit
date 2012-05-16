@@ -184,7 +184,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         }
         if (hasKeyPath) {
             RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-            if (keyPathKey && !keyPathKey->valid()) {
+            if (keyPathKey && !keyPathKey->isValid()) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
@@ -201,14 +201,14 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
                 }
             }
         }
-        if (key && !key->valid()) {
+        if (key && !key->isValid()) {
             ec = IDBDatabaseException::DATA_ERR;
             return;
         }
         for (IndexMap::iterator it = m_indexes.begin(); it != m_indexes.end(); ++it) {
             const RefPtr<IDBIndexBackendImpl>& index = it->second;
             RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
-            if (indexKey && !indexKey->valid()) {
+            if (indexKey && !indexKey->isValid()) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
@@ -255,7 +255,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         if (autoIncrement) {
             if (!key) {
                 RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
-                if (!autoIncKey->valid()) {
+                if (!autoIncKey->isValid()) {
                     callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Maximum key generator value reached."));
                     return;
                 }
@@ -279,7 +279,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         }
     }
 
-    ASSERT(key && key->valid());
+    ASSERT(key && key->isValid());
 
     RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->backingStore()->createInvalidRecordIdentifier();
     if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(objectStore->databaseId(), objectStore->id(), *key, recordIdentifier.get())) {
@@ -297,7 +297,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             indexKeys.append(indexKey.release());
             continue;
         }
-        ASSERT(indexKey->valid());
+        ASSERT(indexKey->isValid());
 
         if ((!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) && !index->addingKeyAllowed(indexKey.get(), key.get())) {
             objectStore->resetAutoIncrementKeyCache();
@@ -372,7 +372,7 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::delete");
     RefPtr<IDBKey> key = prpKey;
-    if (!key || !key->valid()) {
+    if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }

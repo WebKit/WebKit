@@ -100,7 +100,7 @@ IDBTransactionBackendInterface* IDBTransaction::backend() const
     return m_backend.get();
 }
 
-bool IDBTransaction::finished() const
+bool IDBTransaction::isFinished() const
 {
     return m_transactionFinished;
 }

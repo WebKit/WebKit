@@ -98,7 +98,7 @@ public:
     };
 
     Type type() const { return m_type; }
-    bool valid() const { return m_type != InvalidType; }
+    bool isValid() const { return m_type != InvalidType; }
 
     const KeyArray& array() const
     {

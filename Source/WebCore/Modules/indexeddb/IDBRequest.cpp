@@ -251,7 +251,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
     IDB_TRACE("IDBRequest::onSuccess(IDBKey)");
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
-    if (idbKey && idbKey->valid())
+    if (idbKey && idbKey->isValid())
         m_result = IDBAny::create(idbKey);
     else
         m_result = IDBAny::create(SerializedScriptValue::undefinedValue());
