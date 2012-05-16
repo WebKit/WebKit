@@ -1251,9 +1251,6 @@
           '<(SHARED_INTERMEDIATE_DIR)/webkit',
           '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
         ],
-        'mac_framework_dirs': [
-          '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
-        ],
         'msvs_disabled_warnings': [
           4138, 4244, 4291, 4305, 4344, 4355, 4521, 4099,
         ],
@@ -1996,16 +1993,6 @@
       'direct_dependent_settings': {
         'include_dirs': [
           '<@(webcore_include_dirs)',
-        ],
-        'mac_framework_dirs': [
-          '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',
-          '$(SDKROOT)/System/Library/Frameworks/Accelerate.framework',
-          '$(SDKROOT)/System/Library/Frameworks/CoreServices.framework',
-          '$(SDKROOT)/System/Library/Frameworks/Foundation.framework',
-          '$(SDKROOT)/System/Library/Frameworks/CoreFoundation.framework',
-          '$(SDKROOT)/System/Library/Frameworks/AudioToolbox.framework',
-          '$(SDKROOT)/System/Library/Frameworks/AudioUnit.framework',
-          '$(SDKROOT)/System/Library/Frameworks/CoreAudio.framework',
         ],
       },
       'conditions': [
