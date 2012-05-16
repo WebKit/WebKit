@@ -185,7 +185,12 @@ bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned
             ++srcUnpackAlignment;
     }
 
-    outputVector.resize(width * height * 4);
+    unsigned int packedSize;
+    // Output data is tightly packed (alignment == 1).
+    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+        return false;
+    outputVector.resize(packedSize);
+
     return packPixels(cairo_image_surface_get_data(imageSurface.get()), SourceFormatBGRA8,
                       width, height, srcUnpackAlignment, format, type, alphaOp, outputVector.data());
 }

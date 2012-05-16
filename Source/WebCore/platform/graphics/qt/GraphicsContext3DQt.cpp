@@ -1614,7 +1614,13 @@ bool GraphicsContext3D::getImageData(Image* image,
     AlphaOp neededAlphaOp = AlphaDoNothing;
     if (premultiplyAlpha)
         neededAlphaOp = AlphaDoPremultiply;
-    outputVector.resize(nativeImage.byteCount());
+
+    unsigned int packedSize;
+    // Output data is tightly packed (alignment == 1).
+    if (computeImageSizeInBytes(format, type, image->width(), image->height(), 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+        return false;
+    outputVector.resize(packedSize);
+
     return packPixels(nativeImage.bits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, neededAlphaOp, outputVector.data());
 }
 

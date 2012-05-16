@@ -79,7 +79,11 @@ bool GraphicsContext3D::getImageData(Image* image,
     const SkBitmap& skiaImageRef = skiaImage->bitmap();
     SkAutoLockPixels lock(skiaImageRef);
     ASSERT(skiaImageRef.rowBytes() == skiaImageRef.width() * 4);
-    outputVector.resize(skiaImageRef.rowBytes() * skiaImageRef.height());
+    unsigned int packedSize;
+    // Output data is tightly packed (alignment == 1).
+    if (computeImageSizeInBytes(format, type, skiaImageRef.width(), skiaImageRef.height(), 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+        return false;
+    outputVector.resize(packedSize);
     return packPixels(reinterpret_cast<const uint8_t*>(skiaImageRef.getPixels()),
                       SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8,
                       skiaImageRef.width(), skiaImageRef.height(), 0,

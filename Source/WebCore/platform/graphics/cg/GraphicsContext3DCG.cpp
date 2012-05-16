@@ -240,7 +240,13 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!pixelData)
         return false;
     const UInt8* rgba = CFDataGetBytePtr(pixelData.get());
-    outputVector.resize(width * height * 4);
+
+    unsigned int packedSize;
+    // Output data is tightly packed (alignment == 1).
+    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+        return false;
+    outputVector.resize(packedSize);
+
     unsigned int srcUnpackAlignment = 0;
     size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
     unsigned int padding = bytesPerRow - bitsPerPixel / 8 * width;
