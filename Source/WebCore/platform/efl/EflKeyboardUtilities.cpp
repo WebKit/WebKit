@@ -50,6 +50,12 @@ static WindowsKeyMap& windowsKeyMap()
     return windowsKeyMap;
 }
 
+static inline void addCharactersToKeyMap(const char from, const char to)
+{
+    for (char c = from; c <= to; c++)
+        keyMap().set(String(&c, 1), String::format("U+%04X", c));
+}
+
 static void createKeyMap()
 {
     for (unsigned int i = 1; i < 25; i++) {
@@ -78,6 +84,7 @@ static void createKeyMap()
     keyMap().set("ISO_Left_Tab", "U+0009");
     keyMap().set("BackSpace", "U+0008");
     keyMap().set("space", "U+0020");
+    keyMap().set("Print", "PrintScreen");
     // Keypad location
     keyMap().set("KP_Left", "Left");
     keyMap().set("KP_Right", "Right");
@@ -89,6 +96,17 @@ static void createKeyMap()
     keyMap().set("KP_End", "End");
     keyMap().set("KP_Insert", "Insert");
     keyMap().set("KP_Delete", "U+007F");
+ 
+    addCharactersToKeyMap('a', 'z');
+    addCharactersToKeyMap('A', 'Z');
+    addCharactersToKeyMap('0', '9');
+}
+
+static inline void addCharactersToWinKeyMap(const char from, const char to, const int baseCode)
+{
+    int i = 0;
+    for (char c = from; c <= to; c++, i++)
+        windowsKeyMap().set(String(&c, 1), baseCode + i);
 }
 
 static void createWindowsKeyMap()
@@ -120,7 +138,7 @@ static void createWindowsKeyMap()
     windowsKeyMap().set("Left", VK_LEFT);
     windowsKeyMap().set("Up", VK_UP);
     windowsKeyMap().set("Down", VK_DOWN);
-    windowsKeyMap().set("Print", VK_PRINT);
+    windowsKeyMap().set("Print", VK_SNAPSHOT);
     windowsKeyMap().set("Insert", VK_INSERT);
     windowsKeyMap().set("Delete", VK_DELETE);
 
@@ -155,17 +173,11 @@ static void createWindowsKeyMap()
     windowsKeyMap().set("KP_Delete", VK_DELETE);
 
     // Set alphabet to the windowsKeyMap.
-    const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
-    for (unsigned int i = 0; i < 26; i++) {
-        String key(alphabet + i, 1);
-        windowsKeyMap().set(key, VK_A + i);
-    }
+    addCharactersToWinKeyMap('a', 'z', VK_A);
+    addCharactersToWinKeyMap('A', 'Z', VK_A);
 
     // Set digits to the windowsKeyMap.
-    for (unsigned int i = 0; i < 10; i++) {
-        String key = String::number(i);
-        windowsKeyMap().set(key, VK_0 + i);
-    }
+    addCharactersToWinKeyMap('0', '9', VK_0);
 
     // Set shifted digits to the windowsKeyMap.
     windowsKeyMap().set("exclam", VK_1);
@@ -209,6 +221,8 @@ String singleCharacterString(const String& keyName)
         return String("\x8");
     if (keyName == "Tab")
         return String("\t");
+    if (keyName == "Print")
+        return String("");
     return keyName;
 }
 

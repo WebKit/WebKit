@@ -1,3 +1,14 @@
+2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] PlatformKeyboardEvent: figures, letters and printscreen key handling
+        https://bugs.webkit.org/show_bug.cgi?id=85503
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Bug-related testcases are unskipped.
+
+        * platform/efl/Skipped:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Tests that require DASHBOARD_SUPPORT should be moved to test expectations

@@ -799,8 +799,6 @@ fast/events/drag-parent-node.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
 fast/events/option-tab.html
-fast/events/special-key-events-in-input-text.html
-fast/forms/enter-clicks-buttons.html
 fast/forms/input-search-press-escape-key.html
 
 # BUG: not scrolling correctly
