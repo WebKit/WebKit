@@ -78,51 +78,11 @@ WebInspector.HeapSnapshotRealWorker.prototype.__proto__ = WebInspector.HeapSnaps
 
 /**
  * @constructor
- */
-WebInspector.AsyncTaskQueue = function()
-{
-    this._queue = [];
-    this._isTimerSheduled = false;
-}
-
-WebInspector.AsyncTaskQueue.prototype = {
-    /**
-     * @param {function()} task
-     */
-    addTask: function(task)
-    {
-        this._queue.push(task);
-        this._scheduleTimer();
-    },
-
-    _onTimeout: function()
-    {
-        this._isTimerSheduled = false;
-        var task = this._queue.shift();
-        try {
-            task();
-        } finally {
-            this._scheduleTimer();
-        }
-    },
-
-    _scheduleTimer: function()
-    {
-        if (this._queue.length && !this._isTimerSheduled) {
-            setTimeout(this._onTimeout.bind(this), 0);
-            this._isTimerSheduled = true;
-        }
-    }
-}
-
-/**
- * @constructor
  * @extends {WebInspector.HeapSnapshotWorkerWrapper}
  */
 WebInspector.HeapSnapshotFakeWorker = function()
 {
     this._dispatcher = new WebInspector.HeapSnapshotWorkerDispatcher(window, this._postMessageFromWorker.bind(this));
-    this._asyncTaskQueue = new WebInspector.AsyncTaskQueue();
 }
 
 WebInspector.HeapSnapshotFakeWorker.prototype = {
@@ -133,7 +93,7 @@ WebInspector.HeapSnapshotFakeWorker.prototype = {
             if (this._dispatcher)
                 this._dispatcher.dispatchMessage({data: message});
         }
-        this._asyncTaskQueue.addTask(dispatch.bind(this));
+        setTimeout(dispatch.bind(this), 0);
     },
 
     terminate: function()
@@ -147,7 +107,7 @@ WebInspector.HeapSnapshotFakeWorker.prototype = {
         {
             this.dispatchEventToListeners("message", message);
         }
-        this._asyncTaskQueue.addTask(send.bind(this));
+        setTimeout(send.bind(this), 0);
     }
 };
 
