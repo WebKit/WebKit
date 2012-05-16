@@ -1,3 +1,14 @@
+2012-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117332.
+        http://trac.webkit.org/changeset/117332
+        https://bugs.webkit.org/show_bug.cgi?id=86679
+
+        It makes the Qt Linux bot very unhappy (Requested by darktears
+        on #webkit).
+
+        * platform/qt/Skipped:
+
 2012-05-16  Erik Arvidsson  <arv@chromium.org>
 
         Make window-property-shadowing-name.html fail faster

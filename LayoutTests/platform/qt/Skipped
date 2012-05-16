@@ -955,8 +955,9 @@ fast/selectors/unqualified-hover-strict.html
 # failing media tests
 # =========================================================================== #
 
-# Track is not enable yet
-media/track
+# [Qt] media tests are flakey
+# https://bugs.webkit.org/show_bug.cgi?id=57983
+media
 
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
@@ -1076,24 +1077,6 @@ media/media-document-audio-repaint.html
 # [Qt] media/video-playbackrate.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=57476
 media/video-playbackrate.html
-
-media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
-media/W3C/video/canPlayType/canPlayType_codecs_order_1.html
-media/W3C/video/canPlayType/canPlayType_codecs_order_3.html
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
-media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
-media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
-media/audio-garbage-collect.html
-media/media-continues-playing-after-replace-source.html
-media/nodesFromRect-shadowContent.html
-media/sources-fallback-codecs.html
-media/video-controls-rendering-toggle-display-none.html
-media/video-controls-toggling.html
-media/video-playing-and-pause.html
-media/video-volume.html
 
 # ============================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
