@@ -581,21 +581,30 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
 
     case gif_extension:
     {
-      int len = count = q[1];
+      count = q[1];
       gstate es = gif_skip_block;
 
+      // NOTE: We use the spec-mandated block lengths below where applicable,
+      // instead of the value in q[1]. If the two disagree, the GIF is
+      // malformed; the main thing we want to avoid is having the GIF specify a
+      // smaller number in q[1] than the spec requires and then having our
+      // processing code for these extensions blindly read off the end of a
+      // too-short heap buffer.
       switch (*q)
       {
       case 0xf9:
         es = gif_control_extension;
+        count = 4;
         break;
 
       case 0x01:
         // ignoring plain text extension
+        count = 12;
         break;
 
       case 0xff:
         es = gif_application_extension;
+        count = 11;
         break;
 
       case 0xfe:
@@ -603,8 +612,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         break;
       }
 
-      if (len)
-        GETN(len, es);
+      if (count)
+        GETN(count, es);
       else
         GETN(1, gif_image_start);
     }

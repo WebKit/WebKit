@@ -1,3 +1,17 @@
+2012-05-15  Peter Kasting  <pkasting@google.com>
+
+        Malformed GIF can cause decoder to read off end of heap buffer
+        https://bugs.webkit.org/show_bug.cgi?id=86531
+
+        Reviewed by Adam Barth.
+
+        The test here is only expected to catch problems if run under Address
+        Sanitizer or a similar memory-checking utility.
+
+        * fast/images/read-past-end-of-buffer-expected.txt: Added.
+        * fast/images/read-past-end-of-buffer.html: Added.
+        * fast/images/resources/wrong-block-length.gif: Added.
+
 2012-05-16  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] REGRESSION?(62951): media tests fail
