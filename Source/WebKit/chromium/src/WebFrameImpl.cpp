@@ -154,6 +154,7 @@
 #include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
+#include "WebPrintParams.h"
 #include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSecurityOrigin.h"
@@ -444,8 +445,8 @@ private:
 // want to delegate all printing related calls to the plugin.
 class ChromePluginPrintContext : public ChromePrintContext {
 public:
-    ChromePluginPrintContext(Frame* frame, WebPluginContainerImpl* plugin, int printerDPI)
-        : ChromePrintContext(frame), m_plugin(plugin), m_pageCount(0), m_printerDPI(printerDPI)
+    ChromePluginPrintContext(Frame* frame, WebPluginContainerImpl* plugin, const WebPrintParams& printParams)
+        : ChromePrintContext(frame), m_plugin(plugin), m_pageCount(0), m_printParams(printParams)
     {
     }
 
@@ -468,7 +469,8 @@ public:
 
     virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
     {
-        m_pageCount = m_plugin->printBegin(IntRect(printRect), m_printerDPI);
+        m_printParams.printContentArea = IntRect(printRect);
+        m_pageCount = m_plugin->printBegin(m_printParams);
     }
 
     virtual int pageCount() const
@@ -494,7 +496,9 @@ private:
     // Set when printing.
     WebPluginContainerImpl* m_plugin;
     int m_pageCount;
-    int m_printerDPI;
+    WebPrintParams m_printParams;
+    WebPrintScalingOption m_printScalingOption;
+
 };
 
 static WebDataSource* DataSourceForDocLoader(DocumentLoader* loader)
@@ -1439,9 +1443,23 @@ VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& poin
     return node->renderer()->positionForPoint(result.localPoint());
 }
 
-int WebFrameImpl::printBegin(const WebSize& pageSize,
+// TODO(kmadhusu@chromium.org): Remove this function after fixing
+// crbug.com/85132. For more information, please refer to the comments in
+// WebFrame.h
+int WebFrameImpl::printBegin(const WebSize& printContentSize,
                              const WebNode& constrainToNode,
                              int printerDPI,
+                             bool* useBrowserOverlays) {
+    WebRect printableArea(0, 0, printContentSize.width, printContentSize.height);
+    WebSize paperSize(printContentSize);
+    WebRect printContentArea(0, 0, printContentSize.width, printContentSize.height);
+    WebPrintParams printParams(printContentArea, printableArea, paperSize,
+                               printerDPI, WebPrintScalingOptionSourceSize);
+    return printBegin(printParams, constrainToNode, useBrowserOverlays);
+}
+
+int WebFrameImpl::printBegin(const WebPrintParams& printParams,
+                             const WebNode& constrainToNode,
                              bool* useBrowserOverlays)
 {
     ASSERT(!frame()->document()->isFrameSet());
@@ -1456,12 +1474,12 @@ int WebFrameImpl::printBegin(const WebSize& pageSize,
     }
 
     if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-        m_printContext = adoptPtr(new ChromePluginPrintContext(frame(), pluginContainer, printerDPI));
+        m_printContext = adoptPtr(new ChromePluginPrintContext(frame(), pluginContainer, printParams));
     else
         m_printContext = adoptPtr(new ChromePrintContext(frame()));
 
-    FloatRect rect(0, 0, static_cast<float>(pageSize.width),
-                         static_cast<float>(pageSize.height));
+    FloatRect rect(0, 0, static_cast<float>(printParams.printContentArea.width),
+                         static_cast<float>(printParams.printContentArea.height));
     m_printContext->begin(rect.width(), rect.height());
     float pageHeight;
     // We ignore the overlays calculation for now since they are generated in the

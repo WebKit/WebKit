@@ -72,6 +72,7 @@
 #include "ScrollView.h"
 #include "ScrollbarTheme.h"
 #include "UserGestureIndicator.h"
+#include "WebPrintParams.h"
 #include "WheelEvent.h"
 #include <public/Platform.h>
 #include <public/WebClipboard.h>
@@ -243,10 +244,12 @@ bool WebPluginContainerImpl::isPrintScalingDisabled() const
     return m_webPlugin->isPrintScalingDisabled();
 }
 
-int WebPluginContainerImpl::printBegin(const IntRect& printableArea,
-                                       int printerDPI) const
+int WebPluginContainerImpl::printBegin(const WebPrintParams& printParams) const
 {
-    return m_webPlugin->printBegin(printableArea, printerDPI);
+    return m_webPlugin->printBegin(printParams.printContentArea, printParams.printerDPI);
+    // FIXME: After committing this CL, update the chrome plugin printBegin()
+    // function to use the overloaded printBegin function.
+    // return m_webPlugin->printBegin(printParams);
 }
 
 bool WebPluginContainerImpl::printPage(int pageNumber,

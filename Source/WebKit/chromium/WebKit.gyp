@@ -223,6 +223,7 @@
                 'public/WebPluginContainer.h',
                 'public/WebPluginDocument.h',
                 'public/WebPluginListBuilder.h',
+                'public/WebPrintParams.h',
                 'public/WebPrintScalingOption.h',
                 'public/WebPopupMenu.h',
                 'public/WebPopupMenuInfo.h',

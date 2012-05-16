@@ -1,3 +1,37 @@
+2012-05-15  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [chromium] Overloaded printBegin() function to support auto fit to page functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=84312
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        (WebKit):
+        (WebFrame):
+        * public/WebPlugin.h:
+        (WebKit):
+        (WebPlugin):
+        (WebKit::WebPlugin::printBegin):
+        * public/WebPrintParams.h: Added.
+        (WebKit):
+        (WebPrintParams):
+        (WebKit::WebPrintParams::WebPrintParams):
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePluginPrintContext::ChromePluginPrintContext):
+        (WebKit::ChromePluginPrintContext::computePageRects):
+        (ChromePluginPrintContext):
+        (WebKit):
+        (WebKit::WebFrameImpl::printBegin):
+        * src/WebFrameImpl.h:
+        (WebKit):
+        (WebFrameImpl):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::printBegin):
+        * src/WebPluginContainerImpl.h:
+        (WebKit):
+        (WebPluginContainerImpl):
+
 2012-05-15  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Add unit testing to WebTransformationMatrix
