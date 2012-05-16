@@ -1,3 +1,23 @@
+2012-05-16  Geoffrey Garen  <ggaren@apple.com>
+
+        GC is not thread-safe when moving values between C stacks
+        https://bugs.webkit.org/show_bug.cgi?id=86672
+
+        Reviewed by Phil Pizlo.
+
+        GC pauses thread A while marking thread A, and then B while marking B,
+        which isn't safe against A and B moving values between each others'
+        stacks.
+
+        This is a theoretical bug -- I haven't been able to reproduce it
+        in the wild.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromOtherThread):
+        (JSC::MachineThreads::gatherConservativeRoots): Pause all C stacks for the
+        duration of stack marking, to avoid missing values that might be moving
+        between C stacks.
+
 2012-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Block freeing thread should not free blocks when we are actively requesting them

@@ -452,8 +452,6 @@ static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 
 void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots, Thread* thread)
 {
-    suspendThread(thread->platformThread);
-
     PlatformThreadRegisters regs;
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
@@ -463,8 +461,6 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     void* stackBase = thread->stackBase;
     swapIfBackwards(stackPointer, stackBase);
     conservativeRoots.add(stackPointer, stackBase);
-
-    resumeThread(thread->platformThread);
 
     freePlatformThreadRegisters(regs);
 }
@@ -484,12 +480,23 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         // thread that had been suspended while holding the malloc lock.
         fastMallocForbid();
 #endif
+        for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
+            if (!equalThread(thread->platformThread, currentPlatformThread))
+                suspendThread(thread->platformThread);
+        }
+
         // It is safe to access the registeredThreads list, because we earlier asserted that locks are being held,
         // and since this is a shared heap, they are real locks.
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
             if (!equalThread(thread->platformThread, currentPlatformThread))
                 gatherFromOtherThread(conservativeRoots, thread);
         }
+
+        for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
+            if (!equalThread(thread->platformThread, currentPlatformThread))
+                resumeThread(thread->platformThread);
+        }
+
 #ifndef NDEBUG
         fastMallocAllow();
 #endif
