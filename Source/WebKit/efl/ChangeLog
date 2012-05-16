@@ -1,3 +1,26 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
+        https://bugs.webkit.org/show_bug.cgi?id=85585
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add new function to Ewk_Security_Origin to set the application cache
+        quota. Implement reachedApplicationCacheOriginQuota in
+        ChromeClientEfl. Add function to the Ewk_View to report that the
+        application cache quota was reached.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::reachedApplicationCacheOriginQuota):
+        * ewk/ewk_security_origin.cpp:
+        (ewk_security_origin_application_cache_quota_set):
+        * ewk/ewk_security_origin.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_exceeded_application_cache_quota):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+
 2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController  evaluateScriptInIsolatedWorld implementation

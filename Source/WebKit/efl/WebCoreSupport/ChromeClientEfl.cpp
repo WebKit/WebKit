@@ -34,6 +34,7 @@
 #include "config.h"
 #include "ChromeClientEfl.h"
 
+#include "ApplicationCacheStorage.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include "FloatRect.h"
@@ -53,6 +54,7 @@
 #include "WindowFeatures.h"
 #include "ewk_frame_private.h"
 #include "ewk_private.h"
+#include "ewk_security_origin_private.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
 #include <Evas.h>
@@ -395,9 +397,16 @@ void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
     notImplemented();
 }
 
-void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
+void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, int64_t totalSpaceNeeded)
 {
-    notImplemented();
+    Ewk_Security_Origin* ewkOrigin = ewk_security_origin_new(origin);
+    int64_t defaultOriginQuota = WebCore::cacheStorage().defaultOriginQuota();
+
+    int64_t newQuota = ewk_view_exceeded_application_cache_quota(m_view, ewkOrigin, defaultOriginQuota, totalSpaceNeeded);
+    if (newQuota)
+        ewk_security_origin_application_cache_quota_set(ewkOrigin, newQuota);
+
+    ewk_security_origin_free(ewkOrigin);
 }
 
 #if ENABLE(TOUCH_EVENTS)

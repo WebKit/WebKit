@@ -3499,6 +3499,30 @@ bool ewk_view_should_interrupt_javascript(Evas_Object* ewkView)
 
 /**
  * @internal
+ * This is called whenever the application is asking to store data to the cache and the
+ * quota allocated to that application is exceeded. Browser may use this to increase the
+ * size of quota before the originating operation fails.
+ *
+ * @param ewkView View.
+ * @param origin Security origin.
+ * @param defaultOriginQuota Default quota for origin.
+ * @param totalSpaceNeeded The total space needed in the cache in order to fulfill
+ * application's requirement.
+ */
+int64_t ewk_view_exceeded_application_cache_quota(Evas_Object* ewkView, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)
+{
+    DBG("ewkView=%p", ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, 0);
+    if (!smartData->api->exceeded_application_cache_quota)
+        return 0;
+
+    INF("defaultOriginQuota=%" PRIu64 " totalSpaceNeeded=%" PRIu64, defaultOriginQuota, totalSpaceNeeded);
+    return smartData->api->exceeded_application_cache_quota(smartData, origin, defaultOriginQuota, totalSpaceNeeded);
+}
+
+/**
+ * @internal
  * This is called whenever the web site shown in @param frame is asking to store data
  * to the database @param databaseName and the quota allocated to that web site
  * is exceeded. Browser may use this to increase the size of quota before the

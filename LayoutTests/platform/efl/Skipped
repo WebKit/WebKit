@@ -277,23 +277,24 @@ http/tests/misc/copy-resolves-urls.html
 # EFL's LayoutTestController does not implement setCacheModel
 fast/dom/HTMLScriptElement/nested-execution.html
 
-# EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
-http/tests/appcache
-
-# EFL's LayoutTestController does not implement clearApplicationCacheForOrigin
-http/tests/appcache
-
-# EFL's LayoutTestController does not implement originsWithApplicationCache
-http/tests/appcache
-
-# EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
-http/tests/appcache
-
 # EFL's LayoutTestController does not implement setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
 # EFL's LayoutTestController overridePreference does not implement WebKitUsePreHTML5ParserQuirks preference
 fast/parser/pre-html5-parser-quirks.html
+
+# Fallback resource wasn't used for a redirect to a resource with another origin
+http/tests/appcache/fallback.html
+
+# EFL's LayoutTestController does not implement clearApplicationCacheForOrigin
+http/tests/appcache/origin-delete.html
+http/tests/appcache/origin-usage.html
+
+# EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
+http/tests/appcache/origin-usage.html
+
+# EFL's LayoutTestController does not implement originsWithApplicationCache
+http/tests/appcache/origins-with-appcache.html
 
 # EFL's LayoutTestController overridePreference does not implement WebKitOfflineWebApplicationCacheEnabled preference
 http/tests/appcache/disabled.html

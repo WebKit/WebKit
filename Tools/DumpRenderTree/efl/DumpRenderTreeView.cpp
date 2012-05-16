@@ -120,6 +120,27 @@ static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Obj
     return 5 * 1024 * 1024;
 }
 
+static uint64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)
+{
+    if (gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
+        // For example, numbers from 30000 - 39999 will output as 30000.
+        // Rounding up or down does not really matter for these tests. It's
+        // sufficient to just get a range of 10000 to determine if we were
+        // above or below a threshold.
+        int64_t truncatedSpaceNeeded = (totalSpaceNeeded / 10000) * 10000;
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%llu\n",
+               ewk_security_origin_protocol_get(origin),
+               ewk_security_origin_host_get(origin),
+               ewk_security_origin_port_get(origin),
+               truncatedSpaceNeeded);
+    }
+
+    if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())
+        return 0;
+
+    return defaultOriginQuota;
+}
+
 static bool shouldUseSingleBackingStore()
 {
     const char* useSingleBackingStore = getenv("DRT_USE_SINGLE_BACKING_STORE");
@@ -147,6 +168,7 @@ Evas_Object* drtViewAdd(Evas* evas)
     api.run_javascript_prompt = onJavaScriptPrompt;
     api.window_create = onWindowCreate;
     api.window_close = onWindowClose;
+    api.exceeded_application_cache_quota = onExceededApplicationCacheQuota;
     api.exceeded_database_quota = onExceededDatabaseQuota;
 
     return evas_object_smart_add(evas, evas_smart_class_new(&api.sc));

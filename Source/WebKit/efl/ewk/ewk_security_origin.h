@@ -110,6 +110,14 @@ EAPI uint64_t     ewk_security_origin_web_database_quota_get(const Ewk_Security_
 EAPI void         ewk_security_origin_web_database_quota_set(const Ewk_Security_Origin *o, uint64_t quota);
 
 /**
+ * Sets the application cache usage quota for a security origin.
+ *
+ * @param o security origin object
+ * @param quota the usage quota in bytes
+ */
+EAPI void         ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin *o, int64_t quota);
+
+/**
  * Release all resources allocated by a security origin object.
  *
  * @param o security origin object

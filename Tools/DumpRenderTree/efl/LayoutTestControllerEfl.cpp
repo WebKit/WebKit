@@ -543,10 +543,11 @@ void LayoutTestController::clearAllApplicationCaches()
     ewk_settings_application_cache_clear();
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long)
+void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
-    // FIXME: Implement to support application cache quotas.
-    notImplemented();
+    Ewk_Security_Origin* origin = ewk_frame_security_origin_get(browser->mainFrame());
+    ewk_security_origin_application_cache_quota_set(origin, quota);
+    ewk_security_origin_free(origin);
 }
 
 void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)

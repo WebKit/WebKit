@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ewk_security_origin.h"
 
+#include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
 #include "SecurityOrigin.h"
 #include "ewk_private.h"
@@ -77,6 +78,11 @@ void ewk_security_origin_web_database_quota_set(const Ewk_Security_Origin* origi
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setQuota(origin->securityOrigin.get(), quota);
 #endif
+}
+
+void ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin* origin, int64_t quota)
+{
+    WebCore::cacheStorage().storeUpdatedQuotaForOrigin(origin->securityOrigin.get(), quota);
 }
 
 void ewk_security_origin_free(Ewk_Security_Origin* origin)

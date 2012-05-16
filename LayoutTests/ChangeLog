@@ -1,5 +1,17 @@
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
+        https://bugs.webkit.org/show_bug.cgi?id=85585
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip the test cases that require implementation of
+        setApplicationCacheOriginQuota in EFL's LayoutTestController.
+
+        * platform/efl/Skipped:
+
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] A few tests need expected result or rebaselining
         https://bugs.webkit.org/show_bug.cgi?id=86595
 

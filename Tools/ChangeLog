@@ -1,3 +1,21 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
+        https://bugs.webkit.org/show_bug.cgi?id=85585
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Implement setApplicationCacheOriginQuota in EFL's
+        LayoutTestController.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededApplicationCacheQuota):
+        (drtViewAdd):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setApplicationCacheOriginQuota):
+
 2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController  evaluateScriptInIsolatedWorld implementation
