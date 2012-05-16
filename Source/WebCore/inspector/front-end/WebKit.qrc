@@ -27,6 +27,7 @@
     <file>CookieItemsView.js</file>
     <file>CookieParser.js</file>
     <file>CookiesTable.js</file>
+    <file>CPUProfileView.js</file>
     <file>CSSCompletions.js</file>
     <file>CSSKeywordCompletions.js</file>
     <file>CSSSelectorProfileView.js</file>
@@ -106,7 +107,6 @@
     <file>ProfileDataGridTree.js</file>
     <file>ProfileLauncherView.js</file>
     <file>ProfilesPanel.js</file>
-    <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
     <file>RawSourceCode.js</file>

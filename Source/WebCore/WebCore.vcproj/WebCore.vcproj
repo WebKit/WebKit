@@ -74205,6 +74205,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CPUProfileView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CSSCompletions.js"
 					>
 				</File>
@@ -74586,10 +74590,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ProfilesPanel.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ProfileView.js"
 					>
 				</File>
 				<File

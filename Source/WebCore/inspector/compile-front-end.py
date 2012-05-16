@@ -293,6 +293,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "BottomUpProfileDataGridTree.js",
+            "CPUProfileView.js",
             "CSSSelectorProfileView.js",
             "HeapSnapshot.js",
             "HeapSnapshotDataGrids.js",
@@ -305,7 +306,6 @@ modules = [
             "ProfileDataGridTree.js",
             "ProfilesPanel.js",
             "ProfileLauncherView.js",
-            "ProfileView.js",
             "TopDownProfileDataGridTree.js",
         ]
     },

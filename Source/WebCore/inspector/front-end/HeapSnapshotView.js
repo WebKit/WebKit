@@ -245,7 +245,7 @@ WebInspector.HeapSnapshotView.prototype = {
         this._searchFinishedCallback = finishedCallback;
 
         function matchesByName(gridNode) {
-            return ("name" in gridNode) && gridNode.name.hasSubstring(query, true);
+            return ("_name" in gridNode) && gridNode._name.hasSubstring(query, true);
         }
 
         function matchesById(gridNode) {

@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Rename the file.
-
 /**
  * @constructor
  * @extends {WebInspector.View}
