@@ -49,10 +49,9 @@ PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
     if (!dibSection.dsBm.bmBits)
         return 0;
 
-    cairo_surface_t* image = cairo_win32_surface_create_with_dib (CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight);
+    cairo_surface_t* surface = cairo_win32_surface_create_with_dib (CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight);
 
-    // The BitmapImage object takes over ownership of the cairo_surface_t*, so no need to destroy here.
-    return adoptRef(new BitmapImage(image));
+    return BitmapImage::create(new NativeImageCairo(surface));
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
@@ -96,7 +95,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        cairo_surface_t* image = frameAtIndex(i);
+        cairo_surface_t* image = frameAtIndex(i)->surface();
         if (cairo_image_surface_get_height(image) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
