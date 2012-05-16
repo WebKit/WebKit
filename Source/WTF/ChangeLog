@@ -1,3 +1,26 @@
+2012-05-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make things build with DUMP_HASHTABLE_STATS=1
+        https://bugs.webkit.org/show_bug.cgi?id=86571
+
+        Reviewed by Geoffrey Garen.
+        
+        DUMP_HASHTABLE_STATS bitrotted after the WTF separation. This patch
+        makes it build.
+        
+        Added WTF_EXPORTDATA to the global data, and WTF_EXPORT_PRIVATE to
+        the static HashTableStats methods. Added a dumpStats() method
+        that is not yet called anywhere; we can no longer rely on destroying
+        a global object to dump the stats because global destructors are
+        disallowed.
+
+        * wtf/HashTable.cpp:
+        (WTF):
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        * wtf/HashTable.h:
+        (HashTableStats):
+
 2012-05-15  Filip Pizlo  <fpizlo@apple.com>
 
         shrinkToFit() is often not called for Vectors in CodeBlock

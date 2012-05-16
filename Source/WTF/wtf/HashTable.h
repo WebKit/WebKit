@@ -54,21 +54,21 @@ namespace WTF {
 #if DUMP_HASHTABLE_STATS
 
     struct HashTableStats {
-        ~HashTableStats();
         // All of the variables are accessed in ~HashTableStats when the static struct is destroyed.
 
         // The following variables are all atomically incremented when modified.
-        static int numAccesses;
-        static int numRehashes;
-        static int numRemoves;
-        static int numReinserts;
+        WTF_EXPORTDATA static int numAccesses;
+        WTF_EXPORTDATA static int numRehashes;
+        WTF_EXPORTDATA static int numRemoves;
+        WTF_EXPORTDATA static int numReinserts;
 
         // The following variables are only modified in the recordCollisionAtCount method within a mutex.
-        static int maxCollisions;
-        static int numCollisions;
-        static int collisionGraph[4096];
+        WTF_EXPORTDATA static int maxCollisions;
+        WTF_EXPORTDATA static int numCollisions;
+        WTF_EXPORTDATA static int collisionGraph[4096];
 
-        static void recordCollisionAtCount(int count);
+        WTF_EXPORT_PRIVATE static void recordCollisionAtCount(int count);
+        WTF_EXPORT_PRIVATE static void dumpStats();
     };
 
 #endif
