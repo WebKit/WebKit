@@ -142,6 +142,7 @@ private:
     WaitingAnimationsSet m_animationsWaitingForStyle;
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
     bool m_waitingForAsyncStartNotification;
+    double m_previousTimeToNextService;
 };
 
 } // namespace WebCore

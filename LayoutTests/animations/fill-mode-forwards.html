@@ -1,0 +1,96 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var pulsingSquareAnimationEnded = false;
+    var popAnimationCounter = 0;
+
+    function addPopAnimation() {
+        var square = document.getElementById("square");
+        square.className = "pop";
+        popAnimationCounter++;
+    }
+
+    function removePopAnimation() {
+        var square = document.getElementById("square");
+        square.className = "";
+
+        if (popAnimationCounter == 2) {
+            var result = document.getElementById("result");
+            if (pulsingSquareAnimationEnded)
+                result.innerHTML = "FAIL - pop animation should not be finished after pulse animation"
+            else
+                result.innerHTML = "PASS - Test working";
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
+
+    function pulsingSquareEnded() {
+        pulsingSquareAnimationEnded = true;
+    }
+</script>
+<style>
+    body {
+        margin-left: 100px;
+        margin-top: 50px;
+    }
+    #square {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 100px;
+        background-color: blue;
+        opacity: 0;
+    }
+
+    #pulsing-square {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 100px;
+        left: 350px;
+        background-color: red;
+        opacity: 0;
+        -webkit-animation-name: pulse;
+        -webkit-animation-duration: 0.4s;
+        -webkit-animation-timing-function: ease-out;
+        -webkit-animation-iteration-count: 3;
+    }
+
+    @-webkit-keyframes pulse {
+        0% { -webkit-transform: scale(0.05); opacity: 1; }
+        30% { opacity: 1; }
+        60% { -webkit-transform: scale(0.8); opacity: 0; }
+        100% { -webkit-transform: scale(0.8); opacity: 0; }
+    }
+
+    @-webkit-keyframes pop {
+        0% { -webkit-transform: scale(0.05); opacity: 0; }
+        33% { -webkit-transform: scale(1.08); opacity: 1; }
+        66% { -webkit-transform: scale(0.92); opacity: 1; }
+        100% { -webkit-transform: scale(1.0); opacity: 1; }
+    }
+
+    .pop {
+        -webkit-animation-name: pop;
+        -webkit-animation-duration: 0.1s;
+        -webkit-animation-timing-function: ease-in-out;
+        -webkit-animation-fill-mode: forwards;
+    }
+</style>
+</head>
+
+<body>
+  <div id="square" onwebkitanimationend="removePopAnimation();"></div>
+  <div id="pulsing-square" onwebkitanimationiteration="setTimeout(addPopAnimation(), 50);"
+       onwebkitanimationend="pulsingSquareEnded()"></div>
+  <div id="result"></div>
+</body>
+</html>
+

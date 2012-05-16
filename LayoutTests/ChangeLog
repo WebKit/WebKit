@@ -1,3 +1,13 @@
+2012-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        regression(111639): Issue with simultaneous CSS animations
+        https://bugs.webkit.org/show_bug.cgi?id=85929
+
+        Reviewed by Dean Jackson.
+
+        * animations/fill-mode-forwards-expected.txt: Added.
+        * animations/fill-mode-forwards.html: Added.
+
 2012-05-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed gardening for Qt.
