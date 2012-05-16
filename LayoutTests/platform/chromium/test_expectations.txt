@@ -3777,12 +3777,6 @@ BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
-// Caused by r117050
-BUGWK86495 WIN : inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html = PASS TIMEOUT
-BUGWK86495 WIN : inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html = PASS TIMEOUT
-BUGWK86495 WIN : inspector/profiler/heap-snapshot-dominators-expansion-preserved-when-sorting.html = PASS TIMEOUT
-BUGWK86495 WIN : inspector/profiler/heap-snapshot-summary-expansion-preserved-when-sorting.html = PASS TIMEOUT
-
 BUGWK86592 LINUX : fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/inspector/resource-har-pages.html = TEXT PASS
