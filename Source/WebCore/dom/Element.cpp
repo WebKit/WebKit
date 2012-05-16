@@ -1040,22 +1040,19 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
     return false;
 }
 
-PassRefPtr<RenderStyle> Element::customStyleForRenderer()
-{
-    ASSERT_NOT_REACHED(); 
-    return 0; 
-}
-
 PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
-    if (hasCustomStyleForRenderer())
-        return customStyleForRenderer();
-    return document()->styleResolver()->styleForElement(static_cast<Element*>(this));
+    if (hasCustomCallbacks()) {
+        if (RefPtr<RenderStyle> style = customStyleForRenderer())
+            return style.release();
+    }
+
+    return document()->styleResolver()->styleForElement(this);
 }
 
 void Element::recalcStyle(StyleChange change)
 {
-    if (hasCustomWillOrDidRecalcStyle()) {
+    if (hasCustomCallbacks()) {
         if (!willRecalcStyle(change))
             return;
     }
@@ -1083,7 +1080,7 @@ void Element::recalcStyle(StyleChange change)
             clearNeedsStyleRecalc();
             clearChildNeedsStyleRecalc();
 
-            if (hasCustomWillOrDidRecalcStyle())
+            if (hasCustomCallbacks())
                 didRecalcStyle(change);
             return;
         }
@@ -1173,7 +1170,7 @@ void Element::recalcStyle(StyleChange change)
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
     
-    if (hasCustomWillOrDidRecalcStyle())
+    if (hasCustomCallbacks())
         didRecalcStyle(change);
 }
 
@@ -2100,5 +2097,24 @@ PassRefPtr<Attr> Element::ensureAttr(const QualifiedName& name)
     ASSERT(attributeData());
     return attributeData()->ensureAttr(this, name);
 }
+
+bool Element::willRecalcStyle(StyleChange)
+{
+    ASSERT(hasCustomCallbacks());
+    return true;
+}
+
+void Element::didRecalcStyle(StyleChange)
+{
+    ASSERT(hasCustomCallbacks());
+}
+
+
+PassRefPtr<RenderStyle> Element::customStyleForRenderer()
+{
+    ASSERT(hasCustomCallbacks());
+    return 0;
+}
+
 
 } // namespace WebCore

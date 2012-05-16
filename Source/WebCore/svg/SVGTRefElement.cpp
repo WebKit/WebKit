@@ -129,7 +129,7 @@ private:
     SVGShadowText(Document* document, const String& data)
         : Text(document, data)
     {
-         setHasCustomWillOrDidRecalcStyle();
+        setHasCustomCallbacks();
     }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void willRecalcTextStyle(StyleChange);

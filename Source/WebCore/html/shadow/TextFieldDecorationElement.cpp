@@ -58,7 +58,7 @@ TextFieldDecorationElement::TextFieldDecorationElement(Document* document, TextF
     , m_textFieldDecorator(decorator)
 {
     ASSERT(decorator);
-    setHasCustomStyleForRenderer();
+    setHasCustomCallbacks();
 }
 
 PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Document* document, TextFieldDecorator* decorator)

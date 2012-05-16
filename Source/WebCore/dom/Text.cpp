@@ -252,7 +252,7 @@ void Text::attach()
 
 void Text::recalcTextStyle(StyleChange change)
 {
-    if (hasCustomWillOrDidRecalcStyle())
+    if (hasCustomCallbacks())
         willRecalcTextStyle(change);
 
     if (change != NoChange && parentNode() && parentNode()->renderer()) {
@@ -290,6 +290,11 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& d
     result->parserAppendData(data.characters() + start, dataLength - start, maxChars);
 
     return result;
+}
+
+void Text::willRecalcTextStyle(StyleChange)
+{
+    ASSERT_NOT_REACHED();
 }
 
 #ifndef NDEBUG

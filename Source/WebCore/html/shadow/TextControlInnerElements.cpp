@@ -53,7 +53,7 @@ using namespace HTMLNames;
 TextControlInnerElement::TextControlInnerElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
-    setHasCustomStyleForRenderer();
+    setHasCustomCallbacks();
 }
 
 PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* document)
@@ -72,7 +72,7 @@ PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer()
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
-    setHasCustomStyleForRenderer();
+    setHasCustomCallbacks();
 }
 
 PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document)

@@ -214,11 +214,12 @@ public:
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isCharacterDataNode() const { return false; }
+    virtual bool isFrameOwnerElement() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
     bool hasAttrList() const { return getFlag(HasAttrListFlag); }
-    bool isFrameOwnerElement() const { return getFlag(IsFrameOwnerElementFlag); }
+    bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
 
     Node* shadowAncestorNode() const;
     ShadowRoot* shadowRoot() const;
@@ -686,24 +687,22 @@ private:
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
         SelfOrAncestorHasDirAutoFlag = 1 << 22,
-        HasCustomWillOrDidRecalcStyleFlag = 1 << 23,
-        HasCustomStyleForRendererFlag = 1 << 24,
 
-        HasNameFlag = 1 << 25,
+        HasNameFlag = 1 << 23,
 
-        AttributeStyleDirtyFlag = 1 << 26,
+        AttributeStyleDirtyFlag = 1 << 24,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,
 #else
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
-        InNamedFlowFlag = 1 << 28,
-        HasAttrListFlag = 1 << 29,
-        IsFrameOwnerElementFlag = 1 << 30
+        InNamedFlowFlag = 1 << 26,
+        HasAttrListFlag = 1 << 27,
+        HasCustomCallbacksFlag = 1 << 28
     };
 
-    // 2 bits remaining
+    // 4 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -719,7 +718,7 @@ protected:
         CreateShadowRoot = CreateContainer | IsShadowRootFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateFrameOwnerElement = CreateHTMLElement | IsFrameOwnerElementFlag,
+        CreateFrameOwnerElement = CreateHTMLElement | HasCustomCallbacksFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
         CreateDocument = CreateContainer | InDocumentFlag
     };
@@ -737,12 +736,7 @@ protected:
     NodeRareData* ensureRareData();
     void clearRareData();
 
-    bool hasCustomWillOrDidRecalcStyle() const { return getFlag(HasCustomWillOrDidRecalcStyleFlag); }
-    void setHasCustomWillOrDidRecalcStyle() { setFlag(true, HasCustomWillOrDidRecalcStyleFlag); }
-    
-    bool hasCustomStyleForRenderer() const { return getFlag(HasCustomStyleForRendererFlag); }
-    void setHasCustomStyleForRenderer() { setFlag(true, HasCustomStyleForRendererFlag); }
-    void clearHasCustomStyleForRenderer() { clearFlag(HasCustomStyleForRendererFlag); }
+    void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
 
 private:
     // These API should be only used for a tree scope migration.

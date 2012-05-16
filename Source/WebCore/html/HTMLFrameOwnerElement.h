@@ -64,6 +64,7 @@ private:
     friend class Frame;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isFrameOwnerElement() const OVERRIDE { return true; }
 
     Frame* m_contentFrame;
     SandboxFlags m_sandboxFlags;

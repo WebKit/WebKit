@@ -51,6 +51,7 @@ RenderPart* HTMLFrameOwnerElement::renderPart() const
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
+    ASSERT(hasCustomCallbacks());
     // This causes an unload event thus cannot be a part of removedFrom().
     if (Frame* frame = contentFrame()) {
         RefPtr<Frame> protect(frame);

@@ -279,7 +279,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     m_mediaSourceURL.setPath(createCanonicalUUIDString());
 #endif
 
-    setHasCustomWillOrDidRecalcStyle();
+    setHasCustomCallbacks();
     addElementToDocumentMap(this, document);
 }
 

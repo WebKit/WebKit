@@ -90,10 +90,9 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
     , m_haveFiredLoadEvent(false)
     , m_needsShadowTreeRecreation(false)
 {
+    ASSERT(hasCustomCallbacks());
     ASSERT(hasTagName(SVGNames::useTag));
     registerAnimatedPropertiesForSVGUseElement();
-
-    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document, bool wasInsertedByParser)
