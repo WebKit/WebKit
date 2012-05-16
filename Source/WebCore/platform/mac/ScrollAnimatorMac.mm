@@ -963,6 +963,10 @@ void ScrollAnimatorMac::cancelAnimations()
 
 void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
+    // This may not have been set to true yet if the wheel event was handled by the ScrollingTree,
+    // So set it to true here.
+    m_haveScrolledSincePageLoad = true;
+
     if (phase == PlatformWheelEventPhaseBegan)
         didBeginScrollGesture();
     else if (phase == PlatformWheelEventPhaseEnded || phase == PlatformWheelEventPhaseCancelled)
