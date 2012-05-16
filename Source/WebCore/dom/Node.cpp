@@ -976,7 +976,7 @@ void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
     removeNodeListCacheIfPossible(this, data);
 }
 
-void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName)
+void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName, Element* attributeOwnerElement)
 {
     if (hasRareData() && isAttributeNode()) {
         NodeRareData* data = rareData();
@@ -984,18 +984,25 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         data->clearChildNodeListCache();
     }
 
-    // This list should be sync'ed with NodeListsNodeData.
+    // Modifications to attributes that are not associated with an Element can't invalidate NodeList caches.
+    if (!attributeOwnerElement)
+        return;
+
+    // FIXME: Move the list of attributes each NodeList type cares about to be a static on the
+    // appropriate NodeList class. Then use those lists here and in invalidateCachesThatDependOnAttributes
+    // to only invalidate the cache types that depend on the attribute that changed.
+    // FIXME: Keep track of when we have no caches of a given type so that we can avoid the for-loop
+    // below even if a related attribute changed (e.g. if we have no RadioNodeLists, we don't need
+    // to invalidate any caches when id attributes change.)
     if (attrName != classAttr
 #if ENABLE(MICRODATA)
         && attrName != itemscopeAttr
         && attrName != itempropAttr
         && attrName != itemtypeAttr
 #endif
-        && attrName != idAttr
-        && attrName != typeAttr
-        && attrName != checkedAttr
         && attrName != nameAttr
-        && attrName != forAttr)
+        && attrName != forAttr
+        && (attrName != idAttr || !attributeOwnerElement->isFormControlElement()))
         return;
 
     if (!treeScope()->hasNodeListCaches())

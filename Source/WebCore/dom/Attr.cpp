@@ -119,7 +119,7 @@ void Attr::setValue(const AtomicString& value)
     createTextChild();
     m_ignoreChildrenChanged--;
 
-    invalidateNodeListsCacheAfterAttributeChanged(m_name);
+    invalidateNodeListsCacheAfterAttributeChanged(m_name, m_element);
 }
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
@@ -162,7 +162,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
     if (m_ignoreChildrenChanged > 0)
         return;
 
-    invalidateNodeListsCacheAfterAttributeChanged(qualifiedName());
+    invalidateNodeListsCacheAfterAttributeChanged(qualifiedName(), m_element);
 
     // FIXME: We should include entity references in the value
 

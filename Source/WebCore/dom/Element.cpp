@@ -716,7 +716,7 @@ void Element::attributeChanged(const Attribute& attribute)
             setNeedsStyleRecalc();
     }
 
-    invalidateNodeListsCacheAfterAttributeChanged(attribute.name());
+    invalidateNodeListsCacheAfterAttributeChanged(attribute.name(), this);
 
     if (!AXObjectCache::accessibilityEnabled())
         return;
