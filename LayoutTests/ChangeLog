@@ -1,3 +1,12 @@
+2012-05-16  Andras Becsi  <andras.becsi@nokia.com>
+
+        [WTR] Visited link tracking is not disabled properly
+        https://bugs.webkit.org/show_bug.cgi?id=76699
+
+        Reviewed by Jocelyn Turcotte.
+
+        * platform/qt-5.0-wk2/Skipped: Unskip passing tests.
+
 2012-05-16  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Unreviewed test expectations update

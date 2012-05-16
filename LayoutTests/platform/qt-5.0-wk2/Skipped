@@ -396,17 +396,6 @@ fast/block/float/float-in-float-hit-testing.html
 fast/dynamic/012.html
 platform/qt/plugins/qt-qwidget-plugin.html
 
-# [Qt][WK2]REGRESSION(r105461): It made 8 tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=76699
-fast/block/margin-collapse/056.html
-tables/mozilla/marvin/backgr_simple-table-column.html
-tables/mozilla/marvin/backgr_simple-table-row-group.html
-tables/mozilla/marvin/backgr_simple-table-row.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_layers-show.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
-
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
@@ -540,10 +529,6 @@ fullscreen/full-screen-iframe-legacy.html
 # [Qt][WK2] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml crashes
 # https://bugs.webkit.org/show_bug.cgi?id=80209
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
-
-# [Qt][WK2]REGRESSION(r105461): It made 8 tests fail and 30 tests flakey
-# https://bugs.webkit.org/show_bug.cgi?id=76699
-tables/mozilla/marvin/backgr_simple-table-cell.html
 
 # [Qt][WK2] Failing http/tests/plugins tests after reenabled plugins
 # https://bugs.webkit.org/show_bug.cgi?id=82895

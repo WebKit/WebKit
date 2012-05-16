@@ -130,6 +130,7 @@ static const double shutdownTimeout = 60;
 WebProcess::WebProcess()
     : ChildProcess(shutdownTimeout)
     , m_inDidClose(false)
+    , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
@@ -261,6 +262,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
+    m_shouldTrackVisitedLinks = shouldTrackVisitedLinks;
     PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
 }
 
@@ -344,7 +346,7 @@ bool WebProcess::isLinkVisited(LinkHash linkHash) const
 
 void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
 {
-    if (isLinkVisited(linkHash))
+    if (isLinkVisited(linkHash) || !m_shouldTrackVisitedLinks)
         return;
     connection()->send(Messages::WebContext::AddVisitedLinkHash(linkHash), 0);
 }

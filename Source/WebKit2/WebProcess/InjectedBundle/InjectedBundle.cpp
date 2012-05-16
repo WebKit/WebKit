@@ -111,7 +111,7 @@ WebConnection* InjectedBundle::webConnectionToUIProcess() const
 
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
-    PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
+    WebProcess::shared().setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
 }
 
 void InjectedBundle::removeAllVisitedLinks()
