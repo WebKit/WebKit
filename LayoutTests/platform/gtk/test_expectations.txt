@@ -1329,17 +1329,3 @@ BUGWK86284 : svg/text/modify-tspan-position-bug.html = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
-
-// Requires rebaseline after bug 85031
-BUGWK85565 : fast/block/float/016.html = IMAGE
-BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
-
-// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
-BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
-BUGWK84167 : editing/selection/iframe.html = IMAGE+TEXT
-BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
-BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
-BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
-BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
-BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
-BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT

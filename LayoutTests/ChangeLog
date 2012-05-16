@@ -1,3 +1,10 @@
+2012-05-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Unflag tests needing
+        rebaseline. I'll pull them from the bot ASAP.
+
 2012-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117332.
