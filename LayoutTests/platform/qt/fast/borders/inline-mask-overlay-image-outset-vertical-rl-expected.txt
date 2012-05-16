@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 125x389
-  RenderInline {SPAN} at (0,0) size 125x389 [bgcolor=#808080]
-    RenderText {#text} at (19,75) size 33x314
-      text run at (19,75) width 314: "This content should be masked"
-    RenderBR {BR} at (43,389) size 0x0
-    RenderText {#text} at (91,0) size 33x166
-      text run at (91,0) width 166: "with a soft glow."
+layer at (8,8) size 122x404
+  RenderInline {SPAN} at (0,0) size 122x404 [bgcolor=#808080]
+    RenderText {#text} at (21,75) size 30x329
+      text run at (21,75) width 329: "This content should be masked"
+    RenderBR {BR} at (44,404) size 0x0
+    RenderText {#text} at (93,0) size 30x170
+      text run at (93,0) width 170: "with a soft glow."
