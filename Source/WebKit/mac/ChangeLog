@@ -1,3 +1,19 @@
+2012-05-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 117129
+
+    2012-05-15  Anders Carlsson  <andersca@apple.com>
+
+            Use unaccelerated scrolling deltas when rubber-banding
+            https://bugs.webkit.org/show_bug.cgi?id=86503
+            <rdar://problem/11378742>
+
+            Reviewed by Sam Weinig.
+
+            * WebCoreSupport/WebSystemInterface.mm:
+            (InitWebCoreSystemInterface):
+            Init new WKSI functions.
+
 2012-05-15  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/11401642> ENABLE_IFRAME_SEAMLESS should be turned off on the branch

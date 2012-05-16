@@ -181,6 +181,10 @@ void InitWebCoreSystemInterface(void)
         INIT(FilterWasBlocked);
         INIT(FilterAddData);
         INIT(FilterDataComplete);
+
+        INIT(NSElasticDeltaForTimeDelta);
+        INIT(NSElasticDeltaForReboundDelta);
+        INIT(NSReboundDeltaForElasticDelta);
 #endif
 
     });

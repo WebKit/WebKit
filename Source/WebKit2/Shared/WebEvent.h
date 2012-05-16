@@ -182,7 +182,7 @@ public:
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Modifiers, double timestamp);
 #if PLATFORM(MAC)
-    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Modifiers, double timestamp, bool directionInvertedFromDevice);
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, Modifiers, double timestamp);
 #endif
 
     const WebCore::IntPoint position() const { return m_position; }
@@ -195,6 +195,8 @@ public:
     Phase phase() const { return static_cast<Phase>(m_phase); }
     Phase momentumPhase() const { return static_cast<Phase>(m_momentumPhase); }
     bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
+    uint32_t scrollCount() const { return m_scrollCount; }
+    const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -213,6 +215,8 @@ private:
     uint32_t m_phase; // Phase
     uint32_t m_momentumPhase; // Phase
     bool m_hasPreciseScrollingDeltas;
+    uint32_t m_scrollCount;
+    WebCore::FloatSize m_unacceleratedScrollingDelta;
 #endif
 };
 
