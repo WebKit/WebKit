@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "DragData.h"
+#include "PlatformEvent.h"
+#include "PlatformKeyboardEvent.h"
 
 #if ENABLE(DRAG_SUPPORT)
 namespace WebCore {
@@ -50,6 +52,26 @@ DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint
 {
 }
 #endif
+
+#if !PLATFORM(CHROMIUM)
+int DragData::modifierKeyState() const
+{
+    bool shiftKey, ctrlKey, altKey, metaKey;
+    shiftKey = ctrlKey = altKey = metaKey = false;
+    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
+    int keyState = 0;
+    if (shiftKey)
+        keyState = keyState | PlatformEvent::ShiftKey;
+    if (ctrlKey)
+        keyState = keyState | PlatformEvent::CtrlKey;
+    if (altKey)
+        keyState = keyState | PlatformEvent::AltKey;
+    if (metaKey)
+        keyState = keyState | PlatformEvent::MetaKey;
+    return keyState;
+}
+#endif
+
 
 } // namespace WebCore
 

@@ -239,6 +239,20 @@ static const PopupContainerSettings autofillPopupSettings = {
 
 static bool shouldUseExternalPopupMenus = false;
 
+static int webInputEventKeyStateToPlatformEventKeyState(int webInputEventKeyState)
+{
+    int platformEventKeyState = 0;
+    if (webInputEventKeyState & WebInputEvent::ShiftKey)
+        platformEventKeyState = platformEventKeyState | WebCore::PlatformEvent::ShiftKey;
+    if (webInputEventKeyState & WebInputEvent::ControlKey)
+        platformEventKeyState = platformEventKeyState | WebCore::PlatformEvent::CtrlKey;
+    if (webInputEventKeyState & WebInputEvent::AltKey)
+        platformEventKeyState = platformEventKeyState | WebCore::PlatformEvent::AltKey;
+    if (webInputEventKeyState & WebInputEvent::MetaKey)
+        platformEventKeyState = platformEventKeyState | WebCore::PlatformEvent::MetaKey;
+    return platformEventKeyState;
+}
+
 // WebView ----------------------------------------------------------------
 
 WebView* WebView::create(WebViewClient* client)
@@ -2593,12 +2607,22 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     const WebPoint& screenPoint,
     WebDragOperationsMask operationsAllowed)
 {
+    return dragTargetDragEnter(webDragData, clientPoint, screenPoint, operationsAllowed, 0);
+}
+
+WebDragOperation WebViewImpl::dragTargetDragEnter(
+    const WebDragData& webDragData,
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed,
+    int keyModifiers)
+{
     ASSERT(!m_currentDragData);
 
     m_currentDragData = webDragData;
     m_operationsAllowed = operationsAllowed;
 
-    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
+    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter, keyModifiers);
 }
 
 WebDragOperation WebViewImpl::dragTargetDragOver(
@@ -2606,9 +2630,18 @@ WebDragOperation WebViewImpl::dragTargetDragOver(
     const WebPoint& screenPoint,
     WebDragOperationsMask operationsAllowed)
 {
+    return dragTargetDragOver(clientPoint, screenPoint, operationsAllowed, 0);
+}
+
+WebDragOperation WebViewImpl::dragTargetDragOver(
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed,
+    int keyModifiers)
+{
     m_operationsAllowed = operationsAllowed;
 
-    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragOver);
+    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragOver, keyModifiers);
 }
 
 void WebViewImpl::dragTargetDragLeave()
@@ -2632,6 +2665,13 @@ void WebViewImpl::dragTargetDragLeave()
 void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
                                  const WebPoint& screenPoint)
 {
+    dragTargetDrop(clientPoint, screenPoint, 0);
+}
+
+void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
+                                 const WebPoint& screenPoint,
+                                 int keyModifiers)
+{
     ASSERT(m_currentDragData);
 
     // If this webview transitions from the "drop accepting" state to the "not
@@ -2646,6 +2686,7 @@ void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
         return;
     }
 
+    m_currentDragData->setModifierKeyState(webInputEventKeyStateToPlatformEventKeyState(keyModifiers));
     DragData dragData(
         m_currentDragData.get(),
         clientPoint,
@@ -2660,10 +2701,11 @@ void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
     m_dragScrollTimer->stop();
 }
 
-WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPoint, const WebPoint& screenPoint, DragAction dragAction)
+WebDragOperation WebViewImpl::dragTargetDragEnterOrOver(const WebPoint& clientPoint, const WebPoint& screenPoint, DragAction dragAction, int keyModifiers)
 {
     ASSERT(m_currentDragData);
 
+    m_currentDragData->setModifierKeyState(webInputEventKeyStateToPlatformEventKeyState(keyModifiers));
     DragData dragData(
         m_currentDragData.get(),
         clientPoint,

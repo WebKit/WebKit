@@ -305,16 +305,31 @@ public:
 
     // Callback methods when a drag-and-drop operation is trying to drop
     // something on the WebView.
+    // FIXME: Remove this method after chromium changes catch up.
     virtual WebDragOperation dragTargetDragEnter(
         const WebDragData&,
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;
+    virtual WebDragOperation dragTargetDragEnter(
+        const WebDragData&,
+        const WebPoint& clientPoint, const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed,
+        int keyModifiers) = 0;
+    // FIXME: Remove this method after chromium changes catch up.
     virtual WebDragOperation dragTargetDragOver(
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;
+    virtual WebDragOperation dragTargetDragOver(
+        const WebPoint& clientPoint, const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed,
+        int keyModifiers) = 0;
     virtual void dragTargetDragLeave() = 0;
+    // FIXME: Remove this method after chromium changes catch up.
     virtual void dragTargetDrop(
         const WebPoint& clientPoint, const WebPoint& screenPoint) = 0;
+    virtual void dragTargetDrop(
+        const WebPoint& clientPoint, const WebPoint& screenPoint,
+        int keyModifiers) = 0;
 
 
     // Support for resource loading initiated by plugins -------------------

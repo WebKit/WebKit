@@ -75,6 +75,11 @@ unsigned DragData::numberOfFiles() const
     return m_platformDragData->filenames().size();
 }
 
+int DragData::modifierKeyState() const
+{
+    return m_platformDragData->modifierKeyState();
+}
+
 void DragData::asFilenames(Vector<String>& result) const
 {
     const Vector<String>& filenames = m_platformDragData->filenames();

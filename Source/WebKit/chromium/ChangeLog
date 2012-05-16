@@ -1,3 +1,22 @@
+2012-05-16  Varun Jain  <varunjain@google.com>
+
+        [chromium] No modifier flags (shift/ctrl/alt) in drag&drop events on chromium linux
+        https://bugs.webkit.org/show_bug.cgi?id=86236
+
+        Reviewed by Tony Chang.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::webInputEventKeyStateToPlatformEventKeyState):
+        (WebKit):
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit::WebViewImpl::dragTargetDragOver):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: DevToolsSanityTest.TestScriptsTabIsPopulatedOnInspectedPageRefresh is broken

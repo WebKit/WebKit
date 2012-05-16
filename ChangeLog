@@ -1,3 +1,12 @@
+2012-05-16  Varun Jain  <varunjain@google.com>
+
+        [chromium] No modifier flags (shift/ctrl/alt) in drag&drop events on chromium linux
+        https://bugs.webkit.org/show_bug.cgi?id=86236
+
+        Reviewed by Tony Chang.
+
+        * ManualTests/chromium/modifiers-during-drag-and-drop.html: Added.
+
 2012-05-16  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Add WebKit API to access inner text value of input element

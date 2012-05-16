@@ -213,12 +213,14 @@ void ChromiumDataObject::addSharedBuffer(const String& name, PassRefPtr<SharedBu
 }
 
 ChromiumDataObject::ChromiumDataObject()
+    : m_modifierKeyState(0)
 {
 }
 
 ChromiumDataObject::ChromiumDataObject(const ChromiumDataObject& other)
     : RefCounted<ChromiumDataObject>()
     , m_itemList(other.m_itemList)
+    , m_modifierKeyState(0)
 {
 }
 

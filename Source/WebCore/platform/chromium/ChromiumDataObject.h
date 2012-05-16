@@ -86,6 +86,9 @@ public:
     // Used to handle files (images) being dragged out.
     void addSharedBuffer(const String& name, PassRefPtr<SharedBuffer>);
 
+    int modifierKeyState() const { return m_modifierKeyState; }
+    void setModifierKeyState(int modifierKeyState) { m_modifierKeyState = modifierKeyState; }
+
 private:
     ChromiumDataObject();
     explicit ChromiumDataObject(const ChromiumDataObject&);
@@ -95,6 +98,9 @@ private:
     void internalAddFileItem(PassRefPtr<ChromiumDataObjectItem>);
 
     Vector<RefPtr<ChromiumDataObjectItem> > m_itemList;
+
+    // State of Shift/Ctrl/Alt/Meta keys.
+    int m_modifierKeyState;
 };
 
 } // namespace WebCore

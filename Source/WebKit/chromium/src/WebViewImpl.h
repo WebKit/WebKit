@@ -231,14 +231,29 @@ public:
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed);
+    virtual WebDragOperation dragTargetDragEnter(
+        const WebDragData&,
+        const WebPoint& clientPoint,
+        const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed,
+        int keyModifiers);
     virtual WebDragOperation dragTargetDragOver(
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed);
+    virtual WebDragOperation dragTargetDragOver(
+        const WebPoint& clientPoint,
+        const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed,
+        int keyModifiers);
     virtual void dragTargetDragLeave();
     virtual void dragTargetDrop(
         const WebPoint& clientPoint,
         const WebPoint& screenPoint);
+    virtual void dragTargetDrop(
+        const WebPoint& clientPoint,
+        const WebPoint& screenPoint,
+        int keyModifiers);
     virtual unsigned long createUniqueIdentifierForRequest();
     virtual void inspectElementAt(const WebPoint& point);
     virtual WebString inspectorSettings() const;
@@ -578,7 +593,8 @@ private:
     // should be true.
     WebDragOperation dragTargetDragEnterOrOver(const WebPoint& clientPoint,
                                                const WebPoint& screenPoint,
-                                               DragAction);
+                                               DragAction,
+                                               int keyModifiers);
 
     void configureAutoResizeMode();
 
