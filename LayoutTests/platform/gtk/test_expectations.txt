@@ -29,6 +29,209 @@
 // Each test should (eventually) have a bug. Missing DRT features also go here.
 
 //////////////////////////////////////////////////////////////////////////////////////////
+// Stable branch gardening
+//////////////////////////////////////////////////////////////////////////////////////////
+
+BUGSTWKGTK : media/track/track-mode-not-changed-by-new-track.html = CRASH
+BUGSTWKGTK : fast/dom/beforeload/script-before-load-dynamic.html = CRASH
+BUGSTWKGTK : fast/dom/gc-11.html = CRASH
+BUGSTWKGTK : fast/dom/beforeload/remove-video-in-beforeload-listener.html = CRASH
+
+BUGSTWKGTK : css3/calc/block-mask-overlay-image-outset.html = PASS TEXT
+BUGSTWKGTK : editing/deleting/smart-delete-003.html = PASS TEXT
+BUGSTWKGTK : editing/deleting/smart-delete-004.html = PASS TEXT
+BUGSTWKGTK : editing/pasteboard/paste-text-008.html = PASS TEXT
+BUGSTWKGTK : editing/selection/editable-html-element.html = PASS TEXT
+BUGSTWKGTK : fast/css-generated-content/before-content-continuation-chain.html = PASS TEXT
+BUGSTWKGTK : fast/dom/object-plugin-hides-properties.html = PASS TEXT
+BUGSTWKGTK : fast/encoding/utf-16-big-endian.html = PASS TEXT
+BUGSTWKGTK : fast/encoding/utf-16-little-endian.html = PASS TEXT
+BUGSTWKGTK : fast/events/constructors/track-event-constructor.html = PASS TEXT
+BUGSTWKGTK : fast/events/keydown-function-keys.html = PASS TEXT
+BUGSTWKGTK : fast/events/resize-events.html = PASS TEXT
+BUGSTWKGTK : fast/forms/interactive-validation-assertion-by-validate-twice.html = PASS TEXT
+BUGSTWKGTK : fast/forms/interactive-validation-crash-by-style-override.html = PASS TEXT
+BUGSTWKGTK : fast/forms/interactive-validation-prevented.html = PASS TEXT
+BUGSTWKGTK : fast/forms/interactive-validation-select-crash.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-clone.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-in-relative-body.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-checkbox.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-listbox.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-menulist.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-radio.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-range.html = PASS TEXT
+BUGSTWKGTK : fast/forms/validation-message-on-textarea.html = PASS TEXT
+BUGSTWKGTK : fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html = PASS TEXT
+BUGSTWKGTK : fast/frames/flattening/iframe-flattening-nested.html = PASS TEXT
+BUGSTWKGTK : fast/history/multiple-classes-visited.html = PASS TEXT
+BUGSTWKGTK : fast/history/nested-visited-test.html = PASS TEXT
+BUGSTWKGTK : fast/history/self-is-visited.html = PASS TEXT
+BUGSTWKGTK : fast/history/sibling-visited-test.html = PASS TEXT
+BUGSTWKGTK : fast/inline/continuation-outlines-with-layers-2.html = PASS TEXT
+BUGSTWKGTK : fast/loader/stateobjects/state-url-sets-links-visited.html = PASS TEXT
+BUGSTWKGTK : fast/mutation/end-of-task-delivery.html = PASS TEXT
+BUGSTWKGTK : fast/mutation/inline-event-listener.html = PASS TEXT
+BUGSTWKGTK : fast/repaint/japanese-rl-selection-repaint-in-regions.html = PASS TEXT
+BUGSTWKGTK : fast/repaint/line-flow-with-floats-in-regions.html = PASS TEXT
+BUGSTWKGTK : fast/repaint/overflow-flipped-writing-mode-block-in-regions.html = PASS TEXT
+BUGSTWKGTK : fast/repaint/region-painting-via-layout.html = PASS TEXT
+BUGSTWKGTK : fast/repaint/transform-absolute-in-positioned-container.html = PASS TEXT
+BUGSTWKGTK : fast/ruby/ruby-text-before-child-split.html = PASS TEXT
+BUGSTWKGTK : fast/text/atsui-multiple-renderers.html = PASS TEXT
+BUGSTWKGTK : fast/text/atsui-negative-spacing-features.html = PASS TEXT
+BUGSTWKGTK : fast/text/atsui-spacing-features.html = PASS TEXT
+BUGSTWKGTK : fast/text/international/content-language-font-selection.html = PASS IMAGE
+BUGSTWKGTK : fast/text/international/content-language-with-subtags.html = PASS IMAGE
+BUGSTWKGTK : fast/text/international/spaces-combined-in-vertical-text.html = PASS TEXT
+BUGSTWKGTK : fullscreen/video-controls-override.html = PASS TEXT
+BUGSTWKGTK : http/tests/media/video-buffering-repaints-controls.html = PASS TEXT
+BUGSTWKGTK : http/tests/notifications/icon-does-not-exist.html = PASS TEXT
+BUGSTWKGTK : http/tests/notifications/icon-exists-cancel.html = PASS TEXT
+BUGSTWKGTK : http/tests/notifications/icon-exists.html = PASS TEXT
+BUGSTWKGTK : http/tests/notifications/icon-exists-show-alert-during-load.html = PASS TEXT
+BUGSTWKGTK : http/tests/notifications/icon-requires-auth.html = PASS TEXT
+BUGSTWKGTK : http/tests/security/mixedContent/insecure-css-in-iframe.html = PASS TEXT
+BUGSTWKGTK : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
+BUGSTWKGTK : http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html = PASS TEXT
+BUGSTWKGTK : http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html = PASS TEXT
+BUGSTWKGTK : http/tests/security/text-track-crossorigin.html = PASS TEXT
+BUGSTWKGTK : http/tests/xmlhttprequest/send-array-buffer.html = PASS TEXT
+BUGSTWKGTK : http/tests/xmlhttprequest/send-undefined-and-null.html = PASS TEXT
+BUGSTWKGTK : http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html = PASS TEXT
+BUGSTWKGTK : media/event-attributes.html = PASS TEXT
+BUGSTWKGTK : media/track/text-track-cue-is-reachable.html = PASS TEXT
+BUGSTWKGTK : media/track/text-track-is-reachable.html = PASS TEXT
+BUGSTWKGTK : media/track/track-active-cues.html = PASS TEXT
+BUGSTWKGTK : media/track/track-add-remove-cue.html = PASS TEXT
+BUGSTWKGTK : media/track/track-add-track.html = PASS TEXT
+BUGSTWKGTK : media/track/track-addtrack-kind.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cue-mutable.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cue-mutable-text.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cue-nothing-to-render.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cue-rendering.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cues-cuechange.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cues-enter-exit.html = PASS TEXT
+BUGSTWKGTK : media/track/track-cues-seeking.html = PASS TEXT
+BUGSTWKGTK : media/track/track-default-attribute.html = PASS TEXT
+BUGSTWKGTK : media/track/track-kind.html = PASS TEXT
+BUGSTWKGTK : media/track/track-language-preference.html = PASS TEXT
+BUGSTWKGTK : media/track/tracklist-is-reachable.html = PASS TEXT
+BUGSTWKGTK : media/track/track-load-error-readyState.html = PASS TEXT
+BUGSTWKGTK : media/track/track-load-from-element-readyState.html = PASS TEXT
+BUGSTWKGTK : media/track/track-load-from-src-readyState.html = PASS TEXT
+BUGSTWKGTK : media/track/track-mode-triggers-loading.html = PASS TEXT
+BUGSTWKGTK : media/track/track-prefer-captions.html = PASS TEXT
+BUGSTWKGTK : media/track/track-text-track-cue-list.html = PASS TEXT
+BUGSTWKGTK : media/track/track-texttracks.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc000-empty.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc001-utf8.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc002-bom.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc003-newlines.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc004-magic-header.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc005-header-comment.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc006-cue-identifiers.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc007-cue-no-id.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc008-timings-no-hours.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc009-timings-hour.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc010-no-timings.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc011-blank-lines.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc013-settings.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc014-alignment.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc015-positioning.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc016-align-positioning.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc017-line-position.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc018-align-text-line-position.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc019-cue-size.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc020-cue-size-align.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc021-valign.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc022-entities.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc023-markup.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc024-timestamp.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc025-class-markup.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc026-voice.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc027-empty-cue.html = PASS TEXT
+BUGSTWKGTK : media/track/track-webvtt-tc028-unsupported-markup.html = PASS TEXT
+BUGSTWKGTK : media/video-source-load.html = PASS TEXT
+BUGSTWKGTK : media/video-volume-slider.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_canplay.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_canplay_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_canplaythrough_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_loadeddata_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_loadedmetadata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_loadedmetadata_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_order_canplay_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_order_canplay_playing.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_order_loadedmetadata_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_order_loadstart_progress.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_play.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_playing.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_playing_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_progress.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_progress_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_timeupdate.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/events/event_timeupdate_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/networkState/networkState_during_loadstart.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/paused/paused_false_during_play.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/readyState/readyState_during_canplay.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/readyState/readyState_during_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/readyState/readyState_during_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/readyState/readyState_during_loadedmetadata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/audio/readyState/readyState_during_playing.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_codecs_order_1.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_codecs_order_3.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_canplay.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_canplay_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_canplaythrough_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_loadeddata_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_loadedmetadata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_loadedmetadata_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_order_canplay_playing.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_order_loadedmetadata_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_order_loadstart_progress.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_play.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_playing.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_playing_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_progress.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_progress_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_timeupdate.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/events/event_timeupdate_manual.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/networkState/networkState_during_loadstart.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/networkState/networkState_during_progress.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/paused/paused_false_during_play.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/readyState/readyState_during_canplay.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/readyState/readyState_during_canplaythrough.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/readyState/readyState_during_loadeddata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/readyState/readyState_during_loadedmetadata.html = PASS TEXT
+BUGSTWKGTK : media/W3C/video/readyState/readyState_during_playing.html = PASS TEXT
+BUGSTWKGTK : plugins/document-open.html = PASS TEXT
+BUGSTWKGTK : plugins/embed-attributes-style.html = PASS TEXT
+BUGSTWKGTK : plugins/get-url-with-blank-target.html = PASS TEXT
+BUGSTWKGTK : svg/custom/delete-text-crash.html = PASS TEXT
+BUGSTWKGTK : svg/custom/embedded-svg-disallowed-in-dashboard.xml = PASS TEXT
+BUGSTWKGTK : svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html = PASS TEXT
+BUGSTWKGTK : svg/custom/manually-parsed-svg-disallowed-in-dashboard.html = PASS TEXT
+BUGSTWKGTK : svg/custom/svg-disallowed-in-dashboard-object.html = PASS TEXT
+BUGSTWKGTK : svg/hixie/perf/001.xml = PASS TEXT
+BUGSTWKGTK : svg/hixie/perf/002.xml = PASS TEXT
+BUGSTWKGTK : svg/hixie/perf/007.xml = PASS TEXT
+BUGSTWKGTK : tables/mozilla_expected_failures/bugs/bug85016.html = PASS TEXT
+
+BUGSTWKGTK : fast/forms/validation-message-appearance.html = TIMEOUT
+BUGSTWKGTK : fast/forms/interactive-validation-attach-assertion.html = TIMEOUT
+
+//////////////////////////////////////////////////////////////////////////////////////////
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -150,10 +353,10 @@ BUGWK42432 : fast/dom/webtiming.html = FAIL
 BUGWK42432 : fast/dom/webtiming-navigate-within-document.html = FAIL
 BUGWK42432 : fast/dom/webtiming-document-open.html = FAIL
 BUGWK42432 : http/tests/misc/webtiming-origins.html = FAIL
-BUGWK42432 : http/tests/misc/webtiming-one-redirect.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-slow-load.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-ssl.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-two-redirects.php = FAIL
+BUGWK42432 : http/tests/misc/webtiming-one-redirect.php = PASS TEXT
+BUGWK42432 : http/tests/misc/webtiming-slow-load.php = PASS TEXT
+BUGWK42432 : http/tests/misc/webtiming-ssl.php = PASS TEXT
+BUGWK42432 : http/tests/misc/webtiming-two-redirects.php = PASS TEXT
 
 // FileSystem API is not supported.
 BUGWKGTK SKIP : fast/filesystem = FAIL
@@ -320,7 +523,7 @@ BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = C
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
-BUGWK82269 DEBUG : media/track/track-delete-during-setup.html = CRASH
+BUGWK82269 : media/track/track-delete-during-setup.html = CRASH
 BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 
 // This test is crashing when run along with other tests on the release build.
@@ -436,8 +639,6 @@ BUGWK74279 : fullscreen/full-screen-iframe-legacy.html = PASS TEXT
 
 BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 
-BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
-
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
 
 BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
@@ -453,7 +654,7 @@ BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
 
 BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 
-BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
+BUGWK80246 : fast/css/hover-update.html = PASS TEXT
 
 BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
 
@@ -509,7 +710,7 @@ BUGWK54119 : http/tests/misc/acid2.html = TIMEOUT
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
-BUGWK74270 : fast/forms/basic-selects.html = FAIL
+BUGWK74270 : fast/forms/basic-selects.html = PASS TEXT
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
 
@@ -568,7 +769,7 @@ BUGWKGTK : accessibility/visible-elements.html = FAIL
 
 // Blurring and focusing from LayoutTestController do not work.
 // Test results show a caret and focus ring when there shouldn't be.
-BUGWK53646 : editing/selection/caret-and-focus-ring.html = FAIL
+BUGWK53646 : editing/selection/caret-and-focus-ring.html = PASS TEXT
 
 // Blur and focus events are not received for the following tests.
 BUGWKGTK : fast/events/blur-focus-window-should-blur-focus-element.html = FAIL
@@ -611,9 +812,9 @@ BUGWK53964 : fast/forms/listbox-onchange.html = FAIL
 BUGWK53964 : fast/forms/listbox-selection-2.html = FAIL
 BUGWK53964 : fast/forms/option-mouseevents.html = FAIL
 
-BUGWK54119 : http/tests/misc/acid2-pixel.html = FAIL
-BUGWK54119 : fast/css/acid2.html = FAIL
-BUGWK54119 : fast/css/acid2-pixel.html = FAIL
+BUGWK54119 : http/tests/misc/acid2-pixel.html = PASS TEXT
+BUGWK54119 : fast/css/acid2.html = PASS TEXT
+BUGWK54119 : fast/css/acid2-pixel.html = PASS TEXT
 
 // The test below is not scrolled to the proper position. Perhaps because of
 // asynchronous scrollbar behavior.
@@ -633,7 +834,7 @@ BUGWK30575 : fast/dom/elementFromPoint-relative-to-viewport.html = FAIL
 BUGWK53085 : fast/canvas/patternfill-repeat.html = FAIL
 
 // keygen element rendering is broken
-BUGWK54136 : fast/html/keygen.html = FAIL
+BUGWK54136 : fast/html/keygen.html = PASS TEXT
 BUGWK54136 : http/tests/misc/submit-post-keygen.html = FAIL
 
 // [GTK] GTK+ does not support hyphenation
@@ -646,7 +847,7 @@ BUGWK44478 : fast/text/hyphenate-locale.html = FAIL
 BUGWKGTK : fast/js/i18n-bindings-locale.html = FAIL
 
 BUGWKGTK : http/tests/appcache/crash-when-navigating-away-then-back.html = FAIL
-BUGWKGTK : http/tests/appcache/fallback.html = FAIL
+BUGWKGTK : http/tests/appcache/fallback.html = PASS TEXT
 BUGWKGTK : http/tests/appcache/origin-quota.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = FAIL
@@ -662,7 +863,7 @@ BUGWKGTK : http/tests/loading/bad-server-subframe.html = FAIL
 // Needed to cover the fix for <rdar://problem/6727495>
 BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = FAIL
 BUGRDAR6727495 : http/tests/loading/gmail-assert-on-load.html = FAIL
-BUGRDAR6727495 : http/tests/loading/redirect-with-no-location-crash.html = FAIL
+BUGRDAR6727495 : http/tests/loading/redirect-with-no-location-crash.html = PASS TEXT
 BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = FAIL
 
 BUGWKGTK : http/tests/media/video-play-stall-seek.html = FAIL
@@ -680,7 +881,7 @@ BUGWKGTK : http/tests/misc/window-dot-stop.html = FAIL
 BUGWKGTK : http/tests/multipart/policy-ignore-crash.php = FAIL
 
 // Rendering of multipart images is broken.
-BUGWK54251 : http/tests/multipart/invalid-image-data.html = FAIL
+BUGWK54251 : http/tests/multipart/invalid-image-data.html = PASS TEXT
 
 BUGWKGTK : http/tests/plugins/npapi-response-headers.html = FAIL
 BUGWKGTK : http/tests/security/feed-urls-from-remote.html = FAIL
@@ -720,7 +921,7 @@ BUGWKGTK : http/tests/plugins/plugin-document-has-focus.html = FAIL
 
 // Missing resource load callback ability in DRT
 BUGWK27905 : http/tests/loading/redirect-methods.html = FAIL
-BUGWK27905 : http/tests/misc/favicon-loads-with-images-disabled.html = FAIL
+BUGWK27905 : http/tests/misc/favicon-loads-with-images-disabled.html = PASS TEXT
 
 BUGWK28668 : http/tests/appcache/auth.html = FAIL
 
@@ -769,7 +970,7 @@ BUGWKGTK : editing/selection/5825350-1.html = FAIL
 BUGWKGTK : editing/selection/5825350-2.html = FAIL
 
 // Missing layoutTestController.removeOriginAccessWhitelistEntry()
-BUGWKGTK : http/tests/xmlhttprequest/origin-whitelisting-removal.html = FAIL
+BUGWKGTK : http/tests/xmlhttprequest/origin-whitelisting-removal.html = PASS TEXT
 
 BUGWK55682 : fast/images/support-broken-image-delegate.html = FAIL
 
@@ -780,7 +981,7 @@ BUGWKGTK : http/tests/misc/will-send-request-returns-null-on-redirect.html = FAI
 BUGWK58526 : http/tests/loading/onload-vs-immediate-refresh.pl = FAIL
 
 // GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
-BUGWKGTK : http/tests/security/setDomainRelaxationForbiddenForURLScheme.html = FAIL
+BUGWKGTK : http/tests/security/setDomainRelaxationForbiddenForURLScheme.html = PASS TEXT
 
 // New failure after http://trac.webkit.org/changeset/53758
 BUGWKGTK : scrollbars/scrollbar-middleclick-nopaste.html = FAIL
@@ -833,7 +1034,6 @@ BUGWK83174 SKIP : inspector = FAIL
 BUGWK83174 SKIP : http/tests/inspector = FAIL
 BUGWK82886 SKIP : inspector/styles/override-screen-size.html = FAIL
 BUGWK72434 SKIP : inspector/styles/svg-style.xhtml = FAIL
-BUGWK43034 SKIP : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = FAIL
 BUGWK81089 SKIP : inspector/debugger/snippets-model.html = FAIL
 BUGWK43332 SKIP : inspector/debugger/dom-breakpoints.html = FAIL
 BUGWK43332 SKIP : inspector/debugger/event-listener-breakpoints.html = FAIL
@@ -881,7 +1081,7 @@ BUGWK37613 SKIP : editing/execCommand/print.html = TIMEOUT
 
 BUGWK38569 : http/tests/workers/text-encoding.html = FAIL
 
-BUGWK54189 : fast/replaced/border-radius-clip.html = FAIL
+BUGWK54189 : fast/replaced/border-radius-clip.html = PASS TEXT
 
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39102 : editing/spelling/context-menu-suggestions.html = FAIL
@@ -907,7 +1107,7 @@ BUGWK40601 : fast/events/mouse-click-events.html = FAIL
 BUGWK40601 : fast/events/mouseup-from-button2.html = FAIL
 BUGWK40601 : fast/events/right-click-focus.html = FAIL
 BUGWK40601 : editing/selection/5354455-1.html = FAIL
-BUGWK40601 : editing/selection/5354455-2.html = FAIL
+BUGWK40601 : editing/selection/5354455-2.html = PASS TEXT
 BUGWK40601 : media/controls-right-click-on-timebar.html = FAIL
 
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
@@ -917,7 +1117,7 @@ BUGWK58222 : http/tests/loading/preload-append-scan.php = FAIL
 
 // SVG tests that seem to produce incorrect output
 BUGWKGTK : svg/zoom/text/zoom-hixie-mixed-009.xml = FAIL
-BUGWKGTK : svg/custom/mask-excessive-malloc.svg = FAIL
+BUGWKGTK : svg/custom/mask-excessive-malloc.svg = PASS TEXT
 
 // No matching language preference set
 BUGWKGTK : svg/W3C-SVG-1.1/struct-cond-02-t.svg = FAIL
@@ -926,7 +1126,7 @@ BUGWKGTK : svg/W3C-SVG-1.1/struct-cond-02-t.svg = FAIL
 BUGWKGTK : svg/W3C-SVG-1.1/struct-image-04-t.svg = FAIL
 
 // The gradient limits seem broken in this test.
-BUGWKGTK : svg/batik/paints/gradientLimit.svg = FAIL
+BUGWKGTK : svg/batik/paints/gradientLimit.svg = PASS TEXT
 
 // The middle circle on both rectangles is missing in the pixel output.
 BUGWKGTK : svg/custom/circular-marker-reference-2.svg = FAIL
@@ -966,7 +1166,7 @@ BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.system.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.measure.width.space.html = FAIL
-BUGWKGTK : canvas/philip/tests/toDataURL.jpeg.alpha.html = FAIL
+BUGWKGTK : canvas/philip/tests/toDataURL.jpeg.alpha.html = PASS TEXT
 BUGWKGTK : canvas/philip/tests/type.prototype.html = FAIL
 
 
@@ -1111,11 +1311,9 @@ BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html = FAIL
 BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.1.html = FAIL
 BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.2.html = FAIL
 BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.1.html = FAIL
+BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.1.html = FAIL CRASH
 BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.2.html = FAIL
 BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = FAIL
 
 // The following Sputnik tests fail on the 32bit release bot
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html = FAIL
@@ -1168,7 +1366,7 @@ BUGWK49179 : animations/stop-animation-on-suspend.html = FAIL
 // Rounding color problems inside pixman
 BUGWK49964 : fast/canvas/canvas-getImageData.html = FAIL
 BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = FAIL
-BUGWK49964 : fast/canvas/canvas-strokePath-shadow.html = FAIL
+BUGWK49964 : fast/canvas/canvas-strokePath-shadow.html = PASS TEXT
 BUGWK49964 : fast/canvas/canvas-transforms-fillRect-shadow.html = FAIL
 BUGWK49964 : fast/canvas/canvas-scale-strokePath-shadow.html = FAIL
 BUGWK49964 : fast/canvas/rgba-parsing.html = FAIL
@@ -1176,7 +1374,7 @@ BUGWK49964 : fast/canvas/rgba-parsing.html = FAIL
 BUGWK50441 : media/controls-drag-timebar.html = FAIL
 
 BUGWK50740 : editing/spelling/spelling-backspace-between-lines.html = FAIL
-BUGWK50740 : editing/spelling/spellcheck-paste.html = FAIL
+BUGWK50740 : editing/spelling/spellcheck-paste.html = PASS TEXT
 BUGWK50740 : editing/spelling/spellcheck-paste-disabled.html = FAIL
 BUGWK50740 : editing/spelling/spellcheck-queue.html = FAIL
 BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = FAIL
@@ -1205,7 +1403,7 @@ BUGWK52798 : http/tests/security/local-user-CSS-from-remote.html = FAIL
 // LayoutTestController needs layoutTestController.displayInvalidatedRegion
 BUGWK54073 : plugins/windowless_plugin_paint_test.html = FAIL
 
-BUGWK54389 : http/tests/misc/generated-content-inside-table.html = FAIL
+BUGWK54389 : http/tests/misc/generated-content-inside-table.html = PASS TEXT
 
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = FAIL
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = FAIL
@@ -1243,7 +1441,7 @@ BUGWK59391 : editing/text-iterator/findString.html = FAIL
 BUGWK60206 : http/tests/navigation/response204.html = FAIL
 
 // Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
-BUGWKGTK : loader/navigation-while-deferring-loads.html = FAIL
+BUGWKGTK : loader/navigation-while-deferring-loads.html = PASS TEXT
 
 // [Qt][GTK] plugins/get-url-with-javascript-url.html = FAIL fails
 BUGWK60834 : plugins/get-url-with-javascript-url.html = FAIL
@@ -1293,7 +1491,7 @@ BUGWK68979 : http/tests/multipart/stop-crash.html = FAIL
 BUGWK68979 : http/tests/multipart/load-last-non-html-frame.php = FAIL
 
 // REGRESSION(r96870): editing/pasteboard/smart-paste-008.html = FAIL fails on non-Mac
-BUGWK69587 : editing/pasteboard/smart-paste-008.html = FAIL
+BUGWK69587 : editing/pasteboard/smart-paste-008.html = PASS TEXT
 
 // Fails because it does not throw a couple of expected exceptions
 BUGWKGTK : http/tests/local/fileapi/send-sliced-dragged-file.html = FAIL
@@ -1308,27 +1506,27 @@ BUGWK71022 : fast/canvas/canvas-composite-image.html = FAIL
 BUGWK71022 : fast/canvas/canvas-composite-canvas.html = FAIL
 
 // REGRESSION(r99195)
-BUGWK70609 : fast/viewport/viewport-121.html = FAIL
-BUGWK70609 : fast/viewport/viewport-122.html = FAIL
-BUGWK70609 : fast/viewport/viewport-125.html = FAIL
-BUGWK70609 : fast/viewport/viewport-129.html = FAIL
-BUGWK70609 : fast/viewport/viewport-18.html = FAIL
-BUGWK70609 : fast/viewport/viewport-36.html = FAIL
-BUGWK70609 : fast/viewport/viewport-37.html = FAIL
-BUGWK70609 : fast/viewport/viewport-43.html = FAIL
-BUGWK70609 : fast/viewport/viewport-46.html = FAIL
-BUGWK70609 : fast/viewport/viewport-52.html = FAIL
-BUGWK70609 : fast/viewport/viewport-53.html = FAIL
-BUGWK70609 : fast/viewport/viewport-54.html = FAIL
-BUGWK70609 : fast/viewport/viewport-55.html = FAIL
-BUGWK70609 : fast/viewport/viewport-60.html = FAIL
-BUGWK70609 : fast/viewport/viewport-75.html = FAIL
-BUGWK70609 : fast/viewport/viewport-76.html = FAIL
-BUGWK70609 : fast/viewport/viewport-83.html = FAIL
-BUGWK70609 : fast/viewport/viewport-86.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-3.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-4.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-6.html = FAIL
+BUGWK70609 : fast/viewport/viewport-121.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-122.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-125.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-129.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-18.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-36.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-37.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-43.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-46.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-52.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-53.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-54.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-55.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-60.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-75.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-76.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-83.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-86.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-warnings-3.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-warnings-4.html = PASS TEXT
+BUGWK70609 : fast/viewport/viewport-warnings-6.html = PASS TEXT
 
 // viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 BUGWKGTK : fast/viewport/viewport-133.html = FAIL
@@ -1353,38 +1551,38 @@ BUGWK73330 : fast/dom/Range/getClientRects.html = FAIL
 
 // 1 pixel difference between 64-bits and 32-bits
 // Some of these also present rounding issues and xx.00 vs xx.
-BUGWK62204 : svg/as-image/img-preserveAspectRatio-support-1.html = FAIL
-BUGWK62204 : svg/batik/text/smallFonts.svg = FAIL
-BUGWK62204 : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = FAIL
+BUGWK62204 : svg/as-image/img-preserveAspectRatio-support-1.html = PASS TEXT
+BUGWK62204 : svg/batik/text/smallFonts.svg = PASS TEXT
+BUGWK62204 : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = PASS TEXT
 BUGWK62204 : svg/custom/circular-marker-reference-4.svg = FAIL
-BUGWK62204 : svg/custom/empty-merge.svg = FAIL
-BUGWK62204 : svg/custom/relative-sized-inner-svg.xhtml = FAIL
+BUGWK62204 : svg/custom/empty-merge.svg = PASS TEXT
+BUGWK62204 : svg/custom/relative-sized-inner-svg.xhtml = PASS TEXT
 BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = FAIL
-BUGWK62204 : svg/custom/use-css-events.svg = FAIL
-BUGWK62204 : svg/custom/image-small-width-height.svg = FAIL
-BUGWK62204 : svg/custom/small-rect-scale.svg = FAIL
-BUGWK62204 : svg/custom/use-on-clip-path-with-transformation.svg = FAIL
+BUGWK62204 : svg/custom/use-css-events.svg = PASS TEXT
+BUGWK62204 : svg/custom/image-small-width-height.svg = PASS TEXT
+BUGWK62204 : svg/custom/small-rect-scale.svg = PASS TEXT
+BUGWK62204 : svg/custom/use-on-clip-path-with-transformation.svg = PASS TEXT
 BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = FAIL
-BUGWK62204 : svg/filters/feColorMatrix-saturate.svg = FAIL
-BUGWK62204 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = FAIL
+BUGWK62204 : svg/filters/feColorMatrix-saturate.svg = PASS TEXT
+BUGWK62204 : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS TEXT
 BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1/extend-namespace-01-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/extend-namespace-01-f.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = PASS TEXT
 BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1/text-align-08-b.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1/text-align-08-b.svg = PASS TEXT
 BUGWK62204 : svg/W3C-SVG-1.1/coords-units-02-b.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-01-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-02-f.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = FAIL
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-01-b.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-02-f.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-04-b.svg = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1-SE/types-dom-07-f.svg = PASS TEXT
 
 // Floating point inconsistencies between 32-bit and 64-bit bots
 BUGWKGTK : svg/css/composite-shadow-example.html = FAIL
@@ -1400,18 +1598,18 @@ BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
 
 // Failing since font metrics change
 BUGWKGTK : fast/block/float/overhanging-tall-block.html = FAIL
-BUGWKGTK : fast/css/percentage-non-integer.html = FAIL
-BUGWKGTK : fast/css/word-space-extra.html = FAIL
+BUGWKGTK : fast/css/percentage-non-integer.html = PASS TEXT
+BUGWKGTK : fast/css/word-space-extra.html = PASS TEXT
 BUGWKGTK : fast/css/zoom-body-scroll.html = FAIL
 BUGWKGTK : fast/repaint/moving-shadow-on-container.html = FAIL
 BUGWKGTK : fast/repaint/moving-shadow-on-path.html = FAIL
-BUGWKGTK : css3/flexbox/line-wrapping.html = FAIL
+BUGWKGTK : css3/flexbox/line-wrapping.html = PASS TEXT
 BUGWKGTK : fast/css/font-face-data-uri.html = FAIL
 BUGWKGTK : fast/css/font-face-download-error.html = FAIL
-BUGWKGTK : fast/events/keydown-1.html = FAIL
-BUGWKGTK : fast/forms/cursor-at-editable-content-boundary.html = FAIL
-BUGWKGTK : fast/text/glyph-reordering.html = FAIL
-BUGWKGTK : fast/text/ipa-tone-letters.html = FAIL
+BUGWKGTK : fast/events/keydown-1.html = PASS TEXT
+BUGWKGTK : fast/forms/cursor-at-editable-content-boundary.html = PASS TEXT
+BUGWKGTK : fast/text/glyph-reordering.html = PASS TEXT
+BUGWKGTK : fast/text/ipa-tone-letters.html = PASS TEXT
 
 BUGWK73653 : fast/events/offsetX-offsetY.html = FAIL
 BUGWK73653 : fast/forms/number/spin-in-multi-column.html = FAIL
@@ -1440,7 +1638,7 @@ BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = FAIL
 BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = FAIL
 BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = FAIL
 
-BUGWK77633 : fast/forms/listbox-clear-restore.html = FAIL
+BUGWK77633 : fast/forms/listbox-clear-restore.html = PASS IMAGE
 
 BUGWK78434 : fast/dom/Window/window-custom-prototype.html = FAIL
 BUGWK78434 : http/tests/security/cross-frame-access-object-getPrototypeOf.html = FAIL
@@ -1476,7 +1674,7 @@ BUGWK81136 : editing/selection/move-by-word-visually-crash-test-5.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-crash-test-textarea.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-crash-test-css-generated-content.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-inline-block-positioned-element.html = FAIL
-BUGWK81136 : editing/selection/move-by-word-visually-multi-line.html = FAIL
+BUGWK81136 : editing/selection/move-by-word-visually-multi-line.html = PASS TEXT
 BUGWK81136 : editing/selection/move-by-word-visually-multi-space.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-null-box.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-single-space-inline-element.html = FAIL
@@ -1485,7 +1683,7 @@ BUGWK81136 : editing/selection/move-by-word-visually-textarea.html = FAIL
 BUGWK81136 : editing/selection/move-by-word-visually-wrong-left-right.html = FAIL
 
 // Allowed to regress to fix a crash.
-BUGWK81276 : fast/inline/continuation-outlines-with-layers.html = FAIL
+BUGWK81276 : fast/inline/continuation-outlines-with-layers.html = PASS TEXT
 
 BUGWK82020 : plugins/netscape-dom-access-and-reload.html = FAIL
 
@@ -1508,8 +1706,8 @@ BUGWK83675 : fast/multicol/cell-shrinkback.html = FAIL
 // EditorClient::checkTextOfParagraph() is not implemented.
 BUGWKGTK : editing/spelling/spelling-marker-description.html = FAIL
 
-BUGWK69933 : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = FAIL
-BUGWK69933 : fast/borders/inline-mask-overlay-image-outset.html = FAIL
+BUGWK69933 : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS TEXT
+BUGWK69933 : fast/borders/inline-mask-overlay-image-outset.html = PASS TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
