@@ -1166,34 +1166,36 @@ WebInspector.HeapSnapshot.prototype = {
         // via regular properties, and for DOM wrappers. Trying to access random objects
         // can cause a crash due to insonsistent state of internal properties of wrappers.
         var flag = this._nodeFlags.canBeQueried;
+        var hiddenEdgeType = this._edgeHiddenType;
+        var internalEdgeType = this._edgeInternalType;
+        var invisibleEdgeType = this._edgeInvisibleType;
+        var edgeToNodeOffset = this._edgeToNodeOffset;
+        var edgeTypeOffset = this._edgeTypeOffset;
+        var edgeFieldsCount = this._edgeFieldsCount;
 
+        var flags = this._flags;
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
             if (iter.edge.node.isWindow)
                 list.push(iter.edge.node.nodeIndex);
         }
 
-        var edge = new WebInspector.HeapSnapshotEdge(this, undefined);
         var node = new WebInspector.HeapSnapshotNode(this);
         while (list.length) {
             var nodeIndex = list.pop();
-            if (this._flags[nodeIndex] & flag)
+            if (flags[nodeIndex] & flag)
                 continue;
             node.nodeIndex = nodeIndex;
-            this._flags[nodeIndex] |= flag;
+            flags[nodeIndex] |= flag;
             var edgesCount = node.edgesCount;
-            edge._edges = node.rawEdges;
+            var edges = node.rawEdges;
             for (var j = 0; j < edgesCount; ++j) {
-                edge.edgeIndex = j * this._edgeFieldsCount;
-                nodeIndex = edge.nodeIndex;
-                if (this._flags[nodeIndex] & flag)
+                var edgeIndex = j * edgeFieldsCount;
+                nodeIndex = edges.item(edgeIndex + edgeToNodeOffset);
+                if (flags[nodeIndex] & flag)
                     continue;
-                if (edge.isHidden || edge.isInvisible)
-                    continue;
-                if (edge.isInternal)
-                    continue;
-                var name = edge.name;
-                if (!name)
+                var type = edges.item(edgeIndex + edgeTypeOffset);
+                if (type === hiddenEdgeType || type === invisibleEdgeType || type === internalEdgeType)
                     continue;
                 list.push(nodeIndex);
             }
