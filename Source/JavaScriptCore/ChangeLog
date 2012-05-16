@@ -1,3 +1,14 @@
+2012-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Block freeing thread should not free blocks when we are actively requesting them
+        https://bugs.webkit.org/show_bug.cgi?id=86519
+
+        Reviewed by Geoff Garen.
+
+        * heap/BlockAllocator.h:
+        (JSC::BlockAllocator::allocate): Reordering the setting of the flag so its done 
+        while we hold the lock to ensure proper locking.
+
 2012-05-15  Filip Pizlo  <fpizlo@apple.com>
 
         shrinkToFit() is often not called for Vectors in CodeBlock
