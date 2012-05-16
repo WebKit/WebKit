@@ -1,3 +1,27 @@
+2012-05-16  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Gardening failures after r117123 and r117205
+        https://bugs.webkit.org/show_bug.cgi?id=86584
+
+        Unreviewed, EFL gardening.
+
+        Media expectations updated now that they draw the fullscreen icon.
+        Moved flaky test to test_expectations, unskipped unexpected pass.
+
+        * platform/efl/media/controls-after-reload-expected.png:
+        * platform/efl/media/controls-after-reload-expected.txt:
+        * platform/efl/media/controls-strict-expected.png:
+        * platform/efl/media/controls-strict-expected.txt:
+        * platform/efl/media/controls-without-preload-expected.png:
+        * platform/efl/media/controls-without-preload-expected.txt:
+        * platform/efl/media/video-controls-rendering-expected.png:
+        * platform/efl/media/video-controls-rendering-expected.txt:
+        * platform/efl/media/video-display-toggle-expected.png:
+        * platform/efl/media/video-display-toggle-expected.txt:
+        * platform/efl/media/video-zoom-controls-expected.png:
+        * platform/efl/media/video-zoom-controls-expected.txt:
+        * platform/efl/test_expectations.txt:
+
 2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] PlatformKeyboardEvent: figures, letters and printscreen key handling

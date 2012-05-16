@@ -204,9 +204,6 @@ BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
-// EventSender doesn't provide correct key string
-BUGWK84710 : fast/forms/textarea-type-spaces.html = TEXT
-
 // Requires WebP support.
 BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = FAIL
 BUGWKEFL SKIP : fast/images/webp-image-decoding.html = FAIL
@@ -475,3 +472,6 @@ BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = 
 
 // Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
+
+// Test is flaky on other platforms.
+BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT
