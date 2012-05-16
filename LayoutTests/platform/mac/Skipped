@@ -848,3 +848,6 @@ inspector/extensions/extensions-audits-content-script.html
 plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86643
+http/tests/security/contentSecurityPolicy/script-src-redirect.html
