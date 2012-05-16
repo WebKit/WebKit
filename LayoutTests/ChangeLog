@@ -1,3 +1,11 @@
+2012-05-16  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
+
+        Adding further suppressions for flaky tests on cr-linux ews.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-16  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] xhr request to non existent file response is 0 and not 404.

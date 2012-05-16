@@ -2046,7 +2046,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-BUGCR46603 SLOW RELEASE : fast/frames/lots-of-iframes.html = PASS
+BUGCR46603 RELEASE : fast/frames/lots-of-iframes.html = TIMEOUT PASS
 BUGCR46603 RELEASE : fast/frames/lots-of-objects.html = TIMEOUT PASS
 // These tests are really slow in debug.
 BUGCR46603 SKIP DEBUG : fast/frames/lots-of-iframes.html = TIMEOUT
@@ -3788,6 +3788,20 @@ BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-add.html = TEXT PASS
 BUGWK86592 LINUX : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT PASS
+BUGWK86592 LINUX : fast/loader/link-no-URL.html = TEXT PASS
+BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-remove.html = TEXT PASS
+
+BUGWK86592 LINUX : svg/custom/js-late-pattern-creation.svg = IMAGE PASS
+BUGWK86592 LINUX : fast/repaint/fixed-scale.html = IMAGE PASS
+BUGWK86592 LINUX : fast/repaint/fixed-table-overflow-zindex.html = IMAGE PASS
+BUGWK86592 LINUX : fast/repaint/fixed-tranformed.html = IMAGE PASS
+BUGWK86592 LINUX : fast/repaint/scroll-fixed-reflected-layer.html = IMAGE PASS
 
 BUGWK86592 LINUX : fast/loader/text-document-wrapping.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html = TIMEOUT PASS
+BUGWK86592 LINUX : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
+BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
+
+// strange "Unexpected no expected results found" on cr-linux ews
+BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
+BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
