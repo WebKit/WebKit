@@ -873,6 +873,33 @@ fast/spatial-navigation/snav-multiple-select.html
 fast/spatial-navigation/snav-single-select.html
 userscripts/user-script-plugin-document.html
 
+# BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
+fast/repaint/absolute-position-change-containing-block.html
+fast/repaint/absolute-position-moved.html
+fast/repaint/fixed-to-relative-position-with-absolute-child.html
+fast/repaint/inline-overflow.html
+fast/repaint/inline-relative-positioned.html
+fast/repaint/overflow-flipped-writing-mode-block.html
+fast/repaint/overflow-flipped-writing-mode-table.html
+fast/repaint/text-in-relative-positioned-inline.html
+fast/repaint/trailing-floats-root-line-box-overflow.html
+fast/table/simple_paint.html
+fast/table/border-collapsing/cached-cell-append.html
+fast/table/border-collapsing/cached-cell-remove.html
+fast/table/border-collapsing/cached-change-cell-border-color.html
+fast/table/border-collapsing/cached-change-cell-border-width.html
+fast/table/border-collapsing/cached-change-cell-sl-border-color.html
+fast/table/border-collapsing/cached-change-col-border-color.html
+fast/table/border-collapsing/cached-change-col-border-width.html
+fast/table/border-collapsing/cached-change-colgroup-border-color.html
+fast/table/border-collapsing/cached-change-colgroup-border-width.html
+fast/table/border-collapsing/cached-change-row-border-color.html
+fast/table/border-collapsing/cached-change-row-border-width.html
+fast/table/border-collapsing/cached-change-table-border-color.html
+fast/table/border-collapsing/cached-change-table-border-width.html
+fast/table/border-collapsing/cached-change-tbody-border-color.html
+fast/table/border-collapsing/cached-change-tbody-border-width.html
+
 # BUG: The form widgets are too big for Edje to process, however this makes the page not scrollable at all.
 fast/block/float/overhanging-tall-block.html
 

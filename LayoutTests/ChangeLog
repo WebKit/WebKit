@@ -1,3 +1,12 @@
+2012-05-16  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Unskip passing tests related to computedStyleIncludingVisitedInfo and display
+        https://bugs.webkit.org/show_bug.cgi?id=86473
+
+        Unreviewed gardening, partially reverts r117073.
+
+        * platform/efl/Skipped:
+
 2012-05-16  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Add WebKit API to access inner text value of input element
