@@ -50,6 +50,12 @@ WebTransformationMatrix::WebTransformationMatrix(const WebTransformationMatrix& 
 {
 }
 
+WebTransformationMatrix::~WebTransformationMatrix()
+{
+    // We need to call m_private.reset(0). See the comment of WebPrivateOwnPtr class.
+    m_private.reset(0);
+}
+
 #if WEBKIT_IMPLEMENTATION
 WebTransformationMatrix::WebTransformationMatrix(const TransformationMatrix& t)
     : m_private(new TransformationMatrix(t))

@@ -51,6 +51,7 @@ public:
     WebTransformationMatrix();
     WebTransformationMatrix(double a, double b, double c, double d, double e, double f);
     WebTransformationMatrix(const WebTransformationMatrix&);
+    ~WebTransformationMatrix();
 
     // Operations that return a separate matrix and do not modify this one.
     WebTransformationMatrix inverse() const;
