@@ -1,3 +1,21 @@
+2012-05-16  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: pass WebSecurityOrigin to embedder
+        https://bugs.webkit.org/show_bug.cgi?id=86348
+
+        Reviewed by Adam Barth.
+
+        Pass the WebSecurityOrigin of the SpeecReco object to the embedder when calling
+        start(). The origin will be used to determine whether speech recognition is
+        allowed or not.
+
+        * public/WebSpeechRecognitionParams.h:
+        (WebKit::WebSpeechRecognitionParams::WebSpeechRecognitionParams):
+        (WebKit::WebSpeechRecognitionParams::origin):
+        (WebSpeechRecognitionParams):
+        * src/SpeechRecognitionClientProxy.cpp:
+        (WebKit::SpeechRecognitionClientProxy::start):
+
 2012-05-15  Tien-Ren Chen  <trchen@chromium.org>
 
         [Chromium] CCTimer::isActive() is incorrect inside tick callback
