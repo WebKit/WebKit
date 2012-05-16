@@ -221,10 +221,6 @@ fast/events/pagehide-timeout.html
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/events/pageshow-pagehide-on-back-cached.html
 
-# [WK2] Support layoutTestController.dumpProgressFinishedCallback() in WKTR
-# https://bugs.webkit.org/show_bug.cgi?id=81613
-http/tests/loading/progress-finished-callback.html
-
 # [WK2] http/tests/navigation/https-in-page-cache.html times out on mac-wk2
 # https://bugs.webkit.org/show_bug.cgi?id=81622
 http/tests/navigation/https-in-page-cache.html

@@ -1,3 +1,15 @@
+2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [WK2] Support layoutTestController.dumpProgressFinishedCallback() in WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=81613
+
+        Reviewed by Brady Eidson.
+
+        Unskip the related test from mac-kw2 and gtk-wk2 as support has been added.
+
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-wk2/Skipped:
+
 2012-05-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         layerX/layerY warning should be removed

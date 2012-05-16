@@ -325,9 +325,6 @@ http/tests/security/cookies/third-party-cookie-blocking.html
 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 
-# WebKitTestRunner needs an implementation of layoutTestController.dumpProgressFinishedCallback
-http/tests/loading/progress-finished-callback.html
-
 # WebKitTestRunner needs an implementation of layoutTestController.overridePreference
 # https://bugs.webkit.org/show_bug.cgi?id=42197
 http/tests/navigation/ping-same-origin.html
