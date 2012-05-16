@@ -267,7 +267,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemoteWebArchive = (equalIgnoringCase("application/x-webarchive", mimeType) || equalIgnoringCase("multipart/related", mimeType))
-            && !m_substituteData.isValid() && !url.isLocalFile();
+            && !m_substituteData.isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(url);
         if (!frameLoader()->client()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->policyChecker()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.

@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PageSerializer.h"
 #include "QuotedPrintable.h"
+#include "SchemeRegistry.h"
 #include "SharedBuffer.h"
 
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -103,7 +104,7 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create()
 PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* data)
 {
     // For security reasons we only load MHTML pages from the local file system.
-    if (!url.isLocalFile())
+    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(url))
         return 0;
 
     MHTMLParser parser(data);
