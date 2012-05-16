@@ -1,3 +1,10 @@
+2012-05-16  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+        Modified test fails after r117123.
+
+        * platform/qt/Skipped:
+
 2012-05-16  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Gardening failures after r117123 and r117205
