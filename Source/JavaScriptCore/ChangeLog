@@ -1,3 +1,37 @@
+2012-05-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GC in the middle of JSObject::allocatePropertyStorage can cause badness
+        https://bugs.webkit.org/show_bug.cgi?id=83839
+
+        Reviewed by Geoff Garen.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * jit/JITStubs.cpp: Making changes to use the new return value of growPropertyStorage.
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::growPropertyStorage): Renamed to more accurately reflect that we're 
+        growing our already-existing PropertyStorage.
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::setPropertyStorage): "Atomically" sets the new property storage 
+        and the new structure so that we can be sure a GC never occurs when our Structure
+        info is out of sync with our PropertyStorage.
+        (JSC):
+        (JSC::JSObject::putDirectInternal): Moved the check to see if we should 
+        allocate more backing store before the actual property insertion into 
+        the structure.
+        (JSC::JSObject::putDirectWithoutTransition): Ditto.
+        (JSC::JSObject::transitionTo): Ditto.
+        * runtime/Structure.cpp:
+        (JSC::Structure::suggestedNewPropertyStorageSize): Added to keep the resize policy 
+        for property backing stores contained within the Structure class.
+        (JSC):
+        * runtime/Structure.h:
+        (JSC::Structure::shouldGrowPropertyStorage): Lets clients know if another insertion 
+        into the Structure would require resizing the property backing store so that they can 
+        preallocate the required storage.
+        (Structure):
+
 2012-05-16  Geoffrey Garen  <ggaren@apple.com>
 
         GC is not thread-safe when moving values between C stacks

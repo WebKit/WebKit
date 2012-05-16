@@ -266,6 +266,13 @@ void Structure::growPropertyStorageCapacity()
         m_propertyStorageCapacity *= 2;
 }
 
+size_t Structure::suggestedNewPropertyStorageSize()
+{
+    if (isUsingInlineStorage())
+        return JSObject::baseExternalStorageCapacity;
+    return m_propertyStorageCapacity * 2;
+}
+ 
 void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, PropertyName propertyName)
 {
     StringImpl* rep = propertyName.impl();
