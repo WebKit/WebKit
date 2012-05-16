@@ -1,3 +1,15 @@
+2012-05-16  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Fix uninitialized struct member added by r117258
+        https://bugs.webkit.org/show_bug.cgi?id=86611
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When adding a new member to _Ewk_View_Smart_Class,
+        EWK_VIEW_SMART_CLASS_VERSION needs to be updated.
+
+        * ewk/ewk_view.h:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not implement setApplicationCacheOriginQuota
