@@ -186,6 +186,7 @@ void RenderTableCell::updateLogicalWidth(LayoutUnit w)
 
 void RenderTableCell::layout()
 {
+    updateFirstLetter();
     layoutBlock(cellWidthChanged());
     setCellWidthChanged(false);
 }
