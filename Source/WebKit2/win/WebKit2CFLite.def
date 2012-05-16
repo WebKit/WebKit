@@ -217,6 +217,7 @@ EXPORTS
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setStandardFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
+        ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z

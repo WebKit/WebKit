@@ -1,3 +1,13 @@
+2012-05-16  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add WebKit API to access inner text value of input element
+        https://bugs.webkit.org/show_bug.cgi?id=85353
+
+        Reviewed by Kent Tamura.
+
+        * win/WebKit2.def: Added HTMLInputElement::setEditingValue
+        * win/WebKit2CFLite.def: Added HTMLInputElement::setEditingValue
+
 2012-05-16  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Move WebFrameNetworkingContext to WebKit namespace.

@@ -634,6 +634,22 @@ void Internals::setSuggestedValue(Element* element, const String& value, Excepti
     inputElement->setSuggestedValue(value);
 }
 
+void Internals::setEditingValue(Element* element, const String& value, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    inputElement->setEditingValue(value);
+}
+
 void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
 {
     if (!element || !element->document() || !element->document()->view()) {

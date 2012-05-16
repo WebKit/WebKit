@@ -889,6 +889,22 @@ void HTMLInputElement::setSuggestedValue(const String& value)
     updateInnerTextValue();
 }
 
+void HTMLInputElement::setEditingValue(const String& value)
+{
+    if (!renderer() || !isTextField())
+        return;
+    setInnerTextValue(value);
+    subtreeHasChanged();
+
+    unsigned max = value.length();
+    if (focused())
+        setSelectionRange(max, max);
+    else
+        cacheSelectionInResponseToSetValue(max);
+
+    dispatchInputEvent();
+}
+
 void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
 {
     if (!m_inputType->canSetValue(value))

@@ -1,3 +1,13 @@
+2012-05-16  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add WebKit API to access inner text value of input element
+        https://bugs.webkit.org/show_bug.cgi?id=85353
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/editing-value-expected.txt: Added.
+        * fast/forms/editing-value.html: Added. Tests that setting the editing value takes care of the style and placeholder, and that it fires an input event.
+
 2012-05-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip failing test after 117246.

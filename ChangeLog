@@ -1,3 +1,12 @@
+2012-05-16  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add WebKit API to access inner text value of input element
+        https://bugs.webkit.org/show_bug.cgi?id=85353
+
+        Reviewed by Kent Tamura.
+
+        * Source/autotools/symbols.filter: Added HTMLInputElement::setEditingValue
+
 2012-05-15  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Enable Fullscreen API

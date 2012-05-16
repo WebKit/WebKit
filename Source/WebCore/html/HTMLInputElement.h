@@ -156,6 +156,8 @@ public:
     const String& suggestedValue() const;
     void setSuggestedValue(const String&);
 
+    void setEditingValue(const String&);
+
     double valueAsDate() const;
     void setValueAsDate(double, ExceptionCode&);
 

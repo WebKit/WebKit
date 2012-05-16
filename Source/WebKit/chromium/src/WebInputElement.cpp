@@ -98,6 +98,16 @@ WebString WebInputElement::value() const
     return constUnwrap<HTMLInputElement>()->value();
 }
 
+WebString WebInputElement::editingValue() const
+{
+    return constUnwrap<HTMLInputElement>()->innerTextValue();
+}
+
+void WebInputElement::setEditingValue(const WebString& value)
+{
+    unwrap<HTMLInputElement>()->setEditingValue(value);
+}
+
 void WebInputElement::setSuggestedValue(const WebString& value)
 {
     unwrap<HTMLInputElement>()->setSuggestedValue(value);

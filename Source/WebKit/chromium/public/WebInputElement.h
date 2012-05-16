@@ -74,6 +74,12 @@ namespace WebKit {
         WEBKIT_EXPORT int size() const;
         WEBKIT_EXPORT void setValue(const WebString&, bool sendChangeEvent = false);
         WEBKIT_EXPORT WebString value() const;
+        // This returns the non-sanitized, exact value inside the text field.
+        WEBKIT_EXPORT WebString editingValue() const;
+        // Sets the value inside the text field without being sanitized.
+        // Can't be used if a renderer doesn't exist or on a non text field type.
+        // Caret will be moved to the end.
+        WEBKIT_EXPORT void setEditingValue(const WebString&);
         WEBKIT_EXPORT void setSuggestedValue(const WebString&);
         WEBKIT_EXPORT WebString suggestedValue() const;
         WEBKIT_EXPORT void setPlaceholder(const WebString&);
