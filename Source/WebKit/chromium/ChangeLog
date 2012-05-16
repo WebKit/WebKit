@@ -1,3 +1,24 @@
+2012-05-15  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move createMessagePortChannel to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=85764
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * WebKit.gyp:
+        * public/WebMessagePortChannel.h:
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKit::WebKitPlatformSupport::injectIDBKeyIntoSerializedValue):
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::PlatformMessagePortChannel):
+        * src/PlatformMessagePortChannel.h:
+        * src/SharedWorkerRepository.cpp:
+        * src/WebSharedWorkerImpl.cpp:
+        * src/WebWorkerClientImpl.cpp:
+
 2012-05-15  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Reset ScriptInstance in HTMLPlugInElement on WebPluginContainerImpl::setPlugin

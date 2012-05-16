@@ -31,9 +31,9 @@
 #ifndef PlatformMessagePortChannel_h
 #define PlatformMessagePortChannel_h
 
-#include "WebMessagePortChannelClient.h"
 
 #include "MessagePortChannel.h"
+#include <public/WebMessagePortChannelClient.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
