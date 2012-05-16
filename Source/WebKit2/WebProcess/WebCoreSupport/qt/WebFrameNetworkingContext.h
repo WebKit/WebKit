@@ -20,28 +20,26 @@
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
+#include "WebProcess.h"
 #include <WebCore/FrameNetworkingContext.h>
-
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
+
 class WebFrame;
-}
 
-namespace WebCore {
-
-class WebFrameNetworkingContext : public FrameNetworkingContext {
+class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebKit::WebFrame*);
-    virtual QObject* originatingObject() const;
+    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame*);
+    QObject* originatingObject() const { return m_originatingObject.get(); }
 
 private:
-    WebFrameNetworkingContext(WebKit::WebFrame*);
-    virtual ~WebFrameNetworkingContext();
+    WebFrameNetworkingContext(WebFrame*);
+    ~WebFrameNetworkingContext() { }
 
-    virtual QNetworkAccessManager* networkAccessManager() const;
-    virtual bool mimeSniffingEnabled() const;
-    virtual bool thirdPartyCookiePolicyPermission(const QUrl&) const;
+    QNetworkAccessManager* networkAccessManager() const { return WebProcess::shared().networkAccessManager(); }
+    bool mimeSniffingEnabled() const { return m_mimeSniffingEnabled; }
+    bool thirdPartyCookiePolicyPermission(const QUrl&) const { /*TODO. Used QWebSettings in WK1.*/ return true; }
 
     OwnPtr<QObject> m_originatingObject;
     bool m_mimeSniffingEnabled;

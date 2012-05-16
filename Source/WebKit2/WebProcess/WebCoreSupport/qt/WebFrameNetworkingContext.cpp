@@ -22,14 +22,12 @@
 
 #include "WebFrame.h"
 #include "WebPage.h"
-#include "WebProcess.h"
-#include <QNetworkAccessManager>
 #include <QObject>
 #include <QVariant>
 
-namespace WebCore {
+namespace WebKit {
 
-WebFrameNetworkingContext::WebFrameNetworkingContext(WebKit::WebFrame* frame)
+WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
     : FrameNetworkingContext(frame->coreFrame())
     , m_mimeSniffingEnabled(true)
 {
@@ -40,34 +38,9 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebKit::WebFrame* frame)
     }
 }
 
-WebFrameNetworkingContext::~WebFrameNetworkingContext()
-{
-}
-
-PassRefPtr<WebFrameNetworkingContext> WebFrameNetworkingContext::create(WebKit::WebFrame* frame)
+PassRefPtr<WebFrameNetworkingContext> WebFrameNetworkingContext::create(WebFrame* frame)
 {
     return adoptRef(new WebFrameNetworkingContext(frame));
-}
-
-QObject* WebFrameNetworkingContext::originatingObject() const
-{
-    return m_originatingObject.get();
-}
-
-QNetworkAccessManager* WebFrameNetworkingContext::networkAccessManager() const
-{
-    return WebKit::WebProcess::shared().networkAccessManager();
-}
-
-bool WebFrameNetworkingContext::mimeSniffingEnabled() const
-{
-    return m_mimeSniffingEnabled;
-}
-
-bool WebFrameNetworkingContext::thirdPartyCookiePolicyPermission(const QUrl &) const
-{
-    // ### TODO. Used QWebSettings in WK1.
-    return true;
 }
 
 }

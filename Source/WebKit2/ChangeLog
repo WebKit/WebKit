@@ -1,3 +1,22 @@
+2012-05-16  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Move WebFrameNetworkingContext to WebKit namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=86590
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebKit::WebFrameNetworkingContext::create):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h:
+        (WebKit):
+        (WebFrameNetworkingContext):
+        (WebKit::WebFrameNetworkingContext::originatingObject):
+        (WebKit::WebFrameNetworkingContext::~WebFrameNetworkingContext):
+        (WebKit::WebFrameNetworkingContext::networkAccessManager):
+        (WebKit::WebFrameNetworkingContext::mimeSniffingEnabled):
+        (WebKit::WebFrameNetworkingContext::thirdPartyCookiePolicyPermission):
+
 2012-05-16  Andras Becsi  <andras.becsi@nokia.com>
 
         [WTR] Visited link tracking is not disabled properly
