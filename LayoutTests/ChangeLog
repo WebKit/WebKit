@@ -1,3 +1,14 @@
+2012-05-16  Erik Arvidsson  <arv@chromium.org>
+
+        Make window-property-shadowing-name.html fail faster
+        https://bugs.webkit.org/show_bug.cgi?id=86664
+
+        Reviewed by Ojan Vafai.
+
+        This makes test sync instead of async by checking the return value of window.open.
+
+        * fast/dom/Window/window-property-shadowing-name.html:
+
 2012-05-16  Peter Kasting  <pkasting@google.com>
 
         [chromium] Mark test as flakily timing out.

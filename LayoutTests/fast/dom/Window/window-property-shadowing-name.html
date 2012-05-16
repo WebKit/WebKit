@@ -3,23 +3,24 @@ This page tests whether declaring a variable named "name" changes the window's
 name in the DOM. If the test passes, you'll see a PASS message below.
 </p>
 
-<pre id="console">FAIL</pre>
+<pre>FAIL</pre>
 
 <script>
 
-function pass()
+function log(result)
 {
-    document.getElementById("console").innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    document.querySelector("pre").textContent = result;
 }
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
 }
 
 var name = "test";
-window.open("javascript:pass()", "test");
+var w = window.open("javascript:void 0", "test");
+if (w === window)
+    log("PASS");
+else
+    log("FAIL");
 
 </script>
