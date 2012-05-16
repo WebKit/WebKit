@@ -1,3 +1,15 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Tests that require DASHBOARD_SUPPORT should be moved to test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=86578
+
+        Unreviewed EFL gardening. Move tests that require DASHBOARD_SUPPORT
+        flag to test expectations and skip them since this feature is
+        Mac-specific.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: rename DebuggerPresentationModel to DebuggerScriptMapping, make it private to ScriptsPanel.

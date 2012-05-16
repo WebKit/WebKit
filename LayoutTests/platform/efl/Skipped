@@ -218,16 +218,6 @@ fast/dom/Window/window-onFocus.html
 # EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements
 fast/events/keypress-insert-tab.html
 
-# EFL's LayoutTestController does not implement setUseDashboardCompatibilityMode
-fast/canvas/canvas-gradient-addStop-error.html
-fast/canvas/fill-stroke-clip-reset-path.html
-http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
-svg/custom/svg-disallowed-in-dashboard-object.html
-
 # EFL's LayoutTestController does not implement enableAutoResizeMode
 fast/autoresize
 

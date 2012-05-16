@@ -468,5 +468,10 @@ BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 // This test fails if mixer is not at 100%
 BUGWK83704 : media/event-attributes.html = TEXT
 
+// These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
+BUGWKEFL SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
+BUGWKEFL SKIP : fast/canvas/fill-stroke-clip-reset-path.html = FAIL
+BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
+
 // Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
