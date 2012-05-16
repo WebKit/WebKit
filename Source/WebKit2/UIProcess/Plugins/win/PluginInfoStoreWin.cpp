@@ -325,7 +325,13 @@ static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
+#else
+    UNUSED_PARAM(pluginPath);
+    UNUSED_PARAM(plugin);
+    return false;
+#endif
 }
 
 static bool isOldWindowsMediaPlayerPlugin(const PluginModuleInfo& plugin)

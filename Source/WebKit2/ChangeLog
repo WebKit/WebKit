@@ -1,5 +1,12 @@
 2012-05-15  Andy Estes  <aestes@apple.com>
 
+        WebKit2 would fail to build on Windows if Netscape plug-ins were disabled.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo): Return false if ENABLE_NETSCAPE_PLUGIN_API is false.
+
+2012-05-15  Andy Estes  <aestes@apple.com>
+
         Guard Netscape plug-in code with ENABLE(NETSCAPE_PLUGIN_API)
         https://bugs.webkit.org/show_bug.cgi?id=86496
 
