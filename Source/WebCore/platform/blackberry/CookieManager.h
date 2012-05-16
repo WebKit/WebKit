@@ -119,8 +119,6 @@ private:
 
     void checkAndTreatCookie(ParsedCookie*, BackingStoreRemovalPolicy);
 
-    bool shouldRejectForSecurityReason(const ParsedCookie*, const KURL&);
-
     void addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore);
 
     CookieMap* findOrCreateCookieMap(CookieMap* protocolMap, const String& domain, bool findOnly);

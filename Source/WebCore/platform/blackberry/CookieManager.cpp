@@ -138,61 +138,9 @@ void CookieManager::setCookies(const KURL& url, const String& value)
     Vector<ParsedCookie*> cookies = parser.parse(value);
 
     for (size_t i = 0; i < cookies.size(); ++i) {
-        ParsedCookie* cookie = cookies[i];
-        if (!shouldRejectForSecurityReason(cookie, url)) {
-            BackingStoreRemovalPolicy treatment = m_privateMode ? DoNotRemoveFromBackingStore : RemoveFromBackingStore;
-            checkAndTreatCookie(cookie, treatment);
-        } else
-            delete cookie;
+        BackingStoreRemovalPolicy treatment = m_privateMode ? DoNotRemoveFromBackingStore : RemoveFromBackingStore;
+        checkAndTreatCookie(cookies[i], treatment);
     }
-}
-
-bool CookieManager::shouldRejectForSecurityReason(const ParsedCookie* cookie, const KURL& url)
-{
-    // We have to disable the following check because sites like Facebook and
-    // Gmail currently do not follow the spec.
-#if 0
-    // Check if path attribute is a prefix of the request URI.
-    if (!url.path().startsWith(cookie->path())) {
-        LOG_ERROR("Cookie %s is rejected because its path does not math the URL %s\n", cookie->toString().utf8().data(), url.string().utf8().data());
-        return true;
-    }
-#endif
-
-    // ignore domain security if protocol doesn't have domains
-    if (shouldIgnoreDomain(cookie->protocol()))
-        return false;
-
-    // Reject Cookie if domain is empty
-    if (!cookie->domain().length())
-        return true;
-
-    // If an explicitly specified value does not start with a dot, the user agent supplies. (RFC 2965 3.2.2)
-    // Domain: Defaults to the effective request-host. There is no dot at the beginning of request-host. (RFC 2965 3.3.1)
-    if (cookie->domain()[0] == '.') {
-        // Check if the domain contains an embedded dot.
-        size_t dotPosition = cookie->domain().find(".", 1);
-        if (dotPosition == notFound || dotPosition == cookie->domain().length()) {
-            LOG_ERROR("Cookie %s is rejected because its domain does not contain an embedded dot.\n", cookie->toString().utf8().data());
-            return true;
-        }
-    }
-
-    // The request host should domain match the Domain attribute.
-    // Domain string starts with a dot, so a.b.com should domain match .a.b.com.
-    // add a "." at beginning of host name, because it can handle many cases such as
-    // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
-    // and so on.
-    String hostDomainName = url.host();
-    hostDomainName = hostDomainName.startsWith('.') ? hostDomainName : "." + hostDomainName;
-    if (!hostDomainName.endsWith(cookie->domain(), false)) {
-        LOG_ERROR("Cookie %s is rejected because its domain does not domain match the URL %s\n", cookie->toString().utf8().data(), url.string().utf8().data());
-        return true;
-    }
-    // We should check for an embedded dot in the portion of string in the host not in the domain
-    // but to match firefox behaviour we do not.
-
-    return false;
 }
 
 String CookieManager::getCookie(const KURL& url, CookieFilter filter) const

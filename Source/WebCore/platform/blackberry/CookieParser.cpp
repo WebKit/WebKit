@@ -230,6 +230,15 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 // The path attribute may or may not include percent-encoded characters. Fortunately
                 // if there are no percent-encoded characters, decoding the url is a no-op.
                 res->setPath(decodeURLEscapeSequences(parsedValue));
+
+                // We have to disable the following check because sites like Facebook and
+                // Gmail currently do not follow the spec.
+#if 0
+                // Check if path attribute is a prefix of the request URI.
+                if (!m_defaultCookieURL.path().startsWith(res->path()))
+                    LOG_AND_DELETE("Invalid cookie %s (path): it does not math the URL", cookie.ascii().data());
+#endif
+
             } else
                 LOG_AND_DELETE("Invalid cookie %s (path)", cookie.ascii().data());
             break;
@@ -240,9 +249,28 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
             if (length >= 6 && cookie.find("omain", tokenStartSvg + 1, false)) {
                 if (parsedValue.length() > 1 && parsedValue[0] == '"' && parsedValue[parsedValue.length() - 1] == '"')
                     parsedValue = parsedValue.substring(1, parsedValue.length() - 2);
+
+                // Check if the domain contains an embedded dot.
+                size_t dotPosition = parsedValue.find(".", 1);
+                if (dotPosition == notFound || dotPosition == parsedValue.length())
+                    LOG_AND_DELETE("Invalid cookie %s (domain): it does not contain an embedded dot", cookie.ascii().data());
+
                 // If the domain does not start with a dot, add one for security checks,
                 // For example: ab.c.com dose not domain match b.c.com;
                 String realDomain = parsedValue[0] == '.' ? parsedValue : "." + parsedValue;
+
+                // The request host should domain match the Domain attribute.
+                // Domain string starts with a dot, so a.b.com should domain match .a.b.com.
+                // add a "." at beginning of host name, because it can handle many cases such as
+                // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
+                // and so on.
+                String hostDomainName = m_defaultCookieURL.host();
+                hostDomainName = hostDomainName.startsWith('.') ? hostDomainName : "." + hostDomainName;
+                if (!hostDomainName.endsWith(realDomain, false))
+                    LOG_AND_DELETE("Invalid cookie %s (domain): it does not domain match the host");
+                // We should check for an embedded dot in the portion of string in the host not in the domain
+                // but to match firefox behaviour we do not.
+
                 res->setDomain(realDomain);
             } else
                 LOG_AND_DELETE("Invalid cookie %s (domain)", cookie.ascii().data());
