@@ -1,3 +1,16 @@
+2012-05-16  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Don't reset the default font families in WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=86660
+
+        Reviewed by Rob Buis.
+
+        PR 152467
+        The default families are also set definitively in WebCore/page/blackberry/SettingsBlackBerry.cpp
+
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+
 2012-05-16  Genevieve Mak  <gmak@rim.com>
 
         Add missing include that was causing build errors.

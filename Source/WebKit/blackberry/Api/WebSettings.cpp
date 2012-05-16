@@ -170,15 +170,11 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setString(WebKitDefaultTextEncodingName, "iso-8859-1");
     settings->m_private->setBoolean(WebKitDownloadableBinaryFontsEnabled, true);
     settings->m_private->setInteger(WebKitFirstScheduledLayoutDelay, 250); // Match Document::cLayoutScheduleThreshold.
-    settings->m_private->setString(WebKitFixedFontFamily, "Courier New");
     settings->m_private->setBoolean(WebKitJavaScriptEnabled, true);
     settings->m_private->setBoolean(WebKitLoadsImagesAutomatically, true);
     settings->m_private->setUnsignedLongLong(WebKitLocalStorageQuota, 5 * 1024 * 1024);
     settings->m_private->setInteger(WebKitMaximumPagesInCache, 0);
     settings->m_private->setInteger(WebKitMinimumFontSize, 8);
-    settings->m_private->setString(WebKitSansSeriffFontFamily, "Arial");
-    settings->m_private->setString(WebKitSeriffFontFamily, "Times New Roman");
-    settings->m_private->setString(WebKitStandardFontFamily, "Times New Roman");
     settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
 
     return settings;
