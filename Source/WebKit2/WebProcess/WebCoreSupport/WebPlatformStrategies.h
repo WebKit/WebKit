@@ -85,6 +85,8 @@ private:
     Vector<WebCore::PluginInfo> m_cachedPlugins;
 };
 
+void handleDidGetPlugins(uint64_t requestID, const Vector<WebCore::PluginInfo>&);
+
 } // namespace WebKit
 
 #endif // USE(PLATFORM_STRATEGIES)

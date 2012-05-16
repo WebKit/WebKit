@@ -28,7 +28,7 @@
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
 
-#import "KeychainShimResponseMap.h"
+#import "BlockingResponseMap.h"
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
 #import "WebProcess.h"
@@ -39,9 +39,9 @@
 
 namespace WebKit {
 
-static KeychainShimResponseMap<SecItemResponseData>& responseMap()
+static BlockingResponseMap<SecItemResponseData>& responseMap()
 {
-    AtomicallyInitializedStatic(KeychainShimResponseMap<SecItemResponseData>&, responseMap = *new KeychainShimResponseMap<SecItemResponseData>);
+    AtomicallyInitializedStatic(BlockingResponseMap<SecItemResponseData>&, responseMap = *new BlockingResponseMap<SecItemResponseData>);
     return responseMap;
 }
 

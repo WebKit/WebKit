@@ -32,7 +32,7 @@ messages -> WebContext {
     AddVisitedLinkHash(uint64_t linkHash)
     
     # Plugin messages.
-    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
+    GetPlugins(uint64_t requestID, bool refresh) DispatchOnConnectionQueue
     GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, bool blocked)
 
 #if !ENABLE(PLUGIN_PROCESS)
