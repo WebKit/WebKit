@@ -135,3 +135,6 @@ fast/sub-pixel/size-of-box-with-zoom.html
 # This media test always failed on Lion
 # https://bugs.webkit.org/show_bug.cgi?id=86527 and <rdar://problem/11458493>
 http/tests/media/video-query-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86643
+http/tests/security/contentSecurityPolicy/script-src-redirect.html
