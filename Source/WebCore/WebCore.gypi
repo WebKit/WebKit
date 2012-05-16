@@ -4222,7 +4222,6 @@
             'platform/image-decoders/bmp/BMPImageReader.cpp',
             'platform/image-decoders/bmp/BMPImageReader.h',
             'platform/image-decoders/cairo/ImageDecoderCairo.cpp',
-            'platform/image-decoders/cg/ImageDecoderCG.cpp',
             'platform/image-decoders/gif/GIFImageDecoder.cpp',
             'platform/image-decoders/gif/GIFImageDecoder.h',
             'platform/image-decoders/gif/GIFImageReader.cpp',

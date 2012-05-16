@@ -87,10 +87,6 @@ namespace WebCore {
         // the other.  Returns whether the copy succeeded.
         bool copyBitmapData(const ImageFrame&);
 
-        // Makes this frame reference the provided image's pixel data, so that
-        // modifications in one frame are reflected in the other.
-        void copyReferenceToBitmapData(const ImageFrame&);
-
         // Copies the pixel data at [(startX, startY), (endX, startY)) to the
         // same X-coordinates on each subsequent row up to but not including
         // endY.
@@ -154,12 +150,6 @@ namespace WebCore {
 #endif
 
     private:
-#if USE(CG)
-        typedef RetainPtr<CFMutableDataRef> NativeBackingStore;
-#else
-        typedef Vector<PixelData> NativeBackingStore;
-#endif
-
         int width() const;
         int height() const;
 
@@ -196,7 +186,7 @@ namespace WebCore {
         bool m_hasAlpha;
         IntSize m_size;
 #else
-        NativeBackingStore m_backingStore;
+        Vector<PixelData> m_backingStore;
         PixelData* m_bytes; // The memory is backed by m_backingStore.
         IntSize m_size;
         bool m_hasAlpha;

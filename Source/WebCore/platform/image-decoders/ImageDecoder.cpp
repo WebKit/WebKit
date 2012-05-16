@@ -143,7 +143,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     if (this == &other)
         return *this;
 
-    copyReferenceToBitmapData(other);
+    copyBitmapData(other);
     setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
@@ -167,14 +167,6 @@ void ImageFrame::zeroFillPixelData()
 {
     memset(m_bytes, 0, m_size.width() * m_size.height() * sizeof(PixelData));
     m_hasAlpha = true;
-}
-
-#if !USE(CG)
-
-void ImageFrame::copyReferenceToBitmapData(const ImageFrame& other)
-{
-    ASSERT(this != &other);
-    copyBitmapData(other);
 }
 
 bool ImageFrame::copyBitmapData(const ImageFrame& other)
@@ -202,8 +194,6 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     zeroFillPixelData();
     return true;
 }
-
-#endif
 
 bool ImageFrame::hasAlpha() const
 {

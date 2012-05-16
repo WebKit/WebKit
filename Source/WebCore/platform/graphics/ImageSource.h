@@ -63,12 +63,7 @@ class IntSize;
 class SharedBuffer;
 
 #if USE(CG)
-#if USE(WEBKIT_IMAGE_DECODERS)
-class ImageDecoder;
-typedef ImageDecoder* NativeImageSourcePtr;
-#else
 typedef CGImageSourceRef NativeImageSourcePtr;
-#endif
 typedef CGImageRef NativeImagePtr;
 #elif PLATFORM(OPENVG)
 class ImageDecoder;
