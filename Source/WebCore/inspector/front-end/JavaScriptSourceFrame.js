@@ -71,7 +71,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     wasShown: function()
     {
         WebInspector.SourceFrame.prototype.wasShown.call(this);
-        this._setScriptSourceIsDirty(this._isDirty);
     },
 
     willHide: function()
@@ -103,7 +102,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     canEditSource: function()
     {
-        return WebInspector.DebuggerResourceBinding.canEditScriptSource(this._uiSourceCode);
+        return this._uiSourceCode.isEditable();
     },
 
     /**
@@ -112,7 +111,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     commitEditing: function(text)
     {
         this._editingContent = true;
-        WebInspector.DebuggerResourceBinding.setScriptSource(this._uiSourceCode, text, this._didEditContent.bind(this, text));
+        this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this, text));
     },
 
     /**
@@ -170,22 +169,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     afterTextChanged: function(oldRange, newRange)
     {
-        var isDirty = this.textModel.text !== this._originalContent;
-        if (isDirty)
-            this._setScriptSourceIsDirty(true);
-        else
+        this._uiSourceCode.setWorkingCopy(this.textModel.text);
+        if (!this._uiSourceCode.isDirty())
             this._didEditContent(this._originalContent, null);
-    },
-
-    _setScriptSourceIsDirty: function(isDirty)
-    {
-        this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, isDirty);
-        this._isDirty = isDirty;
     },
 
     beforeTextChanged: function()
     {
-        if (!this._isDirty) {
+        if (!this._uiSourceCode.isDirty()) {
             // Disable all breakpoints in the model, store them as muted breakpoints.
             var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
             var lineNumbers = {};
@@ -197,7 +188,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             }
         }
 
-        this._isDirty = true;
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
 
@@ -211,7 +201,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         this._originalContent = content;
-        this._isDirty = false;
 
         // Restore all muted breakpoints.
         for (var lineNumber = 0; lineNumber < this.textModel.linesCount; ++lineNumber) {
@@ -223,7 +212,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._setBreakpoint(lineNumber, breakpointDecoration.condition, breakpointDecoration.enabled);
             }
         }
-        this._setScriptSourceIsDirty(false);
     },
 
     _getPopoverAnchor: function(element, event)
@@ -382,7 +370,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _onMouseDown: function(event)
     {
-        if (this._isDirty)
+        if (this._uiSourceCode.isDirty())
             return;
 
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)

@@ -35,9 +35,10 @@
  * @param {WebInspector.ContentProvider} contentProvider
  * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.JavaScriptSource = function(url, contentProvider, sourceMapping)
+WebInspector.JavaScriptSource = function(url, contentProvider, sourceMapping, isEditable)
 {
     WebInspector.UISourceCode.call(this, url, contentProvider, sourceMapping);
+    this._isEditable = isEditable;
 
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
     // FIXME: postpone breakpoints restore to after the mapping has been established.
@@ -161,6 +162,20 @@ WebInspector.JavaScriptSource.prototype = {
     breakpointStorageId: function()
     {
         return this._formatted ? "deobfuscated:" + this.url : this.url;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isEditable: function()
+    {
+        return this._isEditable && WebInspector.debuggerModel.canSetScriptSource();
+    },
+
+    commitWorkingCopy: function(callback)
+    {  
+        if (this.isDirty())
+            WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), callback);
     }
 }
 

@@ -47,6 +47,7 @@ WebInspector.TabbedEditorContainerDelegate.prototype = {
  */
 WebInspector.TabbedEditorContainer = function(delegate, settingName)
 {
+    WebInspector.Object.call(this);
     this._delegate = delegate;
 
     this._tabbedPane = new WebInspector.TabbedPane();
@@ -135,15 +136,21 @@ WebInspector.TabbedEditorContainer.prototype = {
         const maxDisplayNameLength = 30;
         const minDisplayQueryParamLength = 5;
 
+        var title;
         var parsedURL = uiSourceCode.parsedURL;
         if (!parsedURL.isValid)
-            return parsedURL.url ? parsedURL.url.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
-
-        var maxDisplayQueryParamLength = Math.max(minDisplayQueryParamLength, maxDisplayNameLength - parsedURL.lastPathComponent.length);
-        var displayQueryParams = parsedURL.queryParams ? "?" + parsedURL.queryParams.trimEnd(maxDisplayQueryParamLength - 1) : "";
-        var displayLastPathComponent = parsedURL.lastPathComponent.trimMiddle(maxDisplayNameLength - displayQueryParams.length);
-        var displayName = displayLastPathComponent + displayQueryParams;
-        return displayName || WebInspector.UIString("(program)");
+            title = parsedURL.url ? parsedURL.url.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
+        else {
+            var maxDisplayQueryParamLength = Math.max(minDisplayQueryParamLength, maxDisplayNameLength - parsedURL.lastPathComponent.length);
+            var displayQueryParams = parsedURL.queryParams ? "?" + parsedURL.queryParams.trimEnd(maxDisplayQueryParamLength - 1) : "";
+            var displayLastPathComponent = parsedURL.lastPathComponent.trimMiddle(maxDisplayNameLength - displayQueryParams.length);
+            var displayName = displayLastPathComponent + displayQueryParams;
+            title = displayName || WebInspector.UIString("(program)");
+        }
+        
+        if (uiSourceCode.isDirty())
+            title += "*";
+        return title;
     },
 
     /**
@@ -219,6 +226,9 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._files[tabId] = uiSourceCode;
         
         this._tabbedPane.appendTab(tabId, title, view, tooltip, userGesture);
+
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
         return tabId;
     },
 
@@ -245,6 +255,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
         delete this._currentFile;
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
 
         this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorClosed, uiSourceCode);
 
@@ -287,17 +299,26 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
      */
-    setFileIsDirty: function(uiSourceCode, isDirty)
+    _updateFileTitle: function(uiSourceCode)
     {
         var tabId = this._tabIds.get(uiSourceCode);
         if (tabId) {
             var title = this._titleForFile(uiSourceCode);
-            if (isDirty)
-                title += "*";
             this._tabbedPane.changeTabTitle(tabId, title);
         }
+    },
+    
+    _uiSourceCodeWorkingCopyChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateFileTitle(uiSourceCode);
+    },
+
+    _uiSourceCodeContentChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateFileTitle(uiSourceCode);
     },
 
     reset: function()

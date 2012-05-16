@@ -1,3 +1,13 @@
+2012-05-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Move edit/save script source logic to JavaScriptSource.
+        https://bugs.webkit.org/show_bug.cgi?id=86604
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] A few tests need expected result or rebaselining

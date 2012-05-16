@@ -43,7 +43,6 @@ WebInspector.UISourceCode = function(url, contentProvider, sourceMapping)
     this._contentProvider = contentProvider;
     this._sourceMapping = sourceMapping;
     this.isContentScript = false;
-    this.isEditable = false;
     /**
      * @type Array.<function(?string,boolean,string)>
      */
@@ -57,6 +56,7 @@ WebInspector.UISourceCode = function(url, contentProvider, sourceMapping)
 
 WebInspector.UISourceCode.Events = {
     ContentChanged: "ContentChanged",
+    WorkingCopyChanged: "WorkingCopyChanged",
     ConsoleMessageAdded: "ConsoleMessageAdded",
     ConsoleMessageRemoved: "ConsoleMessageRemoved",
     ConsoleMessagesCleared: "ConsoleMessagesCleared"
@@ -101,7 +101,52 @@ WebInspector.UISourceCode.prototype = {
         console.assert(this._contentLoaded);
         var oldContent = this._content;
         this._content = newContent;
+        delete this._workingCopy;
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {oldContent: oldContent, content: newContent});
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isEditable: function()
+    {
+        return false;
+    },
+
+    /**
+     * @return {string}
+     */
+    workingCopy: function()
+    {
+        console.assert(this._contentLoaded);
+        return this._workingCopy;
+    },
+
+    /**
+     * @param {string} newWorkingCopy
+     */
+    setWorkingCopy: function(newWorkingCopy)
+    {
+        console.assert(this._contentLoaded);
+        var oldWorkingCopy = this._workingCopy;
+        if (this._content === newWorkingCopy)
+            delete this._workingCopy;
+        else
+            this._workingCopy = newWorkingCopy;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: newWorkingCopy});
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isDirty: function()
+    {
+        return this._contentLoaded && typeof this._workingCopy !== "undefined" && this._workingCopy !== this._content;
+    },
+
+    commitWorkingCopy: function(callback)
+    {
+        // Overriden.
     },
 
     /**

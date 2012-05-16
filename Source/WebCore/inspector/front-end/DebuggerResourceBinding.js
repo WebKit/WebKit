@@ -39,16 +39,6 @@ WebInspector.DebuggerResourceBinding = function(uiSourceCodeProject)
     WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
 }
 
-
-/**
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @return {boolean}
- */
-WebInspector.DebuggerResourceBinding.canEditScriptSource = function(uiSourceCode)
-{
-    return WebInspector.debuggerModel.canSetScriptSource() && uiSourceCode.isEditable;
-}
-
 /**
  * @param {WebInspector.UISourceCode} uiSourceCode
  * @param {string} newSource
@@ -86,7 +76,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
     canSetContent: function(resource)
     {
         var uiSourceCode = this._uiSourceCodeForResource(resource);
-        return !!uiSourceCode && WebInspector.DebuggerResourceBinding.canEditScriptSource(uiSourceCode);
+        return !!uiSourceCode && uiSourceCode.isEditable();
     },
 
     /**

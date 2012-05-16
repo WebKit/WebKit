@@ -136,7 +136,7 @@ function test()
     {
         breakpointManager._debuggerModel._addScript(url, url);
         InspectorTest.addResult("  Adding UISourceCode: " + url + ")");
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, defaultMapping);
+        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, defaultMapping, false);
         uiSourceCodes[url] = uiSourceCode;
         breakpointManager.restoreBreakpoints(uiSourceCode);
         return uiSourceCode;

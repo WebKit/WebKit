@@ -75,9 +75,22 @@ WebInspector.NavigatorView.prototype = {
         var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, "");
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
         this._updateScriptTitle(uiSourceCode);
+        this._addUISourceCodeListeners(uiSourceCode);
 
         var folderTreeElement = this.getOrCreateFolderTreeElement(uiSourceCode);
         folderTreeElement.appendChild(scriptTreeElement);
+    },
+
+    _uiSourceCodeWorkingCopyChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateScriptTitle(uiSourceCode)
+    },
+    
+    _uiSourceCodeContentChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateScriptTitle(uiSourceCode);
     },
 
     /**
@@ -98,6 +111,8 @@ WebInspector.NavigatorView.prototype = {
             titleText = uiSourceCode.parsedURL.url;
         if (!titleText)
             titleText = WebInspector.UIString("(program)");
+        if (uiSourceCode.isDirty())
+            titleText = "*" + titleText;
         scriptTreeElement.titleText = titleText;
     },
 
@@ -177,6 +192,25 @@ WebInspector.NavigatorView.prototype = {
             treeElement = parent;
         }
         this._scriptTreeElementsByUISourceCode.remove(uiSourceCode);
+        this._removeUISourceCodeListeners(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _addUISourceCodeListeners: function(uiSourceCode)
+    {
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _removeUISourceCodeListeners: function(uiSourceCode)
+    {
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
     },
 
     _showScriptFoldersSettingChanged: function()
@@ -231,12 +265,17 @@ WebInspector.NavigatorView.prototype = {
         }
 
         var editingConfig = new WebInspector.EditingConfig(commitHandler.bind(this), cancelHandler.bind(this));
+        this._updateScriptTitle(uiSourceCode, true);
         WebInspector.startEditing(scriptTreeElement.titleElement, editingConfig);
         window.getSelection().setBaseAndExtent(scriptTreeElement.titleElement, 0, scriptTreeElement.titleElement, 1);
     },
 
     reset: function()
     {
+        var uiSourceCodes = this._scriptsTree.scriptTreeElements;
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            this._removeUISourceCodeListeners(uiSourceCodes[i]);
+
         this._scriptsTree.stopSearch();
         this._scriptsTree.removeChildren();
         this._folderTreeElements = {};

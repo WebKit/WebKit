@@ -264,16 +264,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._removeSourceFrame(uiSourceCode);
     },
 
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {boolean} isDirty
-     */
-    setScriptSourceIsDirty: function(uiSourceCode, isDirty)
-    {
-        this._navigator.setScriptSourceIsDirty(uiSourceCode, isDirty);
-        this._editorContainer.setFileIsDirty(uiSourceCode, isDirty);
-    },
-
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)
     {
         this.sidebarPanes.scopechain.update(WebInspector.debuggerModel.selectedCallFrame());

@@ -76,9 +76,8 @@ WebInspector.ScriptSnippetModel.prototype = {
     _addScriptSnippet: function(snippet)
     {
         var uiSourceCodeURL = ""; // FIXME: to be implemented.
-        var uiSourceCode = new WebInspector.JavaScriptSource(uiSourceCodeURL, new WebInspector.SnippetContentProvider(snippet), this._snippetScriptMapping);
+        var uiSourceCode = new WebInspector.JavaScriptSource(uiSourceCodeURL, new WebInspector.SnippetContentProvider(snippet), this._snippetScriptMapping, true);
         uiSourceCode.isSnippet = true;
-        uiSourceCode.isEditable = true;
         this._uiSourceCodeForSnippet.put(snippet, uiSourceCode);
         this._snippetForUISourceCode.put(uiSourceCode, snippet);
         this._snippetScriptMapping._fireUISourceCodeAdded(uiSourceCode);
@@ -215,7 +214,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _createUISourceCodeForScript: function(script)
     {
-        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, this._snippetScriptMapping);
+        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, this._snippetScriptMapping, false);
         uiSourceCode.isSnippetEvaluation = true;
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);

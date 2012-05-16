@@ -100,9 +100,8 @@ WebInspector.RawSourceCode.prototype = {
         else
             contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
 
-        var uiSourceCode = new WebInspector.JavaScriptSource(this.url, contentProvider, this._sourceMapping);
+        var uiSourceCode = new WebInspector.JavaScriptSource(this.url, contentProvider, this._sourceMapping, isStandaloneScript);
         uiSourceCode.isContentScript = this.isContentScript;
-        uiSourceCode.isEditable = isStandaloneScript;
         return uiSourceCode;
     },
 
