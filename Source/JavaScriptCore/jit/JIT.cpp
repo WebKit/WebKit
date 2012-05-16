@@ -749,6 +749,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         static_cast<double>(result.size()) /
         static_cast<double>(m_codeBlock->instructions().size()));
     
+    m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
+    
 #if ENABLE(JIT_VERBOSE)
     dataLog("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif

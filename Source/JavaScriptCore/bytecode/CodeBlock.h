@@ -309,25 +309,11 @@ namespace JSC {
             m_dfgData->weakReferences.append(WriteBarrier<JSCell>(*globalData(), ownerExecutable(), target));
         }
         
-        void shrinkWeakReferencesToFit()
-        {
-            if (!m_dfgData)
-                return;
-            m_dfgData->weakReferences.shrinkToFit();
-        }
-        
         void appendWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
         {
             createDFGDataIfNecessary();
             m_dfgData->transitions.append(
                 WeakReferenceTransition(*globalData(), ownerExecutable(), codeOrigin, from, to));
-        }
-        
-        void shrinkWeakReferenceTransitionsToFit()
-        {
-            if (!m_dfgData)
-                return;
-            m_dfgData->transitions.shrinkToFit();
         }
 #endif
 
@@ -826,7 +812,16 @@ namespace JSC {
 
         EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
-        void shrinkToFit();
+        enum ShrinkMode {
+            // Shrink prior to generating machine code that may point directly into vectors.
+            EarlyShrink,
+            
+            // Shrink after generating machine code, and after possibly creating new vectors
+            // and appending to others. At this time it is not safe to shrink certain vectors
+            // because we would have generated machine code that references them directly.
+            LateShrink
+        };
+        void shrinkToFit(ShrinkMode);
         
         void copyPostParseDataFrom(CodeBlock* alternative);
         void copyPostParseDataFromAlternative();

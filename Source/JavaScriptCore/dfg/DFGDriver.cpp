@@ -58,6 +58,12 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     
     if (compileMode == CompileFunction)
         dfg.predictArgumentTypes();
+    
+    // By this point the DFG bytecode parser will have potentially mutated various tables
+    // in the CodeBlock. This is a good time to perform an early shrink, which is more
+    // powerful than a late one. It's safe to do so because we haven't generated any code
+    // that references any of the tables directly, yet.
+    codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 
     performRedundantPhiElimination(dfg);
     performPredictionPropagation(dfg);

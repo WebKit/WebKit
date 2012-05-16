@@ -2092,22 +2092,33 @@ bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
 }
 #endif
 
-void CodeBlock::shrinkToFit()
+void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
-#if ENABLE(CLASSIC_INTERPRETER)
     m_propertyAccessInstructions.shrinkToFit();
     m_globalResolveInstructions.shrinkToFit();
+#if ENABLE(LLINT)
+    m_llintCallLinkInfos.shrinkToFit();
 #endif
 #if ENABLE(JIT)
     m_structureStubInfos.shrinkToFit();
     m_globalResolveInfos.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
+    m_methodCallLinkInfos.shrinkToFit();
 #endif
-
-    m_identifiers.shrinkToFit();
-    m_functionDecls.shrinkToFit();
-    m_functionExprs.shrinkToFit();
-    m_constantRegisters.shrinkToFit();
+#if ENABLE(VALUE_PROFILER)
+    if (shrinkMode == EarlyShrink)
+        m_argumentValueProfiles.shrinkToFit();
+    m_valueProfiles.shrinkToFit();
+    m_rareCaseProfiles.shrinkToFit();
+    m_specialFastCaseProfiles.shrinkToFit();
+#endif
+    
+    if (shrinkMode == EarlyShrink) {
+        m_identifiers.shrinkToFit();
+        m_functionDecls.shrinkToFit();
+        m_functionExprs.shrinkToFit();
+        m_constantRegisters.shrinkToFit();
+    } // else don't shrink these, because we would have already pointed pointers into these tables.
 
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
@@ -2117,7 +2128,24 @@ void CodeBlock::shrinkToFit()
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         m_rareData->m_expressionInfo.shrinkToFit();
         m_rareData->m_lineInfo.shrinkToFit();
+#if ENABLE(JIT)
+        m_rareData->m_callReturnIndexVector.shrinkToFit();
+#endif
+#if ENABLE(DFG_JIT)
+        m_rareData->m_inlineCallFrames.shrinkToFit();
+        m_rareData->m_codeOrigins.shrinkToFit();
+#endif
     }
+    
+#if ENABLE(DFG_JIT)
+    if (m_dfgData) {
+        m_dfgData->osrEntry.shrinkToFit();
+        m_dfgData->osrExit.shrinkToFit();
+        m_dfgData->speculationRecovery.shrinkToFit();
+        m_dfgData->weakReferences.shrinkToFit();
+        m_dfgData->transitions.shrinkToFit();
+    }
+#endif
 }
 
 void CodeBlock::createActivation(CallFrame* callFrame)

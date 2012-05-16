@@ -1,3 +1,36 @@
+2012-05-15  Filip Pizlo  <fpizlo@apple.com>
+
+        shrinkToFit() is often not called for Vectors in CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=86436
+
+        Reviewed by Oliver Hunt.
+        
+        The vectors in CodeBlock are often appended to during various stages of
+        compilation, but we neglect to shrink them after compilation finishes. This
+        patch takes the most brutal possible approach: shrink all the vectors after
+        the bytecompile phase, and then shrink them again after the appropriate
+        JITing phase. The two shrinks are necessary because the JIT may append more
+        stuff, but may also generate code that directly references things in other
+        vectors; hence some can only be shrunk before JIT and some after. Also,
+        we may allow a CodeBlock to sit around for a long time - possibly forever -
+        before invoking the JIT, hence it makes sense to have two shrinks.
+        
+        This is performance neutral on the major benchmarks we track.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::appendWeakReferenceTransition):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2012-05-15  Oliver Hunt  <oliver@apple.com>
 
         Make error information available even if all we have is line number information.

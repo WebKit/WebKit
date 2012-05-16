@@ -1,3 +1,18 @@
+2012-05-15  Filip Pizlo  <fpizlo@apple.com>
+
+        shrinkToFit() is often not called for Vectors in CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=86436
+
+        Reviewed by Oliver Hunt.
+        
+        Gave SegmentedVector a shrinkToFit() method. This only shrinks the segment
+        lookup table, which is likely to not be hugely profitable, but it is better
+        than nothing.
+
+        * wtf/SegmentedVector.h:
+        (SegmentedVector):
+        (WTF::SegmentedVector::shrinkToFit):
+
 2012-05-15  Andy Estes  <aestes@apple.com>
 
         Add WTF_USE_SECURITY_FRAMEWORK and use it in place of the less specific PLATFORM(MAC)

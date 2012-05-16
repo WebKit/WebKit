@@ -189,7 +189,7 @@ JSObject* BytecodeGenerator::generate()
     if ((m_codeType == FunctionCode && !m_codeBlock->needsFullScopeChain() && !m_codeBlock->usesArguments()) || m_codeType == EvalCode)
         symbolTable().clear();
 
-    m_codeBlock->shrinkToFit();
+    m_codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 
     if (m_expressionTooDeep)
         return createOutOfMemoryError(m_scopeChain->globalObject.get());

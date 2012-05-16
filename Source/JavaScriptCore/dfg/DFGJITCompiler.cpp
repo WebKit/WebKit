@@ -190,8 +190,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         exit.m_check.correctLateJump(linkBuffer);
     }
     
-    codeBlock()->shrinkWeakReferencesToFit();
-    codeBlock()->shrinkWeakReferenceTransitionsToFit();
+    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 }
 
 bool JITCompiler::compile(JITCode& entry)
