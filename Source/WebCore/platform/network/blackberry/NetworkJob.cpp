@@ -449,7 +449,7 @@ void NetworkJob::handleNotifyClose(int status)
         else if (isUnauthorized(m_extendedStatusCode))
             purgeCredentials();
 
-        if (shouldNotifyClientFinished()) {
+        if (shouldReleaseClientResource()) {
             if (isRedirect(m_extendedStatusCode) && (m_redirectCount >= s_redirectMaximum))
                 m_extendedStatusCode = BlackBerry::Platform::FilterStream::StatusTooManyRedirects;
 
@@ -457,7 +457,7 @@ void NetworkJob::handleNotifyClose(int status)
             if (isClientAvailable()) {
 
                 RecursionGuard guard(m_callingClient);
-                if (isError(m_extendedStatusCode) && !m_dataReceived && m_handle->firstRequest().httpMethod() != "HEAD") {
+                if (shouldNotifyClientFailed()) {
                     String domain = m_extendedStatusCode < 0 ? ResourceError::platformErrorDomain : ResourceError::httpErrorDomain;
                     ResourceError error(domain, m_extendedStatusCode, m_response.url().string(), m_response.httpStatusText());
                     m_handle->client()->didFail(m_handle.get(), error);
@@ -476,7 +476,7 @@ void NetworkJob::handleNotifyClose(int status)
     m_multipartResponse = nullptr;
 }
 
-bool NetworkJob::shouldNotifyClientFinished()
+bool NetworkJob::shouldReleaseClientResource()
 {
     if (m_redirectCount >= s_redirectMaximum)
         return true;
@@ -488,6 +488,13 @@ bool NetworkJob::shouldNotifyClientFinished()
         return false;
 
     return true;
+}
+
+bool NetworkJob::shouldNotifyClientFailed() const
+{
+    if (m_handle->firstRequest().targetType() == ResourceRequest::TargetIsXHR)
+        return m_extendedStatusCode < 0;
+    return isError(m_extendedStatusCode) && !m_dataReceived;
 }
 
 bool NetworkJob::retryAsFTPDirectory()
@@ -574,7 +581,7 @@ void NetworkJob::sendResponseIfNeeded()
 
     m_responseSent = true;
 
-    if (isError(m_extendedStatusCode) && !m_dataReceived)
+    if (shouldNotifyClientFailed())
         return;
 
     String urlFilename;

@@ -95,7 +95,8 @@ private:
 
     bool shouldSendClientData() const;
 
-    bool shouldNotifyClientFinished();
+    bool shouldReleaseClientResource();
+    bool shouldNotifyClientFailed() const;
 
     bool shouldDeferLoading() const
     {
@@ -133,7 +134,7 @@ private:
 
     void purgeCredentials();
 
-    bool isError(int statusCode)
+    bool isError(int statusCode) const
     {
         return statusCode < 0 || (400 <= statusCode && statusCode < 600);
     }

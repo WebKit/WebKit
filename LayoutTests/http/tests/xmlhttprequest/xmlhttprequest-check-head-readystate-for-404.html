@@ -14,7 +14,7 @@
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState) {
             res = res + xmlhttp.readyState;
-            if(res == "124"){
+            if(res == "124" && xmlhttp.status == 404) {
                 document.getElementById('result').innerText = "PASS";
 
                 if (window.layoutTestController)

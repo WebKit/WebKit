@@ -1,3 +1,12 @@
+2012-05-16  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] xhr request to non existent file response is 0 and not 404.
+        https://bugs.webkit.org/show_bug.cgi?id=86344
+
+        Reviewed by George Staikos.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-check-head-readystate-for-404.html:
+
 2012-05-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Unreviewed gardening, unskip a fixed test
