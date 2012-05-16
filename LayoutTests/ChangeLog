@@ -1,3 +1,18 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] A few tests need expected result or rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=86595
+
+        Unreviewed EFL gardening. Add expected results for a few tests and
+        unskip them.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/forms/input-text-double-click-expected.png: Added.
+        * platform/efl/fast/forms/input-text-double-click-expected.txt:
+        * platform/efl/http/tests/misc/slow-loading-mask-expected.png: Added.
+        * platform/efl/http/tests/misc/slow-loading-mask-expected.txt: Added.
+        * platform/efl/media/video-frame-accurate-seek-expected.png: Added.
+
 2012-05-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController  evaluateScriptInIsolatedWorld implementation

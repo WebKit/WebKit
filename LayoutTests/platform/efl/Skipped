@@ -710,9 +710,6 @@ http/tests/loading/empty-urls.html
 # Tests which need investigation
 # ------------------------------
 
-# BUG: blue boxes should not be shown
-http/tests/misc/slow-loading-mask.html
-
 # BUG: eyes not being rendered correctly
 http/tests/misc/acid2-pixel.html
 
@@ -722,9 +719,6 @@ http/tests/multipart/invalid-image-data.html
 # BUG: composited area is transparent
 compositing/geometry/fixed-position.html
 compositing/geometry/vertical-scroll-composited.html
-
-# BUG: the word "word" is not being selected
-fast/forms/input-text-double-click.html
 
 # EFL's EventSender aborts in keyNameFromJSValue if it does not know the key
 editing/input/emacs-ctrl-o.html
@@ -1033,9 +1027,6 @@ mathml/presentation/row-alignment.xhtml
 
 # BUG: there should be no scrollbars.
 mathml/presentation/style.xhtml
-
-# BUG: the first frame is not at the right position.
-media/video-frame-accurate-seek.html
 
 # BUG: tiled backing store takes too long.
 compositing/tiling/crash-huge-layer.html
