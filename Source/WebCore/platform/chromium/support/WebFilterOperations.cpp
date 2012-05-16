@@ -35,9 +35,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebFilterOperations::initialize()
+void WebFilterOperations::reset()
 {
     m_private.reset(new FilterOperations());
+}
+
+void WebFilterOperations::destroy()
+{
+    m_private.reset(0);
 }
 
 void WebFilterOperations::append(const WebFilterOperation& filter)
@@ -64,11 +69,6 @@ void WebFilterOperations::append(const WebFilterOperation& filter)
         break;
     }
     }
-}
-
-void WebFilterOperations::clear()
-{
-    m_private->operations().clear();
 }
 
 const FilterOperations& WebFilterOperations::toFilterOperations() const

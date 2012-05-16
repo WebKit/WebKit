@@ -39,19 +39,18 @@ struct WebFilterOperation;
 // An ordered set of filter operations.
 class WebFilterOperations {
 public:
-    WebFilterOperations() { initialize(); }
+    WebFilterOperations() { reset(); }
+    ~WebFilterOperations() { destroy(); }
 
+    WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void append(const WebFilterOperation&);
-
-    // Removes all filter operations.
-    WEBKIT_EXPORT void clear();
 
 #if WEBKIT_IMPLEMENTATION
     const WebCore::FilterOperations& toFilterOperations() const;
 #endif
 
 private:
-    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void destroy();
 
     WebPrivateOwnPtr<WebCore::FilterOperations> m_private;
 };
