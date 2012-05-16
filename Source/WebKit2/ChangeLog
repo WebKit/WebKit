@@ -1,3 +1,63 @@
+2012-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get plugins to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=86356
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitMimeInfo.cpp: Added.
+        (_WebKitMimeInfo): Boxed type to represent MIME type information.
+        (webkitMimeInfoCreate): Ceate a new WebKitMimeInfo.
+        (webkit_mime_info_ref):
+        (webkit_mime_info_unref):
+        (webkit_mime_info_get_mime_type): Return the mime type.
+        (webkit_mime_info_get_description): Return the mime type
+        description.
+        (webkit_mime_info_get_extensions): Return the list of extensions
+        associated to the mime type.
+        * UIProcess/API/gtk/WebKitMimeInfo.h: Added.
+        * UIProcess/API/gtk/WebKitMimeInfoPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPlugin.cpp: Added.
+        (webkitPluginFinalize):
+        (webkit_plugin_init):
+        (webkit_plugin_class_init):
+        (webkitPluginCreate): Create a new WebKitPlugin for the given
+        PluginModuleInfo.
+        (webkit_plugin_get_name): Return the plugin name.
+        (webkit_plugin_get_description): Return the plugin description.
+        (webkit_plugin_get_path): Return the path where the plugin is
+        installed.
+        (webkit_plugin_get_mime_info_list): Return the list of mime types
+        handled by the plugin.
+        * UIProcess/API/gtk/WebKitPlugin.h: Added.
+        * UIProcess/API/gtk/WebKitPluginPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_additional_plugins_directory): Set an
+        additional directory to be scanned for plugins.
+        (GetPluginsAsyncData): Helper struct used to asynchronously get
+        the list of plugins.
+        (getPluginsAsyncDataCreate): Create a GetPluginsAsyncData struct.
+        (getPluginsAsyncDataDestroy): Destroy a GetPluginsAsyncData
+        struct.
+        (webkitWebContextGetPluginThread): Thread body to get the list of
+        plugins installed.
+        (webkit_web_context_get_plugins): Asynchronously get the list of
+        plugins installed.
+        (webkit_web_context_get_plugins_finish): Finish async operation
+        started by webkit_web_context_get_plugins() returning a list of
+        WebKitPlugin.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitPlugin.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add new types.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextGetPlugins):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h:
+
 2012-05-16  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=86638

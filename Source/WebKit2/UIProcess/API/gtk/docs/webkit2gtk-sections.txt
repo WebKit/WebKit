@@ -29,6 +29,9 @@ webkit_web_context_get_cache_model
 webkit_web_context_set_cache_model
 webkit_web_context_download_uri
 webkit_web_context_get_cookie_manager
+webkit_web_context_set_additional_plugins_directory
+webkit_web_context_get_plugins
+webkit_web_context_get_plugins_finish
 
 <SUBSECTION Standard>
 WebKitWebContextClass
@@ -600,4 +603,36 @@ WEBKIT_COOKIE_MANAGER_GET_CLASS
 <SUBSECTION Private>
 WebKitCookieManagerPrivate
 webkit_cookie_manager_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitPlugin</FILE>
+WebKitPlugin
+webkit_plugin_get_name
+webkit_plugin_get_description
+webkit_plugin_get_path
+webkit_plugin_get_mime_info_list
+
+<SUBSECTION WebKitMimeInfo>
+WebKitMimeInfo
+webkit_mime_info_ref
+webkit_mime_info_unref
+webkit_mime_info_get_mime_type
+webkit_mime_info_get_description
+webkit_mime_info_get_extensions
+
+<SUBSECTION Standard>
+WebKitPluginClass
+WEBKIT_TYPE_PLUGIN
+WEBKIT_PLUGIN
+WEBKIT_IS_PLUGIN
+WEBKIT_PLUGIN_CLASS
+WEBKIT_IS_PLUGIN_CLASS
+WEBKIT_PLUGIN_GET_CLASS
+WEBKIT_TYPE_MIME_INFO
+
+<SUBSECTION Private>
+webkit_plugin_get_type
+webkit_mime_info_get_type
+WebKitPluginPrivate
 </SECTION>

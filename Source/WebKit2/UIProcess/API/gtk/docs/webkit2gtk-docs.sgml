@@ -31,6 +31,7 @@
     <xi:include href="xml/WebKitFileChooserRequest.xml"/>
     <xi:include href="xml/WebKitFindController.xml"/>
     <xi:include href="xml/WebKitCookieManager.xml"/>
+    <xi:include href="xml/WebKitPlugin.xml"/>
   </chapter>
 
   <index id="index-all">

@@ -65,7 +65,9 @@ Libraries_libWebKit2APITestCore_la_CPPFLAGS = $(webkit2_tests_cppflags)
 
 Programs_WebKit2APITests_TestWebKitWebContext_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebContext.cpp
-Programs_WebKit2APITests_TestWebKitWebContext_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitWebContext_CPPFLAGS = \
+	-DWEBKIT_TEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
+	$(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebKitWebContext_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitWebContext_LDFLAGS = $(webkit2_tests_ldflags)
 

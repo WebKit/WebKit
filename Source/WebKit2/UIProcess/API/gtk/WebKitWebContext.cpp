@@ -24,8 +24,10 @@
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
+#include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include <WebCore/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -234,6 +236,97 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
         priv->cookieManager = adoptGRef(webkitCookieManagerCreate(WKContextGetCookieManager(priv->context.get())));
 
     return priv->cookieManager.get();
+}
+
+/**
+ * webkit_web_context_set_additional_plugins_directory:
+ * @context: a #WebKitWebContext
+ * @directory: the directory to add
+ *
+ * Set an additional directory where WebKit will look for plugins.
+ */
+void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* context, const char* directory)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(directory);
+
+    toImpl(context->priv->context.get())->setAdditionalPluginsDirectory(WebCore::filenameToString(directory));
+}
+
+struct GetPluginsAsyncData {
+    Vector<PluginModuleInfo> plugins;
+};
+
+static GetPluginsAsyncData* getPluginsAsyncDataCreate()
+{
+    GetPluginsAsyncData* data = g_slice_new(GetPluginsAsyncData);
+    new (data) GetPluginsAsyncData();
+    return data;
+}
+
+static void getPluginsAsyncDataDestroy(GetPluginsAsyncData* data)
+{
+    data->~GetPluginsAsyncData();
+    g_slice_free(GetPluginsAsyncData, data);
+}
+
+static void webkitWebContextGetPluginThread(GSimpleAsyncResult* result, GObject* object, GCancellable*)
+{
+    GetPluginsAsyncData* data = static_cast<GetPluginsAsyncData*>(g_simple_async_result_get_op_res_gpointer(result));
+    data->plugins = toImpl(WEBKIT_WEB_CONTEXT(object)->priv->context.get())->pluginInfoStore().plugins();
+}
+
+/**
+ * webkit_web_context_get_plugins:
+ * @context: a #WebKitWebContext
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously get the list of installed plugins.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_context_get_plugins_finish() to get the result of the operation.
+ */
+void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(context), callback, userData,
+                                                                             reinterpret_cast<gpointer>(webkit_web_context_get_plugins)));
+    g_simple_async_result_set_op_res_gpointer(result.get(), getPluginsAsyncDataCreate(),
+                                              reinterpret_cast<GDestroyNotify>(getPluginsAsyncDataDestroy));
+    g_simple_async_result_run_in_thread(result.get(), webkitWebContextGetPluginThread, G_PRIORITY_DEFAULT, cancellable);
+}
+
+/**
+ * webkit_web_context_get_plugins_finish:
+ * @context: a #WebKitWebContext
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_context_get_plugins.
+ *
+ * Returns: (element-type WebKitPlugin) (transfer full): a #GList of #WebKitPlugin. You must free the #GList with
+ *    g_list_free() and unref the #WebKitPlugin<!-- -->s with g_object_unref() when you're done with them.
+ */
+GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_context_get_plugins);
+
+    if (g_simple_async_result_propagate_error(simpleResult, error))
+        return 0;
+
+    GetPluginsAsyncData* data = static_cast<GetPluginsAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
+    GList* plugins = 0;
+    for (size_t i = 0; i < data->plugins.size(); ++i)
+        plugins = g_list_prepend(plugins, webkitPluginCreate(data->plugins[i]));
+
+    return plugins;
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)
