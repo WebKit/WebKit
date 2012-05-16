@@ -33,7 +33,7 @@
 #if PLATFORM(QT)
 #if QT_VERSION >= 0x050000
 #include <QOpenGLContext>
-#include <QPlatformPixmap>
+#include <qpa/qplatformpixmap.h>
 #else
 #include <QGLContext>
 #endif // QT_VERSION
