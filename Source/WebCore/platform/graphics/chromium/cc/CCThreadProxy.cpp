@@ -59,8 +59,8 @@ namespace WebCore {
 
 namespace {
 
-// FIXME: Use ThrottledUploader by default.
-static TextureUploaderOption textureUploader = UnthrottledUploader;
+// Type of texture uploader to use for texture updates.
+static TextureUploaderOption textureUploader = ThrottledUploader;
 
 } // anonymous namespace
 
