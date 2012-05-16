@@ -1,3 +1,9 @@
+2012-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a typo.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2012-05-15  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Enable Fullscreen API
