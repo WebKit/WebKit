@@ -1,3 +1,20 @@
+2012-04-03  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in SelectorChecker::checkOneSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=83040
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/css-set-selector-text-crash.html
+
+        Removing the early bail when we detect that our selector text
+        hasn't changed, and we don't notify the styleSelectorChanged.
+        In fact, when we adopt the new selector list, the old one will
+        get destroyed and the styleSelectorChanged call needs to be made.
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
 2012-04-09  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to floats not cleared before starting SVG <text> layout.
