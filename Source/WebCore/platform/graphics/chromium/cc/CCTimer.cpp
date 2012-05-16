@@ -52,10 +52,14 @@ public:
 
     void performTask()
     {
-        if (!m_timer || !m_timer->m_client)
+        if (!m_timer)
             return;
 
-        m_timer->m_client->onTimerFired();
+        CCTimerClient* client = m_timer->m_client;
+
+        m_timer->stop();
+        if (client)
+            client->onTimerFired();
     }
 
 private:

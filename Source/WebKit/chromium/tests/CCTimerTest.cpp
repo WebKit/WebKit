@@ -55,8 +55,9 @@ TEST_F(CCTimerTest, OneShot)
 {
     CCTimer timer(&m_thread, this);
     timer.startOneShot(0.001);
-
+    EXPECT_TRUE(timer.isActive());
     m_thread.runPendingTask();
+    EXPECT_FALSE(timer.isActive());
     EXPECT_TRUE(m_flag);
     EXPECT_FALSE(m_thread.hasPendingTask());
 }
@@ -65,7 +66,9 @@ TEST_F(CCTimerTest, StopManually)
 {
     CCTimer timer(&m_thread, this);
     timer.startOneShot(0.001);
+    EXPECT_TRUE(timer.isActive());
     timer.stop();
+    EXPECT_FALSE(timer.isActive());
 
     m_thread.runPendingTask();
     EXPECT_FALSE(m_flag);

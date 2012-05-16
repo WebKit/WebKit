@@ -1,3 +1,15 @@
+2012-05-15  Tien-Ren Chen  <trchen@chromium.org>
+
+        [Chromium] CCTimer::isActive() is incorrect inside tick callback
+        https://bugs.webkit.org/show_bug.cgi?id=86513
+
+        Update test cases to verify CCTimer::isActive() values.
+
+        Reviewed by James Robinson.
+
+        * tests/CCTimerTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117204.
