@@ -1,3 +1,15 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Remove full-screen-keyboard-disabled.html from test_expectation.txt
+        https://bugs.webkit.org/show_bug.cgi?id=86596
+
+        Unreviewed EFL gardening.
+
+        Remove full-screen-keyboard-disabled.html from test_expectation.txt.
+        This case is not failed since r117205.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-16  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Unskip passing tests related to computedStyleIncludingVisitedInfo and display
