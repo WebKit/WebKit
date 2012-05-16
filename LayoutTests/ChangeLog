@@ -1,3 +1,16 @@
+2012-05-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: extract CompositeUISourceCodeProvider from DebuggerScriptMapping.
+        https://bugs.webkit.org/show_bug.cgi?id=86634
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/linkifier.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-05-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Support script snippets saving.

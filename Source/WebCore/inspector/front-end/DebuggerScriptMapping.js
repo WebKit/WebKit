@@ -30,8 +30,6 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
- * @implements {WebInspector.UISourceCodeProvider}
  */
 WebInspector.DebuggerScriptMapping = function()
 {
@@ -43,11 +41,6 @@ WebInspector.DebuggerScriptMapping = function()
     this._mappings.push(this._compilerMapping);
     this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;
     this._mappings.push(this._snippetMapping);
-    for (var i = 0; i < this._mappings.length; ++i) {
-        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
-        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
-    }
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
@@ -56,6 +49,14 @@ WebInspector.DebuggerScriptMapping = function()
 
 WebInspector.DebuggerScriptMapping.prototype = {
     /**
+     * @return {Array.<WebInspector.UISourceCodeProvider>}
+     */
+    uiSourceCodeProviders: function()
+    {
+        return this._mappings;
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _parsedScriptSource: function(event)
@@ -63,44 +64,6 @@ WebInspector.DebuggerScriptMapping.prototype = {
         var script = /** @type {WebInspector.Script} */ event.data;
         var mapping = this._mappingForScript(script);
         mapping.addScript(script);
-    },
-
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodes: function()
-    {
-        var result = [];
-        for (var i = 0; i < this._mappings.length; ++i) {
-            var uiSourceCodeList = this._mappings[i].uiSourceCodes();
-            for (var j = 0; j < uiSourceCodeList.length; ++j)
-                result.push(uiSourceCodeList[j]);
-        }
-        return result;
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeAdded: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, event.data);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeReplaced: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, event.data);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeRemoved: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, event.data);
     },
 
     /**
@@ -128,5 +91,3 @@ WebInspector.DebuggerScriptMapping.prototype = {
             this._mappings[i].reset();
     }
 }
-
-WebInspector.DebuggerScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;

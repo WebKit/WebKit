@@ -193,7 +193,8 @@ function test()
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
             var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping();
-            debuggerScriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
+            var uiSourceCodeProvider = new WebInspector.CompositeUISourceCodeProvider(debuggerScriptMapping.uiSourceCodeProviders());
+            uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";
