@@ -1,3 +1,9 @@
+2012-05-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Fix my typo.
+
+        * platform/qt/Skipped: After r117262.
+
 2012-05-16  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         "border: collapse" + "display: none" rows in the tbody while having thead or tfoot doesn't render the opposite border
