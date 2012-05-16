@@ -1,3 +1,9 @@
+2012-05-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r117123 and r117225.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         ShadowRoot.selection should return the seleciton whose range is in a shadow tree.
