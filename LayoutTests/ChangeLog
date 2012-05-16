@@ -1,3 +1,22 @@
+2012-05-16  Stephen White  <senorblanco@chromium.org>
+
+        New baselines required after r117187.
+        https://bugs.webkit.org/show_bug.cgi?id=86486
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-linux/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Avoid jumpscroll when entering new text in a multi-line editor.
