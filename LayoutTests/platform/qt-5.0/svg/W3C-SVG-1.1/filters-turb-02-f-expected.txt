@@ -1,0 +1,103 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (59,28) size 362x268
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="turbneg1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-0.20" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-0.50" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-0.80" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbzero"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="0.00" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbpos1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="0.20" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbpos2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="0.50" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbpos3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="1.50" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-1.00" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-1.50" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-2.00" numOctaves="1" stitchTiles="0"]
+        RenderSVGResourceFilter {filter} [id="turbneg7"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feTurbulence type="TURBULANCE" baseFrequency="0.01, 0.01" seed="-2.60" numOctaves="1" stitchTiles="0"]
+      RenderSVGText {text} at (141,28) size 197x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 197x24
+          chunk 1 (middle anchor) text run 1 at (141.89,48.00) startOffset 0 endOffset 1 width 6.67: "f"
+          chunk 1 (middle anchor) text run 2 at (148.20,48.00) startOffset 1 endOffset 3 width 28.01: "eT"
+          chunk 1 (middle anchor) text run 3 at (174.02,48.00) startOffset 3 endOffset 17 width 164.09: "urbulence seed"
+      RenderSVGContainer {g} at (59,74) size 362x222 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,80.00)}]
+        RenderSVGRect {rect} at (65,80) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg3"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (9,65) size 32x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x18
+            chunk 1 (middle anchor) text run 1 at (9.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.8"
+        RenderSVGRect {rect} at (115,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg2"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (59,65) size 32x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x18
+            chunk 1 (middle anchor) text run 1 at (59.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.5"
+        RenderSVGRect {rect} at (165,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg1"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (109,65) size 32x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x18
+            chunk 1 (middle anchor) text run 1 at (109.49,80.00) startOffset 0 endOffset 4 width 31.01: "-0.2"
+        RenderSVGRect {rect} at (215,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbzero"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (169,65) size 11x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 11x18
+            chunk 1 (middle anchor) text run 1 at (170.00,80.00) startOffset 0 endOffset 1 width 10.01: "0"
+        RenderSVGRect {rect} at (265,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbpos1"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (212,65) size 26x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x18
+            chunk 1 (middle anchor) text run 1 at (212.49,80.00) startOffset 0 endOffset 3 width 25.02: "0.2"
+        RenderSVGRect {rect} at (315,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbpos2"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (262,65) size 26x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x18
+            chunk 1 (middle anchor) text run 1 at (262.49,80.00) startOffset 0 endOffset 3 width 25.02: "0.5"
+        RenderSVGRect {rect} at (365,80) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbpos3"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (313,65) size 24x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 24x18
+            chunk 1 (middle anchor) text run 1 at (313.16,80.00) startOffset 0 endOffset 1 width 10.01: "1"
+            chunk 1 (middle anchor) text run 2 at (321.83,80.00) startOffset 1 endOffset 3 width 15.01: ".5"
+        RenderSVGRect {rect} at (59,74) size 362x102 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-5.00] [width=360.00] [height=100.00]
+        RenderSVGRect {rect} at (65,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg4"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (16,185) size 17x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x18
+            chunk 1 (middle anchor) text run 1 at (17.00,200.00) startOffset 0 endOffset 2 width 16.00: "-1"
+        RenderSVGRect {rect} at (115,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,120.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg5"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (60,185) size 30x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 30x18
+            chunk 1 (middle anchor) text run 1 at (60.16,200.00) startOffset 0 endOffset 2 width 16.00: "-1"
+            chunk 1 (middle anchor) text run 2 at (74.83,200.00) startOffset 2 endOffset 4 width 15.01: ".5"
+        RenderSVGRect {rect} at (59,194) size 112x102 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=115.00] [width=110.00] [height=100.00]
+        RenderSVGRect {rect} at (315,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,120.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg6"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (266,185) size 17x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x18
+            chunk 1 (middle anchor) text run 1 at (267.00,200.00) startOffset 0 endOffset 2 width 16.00: "-2"
+        RenderSVGRect {rect} at (365,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,120.00)}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          [filter="turbneg7"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+        RenderSVGText {text} at (309,185) size 32x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x18
+            chunk 1 (middle anchor) text run 1 at (309.49,200.00) startOffset 0 endOffset 4 width 31.01: "-2.6"
+        RenderSVGRect {rect} at (309,194) size 112x102 [stroke={[type=SOLID] [color=#000000]}] [x=245.00] [y=115.00] [width=110.00] [height=100.00]
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

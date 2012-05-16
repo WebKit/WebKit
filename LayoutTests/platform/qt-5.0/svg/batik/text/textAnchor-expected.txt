@@ -1,0 +1,170 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,0) size 448x498
+    RenderSVGText {text} at (144,24) size 162x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 162x21
+        chunk 1 (middle anchor) text run 1 at (144.00,40.00) startOffset 0 endOffset 22 width 162.00: "text-anchor on <tspan>"
+    RenderSVGContainer {g} at (31,82) size 366x376 [transform={m=((0.75,0.00)(0.00,0.75)) t=(56.25,82.50)}]
+      RenderSVGContainer {g} at (55,82) size 340x376
+        RenderSVGRect {rect} at (56,82) size 338x126 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=450.00] [height=167.00]
+        RenderSVGRect {rect} at (56,207) size 338x126 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=167.00] [width=450.00] [height=167.00]
+        RenderSVGRect {rect} at (56,333) size 338x125 [opacity=0.10] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=334.00] [width=450.00] [height=166.00]
+        RenderSVGPath {line} at (168,82) size 2x376 [stroke={[type=SOLID] [color=#FF0000]}] [x1=150.00] [y1=0.00] [x2=150.00] [y2=500.00]
+        RenderSVGPath {line} at (295,82) size 2x376 [stroke={[type=SOLID] [color=#FF0000]}] [x1=320.00] [y1=0.00] [x2=320.00] [y2=500.00]
+        RenderSVGRect {rect} at (55,82) size 340x376 [stroke={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=450.00] [height=500.00]
+      RenderSVGContainer {g} at (31,93) size 366x92
+        RenderSVGContainer {g} at (168,93) size 229x32
+          RenderSVGText {text} at (150,14) size 304x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (207.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (211.33,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (328.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (170,0) size 134x22
+                chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (99,123) size 298x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
+          RenderSVGText {text} at (58,14) size 395x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (middle anchor) text run 1 at (58.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (116.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (120.00,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (237.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (261,0) size 134x22
+                chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (31,153) size 366x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
+          RenderSVGText {text} at (-33,14) size 487x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (end anchor) text run 1 at (-32.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (24.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (28.67,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 135x22
+              RenderSVGInlineText {#text} at (352,0) size 134x22
+                chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {g} at (31,220) size 316x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        RenderSVGContainer {g} at (168,220) size 179x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+          RenderSVGText {text} at (150,14) size 237x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (207.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (211.33,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (328.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (103,0) size 134x22
+                chunk 1 (middle anchor) text run 1 at (253.33,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (99,250) size 248x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+          RenderSVGText {text} at (58,14) size 329x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (middle anchor) text run 1 at (58.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (116.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (120.00,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (237.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (194,0) size 134x22
+                chunk 1 (middle anchor) text run 1 at (253.33,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (31,280) size 316x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+          RenderSVGText {text} at (-33,14) size 420x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (end anchor) text run 1 at (-32.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (24.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (28.67,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (286,0) size 134x22
+                chunk 1 (middle anchor) text run 1 at (253.33,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {g} at (31,348) size 275x92 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
+        RenderSVGContainer {g} at (168,348) size 138x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,260.00)}]
+          RenderSVGText {text} at (150,14) size 183x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (207.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (211.33,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (328.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (36,0) size 134x22
+                chunk 1 (end anchor) text run 1 at (186.67,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (99,378) size 198x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+          RenderSVGText {text} at (58,14) size 262x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (middle anchor) text run 1 at (58.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (116.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (120.00,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (237.33,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (128,0) size 134x22
+                chunk 1 (end anchor) text run 1 at (186.67,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGContainer {g} at (31,408) size 266x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,340.00)}]
+          RenderSVGText {text} at (-33,14) size 353x42 contains 1 chunk(s)
+            RenderSVGTSpan {tspan} at (0,0) size 58x22
+              RenderSVGInlineText {#text} at (0,20) size 58x22
+                chunk 1 (end anchor) text run 1 at (-32.67,50.00) startOffset 0 endOffset 8 width 57.33: "I am the"
+            RenderSVGInlineText {#text} at (57,20) size 4x22
+              chunk 1 text run 1 at (24.67,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 118x22
+              RenderSVGInlineText {#text} at (61,20) size 118x22
+                chunk 1 text run 1 at (28.67,50.00) startOffset 0 endOffset 15 width 117.33: "same text chunk"
+            RenderSVGInlineText {#text} at (178,20) size 4x22
+              chunk 1 text run 1 at (146.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            RenderSVGTSpan {tspan} at (0,0) size 134x22
+              RenderSVGInlineText {#text} at (219,0) size 134x22
+                chunk 1 (end anchor) text run 1 at (186.67,30.00) startOffset 0 endOffset 18 width 133.33: "another text chunk"
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 448x498
+      RenderSVGContainer {g} at (0,0) size 448x498
+        RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGContainer {g} at (418,466) size 28x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
+          RenderSVGViewportContainer {svg} at (418,466) size 28x30
+            RenderSVGPath {path} at (418,468) size 14x19 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+            RenderSVGPath {path} at (432,466) size 14x17 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+            RenderSVGPath {path} at (425,484) size 16x12 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

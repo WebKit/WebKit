@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 200x50
-  RenderSVGRoot {svg} at (129,8) size 21x16
+  RenderSVGRoot {svg} at (69,7) size 81x18
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (129,8) size 21x16
-      RenderSVGText {text} at (129,8) size 21x16 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 21x16
-          chunk 1 text run 1 at (129.00,20.00) startOffset 0 endOffset 19 width 21.00 RTL override: "\x{DBC0}\x{DC5B}[\x{D800}\x{DC5B}]\x{DBC0}\x{DC5D} | \x{DBC0}\x{DC5B}[\x{D800}\x{DC5D}]\x{DBC0}\x{DC5D}"
+    RenderSVGContainer {g} at (69,7) size 81x18
+      RenderSVGText {text} at (69,7) size 81x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 81x18
+          chunk 1 text run 1 at (69.36,20.00) startOffset 0 endOffset 19 width 80.64 RTL override: "\x{DBC0}\x{DC5B}[\x{D800}\x{DC5B}]\x{DBC0}\x{DC5D} | \x{DBC0}\x{DC5B}[\x{D800}\x{DC5D}]\x{DBC0}\x{DC5D}"

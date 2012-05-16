@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (96,34) size 192x221
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (0,-16) size 188x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 188x21
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 25 width 188.00: "Referenced character data"
+      RenderSVGPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M 100 150 L 150 140 L 200 150"]
+    RenderSVGText {text} at (100,34) size 85x21 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 85x21
+        RenderSVGTSpan {tspan} at (0,0) size 85x21
+          RenderSVGInlineText {#text} at (0,0) size 85x21
+            chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 13 width 85.00: "tspan in link"
+    RenderSVGText {text} at (100,84) size 188x21 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 188x21
+        RenderSVGInline {tref} at (0,0) size 188x21
+          RenderSVGInlineText {#text} at (0,0) size 188x21
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 25 width 188.00: "Referenced character data"
+    RenderSVGText {text} at (96,123) size 109x32 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 109x32
+        RenderSVGTextPath {textPath} at (0,0) size 109x32
+          RenderSVGInlineText {#text} at (0,0) size 109x32
+            chunk 1 text run 1 at (101.96,149.61) startOffset 0 endOffset 1 width 4.00: "t"
+            chunk 1 text run 2 at (108.33,148.33) startOffset 1 endOffset 2 width 9.00: "e"
+            chunk 1 text run 3 at (116.67,146.67) startOffset 2 endOffset 3 width 8.00: "x"
+            chunk 1 text run 4 at (122.55,145.49) startOffset 3 endOffset 4 width 4.00: "t"
+            chunk 1 text run 5 at (129.91,144.02) startOffset 4 endOffset 5 width 11.00: "P"
+            chunk 1 text run 6 at (139.71,142.06) startOffset 5 endOffset 6 width 9.00: "a"
+            chunk 1 text run 7 at (146.09,140.78) startOffset 6 endOffset 7 width 4.00: "t"
+            chunk 1 text run 8 at (152.46,140.49) startOffset 7 endOffset 8 width 9.00: "h"
+            chunk 1 text run 9 at (158.83,141.77) startOffset 8 endOffset 9 width 4.00: " "
+            chunk 1 text run 10 at (162.76,142.55) startOffset 9 endOffset 10 width 4.00: "i"
+            chunk 1 text run 11 at (169.13,143.83) startOffset 10 endOffset 11 width 9.00: "n"
+            chunk 1 text run 12 at (175.50,145.10) startOffset 11 endOffset 12 width 4.00: " "
+            chunk 1 text run 13 at (179.43,145.89) startOffset 12 endOffset 13 width 4.00: "l"
+            chunk 1 text run 14 at (183.35,146.67) startOffset 13 endOffset 14 width 4.00: "i"
+            chunk 1 text run 15 at (189.72,147.94) startOffset 14 endOffset 15 width 9.00: "n"
+            chunk 1 text run 16 at (198.06,149.61) startOffset 15 endOffset 16 width 8.00: "k"
+    RenderSVGText {text} at (100,184) size 117x21 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 117x21
+        RenderSVGTSpan {altGlyph} at (0,0) size 11x21
+          RenderSVGInlineText {#text} at (0,0) size 11x21
+            chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 1 width 11.00: "A"
+        RenderSVGInlineText {#text} at (11,0) size 106x21
+          chunk 1 text run 1 at (111.00,200.00) startOffset 0 endOffset 15 width 106.00: "ltGlyph content"
+    RenderSVGText {text} at (100,234) size 145x21 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 145x21
+        RenderSVGInline {a} at (0,0) size 145x21
+          RenderSVGTSpan {tspan} at (0,0) size 145x21
+            RenderSVGInlineText {#text} at (0,0) size 145x21
+              chunk 1 text run 1 at (100.00,250.00) startOffset 0 endOffset 22 width 145.00: "tspan in link in tspan"
+    RenderSVGText {text}
+      RenderSVGInline {a} at (0,0) size 0x0

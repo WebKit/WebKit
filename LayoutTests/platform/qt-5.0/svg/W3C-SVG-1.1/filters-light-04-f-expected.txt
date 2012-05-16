@@ -1,0 +1,86 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (70,34) size 335x221
+      RenderSVGText {text} at (126,34) size 228x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x21
+          chunk 1 (middle anchor) text run 1 at (126.00,50.00) startOffset 0 endOffset 31 width 228.00: "feSpotLight's limitingConeAngle"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="spotLightA"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightB"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightD"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightE"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightF"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightG"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="spotLightH"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
+            [SourceGraphic]
+      RenderSVGContainer {g} at (70,111) size 335x144 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-20.00)}]
+        RenderSVGContainer {g} at (70,111) size 293x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,110.00)}]
+          RenderSVGText {text} at (70,21) size 10x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 10x12
+              chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 2 width 10.00: "30"
+          RenderSVGText {text} at (165,21) size 10x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 10x12
+              chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 2 width 10.00: "20"
+          RenderSVGText {text} at (260,21) size 69x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 69x12
+              chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 16 width 69.00: "Animated (0..50)"
+          RenderSVGText {text} at (355,21) size 5x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 5x12
+              chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 1 width 5.00: "5"
+          RenderSVGContainer {g} at (70,211) size 293x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+            RenderSVGText {text} at (70,21) size 13x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 13x12
+                chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 3 width 13.00: "-30"
+            RenderSVGText {text} at (165,21) size 13x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 13x12
+                chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 3 width 13.00: "-20"
+            RenderSVGText {text} at (260,21) size 72x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 72x12
+                chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 17 width 72.00: "Animated (0..-50)"
+            RenderSVGText {text} at (355,21) size 8x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 8x12
+                chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 2 width 8.00: "-5"
+        RenderSVGContainer {g} at (70,125) size 335x130
+          RenderSVGRect {rect} at (70,125) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,145.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightA"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (165,125) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,145.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightB"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (260,125) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,145.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightC"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (355,125) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(355.00,145.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightD"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (70,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightE"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (165,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightF"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (260,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightG"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+          RenderSVGRect {rect} at (355,225) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(355.00,245.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+            [filter="spotLightH"] RenderSVGResourceFilter {filter} at (0,0) size 50x30
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".4 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
