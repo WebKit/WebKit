@@ -60,7 +60,8 @@ WebInspector.NavigatorView = function()
 
 
 WebInspector.NavigatorView.Events = {
-    ItemSelected: "ItemSelected"
+    ItemSelected: "ItemSelected",
+    FileRenamed: "FileRenamed"
 }
 
 WebInspector.NavigatorView.prototype = {
@@ -81,12 +82,18 @@ WebInspector.NavigatorView.prototype = {
         folderTreeElement.appendChild(scriptTreeElement);
     },
 
+    _uiSourceCodeTitleChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateScriptTitle(uiSourceCode)
+    },
+
     _uiSourceCodeWorkingCopyChanged: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
         this._updateScriptTitle(uiSourceCode)
     },
-    
+
     _uiSourceCodeContentChanged: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
@@ -95,8 +102,9 @@ WebInspector.NavigatorView.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean=} ignoreIsDirty
      */
-    _updateScriptTitle: function(uiSourceCode)
+    _updateScriptTitle: function(uiSourceCode, ignoreIsDirty)
     {
         var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
         if (!scriptTreeElement)
@@ -111,7 +119,7 @@ WebInspector.NavigatorView.prototype = {
             titleText = uiSourceCode.parsedURL.url;
         if (!titleText)
             titleText = WebInspector.UIString("(program)");
-        if (uiSourceCode.isDirty())
+        if (!ignoreIsDirty && uiSourceCode.isDirty())
             titleText = "*" + titleText;
         scriptTreeElement.titleText = titleText;
     },
@@ -200,6 +208,7 @@ WebInspector.NavigatorView.prototype = {
      */
     _addUISourceCodeListeners: function(uiSourceCode)
     {
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
     },
@@ -209,6 +218,7 @@ WebInspector.NavigatorView.prototype = {
      */
     _removeUISourceCodeListeners: function(uiSourceCode)
     {
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
     },
@@ -226,8 +236,9 @@ WebInspector.NavigatorView.prototype = {
     },
 
     _fileRenamed: function(uiSourceCode, newTitle)
-    {
-        // FIXME: To be implemented.
+    {    
+        var data = { uiSourceCode: uiSourceCode, name: newTitle };
+        this.dispatchEventToListeners(WebInspector.NavigatorView.Events.FileRenamed, data);
     },
 
     /**
@@ -568,6 +579,7 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
         this.listItemElement.addEventListener("click", this._onclick.bind(this), false);
+        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
     },
 
     onspace: function()

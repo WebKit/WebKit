@@ -224,9 +224,10 @@ WebInspector.TabbedEditorContainer.prototype = {
         var tabId = this._generateTabId();
         this._tabIds.put(uiSourceCode, tabId);
         this._files[tabId] = uiSourceCode;
-        
+
         this._tabbedPane.appendTab(tabId, title, view, tooltip, userGesture);
 
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
         return tabId;
@@ -238,7 +239,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     _removeFileTab: function(uiSourceCode)
     {
         var tabId = this._tabIds.get(uiSourceCode);
-        
+
         if (tabId)
             this._tabbedPane.closeTab(tabId);
     },
@@ -255,6 +256,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
         delete this._currentFile;
+
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
 
@@ -308,7 +311,13 @@ WebInspector.TabbedEditorContainer.prototype = {
             this._tabbedPane.changeTabTitle(tabId, title);
         }
     },
-    
+
+    _uiSourceCodeTitleChanged: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._updateFileTitle(uiSourceCode);
+    },
+
     _uiSourceCodeWorkingCopyChanged: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;

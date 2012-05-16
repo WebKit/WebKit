@@ -84,6 +84,9 @@ WebInspector.ScriptsPanel = function(scriptMappingForTest)
     this._navigatorController = new WebInspector.NavigatorOverlayController(this, this.editorView, this._navigator.view, this._editorContainer.view);
 
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
+    this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.SnippetCreationRequested, this._snippetCreationRequested, this);
+    this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.FileRenamed, this._fileRenamed, this);
+
     this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._editorSelected, this);
     this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorClosed, this._editorClosed, this);
 
@@ -963,6 +966,33 @@ WebInspector.ScriptsPanel.prototype = {
         this._toggleDebuggerSidebarButton.title = WebInspector.UIString("Show debugger");
         this.splitView.hideSidebarElement();
         WebInspector.settings.debuggerSidebarHidden.set(true);
+    },
+
+    _fileRenamed: function(event)
+    {
+       var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var name = /** @type {string} */ event.data.name;
+        if (!uiSourceCode.isSnippet)
+            return;
+        WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, name);
+    },
+        
+    _snippetCreationRequested: function()
+    {
+        var uiSourceCode = WebInspector.scriptSnippetModel.createScriptSnippet();
+        this._showSourceLine(uiSourceCode);
+        
+        var shouldHideNavigator = !this._navigatorController.isNavigatorPinned();
+        if (this._navigatorController.isNavigatorHidden())
+            this._navigatorController.showNavigatorOverlay();
+        this._navigator.rename(uiSourceCode, callback.bind(this));
+    
+        function callback()
+        {
+            if (shouldHideNavigator)
+                this._navigatorController.hideNavigatorOverlay();
+            this._showSourceLine(uiSourceCode);
+        }
     }
 }
 

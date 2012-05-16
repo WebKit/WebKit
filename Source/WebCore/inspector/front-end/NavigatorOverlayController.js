@@ -161,5 +161,15 @@ WebInspector.NavigatorOverlayController.prototype = {
     {
         if (!event.target.isSelfOrDescendant(this._sidebarOverlay.element))
             this.hideNavigatorOverlay();
+    },
+    
+    isNavigatorPinned: function()
+    {
+        return this._navigatorShowHideButton.state === "pinned";
+    },
+    
+    isNavigatorHidden: function()
+    {
+        return this._navigatorShowHideButton.state === "hidden";
     }
 }

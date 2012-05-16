@@ -57,6 +57,7 @@ WebInspector.UISourceCode = function(url, contentProvider, sourceMapping)
 WebInspector.UISourceCode.Events = {
     ContentChanged: "ContentChanged",
     WorkingCopyChanged: "WorkingCopyChanged",
+    TitleChanged: "TitleChanged",
     ConsoleMessageAdded: "ConsoleMessageAdded",
     ConsoleMessageRemoved: "ConsoleMessageRemoved",
     ConsoleMessagesCleared: "ConsoleMessagesCleared"
@@ -69,6 +70,16 @@ WebInspector.UISourceCode.prototype = {
     get url()
     {
         return this._url;
+    },
+
+    /**
+     * @param {string} url
+     */
+    urlChanged: function(url)
+    {
+        this._url = url;
+        this._parsedURL = new WebInspector.ParsedURL(this._url);
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.TitleChanged, null);
     },
 
     /**
