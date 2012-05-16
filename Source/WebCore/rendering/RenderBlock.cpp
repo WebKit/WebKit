@@ -5887,58 +5887,6 @@ static inline bool shouldSkipForFirstLetter(UChar c)
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
-RenderObject* RenderBlock::findLastObjectWithFirstLetterText(RenderObject* child, RenderObject* &firstLetterBlock)
-{
-    while (child) {
-        RenderObject* nextChild = child->nextSibling();
-        // Style and skip over any objects such as quotes or punctuation
-        child = findLastObjectAfterFirstLetterPunctuation(child, firstLetterBlock);
-        if (child)
-            break;
-        child = nextChild;
-    }
-    return child;
-}
-
-RenderObject* RenderBlock::findLastObjectAfterFirstLetterPunctuation(RenderObject* child, RenderObject* &firstLetterBlock)
-{
-    if (child->isText()) {
-        // CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
-        // "The first letter must occur on the first formatted line."
-        if (child->isBR())
-            return child;
-        
-        // If child is a single punctuation mark or a Render Quote then style it as first-letter now and keep looking for further text,
-        bool textQuote = toRenderText(child)->textLength() == 1 && isPunctuationForFirstLetter(toRenderText(child)->characters()[0]);
-        if (child->isQuote() || textQuote)
-            addFirstLetter(child, firstLetterBlock);
-        else if (!toRenderText(child)->isAllCollapsibleWhitespace())
-            return child;
-        return 0;
-    }
-    
-    if (child->isListMarker())
-        return 0;
-    
-    if (child->isFloatingOrPositioned()) {
-        // Floats and positioned objects do not inherit their style from parents so if it is styled
-        // inspect its children for text, otherwise move on to its sibling.
-        if (child->style()->styleType() == FIRST_LETTER)
-            return findLastObjectWithFirstLetterText(child->firstChild(), firstLetterBlock);
-        return 0;
-    }
-    
-    if (child->isReplaced() || child->isRenderButton() || child->isMenuList())
-        return child;
-    
-    if (child->style()->hasPseudoStyle(FIRST_LETTER) && child->canHaveChildren())  {
-        // We found a lower-level node with first-letter, which supersedes the higher-level style.
-        firstLetterBlock = child;
-        return findLastObjectWithFirstLetterText(child->firstChild(), firstLetterBlock);
-    }
-    return findLastObjectWithFirstLetterText(child->firstChild(), firstLetterBlock);
-}
-
 static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
 {
     RenderObject* firstLetterBlock = start;
@@ -6088,36 +6036,47 @@ void RenderBlock::updateFirstLetter()
     if (!firstLetterBlock)
         return;
 
-    // Check each sibling and drill into its inlines until we find a text node that is not all whitespace
-    // or is a line break.
-    RenderObject* firstLetterObject = firstLetterBlock->firstChild();
-    
-    firstLetterObject = findLastObjectWithFirstLetterText(firstLetterObject, firstLetterBlock);
+    // Drill into inlines looking for our first text child.
+    RenderObject* currChild = firstLetterBlock->firstChild();
+    while (currChild) {
+        if (currChild->isText())
+            break;
+        if (currChild->isListMarker())
+            currChild = currChild->nextSibling();
+        else if (currChild->isFloatingOrPositioned()) {
+            if (currChild->style()->styleType() == FIRST_LETTER) {
+                currChild = currChild->firstChild();
+                break;
+            }
+            currChild = currChild->nextSibling();
+        } else if (currChild->isReplaced() || currChild->isRenderButton() || currChild->isMenuList())
+            break;
+        else if (currChild->style()->hasPseudoStyle(FIRST_LETTER) && canHaveGeneratedChildren(currChild))  {
+            // We found a lower-level node with first-letter, which supersedes the higher-level style
+            firstLetterBlock = currChild;
+            currChild = currChild->firstChild();
+        } else
+            currChild = currChild->firstChild();
+    }
 
-    if (!firstLetterObject)
+    if (!currChild)
         return;
-    
-    addFirstLetter(firstLetterObject, firstLetterBlock);
-}
-
-void RenderBlock::addFirstLetter(RenderObject* firstLetterObject, RenderObject* &firstLetterBlock)
-{
 
     // If the child already has style, then it has already been created, so we just want
     // to update it.
-    if (firstLetterObject->parent()->style()->styleType() == FIRST_LETTER) {
-        updateFirstLetterStyle(firstLetterBlock, firstLetterObject);
+    if (currChild->parent()->style()->styleType() == FIRST_LETTER) {
+        updateFirstLetterStyle(firstLetterBlock, currChild);
         return;
     }
 
-    if (!firstLetterObject->isText() || firstLetterObject->isBR())
+    if (!currChild->isText() || currChild->isBR())
         return;
 
     // Our layout state is not valid for the repaints we are going to trigger by
     // adding and removing children of firstLetterContainer.
     LayoutStateDisabler layoutStateDisabler(view());
 
-    createFirstLetterRenderer(firstLetterBlock, firstLetterObject);
+    createFirstLetterRenderer(firstLetterBlock, currChild);
 }
 
 // Helper methods for obtaining the last line, computing line counts and heights for line counts
