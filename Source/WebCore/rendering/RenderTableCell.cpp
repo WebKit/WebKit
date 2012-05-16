@@ -604,7 +604,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
             return result;
         
         // (6) Previous row group's after border.
-        currSection = table->sectionAbove(currSection);
+        currSection = table->sectionAbove(currSection, SkipEmptySections);
         if (currSection) {
             result = chooseBorder(CollapsedBorderValue(currSection->style()->borderAfter(), includeColor ? currSection->style()->visitedDependentColor(afterColorProperty) : Color(), BROWGROUP), result);
             if (!result.exists())
@@ -682,7 +682,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
             return result;
         
         // (6) Following row group's before border.
-        currSection = table->sectionBelow(currSection);
+        currSection = table->sectionBelow(currSection, SkipEmptySections);
         if (currSection) {
             result = chooseBorder(result, CollapsedBorderValue(currSection->style()->borderBefore(), includeColor ? currSection->style()->visitedDependentColor(beforeColorProperty) : Color(), BROWGROUP));
             if (!result.exists())

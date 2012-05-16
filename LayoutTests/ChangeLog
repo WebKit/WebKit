@@ -1,3 +1,14 @@
+2012-05-16  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        "border: collapse" + "display: none" rows in the tbody while having thead or tfoot doesn't render the opposite border
+        https://bugs.webkit.org/show_bug.cgi?id=67877
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/table-collapsed-borders-expected.html: Added.
+        * fast/css/table-collapsed-borders.html: Added.
+        Added new reftest for testing table with collapsed borders.
+
 2012-05-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move edit/save script source logic to JavaScriptSource.
