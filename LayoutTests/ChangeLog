@@ -1,3 +1,9 @@
+2012-05-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, rebaselining after r117310.
+
+        * platform/gtk/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-05-16  Jer Noble  <jer.noble@apple.com>
 
         <video> elements with no video tracks report false for webkitSupportsFullscreen.
