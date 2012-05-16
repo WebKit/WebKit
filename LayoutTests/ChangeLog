@@ -1,3 +1,17 @@
+2012-05-15  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Fix eventSender key providing
+        https://bugs.webkit.org/show_bug.cgi?id=84710
+
+        Reviewed by Andreas Kling.
+
+        Currently eventSender doesn't provide key event correctly.
+        For example, 'Right' will be visible when 'right arrow' key event is fired.
+        Given circumstance, nothing has to be shown.
+        Therefore, this patch fixed incorrectly provided key event.
+
+        * platform/efl/Skipped:
+
 2012-05-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed chromium test expectation update after r117206

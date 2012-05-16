@@ -178,11 +178,6 @@ fast/loader/form-submission-after-beforeunload-cancel.html
 # EFL's DRT needs a PlainTextController implementation
 editing/text-iterator/basic-iteration.html
 
-# EFL's DRT key down bug
-# https://bugs.webkit.org/show_bug.cgi?id=84710
-editing/input/password-echo-passnode.html
-editing/input/password-echo-passnode2.html
-
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
 

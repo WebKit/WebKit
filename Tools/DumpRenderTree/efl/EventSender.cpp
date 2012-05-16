@@ -109,13 +109,15 @@ enum EventQueueStrategy {
 };
 
 struct KeyEventInfo {
-    KeyEventInfo(const CString& keyName, EvasKeyModifier modifiers)
+    KeyEventInfo(const CString& keyName, const CString& keyString, EvasKeyModifier modifiers)
         : keyName(keyName)
+        , keyString(keyString)
         , modifiers(modifiers)
     {
     }
 
     const CString keyName;
+    const CString keyString;
     EvasKeyModifier modifiers;
 };
 
@@ -360,94 +362,94 @@ static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObject
     return JSValueMakeUndefined(context);
 }
 
-static const CString keyPadNameFromJSValue(JSStringRef character)
+static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, EvasKeyModifier modifiers)
 {
     if (equals(character, "leftArrow"))
-        return "KP_Left";
+        return new KeyEventInfo("KP_Left", "", modifiers);
     if (equals(character, "rightArrow"))
-        return "KP_Right";
+        return new KeyEventInfo("KP_Right", "", modifiers);
     if (equals(character, "upArrow"))
-        return "KP_Up";
+        return new KeyEventInfo("KP_Up", "", modifiers);
     if (equals(character, "downArrow"))
-        return "KP_Down";
+        return new KeyEventInfo("KP_Down", "", modifiers);
     if (equals(character, "pageUp"))
-        return "KP_Prior";
+        return new KeyEventInfo("KP_Prior", "", modifiers);
     if (equals(character, "pageDown"))
-        return "KP_Next";
+        return new KeyEventInfo("KP_Next", "", modifiers);
     if (equals(character, "home"))
-        return "KP_Home";
+        return new KeyEventInfo("KP_Home", "", modifiers);
     if (equals(character, "end"))
-        return "KP_End";
+        return new KeyEventInfo("KP_End", "", modifiers);
     if (equals(character, "insert"))
-        return "KP_Insert";
+        return new KeyEventInfo("KP_Insert", "", modifiers);
     if (equals(character, "delete"))
-        return "KP_Delete";
+        return new KeyEventInfo("KP_Delete", "", modifiers);
 
-    return character->ustring().utf8();
+    return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
 }
 
-static const CString keyNameFromJSValue(JSStringRef character)
+static KeyEventInfo* keyNameFromJSValue(JSStringRef character, EvasKeyModifier modifiers)
 {
     if (equals(character, "leftArrow"))
-        return "Left";
+        return new KeyEventInfo("Left", "", modifiers);
     if (equals(character, "rightArrow"))
-        return "Right";
+        return new KeyEventInfo("Right", "", modifiers);
     if (equals(character, "upArrow"))
-        return "Up";
+        return new KeyEventInfo("Up", "", modifiers);
     if (equals(character, "downArrow"))
-        return "Down";
+        return new KeyEventInfo("Down", "", modifiers);
     if (equals(character, "pageUp"))
-        return "Prior";
+        return new KeyEventInfo("Prior", "", modifiers);
     if (equals(character, "pageDown"))
-        return "Next";
+        return new KeyEventInfo("Next", "", modifiers);
     if (equals(character, "home"))
-        return "Home";
+        return new KeyEventInfo("Home", "", modifiers);
     if (equals(character, "end"))
-        return "End";
+        return new KeyEventInfo("End", "", modifiers);
     if (equals(character, "insert"))
-        return "Insert";
+        return new KeyEventInfo("Insert", "", modifiers);
     if (equals(character, "delete"))
-        return "Delete";
+        return new KeyEventInfo("Delete", "", modifiers);
     if (equals(character, "printScreen"))
-        return "Print";
+        return new KeyEventInfo("Print", "", modifiers);
     if (equals(character, "menu"))
-        return "Menu";
+        return new KeyEventInfo("Menu", "", modifiers);
     if (equals(character, "F1"))
-        return "F1";
+        return new KeyEventInfo("F1", "", modifiers);
     if (equals(character, "F2"))
-        return "F2";
+        return new KeyEventInfo("F2", "", modifiers);
     if (equals(character, "F3"))
-        return "F3";
+        return new KeyEventInfo("F3", "", modifiers);
     if (equals(character, "F4"))
-        return "F4";
+        return new KeyEventInfo("F4", "", modifiers);
     if (equals(character, "F5"))
-        return "F5";
+        return new KeyEventInfo("F5", "", modifiers);
     if (equals(character, "F6"))
-        return "F6";
+        return new KeyEventInfo("F6", "", modifiers);
     if (equals(character, "F7"))
-        return "F7";
+        return new KeyEventInfo("F7", "", modifiers);
     if (equals(character, "F8"))
-        return "F8";
+        return new KeyEventInfo("F8", "", modifiers);
     if (equals(character, "F9"))
-        return "F9";
+        return new KeyEventInfo("F9", "", modifiers);
     if (equals(character, "F10"))
-        return "F10";
+        return new KeyEventInfo("F10", "", modifiers);
     if (equals(character, "F11"))
-        return "F11";
+        return new KeyEventInfo("F11", "", modifiers);
     if (equals(character, "F12"))
-        return "F12";
+        return new KeyEventInfo("F12", "", modifiers);
 
     int charCode = JSStringGetCharactersPtr(character)[0];
     if (charCode == '\n' || charCode == '\r')
-        return "Return";
+        return new KeyEventInfo("Return", "Return", modifiers);
     if (charCode == '\t')
-        return "Tab";
+        return new KeyEventInfo("Tab", "Tab", modifiers);
     if (charCode == '\x8')
-        return "BackSpace";
+        return new KeyEventInfo("BackSpace", "BackSpace", modifiers);
     if (charCode == ' ')
-        return "space";
+        return new KeyEventInfo("space", " ", modifiers);
 
-    return character->ustring().utf8();
+    return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
 }
 
 static KeyEventInfo* createKeyEventInfo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -471,8 +473,7 @@ static KeyEventInfo* createKeyEventInfo(JSContextRef context, size_t argumentCou
     if (argumentCount >= 2)
         modifiers = modifiersFromJSValue(context, arguments[1]);
 
-    const CString keyName = (location == DomKeyLocationNumpad) ? keyPadNameFromJSValue(character.get()) : keyNameFromJSValue(character.get());
-    return new KeyEventInfo(keyName, modifiers);
+    return (location == DomKeyLocationNumpad) ? keyPadNameFromJSValue(character.get(), modifiers) : keyNameFromJSValue(character.get(), modifiers);
 }
 
 static void sendKeyDown(Evas* evas, KeyEventInfo* keyEventInfo)
@@ -481,14 +482,15 @@ static void sendKeyDown(Evas* evas, KeyEventInfo* keyEventInfo)
         return;
 
     const char* keyName = keyEventInfo->keyName.data();
+    const char* keyString = keyEventInfo->keyString.data();
     EvasKeyModifier modifiers = keyEventInfo->modifiers;
 
     DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
 
     ASSERT(evas);
     setEvasModifiers(evas, modifiers);
-    evas_event_feed_key_down(evas, keyName, keyName, keyName, 0, 0, 0);
-    evas_event_feed_key_up(evas, keyName, keyName, keyName, 0, 1, 0);
+    evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, 0, 0);
+    evas_event_feed_key_up(evas, keyName, keyName, keyString, 0, 1, 0);
     setEvasModifiers(evas, EvasKeyModifierNone);
 
     DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary();
