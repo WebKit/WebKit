@@ -3782,3 +3782,14 @@ BUGWK86495 WIN : inspector/profiler/heap-snapshot-containment-expansion-preserve
 BUGWK86495 WIN : inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html = PASS TIMEOUT
 BUGWK86495 WIN : inspector/profiler/heap-snapshot-dominators-expansion-preserved-when-sorting.html = PASS TIMEOUT
 BUGWK86495 WIN : inspector/profiler/heap-snapshot-summary-expansion-preserved-when-sorting.html = PASS TIMEOUT
+
+BUGWK86572 : mhtml/check_domain.mht = MISSING
+BUGWK86572 : mhtml/multi_frames_binary.mht = MISSING
+BUGWK86572 : mhtml/multi_frames_ie.mht = MISSING
+BUGWK86572 : mhtml/multi_frames_unmht.mht = MISSING
+BUGWK86572 : mhtml/page_with_css_and_js_ie.mht = MISSING
+BUGWK86572 : mhtml/page_with_css_and_js_unmht.mht = MISSING
+BUGWK86572 : mhtml/page_with_image_ie.mht = MISSING
+BUGWK86572 : mhtml/page_with_image_unmht.mht = MISSING
+BUGWK86572 : mhtml/simple_page_ie.mht = MISSING
+BUGWK86572 : mhtml/simple_page_unmht.mht = MISSING

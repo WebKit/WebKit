@@ -1,3 +1,9 @@
+2012-05-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed chromium test expectation update after r117206
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-15  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         regression(111639): Issue with simultaneous CSS animations
