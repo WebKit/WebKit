@@ -1,3 +1,21 @@
+2012-05-15  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [BlackBerry] Enhance an API of BackingStore::drawContents
+        https://bugs.webkit.org/show_bug.cgi?id=86447
+
+        Reviewed by George Staikos.
+
+        Enhance the current APIs by adding parameters of id and destination
+        contentSize, because chrome browser may want different contents from
+        the same webview at different times.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStore::drawContents):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
 2012-05-15  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Enable the Fullscreen API

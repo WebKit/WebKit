@@ -2214,9 +2214,9 @@ Platform::IntRect BackingStorePrivate::tileRect()
     return Platform::IntRect(0, 0, tileWidth(), tileHeight());
 }
 
-void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Drawable* drawable,
-                                         double scale,
-                                         const Platform::IntRect& contentsRect) const
+void BackingStorePrivate::renderContents(Platform::Graphics::Drawable* drawable,
+                                         const Platform::IntRect& contentsRect,
+                                         const Platform::IntSize& destinationSize) const
 {
     if (!drawable || contentsRect.isEmpty())
         return;
@@ -2230,17 +2230,19 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Drawabl
 
     WebCore::IntRect transformedContentsRect(contentsRect.x(), contentsRect.y(), contentsRect.width(), contentsRect.height());
 
-    if (scale != 1.0) {
+    float widthScale = static_cast<float>(destinationSize.width()) / contentsRect.width();
+    float heightScale = static_cast<float>(destinationSize.height()) / contentsRect.height();
+
+    if (widthScale != 1.0 && heightScale != 1.0) {
         TransformationMatrix matrix;
-        matrix.scale(1.0 / scale);
+        matrix.scaleNonUniform(1.0 / widthScale, 1.0 / heightScale);
         transformedContentsRect = matrix.mapRect(transformedContentsRect);
 
         // We extract from the contentsRect but draw a slightly larger region than
         // we were told to, in order to avoid pixels being rendered only partially.
-        const int atLeastOneDevicePixel = static_cast<int>(ceilf(1.0 / scale));
+        const int atLeastOneDevicePixel = static_cast<int>(ceilf(std::max(1.0 / widthScale, 1.0 / heightScale)));
         transformedContentsRect.inflate(atLeastOneDevicePixel);
-
-        graphicsContext.scale(FloatSize(scale, scale));
+        graphicsContext.scale(FloatSize(widthScale, heightScale));
     }
 
     graphicsContext.clip(transformedContentsRect);
@@ -2837,9 +2839,9 @@ Platform::Graphics::Buffer* BackingStorePrivate::buffer() const
     return 0;
 }
 
-void BackingStore::drawContents(BlackBerry::Platform::Graphics::Drawable* drawable, double scale, const Platform::IntRect& contentsRect)
+void BackingStore::drawContents(Platform::Graphics::Drawable* drawable, const Platform::IntRect& contentsRect, const Platform::IntSize& destinationSize)
 {
-    d->renderContents(drawable, scale, contentsRect);
+    d->renderContents(drawable, contentsRect, destinationSize);
 }
 
 }

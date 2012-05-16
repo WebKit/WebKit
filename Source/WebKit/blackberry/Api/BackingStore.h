@@ -78,7 +78,7 @@ public:
     void createBackingStoreMemory();
     void releaseBackingStoreMemory();
 
-    void drawContents(BlackBerry::Platform::Graphics::Drawable*, double /*scale*/, const BlackBerry::Platform::IntRect&);
+    void drawContents(Platform::Graphics::Drawable*, const Platform::IntRect& /*contentsRect*/, const Platform::IntSize& /*destinationSize*/);
 
 private:
     friend class BlackBerry::WebKit::BackingStoreClient;
