@@ -237,7 +237,8 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     
-    virtual LayoutUnit firstLineBoxBaseline() const;
+    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
+    virtual LayoutUnit lastLineBoxBaseline() const OVERRIDE;
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();

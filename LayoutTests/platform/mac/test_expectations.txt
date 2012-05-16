@@ -214,3 +214,13 @@ BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
+
+// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
+BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/iframe.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
+BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
+BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
+BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
+BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT

@@ -197,11 +197,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,187) size 44x19
             text run at (0,187) width 44: "iframe: "
           RenderPartObject {IFRAME} at (44,0) size 402x202 [border: (1px solid #000000)]
-            layer at (0,0) size 385x219
+            layer at (0,0) size 385x214
               RenderView at (0,0) size 385x200
-            layer at (0,0) size 385x219
-              RenderBlock {HTML} at (0,0) size 385x219
-                RenderBody {BODY} at (8,8) size 369x203
+            layer at (0,0) size 385x214
+              RenderBlock {HTML} at (0,0) size 385x214
+                RenderBody {BODY} at (8,8) size 369x198
                   RenderBlock {P} at (0,0) size 369x100
                     RenderText {#text} at (0,0) size 363x99
                       text run at (0,0) width 298: "This tests caret movement through an inline table. "
@@ -211,10 +211,10 @@ layer at (0,0) size 800x600
                       text run at (117,40) width 245: "The caret shouldn't skip across the table,"
                       text run at (0,60) width 363: "but should enter it (unless we later decide that we don't want"
                       text run at (0,80) width 85: "this behavior)."
-                  RenderBlock {DIV} at (0,116) size 369x87
-                    RenderBlock {DIV} at (0,0) size 369x87
-                      RenderText {#text} at (0,67) size 73x19
-                        text run at (0,67) width 73: "Inline Table:"
+                  RenderBlock {DIV} at (0,116) size 369x82
+                    RenderBlock {DIV} at (0,0) size 369x82
+                      RenderText {#text} at (0,10) size 73x19
+                        text run at (0,10) width 73: "Inline Table:"
                       RenderTable {TABLE} at (73,0) size 124x82 [border: (1px outset #808080)]
                         RenderTableSection {TBODY} at (1,1) size 122x80
                           RenderTableRow {TR} at (0,2) size 122x24
@@ -247,8 +247,8 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (81,54) size 39x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 29x19
                                 text run at (2,2) width 29: "Nine"
-                      RenderText {#text} at (197,67) size 63x19
-                        text run at (197,67) width 63: "The End..."
+                      RenderText {#text} at (197,10) size 63x19
+                        text run at (197,10) width 63: "The End..."
           RenderText {#text} at (446,187) size 64x19
             text run at (446,187) width 64: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,3 +1,63 @@
+2012-04-22  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: inline-table-001 fails
+        https://bugs.webkit.org/show_bug.cgi?id=84167
+
+        Reviewed by Julien Chaffraix.
+
+        * css2.1/20110323/inline-table-001.htm: Added.
+        * css2.1/20110323/inline-table-002a.htm: Added.
+        * css2.1/20110323/inline-table-003.htm: Added.
+          From the CSS 2.1 test suite.
+
+        * fast/css/empty-cell-baseline-expected.html: Added.
+        * fast/css/empty-cell-baseline.html: Added.
+          This ensures we don't take a baseline from an empty cell.
+
+        * fast/inline-block/001.html: Modified to make expected results clearer.
+
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-003-expected.txt: Added.
+
+        * platform/chromium-linux/editing/pasteboard/innerText-inline-table-expected.png:
+            Progression, the baseline of the text in each cell has moved up to where it should be.
+        * platform/chromium-linux/editing/selection/iframe-expected.png: 
+            Progression, 'Inline Table' and 'The End' line up with the first row of the inline table.
+        * platform/chromium-linux/editing/selection/inline-table-expected.png:
+            Progression, 'Inline Table' and 'The End' line up with the first row of the inline table.
+        * platform/chromium-linux/editing/selection/table-caret-3-expected.png:
+            Progression, 'foo' and 'baz' line up with the first row of the inline table.
+        * platform/chromium-linux/fast/css-generated-content/inline-display-types-expected.png:
+            Progression, 'Test' and 'content' now line up.
+        * platform/chromium-linux/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.png:
+            Progression, the two boxes now line up.
+        * platform/chromium-linux/fast/inline-block/001-expected.png:
+            Progression, the boxes now line up in the same way as FF and Opera.
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.txt:
+            Progression, the baseline of the text in each cell has moved up to where it should be.
+
+        * platform/chromium-win/editing/pasteboard/innerText-inline-table-expected.txt:
+        * platform/chromium-win/editing/selection/iframe-expected.txt:
+        * platform/chromium-win/editing/selection/inline-table-expected.txt:
+        * platform/chromium-win/editing/selection/table-caret-3-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/inline-display-types-expected.txt:
+        * platform/chromium-win/fast/inline-block/001-expected.txt:
+        * platform/chromium-win/fast/repaint/float-overflow-expected.txt:
+        * platform/chromium-win/fast/repaint/float-overflow-right-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/Skipped:
+            Text rebaselines.
+
 2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [WK2] Support layoutTestController.dumpProgressFinishedCallback() in WKTR

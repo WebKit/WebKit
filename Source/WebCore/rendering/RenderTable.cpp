@@ -1215,18 +1215,41 @@ void RenderTable::updateFirstLetter()
 {
 }
 
-LayoutUnit RenderTable::firstLineBoxBaseline() const
+enum LineBox { FirstLineBox, LastLineBox };
+
+static LayoutUnit getLineBoxBaseline(const RenderTable* table, LineBox lineBox)
 {
-    if (isWritingModeRoot())
+    if (table->isWritingModeRoot())
         return -1;
 
-    recalcSectionsIfNeeded();
+    table->recalcSectionsIfNeeded();
 
-    const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
+    const RenderTableSection* topNonEmptySection = table->topNonEmptySection();
     if (!topNonEmptySection)
         return -1;
 
-    return topNonEmptySection->logicalTop() + topNonEmptySection->firstLineBoxBaseline();
+    LayoutUnit baseline = topNonEmptySection->firstLineBoxBaseline();
+    if (baseline > 0)
+        return topNonEmptySection->logicalTop() + baseline;
+
+    // The 'first' linebox baseline in a table in the absence of any text in the first section
+    // is the top of the table.
+    if (lineBox == FirstLineBox)
+        return topNonEmptySection->logicalTop();
+
+    // The 'last' linebox baseline in a table is the baseline of text in the first
+    // cell in the first row/section, so if there is no text do not return a baseline.
+    return -1;
+}
+
+LayoutUnit RenderTable::lastLineBoxBaseline() const
+{
+    return getLineBoxBaseline(this, LastLineBox);
+}
+
+LayoutUnit RenderTable::firstLineBoxBaseline() const
+{
+    return getLineBoxBaseline(this, FirstLineBox);
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy)

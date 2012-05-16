@@ -471,3 +471,13 @@ BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
 // Test is flaky on other platforms.
 BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT
+
+// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
+BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/iframe.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
+BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
+BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
+BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
+BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
+BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT

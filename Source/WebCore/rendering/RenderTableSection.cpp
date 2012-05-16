@@ -949,7 +949,8 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
     for (size_t i = 0; i < firstRow.size(); ++i) {
         const CellStruct& cs = firstRow.at(i);
         const RenderTableCell* cell = cs.primaryCell();
-        if (cell)
+        // Only cells with content have a baseline
+        if (cell && cell->contentLogicalHeight())
             firstLineBaseline = max(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight());
     }
 
