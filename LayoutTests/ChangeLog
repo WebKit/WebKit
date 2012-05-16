@@ -1,3 +1,18 @@
+2012-05-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] expose evaluateOptions in audit formatters
+        https://bugs.webkit.org/show_bug.cgi?id=86617
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/extensions/extensions-audits-content-script-expected.txt: Added.
+        * inspector/extensions/extensions-audits-content-script.html: Added.
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-16  Rob Buis  <rbuis@rim.com>
 
         SVGSVGElement checkIntersection and checkEnclosure Mem corruption

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,9 +30,14 @@
 
 /**
  * @constructor
+ * @param {string} extensionOrigin
+ * @param {string} id
+ * @param {string} displayName
+ * @param {number} ruleCount
  */
-WebInspector.ExtensionAuditCategory = function(id, displayName, ruleCount)
+WebInspector.ExtensionAuditCategory = function(extensionOrigin, id, displayName, ruleCount)
 {
+    this._extensionOrigin = extensionOrigin;
     this._id = id;
     this._displayName = displayName;
     this._ruleCount  = ruleCount;
@@ -63,6 +68,8 @@ WebInspector.ExtensionAuditCategory.prototype = {
 
 /**
  * @constructor
+ * @param {WebInspector.ExtensionAuditCategory} category
+ * @param {function(WebInspector.AuditRuleResult)} callback
  */
 WebInspector.ExtensionAuditCategoryResults = function(category, callback)
 {
@@ -98,7 +105,8 @@ WebInspector.ExtensionAuditCategoryResults.prototype = {
 
     _addNode: function(parent, node)
     {
-        var addedNode = parent.addChild(node.contents, node.expanded);
+        var contents = WebInspector.auditFormatters.partiallyApply(WebInspector.ExtensionAuditFormatters, this, node.contents);
+        var addedNode = parent.addChild(contents, node.expanded);
         if (node.children) {
             for (var i = 0; i < node.children.length; ++i)
                 this._addNode(addedNode, node.children[i]);
@@ -111,6 +119,81 @@ WebInspector.ExtensionAuditCategoryResults.prototype = {
         this._pendingRules--;
         if (!this._pendingRules)
             WebInspector.extensionServer.stopAuditRun(this);
+    },
+
+    /**
+     * @param {string} expression
+     * @param {function(WebInspector.RemoteObject)} callback
+     */
+    evaluate: function(expression, evaluateOptions, callback)
+    {
+        /**
+         * @param {?string} error
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
+        function onEvaluate(error, result, wasThrown)
+        {
+            if (wasThrown)
+                return;
+            var object = WebInspector.RemoteObject.fromPayload(result);
+            callback(object);
+        }
+        WebInspector.extensionServer.evaluate(expression, false, false, evaluateOptions, this._category._extensionOrigin, onEvaluate);
+    }
+}
+
+WebInspector.ExtensionAuditFormatters = {
+    /**
+     * @this {WebInspector.ExtensionAuditCategoryResults}
+     * @param {string} expression
+     * @param {string} title
+     * @param {Object} evaluateOptions
+     */
+    object: function(expression, title, evaluateOptions)
+    {
+        var parentElement = document.createElement("div");
+        function onEvaluate(remoteObject)
+        {
+            var section = new WebInspector.ObjectPropertiesSection(remoteObject, title);
+            section.expanded = true;
+            section.editable = false;
+            parentElement.appendChild(section.element);
+        }
+        this.evaluate(expression, evaluateOptions, onEvaluate);
+        return parentElement;
+    },
+
+    /**
+     * @this {WebInspector.ExtensionAuditCategoryResults}
+     * @param {string} expression
+     * @param {Object} evaluateOptions
+     */
+    node: function(expression, evaluateOptions)
+    {
+        var parentElement = document.createElement("div");
+        /**
+         * @param {?number} nodeId
+         */
+        function onNodeAvailable(nodeId)
+        {
+            if (!nodeId)
+                return;
+            var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
+            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+            treeOutline.element.addStyleClass("outline-disclosure");
+            treeOutline.setVisible(true);
+            parentElement.appendChild(treeOutline.element);
+        }
+        /**
+         * @param {WebInspector.RemoteObject} remoteObject
+         */
+        function onEvaluate(remoteObject)
+        {
+            remoteObject.pushNodeToFrontend(onNodeAvailable);
+        }
+        this.evaluate(expression, evaluateOptions, onEvaluate);
+        return parentElement;
     }
 }
 

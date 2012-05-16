@@ -782,7 +782,6 @@ BUGWK83174 SKIP : http/tests/inspector = FAIL
 BUGWK82886 SKIP : inspector/styles/override-screen-size.html = FAIL
 BUGWK72434 SKIP : inspector/styles/svg-style.xhtml = FAIL
 BUGWK43034 SKIP : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = FAIL
-BUGWK81089 SKIP : inspector/debugger/snippets-model.html = FAIL
 BUGWK43332 SKIP : inspector/debugger/dom-breakpoints.html = FAIL
 BUGWK43332 SKIP : inspector/debugger/event-listener-breakpoints.html = FAIL
 BUGWK43332 SKIP : inspector/debugger/step-through-event-listeners.html = FAIL
@@ -791,6 +790,7 @@ BUGWK40300 SKIP : inspector/debugger/live-edit.html = FAIL
 BUGWK50868 SKIP : inspector/debugger/debugger-step-out.html = FAIL
 BUGWK50868 SKIP : inspector/styles/styles-source-lines-inline.html = FAIL
 BUGWK85709 SKIP : inspector/extensions/extensions-eval-content-script.html = FAIL
+BUGWK85709 SKIP : inspector/extensions/extensions-audits-content-script.html = FAIL
 
 // These inspector tests fell out of the radar after the transition to NRWT
 // Some time out and some are flaky or present different baselines.

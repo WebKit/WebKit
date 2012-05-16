@@ -114,7 +114,7 @@ WebInspector.AuditCategoryResultPane.prototype = {
         if (result.className)
             treeElement.listItemElement.addStyleClass(result.className);
         if (typeof result.value !== "string")
-            treeElement.listItemElement.appendChild(WebInspector.applyFormatters(result.value));
+            treeElement.listItemElement.appendChild(WebInspector.auditFormatters.apply(result.value));
 
         if (result.children) {
             for (var i = 0; i < result.children.length; ++i)

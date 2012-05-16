@@ -28,38 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.applyFormatters = function(value)
+/**
+ * @constructor
+ */
+WebInspector.AuditFormatters = function()
 {
-    var formatter;
-    var type = typeof value;
-    var args;
-
-    switch (type) {
-        case "string":
-        case "boolean":
-        case "number":
-            formatter = WebInspector.AuditFormatters.text;
-            args = [ value.toString() ];
-            break;
-
-        case "object":
-            if (value instanceof Node)
-                return value;
-            if (value instanceof Array) {
-                formatter = WebInspector.AuditFormatters.concat;
-                args = value;
-            } else if (value.type && value.arguments) {
-                formatter = WebInspector.AuditFormatters[value.type];
-                args = value.arguments;
-            }
-    }
-    if (!formatter)
-        throw "Invalid value or formatter: " + type + JSON.stringify(value);
-
-    return formatter.apply(null, args);
 }
 
-WebInspector.AuditFormatters = {
+WebInspector.AuditFormatters.Registry = {
     text: function(text)
     {
         return document.createTextNode(text);
@@ -77,7 +53,7 @@ WebInspector.AuditFormatters = {
     {
         var parent = document.createElement("span");
         for (var arg = 0; arg < arguments.length; ++arg)
-            parent.appendChild(WebInspector.applyFormatters(arguments[arg]));
+            parent.appendChild(WebInspector.auditFormatters.apply(arguments[arg]));
         return parent;
     },
 
@@ -96,77 +72,57 @@ WebInspector.AuditFormatters = {
     {
         // FIXME: use WebInspector.Linkifier
         return WebInspector.linkifyResourceAsNode(url, line, "console-message-url webkit-html-resource-link");
-    },
-
-    /**
-     * @param {string} expression
-     * @param {string} title
-     */
-    object: function(expression, title)
-    {
-        var parentElement = document.createElement("div");
-        function onEvaluate(remoteObject)
-        {
-            var section = new WebInspector.ObjectPropertiesSection(remoteObject, title);
-            section.expanded = true;
-            section.editable = false;
-            parentElement.appendChild(section.element);
-        }
-        WebInspector.AuditFormatters.Utilities.evaluate(expression, onEvaluate);
-        return parentElement;
-    },
-
-    /**
-     * @param {string} expression
-     */
-    node: function(expression)
-    {
-        var parentElement = document.createElement("div");
-        /**
-         * @param {?number} nodeId
-         */
-        function onNodeAvailable(nodeId)
-        {
-            if (!nodeId)
-                return;
-            var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
-            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
-            treeOutline.element.addStyleClass("outline-disclosure");
-            treeOutline.setVisible(true);
-            parentElement.appendChild(treeOutline.element);
-        }
-        /**
-         * @param {WebInspector.RemoteObject} remoteObject
-         */
-        function onEvaluate(remoteObject)
-        {
-            remoteObject.pushNodeToFrontend(onNodeAvailable);
-        }
-        WebInspector.AuditFormatters.Utilities.evaluate(expression, onEvaluate);
-        return parentElement;
     }
 };
 
-WebInspector.AuditFormatters.Utilities = {
+WebInspector.AuditFormatters.prototype = {
     /**
-     * @param {string} expression
-     * @param {function(WebInspector.RemoteObject)} callback
+     * @param {string|boolean|number|Object} value
      */
-    evaluate: function(expression, callback)
+    apply: function(value)
     {
-        /**
-         * @param {?string} error
-         * @param {?RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
-        function onEvaluate(error, result, wasThrown)
-        {
-            if (wasThrown)
-                return;
-            var object = WebInspector.RemoteObject.fromPayload(result);
-            callback(object);
-        }
-        RuntimeAgent.evaluate(expression, "extension-watch", true, undefined, undefined, undefined, onEvaluate);
-    }
-};
+        var formatter;
+        var type = typeof value;
+        var args;
 
+        switch (type) {
+        case "string":
+        case "boolean":
+        case "number":
+            formatter = WebInspector.AuditFormatters.Registry.text;
+        args = [ value.toString() ];
+        break;
+
+        case "object":
+            if (value instanceof Node)
+                return value;
+            if (value instanceof Array) {
+                formatter = WebInspector.AuditFormatters.Registry.concat;
+                args = value;
+            } else if (value.type && value.arguments) {
+                formatter = WebInspector.AuditFormatters.Registry[value.type];
+                args = value.arguments;
+            }
+        }
+        if (!formatter)
+            throw "Invalid value or formatter: " + type + JSON.stringify(value);
+
+        return formatter.apply(null, args);
+    },
+
+    /**
+     * @param {Object} formatters
+     * @param {Object} thisArgument
+     * @param {string|boolean|number|Object} value
+     */
+    partiallyApply: function(formatters, thisArgument, value)
+    {
+        if (value instanceof Array)
+            return value.map(this.partiallyApply.bind(this, formatters, thisArgument));
+        if (typeof value === "object" && typeof formatters[value.type] === "function" && value.arguments)
+            return formatters[value.type].apply(thisArgument, value.arguments);
+        return value;
+    }
+}
+
+WebInspector.auditFormatters = new WebInspector.AuditFormatters();

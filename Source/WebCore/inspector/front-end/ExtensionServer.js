@@ -500,9 +500,9 @@ WebInspector.ExtensionServer.prototype = {
         return this._requests[id];
     },
 
-    _onAddAuditCategory: function(message)
+    _onAddAuditCategory: function(message, port)
     {
-        var category = new WebInspector.ExtensionAuditCategory(message.id, message.displayName, message.resultCount);
+        var category = new WebInspector.ExtensionAuditCategory(port._extensionOrigin, message.id, message.displayName, message.resultCount);
         if (WebInspector.panels.audits.getCategory(category.id))
             return this._status.E_EXISTS(category.id);
         this._clientObjects[message.id] = category;
