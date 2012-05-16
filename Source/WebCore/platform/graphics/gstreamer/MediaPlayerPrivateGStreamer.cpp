@@ -1498,145 +1498,95 @@ static HashSet<String> mimeTypeCache()
     DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
     static bool typeListInitialized = false;
 
-    if (!typeListInitialized) {
-        // Build a whitelist of mime-types known to be supported by
-        // GStreamer.
-        HashSet<String> handledApplicationSubtypes;
-        handledApplicationSubtypes.add(String("ogg"));
-        handledApplicationSubtypes.add(String("vnd.rn-realmedia"));
-        handledApplicationSubtypes.add(String("x-pn-realaudio"));
+    if (typeListInitialized)
+        return cache;
+    const char* mimeTypes[] = {"application/ogg",
+                               "application/vnd.apple.mpegurl",
+                               "application/vnd.rn-realmedia",
+                               "application/x-3gp",
+                               "application/x-pn-realaudio",
+                               "audio/3gpp",
+                               "audio/aac",
+                               "audio/flac",
+                               "audio/iLBC-sh",
+                               "audio/midi",
+                               "audio/mobile-xmf",
+                               "audio/mp1",
+                               "audio/mp2",
+                               "audio/mp3",
+                               "audio/mp4",
+                               "audio/mpeg",
+                               "audio/ogg",
+                               "audio/qcelp",
+                               "audio/riff-midi",
+                               "audio/wav",
+                               "audio/webm",
+                               "audio/x-ac3",
+                               "audio/x-aiff",
+                               "audio/x-amr-nb-sh",
+                               "audio/x-amr-wb-sh",
+                               "audio/x-au",
+                               "audio/x-ay",
+                               "audio/x-celt",
+                               "audio/x-dts",
+                               "audio/x-flac",
+                               "audio/x-gbs",
+                               "audio/x-gsm",
+                               "audio/x-gym",
+                               "audio/x-imelody",
+                               "audio/x-ircam",
+                               "audio/x-kss",
+                               "audio/x-m4a",
+                               "audio/x-mod",
+                               "audio/x-mp3",
+                               "audio/x-mpeg",
+                               "audio/x-musepack",
+                               "audio/x-nist",
+                               "audio/x-nsf",
+                               "audio/x-paris",
+                               "audio/x-sap",
+                               "audio/x-sbc",
+                               "audio/x-sds",
+                               "audio/x-shorten",
+                               "audio/x-sid",
+                               "audio/x-spc",
+                               "audio/x-speex",
+                               "audio/x-svx",
+                               "audio/x-ttafile",
+                               "audio/x-vgm",
+                               "audio/x-voc",
+                               "audio/x-vorbis+ogg",
+                               "audio/x-w64",
+                               "audio/x-wav",
+                               "audio/x-wavpack",
+                               "audio/x-wavpack-correction",
+                               "video/3gpp",
+                               "video/mj2",
+                               "video/mp4",
+                               "video/mpeg",
+                               "video/mpegts",
+                               "video/ogg",
+                               "video/quicktime",
+                               "video/vivo",
+                               "video/webm",
+                               "video/x-cdxa",
+                               "video/x-dirac",
+                               "video/x-dv",
+                               "video/x-fli",
+                               "video/x-flv",
+                               "video/x-h263",
+                               "video/x-ivf",
+                               "video/x-m4v",
+                               "video/x-matroska",
+                               "video/x-mng",
+                               "video/x-ms-asf",
+                               "video/x-msvideo",
+                               "video/x-mve",
+                               "video/x-nuv",
+                               "video/x-vcd"};
 
-        GList* factories = gst_type_find_factory_get_list();
-        for (GList* iterator = factories; iterator; iterator = iterator->next) {
-            GstTypeFindFactory* factory = GST_TYPE_FIND_FACTORY(iterator->data);
-            GstCaps* caps = gst_type_find_factory_get_caps(factory);
-            gchar** extensions;
-
-            if (!caps)
-                continue;
-
-            for (guint structureIndex = 0; structureIndex < gst_caps_get_size(caps); structureIndex++) {
-                GstStructure* structure = gst_caps_get_structure(caps, structureIndex);
-                const gchar* name = gst_structure_get_name(structure);
-                bool cached = false;
-
-                // There isn't a one-to-one correspondance of caps to supported mime types in
-                // GStreamer, so we need to manually map between them. At some point in the future,
-                // GStreamer may reduce the differences between caps and mime types and we can
-                // remove mappings.
-                if (g_str_equal(name, "video/x-h264")) {
-                    cache.add(String("video/mp4"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "audio/x-m4a")) {
-                    cache.add(String("audio/aac"));
-                    cache.add(String("audio/mp4"));
-                    cache.add(String("audio/x-m4a"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "application/x-3gp")) {
-                    cache.add(String("audio/3gpp"));
-                    cache.add(String("video/3gpp"));
-                    cache.add(String("application/x-3gp"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "video/x-theora")) {
-                    cache.add(String("video/ogg"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "audio/x-vorbis")) {
-                    cache.add(String("audio/ogg"));
-                    cache.add(String("audio/x-vorbis+ogg"));
-                    cache.add(String("audio/webm"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "audio/x-wav")) {
-                    cache.add(String("audio/wav"));
-                    cache.add(String("audio/x-wav"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "audio/x-flac")) {
-                    cache.add(String("audio/flac"));
-                    cache.add(String("audio/x-flac"));
-                    cached = true;
-                }
-
-                if (g_str_equal(name, "audio/mpeg")) {
-                    cache.add(String(name));
-                    cache.add(String("audio/x-mpeg"));
-                    cached = true;
-
-                    // This is what we are handling:
-                    // mpegversion=(int)1, layer=(int)[ 1, 3 ]
-                    gint mpegVersion = 0;
-                    if (gst_structure_get_int(structure, "mpegversion", &mpegVersion) && (mpegVersion == 1)) {
-                        const GValue* layer = gst_structure_get_value(structure, "layer");
-                        if (G_VALUE_TYPE(layer) == GST_TYPE_INT_RANGE) {
-                            gint minLayer = gst_value_get_int_range_min(layer);
-                            gint maxLayer = gst_value_get_int_range_max(layer);
-                            if (minLayer <= 1 && 1 <= maxLayer)
-                                cache.add(String("audio/mp1"));
-                            if (minLayer <= 2 && 2 <= maxLayer)
-                                cache.add(String("audio/mp2"));
-                            if (minLayer <= 3 && 3 <= maxLayer) {
-                                cache.add(String("audio/x-mp3"));
-                                cache.add(String("audio/mp3"));
-                            }
-                        }
-                    }
-                }
-
-                if (!cached) {
-                    // GStreamer plugins can be capable of supporting
-                    // types which WebKit supports by default. In that
-                    // case, we should not consider these types
-                    // supportable by GStreamer.  Examples of what
-                    // GStreamer can support but should not be added:
-                    // text/plain, text/html, image/jpeg,
-                    // application/xml
-                    gchar** mimetype = g_strsplit(name, "/", 2);
-                    if (g_str_equal(mimetype[0], "audio")
-                        || g_str_equal(mimetype[0], "video")
-                        || (g_str_equal(mimetype[0], "application")
-                            && handledApplicationSubtypes.contains(String(mimetype[1]))))
-                        cache.add(String(name));
-                    else if (g_str_equal(name, "application/x-hls"))
-                        cache.add(String("application/vnd.apple.mpegurl"));
-
-
-                    g_strfreev(mimetype);
-                }
-
-                // As a last resort try some special cases depending
-                // on the file extensions registered with the typefind
-                // factory.
-                if (!cached && (extensions = gst_type_find_factory_get_extensions(factory))) {
-                    for (int index = 0; extensions[index]; index++) {
-                        if (g_str_equal(extensions[index], "m4v"))
-                            cache.add(String("video/x-m4v"));
-
-                        // Workaround for
-                        // https://bugzilla.gnome.org/show_bug.cgi?id=640709.
-                        // typefindfunctions <= 0.10.32 doesn't
-                        // register the H264 typefinder correctly so
-                        // as a workaround we check the registered
-                        // file extensions for it.
-                        if (g_str_equal(extensions[index], "h264"))
-                            cache.add(String("video/mp4"));
-                    }
-                }
-            }
-        }
-
-        gst_plugin_feature_list_free(factories);
-        typeListInitialized = true;
-    }
+    for (unsigned i = 0; i < (sizeof(mimeTypes) / sizeof(*mimeTypes)); ++i)
+        cache.add(String(mimeTypes[i]));
 
     return cache;
 }
