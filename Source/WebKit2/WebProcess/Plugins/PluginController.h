@@ -76,6 +76,7 @@ public:
     // Cancels the load of the manual stream.
     virtual void cancelManualStreamLoad() = 0;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // Get the NPObject that corresponds to the window JavaScript object. Returns a retained object.
     virtual NPObject* windowScriptNPObject() = 0;
 
@@ -84,6 +85,7 @@ public:
 
     // Evaluates the given script string in the context of the given NPObject.
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) = 0;
+#endif
 
     // Set the statusbar text.
     virtual void setStatusbarText(const String&) = 0;

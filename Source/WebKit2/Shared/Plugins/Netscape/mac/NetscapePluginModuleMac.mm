@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetscapePluginModule.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #import "PluginProcessProxy.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
@@ -526,3 +528,5 @@ void NetscapePluginModule::determineQuirks()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

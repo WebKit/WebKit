@@ -810,6 +810,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
 
     HashSet<String> sitesSet;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     for (size_t i = 0; i < pluginPaths.size(); ++i) {
         RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
         if (!netscapePluginModule)
@@ -819,6 +820,7 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
         for (size_t i = 0; i < sites.size(); ++i)
             sitesSet.add(sites[i]);
     }
+#endif
 
     Vector<String> sites;
     copyToVector(sitesSet, sites);
@@ -830,6 +832,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 {
     LocalTerminationDisabler terminationDisabler(*this);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     for (size_t i = 0; i < pluginPaths.size(); ++i) {
         RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
         if (!netscapePluginModule)
@@ -844,6 +847,7 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
         for (size_t i = 0; i < sites.size(); ++i)
             netscapePluginModule->clearSiteData(sites[i], flags, maxAgeInSeconds);
     }
+#endif
 
     connection()->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
 }

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSNPMethod.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "JSNPObject.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/FunctionPrototype.h>
@@ -86,3 +88,5 @@ CallType JSNPMethod::getCallData(JSCell*, CallData& callData)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

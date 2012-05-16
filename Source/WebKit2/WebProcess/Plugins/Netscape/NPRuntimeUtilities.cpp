@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NPRuntimeUtilities.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -150,3 +152,5 @@ void releaseNPVariantValue(NPVariant* variant)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

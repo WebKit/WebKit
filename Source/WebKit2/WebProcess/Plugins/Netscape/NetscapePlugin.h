@@ -26,6 +26,8 @@
 #ifndef NetscapePlugin_h
 #define NetscapePlugin_h
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
 #include <WebCore/AffineTransform.h>
@@ -359,5 +361,7 @@ public: // Need to call it in the NPN_GetValue browser callback.
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapePlugin_h

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetscapeSandboxFunctions.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #import "PluginProcess.h"
@@ -188,4 +190,6 @@ NPError WKN_FileStopAccessing(const char* path)
     return NPERR_NO_ERROR;
 }
 
-#endif
+#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)

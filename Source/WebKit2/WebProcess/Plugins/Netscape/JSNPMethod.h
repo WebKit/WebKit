@@ -26,6 +26,8 @@
 #ifndef JSNPMethod_h
 #define JSNPMethod_h
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
@@ -69,5 +71,7 @@ private:
 
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // JSNPMethod_h

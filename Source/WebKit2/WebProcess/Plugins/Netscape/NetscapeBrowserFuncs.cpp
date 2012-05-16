@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetscapeBrowserFuncs.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
 #include "PluginController.h"
@@ -505,7 +507,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && ENABLE(PLUGIN_PROCESS)
         case WKNVSandboxFunctions:
         {
             *(WKNSandboxFunctions **)value = netscapeSandboxFunctions();
@@ -1060,3 +1062,5 @@ NPNetscapeFuncs* netscapeBrowserFuncs()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

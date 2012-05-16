@@ -227,8 +227,10 @@ void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
     // Calling streamDidFinishLoading could cause us to be deleted, so we hold on to a reference here.
     RefPtr<Stream> protectStream(this);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // Protect the plug-in while we're calling into it.
     NPRuntimeObjectMap::PluginProtector pluginProtector(&m_pluginView->m_npRuntimeObjectMap);
+#endif
     m_pluginView->m_plugin->streamDidFinishLoading(m_streamID);
 
     m_pluginView->removeStream(this);
@@ -261,7 +263,9 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_isWaitingUntilMediaCanStart(false)
     , m_isBeingDestroyed(false)
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     , m_npRuntimeObjectMap(this)
+#endif
     , m_manualStreamState(StreamStateInitial)
 {
 #if PLATFORM(MAC)
@@ -293,8 +297,10 @@ PluginView::~PluginView()
 #endif
     }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // Invalidate the object map.
     m_npRuntimeObjectMap.invalidate();
+#endif
 
     cancelAllStreams();
 
@@ -529,6 +535,7 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
     if (!m_isInitialized || !m_plugin)
         return 0;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* scriptableNPObject = m_plugin->pluginScriptableNPObject();
     if (!scriptableNPObject)
         return 0;
@@ -537,6 +544,10 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
     releaseNPObject(scriptableNPObject);
 
     return jsObject;
+#else
+    UNUSED_PARAM(globalObject);
+    return 0;
+#endif
 }
 
 void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
@@ -1054,6 +1065,7 @@ void PluginView::cancelManualStreamLoad()
         documentLoader->cancelMainResourceLoad(frame()->loader()->cancelledError(m_parameters.url));
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 NPObject* PluginView::windowScriptNPObject()
 {
     if (!frame())
@@ -1090,6 +1102,7 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 }
+#endif
 
 void PluginView::setStatusbarText(const String& statusbarText)
 {

@@ -137,9 +137,11 @@ private:
                          const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
     virtual void cancelStreamLoad(uint64_t streamID);
     virtual void cancelManualStreamLoad();
+#if ENABLE(NETSCAPE_PLUGIN_API)
     virtual NPObject* windowScriptNPObject();
     virtual NPObject* pluginElementNPObject();
     virtual bool evaluate(NPObject*, const String&scriptString, NPVariant* result, bool allowPopups);
+#endif
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
@@ -190,8 +192,10 @@ private:
     // Streams that the plug-in has requested to load. 
     HashMap<uint64_t, RefPtr<Stream> > m_streams;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // A map of all related NPObjects for this plug-in view.
     NPRuntimeObjectMap m_npRuntimeObjectMap;
+#endif
 
     // The manual stream state. This is used so we can deliver a manual stream to a plug-in
     // when it is initialized.
