@@ -1,3 +1,18 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Rounding errors on 32-bit machines causes tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=86194
+
+        Reviewed by Martin Robinson.
+
+        Pass additional CXXFLAGS to CMake in an attempt to harmonize floating
+        point values between 32-bit and 64-bit architectures.
+        Same flags are already used by Qt and GTK ports. 
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+        (generateBuildSystemFromCMakeProject):
+
 2012-05-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Web process hangs while waiting for plugin process connection during layouttests
