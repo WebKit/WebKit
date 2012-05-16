@@ -667,6 +667,10 @@ http/tests/xmlhttprequest/re-login.html
 
 http/tests/xmlhttprequest/cache-override.html
 
+# [Qt] New http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-body.htm fails
+# https://bugs.webkit.org/show_bug.cgi?id=86606
+http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-body.htm
+
 # =========================================================================== #
 #       Failing editing/inserting tests.                                      #
 # =========================================================================== #

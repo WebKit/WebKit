@@ -1,3 +1,12 @@
+2012-05-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip failing test after 117246.
+        https://bugs.webkit.org/show_bug.cgi?id=86606
+
+        Reviewed by Csaba Osztrongonác.
+
+        * platform/qt/Skipped:
+
 2012-05-16  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unreviewed gardening: updating expectations after r117259
