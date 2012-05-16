@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
 Ensure that simulated click on label elements uses the original mouse coordinates.
 
  Click Me

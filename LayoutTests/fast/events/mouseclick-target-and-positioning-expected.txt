@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
 This page tests whether a click event propogates with the correct target and positioning. See rdar://problem/4477126.
 
 click inside the red box:[]

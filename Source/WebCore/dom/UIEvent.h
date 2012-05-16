@@ -67,9 +67,6 @@ namespace WebCore {
         UIEvent();
         UIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
 
-        // layerX and layerY are deprecated. This reports a message to the console until we remove them.
-        void warnDeprecatedLayerXYUsage();
-
     private:
         RefPtr<AbstractView> m_view;
         int m_detail;
