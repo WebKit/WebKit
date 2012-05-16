@@ -254,14 +254,14 @@ TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh = function()
     var test = this;
     this.assertEquals(WebInspector.panels.elements, WebInspector.inspectorView.currentPanel(), "Elements panel should be current one.");
 
-    WebInspector.debuggerPresentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, waitUntilScriptIsParsed);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, waitUntilScriptIsParsed);
 
     // Reload inspected page. It will reset the debugger agent.
     test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
 
     function waitUntilScriptIsParsed()
     {
-        WebInspector.debuggerPresentationModel.removeEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, waitUntilScriptIsParsed);
+        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, waitUntilScriptIsParsed);
         test.showPanel("scripts");
         test._waitUntilScriptsAreParsed(["debugger_test_page.html"],
             function() {

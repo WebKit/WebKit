@@ -1,5 +1,17 @@
 2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
+        [Chromium] Web Inspector: DevToolsSanityTest.TestScriptsTabIsPopulatedOnInspectedPageRefresh is broken
+        https://bugs.webkit.org/show_bug.cgi?id=86629
+
+        Reviewed by Pavel Feldman.
+
+        Listen to DebuggerModel instead of DebuggerPresentationModel which is gone.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh.waitUntilScriptIsParsed):
+
+2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
+
         [Chromium] Web Inspector: debugger browser tests are broken
         https://bugs.webkit.org/show_bug.cgi?id=86624
 
