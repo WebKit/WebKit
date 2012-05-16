@@ -1,3 +1,12 @@
+2012-05-16  Peter Kasting  <pkasting@google.com>
+
+        Fix bad expectation added in r117249.
+        https://bugs.webkit.org/show_bug.cgi?id=82698
+
+        Unreviewed, test expectation fix.
+
+        * editing/shadow/selection-of-orphan-shadowroot-expected.txt:
+
 2012-04-22  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: inline-table-001 fails

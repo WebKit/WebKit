@@ -1,4 +1,4 @@
-Nodes of the selection for orphan shadow root should return null.
+Nodes of the selection for an orphan shadow root should return null.
 
 PASS selection.anchorNode is null
 PASS selection.focusNode is null
