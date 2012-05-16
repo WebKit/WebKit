@@ -1,3 +1,28 @@
+2012-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117204.
+        http://trac.webkit.org/changeset/117204
+        https://bugs.webkit.org/show_bug.cgi?id=86559
+
+        causing win compilation failures (Requested by pilgrim_google_
+        on #webkit).
+
+        * WebKit.gyp:
+        * public/WebMessagePortChannel.h:
+        (WebKit):
+        (WebMessagePortChannel):
+        (WebKit::WebMessagePortChannel::~WebMessagePortChannel):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::createMessagePortChannel):
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::PlatformMessagePortChannel):
+        * src/PlatformMessagePortChannel.h:
+        * src/SharedWorkerRepository.cpp:
+        * src/WebSharedWorkerImpl.cpp:
+        * src/WebWorkerClientImpl.cpp:
+
 2012-05-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Rename Node::shadowTreeRootNode() to Node::shadowRoot()

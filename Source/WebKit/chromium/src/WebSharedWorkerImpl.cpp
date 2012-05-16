@@ -46,6 +46,7 @@
 #include "WebFileError.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebMessagePortChannel.h"
 #include "WebRuntimeFeatures.h"
 #include "WebSettings.h"
 #include "WebSharedWorkerClient.h"
@@ -57,7 +58,6 @@
 #include "WorkerThread.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
-#include <public/WebMessagePortChannel.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;

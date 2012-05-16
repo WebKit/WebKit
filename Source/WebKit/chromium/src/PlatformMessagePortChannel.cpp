@@ -36,10 +36,9 @@
 #include "SerializedScriptValue.h"
 
 #include "WebKit.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "WebMessagePortChannel.h"
 #include "platform/WebString.h"
-
-#include <public/Platform.h>
-#include <public/WebMessagePortChannel.h>
 
 using namespace WebKit;
 
@@ -123,7 +122,7 @@ PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::create(
 PlatformMessagePortChannel::PlatformMessagePortChannel()
     : m_localPort(0)
 {
-    m_webChannel = WebKit::Platform::current()->createMessagePortChannel();
+    m_webChannel = webKitPlatformSupport()->createMessagePortChannel();
     if (m_webChannel)
         m_webChannel->setClient(this);
 }

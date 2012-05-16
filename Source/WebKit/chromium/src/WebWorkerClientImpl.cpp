@@ -58,12 +58,11 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
+#include "WebMessagePortChannel.h"
 #include "WebPermissionClient.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "WebViewImpl.h"
-
-#include <public/WebMessagePortChannel.h>
 
 using namespace WebCore;
 

@@ -72,8 +72,6 @@
             'chromium/public/WebMediaStreamDescriptor.h',
             'chromium/public/WebMediaStreamSource.h',
             'chromium/public/WebMediaStreamSourcesRequest.h',
-            'chromium/public/WebMessagePortChannel.h',
-            'chromium/public/WebMessagePortChannelClient.h',
             'chromium/public/WebMimeRegistry.h',
             'chromium/public/WebNonCopyable.h',
             'chromium/public/WebPeerConnection00Handler.h',

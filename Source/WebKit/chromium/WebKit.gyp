@@ -199,6 +199,8 @@
                 'public/WebMediaPlayerClient.h',
                 'public/WebMediaStreamRegistry.h',
                 'public/WebMenuItemInfo.h',
+                'public/WebMessagePortChannel.h',
+                'public/WebMessagePortChannelClient.h',
                 'public/WebNavigationType.h',
                 'public/WebNetworkStateNotifier.h',
                 'public/WebNode.h',

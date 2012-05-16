@@ -46,7 +46,6 @@ class WebClipboard;
 class WebFileSystem;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
-class WebMessagePortChannel;
 class WebMimeRegistry;
 class WebPeerConnection00Handler;
 class WebPeerConnection00HandlerClient;
@@ -133,13 +132,6 @@ public:
 
     // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.
     virtual size_t highUsageDeltaMB() { return 128; }
-
-
-    // Message Ports -------------------------------------------------------
-
-    // Creates a Message Port Channel. This can be called on any thread.
-    // The returned object should only be used on the thread it was created on.
-    virtual WebMessagePortChannel* createMessagePortChannel() { return 0; }
 
 
     // Network -------------------------------------------------------------

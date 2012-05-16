@@ -54,6 +54,7 @@ class WebCookieJar;
 class WebFileUtilities;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
+class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
@@ -123,6 +124,13 @@ public:
     // http://webkit.org/b/84207
     virtual WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebString& keyPath) { return injectIDBKeyIntoSerializedValue(key, value, WebIDBKeyPath(keyPath)); }
     virtual WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebIDBKeyPath& keyPath) { return WebSerializedScriptValue(); }
+
+
+    // Message Ports -------------------------------------------------------
+
+    // Creates a Message Port Channel. This can be called on any thread.
+    // The returned object should only be used on the thread it was created on.
+    virtual WebMessagePortChannel* createMessagePortChannel() { return 0; }
 
 
     // Plugins -------------------------------------------------------------

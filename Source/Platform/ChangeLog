@@ -1,3 +1,19 @@
+2012-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117204.
+        http://trac.webkit.org/changeset/117204
+        https://bugs.webkit.org/show_bug.cgi?id=86559
+
+        causing win compilation failures (Requested by pilgrim_google_
+        on #webkit).
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        * chromium/public/WebMessagePortChannel.h: Removed.
+        * chromium/public/WebMessagePortChannelClient.h: Removed.
+
 2012-05-15  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move createMessagePortChannel to Platform.h
