@@ -144,10 +144,6 @@ WebInspector.ResourceScriptMapping.prototype = {
     _uiSourceCodeAdded: function(rawSourceCode, uiSourceCode)
     {
         this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
-
-        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
-            rawSourceCode._scripts[i].setSourceMapping(this);
-
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
     },
 
@@ -164,7 +160,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         for (var i = 0; i < rawSourceCode._scripts.length; ++i)
             rawSourceCode._scripts[i].setSourceMapping(this);
 
-        var data = { oldUISourceCode: uiSourceCode, uiSourceCode: uiSourceCode };
+        var data = { oldUISourceCode: oldUISourceCode, uiSourceCode: uiSourceCode };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, data);
     },
 
