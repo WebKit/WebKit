@@ -696,10 +696,6 @@ http/tests/multipart/policy-ignore-crash.php
 http/tests/security/feed-urls-from-remote.html
 
 # Test times out (via GTK+)
-# https://bugs.webkit.org/show_bug.cgi?id=64085
-http/tests/misc/iframe-reparenting-id-collision.html
-
-# Test times out (via GTK+)
 # https://bugs.webkit.org/show_bug.cgi?id=61122
 http/tests/navigation/post-307-response.html
 

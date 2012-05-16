@@ -1,3 +1,14 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] http/tests/misc/iframe-reparenting-id-collision.html can be unskipped
+        https://bugs.webkit.org/show_bug.cgi?id=86588
+
+        Unreviewed EFL gardening. Unskip
+        http/tests/misc/iframe-reparenting-id-collision.html which is passing
+        now that Bug 64085 is closed.
+
+        * platform/efl/Skipped:
+
 2012-05-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r117123 and r117225.
