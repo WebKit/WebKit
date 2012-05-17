@@ -426,7 +426,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get distanceToWindow()
     {
-        return this._snapshot._distancesToWindow[this.nodeIndex];
+        return this._snapshot._distancesToWindow[this.nodeIndex / this._snapshot._nodeFieldCount];
     },
 
     get className()
@@ -895,29 +895,29 @@ WebInspector.HeapSnapshot.prototype = {
 
     _calculateObjectToWindowDistance: function()
     {
-        this._distancesToWindow = new Array(this.nodeCount);
+        var nodeFieldCount = this._nodeFieldCount;
+        var distances = new Uint32Array(this.nodeCount);
 
         // bfs for Window roots
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
             var node = iter.edge.node;
             if (node.isWindow) {
-                if (node.nodeIndex % this._nodeFieldCount)
-                    throw new Error("Invalid nodeIndex: " + node.nodeIndex);
                 list.push(node.nodeIndex);
-                this._distancesToWindow[node.nodeIndex] = 0;
+                distances[node.nodeIndex / nodeFieldCount] = 0;
             }
         }
-        this._bfs(list);
+        this._bfs(list, distances);
 
         // bfs for root
         list = [];
         list.push(this._rootNodeIndex);
-        this._distancesToWindow[this._rootNodeIndex] = 0;
-        this._bfs(list);
+        distances[this._rootNodeIndex / nodeFieldCount] = 0;
+        this._bfs(list, distances);
+        this._distancesToWindow = distances;
     },
 
-    _bfs: function(list)
+    _bfs: function(list, distances)
     {
         // Peload fields into local variables for better performance.
         var edgeFieldsCount = this._edgeFieldsCount;
@@ -925,29 +925,28 @@ WebInspector.HeapSnapshot.prototype = {
         var nodeFieldCount = this._nodeFieldCount;
         var firstEdgeIndexOffset = this._firstEdgeIndexOffset;
         var edgeToNodeOffset = this._edgeToNodeOffset;
-        var distancesToWindow = this._distancesToWindow;
         var nodes = this._nodes;
+        var nodeCount = this.nodeCount;
 
         var index = 0;
         while (index < list.length) {
             var nodeIndex = list[index++]; // shift generates too much garbage.
+            var nodeOrdinal = nodeIndex / nodeFieldCount;
             if (index > 100000) {
                 list = list.slice(index);
                 index = 0;
             }
-            var distance = distancesToWindow[nodeIndex] + 1;
-
+            var distance = distances[nodeOrdinal] + 1;
             var firstEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
-            var edgesEnd = nodeIndex < nodes.length
-                         ? nodes[nodeIndex + nodeFieldCount + firstEdgeIndexOffset]
+            var edgesEnd = nodeOrdinal < nodeCount - 1
+                         ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
                          : containmentEdges.length;
             for (var edgeToNodeIndex = firstEdgeIndex + edgeToNodeOffset; edgeToNodeIndex < edgesEnd; edgeToNodeIndex += edgeFieldsCount) {
                 var childNodeIndex = containmentEdges[edgeToNodeIndex];
-                if (childNodeIndex % nodeFieldCount)
-                    throw new Error("Invalid childNodeIndex: " + childNodeIndex);
-                if (childNodeIndex in distancesToWindow)
+                var childNodeOrdinal = childNodeIndex / nodeFieldCount;
+                if (distances[childNodeOrdinal])
                     continue;
-                distancesToWindow[childNodeIndex] = distance;
+                distances[childNodeOrdinal] = distance;
                 list.push(childNodeIndex);
             }
         }
@@ -967,6 +966,7 @@ WebInspector.HeapSnapshot.prototype = {
         var distancesToWindow = this._distancesToWindow;
 
         for (var nodeIndex = this._rootNodeIndex; nodeIndex < nodesLength; nodeIndex += nodeFieldsCount) {
+            var nodeOrdinal = nodeIndex / nodeFieldsCount;
             node.nodeIndex = nodeIndex;
             var selfSize = nodes[nodeIndex + selfSizeOffset];
             if (filter && !filter(node))
@@ -979,7 +979,7 @@ WebInspector.HeapSnapshot.prototype = {
                 var nameMatters = nodeType === "object" || nodeType === "native";
                 var value = {
                     count: 1,
-                    distanceToWindow: distancesToWindow[nodeIndex],
+                    distanceToWindow: distancesToWindow[nodeOrdinal],
                     self: selfSize,
                     maxRet: 0,
                     type: nodeType,
@@ -990,7 +990,7 @@ WebInspector.HeapSnapshot.prototype = {
                 aggregatesByClassName[node.className] = value;
             } else {
                 var clss = aggregates[classIndex];
-                clss.distanceToWindow = Math.min(clss.distanceToWindow, distancesToWindow[nodeIndex]);
+                clss.distanceToWindow = Math.min(clss.distanceToWindow, distancesToWindow[nodeOrdinal]);
                 ++clss.count;
                 clss.self += selfSize;
                 clss.idxs.push(nodeIndex);
