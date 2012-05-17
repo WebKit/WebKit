@@ -1,3 +1,13 @@
+2012-05-17  Dan Bernstein  <mitz@apple.com>
+
+        In vertical writing modes, pagination may split a line after a block shifts
+        https://bugs.webkit.org/show_bug.cgi?id=86763
+
+        Reviewed by Sam Weinig.
+
+        * fast/multicol/pageLogicalOffset-vertical-expected.html: Added.
+        * fast/multicol/pageLogicalOffset-vertical.html: Added.
+
 2012-05-17  Abhishek Arya  <inferno@chromium.org>
 
         Move run-in handling to addChild, instead of in layout.

@@ -74,9 +74,9 @@ public:
     
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
-    LayoutUnit pageLogicalOffset(LayoutUnit childLogicalOffset) const;
+    LayoutUnit pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
 
-    void addForcedColumnBreak(LayoutUnit childLogicalOffset);
+    void addForcedColumnBreak(RenderBox*, LayoutUnit childLogicalOffset);
     
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }

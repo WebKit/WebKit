@@ -196,16 +196,18 @@ void LayoutState::clearPaginationInformation()
     m_columnInfo = m_next->m_columnInfo;
 }
 
-LayoutUnit LayoutState::pageLogicalOffset(LayoutUnit childLogicalOffset) const
+LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const
 {
-    return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
+    if (child->isHorizontalWritingMode())
+        return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
+    return m_layoutOffset.width() + childLogicalOffset - m_pageOffset.width();
 }
 
-void LayoutState::addForcedColumnBreak(LayoutUnit childLogicalOffset)
+void LayoutState::addForcedColumnBreak(RenderBox* child, LayoutUnit childLogicalOffset)
 {
     if (!m_columnInfo || m_columnInfo->columnHeight())
         return;
-    m_columnInfo->addForcedBreak(pageLogicalOffset(childLogicalOffset));
+    m_columnInfo->addForcedBreak(pageLogicalOffset(child, childLogicalOffset));
 }
 
 void LayoutState::propagateLineGridInfo(RenderBox* renderer)
