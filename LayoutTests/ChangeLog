@@ -1,3 +1,46 @@
+2012-05-16  Luke Macpherson  <macpherson@chromium.org>
+
+        Add tests for CSS Variables.
+        https://bugs.webkit.org/show_bug.cgi?id=86575
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/variables/colors-test-expected.html: Added.
+        * fast/css/variables/colors-test.html: Added.
+        * fast/css/variables/complex-cycle-expected.html: Added.
+        * fast/css/variables/complex-cycle.html: Added.
+        * fast/css/variables/computed-style-expected.html: Added.
+        * fast/css/variables/computed-style.html: Added.
+        * fast/css/variables/inherited-values-expected.html: Added.
+        * fast/css/variables/inherited-values.html: Added.
+        * fast/css/variables/inline-styles-expected.html: Added.
+        * fast/css/variables/inline-styles.html: Added.
+        * fast/css/variables/invalid-shorthand-expected.html: Added.
+        * fast/css/variables/invalid-shorthand.html: Added.
+        * fast/css/variables/invalid-variable-value-expected.html: Added.
+        * fast/css/variables/invalid-variable-value.html: Added.
+        * fast/css/variables/multi-level-cycle-expected.html: Added.
+        * fast/css/variables/multi-level-cycle.html: Added.
+        * fast/css/variables/redefinition-expected.html: Added.
+        * fast/css/variables/redefinition.html: Added.
+        * fast/css/variables/shorthand-expected.html: Added.
+        * fast/css/variables/shorthand.html: Added.
+        * fast/css/variables/simple-cycle-expected.html: Added.
+        * fast/css/variables/simple-cycle.html: Added.
+        * fast/css/variables/undefined-expected.html: Added.
+        * fast/css/variables/undefined.html: Added.
+        * fast/css/variables/use-before-defined-expected.html: Added.
+        * fast/css/variables/use-before-defined.html: Added.
+        * fast/css/variables/var-inside-shorthand-expected.html: Added.
+        * fast/css/variables/var-inside-shorthand.html: Added.
+        * fast/css/variables/variable-chain-expected.html: Added.
+        * fast/css/variables/variable-chain.html: Added.
+        * platform/chromium/test_expectations.txt: Skip tests until variables implementation lands.
+        * platform/efl/test_expectations.txt: Skip tests until variables implementation lands.
+        * platform/gtk/test_expectations.txt: Skip tests until variables implementation lands.
+        * platform/mac/test_expectations.txt: Skip tests until variables implementation lands.
+        * platform/qt/test_expectations.txt: Skip tests until variables implementation lands.
+
 2012-05-16  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, marking failing test.

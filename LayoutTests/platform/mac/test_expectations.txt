@@ -9,6 +9,9 @@ BUGWK76489 : compositing/webgl/webgl-reflection.html = IMAGE
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
+// CSS Variables are not yet enabled.
+BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
 

@@ -149,6 +149,9 @@ BUGWK73528 SKIP : networkinformation = PASS FAIL
 // The intent tag is not yet enabled.
 BUGGBILLOCK SKIP : webintents/intent-tag.html = FAIL
 
+// CSS Variables are not yet enabled.
+BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

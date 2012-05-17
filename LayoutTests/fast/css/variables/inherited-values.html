@@ -1,0 +1,14 @@
+<style>
+body {
+    -webkit-var-foreground: green;
+    -webkit-var-background: rgb(255, 255, 255);
+}
+div {
+    color: -webkit-var(foreground);
+    background-color: red;
+    background-color: -webkit-var(background);
+}
+</style>
+<div>
+This text should be green on a white background. There should be no red visible.
+</div>

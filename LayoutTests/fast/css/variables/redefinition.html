@@ -1,0 +1,23 @@
+<style>
+body {
+    -webkit-var-a: red;
+}
+#a {
+    -webkit-var-a: green;
+}
+#b {
+    -webkit-var-a: blue;
+}
+div {
+    color: -webkit-var(a);
+}
+</style>
+<div>
+This text should be red.
+</div>
+<div id="a">
+This text should be green.
+</div>
+<div id="b">
+This text should be blue.
+</div>

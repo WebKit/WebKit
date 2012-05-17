@@ -1,0 +1,18 @@
+<style>
+body {
+    -webkit-var-a: bold;
+    font-weight: normal;
+    font-weight: -webkit-var(a);
+}
+</style>
+<body>
+Test failed - JS did not run
+</body>
+<script>
+var element = document.body;
+var weight = window.getComputedStyle(element, null).getPropertyValue("font-weight");
+if (weight == "bold")
+  element.innerHTML = "Test passed - computed font weight is bold";
+else
+  element.innerHTML = "Test failed - computed color is " + weight;
+</script>

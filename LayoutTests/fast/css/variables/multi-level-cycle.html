@@ -1,0 +1,20 @@
+<style>
+.a {
+    -webkit-var-a: -webkit-var(b);
+    -webkit-var-b: red;
+}
+.b {
+    -webkit-var-b: -webkit-var(a);
+}
+.c {
+    -webkit-var-c: -webkit-var(a);
+    color: -webkit-var(c);
+}
+</style>
+<div id="a">
+<div id="b">
+<div id="c">
+This test is successful if this text is black, and the test does not result in a crash.
+</div>
+</div>
+</div>

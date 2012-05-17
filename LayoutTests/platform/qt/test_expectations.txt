@@ -75,3 +75,6 @@ BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
 BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
 BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
+
+// CSS Variables are not yet enabled.
+BUGWK85580 SKIP : fast/css/variables = PASS FAIL

@@ -1,0 +1,14 @@
+<style>
+body {
+    -webkit-var-c: green;
+    -webkit-var-b: -webkit-var(c);
+}
+div {
+    color: red;
+    -webkit-var-a: -webkit-var(b);
+    color: -webkit-var(a);
+}
+</style>
+<div>
+This text should be green on a white background. There should be no red visible.
+</div>

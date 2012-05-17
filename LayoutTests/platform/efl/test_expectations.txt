@@ -20,6 +20,9 @@ BUGWK83897 SKIP : fast/regions = FAIL
 // Exclusions implementation not complete yet.
 BUGWK83898 SKIP : fast/exclusions = FAIL
 
+// CSS Variables are not yet enabled.
+BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
 BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
