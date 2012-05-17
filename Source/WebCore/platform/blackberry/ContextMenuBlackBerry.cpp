@@ -43,4 +43,10 @@ void ContextMenu::setPlatformDescription(void*)
     notImplemented();
 }
 
+unsigned ContextMenu::itemCount() const
+{
+    notImplemented();
+    return 0;
+}
+
 } // namespace WebCore

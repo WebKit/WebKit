@@ -20,11 +20,24 @@
 #include "PlatformScreen.h"
 
 #include "FloatRect.h"
+#include "NotImplemented.h"
 #include "Widget.h"
 
 #include <BlackBerryPlatformScreen.h>
 
 namespace WebCore {
+
+int screenHorizontalDPI(Widget*)
+{
+    notImplemented();
+    return 0;
+}
+
+int screenVerticalDPI(Widget*)
+{
+    notImplemented();
+    return 0;
+}
 
 bool screenIsMonochrome(Widget*)
 {
