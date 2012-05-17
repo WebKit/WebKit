@@ -598,14 +598,13 @@ static bool expandSelectionToGranularity(Frame* frame, VisibleSelection selectio
         selection = DOMSupport::visibleSelectionForClosestActualWordStart(selection);
 
     selection.expandUsingGranularity(granularity);
-    RefPtr<Range> newRange = selection.toNormalizedRange();
-    RefPtr<Range> oldRange = frame->selection()->selection().toNormalizedRange();
-    EAffinity affinity = frame->selection()->affinity();
+    selection.setAffinity(frame->selection()->affinity());
 
-    if (isInputMode && !frame->editor()->client()->shouldChangeSelectedRange(oldRange.get(), newRange.get(), affinity, false))
+    if (isInputMode && !frame->selection()->shouldChangeSelection(selection))
         return false;
 
-    return frame->selection()->setSelectedRange(newRange.get(), affinity, true);
+    frame->selection()->setSelection(selection);
+    return true;
 }
 
 void SelectionHandler::selectObject(const WebCore::IntPoint& location, TextGranularity granularity)

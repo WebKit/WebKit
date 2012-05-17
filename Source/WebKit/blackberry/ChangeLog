@@ -1,3 +1,17 @@
+2012-05-17  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] expandSelectionToGranularity should only use VisibleSelection and not range.
+        https://bugs.webkit.org/show_bug.cgi?id=86759
+
+        Reviewed by Antonio Gomes.
+
+        expandSelectionToGranularity unnecesarily converted the
+        selection to range and back. Using the selection
+        directly is preferred.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::expandSelectionToGranularity):
+
 2012-05-17  Hironori Bono  <hbono@chromium.org>
 
         [Refactoring] Move platform-specific code in Editor::respondToChangedSelection to the WebKit layer
