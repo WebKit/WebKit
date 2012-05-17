@@ -1,3 +1,25 @@
+2012-05-16  Geoffrey Garen  <ggaren@apple.com>
+
+        This is not a joke: 3.7X speedup from removing a call to sleep
+        https://bugs.webkit.org/show_bug.cgi?id=86702
+
+        Reviewed by Eric Seidel.
+
+        The speedup was on a GC benchmark, with a custom VM caching layer
+        not in TOT yet.
+
+        Instruments showed most GC threads spending the majority of their
+        time sleeping instead of doing useful work. Removing the call to
+        sleep sped up the benchmark.
+
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SlowLock): Since a spin lock is only ever held for a short
+        amount of time, don't sleep for a long amount of time waiting for it
+        to unlock -- yielding to the scheduler is sufficient.
+
+        If we find a case where someone is sitting on a spin lock for over 2ms,
+        we should fix the spin lock holder, not the spin lock.
+
 2012-05-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make things build with DUMP_HASHTABLE_STATS=1

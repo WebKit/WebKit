@@ -129,13 +129,14 @@ struct TCMalloc_SpinLock {
 #define SPINLOCK_INITIALIZER { 0 }
 
 static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
-// Yield immediately since fast path failed
-#if OS(WINDOWS)
-  Sleep(0);
-#else
-  sched_yield();
-#endif
   while (true) {
+    // Yield immediately since fast path failed
+#if OS(WINDOWS)
+    Sleep(0);
+#else
+    sched_yield();
+#endif
+
     int r;
 #if COMPILER(GCC)
 #if CPU(X86) || CPU(X86_64)
@@ -167,25 +168,6 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
     if (!r) {
       return;
     }
-
-    // This code was adapted from the ptmalloc2 implementation of
-    // spinlocks which would sched_yield() upto 50 times before
-    // sleeping once for a few milliseconds.  Mike Burrows suggested
-    // just doing one sched_yield() outside the loop and always
-    // sleeping after that.  This change helped a great deal on the
-    // performance of spinlocks under high contention.  A test program
-    // with 10 threads on a dual Xeon (four virtual processors) went
-    // from taking 30 seconds to 16 seconds.
-
-    // Sleep for a few milliseconds
-#if OS(WINDOWS)
-    Sleep(2);
-#else
-    struct timespec tm;
-    tm.tv_sec = 0;
-    tm.tv_nsec = 2000001;
-    nanosleep(&tm, NULL);
-#endif
   }
 }
 
