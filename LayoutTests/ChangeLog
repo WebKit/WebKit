@@ -1,3 +1,9 @@
+2012-05-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, marking backgr_position-table.html and some others as fail.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r117339.

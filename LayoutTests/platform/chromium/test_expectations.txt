@@ -3820,3 +3820,6 @@ BUGWK86698 WIN : fast/forms/select-style.html = IMAGE
 
 BUGWK86701 : fast/repaint/layer-child-outline.html = IMAGE
 BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
+
+BUGWK86712 : tables/mozilla/marvin/backgr_position-table.html = IMAGE
+BUGWK86712 : tables/mozilla_expected_failures/marvin/backgr_border-table-row.html = IMAGE
