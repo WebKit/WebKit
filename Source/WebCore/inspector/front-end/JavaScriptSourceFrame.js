@@ -44,7 +44,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     for (var i = 0; i < locations.length; ++i)
         this._breakpointAdded({data:locations[i]});
 
-    WebInspector.SourceFrame.call(this, uiSourceCode.url);
+    WebInspector.SourceFrame.call(this, uiSourceCode);
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
@@ -80,24 +80,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     },
 
     /**
-     * @param {function(?string, boolean, string)} callback
-     */
-    requestContent: function(callback)
-    {
-        /**
-         * @param {?string} content
-         * @param {boolean} contentEncoded
-         * @param {string} mimeType
-         */
-        function mycallback(content, contentEncoded, mimeType)
-        {
-            this._originalContent = content;
-            callback(content, contentEncoded, mimeType);
-        }
-        this._uiSourceCode.requestContent(mycallback.bind(this));
-    },
-
-    /**
      * @return {boolean}
      */
     canEditSource: function()
@@ -113,7 +95,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._editingContent = true;
         if (!this._uiSourceCode.isDirty())
             return;
-        this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this, text));
+        this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this));
     },
 
     /**
@@ -173,7 +155,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         this._uiSourceCode.setWorkingCopy(this.textModel.text);
         if (!this._uiSourceCode.isDirty())
-            this._didEditContent(this._originalContent, null);
+            this._didEditContent(null);
     },
 
     beforeTextChanged: function()
@@ -193,7 +175,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
 
-    _didEditContent: function(content, error)
+    _didEditContent: function(error)
     {
         delete this._editingContent;
 
@@ -201,8 +183,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
             return;
         }
-
-        this._originalContent = content;
 
         // Restore all muted breakpoints.
         for (var lineNumber = 0; lineNumber < this.textModel.linesCount; ++lineNumber) {

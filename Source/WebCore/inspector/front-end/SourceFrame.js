@@ -31,13 +31,15 @@
 /**
  * @extends {WebInspector.View}
  * @constructor
+ * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.SourceFrame = function(url)
+WebInspector.SourceFrame = function(contentProvider)
 {
     WebInspector.View.call(this);
     this.element.addStyleClass("script-view");
 
-    this._url = url;
+    this._url = contentProvider.contentURL();
+    this._contentProvider = contentProvider;
 
     this._textModel = new WebInspector.TextEditorModel();
 
@@ -114,15 +116,8 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._contentRequested) {
             this._contentRequested = true;
-            this.requestContent(this.setContent.bind(this));
+            this._contentProvider.requestContent(this.setContent.bind(this));
         }
-    },
-
-    /**
-     * @param {function(?string, boolean, string)} callback
-     */
-    requestContent: function(callback)
-    {
     },
 
     /**

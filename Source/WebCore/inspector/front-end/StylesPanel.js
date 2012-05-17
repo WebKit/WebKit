@@ -113,7 +113,7 @@ WebInspector.StyleSourceFrame = function(styleSource)
 {
     this._resource = styleSource._resource;
     this._styleSource = styleSource;
-    WebInspector.SourceFrame.call(this, this._resource.url);
+    WebInspector.SourceFrame.call(this, this._styleSource);
     this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
@@ -124,14 +124,6 @@ WebInspector.StyleSourceFrame.prototype = {
     canEditSource: function()
     {
         return true;
-    },
-
-    /**
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestContent: function(callback)
-    {
-        this._styleSource.requestContent(callback);
     },
 
     /**

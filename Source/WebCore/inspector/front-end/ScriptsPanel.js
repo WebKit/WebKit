@@ -468,7 +468,7 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame = new WebInspector.StyleSourceFrame(uiSourceCode);
         else {
             console.assert(false, "Unknown UISourceCode type");
-            sourceFrame = new WebInspector.SourceFrame(uiSourceCode.url);
+            sourceFrame = new WebInspector.SourceFrame(uiSourceCode);
         }
          
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);

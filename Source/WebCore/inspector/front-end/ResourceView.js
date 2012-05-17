@@ -83,7 +83,7 @@ WebInspector.ResourceView.nonSourceViewForResource = function(resource)
 WebInspector.ResourceSourceFrame = function(resource)
 {
     this._resource = resource;
-    WebInspector.SourceFrame.call(this, resource.url);
+    WebInspector.SourceFrame.call(this, resource);
     this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
@@ -91,23 +91,6 @@ WebInspector.ResourceSourceFrame.prototype = {
     get resource()
     {
         return this._resource;
-    },
-
-    /**
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestContent: function(callback)
-    {
-        /**
-         * @param {?string} content
-         * @param {boolean} contentEncoded
-         * @param {string} mimeType
-         */
-        function callbackWrapper(content, contentEncoded, mimeType)
-        {
-            callback(content, contentEncoded, mimeType);
-        }
-        this.resource.requestContent(callbackWrapper.bind(this));
     },
 
     _contentChanged: function(event)

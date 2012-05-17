@@ -32,6 +32,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @implements {WebInspector.ContentProvider}
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
  * @param {WebInspector.SourceMapping=} sourceMapping
@@ -88,6 +89,14 @@ WebInspector.UISourceCode.prototype = {
     get parsedURL()
     {
         return this._parsedURL;
+    },
+
+    /**
+     * @return {?string}
+     */
+    contentURL: function()
+    {
+        return this._url;
     },
 
     /**
