@@ -2949,6 +2949,11 @@ bool WebViewImpl::isActive() const
     return (page() && page()->focusController()) ? page()->focusController()->isActive() : false;
 }
 
+void WebViewImpl::setDomainRelaxationForbidden(bool forbidden, const WebString& scheme)
+{
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme));
+}
+
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned activeColor,
                                      unsigned trackColor) {

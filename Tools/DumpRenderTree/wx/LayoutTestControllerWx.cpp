@@ -297,6 +297,11 @@ void LayoutTestController::setDefersLoading(bool)
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     // FIXME: implement

@@ -115,6 +115,7 @@ public:
     static void suspendActiveDOMObjects(QWebFrame* frame);
     static void resumeActiveDOMObjects(QWebFrame* frame);
 
+    static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
     static void setFrameFlatteningEnabled(QWebPage*, bool);
     static void setCaretBrowsingEnabled(QWebPage* page, bool value);
     static void setAuthorAndUserStylesEnabled(QWebPage*, bool);

@@ -36,8 +36,8 @@
 
         log("Forbidding domain relaxation for the http: scheme");
 
-        if (window.internals)
-            internals.settings.setDomainRelaxationForbiddenForURLScheme(true, "http");
+        if (window.layoutTestController)
+            layoutTestController.setDomainRelaxationForbiddenForURLScheme(true, "http");
 
         var exception;
         try {
@@ -53,8 +53,8 @@
 
         domainShouldBe("0.0.1");
 
-        if (window.internals)
-            internals.settings.setDomainRelaxationForbiddenForURLScheme(false, "http");
+        if (window.layoutTestController)
+            layoutTestController.setDomainRelaxationForbiddenForURLScheme(false, "http");
 
         log("Allowing domain relaxation for the http: scheme");
 
@@ -63,16 +63,16 @@
 
         log("Forbidding domain relaxation for the not-http: scheme");
 
-        if (window.internals)
-            internals.settings.setDomainRelaxationForbiddenForURLScheme(true, "not-http");
+        if (window.layoutTestController)
+            layoutTestController.setDomainRelaxationForbiddenForURLScheme(true, "not-http");
 
         document.domain = "1";
         domainShouldBe("1");
 
         log("Allowing domain relaxation for the not-http: scheme");
 
-        if (window.internals)
-            internals.settings.setDomainRelaxationForbiddenForURLScheme(false, "not-http");
+        if (window.layoutTestController)
+            layoutTestController.setDomainRelaxationForbiddenForURLScheme(false, "not-http");
     </script>
 </body>
 </html>

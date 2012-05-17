@@ -71,6 +71,7 @@
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
+#include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -482,6 +483,11 @@ void DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin(const QString& sou
 void DumpRenderTreeSupportQt::resetOriginAccessWhiteLists()
 {
     SecurityPolicy::resetOriginAccessWhitelists();
+}
+
+void DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)
+{
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
 }
 
 void DumpRenderTreeSupportQt::setCaretBrowsingEnabled(QWebPage* page, bool value)

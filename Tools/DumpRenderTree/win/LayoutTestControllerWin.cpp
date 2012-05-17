@@ -1043,6 +1043,17 @@ void LayoutTestController::setDefersLoading(bool)
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    BSTR schemeBSTR = JSStringCopyBSTR(scheme);
+    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR);
+    SysFreeString(schemeBSTR);
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     printf("ERROR: LayoutTestController::setAppCacheMaximumSize() not implemented\n");

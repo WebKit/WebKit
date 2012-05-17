@@ -614,6 +614,11 @@ void LayoutTestController::syncLocalStorage()
     notImplemented();
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+{
+    notImplemented();
+}
+
 void LayoutTestController::goBack()
 {
     ewk_frame_back(browser->mainFrame());

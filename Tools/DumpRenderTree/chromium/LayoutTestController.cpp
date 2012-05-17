@@ -190,6 +190,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
     bindMethod("setDatabaseQuota", &LayoutTestController::setDatabaseQuota);
     bindMethod("setDeferMainResourceDataLoad", &LayoutTestController::setDeferMainResourceDataLoad);
+    bindMethod("setDomainRelaxationForbiddenForURLScheme", &LayoutTestController::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
     bindMethod("setAudioData", &LayoutTestController::setAudioData);
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
@@ -1191,6 +1192,13 @@ void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentLis
         result->set(false);
 }
 #endif
+
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 2 || !arguments[0].isBool() || !arguments[1].isString())
+        return;
+    m_shell->webView()->setDomainRelaxationForbidden(cppVariantToBool(arguments[0]), cppVariantToWebString(arguments[1]));
+}
 
 void LayoutTestController::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
 {

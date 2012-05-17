@@ -255,6 +255,7 @@ public:
     void simulateDesktopNotificationClick(const CppArgumentList&, CppVariant*);
 #endif
 
+    void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
     void setEditingBehavior(const CppArgumentList&, CppVariant*);
 

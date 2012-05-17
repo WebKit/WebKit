@@ -36,7 +36,6 @@
 #include "LocaleToScriptMapping.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SchemeRegistry.h"
 #include "Settings.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -328,11 +327,6 @@ void InternalSettings::setMediaPlaybackRequiresUserGesture(bool enabled, Excepti
 {
     InternalSettingsGuardForSettings();
     settings()->setMediaPlaybackRequiresUserGesture(enabled);
-}
-    
-void InternalSettings::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& urlScheme, ExceptionCode&)
-{
-    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, urlScheme);
 }
 
 }

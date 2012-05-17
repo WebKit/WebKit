@@ -74,7 +74,6 @@ public:
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
-    void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& urlScheme, ExceptionCode&);
 
     void restoreTo(Settings*);
 

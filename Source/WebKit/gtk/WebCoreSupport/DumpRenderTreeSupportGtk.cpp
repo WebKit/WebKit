@@ -56,6 +56,7 @@
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -878,4 +879,9 @@ void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 #if ENABLE(MUTATION_OBSERVERS)
     WebKitMutationObserver::deliverAllMutations();
 #endif
+}
+
+void DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme)
+{
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String::fromUTF8(urlScheme));
 }

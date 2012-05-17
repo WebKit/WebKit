@@ -6606,6 +6606,12 @@ HRESULT WebView::geolocationDidFailWithError(IWebError* error)
     return S_OK;
 }
 
+HRESULT WebView::setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme)
+{
+    SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme, SysStringLen(scheme)));
+    return S_OK;
+}
+
 HRESULT WebView::registerURLSchemeAsSecure(BSTR scheme)
 {
     SchemeRegistry::registerURLSchemeAsSecure(toString(scheme));
