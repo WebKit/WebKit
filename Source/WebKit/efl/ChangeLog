@@ -1,3 +1,17 @@
+2012-05-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] fast/frames/frame-crash-with-page-cache.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=85879
+
+        Reviewed by Noam Rosenthal.
+
+        _ewk_frame_smart_del() is considering now that the frame can be present in cache.
+        loader()->detachFromParent() is only applied for the main frame.
+        loader()->cancelAndClear() is not used anymore.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_del):
+
 2012-05-16  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Restore accidentally changed copyrights.

@@ -386,8 +386,6 @@ BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 
 BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
 
-BUGWK85879 : fast/frames/frame-crash-with-page-cache.html = CRASH
-
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 
 // Perf tests are way too slow on debug builds.
