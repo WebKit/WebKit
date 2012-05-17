@@ -38,13 +38,26 @@ RenderFrameBase::RenderFrameBase(Element* element)
 {
 }
 
-void RenderFrameBase::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
+inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixedWidth, bool hasFixedHeight)
+{
+    // If the size computed to zero never expand.
+    if (!width || !height)
+        return false;
+    // Really small fixed size frames can't be meant to be scrolled and are there probably by mistake. Avoid expanding.
+    static unsigned smallestUsefullyScrollableDimension = 8;
+    if (hasFixedWidth && width < LayoutUnit(smallestUsefullyScrollableDimension))
+        return false;
+    if (hasFixedHeight && height < LayoutUnit(smallestUsefullyScrollableDimension))
+        return false;
+    return true;
+}
+
+void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
     FrameView* childFrameView = static_cast<FrameView*>(widget());
     RenderView* childRoot = childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
 
-    // Do not expand frames which has zero width or height
-    if (!width() || !height() || !childRoot) {
+    if (!childRoot || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
         updateWidgetPosition();
         if (childFrameView)
             childFrameView->layout();
@@ -69,7 +82,7 @@ void RenderFrameBase::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
     int vBorder = borderTop() + borderBottom();
 
     // make sure minimum preferred width is enforced
-    if (isScrollable || !fixedWidth) {
+    if (isScrollable || !hasFixedWidth) {
         setWidth(max(width(), childRoot->minPreferredLogicalWidth() + hBorder));
         // update again to pass the new width to the child frame
         updateWidgetPosition();
@@ -77,9 +90,9 @@ void RenderFrameBase::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
     }
 
     // expand the frame by setting frame height = content height
-    if (isScrollable || !fixedHeight || childRoot->isFrameSet())
+    if (isScrollable || !hasFixedHeight || childRoot->isFrameSet())
         setHeight(max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
-    if (isScrollable || !fixedWidth || childRoot->isFrameSet())
+    if (isScrollable || !hasFixedWidth || childRoot->isFrameSet())
         setWidth(max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
 
     updateWidgetPosition();

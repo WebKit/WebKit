@@ -1,0 +1,126 @@
+<html>
+<head>
+<script>window.jsTestIsAsync = true;</script>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description("Test that frame flattening is not used for tiny frames. This test requires DRT or user agent with flattening enabled.");
+
+if (window.layoutTestController)
+    layoutTestController.setFrameFlatteningEnabled(true);
+
+function checkResult(frameName, expectedWidth, expectedHeight)
+{
+    frame = document.getElementById(frameName);
+    debug(frameName);
+    shouldBe("getComputedStyle(frame, 0).width", expectedWidth);
+    shouldBe("getComputedStyle(frame, 0).height", expectedHeight);
+}
+
+function test()
+{
+    setTimeout(function() {
+        checkResult("testFrame0", "'0px'", "'0px'");
+        checkResult("testFrame1", "'1px'", "'1px'");
+        checkResult("testFrame2", "'7px'", "'7px'");
+        checkResult("testFrame3", "'400px'", "'400px'");
+        checkResult("testFrame4", "'0px'", "'100px'");
+        checkResult("testFrame5", "'100px'", "'0px'");
+        checkResult("testFrame6", "'100px'", "'2px'");
+        checkResult("testFrame7", "'2px'", "'100px'");
+        checkResult("testFrame8", "'2px'", "'150px'");
+        checkResult("testFrame9", "'300px'", "'2px'");
+        checkResult("testFrame10", "'400px'", "'400px'");
+        checkResult("testFrame11", "'400px'", "'400px'");
+        finishJSTest();
+    }, 0);
+}
+</script>
+</head>
+<body onload="test()">
+<iframe id="testFrame0" width="0px" height="0px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame1" width="1px" height="1px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+        <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame2" width="7px" height="7px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+        <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame3" width="8px" height="8px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame4" width="0px" height="100px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame5" width="100px" height="0px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame6" width="100px" height="2px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame7" width="2px" height="100px" style="border-width:0px" scrolling=auto src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame8" width="2px" scrolling=auto style="border-width:0px" src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame9" height="2px" scrolling=auto style="border-width:0px" src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame10" width="8px" scrolling=auto style="border-width:0px" src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<iframe id="testFrame11" height="8px" scrolling=auto style="border-width:0px" src="data:text/html,
+    <style>body { background-color: red; }</style>
+    <body>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+    </body>
+    ">
+</iframe>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,13 @@
+2012-05-17  Antti Koivisto  <antti@apple.com>
+
+        Frame flattening should not expand tiny frames
+        https://bugs.webkit.org/show_bug.cgi?id=86736
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * fast/frames/flattening/iframe-tiny-expected.txt: Added.
+        * fast/frames/flattening/iframe-tiny.html: Added.
+
 2012-05-17  Krzysztof Czech  <k.czech@samsung.com>, Mariusz Grzegorczyk <mariusz.g@samsung.com>
 
         [EFL] Gardening failure test cases.

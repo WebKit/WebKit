@@ -1,0 +1,45 @@
+Test that frame flattening is not used for tiny frames. This test requires DRT or user agent with flattening enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+testFrame0
+PASS getComputedStyle(frame, 0).width is '0px'
+PASS getComputedStyle(frame, 0).height is '0px'
+testFrame1
+PASS getComputedStyle(frame, 0).width is '1px'
+PASS getComputedStyle(frame, 0).height is '1px'
+testFrame2
+PASS getComputedStyle(frame, 0).width is '7px'
+PASS getComputedStyle(frame, 0).height is '7px'
+testFrame3
+PASS getComputedStyle(frame, 0).width is '400px'
+PASS getComputedStyle(frame, 0).height is '400px'
+testFrame4
+PASS getComputedStyle(frame, 0).width is '0px'
+PASS getComputedStyle(frame, 0).height is '100px'
+testFrame5
+PASS getComputedStyle(frame, 0).width is '100px'
+PASS getComputedStyle(frame, 0).height is '0px'
+testFrame6
+PASS getComputedStyle(frame, 0).width is '100px'
+PASS getComputedStyle(frame, 0).height is '2px'
+testFrame7
+PASS getComputedStyle(frame, 0).width is '2px'
+PASS getComputedStyle(frame, 0).height is '100px'
+testFrame8
+PASS getComputedStyle(frame, 0).width is '2px'
+PASS getComputedStyle(frame, 0).height is '150px'
+testFrame9
+PASS getComputedStyle(frame, 0).width is '300px'
+PASS getComputedStyle(frame, 0).height is '2px'
+testFrame10
+PASS getComputedStyle(frame, 0).width is '400px'
+PASS getComputedStyle(frame, 0).height is '400px'
+testFrame11
+PASS getComputedStyle(frame, 0).width is '400px'
+PASS getComputedStyle(frame, 0).height is '400px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+           
