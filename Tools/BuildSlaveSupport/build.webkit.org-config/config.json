@@ -68,6 +68,7 @@
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
+                    { "name": "efl-linux-slave-3", "platform": "efl" },
 
                     { "name": "hfreyther-mipsel-linux1", "platform": "qt"},
                     { "name": "hfreyther-sh4-linux1", "platform": "qt"}
@@ -294,7 +295,7 @@
                       "slavenames": ["wince-1"]
                     },
                     {
-                      "name": "EFL Linux Release", "type": "BuildAndTest", "builddir": "efl-linux-release",
+                      "name": "EFL Linux 64-bit Release", "type": "BuildAndTest", "builddir": "efl-linux-64-release",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-1"]
                     },
@@ -302,6 +303,11 @@
                       "name": "EFL Linux Debug", "type": "BuildAndTest", "builddir": "efl-linux-debug",
                       "platform": "efl", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-2"]
+                    },
+                    {
+                      "name": "EFL Linux 32-bit Release (Build)", "type": "Build", "builddir": "efl-linux-32-release",
+                      "platform": "efl", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["efl-linux-slave-3"]
                     }
                   ],
 
@@ -313,7 +319,8 @@
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Linux Release (Grid Layout)", "Chromium Android Release",
-                                       "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release", "EFL Linux Debug"]
+                                       "EFL Linux 64-bit Release", "EFL Linux Debug", "EFL Linux 32-bit Release (Build)",
+                                       "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0, 
                       "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Debug (Build)"] 

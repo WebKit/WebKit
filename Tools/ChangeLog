@@ -1,3 +1,14 @@
+2012-05-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add new build slave for EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=86567
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a build slave for EFL 32-bit linux build.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Support for Battery Status API on the WebKit-Efl
