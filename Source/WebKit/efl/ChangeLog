@@ -1,3 +1,19 @@
+2012-05-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Do not check NULL pointer allocated by new.
+        https://bugs.webkit.org/show_bug.cgi?id=86610
+
+        Reviewed by Ryosuke Niwa.
+
+        WebKit-Efl doesn't check pointers that are initialized by new.
+        Those checks are not needed because new operator doesn't return NULL.
+        Only an overloaded version of new returns NULL pointer.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_entry_new):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_core_frame_new):
+
 2012-05-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] fast/frames/frame-crash-with-page-cache.html is crashing

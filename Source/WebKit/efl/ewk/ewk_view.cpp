@@ -700,10 +700,6 @@ static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo
 static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_Data* smartData, Ewk_View_Private_Data* priv, WebCore::HTMLFrameOwnerElement* owner)
 {
     WebCore::FrameLoaderClientEfl* frameLoaderClient = new WebCore::FrameLoaderClientEfl(smartData->self);
-    if (!frameLoaderClient) {
-        CRITICAL("Could not create frame loader client.");
-        return 0;
-    }
     frameLoaderClient->setCustomUserAgent(String::fromUTF8(priv->settings.userAgent));
 
     return WebCore::Frame::create(priv->page.get(), owner, frameLoaderClient);

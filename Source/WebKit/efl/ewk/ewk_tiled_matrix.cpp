@@ -265,18 +265,16 @@ void ewk_tile_matrix_entry_new(Ewk_Tile_Matrix* tileMatrix, float zoom)
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
 
     Ewk_Tile_Matrix_Entry* entry = new Ewk_Tile_Matrix_Entry;
-    if (entry) {
-        entry->zoom = zoom;
-        entry->count = 0;
-        entry->matrix = eina_matrixsparse_new(1, 1, _ewk_tile_matrix_cell_free, tileMatrix);
-        if (!entry->matrix) {
-            ERR("could not create sparse matrix.");
-            delete entry;
-            return;
-        }
-        tileMatrix->matrices = eina_inlist_prepend(tileMatrix->matrices, EINA_INLIST_GET(entry));
-        tileMatrix->matrix = entry->matrix;
+    entry->zoom = zoom;
+    entry->count = 0;
+    entry->matrix = eina_matrixsparse_new(1, 1, _ewk_tile_matrix_cell_free, tileMatrix);
+    if (!entry->matrix) {
+        ERR("could not create sparse matrix.");
+        delete entry;
+        return;
     }
+    tileMatrix->matrices = eina_inlist_prepend(tileMatrix->matrices, EINA_INLIST_GET(entry));
+    tileMatrix->matrix = entry->matrix;
 }
 
 void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix* tileMatrix)
