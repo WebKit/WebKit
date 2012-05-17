@@ -1,3 +1,9 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, unskip some tests after r117426.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] REGRESSION(101967): It made editing/style/iframe-onload-crash-mac.html timeout
