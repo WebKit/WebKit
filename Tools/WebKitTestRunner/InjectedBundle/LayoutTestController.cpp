@@ -545,13 +545,14 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool sho
 
 void LayoutTestController::setPageVisibility(JSStringRef state)
 {
-    WKStringRef visibilityStateKey = toWK(state).get();
     WebCore::PageVisibilityState visibilityState = WebCore::PageVisibilityStateVisible;
 
-    if (WKStringIsEqualToUTF8CString(visibilityStateKey, "hidden"))
+    if (JSStringIsEqualToUTF8CString(state, "hidden"))
         visibilityState = WebCore::PageVisibilityStateHidden;
-    else if (WKStringIsEqualToUTF8CString(visibilityStateKey, "prerender"))
+    else if (JSStringIsEqualToUTF8CString(state, "prerender"))
         visibilityState = WebCore::PageVisibilityStatePrerender;
+    else if (JSStringIsEqualToUTF8CString(state, "preview"))
+        visibilityState = WebCore::PageVisibilityStatePreview;
 
     WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), visibilityState, /* isInitialState */ false);
 }

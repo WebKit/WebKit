@@ -76,8 +76,6 @@ fast/loader/policy-delegate-action-hit-test-zoomed.html
 # Still failing after implementing layoutTestController.setPageVisibility()
 # https://bugs.webkit.org/show_bug.cgi?id=83263
 fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
 
 svg/custom/mouse-move-on-svg-container.xhtml
 svg/custom/mouse-move-on-svg-root-standalone.svg
