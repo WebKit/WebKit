@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,36 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTextInputType_h
-#define WebTextInputType_h
+#include "config.h"
+#include "WebTextInputInfo.h"
 
 namespace WebKit {
 
-enum WebTextInputType {
-    // Input caret is not in an editable node, no input method shall be used.
-    WebTextInputTypeNone,
-
-    // Input caret is in a normal editable node, any input method can be used.
-    WebTextInputTypeText,
-    WebTextInputTypeTextArea,
-    WebTextInputTypeContentEditable,
-
-    // Input caret is in a specific input field, and input method may be used
-    // only if it's suitable for the specific input field.
-    WebTextInputTypePassword,
-    WebTextInputTypeSearch,
-    WebTextInputTypeEmail,
-    WebTextInputTypeNumber,
-    WebTextInputTypeTelephone,
-    WebTextInputTypeURL,
-    WebTextInputTypeDate,
-    WebTextInputTypeDateTime,
-    WebTextInputTypeDateTimeLocal,
-    WebTextInputTypeMonth,
-    WebTextInputTypeTime,
-    WebTextInputTypeWeek,
-};
+bool WebTextInputInfo::equals(const WebTextInputInfo& other) const
+{
+    return type == other.type
+        && value == other.value
+        && selectionStart == other.selectionStart
+        && selectionEnd == other.selectionEnd
+        && compositionStart == other.compositionStart
+        && compositionEnd == other.compositionEnd;
+}
 
 } // namespace WebKit
-
-#endif

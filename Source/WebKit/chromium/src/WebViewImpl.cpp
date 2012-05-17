@@ -113,6 +113,7 @@
 #include "SpeechInputClientImpl.h"
 #include "SpeechRecognitionClientProxy.h"
 #include "StyleResolver.h"
+#include "Text.h"
 #include "TextFieldDecoratorImpl.h"
 #include "TextIterator.h"
 #include "Timer.h"
@@ -140,6 +141,7 @@
 #include "WebRange.h"
 #include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
+#include "WebTextInputInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "cc/CCProxy.h"
@@ -1879,62 +1881,115 @@ bool WebViewImpl::compositionRange(size_t* location, size_t* length)
     return false;
 }
 
+WebTextInputInfo WebViewImpl::textInputInfo()
+{
+    WebTextInputInfo info;
+
+    Frame* focused = focusedWebCoreFrame();
+    if (!focused)
+        return info;
+
+    Editor* editor = focused->editor();
+    if (!editor || !editor->canEdit())
+        return info;
+
+    FrameSelection* selection = focused->selection();
+    if (!selection)
+        return info;
+
+    Node* node = focusedWebCoreNode();
+    if (!node)
+        return info;
+
+    info.type = textInputType();
+    if (info.type == WebTextInputTypeNone)
+        return info;
+
+    if (node->hasTagName(HTMLNames::textareaTag))
+        info.value = static_cast<HTMLTextAreaElement*>(node)->value();
+    else if (node->hasTagName(HTMLNames::inputTag))
+        info.value = static_cast<HTMLInputElement*>(node)->value();
+    else if (node->shouldUseInputMethod())
+        info.value = node->nodeValue();
+    else
+        return info;
+
+    if (info.value.isEmpty())
+        return info;
+
+    if (node->hasTagName(HTMLNames::textareaTag) || node->hasTagName(HTMLNames::inputTag)) {
+        HTMLTextFormControlElement* formElement = static_cast<HTMLTextFormControlElement*>(node);
+        info.selectionStart = formElement->selectionStart();
+        info.selectionEnd = formElement->selectionEnd();
+        if (editor->hasComposition()) {
+            info.compositionStart = formElement->indexForVisiblePosition(Position(editor->compositionNode(), editor->compositionStart()));
+            info.compositionEnd = formElement->indexForVisiblePosition(Position(editor->compositionNode(), editor->compositionEnd()));
+        }
+    } else {
+        info.selectionStart = selection->start().computeOffsetInContainerNode();
+        info.selectionEnd = selection->end().computeOffsetInContainerNode();
+        if (editor->hasComposition()) {
+            info.compositionStart = static_cast<int>(editor->compositionStart());
+            info.compositionEnd = static_cast<int>(editor->compositionEnd());
+        }
+    }
+
+    return info;
+}
+
 WebTextInputType WebViewImpl::textInputType()
 {
     Node* node = focusedWebCoreNode();
     if (!node)
         return WebTextInputTypeNone;
 
-    if (node->nodeType() == Node::ELEMENT_NODE) {
-        Element* element = static_cast<Element*>(node);
-        if (element->hasLocalName(HTMLNames::inputTag)) {
-            HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
+    if (node->hasTagName(HTMLNames::inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
 
-            if (input->readOnly() || input->disabled())
-                return WebTextInputTypeNone;
-
-            if (input->isPasswordField())
-                return WebTextInputTypePassword;
-            if (input->isSearchField())
-                return WebTextInputTypeSearch;
-            if (input->isEmailField())
-                return WebTextInputTypeEmail;
-            if (input->isNumberField())
-                return WebTextInputTypeNumber;
-            if (input->isTelephoneField())
-                return WebTextInputTypeTelephone;
-            if (input->isURLField())
-                return WebTextInputTypeURL;
-            if (input->isDateField())
-                return WebTextInputTypeDate;
-            if (input->isDateTimeField())
-                return WebTextInputTypeDateTime;
-            if (input->isDateTimeLocalField())
-                return WebTextInputTypeDateTimeLocal;
-            if (input->isMonthField())
-                return WebTextInputTypeMonth;
-            if (input->isTimeField())
-                return WebTextInputTypeTime;
-            if (input->isWeekField())
-                return WebTextInputTypeWeek;
-            if (input->isTextField())
-                return WebTextInputTypeText;
-
+        if (input->readOnly() || input->disabled())
             return WebTextInputTypeNone;
-        }
 
-        if (element->hasLocalName(HTMLNames::textareaTag)) {
-            HTMLTextAreaElement* textarea = static_cast<HTMLTextAreaElement*>(element);
-
-            if (textarea->readOnly() || textarea->disabled())
-                return WebTextInputTypeNone;
+        if (input->isPasswordField())
+            return WebTextInputTypePassword;
+        if (input->isSearchField())
+            return WebTextInputTypeSearch;
+        if (input->isEmailField())
+            return WebTextInputTypeEmail;
+        if (input->isNumberField())
+            return WebTextInputTypeNumber;
+        if (input->isTelephoneField())
+            return WebTextInputTypeTelephone;
+        if (input->isURLField())
+            return WebTextInputTypeURL;
+        if (input->isDateField())
+            return WebTextInputTypeDate;
+        if (input->isDateTimeField())
+            return WebTextInputTypeDateTime;
+        if (input->isDateTimeLocalField())
+            return WebTextInputTypeDateTimeLocal;
+        if (input->isMonthField())
+            return WebTextInputTypeMonth;
+        if (input->isTimeField())
+            return WebTextInputTypeTime;
+        if (input->isWeekField())
+            return WebTextInputTypeWeek;
+        if (input->isTextField())
             return WebTextInputTypeText;
-        }
+
+        return WebTextInputTypeNone;
     }
 
-    // For other situations.
+    if (node->hasTagName(HTMLNames::textareaTag)) {
+        HTMLTextAreaElement* textarea = static_cast<HTMLTextAreaElement*>(node);
+
+        if (textarea->readOnly() || textarea->disabled())
+            return WebTextInputTypeNone;
+
+        return WebTextInputTypeTextArea;
+    }
+
     if (node->shouldUseInputMethod())
-        return WebTextInputTypeText;
+        return WebTextInputTypeContentEditable;
 
     return WebTextInputTypeNone;
 }

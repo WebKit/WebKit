@@ -1,3 +1,35 @@
+2012-05-16  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Implement WebViewImpl::textInputInfo() for Android
+        https://bugs.webkit.org/show_bug.cgi?id=86440
+
+        Reviewed by Darin Fisher.
+
+        This patch adds WebView::textInputInfo(), which describes the text
+        input that currently has focus.  Android is planning to use this to
+        determine what sort of keyboard or text entry UI to show.  This API
+        subsumes the textInputType() API, which will be removed once the
+        clients have been updated.
+
+        * WebKit.gyp:
+        * public/WebTextInputInfo.h: Added.
+        (WebKit):
+        (WebTextInputInfo):
+        (WebKit::WebTextInputInfo::WebTextInputInfo):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * public/WebTextInputType.h:
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::textInputInfo):
+        (WebKit::WebWidget::textInputType):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputInfo):
+        (WebKit):
+        (WebKit::WebViewImpl::textInputType):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-05-16  Greg Billock  <gbillock@google.com>
 
         IDL and implementation for Web Intents delivery
