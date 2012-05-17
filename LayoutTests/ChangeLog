@@ -1,3 +1,16 @@
+2012-05-16  Tim Horton  <timothy_horton@apple.com>
+
+        Crash if SVG gradient stop has display: none set
+        https://bugs.webkit.org/show_bug.cgi?id=86686
+        <rdar://problem/10751905>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that ensures that we don't crash if "display: none" is set on an SVGStopElement.
+
+        * svg/custom/gradient-stop-display-none-crash-expected.txt: Added.
+        * svg/custom/gradient-stop-display-none-crash.svg: Added.
+
 2012-05-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r116069 and r117339.
