@@ -1,3 +1,12 @@
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Remove unnecessary expectations for passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=86698
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, unskip some tests after r117426.

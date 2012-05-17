@@ -3804,15 +3804,6 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
-BUGWK86698 WIN : transitions/cross-fade-background-image.html = IMAGE
-BUGWK86698 WIN : fast/forms/input-align-image.html = IMAGE+TEXT
-BUGWK86698 WIN : fast/forms/preserveFormDuringResidualStyle.html = IMAGE+TEXT
-BUGWK86698 WIN : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGWK86698 WIN : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
-BUGWK86698 WIN : fast/forms/input-appearance-bkcolor.html = IMAGE
-BUGWK86698 WIN : fast/forms/input-appearance-height.html = IMAGE
-BUGWK86698 WIN : fast/forms/select-style.html = IMAGE
-
 BUGWK86701 : fast/repaint/layer-child-outline.html = IMAGE
 BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
 
