@@ -1,3 +1,9 @@
+2012-05-16  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, marking cross-fade-background-image.html as failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-16  Tony Chang  <tony@chromium.org>
 
         rename display:-webkit-flexbox to display:-webkit-flex

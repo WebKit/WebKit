@@ -3809,3 +3809,5 @@ BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = TIMEOUT PASS
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
+
+BUGWK86698 :  transitions/cross-fade-background-image.html = IMAGE
