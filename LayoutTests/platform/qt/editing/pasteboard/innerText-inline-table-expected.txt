@@ -6,29 +6,29 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x21
         RenderText {#text} at (0,0) size 551x21
           text run at (0,0) width 551: "Checks that the text iterator is emitting a space before and after an inline table."
-      RenderBlock {DIV} at (0,21) size 784x32
-        RenderText {#text} at (0,11) size 35x21
-          text run at (0,11) width 35: "hello"
+      RenderBlock {DIV} at (0,21) size 784x29
+        RenderText {#text} at (0,8) size 35x21
+          text run at (0,8) width 35: "hello"
         RenderTable {TABLE} at (35,0) size 15x27
           RenderTableSection {TBODY} at (0,0) size 15x27
             RenderTableRow {TR} at (0,2) size 15x23
               RenderTableCell {TD} at (2,2) size 11x23 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 9x21
                   text run at (1,1) width 9: "1"
-        RenderText {#text} at (50,11) size 39x21
-          text run at (50,11) width 39: "world"
-      RenderBlock {DIV} at (0,53) size 784x32
-        RenderText {#text} at (0,11) size 26x21
-          text run at (0,11) width 26: "foo "
+        RenderText {#text} at (50,8) size 39x21
+          text run at (50,8) width 39: "world"
+      RenderBlock {DIV} at (0,50) size 784x29
+        RenderText {#text} at (0,8) size 26x21
+          text run at (0,8) width 26: "foo "
         RenderTable {TABLE} at (26,0) size 15x27
           RenderTableSection {TBODY} at (0,0) size 15x27
             RenderTableRow {TR} at (0,2) size 15x23
               RenderTableCell {TD} at (2,2) size 11x23 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 9x21
                   text run at (1,1) width 9: "2"
-        RenderText {#text} at (41,11) size 27x21
-          text run at (41,11) width 27: " bar"
-      RenderBlock {UL} at (0,101) size 784x21
+        RenderText {#text} at (41,8) size 27x21
+          text run at (41,8) width 27: " bar"
+      RenderBlock {UL} at (0,95) size 784x21
         RenderListItem {LI} at (40,0) size 744x21
           RenderBlock {PRE} at (0,0) size 744x21
             RenderListMarker at (-18,0) size 7x21: bullet

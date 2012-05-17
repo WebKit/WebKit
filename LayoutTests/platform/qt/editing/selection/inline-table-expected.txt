@@ -151,10 +151,10 @@ layer at (0,0) size 800x600
           text run at (0,21) width 201: "table, as if it were an image. "
           text run at (201,21) width 534: "The caret shouldn't skip across the table, but should enter it (unless we later"
           text run at (0,42) width 283: "decide that we don't want this behavior)."
-      RenderBlock {DIV} at (0,79) size 784x90
-        RenderBlock {DIV} at (0,0) size 784x90
-          RenderText {#text} at (0,69) size 88x21
-            text run at (0,69) width 88: "Inline Table:"
+      RenderBlock {DIV} at (0,79) size 784x85
+        RenderBlock {DIV} at (0,0) size 784x85
+          RenderText {#text} at (0,10) size 88x21
+            text run at (0,10) width 88: "Inline Table:"
           RenderTable {TABLE} at (88,0) size 147x85 [border: (1px outset #808080)]
             RenderTableSection {TBODY} at (1,1) size 145x83
               RenderTableRow {TR} at (0,2) size 145x25
@@ -187,6 +187,6 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (97,56) size 46x25 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                   RenderText {#text} at (2,2) size 34x21
                     text run at (2,2) width 34: "Nine"
-          RenderText {#text} at (235,69) size 73x21
-            text run at (235,69) width 73: "The End..."
+          RenderText {#text} at (235,10) size 73x21
+            text run at (235,10) width 73: "The End..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

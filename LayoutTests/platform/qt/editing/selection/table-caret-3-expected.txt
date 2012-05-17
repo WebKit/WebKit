@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x21
         RenderText {#text} at (0,0) size 423x21
           text run at (0,0) width 423: "This tests the caret position for the caret after an inline table."
-      RenderBlock {DIV} at (0,37) size 784x90
-        RenderText {#text} at (0,69) size 22x21
-          text run at (0,69) width 22: "foo"
+      RenderBlock {DIV} at (0,37) size 784x85
+        RenderText {#text} at (0,10) size 22x21
+          text run at (0,10) width 22: "foo"
         RenderTable {TABLE} at (22,0) size 58x85 [border: (1px solid #999999)]
           RenderTableSection {TBODY} at (1,1) size 56x83
             RenderTableRow {TR} at (0,2) size 56x25
@@ -26,6 +26,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,56) size 52x25 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x21
                   text run at (2,2) width 48: "a table"
-        RenderText {#text} at (80,69) size 26x21
-          text run at (80,69) width 26: "baz"
+        RenderText {#text} at (80,10) size 26x21
+          text run at (80,10) width 26: "baz"
 caret: position 1 of child 1 {TABLE} of child 2 {DIV} of body

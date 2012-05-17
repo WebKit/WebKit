@@ -2480,7 +2480,6 @@ fast/forms/file/file-input-capture.html
 
 # REGRESSION(r116134): It made 3 inspector tests fail
 inspector/debugger/scripts-panel.html
-inspector/debugger/snippets-model.html
 inspector/debugger/source-frame.html
 
 # [Qt] new test http/tests/cookies/single-quoted-value.html is failing

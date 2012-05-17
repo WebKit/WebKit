@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x586
-  RenderBlock {HTML} at (0,0) size 800x586 [bgcolor=#00FF99]
-    RenderBody {BODY} at (57,64) size 686x458 [bgcolor=#99FFCC] [border: (3px solid #000000)]
+layer at (0,0) size 800x559
+  RenderBlock {HTML} at (0,0) size 800x559 [bgcolor=#00FF99]
+    RenderBody {BODY} at (57,64) size 686x431 [bgcolor=#99FFCC] [border: (3px solid #000000)]
       RenderBlock {P} at (3,3) size 680x64
         RenderText {#text} at (0,5) size 680x53
           text run at (0,5) width 513: "These links are in an element with display table-row, and the li elements "
@@ -27,12 +27,12 @@ layer at (0,0) size 800x586
               RenderInline {A} at (0,0) size 34x21 [color=#0000EE]
                 RenderText {#text} at (16,0) size 34x21
                   text run at (16,0) width 34: "links"
-      RenderBlock {DIV} at (3,88) size 680x367
+      RenderBlock {DIV} at (3,88) size 680x340
         RenderBlock (anonymous) at (16,16) size 648x21
           RenderText {#text} at (0,0) size 434x21
             text run at (0,0) width 188: "This text is not in the form. "
             text run at (188,0) width 246: "The form should be indented 40px."
-        RenderBlock {FORM} at (96,37) size 568x314
+        RenderBlock {FORM} at (96,37) size 568x287
           RenderBlock {P} at (0,0) size 568x64
             RenderText {#text} at (0,5) size 556x53
               text run at (0,5) width 162: "This is text in the form. "
@@ -40,8 +40,8 @@ layer at (0,0) size 800x586
               text run at (357,5) width 199: "The form itself has the same"
               text run at (0,37) width 222: "table-row/table-cell problem as "
               text run at (222,37) width 48: "above."
-          RenderBlock {P} at (0,64) size 568x71
-            RenderTable {SPAN} at (0,0) size 147x60
+          RenderBlock {P} at (0,64) size 568x62
+            RenderTable {SPAN} at (0,2) size 147x60
               RenderTableSection (anonymous) at (0,0) size 147x60
                 RenderTableRow {SPAN} at (0,0) size 147x28
                   RenderTableCell (anonymous) at (0,0) size 147x28 [r=0 c=0 rs=1 cs=1]
@@ -50,9 +50,9 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-            RenderText {#text} at (147,44) size 4x21
-              text run at (147,44) width 4: " "
-            RenderTable {SPAN} at (151,0) size 147x60
+            RenderText {#text} at (147,5) size 4x21
+              text run at (147,5) width 4: " "
+            RenderTable {SPAN} at (151,2) size 147x60
               RenderTableSection (anonymous) at (0,0) size 147x60
                 RenderTableRow {SPAN} at (0,0) size 147x28
                   RenderTableCell (anonymous) at (0,0) size 147x28 [r=0 c=0 rs=1 cs=1]
@@ -62,8 +62,8 @@ layer at (0,0) size 800x586
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,135) size 568x71
-            RenderTable {SPAN} at (0,0) size 339x60
+          RenderBlock {P} at (0,126) size 568x62
+            RenderTable {SPAN} at (0,2) size 339x60
               RenderTableSection (anonymous) at (0,0) size 339x60
                 RenderTableRow {SPAN} at (0,0) size 339x28
                   RenderTableCell (anonymous) at (0,0) size 339x28 [r=0 c=0 rs=1 cs=1]
@@ -73,8 +73,8 @@ layer at (0,0) size 800x586
                   RenderTableCell (anonymous) at (0,28) size 339x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 335x25
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,206) size 568x71
-            RenderTable {SPAN} at (0,0) size 147x60
+          RenderBlock {P} at (0,188) size 568x62
+            RenderTable {SPAN} at (0,2) size 147x60
               RenderTableSection (anonymous) at (0,0) size 147x60
                 RenderTableRow {SPAN} at (0,0) size 147x28
                   RenderTableCell (anonymous) at (0,0) size 147x28 [r=0 c=0 rs=1 cs=1]
@@ -83,9 +83,9 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-            RenderText {#text} at (147,44) size 4x21
-              text run at (147,44) width 4: " "
-            RenderTable {SPAN} at (151,0) size 147x60
+            RenderText {#text} at (147,5) size 4x21
+              text run at (147,5) width 4: " "
+            RenderTable {SPAN} at (151,2) size 147x60
               RenderTableSection (anonymous) at (0,0) size 147x60
                 RenderTableRow {SPAN} at (0,0) size 147x28
                   RenderTableCell (anonymous) at (0,0) size 147x28 [r=0 c=0 rs=1 cs=1]
@@ -95,7 +95,7 @@ layer at (0,0) size 800x586
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,277) size 568x37
+          RenderBlock {P} at (0,250) size 568x37
             RenderButton {INPUT} at (2,2) size 66x33 [bgcolor=#C0C0C0]
               RenderBlock (anonymous) at (6,6) size 54x21
                 RenderText at (0,0) size 54x21
@@ -107,13 +107,13 @@ layer at (0,0) size 800x586
                 RenderText at (0,0) size 80x21
                   text run at (0,0) width 80: "Clear Form"
             RenderText {#text} at (0,0) size 0x0
-layer at (160,286) size 139x21
+layer at (160,288) size 139x21
   RenderBlock {DIV} at (2,2) size 139x21
-layer at (311,286) size 139x21
+layer at (311,288) size 139x21
   RenderBlock {DIV} at (2,2) size 139x21
-layer at (160,357) size 331x21
+layer at (160,350) size 331x21
   RenderBlock {DIV} at (2,2) size 331x21
-layer at (160,428) size 139x21
+layer at (160,412) size 139x21
   RenderBlock {DIV} at (2,2) size 139x21
-layer at (311,428) size 139x21
+layer at (311,412) size 139x21
   RenderBlock {DIV} at (2,2) size 139x21

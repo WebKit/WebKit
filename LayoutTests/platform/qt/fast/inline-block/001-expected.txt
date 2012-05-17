@@ -3,47 +3,86 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 760x42
-        text run at (0,0) width 760: "THIS TEST'S RESULTS ARE NOT CORRECT, SINCE INLINE TABLES ARE NOT BASELINE-ALIGNING"
-        text run at (0,21) width 522: "PROPERLY, AND WHEN THEY DO, THE FIRST ROW WILL BE USED. "
-      RenderBR {BR} at (522,37) size 0x0
-      RenderBlock {P} at (0,49) size 64x46 [border: (2px solid #0000FF)]
-        RenderText {#text} at (2,2) size 60x21
-          text run at (2,2) width 60: "This text"
-        RenderBR {BR} at (62,18) size 0x0
-        RenderText {#text} at (2,23) size 60x21
-          text run at (2,23) width 60: "This text"
-      RenderText {#text} at (64,72) size 4x21
-        text run at (64,72) width 4: " "
-      RenderBlock {P} at (68,49) size 129x46 [border: (2px solid #0000FF)]
-        RenderBlock {SPAN} at (2,2) size 125x42
-          RenderText {#text} at (0,0) size 91x21
-            text run at (0,0) width 91: "should all be"
-          RenderBR {BR} at (91,16) size 0x0
-          RenderText {#text} at (0,21) size 125x21
-            text run at (0,21) width 125: "should also all be"
-      RenderText {#text} at (197,72) size 4x21
-        text run at (197,72) width 4: " "
-      RenderTable {TABLE} at (201,42) size 48x46 [border: (2px solid #0000FF)]
-        RenderTableSection {TBODY} at (2,2) size 44x42
-          RenderTableRow {TR} at (0,0) size 44x21
-            RenderTableCell {TD} at (0,0) size 44x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 44x21
-                text run at (0,0) width 44: "on the"
-          RenderTableRow {TR} at (0,21) size 44x21
-            RenderTableCell {TD} at (0,21) size 44x21 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 44x21
-                text run at (0,0) width 44: "on the"
-      RenderText {#text} at (249,72) size 4x21
-        text run at (249,72) width 4: " "
-      RenderTable {TABLE} at (253,42) size 81x46 [border: (2px solid #0000FF)]
-        RenderTableSection {TBODY} at (2,2) size 77x42
+      RenderText {#text} at (0,0) size 274x21
+        text run at (0,0) width 274: "The two blue boxes should be aligned."
+      RenderBR {BR} at (274,16) size 0x0
+      RenderText {#text} at (0,21) size 266x21
+        text run at (0,21) width 266: "The two red boxes should be aligned."
+      RenderBR {BR} at (266,37) size 0x0
+      RenderText {#text} at (0,42) size 381x21
+        text run at (0,42) width 381: "The text in the blue boxes should be on the same line."
+      RenderBR {BR} at (381,58) size 0x0
+      RenderText {#text} at (0,63) size 373x21
+        text run at (0,63) width 373: "The text in the red boxes should be on the same line."
+      RenderBR {BR} at (373,79) size 0x0
+      RenderText {#text} at (0,84) size 697x21
+        text run at (0,84) width 697: "The top of the first red box should line up with the bottom of the second last line of the last blue box."
+      RenderBR {BR} at (697,100) size 0x0
+      RenderBlock {P} at (0,105) size 71x88 [border: (2px solid #0000FF)]
+        RenderText {#text} at (2,2) size 67x21
+          text run at (2,2) width 67: "All on the"
+        RenderBR {BR} at (69,18) size 0x0
+        RenderText {#text} at (2,23) size 67x21
+          text run at (2,23) width 67: "All on the"
+        RenderBR {BR} at (69,39) size 0x0
+        RenderText {#text} at (2,44) size 67x21
+          text run at (2,44) width 67: "All on the"
+        RenderBR {BR} at (69,60) size 0x0
+        RenderText {#text} at (2,65) size 67x21
+          text run at (2,65) width 67: "All on the"
+      RenderText {#text} at (71,170) size 4x21
+        text run at (71,170) width 4: " "
+      RenderBlock {P} at (75,105) size 77x88 [border: (2px solid #0000FF)]
+        RenderBlock {SPAN} at (2,2) size 73x84
+          RenderText {#text} at (0,0) size 73x21
+            text run at (0,0) width 73: "same line."
+          RenderBR {BR} at (73,16) size 0x0
+          RenderText {#text} at (0,21) size 73x21
+            text run at (0,21) width 73: "same line."
+          RenderBR {BR} at (73,37) size 0x0
+          RenderText {#text} at (0,42) size 73x21
+            text run at (0,42) width 73: "same line."
+          RenderBR {BR} at (73,58) size 0x0
+          RenderText {#text} at (0,63) size 73x21
+            text run at (0,63) width 73: "same line."
+      RenderText {#text} at (152,170) size 4x21
+        text run at (152,170) width 4: " "
+      RenderTable {TABLE} at (156,163) size 71x88 [border: (2px solid #FF0000)]
+        RenderTableSection {TBODY} at (2,2) size 67x84
+          RenderTableRow {TR} at (0,0) size 67x21
+            RenderTableCell {TD} at (0,0) size 67x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 67x21
+                text run at (0,0) width 67: "All on the"
+          RenderTableRow {TR} at (0,21) size 67x21
+            RenderTableCell {TD} at (0,21) size 67x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 67x21
+                text run at (0,0) width 67: "All on the"
+          RenderTableRow {TR} at (0,42) size 67x21
+            RenderTableCell {TD} at (0,42) size 67x21 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 67x21
+                text run at (0,0) width 67: "All on the"
+          RenderTableRow {TR} at (0,63) size 67x21
+            RenderTableCell {TD} at (0,63) size 67x21 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 67x21
+                text run at (0,0) width 67: "All on the"
+      RenderText {#text} at (227,170) size 4x21
+        text run at (227,170) width 4: " "
+      RenderTable {TABLE} at (231,163) size 81x88 [border: (2px solid #FF0000)]
+        RenderTableSection {TBODY} at (2,2) size 77x84
           RenderTableRow {TR} at (0,0) size 77x21
             RenderTableCell {TD} at (0,0) size 77x21 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 77x21
                 text run at (0,0) width 77: "same line. "
           RenderTableRow {TR} at (0,21) size 77x21
             RenderTableCell {TD} at (0,21) size 77x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 77x21
+                text run at (0,0) width 77: "same line. "
+          RenderTableRow {TR} at (0,42) size 77x21
+            RenderTableCell {TD} at (0,42) size 77x21 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 77x21
+                text run at (0,0) width 77: "same line. "
+          RenderTableRow {TR} at (0,63) size 77x21
+            RenderTableCell {TD} at (0,63) size 77x21 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 73x21
                 text run at (0,0) width 73: "same line."
       RenderText {#text} at (0,0) size 0x0
