@@ -24,6 +24,13 @@
 
         * platform/qt/Skipped: Skip failing tests after r117288.
 
+2012-05-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Web process hangs while waiting for plugin process connection during layouttests
+        https://bugs.webkit.org/show_bug.cgi?id=86620
+
+        * platform/qt/Skipped: Skip failing tests after r117288.
+
 2012-05-16  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed expectations update.
