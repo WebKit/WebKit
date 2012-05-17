@@ -86,7 +86,7 @@ class AtomicHTMLToken : public AtomicMarkupTokenBase<HTMLToken> {
 public:
     AtomicHTMLToken(HTMLToken& token) : AtomicMarkupTokenBase<HTMLToken>(&token) { }
 
-    AtomicHTMLToken(HTMLTokenTypes::Type type, AtomicString name, const Vector<Attribute>& attributes = Vector<Attribute>())
+    AtomicHTMLToken(HTMLTokenTypes::Type type, const AtomicString& name, const Vector<Attribute>& attributes = Vector<Attribute>())
         : AtomicMarkupTokenBase<HTMLToken>(type, name, attributes)
     {
     }
