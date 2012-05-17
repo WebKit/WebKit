@@ -556,7 +556,8 @@ compositing/rtl/rtl-iframe-fixed-overflow.html
 
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
-fast/ruby/ruby-block-style-not-updated.html
 fast/ruby/ruby-inline-style-not-updated.html
-svg/W3C-SVG-1.1/render-elems-08-t.svg
-svg/W3C-SVG-1.1/render-groups-03-t.svg
+fast/table/table-row-before-child-style-update.html
+fast/table/table-row-style-not-updated-with-before-content.html
+fast/table/table-row-style-not-updated.html
+fast/table/table-style-not-updated.html

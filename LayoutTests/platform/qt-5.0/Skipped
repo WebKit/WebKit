@@ -159,10 +159,7 @@ fast/xsl/xslt-entity.xml
 # https://bugs.webkit.org/show_bug.cgi?id=86452
 fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html
 fast/table/table-before-child-style-update.html
-fast/table/table-row-before-child-style-update.html
 fast/table/table-row-style-not-updated-with-after-content.html
-fast/table/table-row-style-not-updated.html
-fast/table/table-style-not-updated.html
 
 # [Qt] Web process hangs while waiting for plugin process connection during layouttests
 # https://bugs.webkit.org/show_bug.cgi?id=86620

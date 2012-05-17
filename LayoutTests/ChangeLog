@@ -1,3 +1,12 @@
+2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+
 2012-05-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: error when expanding an HTMLAllCollection object in the console
