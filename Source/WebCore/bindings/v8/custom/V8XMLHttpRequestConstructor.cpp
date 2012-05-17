@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     // Allocate a XMLHttpRequest object as its internal field.
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return throwError("XMLHttpRequest constructor's associated context is not available", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "XMLHttpRequest constructor's associated context is not available");
 
     RefPtr<SecurityOrigin> securityOrigin;
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered())

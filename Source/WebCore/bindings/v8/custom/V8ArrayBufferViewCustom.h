@@ -76,7 +76,7 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
             return throwError("Could not convert argument 2 to a number");
     } else {
         if ((buf->byteLength() - offset) % sizeof(ElementType))
-            return throwError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.", V8Proxy::RangeError);
+            return V8Proxy::throwError(V8Proxy::RangeError, "ArrayBuffer length minus the byteOffset is not a multiple of the element size.");
         length = (buf->byteLength() - offset) / sizeof(ElementType);
     }
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
@@ -169,7 +169,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (doInstantiation)
         array = ArrayClass::create(len);
     if (!array.get())
-        return throwError("ArrayBufferView size is not a small enough positive integer.", V8Proxy::RangeError);
+        return V8Proxy::throwError(V8Proxy::RangeError, "ArrayBufferView size is not a small enough positive integer.");
 
 
     // Transform the holder into a wrapper object for the array.

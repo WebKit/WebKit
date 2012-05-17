@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return throwError("Blob constructor associated document is unavailable", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "Blob constructor associated document is unavailable");
 
     if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();

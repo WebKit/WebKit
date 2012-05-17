@@ -160,7 +160,7 @@ static void handleFatalErrorInV8()
 
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
-    throwError("Maximum call stack size exceeded.", V8Proxy::RangeError);
+    V8Proxy::throwError(V8Proxy::RangeError, "Maximum call stack size exceeded.");
     return v8::Local<v8::Value>();
 }
 

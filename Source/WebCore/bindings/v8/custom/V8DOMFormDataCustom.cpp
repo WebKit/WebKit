@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8DOMFormData::appendCallback(const v8::Arguments& args)
     INC_STATS("DOM.FormData.append()");
     
     if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return V8Proxy::throwError(V8Proxy::SyntaxError, "Not enough arguments");
 
     DOMFormData* domFormData = V8DOMFormData::toNative(args.Holder());
 

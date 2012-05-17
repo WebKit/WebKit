@@ -69,7 +69,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return throwError("WebKitMutationObserver constructor's associated frame unavailable", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "WebKitMutationObserver constructor's associated frame unavailable");
 
     RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
     RefPtr<WebKitMutationObserver> observer = WebKitMutationObserver::create(callback.release());
