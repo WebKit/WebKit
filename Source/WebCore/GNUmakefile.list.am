@@ -4930,6 +4930,10 @@ if ENABLE_INDEXED_DATABASE
 webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBAny.cpp \
 	DerivedSources/WebCore/JSIDBAny.h \
+	DerivedSources/WebCore/JSIDBCursor.cpp \
+	DerivedSources/WebCore/JSIDBCursor.h \
+	DerivedSources/WebCore/JSIDBCursorWithValue.cpp \
+	DerivedSources/WebCore/JSIDBCursorWithValue.h \
 	DerivedSources/WebCore/JSIDBDatabaseException.cpp \
 	DerivedSources/WebCore/JSIDBDatabaseException.h \
 	DerivedSources/WebCore/JSIDBDatabase.cpp \
@@ -4938,6 +4942,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBFactory.h \
 	DerivedSources/WebCore/JSIDBIndex.cpp \
 	DerivedSources/WebCore/JSIDBIndex.h \
+	DerivedSources/WebCore/JSIDBKey.cpp \
+	DerivedSources/WebCore/JSIDBKey.h \
 	DerivedSources/WebCore/JSIDBKeyRange.cpp \
 	DerivedSources/WebCore/JSIDBKeyRange.h \
 	DerivedSources/WebCore/JSIDBObjectStore.cpp \
@@ -4945,20 +4951,30 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBRequest.cpp \
 	DerivedSources/WebCore/JSIDBRequest.h \
 	DerivedSources/WebCore/JSIDBTransaction.cpp \
-	DerivedSources/WebCore/JSIDBTransaction.h
+	DerivedSources/WebCore/JSIDBTransaction.h \
+	DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp \
+	DerivedSources/WebCore/JSIDBVersionChangeEvent.h \
+	DerivedSources/WebCore/JSIDBVersionChangeRequest.cpp \
+	DerivedSources/WebCore/JSIDBVersionChangeRequest.h
 
 dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBAny.idl \
-	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
+	$(WebCore)/Modules/indexeddb/IDBCursor.idl \
+	$(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
 	$(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
 	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
+	$(WebCore)/Modules/indexeddb/IDBKey.idl \
 	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
 	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
 	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
+	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
+	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
 	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl
+
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----

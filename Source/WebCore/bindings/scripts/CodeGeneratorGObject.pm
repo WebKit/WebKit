@@ -198,6 +198,11 @@ sub SkipAttribute {
         return 1;
     }
 
+    # Skip indexed database attributes for now, they aren't yet supported for the GObject generator.
+    if ($attribute->signature->name =~ /^webkitIndexedDB/ or $attribute->signature->name =~ /^webkitIDB/) {
+        return 1;
+    }
+
     return 0;
 }
 
