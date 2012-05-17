@@ -1,3 +1,14 @@
+2012-05-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Test expectation update.
+
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.png:
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.txt:After 117310.
+        * platform/qt/fast/repaint/float-overflow-expected.png:
+        * platform/qt/fast/repaint/float-overflow-expected.txt: After r117339.
+        * platform/qt/fast/repaint/float-overflow-right-expected.png:
+        * platform/qt/fast/repaint/float-overflow-right-expected.txt: After r117339.
+
 2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert setDomainRelaxationForbiddenForURLScheme to use InternalSettings interface
