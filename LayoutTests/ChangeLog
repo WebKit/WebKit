@@ -1,3 +1,37 @@
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Rebaseline.
+        https://bugs.webkit.org/show_bug.cgi?id=86441
+
+        Unreviewed, test expecations update.
+
+        * platform/chromium-mac-leopard/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-rules-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-mac-snowleopard/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/column-rules-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/chromium-mac/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-mac/fast/multicol/column-rules-expected.png:
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-mac/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/chromium-mac/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/column-count-with-rules-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-lr/column-rules-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/column-count-with-rules-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-rl/column-rules-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, update test number tracking media-continues-playing-after-replace-source.html

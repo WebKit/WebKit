@@ -3794,19 +3794,6 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
-// Needs rebaseline?
-BUGWK86441 MAC : css3/unicode-bidi-isolate-basic.html = IMAGE
-BUGWK86441 MAC : fast/multicol/column-count-with-rules.html = IMAGE
-BUGWK86441 MAC : fast/multicol/column-rules.html = IMAGE
-BUGWK86441 MAC : fast/multicol/layers-in-multicol.html = IMAGE
-BUGWK86441 MAC : fast/multicol/overflow-unsplittable.html = IMAGE
-BUGWK86441 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGWK86441 MAC : fast/multicol/positive-leading.html = IMAGE
-BUGWK86441 MAC : fast/multicol/vertical-lr/column-count-with-rules.html = IMAGE
-BUGWK86441 MAC : fast/multicol/vertical-lr/column-rules.html = IMAGE
-BUGWK86441 MAC : fast/multicol/vertical-rl/column-count-with-rules.html = IMAGE
-BUGWK86441 MAC : fast/multicol/vertical-rl/column-rules.html = IMAGE
-
 BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
 
 // Needs rebaseline after bug 86441
