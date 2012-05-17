@@ -1,3 +1,12 @@
+2012-05-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added platform specific expectation.
+
+        * platform/qt-5.0-wk2/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added after r117419.
+        * platform/qt-5.0-wk2/svg/css/text-gradient-shadow-expected.txt: Added after r117289.
+        * platform/qt/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added after r117419.
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.txt: Update after r117429.
+
 2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION: http/tests/xmlhttprequest/basic-auth-nopassword.html started to crash with newer Qt5
