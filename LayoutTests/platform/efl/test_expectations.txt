@@ -418,7 +418,7 @@ BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 // New test introduced in r116858 fails
-BUGWK86322 : media/media-continues-playing-after-replace-source.html = TEXT
+BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
 
 // Seems to fail on mac as well
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT

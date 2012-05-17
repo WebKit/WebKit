@@ -1,3 +1,9 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, update test number tracking media-continues-playing-after-replace-source.html
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-17  Peter Kasting  <pkasting@google.com>
 
         [chromium] Remove passing tests, re-number some still-present issues.
