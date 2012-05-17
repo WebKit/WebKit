@@ -1,3 +1,16 @@
+2012-05-16  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Restore accidentally changed copyrights.
+        https://bugs.webkit.org/show_bug.cgi?id=86471
+
+        Reviewed by Antonio Gomes.
+
+        Restore accidentally changed copyrights.
+
+        * ewk/ewk_js_private.h:
+        * ewk/ewk_security_origin_private.h:
+        * ewk/ewk_view_private.h:
+
 2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Support for Battery Status API on the WebKit-Efl

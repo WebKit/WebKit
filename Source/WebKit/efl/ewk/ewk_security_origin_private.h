@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2012 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
