@@ -1,3 +1,16 @@
+2012-05-11  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Allow FileSystem API implementation to pass snapshot metadata at File creation time
+        https://bugs.webkit.org/show_bug.cgi?id=78879
+
+        Reviewed by Jian Li.
+
+        Added tests for making sure metadata is not cached in the regular
+        temporary filesystem.
+
+        * fast/filesystem/file-metadata-after-write-expected.txt: Added.
+        * fast/filesystem/file-metadata-after-write.html: Added.
+
 2012-05-17  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, updating chrome test expectations.

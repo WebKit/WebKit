@@ -123,11 +123,11 @@ void DOMFileSystem::createWriter(const FileEntry* fileEntry, PassRefPtr<FileWrit
 
 namespace {
 
-class GetPathCallback : public FileSystemCallbacksBase {
+class GetMetadataCallback : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<GetPathCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    static PassOwnPtr<GetMetadataCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
     {
-        return adoptPtr(new GetPathCallback(filesystem, name, successCallback, errorCallback));
+        return adoptPtr(new GetMetadataCallback(filesystem, name, successCallback, errorCallback));
     }
 
     virtual void didReadMetadata(const FileMetadata& metadata)
@@ -136,12 +136,18 @@ public:
         if (!m_successCallback)
             return;
 
-        m_successCallback->handleEvent(File::createWithName(metadata.platformPath, m_name).get());
+        // For regular filesystem types (temporary or persistent), we should not cache file metadata as it could change File semantics.
+        // For other filesystem types (which could be platform-specific ones), there's a chance that the files are on remote filesystem. If the port has returned metadata just pass it to File constructor (so we may cache the metadata).
+        if (m_filesystem->type() == FileSystemTypeTemporary || m_filesystem->type() == FileSystemTypePersistent)
+            m_successCallback->handleEvent(File::createWithName(metadata.platformPath, m_name).get());
+        else
+            m_successCallback->handleEvent(File::createForFileSystemFile(m_name, metadata).get());
+
         m_successCallback.release();
     }
 
 private:
-    GetPathCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    GetMetadataCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
         : FileSystemCallbacksBase(errorCallback)
         , m_filesystem(filesystem)
         , m_name(name)
@@ -158,7 +164,7 @@ private:
 
 void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_asyncFileSystem->createSnapshotFileAndReadMetadata(createFileSystemURL(fileEntry), GetPathCallback::create(this, fileEntry->name(), successCallback, errorCallback));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(createFileSystemURL(fileEntry), GetMetadataCallback::create(this, fileEntry->name(), successCallback, errorCallback));
 }
 
 } // namespace WebCore

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class FileMetadata;
 class KURL;
 
 class File : public Blob {
@@ -50,6 +51,16 @@ public:
 
 #if ENABLE(DIRECTORY_UPLOAD)
     static PassRefPtr<File> createWithRelativePath(const String& path, const String& relativePath);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    // If filesystem files live in the remote filesystem, the port might pass the valid metadata (non-zero modificationTime and non-negative file size) and cache in the File object.
+    //
+    // Otherwise calling size(), lastModifiedTime() and webkitSlice() will synchronously query the file metadata.
+    static PassRefPtr<File> createForFileSystemFile(const String& name, const FileMetadata& metadata)
+    {
+        return adoptRef(new File(name, metadata));
+    }
 #endif
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
@@ -81,8 +92,20 @@ private:
     File(const String& path, const KURL& srcURL, const String& type);
     File(const String& path, const String& name);
 
+# if ENABLE(FILE_SYSTEM)
+    File(const String& name, const FileMetadata&);
+#endif
+
     String m_path;
     String m_name;
+
+#if ENABLE(FILE_SYSTEM)
+    // If non-zero modificationTime and non-negative file size are given at construction time we use them in size(), lastModifiedTime() and webkitSlice().
+    // By default we initialize m_snapshotSize to -1 and m_snapshotModificationTime to 0 (so that we don't use them unless they are given).
+    const long long m_snapshotSize;
+    const double m_snapshotModificationTime;
+#endif
+
 #if ENABLE(DIRECTORY_UPLOAD)
     String m_relativePath;
 #endif

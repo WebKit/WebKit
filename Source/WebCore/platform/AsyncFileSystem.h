@@ -127,6 +127,8 @@ public:
     // while in remote filesystem case the backend may download the file into a temporary snapshot file and return the metadata of the temporary file.
     // AsyncFileSystemCallbacks::didReadMetadata() is called when the metadata for the snapshot file is successfully returned.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
+    //
+    // Note: the returned metadata info is cached in the File object for non-regular filesystem types (neither Temporary nor Persistent). The port could return valid metadata if it wants File object to cache metadata (e.g. if the file body is on a remote server), but otherwise should NOT return valid metadata.
     virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
 protected:
