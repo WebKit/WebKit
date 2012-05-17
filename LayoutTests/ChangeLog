@@ -1,3 +1,13 @@
+2012-05-17  Pravin D  <pravind.2k4@gmail.com>
+
+        REGRESSION (r116331): RSS Headlines/links are missing (-webkit-box-flex broken?)
+        https://bugs.webkit.org/show_bug.cgi?id=85991
+
+        Reviewed by Eric Seidel.
+
+        * fast/css/deprecated-flex-box-zero-width-intrinsic-max-width-expected.txt: Added.
+        * fast/css/deprecated-flex-box-zero-width-intrinsic-max-width.html: Added.
+
 2012-05-17  Uday Kiran  <udaykiran@motorola.com>
 
         CSS3 Multicolumn: Content in normal flow extending into column gaps should be clipped at middle of column-gap
