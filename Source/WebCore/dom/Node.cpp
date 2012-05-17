@@ -2229,6 +2229,57 @@ void Node::showTreeForThis() const
     showTreeAndMark(this, "*");
 }
 
+void Node::showNodePathForThis() const
+{
+    Vector<const Node*, 16> chain;
+    const Node* node = this;
+    while (node->parentOrHostNode()) {
+        chain.append(node);
+        node = node->parentOrHostNode();
+    }
+    for (unsigned index = chain.size(); index > 0; --index) {
+        const Node* node = chain[index - 1];
+        if (node->isShadowRoot()) {
+            int count = 0;
+            for (ShadowRoot* shadowRoot = oldestShadowRootFor(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->youngerShadowRoot())
+                ++count;
+            fprintf(stderr, "/#shadow-root[%d]", count);
+            continue;
+        }
+
+        switch (node->nodeType()) {
+        case ELEMENT_NODE: {
+            fprintf(stderr, "/%s", node->nodeName().utf8().data());
+
+            const Element* element = toElement(node);
+            const AtomicString& idattr = element->getIdAttribute();
+            bool hasIdAttr = !idattr.isNull() && !idattr.isEmpty();
+            if (node->previousSibling() || node->nextSibling()) {
+                int count = 0;
+                for (Node* previous = node->previousSibling(); previous; previous = previous->previousSibling())
+                    if (previous->nodeName() == node->nodeName())
+                        ++count;
+                if (hasIdAttr)
+                    fprintf(stderr, "[@id=\"%s\" and position()=%d]", idattr.string().utf8().data(), count);
+                else
+                    fprintf(stderr, "[%d]", count);
+            } else if (hasIdAttr)
+                fprintf(stderr, "[@id=\"%s\"]", idattr.string().utf8().data());
+            break;
+        }
+        case TEXT_NODE:
+            fprintf(stderr, "/text()");
+            break;
+        case ATTRIBUTE_NODE:
+            fprintf(stderr, "/@%s", node->nodeName().utf8().data());
+            break;
+        default:
+            break;
+        }
+    }
+    fprintf(stderr, "\n");
+}
+
 static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2)
 {
     for (const Node* node = rootNode; node; node = node->traverseNextNode()) {
@@ -2920,6 +2971,12 @@ void showTree(const WebCore::Node* node)
 {
     if (node)
         node->showTreeForThis();
+}
+
+void showNodePath(const WebCore::Node* node)
+{
+    if (node)
+        node->showNodePathForThis();
 }
 
 #endif
