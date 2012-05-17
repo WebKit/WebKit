@@ -873,22 +873,6 @@ plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-getProperty.html
 plugins/npruntime/delete-plugin-within-invoke.html
 
-# [Qt] Web process hangs while waiting for plugin process connection during layouttests
-# https://bugs.webkit.org/show_bug.cgi?id=86620
-plugins
-fast/dom/Window/Plug-ins.html
-http/tests/plugins
-fast/frames/sandboxed-iframe-about-blank.html
-fast/frames/sandboxed-iframe-navigation-allowed.html
-fast/replaced/invalid-object-with-fallback.html
-fast/replaced/object-with-embed-url-param.html
-http/tests/inspector/network/network-content-replacement-embed.html
-http/tests/inspector/network/network-embed.html
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
-
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
 # =========================================================================== #

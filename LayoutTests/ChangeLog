@@ -1,3 +1,15 @@
+2012-05-17  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Web process hangs while waiting for plugin process connection during layouttests
+        https://bugs.webkit.org/show_bug.cgi?id=86620
+
+        Reviewed by Csaba Osztrogonác.
+
+        Don't disable plugin tests for Qt 4.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/Skipped:
+
 2012-05-17  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] fast/events/page-visibility-* tests fail
