@@ -1,3 +1,25 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Support for Battery Status API on the WebKit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=83254
+
+        Reviewed by Chang Shu.
+
+        The set of e_dbus libraries, e_ukit library in particular, enables to support all types of battery status events (e.g., charging, chargingTime, dischargingTime, level).
+
+        * WebCoreSupport/BatteryClientEfl.cpp:
+        (WebCore::BatteryClientEfl::BatteryClientEfl):
+        (WebCore::BatteryClientEfl::startUpdating):
+        (WebCore::BatteryClientEfl::stopUpdating):
+        (WebCore::BatteryClientEfl::setBatteryStatus):
+        (WebCore):
+        (WebCore::BatteryClientEfl::timerFired):
+        (WebCore::BatteryClientEfl::getBatteryStatus):
+        (WebCore::BatteryClientEfl::setBatteryClient):
+        * WebCoreSupport/BatteryClientEfl.h:
+        (WebCore::BatteryClientEfl::batteryStatus):
+        (BatteryClientEfl):
+
 2012-05-16  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Fix uninitialized struct member added by r117258

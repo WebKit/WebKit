@@ -23,6 +23,9 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "BatteryClient.h"
+#include "BatteryStatus.h"
+#include "Timer.h"
+#include <E_Ukit.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -41,9 +44,17 @@ public:
     virtual void batteryControllerDestroyed();
 
     void setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
+    BatteryStatus* batteryStatus() { return m_batteryStatus.get(); }
 
 private:
+    void timerFired(Timer<BatteryClientEfl>*);
+    static void getBatteryStatus(void* data, void* replyData, DBusError*);
+    static void setBatteryClient(void* data, void* replyData, DBusError*);
+
     BatteryController* m_controller;
+    Timer<BatteryClientEfl> m_timer;
+    RefPtr<BatteryStatus> m_batteryStatus;
+    const double m_batteryStatusRefreshInterval;
 };
 
 }

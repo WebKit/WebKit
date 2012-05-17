@@ -1,3 +1,14 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Support for Battery Status API on the WebKit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=83254
+
+        Reviewed by Chang Shu.
+
+        Add e_dbus libraries to jhbuild's modules list.
+
+        * efl/jhbuild.modules:
+
 2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Rounding errors on 32-bit machines causes tests to fail

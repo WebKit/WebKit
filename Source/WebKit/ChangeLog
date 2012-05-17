@@ -1,3 +1,14 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Support for Battery Status API on the WebKit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=83254
+
+        Reviewed by Chang Shu.
+
+        Add e_ukit library and include directory to get battery status of device.
+
+        * PlatformEfl.cmake:
+
 2012-05-15  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Split ewk_private.h file to multiple private files.

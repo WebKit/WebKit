@@ -13,6 +13,7 @@
       <dep package="glib-networking"/>
       <dep package="libsoup"/>
       <dep package="edje"/>
+      <dep package="e_dbus"/>
     </dependencies>
   </metamodule>
 
@@ -204,6 +205,16 @@
       <dep package="ecore"/>
       <dep package="evas"/>
       <dep package="embryo"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="e_dbus">
+    <branch module="e_dbus"
+            repo="enlightenment.org"
+            revision="68629"/>
+    <dependencies>
+      <dep package="ecore"/>
+      <dep package="eina"/>
     </dependencies>
   </autotools>
 

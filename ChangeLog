@@ -1,3 +1,14 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Support for Battery Status API on the WebKit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=83254
+
+        Reviewed by Chang Shu.
+
+        Add dependency check for e_ukit package which is in the e_dbus library.
+
+        * Source/cmake/FindEFL.cmake:
+
 2012-05-16  Varun Jain  <varunjain@google.com>
 
         [chromium] No modifier flags (shift/ctrl/alt) in drag&drop events on chromium linux
