@@ -1,3 +1,33 @@
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
+        [Performance test] Add a micro benchmark for div.firstChild getter
+        https://bugs.webkit.org/show_bug.cgi?id=86582
+
+        Reviewed by Ryosuke Niwa.
+
+        We are going to remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        In this bug, we add a micro benchmark for div.firstChild getter.
+        This benchmark covers 'firstChild', 'lastChild', 'nextSibling' and
+        'previousSibling' in Dromaeo/dom-traverse.html, and other DOM attributes
+        that return a Node object.
+
+        Multiple test results in my Linux desktop:
+
+        RESULT Bindings: first-child= 798.157160346 runs/s
+        median= 798.004987531 runs/s, stdev= 1.52006063407 runs/s, min= 796.019900498 runs/s, max= 801.001251564 runs/s
+        RESULT Bindings: first-child= 797.603608554 runs/s
+        median= 797.872340426 runs/s, stdev= 2.2522621261 runs/s, min= 791.556728232 runs/s, max= 801.001251564 runs/s
+        RESULT Bindings: first-child= 798.656295468 runs/s
+        median= 798.004987531 runs/s, stdev= 1.79367478063 runs/s, min= 797.01120797 runs/s, max= 803.011292346 runs/s
+        RESULT Bindings: first-child= 797.812784267 runs/s
+        median= 798.004987531 runs/s, stdev= 2.31766523191 runs/s, min= 791.100123609 runs/s, max= 802.005012531 runs/s
+        RESULT Bindings: first-child= 797.963311597 runs/s
+        median= 798.004987531 runs/s, stdev= 2.53014907337 runs/s, min= 789.14919852 runs/s, max= 801.001251564 runs/s
+
+        * Bindings/first-child.html: Added.
+
 2012-05-16  Kentaro Hara  <haraken@chromium.org>
 
         [Performance test] Support "description" for PerfTestRunner.run and PerfTestRunner.runPerSecond
