@@ -42,6 +42,7 @@ function setVersionSuccess(evt)
     shouldBeTrue("'keyPath' in store");
     shouldBeTrue("'indexNames' in store");
     shouldBeTrue("'transaction' in store");
+    shouldBeTrue("'autoIncrement' in store");
     shouldBeTrue("'put' in store");
     shouldBeEqualToString("typeof store.put", "function");
     shouldBeTrue("'add' in store");
@@ -65,8 +66,13 @@ function setVersionSuccess(evt)
 
     shouldBeEqualToString("store.name", "storeName");
     shouldBeNull("store.keyPath");
+    shouldBeFalse("store.autoIncrement");
     shouldBe("storeNames.contains('storeName')", "true");
     shouldBe("storeNames.length", "1");
+
+    shouldBeEqualToString("db.createObjectStore('storeWithKeyPath', {keyPath: 'path'}).keyPath", "path");
+    shouldBeTrue("db.createObjectStore('storeWithKeyGenerator', {autoIncrement: true}).autoIncrement");
+
     // FIXME: test all of object store's methods.
 
     debug("Ask for an index that doesn't exist:");

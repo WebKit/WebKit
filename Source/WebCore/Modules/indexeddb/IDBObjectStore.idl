@@ -32,6 +32,7 @@ module storage {
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString keyPath;
         readonly attribute DOMStringList indexNames;
         readonly attribute IDBTransaction transaction;
+        readonly attribute boolean autoIncrement;
 
         [CallWith=ScriptExecutionContext] IDBRequest put(in SerializedScriptValue value, in [Optional] IDBKey key)
             raises (IDBDatabaseException);

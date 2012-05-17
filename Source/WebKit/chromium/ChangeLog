@@ -1,3 +1,21 @@
+2012-05-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBObjectStore.autoIncrement
+        https://bugs.webkit.org/show_bug.cgi?id=86662
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::autoIncrement):
+        (WebKit):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::autoIncrement):
+        (WebKit):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-05-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Support Copy ... actions for the Web Inspector remote debugging mode.

@@ -1,3 +1,15 @@
+2012-05-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBObjectStore.autoIncrement
+        https://bugs.webkit.org/show_bug.cgi?id=86662
+
+        Reviewed by Dimitri Glazkov.
+
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (setVersionSuccess):
+
 2012-05-17  Peter Kasting  <pkasting@google.com>
 
         [chromium] Rebaseline.

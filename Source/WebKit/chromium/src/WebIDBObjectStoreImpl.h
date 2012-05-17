@@ -51,6 +51,7 @@ public:
     // http://webkit.org/b/84207
     WebString keyPathString() const;
     WebDOMStringList indexNames() const;
+    bool autoIncrement() const;
 
     void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);

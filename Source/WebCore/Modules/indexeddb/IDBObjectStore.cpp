@@ -78,6 +78,12 @@ IDBTransaction* IDBObjectStore::transaction() const
     return m_transaction.get();
 }
 
+bool IDBObjectStore::autoIncrement() const
+{
+    IDB_TRACE("IDBObjectStore::autoIncrement");
+    return m_backend->autoIncrement();
+}
+
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::get");

@@ -50,6 +50,7 @@ public:
     virtual String name() const = 0;
     virtual String keyPath() const = 0;
     virtual PassRefPtr<DOMStringList> indexNames() const = 0;
+    virtual bool autoIncrement() const = 0;
 
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 

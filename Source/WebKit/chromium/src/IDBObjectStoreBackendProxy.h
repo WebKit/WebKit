@@ -45,6 +45,7 @@ public:
     virtual String name() const;
     virtual String keyPath() const;
     virtual PassRefPtr<WebCore::DOMStringList> indexNames() const;
+    virtual bool autoIncrement() const;
 
     virtual void get(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void put(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);

@@ -74,6 +74,11 @@ PassRefPtr<DOMStringList> IDBObjectStoreBackendProxy::indexNames() const
     return m_webIDBObjectStore->indexNames();
 }
 
+bool IDBObjectStoreBackendProxy::autoIncrement() const
+{
+    return m_webIDBObjectStore->autoIncrement();
+}
+
 void IDBObjectStoreBackendProxy::get(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

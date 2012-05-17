@@ -20,6 +20,7 @@ PASS 'name' in store is true
 PASS 'keyPath' in store is true
 PASS 'indexNames' in store is true
 PASS 'transaction' in store is true
+PASS 'autoIncrement' in store is true
 PASS 'put' in store is true
 PASS typeof store.put is "function"
 PASS 'add' in store is true
@@ -42,8 +43,11 @@ PASS 'count' in store is true
 PASS typeof store.count is "function"
 PASS store.name is "storeName"
 PASS store.keyPath is null
+PASS store.autoIncrement is false
 PASS storeNames.contains('storeName') is true
 PASS storeNames.length is 1
+PASS db.createObjectStore('storeWithKeyPath', {keyPath: 'path'}).keyPath is "path"
+PASS db.createObjectStore('storeWithKeyGenerator', {autoIncrement: true}).autoIncrement is true
 Ask for an index that doesn't exist:
 index = store.index('asdf')
 PASS Exception thrown.

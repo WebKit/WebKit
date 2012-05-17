@@ -74,6 +74,11 @@ WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
     return m_objectStore->indexNames();
 }
 
+bool WebIDBObjectStoreImpl::autoIncrement() const
+{
+    return m_objectStore->autoIncrement();
+}
+
 void WebIDBObjectStoreImpl::get(const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     m_objectStore->get(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
