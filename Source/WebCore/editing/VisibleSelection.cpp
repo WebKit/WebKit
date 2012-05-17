@@ -30,7 +30,6 @@
 #include "Element.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
-#include "TreeScopeAdjuster.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "Range.h"
@@ -411,6 +410,28 @@ void VisibleSelection::updateSelectionType()
         m_affinity = DOWNSTREAM;
 }
 
+Position VisibleSelection::adjustPositionBefore(TreeScope* treeScope, const Position& currentPosition)
+{
+    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.anchorNode()))
+        return positionBeforeNode(ancestor);
+
+    if (Node* lastChild = treeScope->rootNode()->lastChild())
+        return positionAfterNode(lastChild);
+
+    return Position();
+}
+
+Position VisibleSelection::adjustPositionAfter(TreeScope* treeScope, const Position& currentPosition)
+{
+    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.anchorNode()))
+        return positionAfterNode(ancestor);
+
+    if (Node* firstChild = treeScope->rootNode()->firstChild())
+        return positionBeforeNode(firstChild);
+
+    return Position();
+}
+
 void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
@@ -466,10 +487,10 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
         return;
 
     if (m_baseIsFirst) {
-        m_extent = TreeScopeAdjuster(m_start.anchorNode()->treeScope()).adjustPositionBefore(m_end);
+        m_extent = adjustPositionBefore(m_start.anchorNode()->treeScope(), m_end);
         m_end = m_extent;
     } else {
-        m_extent = TreeScopeAdjuster(m_end.anchorNode()->treeScope()).adjustPositionAfter(m_start);
+        m_extent = adjustPositionAfter(m_end.anchorNode()->treeScope(), m_start);
         m_start = m_extent;
     }
 

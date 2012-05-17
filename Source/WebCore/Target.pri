@@ -620,7 +620,6 @@ SOURCES += \
     dom/TouchList.cpp \
     dom/Traversal.cpp \
     dom/TreeScope.cpp \
-    dom/TreeScopeAdjuster.cpp \
     dom/TreeScopeAdopter.cpp \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
@@ -1775,7 +1774,6 @@ HEADERS += \
     dom/Traversal.h \
     dom/TreeDepthLimit.h \
     dom/TreeScope.h \
-    dom/TreeScopeAdjuster.h \
     dom/TreeScopeAdopter.h \
     dom/TreeWalker.h \
     dom/UIEvent.h \

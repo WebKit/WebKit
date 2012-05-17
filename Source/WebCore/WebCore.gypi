@@ -5397,8 +5397,6 @@
             'dom/TreeDepthLimit.h',
             'dom/TreeScope.cpp',
             'dom/TreeScope.h',
-            'dom/TreeScopeAdjuster.cpp',
-            'dom/TreeScopeAdjuster.h',
             'dom/TreeScopeAdopter.cpp',
             'dom/TreeScopeAdopter.h',
             'dom/TreeWalker.cpp',

@@ -96,6 +96,19 @@ void TreeScope::removeElementById(const AtomicString& elementId, Element* elemen
     m_elementsById.remove(elementId.impl(), element);
 }
 
+Node* TreeScope::ancestorInThisScope(Node* node) const
+{
+    while (node) {
+        if (node->treeScope() == this)
+            return node;
+        if (!node->isInShadowTree())
+            return 0;
+        node = node->shadowAncestorNode();
+    }
+
+    return 0;
+}
+
 void TreeScope::addImageMap(HTMLMapElement* imageMap)
 {
     AtomicStringImpl* name = imageMap->getName().impl();

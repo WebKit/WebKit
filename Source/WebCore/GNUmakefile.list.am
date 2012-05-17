@@ -1989,8 +1989,6 @@ webcore_sources += \
 	Source/WebCore/dom/TreeDepthLimit.h \
 	Source/WebCore/dom/TreeScope.cpp \
 	Source/WebCore/dom/TreeScope.h \
-	Source/WebCore/dom/TreeScopeAdjuster.cpp \
-	Source/WebCore/dom/TreeScopeAdjuster.h \
 	Source/WebCore/dom/TreeScopeAdopter.cpp \
 	Source/WebCore/dom/TreeScopeAdopter.h \
 	Source/WebCore/dom/TreeWalker.cpp \

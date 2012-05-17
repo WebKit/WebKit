@@ -1582,8 +1582,6 @@
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */; };
-		5740E83C1532DE1700760628 /* TreeScopeAdjuster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5740E83A1532DE1700760628 /* TreeScopeAdjuster.cpp */; };
-		5740E83D1532DE1700760628 /* TreeScopeAdjuster.h in Headers */ = {isa = PBXBuildFile; fileRef = 5740E83B1532DE1700760628 /* TreeScopeAdjuster.h */; };
 		578DA20E1520EB8C006141C1 /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F4F5FFC11CBD30100A186BF /* InspectorFrontend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		578DA20F1520EBA3006141C1 /* InspectorTypeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 573D134614CE39FF0057ABCA /* InspectorTypeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57B791A314C6A62900F202D1 /* ContentDistributor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */; };
@@ -8609,8 +8607,6 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTypeBuilder.cpp; sourceTree = "<group>"; };
 		573D134614CE39FF0057ABCA /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
-		5740E83A1532DE1700760628 /* TreeScopeAdjuster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeScopeAdjuster.cpp; sourceTree = "<group>"; };
-		5740E83B1532DE1700760628 /* TreeScopeAdjuster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeScopeAdjuster.h; sourceTree = "<group>"; };
 		57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentDistributor.cpp; sourceTree = "<group>"; };
 		57B791A014C6A62900F202D1 /* ContentDistributor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentDistributor.h; sourceTree = "<group>"; };
 		57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSelectorQuery.cpp; sourceTree = "<group>"; };
@@ -21351,8 +21347,6 @@
 				37FD4297118368460093C029 /* TreeDepthLimit.h */,
 				14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */,
 				14D64B5B134A5B6B00E58FDA /* TreeScope.h */,
-				5740E83A1532DE1700760628 /* TreeScopeAdjuster.cpp */,
-				5740E83B1532DE1700760628 /* TreeScopeAdjuster.h */,
 				A77E1FED14AACB6E005B7CB6 /* TreeScopeAdopter.cpp */,
 				A77E1FEE14AACB6E005B7CB6 /* TreeScopeAdopter.h */,
 				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
@@ -24711,7 +24705,6 @@
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
 				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
-				5740E83D1532DE1700760628 /* TreeScopeAdjuster.h in Headers */,
 				A77E1FF014AACB6E005B7CB6 /* TreeScopeAdopter.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
@@ -27765,7 +27758,6 @@
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */,
-				5740E83C1532DE1700760628 /* TreeScopeAdjuster.cpp in Sources */,
 				A77E1FEF14AACB6E005B7CB6 /* TreeScopeAdopter.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
 				93309E19099E64920056E581 /* TypingCommand.cpp in Sources */,

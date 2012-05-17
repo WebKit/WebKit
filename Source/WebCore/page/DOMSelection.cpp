@@ -40,7 +40,6 @@
 #include "Range.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
-#include "TreeScopeAdjuster.h"
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -506,7 +505,7 @@ Node* DOMSelection::shadowAdjustedNode(const Position& position) const
         return 0;
 
     Node* containerNode = position.containerNode();
-    Node* adjustedNode = TreeScopeAdjuster(m_treeScope).ancestorInThisScope(containerNode);
+    Node* adjustedNode = m_treeScope->ancestorInThisScope(containerNode);
 
     if (!adjustedNode)
         return 0;
@@ -523,7 +522,7 @@ int DOMSelection::shadowAdjustedOffset(const Position& position) const
         return 0;
 
     Node* containerNode = position.containerNode();
-    Node* adjustedNode = TreeScopeAdjuster(m_treeScope).ancestorInThisScope(containerNode);
+    Node* adjustedNode = m_treeScope->ancestorInThisScope(containerNode);
 
     if (!adjustedNode)
         return 0;

@@ -55,6 +55,8 @@ public:
     void addElementById(const AtomicString& elementId, Element*);
     void removeElementById(const AtomicString& elementId, Element*);
 
+    Node* ancestorInThisScope(Node*) const;
+
     void addImageMap(HTMLMapElement*);
     void removeImageMap(HTMLMapElement*);
     HTMLMapElement* getImageMap(const String& url) const;
