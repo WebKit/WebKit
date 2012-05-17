@@ -690,11 +690,11 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
     // Until the canvas is written to by the application, the clear that
     // happened after it was composited should be ignored by the compositor.
     if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-        m_context->paintCompositedResultsToCanvas(this);
+        m_context->paintCompositedResultsToCanvas(canvas()->buffer());
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM)
         if (m_drawingBuffer)
-            m_drawingBuffer->paintCompositedResultsToCanvas(this);
+            m_drawingBuffer->paintCompositedResultsToCanvas(canvas()->buffer());
 #endif
 
         canvas()->makePresentationCopy();
@@ -710,7 +710,7 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
 
     if (m_drawingBuffer)
         m_drawingBuffer->commit();
-    m_context->paintRenderingResultsToCanvas(this, m_drawingBuffer.get());
+    m_context->paintRenderingResultsToCanvas(canvas()->buffer(), m_drawingBuffer.get());
 
     if (m_drawingBuffer) {
         if (m_framebufferBinding)

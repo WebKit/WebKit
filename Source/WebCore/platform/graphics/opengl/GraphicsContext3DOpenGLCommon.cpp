@@ -30,10 +30,8 @@
 
 #include "GraphicsContext3D.h"
 
-#include "CanvasRenderingContext.h"
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext.h"
-#include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
@@ -109,11 +107,8 @@ bool GraphicsContext3D::isResourceSafe()
     return false;
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer*)
+void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer*)
 {
-    HTMLCanvasElement* canvas = context->canvas();
-    ImageBuffer* imageBuffer = canvas->buffer();
-
     int rowBytes = m_currentWidth * 4;
     int totalBytes = rowBytes * m_currentHeight;
 
@@ -133,10 +128,10 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     }
 
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
-                  canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
+                  imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context()->platformContext());
 }
 
-bool GraphicsContext3D::paintCompositedResultsToCanvas(CanvasRenderingContext*)
+bool GraphicsContext3D::paintCompositedResultsToCanvas(ImageBuffer*)
 {
     // Not needed at the moment, so return that nothing was done.
     return false;

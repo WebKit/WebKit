@@ -1,3 +1,20 @@
+2012-05-16  James Robinson  <jamesr@chromium.org>
+
+        GraphicsContext3D interface should not be aware of CanvasRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=86550
+
+        Reviewed by Darin Adler.
+
+        Updates chromium implementation of GraphicsContext3D for API change and removes a bunch of unnecessary
+        #includes.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+
 2012-05-16  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: WebKit API for IDBObjectStore.autoIncrement property

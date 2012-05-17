@@ -725,7 +725,7 @@ bool GraphicsContext3D::layerComposited() const
     return false;
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
+void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer*, DrawingBuffer* drawingBuffer)
 {
     notImplemented();
 }
@@ -736,7 +736,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
     return 0;
 }
 
-bool GraphicsContext3D::paintCompositedResultsToCanvas(CanvasRenderingContext*)
+bool GraphicsContext3D::paintCompositedResultsToCanvas(ImageBuffer*)
 {
     return false;
 }

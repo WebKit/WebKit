@@ -92,7 +92,6 @@ const Platform3DObject NullPlatform3DObject = 0;
 #endif
 
 namespace WebCore {
-class CanvasRenderingContext;
 class DrawingBuffer;
 class Extensions3D;
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
@@ -807,9 +806,9 @@ public:
     void markLayerComposited();
     bool layerComposited() const;
 
-    void paintRenderingResultsToCanvas(CanvasRenderingContext*, DrawingBuffer*);
+    void paintRenderingResultsToCanvas(ImageBuffer*, DrawingBuffer*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
-    bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
+    bool paintCompositedResultsToCanvas(ImageBuffer*);
 
     // Support for buffer creation and deletion
     Platform3DObject createBuffer();

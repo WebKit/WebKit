@@ -101,7 +101,7 @@ unsigned DrawingBuffer::frontColorBuffer() const
     return colorBuffer();
 }
 
-void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
 {
 }
 #endif

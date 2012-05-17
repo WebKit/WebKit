@@ -44,7 +44,6 @@
 #endif
 
 namespace WebCore {
-class CanvasRenderingContext;
 class GraphicsContext3D;
 class ImageData;
 #if PLATFORM(CHROMIUM)
@@ -127,7 +126,7 @@ public:
     void prepareBackBuffer();
     bool requiresCopyFromBackToFrontBuffer() const;
     unsigned frontColorBuffer() const;
-    void paintCompositedResultsToCanvas(CanvasRenderingContext*);
+    void paintCompositedResultsToCanvas(ImageBuffer*);
 #endif
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }

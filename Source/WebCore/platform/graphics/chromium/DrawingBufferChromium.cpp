@@ -206,7 +206,7 @@ Platform3DObject DrawingBuffer::framebuffer() const
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
 {
     if (!m_context->makeContextCurrent() || m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
         return;
@@ -224,7 +224,7 @@ void DrawingBuffer::paintCompositedResultsToCanvas(CanvasRenderingContext* conte
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, frontColorBuffer(), 0);
 
     Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !m_context->getContextAttributes().premultipliedAlpha, context->canvas()->buffer());
+    extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !m_context->getContextAttributes().premultipliedAlpha, imageBuffer);
     m_context->deleteFramebuffer(framebuffer);
 
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, previousFramebuffer);

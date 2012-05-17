@@ -76,10 +76,10 @@ public:
     bool layerComposited() const;
     void markLayerComposited();
 
-    void paintRenderingResultsToCanvas(CanvasRenderingContext*, DrawingBuffer*);
+    void paintRenderingResultsToCanvas(ImageBuffer*, DrawingBuffer*);
     void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
-    bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
+    bool paintCompositedResultsToCanvas(ImageBuffer*);
 
     void prepareTexture();
 

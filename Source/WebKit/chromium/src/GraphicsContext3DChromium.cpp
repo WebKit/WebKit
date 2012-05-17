@@ -34,17 +34,11 @@
 
 #include "GraphicsContext3D.h"
 
-#include "CachedImage.h"
-#include "CanvasRenderingContext.h"
-#include "Chrome.h"
-#include "ChromeClientImpl.h"
 #include "DrawingBuffer.h"
 #include "Extensions3DChromium.h"
 #include "GrContext.h"
 #include "GrGLInterface.h"
 #include "GraphicsContext3DPrivate.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include <public/Platform.h>
@@ -53,6 +47,7 @@
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 
 namespace {
@@ -256,16 +251,15 @@ void GraphicsContext3DPrivate::paintFramebufferToCanvas(int framebuffer, int wid
     }
 }
 
-void GraphicsContext3DPrivate::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
+void GraphicsContext3DPrivate::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer* drawingBuffer)
 {
-    ImageBuffer* imageBuffer = context->canvas()->buffer();
     Platform3DObject framebufferId;
     int width, height;
     getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
     paintFramebufferToCanvas(framebufferId, width, height, !m_impl->getContextAttributes().premultipliedAlpha, imageBuffer);
 }
 
-bool GraphicsContext3DPrivate::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+bool GraphicsContext3DPrivate::paintCompositedResultsToCanvas(ImageBuffer*)
 {
     return false;
 }
@@ -1204,9 +1198,9 @@ bool GraphicsContext3D::layerComposited() const
     return m_private->layerComposited();
 }
 
-void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context, DrawingBuffer* drawingBuffer)
+void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer* drawingBuffer)
 {
-    return m_private->paintRenderingResultsToCanvas(context, drawingBuffer);
+    return m_private->paintRenderingResultsToCanvas(imageBuffer, drawingBuffer);
 }
 
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
@@ -1214,7 +1208,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
     return m_private->paintRenderingResultsToImageData(drawingBuffer);
 }
 
-DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, CanvasRenderingContext*, bool)
+DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, ImageBuffer*, bool)
 
 DELEGATE_TO_INTERNAL_R(createBuffer, Platform3DObject)
 DELEGATE_TO_INTERNAL_R(createFramebuffer, Platform3DObject)
