@@ -1,3 +1,11 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, update expectations after r117426.
+
+        * platform/efl/editing/unsupported-content/list-type-before-expected.txt:
+        * platform/efl/editing/unsupported-content/table-type-after-expected.txt:
+        * platform/efl/editing/unsupported-content/table-type-before-expected.txt:
+
 2012-05-17  Robert Hogan  <robert@webkit.org>
 
         Rebaseline Chromium results after r117477
