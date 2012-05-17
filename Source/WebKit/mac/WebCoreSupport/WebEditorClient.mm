@@ -694,6 +694,16 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document()->frame()));
 }
 
+bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
+{
+    // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    return type != TextCheckingTypeSpelling;
+#else
+    return true;
+#endif
+}
+
 void WebEditorClient::ignoreWordInSpellDocument(const String& text)
 {
     [[NSSpellChecker sharedSpellChecker] ignoreWord:text 

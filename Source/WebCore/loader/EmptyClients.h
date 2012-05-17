@@ -416,6 +416,7 @@ public:
 
 class EmptyTextCheckerClient : public TextCheckerClient {
 public:
+    virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const { return true; }
     virtual void ignoreWordInSpellDocument(const String&) { }
     virtual void learnWord(const String&) { }
     virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }

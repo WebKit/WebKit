@@ -42,6 +42,7 @@ class TextCheckerClientGtk : public WebCore::TextCheckerClient {
     public:
         TextCheckerClientGtk(WebKitSpellChecker*);
         ~TextCheckerClientGtk();
+        virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
         virtual void ignoreWordInSpellDocument(const WTF::String&);
         virtual void learnWord(const WTF::String&);
         virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);

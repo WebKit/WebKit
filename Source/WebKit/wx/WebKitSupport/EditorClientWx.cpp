@@ -498,6 +498,11 @@ void EditorClientWx::respondToChangedSelection(Frame* frame)
     }
 }
 
+bool EditorClientWx::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void EditorClientWx::ignoreWordInSpellDocument(const String&) 
 { 
     notImplemented(); 

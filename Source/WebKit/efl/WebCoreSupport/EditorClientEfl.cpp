@@ -505,6 +505,11 @@ void EditorClientEfl::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
+bool EditorClientEfl::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void EditorClientEfl::ignoreWordInSpellDocument(const String&)
 {
     notImplemented();

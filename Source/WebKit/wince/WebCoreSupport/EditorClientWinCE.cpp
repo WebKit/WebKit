@@ -443,6 +443,11 @@ void EditorClientWinCE::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
+bool EditorClientWinCE::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void EditorClientWinCE::ignoreWordInSpellDocument(const String& text)
 {
     notImplemented();

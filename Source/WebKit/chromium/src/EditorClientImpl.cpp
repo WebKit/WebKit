@@ -39,6 +39,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
+#include "Settings.h"
 #include "SpellChecker.h"
 #include "UndoStep.h"
 
@@ -692,6 +693,12 @@ void EditorClientImpl::textWillBeDeletedInTextField(Element*)
 
 void EditorClientImpl::textDidChangeInTextArea(Element*)
 {
+}
+
+bool EditorClientImpl::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
+{
+    const Frame* frame = m_webView->focusedWebCoreFrame();
+    return !frame || !frame->settings() || !frame->settings()->asynchronousSpellCheckingEnabled();
 }
 
 void EditorClientImpl::ignoreWordInSpellDocument(const String&)

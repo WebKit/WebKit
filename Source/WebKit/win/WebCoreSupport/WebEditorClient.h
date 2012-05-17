@@ -97,6 +97,7 @@ public:
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleInputMethodKeydown(WebCore::KeyboardEvent*);
 
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
     virtual void ignoreWordInSpellDocument(const WTF::String&);
     virtual void learnWord(const WTF::String&);
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);

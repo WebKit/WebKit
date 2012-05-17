@@ -47,6 +47,11 @@ static void convertToVectorList(const QStringList& list, Vector<String>& vList)
 
 namespace WebCore {
 
+bool TextCheckerClientQt::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void TextCheckerClientQt::ignoreWordInSpellDocument(const String& word)
 {
     if (!loadSpellChecker())

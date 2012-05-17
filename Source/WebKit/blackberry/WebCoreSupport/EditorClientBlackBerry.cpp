@@ -534,6 +534,11 @@ void EditorClientBlackBerry::textDidChangeInTextArea(Element*)
     notImplemented();
 }
 
+bool EditorClientBlackBerry::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void EditorClientBlackBerry::ignoreWordInSpellDocument(const WTF::String&)
 {
     notImplemented();

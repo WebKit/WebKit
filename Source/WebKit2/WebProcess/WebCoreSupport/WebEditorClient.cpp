@@ -372,6 +372,16 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, static_cast<HTMLInputElement*>(element), WKInputFieldActionTypeInsertDelete, webFrame);
 }
 
+bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const
+{
+    // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    return type != TextCheckingTypeSpelling;
+#else
+    return true;
+#endif
+}
+
 void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 {
     m_page->send(Messages::WebPageProxy::IgnoreWord(word));

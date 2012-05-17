@@ -625,6 +625,11 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* )
 {
 }
 
+bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 {
     COMPtr<IWebEditingDelegate> ed;

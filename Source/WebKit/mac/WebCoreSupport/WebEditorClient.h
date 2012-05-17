@@ -121,6 +121,7 @@ public:
     virtual void textWillBeDeletedInTextField(WebCore::Element*) OVERRIDE;
     virtual void textDidChangeInTextArea(WebCore::Element*) OVERRIDE;
     
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const OVERRIDE;
     virtual void ignoreWordInSpellDocument(const WTF::String&) OVERRIDE;
     virtual void learnWord(const WTF::String&) OVERRIDE;
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) OVERRIDE;

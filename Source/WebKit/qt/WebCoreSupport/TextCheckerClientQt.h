@@ -41,6 +41,7 @@ namespace WebCore {
 
 class TextCheckerClientQt : public TextCheckerClient {
 public:
+    virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const;
     virtual void ignoreWordInSpellDocument(const String&);
     virtual void learnWord(const String&);
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);

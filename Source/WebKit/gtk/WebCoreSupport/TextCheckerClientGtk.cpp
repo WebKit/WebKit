@@ -44,6 +44,11 @@ TextCheckerClientGtk::~TextCheckerClientGtk()
 {
 }
 
+bool TextCheckerClientGtk::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
+{
+    return true;
+}
+
 void TextCheckerClientGtk::ignoreWordInSpellDocument(const String& text)
 {
     webkit_spell_checker_ignore_word(m_spellChecker.get(), text.utf8().data());

@@ -94,6 +94,7 @@ public:
     virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
     virtual void textWillBeDeletedInTextField(WebCore::Element*);
     virtual void textDidChangeInTextArea(WebCore::Element*);
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
     virtual void ignoreWordInSpellDocument(const WTF::String&);
     virtual void learnWord(const WTF::String&);
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
