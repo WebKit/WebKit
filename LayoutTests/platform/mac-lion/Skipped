@@ -138,3 +138,7 @@ http/tests/media/video-query-url.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=86643
 http/tests/security/contentSecurityPolicy/script-src-redirect.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86785
+fast/repaint/float-overflow-right.html
+fast/repaint/float-overflow.html

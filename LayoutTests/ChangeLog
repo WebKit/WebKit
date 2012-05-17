@@ -1,3 +1,10 @@
+2012-05-17  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=86785
+        Two fast/repaint tests fail on mac lion
+
+        * platform/mac-lion/Skipped:
+
 2012-05-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement IDBObjectStore.autoIncrement
