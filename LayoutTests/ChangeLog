@@ -1,3 +1,10 @@
+2012-05-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r117373.
+
+        * platform/gtk/fast/forms/input-align-image-expected.txt:
+        * platform/gtk/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+
 2012-05-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Web process hangs while waiting for plugin process connection during layouttests

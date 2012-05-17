@@ -9,24 +9,24 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
-      RenderBlock {CENTER} at (0,0) size 784x26
+      RenderBlock {CENTER} at (0,0) size 784x25
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,0) size 784x26
-          RenderTable {TABLE} at (364,0) size 56x26
-            RenderTableSection {TBODY} at (0,0) size 56x26
-              RenderTableRow {TR} at (0,2) size 56x22
-                RenderTableCell {TD} at (2,2) size 52x22 [r=0 c=0 rs=1 cs=1]
-                  RenderImage {INPUT} at (1,1) size 50x20
+        RenderBlock (anonymous) at (0,0) size 784x25
+          RenderTable {TABLE} at (380,0) size 23x25
+            RenderTableSection {TBODY} at (0,0) size 23x25
+              RenderTableRow {TR} at (0,2) size 23x21
+                RenderTableCell {TD} at (2,2) size 19x21 [r=0 c=0 rs=1 cs=1]
+                  RenderImage {INPUT} at (1,1) size 17x19
                   RenderText {#text} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,26) size 784x0
+        RenderBlock (anonymous) at (0,25) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,26) size 784x0
+      RenderBlock (anonymous) at (0,25) size 784x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,26) size 784x36
+      RenderBlock {DIV} at (0,25) size 784x36
         RenderText {#text} at (0,0) size 775x37
           text run at (0,0) width 775: "Success! This test succeeds if the input named mover is not detached from its form when it is moved around in the DOM to"
           text run at (0,18) width 139: "come before the table."
