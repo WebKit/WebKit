@@ -60,15 +60,6 @@ static Node* previousLeafWithSameEditability(Node* node, EditableType editableTy
     return 0;
 }
 
-static Node* enclosingNodeWithNonInlineRenderer(Node* node)
-{
-    for (; node; node = node->parentNode()) {
-        if (node->renderer() && !node->renderer()->isInline())
-            return node;
-    }
-    return 0;
-}
-
 static Node* nextLeafWithSameEditability(Node* node, EditableType editableType = ContentIsEditable)
 {
     if (!node)
@@ -88,10 +79,9 @@ static Node* nextLeafWithSameEditability(Node* node, EditableType editableType =
 static Position previousRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
     Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
-    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
     Node* previousNode = previousLeafWithSameEditability(node, editableType);
 
-    while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
+    while (previousNode && inSameLine(firstPositionInOrBeforeNode(previousNode), visiblePosition))
         previousNode = previousLeafWithSameEditability(previousNode, editableType);
   
     while (previousNode && !previousNode->isShadowRoot()) {
@@ -112,9 +102,8 @@ static Position previousRootInlineBoxCandidatePosition(Node* node, const Visible
 static Position nextRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
     Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
-    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
     Node* nextNode = nextLeafWithSameEditability(node, editableType);
-    while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
+    while (nextNode && inSameLine(firstPositionInOrBeforeNode(nextNode), visiblePosition))
         nextNode = nextLeafWithSameEditability(nextNode, ContentIsEditable);
   
     while (nextNode && !nextNode->isShadowRoot()) {
