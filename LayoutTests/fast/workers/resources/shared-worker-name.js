@@ -147,6 +147,17 @@ function test10()
     }
 }
 
+function test11()
+{
+    // Creating a worker with a specific name, the name attribute should be set to worker correctly.
+    var worker = new SharedWorker('resources/shared-worker-common.js', "testingNameAttribute");
+    worker.port.postMessage("testingNameAttribute");
+    worker.port.onmessage = function(event) {
+        shouldBeEqual("the name attribute of worker can be set correctly", event.data, "testingNameAttribute");
+        nextTest();
+    }
+}
+
 function shouldBeEqual(description, a, b)
 {
     if (a == b)

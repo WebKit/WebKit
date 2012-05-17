@@ -16,6 +16,7 @@ PASS creating worker with a null name
 PASS created SharedWorker with name 'undefined'
 PASS setting self.foo
 PASS creating worker with an undefined name
+PASS the name attribute of worker can be set correctly
 
 TEST COMPLETE
 

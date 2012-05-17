@@ -1,3 +1,22 @@
+2012-05-17  Li Yin  <li.yin@intel.com>
+
+        [Worker] Web Worker lacks test to check the name attribute of SharedWorker
+        https://bugs.webkit.org/show_bug.cgi?id=86714
+
+        Reviewed by Kentaro Hara.
+
+        Spec: http://www.w3.org/TR/2012/CR-workers-20120501/#sharedworkerglobalscope
+        The name attribute must return the value it was assigned when the SharedWorkerGlobalScope object was created.
+        So we should have a test to check it, there is a related test "fast/worker/shared-worker-name.html" already, 
+        but it doesn't cover this.
+
+        * fast/workers/resources/shared-worker-common.js:
+        (handleMessage):
+        * fast/workers/resources/shared-worker-name.js:
+        (test11.worker.port.onmessage):
+        (test11):
+        * fast/workers/shared-worker-name-expected.txt:
+
 2012-05-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] fast/frames/frame-crash-with-page-cache.html is crashing

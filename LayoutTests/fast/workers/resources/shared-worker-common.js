@@ -24,6 +24,8 @@ function handleMessage(event, port) {
         port.postMessage("DONE");
     else if (event.data == "throw")
         generateError();
+    else if (event.data == "testingNameAttribute")
+        port.postMessage(self.name);
     else if (/eval.+/.test(event.data)) {
         try {
             port.postMessage(event.data.substr(5) + ": " + eval(event.data.substr(5)));
