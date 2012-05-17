@@ -54,7 +54,8 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
-    this.debugToolbar = this._createDebugToolbar();
+    var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString(WebInspector.experimentsSettings.sourceCodePanel.isEnabled() ? "Source Code Panel" : "Scripts Panel"));
+    this.debugToolbar = this._createDebugToolbar(helpSection);
 
     const initialDebugSidebarWidth = 225;
     const maximalDebugSidebarWidthPercent = 50;
@@ -126,18 +127,17 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
 
-    var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString("Scripts Panel"));
     this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));
     var evaluateInConsoleShortcut = WebInspector.KeyboardShortcut.makeDescriptor("e", WebInspector.KeyboardShortcut.Modifiers.Shift | WebInspector.KeyboardShortcut.Modifiers.Ctrl);
     helpSection.addKey(evaluateInConsoleShortcut.name, WebInspector.UIString("Evaluate selection in console"));
     this.registerShortcut(evaluateInConsoleShortcut.key, this._evaluateSelectionInConsole.bind(this));
 
     var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
-    helpSection.addKey(openResourceShortcut.name, WebInspector.UIString("Open script"));
+    helpSection.addKey(openResourceShortcut.name, WebInspector.UIString("Open file"));
 
-    var scriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
-    helpSection.addKey(scriptOutlineShortcut.name, WebInspector.UIString("Go to function"));
-    this.registerShortcut(scriptOutlineShortcut.key, this._showJavaScriptOutlineDialog.bind(this));
+    var outlineShortcut = WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
+    helpSection.addKey(outlineShortcut.name, WebInspector.UIString("Go to member"));
+    this.registerShortcut(outlineShortcut.key, this._showOutlineDialog.bind(this));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -784,7 +784,7 @@ WebInspector.ScriptsPanel.prototype = {
             WebInspector.evaluateInConsole(selection.toString());
     },
 
-    _createDebugToolbar: function()
+    _createDebugToolbar: function(section)
     {
         var debugToolbar = document.createElement("div");
         debugToolbar.className = "status-bar";
@@ -799,7 +799,7 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F8));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier));
-        this.pauseButton = this._createButtonAndRegisterShortcuts("scripts-pause", title, handler, shortcuts, WebInspector.UIString("Pause/Continue"));
+        this.pauseButton = this._createButtonAndRegisterShortcuts(section, "scripts-pause", title, handler, shortcuts, WebInspector.UIString("Pause/Continue"));
         debugToolbar.appendChild(this.pauseButton);
 
         // Step over.
@@ -808,7 +808,7 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F10));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier));
-        this.stepOverButton = this._createButtonAndRegisterShortcuts("scripts-step-over", title, handler, shortcuts, WebInspector.UIString("Step over"));
+        this.stepOverButton = this._createButtonAndRegisterShortcuts(section, "scripts-step-over", title, handler, shortcuts, WebInspector.UIString("Step over"));
         debugToolbar.appendChild(this.stepOverButton);
 
         // Step into.
@@ -817,7 +817,7 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier));
-        this.stepIntoButton = this._createButtonAndRegisterShortcuts("scripts-step-into", title, handler, shortcuts, WebInspector.UIString("Step into"));
+        this.stepIntoButton = this._createButtonAndRegisterShortcuts(section, "scripts-step-into", title, handler, shortcuts, WebInspector.UIString("Step into"));
         debugToolbar.appendChild(this.stepIntoButton);
 
         // Step out.
@@ -826,7 +826,7 @@ WebInspector.ScriptsPanel.prototype = {
         shortcuts = [];
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11, WebInspector.KeyboardShortcut.Modifiers.Shift));
         shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift | platformSpecificModifier));
-        this.stepOutButton = this._createButtonAndRegisterShortcuts("scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
+        this.stepOutButton = this._createButtonAndRegisterShortcuts(section, "scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
         debugToolbar.appendChild(this.stepOutButton);
 
         this._toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
@@ -841,7 +841,7 @@ WebInspector.ScriptsPanel.prototype = {
         return debugToolbar;
     },
 
-    _createButtonAndRegisterShortcuts: function(buttonId, buttonTitle, handler, shortcuts, shortcutDescription)
+    _createButtonAndRegisterShortcuts: function(section, buttonId, buttonTitle, handler, shortcuts, shortcutDescription)
     {
         var button = document.createElement("button");
         button.className = "status-bar-item";
@@ -856,7 +856,6 @@ WebInspector.ScriptsPanel.prototype = {
             this.registerShortcut(shortcuts[i].key, handler);
             shortcutNames.push(shortcuts[i].name);
         }
-        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Scripts Panel"));
         section.addAlternateKeys(shortcutNames, shortcutDescription);
 
         return button;
@@ -946,9 +945,16 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.addExpression(expression);
     },
 
-    _showJavaScriptOutlineDialog: function()
+    _showOutlineDialog: function()
     {
-         WebInspector.JavaScriptOutlineDialog.show(this.visibleView, this.visibleView);
+         var uiSourceCode = this._editorContainer.currentFile();
+         if (!uiSourceCode)
+             return;
+
+         if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+             WebInspector.JavaScriptOutlineDialog.show(this.visibleView, uiSourceCode);
+         else if (uiSourceCode instanceof WebInspector.StyleSource)
+             WebInspector.StyleSheetOutlineDialog.show(this.visibleView, /** @type {WebInspector.StyleSource} */ uiSourceCode);
     },
 
     _installDebuggerSidebarController: function()

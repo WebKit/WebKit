@@ -161,3 +161,111 @@ WebInspector.StyleSourceFrame.prototype = {
 }
 
 WebInspector.StyleSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.SelectionDialogContentProvider}
+ * @param {WebInspector.View} view
+ * @param {WebInspector.StyleSource} styleSource
+ */
+WebInspector.StyleSheetOutlineDialog = function(view, styleSource)
+{
+    WebInspector.SelectionDialogContentProvider.call(this);
+
+    this._rules = [];
+    this._view = view;
+    this._styleSource = styleSource;
+}
+
+/**
+ * @param {WebInspector.View} view
+ * @param {WebInspector.StyleSource} styleSource
+ */
+WebInspector.StyleSheetOutlineDialog.show = function(view, styleSource)
+{
+    if (WebInspector.Dialog.currentInstance())
+        return null;
+    var delegate = new WebInspector.StyleSheetOutlineDialog(view, styleSource);
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(delegate);
+    WebInspector.Dialog.show(view.element, filteredItemSelectionDialog);
+}
+
+WebInspector.StyleSheetOutlineDialog.prototype = {
+    /**
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemTitleAt: function(itemIndex)
+    {
+        return this._rules[itemIndex].selectorText;
+    },
+
+    /**
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemKeyAt: function(itemIndex)
+    {
+        return this._rules[itemIndex].selectorText;
+    },
+
+    /**
+     * @return {number}
+     */
+    itemsCount: function()
+    {
+        return this._rules.length;
+    },
+
+    /**
+     * @param {function(number, number, number, number)} callback
+     */
+    requestItems: function(callback)
+    {
+        function didGetAllStyleSheets(error, infos)
+        {
+            if (error) {
+                callback(0, 0, 0, 0);
+                return;
+            }
+  
+            for (var i = 0; i < infos.length; ++i) {
+                var info = infos[i];
+                if (info.sourceURL === this._styleSource.contentURL()) {
+                    WebInspector.CSSStyleSheet.createForId(info.styleSheetId, didGetStyleSheet.bind(this));
+                    return;
+                }
+            }
+            callback(0, 0, 0, 0);
+        }
+
+        CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
+
+        /**
+         * @param {?WebInspector.CSSStyleSheet} styleSheet
+         */
+        function didGetStyleSheet(styleSheet)
+        {
+            if (!styleSheet) {
+                callback(0, 0, 0, 0);
+                return;
+            }
+
+            this._rules = styleSheet.rules;
+            callback(0, this._rules.length, 0, 1);
+        }
+    },
+
+    /**
+     * @param {number} itemIndex
+     */
+    selectItem: function(itemIndex)
+    {
+        var lineNumber = this._rules[itemIndex].sourceLine;
+        if (!isNaN(lineNumber) && lineNumber >= 0)
+            this._view.highlightLine(lineNumber);
+        this._view.focus();
+    }
+}
+
+WebInspector.StyleSheetOutlineDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;

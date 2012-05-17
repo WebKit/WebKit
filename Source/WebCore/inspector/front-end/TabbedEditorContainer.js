@@ -346,6 +346,14 @@ WebInspector.TabbedEditorContainer.prototype = {
     _generateTabId: function()
     {
         return "tab_" + (WebInspector.TabbedEditorContainer._tabId++);
+    },
+
+    /**
+     * @return {WebInspector.UISourceCode} uiSourceCode
+     */
+    currentFile: function()
+    {
+        return this._currentFile;
     }
 }
 

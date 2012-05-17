@@ -489,11 +489,6 @@ WebInspector.JavaScriptOutlineDialog.show = function(view, contentProvider)
     WebInspector.Dialog.show(view.element, filteredItemSelectionDialog);
 }
 
-WebInspector.JavaScriptOutlineDialog.createShortcut = function()
-{
-    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
-}
-
 WebInspector.JavaScriptOutlineDialog.prototype = {
     /**
      * @param {number} itemIndex
