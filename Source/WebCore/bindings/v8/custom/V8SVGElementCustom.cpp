@@ -41,7 +41,7 @@ v8::Handle<v8::Value> toV8(SVGElement* impl, v8::Isolate* isolate, bool forceNew
 {
     if (!impl)
         return v8::Null();
-    return createV8SVGWrapper(impl, forceNewObject);
+    return createV8SVGWrapper(impl, isolate, forceNewObject);
 }
 
 } // namespace WebCore

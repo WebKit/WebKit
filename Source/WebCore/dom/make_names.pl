@@ -1035,12 +1035,12 @@ END
         } elsif ($wrapperFactoryType eq "V8") {
             if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
                 print F <<END
-static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Isolate* isolate)
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return V8$parameters{namespace}Element::wrap(element);
-    return toV8(static_cast<${JSInterfaceName}*>(element));
+        return V8$parameters{namespace}Element::wrap(element, isolate);
+    return toV8(static_cast<${JSInterfaceName}*>(element), isolate);
 }
 
 END
@@ -1048,28 +1048,28 @@ END
             } elsif ($enabledTags{$tagName}{runtimeConditional}) {
                 my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
                 print F <<END
-static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Isolate* isolate)
 {
     if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
-        return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element));
-    return toV8(static_cast<${JSInterfaceName}*>(element));
+        return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), isolate);
+    return toV8(static_cast<${JSInterfaceName}*>(element), isolate);
 }
 END
 ;
             } elsif (${JSInterfaceName} eq "HTMLElement") {
                 print F <<END
-static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Isolate* isolate)
 {
-    return V8$parameters{namespace}Element::wrap(element);
+    return V8$parameters{namespace}Element::wrap(element, isolate);
 }
 
 END
 ;
              } else {
             print F <<END
-static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Isolate* isolate)
 {
-    return toV8(static_cast<${JSInterfaceName}*>(element));
+    return toV8(static_cast<${JSInterfaceName}*>(element), isolate);
 }
 
 
@@ -1151,7 +1151,7 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
-typedef v8::Handle<v8::Value> (*Create$parameters{namespace}ElementWrapperFunction)($parameters{namespace}Element*);
+typedef v8::Handle<v8::Value> (*Create$parameters{namespace}ElementWrapperFunction)($parameters{namespace}Element*, v8::Isolate*);
 
 END
 ;
@@ -1170,7 +1170,7 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
-v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, bool forceNewObject)
+v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, v8::Isolate* isolate, bool forceNewObject)
 {
     typedef HashMap<WTF::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
@@ -1211,7 +1211,7 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
-        return createWrapperFunction(element);
+        return createWrapperFunction(element, isolate);
     return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), 0, forceNewObject);
 END
 ;
@@ -1272,7 +1272,7 @@ namespace WebCore {
 
     class $parameters{namespace}Element;
 
-    v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, bool);
+    v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, v8::Isolate*, bool);
 }
 END
 ;
