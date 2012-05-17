@@ -1,3 +1,14 @@
+2012-05-17  Krzysztof Czech  <k.czech@samsung.com>, Mariusz Grzegorczyk <mariusz.g@samsung.com>
+
+        [EFL] Gardening failure test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=86728
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/Skipped: removing tests related to editing callbacks functionality.
+        * platform/efl/test_expectations.txt: adding new bugs regarding drag'n'drop and spell checking.
+        Merging tests with particular bugs.
+
 2012-05-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding platform-specific baselines for
