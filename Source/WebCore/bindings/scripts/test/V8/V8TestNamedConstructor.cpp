@@ -48,14 +48,14 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     INC_STATS("DOM.TestNamedConstructor.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return throwError("TestNamedConstructor constructor associated frame is unavailable", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "TestNamedConstructor constructor associated frame is unavailable");
 
     Document* document = frame->document();
 

@@ -130,7 +130,7 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 1) {
         if (!extractTransferables(args[1], messagePortArrayTransferList, arrayBufferArrayTransferList))
-            return throwError("Could not extract transferables", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[0], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
@@ -156,7 +156,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     ArrayBufferArray arrayBufferArrayTx;
     if (args.Length() > 1) {
         if (!extractTransferables(args[1], messagePortArrayTx, arrayBufferArrayTx))
-            return throwError("Could not extract transferables", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool firstDidThrow = false;
     RefPtr<SerializedScriptValue> first = SerializedScriptValue::create(args[0], &messagePortArrayTx, &arrayBufferArrayTx, firstDidThrow, args.GetIsolate());
@@ -174,7 +174,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     ArrayBufferArray arrayBufferArrayTxx;
     if (args.Length() > 3) {
         if (!extractTransferables(args[3], messagePortArrayTxx, arrayBufferArrayTxx))
-            return throwError("Could not extract transferables", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool secondDidThrow = false;
     RefPtr<SerializedScriptValue> second = SerializedScriptValue::create(args[2], &messagePortArrayTxx, &arrayBufferArrayTxx, secondDidThrow, args.GetIsolate());
@@ -213,7 +213,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     INC_STATS("DOM.TestSerializedScriptValueInterface.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -224,7 +224,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 2) {
         if (!extractTransferables(args[2], messagePortArrayTransferList, arrayBufferArrayTransferList))
-            return throwError("Could not extract transferables", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());

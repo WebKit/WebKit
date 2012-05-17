@@ -1623,7 +1623,7 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    ArrayBufferArray arrayBufferArray$TransferListName;\n";
                 $parameterCheckString .= "    if (args.Length() > $transferListIndex) {\n";
                 $parameterCheckString .= "        if (!extractTransferables(args[$transferListIndex], messagePortArray$TransferListName, arrayBufferArray$TransferListName))\n";
-                $parameterCheckString .= "            return throwError(\"Could not extract transferables\", V8Proxy::TypeError);\n";
+                $parameterCheckString .= "            return V8Proxy::throwTypeError(\"Could not extract transferables\");\n";
                 $parameterCheckString .= "    }\n";
                 $useTransferList = 1;
             }
@@ -1671,7 +1671,7 @@ sub GenerateParametersCheck
                    $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
                    $parameterCheckString .= "        V8Proxy::setDOMException(ec, args.GetIsolate());\n";
                }
-               $parameterCheckString .= "        return throwError(\"Not an object.\", V8Proxy::TypeError);\n";
+               $parameterCheckString .= "        return V8Proxy::throwTypeError(\"Not an object.\");\n";
                $parameterCheckString .= "    }\n";
             }
         }
@@ -1714,7 +1714,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -1739,7 +1739,7 @@ END
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return throwError("${implClassName} constructor's associated context is not available", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor's associated context is not available");
 END
     }
 
@@ -1799,7 +1799,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -1888,14 +1888,14 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return throwError("${implClassName} constructor associated frame is unavailable", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor associated frame is unavailable");
 
     Document* document = frame->document();
 

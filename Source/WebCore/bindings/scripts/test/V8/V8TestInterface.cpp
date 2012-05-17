@@ -208,7 +208,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     INC_STATS("DOM.TestInterface.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -221,7 +221,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return throwError("TestInterface constructor's associated context is not available", V8Proxy::ReferenceError);
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "TestInterface constructor's associated context is not available");
 
     RefPtr<TestInterface> impl = TestInterface::create(context, str1, str2, ec);
     v8::Handle<v8::Object> wrapper = args.Holder();

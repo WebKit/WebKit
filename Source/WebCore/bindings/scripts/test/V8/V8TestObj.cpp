@@ -1351,7 +1351,7 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(Dictionary, oo, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     if (args.Length() > 0 && !oo.isUndefinedOrNull() && !oo.isObject()) {
-        return throwError("Not an object.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("Not an object.");
     }
     if (args.Length() <= 1) {
         imp->optionsObject(oo);
@@ -1359,7 +1359,7 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     }
     EXCEPTION_BLOCK(Dictionary, ooo, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     if (args.Length() > 1 && !ooo.isUndefinedOrNull() && !ooo.isObject()) {
-        return throwError("Not an object.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("Not an object.");
     }
     imp->optionsObject(oo, ooo);
     return v8::Handle<v8::Value>();
@@ -2234,7 +2234,7 @@ v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.TestObj.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
