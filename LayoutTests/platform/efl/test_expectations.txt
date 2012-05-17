@@ -365,7 +365,7 @@ BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 BUGWK85956 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 
 // There are not proper result with FULLSCREN_API enabling.
-BUGWK85870 : fullscreen/video-controls-drag.html = TEXT
+BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 

@@ -1,3 +1,14 @@
+2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Fix bug number for video-controls-drag.html in the test_expectation.txt
+        https://bugs.webkit.org/show_bug.cgi?id=86607
+
+        Unreviewed EFL gardening.
+
+        Change BUGWK number to point to right patch.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-16  Hayato Ito  <hayato@chromium.org>
 
         Implement a Shadow DOM spec's section 6 'Events'.
