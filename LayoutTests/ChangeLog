@@ -1,3 +1,20 @@
+2012-05-16  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed expectations update.
+
+        * fast/repaint/float-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-expected.png.
+        * fast/repaint/float-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-expected.txt.
+        * fast/repaint/float-overflow-right-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-right-expected.png.
+        * fast/repaint/float-overflow-right-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-right-expected.txt.
+        * platform/chromium-linux/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/float-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/float-overflow-expected.txt: Renamed from LayoutTests/platform/gtk/fast/repaint/float-overflow-expected.txt.
+        * platform/chromium-mac/fast/repaint/float-overflow-right-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/float-overflow-right-expected.txt: Renamed from LayoutTests/platform/gtk/fast/repaint/float-overflow-right-expected.txt.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/repaint/float-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/float-overflow-right-expected.png: Removed.
+
 2012-05-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Fix bug number for video-controls-drag.html in the test_expectation.txt

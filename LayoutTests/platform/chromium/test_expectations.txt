@@ -1593,10 +1593,6 @@ BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 
-// Also needs a text rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84167
-BUGCR23473 MAC : fast/repaint/float-overflow.html = IMAGE
-BUGCR23473 MAC : fast/repaint/float-overflow-right.html = IMAGE
-
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
