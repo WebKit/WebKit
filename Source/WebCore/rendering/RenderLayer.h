@@ -369,7 +369,6 @@ public:
 
     void updateTransform();
 
-    void relativePositionOffset(LayoutUnit& relX, LayoutUnit& relY) const { relX += m_relativeOffset.width(); relY += m_relativeOffset.height(); }
     const LayoutSize& relativePositionOffset() const { return m_relativeOffset; }
 
     void clearClipRectsIncludingDescendants();

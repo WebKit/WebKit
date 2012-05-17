@@ -932,14 +932,7 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();
 
-    // Find our leftmost position.
-    LayoutRect boundingBox(linesVisualOverflowBoundingBox());
-    LayoutUnit left = boundingBox.x();
-    LayoutUnit top = boundingBox.y();
-
-    // Now invalidate a rectangle.
-    LayoutUnit ow = style() ? style()->outlineSize() : 0;
-
+    LayoutRect repaintRect(linesVisualOverflowBoundingBox());
     bool hitRepaintContainer = false;
 
     // We need to add in the relative position offsets of any inlines (including us) up to our
@@ -952,45 +945,41 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
             break;
         }
         if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
-            toRenderInline(inlineFlow)->layer()->relativePositionOffset(left, top);
+            repaintRect.move(toRenderInline(inlineFlow)->layer()->relativePositionOffset());
     }
 
-    LayoutRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
+    LayoutUnit outlineSize = style()->outlineSize();
+    repaintRect.inflate(outlineSize);
 
     if (hitRepaintContainer || !cb)
-        return r;
+        return repaintRect;
 
     if (cb->hasColumns())
-        cb->adjustRectForColumns(r);
+        cb->adjustRectForColumns(repaintRect);
 
     if (cb->hasOverflowClip()) {
         // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
-        LayoutRect repaintRect(r);
         repaintRect.move(-cb->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
         LayoutRect boxRect(LayoutPoint(), cb->cachedSizeForOverflowClip());
-        r = intersection(repaintRect, boxRect);
+        repaintRect.intersect(boxRect);
     }
 
-    cb->computeRectForRepaint(repaintContainer, r);
+    cb->computeRectForRepaint(repaintContainer, repaintRect);
 
-    if (ow) {
+    if (outlineSize) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-            if (!curr->isText()) {
-                LayoutRect childRect = curr->rectWithOutlineForRepaint(repaintContainer, ow);
-                r.unite(childRect);
-            }
+            if (!curr->isText())
+                repaintRect.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineSize));
         }
 
-        if (continuation() && !continuation()->isInline() && continuation()->parent()) {
-            LayoutRect contRect = continuation()->rectWithOutlineForRepaint(repaintContainer, ow);
-            r.unite(contRect);
-        }
+        if (continuation() && !continuation()->isInline() && continuation()->parent())
+            repaintRect.unite(continuation()->rectWithOutlineForRepaint(repaintContainer, outlineSize));
     }
 
-    return r;
+    return repaintRect;
 }
 
 LayoutRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, LayoutUnit outlineWidth) const
