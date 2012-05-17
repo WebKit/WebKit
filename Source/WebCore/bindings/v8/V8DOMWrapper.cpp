@@ -253,10 +253,10 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     if (eventNames().interfaceFor##interfaceName == desiredInterface) \
-        return toV8(static_cast<interfaceName*>(target));
+        return toV8(static_cast<interfaceName*>(target), isolate);
 
 // A JS object of type EventTarget is limited to a small number of possible classes.
-v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target)
+v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target, v8::Isolate* isolate)
 {
     if (!target)
         return v8::Null();

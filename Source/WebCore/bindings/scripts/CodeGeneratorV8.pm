@@ -3827,7 +3827,7 @@ sub NativeToJSValue
     }
 
     if ($type eq "EventTarget") {
-        return "V8DOMWrapper::convertEventTargetToV8Object($value)";
+        return "V8DOMWrapper::convertEventTargetToV8Object($value, $getIsolate)";
     }
 
     if ($type eq "EventListener") {
