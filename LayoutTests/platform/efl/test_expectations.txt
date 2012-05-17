@@ -293,7 +293,6 @@ BUGWK84835 : editing/execCommand/enabling-and-selection.html = TEXT
 BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 BUGWK84835 : editing/execCommand/paste-and-match-style-event.html = TEXT
-BUGWK84835 : editing/execCommand/switch-list-type.html = TEXT
 
 // Needs baselines
 BUGWK84839 : editing/execCommand/4580583-1.html = MISSING
