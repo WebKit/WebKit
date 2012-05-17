@@ -1,3 +1,9 @@
+2012-05-17  MORITA Hajime <morrita@google.com>
+
+        Unreviewed, marking tests which need rebaselining after r117412.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, marking acid3-test-77.html as fail.

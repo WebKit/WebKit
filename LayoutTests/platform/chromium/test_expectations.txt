@@ -3824,6 +3824,18 @@ BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
 
 BUGWK86712 : tables/mozilla/marvin/backgr_position-table.html = IMAGE
 BUGWK86712 : tables/mozilla_expected_failures/marvin/backgr_border-table-row.html = IMAGE
+BUGWK86712 : css3/unicode-bidi-isolate-basic.html = IMAGE
+BUGWK86712 : fast/multicol/column-count-with-rules.html = IMAGE
+BUGWK86712 : fast/multicol/column-rules.html = IMAGE
+BUGWK86712 : fast/multicol/layers-in-multicol.html = IMAGE
+BUGWK86712 : fast/multicol/overflow-unsplittable.html = IMAGE
+BUGWK86712 : fast/multicol/positioned-with-constrained-height.html = IMAGE
+BUGWK86712 : fast/multicol/positive-leading.html = IMAGE
+BUGWK86712 : fast/multicol/vertical-lr/column-count-with-rules.html = IMAGE
+BUGWK86712 : fast/multicol/vertical-lr/column-rules.html = IMAGE
+BUGWK86712 : fast/multicol/vertical-rl/column-count-with-rules.html = IMAGE
+BUGWK86712 : fast/multicol/vertical-rl/column-rules.html = IMAGE
+
 
 BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
 
