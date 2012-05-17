@@ -40,7 +40,7 @@ BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
-// Need rebaselining after 71244
+// Need rebaselining after 71244. Also needs rebaseline after 86441.
 BUGWK74432 : fast/borders/border-antialiasing.html = IMAGE
 
 
@@ -227,3 +227,6 @@ BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
 BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
 BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
+
+// Needs rebaseline after bug 86441
+BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE

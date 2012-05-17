@@ -68,3 +68,7 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+
+// Needs rebaseline after bug 86441
+BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
+BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE

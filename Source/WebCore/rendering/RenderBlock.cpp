@@ -2621,6 +2621,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& p
     if (!colCount)
         return;
     LayoutUnit currLogicalTopOffset = 0;
+    LayoutUnit colGap = columnGap();
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         LayoutRect colRect = columnRectAt(colInfo, i);
@@ -2639,10 +2640,19 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& p
         
         if (!info.rect.isEmpty()) {
             GraphicsContextStateSaver stateSaver(*context);
+            LayoutRect clipRect(colRect);
             
+            if (i < colCount - 1) {
+                if (isHorizontalWritingMode())
+                    clipRect.expand(colGap / 2, 0);
+                else
+                    clipRect.expand(0, colGap / 2);
+            }
             // Each strip pushes a clip, since column boxes are specified as being
             // like overflow:hidden.
-            context->clip(colRect);
+            // FIXME: Content and column rules that extend outside column boxes at the edges of the multi-column element
+            // are clipped according to the 'overflow' property.
+            context->clip(clipRect);
 
             // Adjust our x and y when painting.
             LayoutPoint adjustedPaintOffset = paintOffset + offset;
