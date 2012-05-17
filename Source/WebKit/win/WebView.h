@@ -824,7 +824,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE geolocationDidChangePosition(IWebGeolocationPosition* position);
     virtual HRESULT STDMETHODCALLTYPE geolocationDidFailWithError(IWebError* error);
 
-    virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme);
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(BSTR);
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(BSTR);
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(BSTR);

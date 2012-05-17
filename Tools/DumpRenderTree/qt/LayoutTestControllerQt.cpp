@@ -720,11 +720,6 @@ void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
         m_drt->webPage()->settings()->setUserStyleSheetUrl(QUrl());
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)
-{
-    DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
-}
-
 int LayoutTestController::workerThreadCount()
 {
     return DumpRenderTreeSupportQt::workerThreadCount();

@@ -256,3 +256,4 @@ EXPORTS
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
+        ?setDomainRelaxationForbiddenForURLScheme@SchemeRegistry@WebCore@@SAX_NABVString@WTF@@@Z

@@ -126,7 +126,6 @@ public:
     static void setPageCacheSupportsPlugins(WebKitWebView*, bool enabled);
 
     static void deliverAllMutationsIfNecessary();
-    static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme);
 
 private:
     static bool s_drtRun;

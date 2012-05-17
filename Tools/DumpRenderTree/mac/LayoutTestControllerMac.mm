@@ -492,12 +492,6 @@ void LayoutTestController::setDefersLoading(bool defers)
     [[mainFrame webView] setDefersCallbacks:defers];
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
-{
-    RetainPtr<CFStringRef> schemeCFString(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, scheme));
-    [WebView _setDomainRelaxationForbidden:forbidden forURLScheme:(NSString *)schemeCFString.get()];
-}
-
 void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // DumpRenderTree configured the WebView to use WebDeviceOrientationProviderMock.

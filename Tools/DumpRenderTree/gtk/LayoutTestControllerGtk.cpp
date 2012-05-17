@@ -739,12 +739,6 @@ void LayoutTestController::syncLocalStorage()
     // FIXME: implement
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
-{
-    GOwnPtr<gchar> urlScheme(JSStringCopyUTF8CString(scheme));
-    DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(forbidden, urlScheme.get());
-}
-
 void LayoutTestController::goBack()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);

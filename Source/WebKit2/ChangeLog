@@ -1,3 +1,12 @@
+2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert setDomainRelaxationForbiddenForURLScheme to use InternalSettings interface
+        https://bugs.webkit.org/show_bug.cgi?id=86704
+
+        Reviewed by Eric Seidel.
+
+        * win/WebKit2.def: Add setDomainRelaxationForbiddenForURLScheme symbol filter.
+
 2012-05-16  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build change after exported symbol

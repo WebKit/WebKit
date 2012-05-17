@@ -38,7 +38,6 @@
 #include "OwnArrayPtr.h"
 #include "Page.h"
 #include "RenderTreeAsText.h"
-#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -221,11 +220,6 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
         return;
 
     WebCore::DatabaseTracker::tracker().setQuota(mainFrame->document()->securityOrigin(), quota);
-}
-
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
-{
-    WebCore::SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, jsStringRefToWebCoreString(scheme));
 }
 
 void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)

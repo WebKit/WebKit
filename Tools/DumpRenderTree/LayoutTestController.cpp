@@ -1231,21 +1231,6 @@ static JSValueRef setDefersLoadingCallback(JSContextRef context, JSObjectRef fun
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setDomainRelaxationForbiddenForURLSchemeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // Has Mac and Windows implementation
-    if (argumentCount < 2)
-        return JSValueMakeUndefined(context);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-
-    bool forbidden = JSValueToBoolean(context, arguments[0]);
-    JSRetainPtr<JSStringRef> scheme(Adopt, JSValueToStringCopy(context, arguments[1], 0));
-    controller->setDomainRelaxationForbiddenForURLScheme(forbidden, scheme.get());
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef setMockDeviceOrientationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 6)
@@ -2374,7 +2359,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setDatabaseQuota", setDatabaseQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete }, 
         { "setDeferMainResourceDataLoad", setDeferMainResourceDataLoadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDefersLoading", setDefersLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setDomainRelaxationForbiddenForURLScheme", setDomainRelaxationForbiddenForURLSchemeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setEditingBehavior", setEditingBehaviorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setFrameFlatteningEnabled", setFrameFlatteningEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setGeolocationPermission", setGeolocationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

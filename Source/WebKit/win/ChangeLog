@@ -1,3 +1,18 @@
+2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert setDomainRelaxationForbiddenForURLScheme to use InternalSettings interface
+        https://bugs.webkit.org/show_bug.cgi?id=86704
+
+        Reviewed by Eric Seidel.
+
+        Remove setDomainRelaxationForbiddenForURLScheme functions, because it is able to work in the
+        cross-port way through the InternalSettings interface.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        * WebView.h:
+        (WebView):
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface

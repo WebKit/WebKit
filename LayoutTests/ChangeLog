@@ -1,3 +1,15 @@
+2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert setDomainRelaxationForbiddenForURLScheme to use InternalSettings interface
+        https://bugs.webkit.org/show_bug.cgi?id=86704
+
+        Reviewed by Eric Seidel.
+
+        Invoke setDomainRelaxationForbiddenForURLScheme functions from internalSettings, because it is able to work in the
+        cross-port way via the InternalSettings interface.
+
+        * http/tests/security/setDomainRelaxationForbiddenForURLScheme.html:
+
 2012-05-17  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing reftests.

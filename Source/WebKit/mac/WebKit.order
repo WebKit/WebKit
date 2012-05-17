@@ -55,7 +55,6 @@ _WKGetWebDefaultCFStringEncoding
 -[NSURL(WebNSURLExtras) _web_originalData]
 _WebLocalizedString
 +[WebView(WebPrivate) _registerURLSchemeAsSecure:]
-+[WebView(WebPrivate) _setDomainRelaxationForbidden:forURLScheme:]
 -[WebPreferences(WebPrivate) setDeveloperExtrasEnabled:]
 -[WebPreferences _setBoolValue:forKey:]
 +[NSPasteboard(WebExtras) _web_dragTypesForURL]
