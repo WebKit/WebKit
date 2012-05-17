@@ -212,6 +212,20 @@ static WebMenuTarget* target;
 }
 @end
 
+@interface WebRootLayer : CALayer
+@end
+
+@implementation WebRootLayer
+- (void)renderInContext:(CGContextRef)ctx
+{
+    // AppKit calls -[CALayer renderInContext:] to render layer-backed views
+    // into bitmap contexts, but renderInContext: doesn't capture mask layers
+    // (<rdar://problem/9539526>), so we can't rely on it. Since our layer
+    // contents will have already been rendered by drawRect:, we can safely make
+    // this a NOOP.
+}
+@end
+
 // if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
 static BOOL forceNSViewHitTest;
 
@@ -5466,7 +5480,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     }
 
     // Make a container layer, which will get sized/positioned by AppKit and CA.
-    CALayer* viewLayer = [CALayer layer];
+    CALayer* viewLayer = [WebRootLayer layer];
 
 #ifdef BUILDING_ON_LEOPARD
     // Turn off default animations.

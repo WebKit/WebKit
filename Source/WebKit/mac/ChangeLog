@@ -1,3 +1,19 @@
+2012-05-17  Andy Estes  <aestes@apple.com>
+
+        Don't let -[CALayer renderInContext:] try to render WebView's root layer
+        https://bugs.webkit.org/show_bug.cgi?id=86773
+        <rdar://problem/10950075>
+
+        Reviewed by Dan Bernstein.
+
+        -[CALayer renderInContext:] doesn't correctly render our layer tree, so
+        don't let it try. Calling drawRect: with a bitmap context will already
+        do the right thing for WebViews.
+
+        * WebView/WebHTMLView.mm: Create a subclass of CALayer called WebLayerHostingLayer.
+        (-[WebLayerHostingLayer renderInContext:]): override renderInContext: to be a NOOP.
+        (-[WebHTMLView attachRootLayer:]): Create a WebLayerHostingLayer rather than a CALayer.
+
 2012-05-17  Hironori Bono  <hbono@chromium.org>
 
         [Refactoring] Move platform-specific code in Editor::respondToChangedSelection to the WebKit layer
