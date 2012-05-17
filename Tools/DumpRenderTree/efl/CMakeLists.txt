@@ -9,6 +9,7 @@ SET(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTree.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTreeChrome.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTreeView.cpp
+    ${TOOLS_DIR}/DumpRenderTree/efl/EditingCallbacks.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/EventSender.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/FontManagement.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/GCControllerEfl.cpp
@@ -44,6 +45,7 @@ SET(DumpRenderTree_LIBRARIES
 SET(DumpRenderTree_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     ${WEBKIT_DIR}/efl
+    ${WEBKIT_DIR}/efl/WebCoreSupport
     ${WEBCORE_DIR}
     ${WEBCORE_DIR}/bridge
     ${WEBCORE_DIR}/bridge/jsc

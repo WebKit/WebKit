@@ -53,9 +53,9 @@ void EditorClientEfl::setInputMethodState(bool active)
     ewk_view_input_method_state_set(m_view, active);
 }
 
-bool EditorClientEfl::shouldDeleteRange(Range*)
+bool EditorClientEfl::shouldDeleteRange(Range* range)
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_view, "editorclient,range,delete", range);
     return true;
 }
 
@@ -82,33 +82,36 @@ int EditorClientEfl::spellCheckerDocumentTag()
     return 0;
 }
 
-bool EditorClientEfl::shouldBeginEditing(Range*)
+bool EditorClientEfl::shouldBeginEditing(Range* range)
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_view, "editorclient,editing,begin", range);
     return true;
 }
 
-bool EditorClientEfl::shouldEndEditing(Range*)
+bool EditorClientEfl::shouldEndEditing(Range* range)
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_view, "editorclient,editing,end", range);
     return true;
 }
 
-bool EditorClientEfl::shouldInsertText(const String&, Range*, EditorInsertAction)
+bool EditorClientEfl::shouldInsertText(const String& text, Range* range, EditorInsertAction action)
 {
-    notImplemented();
+    Ewk_Should_Insert_Text_Event shouldInsertTextEvent = { text.utf8().data(), range, action };
+    evas_object_smart_callback_call(m_view, "editorclient,text,insert", &shouldInsertTextEvent);
     return true;
 }
 
-bool EditorClientEfl::shouldChangeSelectedRange(Range*, Range*, EAffinity, bool)
+bool EditorClientEfl::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting)
 {
-    notImplemented();
+    Ewk_Should_Change_Selected_Range_Event shouldChangeSelectedRangeEvent = { fromRange, toRange, affinity, stillSelecting };
+    evas_object_smart_callback_call(m_view, "editorclient,selected,range,change", &shouldChangeSelectedRangeEvent);
     return true;
 }
 
-bool EditorClientEfl::shouldApplyStyle(StylePropertySet*, Range*)
+bool EditorClientEfl::shouldApplyStyle(StylePropertySet* style, Range* range)
 {
-    notImplemented();
+    Ewk_Should_Apply_Style_Event shouldApplyStyleEvent = { style, range };
+    evas_object_smart_callback_call(m_view, "editorclient,style,apply", &shouldApplyStyleEvent);
     return true;
 }
 
@@ -120,7 +123,7 @@ bool EditorClientEfl::shouldMoveRangeAfterDelete(Range*, Range*)
 
 void EditorClientEfl::didBeginEditing()
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_view, "editorclient,editing,began", 0);
 }
 
 void EditorClientEfl::respondToChangedContents()
@@ -159,7 +162,7 @@ void EditorClientEfl::respondToChangedSelection(Frame* coreFrame)
 
 void EditorClientEfl::didEndEditing()
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_view, "editorclient,editing,ended", 0);
 }
 
 void EditorClientEfl::didWriteSelectionToPasteboard()
@@ -230,9 +233,10 @@ void EditorClientEfl::redo()
     }
 }
 
-bool EditorClientEfl::shouldInsertNode(Node*, Range*, EditorInsertAction)
+bool EditorClientEfl::shouldInsertNode(Node* node, Range* range, EditorInsertAction action)
 {
-    notImplemented();
+    Ewk_Should_Insert_Node_Event insertNodeEvent = { node, range, action };
+    evas_object_smart_callback_call(m_view, "editorclient,node,insert", &insertNodeEvent);
     return true;
 }
 

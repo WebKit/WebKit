@@ -29,6 +29,7 @@
 
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeView.h"
+#include "EditingCallbacks.h"
 #include "EventSender.h"
 #include "GCController.h"
 #include "KURL.h"
@@ -107,6 +108,8 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "mixedcontent,run", onInsecureContentRun, 0);
     evas_object_smart_callback_add(view, "mixedcontent,displayed", onInsecureContentDisplayed, 0);
     evas_object_smart_callback_add(view, "frame,created", onFrameCreated, 0);
+
+    connectEditingCallbacks(view);
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(view);
     evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);

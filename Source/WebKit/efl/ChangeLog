@@ -1,3 +1,26 @@
+2012-05-17  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [EFL] [DRT] EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
+        https://bugs.webkit.org/show_bug.cgi?id=84835
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/EditorClientEfl.cpp: Call appropriate callbacks for editing actions.
+        (WebCore::EditorClientEfl::shouldDeleteRange):
+        (WebCore::EditorClientEfl::shouldBeginEditing):
+        (WebCore::EditorClientEfl::shouldEndEditing):
+        (WebCore::EditorClientEfl::shouldInsertText):
+        (WebCore::EditorClientEfl::shouldChangeSelectedRange):
+        (WebCore::EditorClientEfl::shouldApplyStyle):
+        (WebCore::EditorClientEfl::didBeginEditing):
+        (WebCore::EditorClientEfl::didEndEditing):
+        (WebCore::EditorClientEfl::shouldInsertNode):
+        * WebCoreSupport/EditorClientEfl.h: Add structures needed by editing callbacks.
+        (Ewk_Should_Insert_Node_Event):
+        (Ewk_Should_Insert_Text_Event):
+        (Ewk_Should_Change_Selected_Range_Event):
+        (Ewk_Should_Apply_Style_Event):
+
 2012-05-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Do not check NULL pointer allocated by new.
