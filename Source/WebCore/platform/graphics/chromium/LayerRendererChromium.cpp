@@ -416,7 +416,8 @@ void LayerRendererChromium::beginDrawingFrame(CCRenderSurface* defaultRenderSurf
 
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
     size_t maxLimit = TextureManager::highLimitBytes(viewportSize());
-    m_renderSurfaceTextureManager->setMaxMemoryLimitBytes(maxLimit - contentsMemoryUseBytes);
+    size_t newLimit = (maxLimit > contentsMemoryUseBytes) ? maxLimit - contentsMemoryUseBytes : 0;
+    m_renderSurfaceTextureManager->setMaxMemoryLimitBytes(newLimit);
 
     if (viewportSize().isEmpty())
         return;
