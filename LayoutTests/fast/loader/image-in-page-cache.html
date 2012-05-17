@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Images in page cache should not be updated</title>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var otherWindow;
+function runTest() {
+	if (window.layoutTestController) {
+		layoutTestController.dumpAsText();
+		layoutTestController.waitUntilDone();
+		layoutTestController.setCanOpenWindows();
+		layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+	}
+
+	// This test open two windows. One primary window will load animated-image.html.
+	// otherWindow will load two pages that use an animated GIF,
+	// so that one of them gets put into the page cache.
+	// After closing otherWindow, there should not be a crash.
+	debug("Opening animated-image.html in new window");
+	window.open("resources/animated-image.html", "_blank");
+};
+
+window.step2 = function() {
+	setTimeout(function() {
+		debug("Opening animated-image2.html in otherWindow");
+		otherWindow = window.open("resources/animated-image2.html", "_blank");
+	}, 0);
+};
+
+window.step3 = function() {
+	setTimeout(function() {
+		debug("Opening animated-image3.html in otherWindow");
+		otherWindow.location = "resources/animated-image3.html";
+	}, 0);
+};
+
+window.step4 = function() {
+	setTimeout(function() {
+		debug("Closing otherWindow");
+		otherWindow.close();
+		step5();
+	}, 0);
+};
+
+window.step5 = function() {
+	function doStep() {
+		if (!otherWindow.closed) {
+			setTimeout(doStep, 0);
+			return;
+		}
+		testPassed("Closed otherWindow");
+		finishJSTest();
+	}
+
+	setTimeout(doStep, 0);
+};
+</script>
+</head>
+
+<body onload="runTest()">
+<div id="console"></div>
+<script>
+description("https://bugs.webkit.org/show_bug.cgi?id=86668 Images in cached pages should not be updated when a live page is using that same image.");
+window.jsTestIsAsync = true;
+successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

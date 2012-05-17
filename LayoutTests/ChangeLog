@@ -1,3 +1,22 @@
+2012-05-16  Jon Lee  <jonlee@apple.com>
+
+        Animated GIFs in page cache get updated
+        https://bugs.webkit.org/show_bug.cgi?id=86668
+        <rdar://problem/11395549>
+
+        Reviewed by Brady Eidson.
+
+        This test loads pages with subframes that display the same animated gif. When one of
+        the pages goes into the page cache, we want to make sure that we do not crash as a
+        side effect of the page's images getting updated.
+
+        * fast/loader/image-in-page-cache-expected.txt: Added.
+        * fast/loader/image-in-page-cache.html: Added.
+        * fast/loader/resources/animated-image-subframe.html: Added.
+        * fast/loader/resources/animated-image.html: Added.
+        * fast/loader/resources/animated-image2.html: Added.
+        * fast/loader/resources/animated-image3.html: Added.
+
 2012-05-16  Tim Horton  <timothy_horton@apple.com>
 
         Crash if SVG gradient stop has display: none set
