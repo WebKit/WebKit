@@ -769,6 +769,11 @@ WebInspector.documentCopy = function(event)
 {
     if (WebInspector.inspectorView.currentPanel() && WebInspector.inspectorView.currentPanel().handleCopyEvent)
         WebInspector.inspectorView.currentPanel().handleCopyEvent(event);
+    WebInspector.documentCopyEventFired(event);
+}
+
+WebInspector.documentCopyEventFired = function(event)
+{
 }
 
 WebInspector.contextMenuEventFired = function(event)

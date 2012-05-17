@@ -1,3 +1,13 @@
+2012-05-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Support Copy ... actions for the Web Inspector remote debugging mode.
+        https://bugs.webkit.org/show_bug.cgi?id=86621
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+        (WebInspector.clipboardAccessDeniedMessage):
+
 2012-05-17  Hironori Bono  <hbono@chromium.org>
 
         [Refactoring] Move platform-specific code in Editor::respondToChangedSelection to the WebKit layer
