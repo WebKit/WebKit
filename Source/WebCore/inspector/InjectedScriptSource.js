@@ -271,7 +271,7 @@ InjectedScript.prototype = {
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
-        if (!object)
+        if (!this._isDefined(object))
             return "Could not find object with given id";
 
         if (args) {
