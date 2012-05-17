@@ -1,3 +1,9 @@
+2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unksip a now passing test.
+
+        * platform/qt/Skipped:
+
 2012-05-11  Kinuko Yasuda  <kinuko@chromium.org>
 
         Allow FileSystem API implementation to pass snapshot metadata at File creation time
