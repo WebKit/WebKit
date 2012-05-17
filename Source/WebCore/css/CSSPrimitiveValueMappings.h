@@ -1111,11 +1111,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case INLINE_BOX:
             m_value.ident = CSSValueWebkitInlineBox;
             break;
-        case FLEXBOX:
-            m_value.ident = CSSValueWebkitFlexbox;
+        case FLEX:
+            m_value.ident = CSSValueWebkitFlex;
             break;
-        case INLINE_FLEXBOX:
-            m_value.ident = CSSValueWebkitInlineFlexbox;
+        case INLINE_FLEX:
+            m_value.ident = CSSValueWebkitInlineFlex;
             break;
 #if ENABLE(CSS_GRID_LAYOUT)
         case GRID:

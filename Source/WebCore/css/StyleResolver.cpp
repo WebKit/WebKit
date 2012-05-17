@@ -1912,7 +1912,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case BLOCK:
     case TABLE:
     case BOX:
-    case FLEXBOX:
+    case FLEX:
 #if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
 #endif
@@ -1927,8 +1927,8 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
         return TABLE;
     case INLINE_BOX:
         return BOX;
-    case INLINE_FLEXBOX:
-        return FLEXBOX;
+    case INLINE_FLEX:
+        return FLEX;
 #if ENABLE(CSS_GRID_LAYOUT)
     case INLINE_GRID:
         return GRID;

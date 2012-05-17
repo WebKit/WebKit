@@ -2,8 +2,8 @@
 <html>
 <head>
 <style>
-.flexbox { display: -webkit-flexbox; }
-.flexboxInline { display: -webkit-inline-flexbox; }
+.flexbox { display: -webkit-flex; }
+.flexboxInline { display: -webkit-inline-flex; }
 </style>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
@@ -11,27 +11,27 @@
 <div class="flexbox" id="flexbox"></div>
 <div class="flexboxInline" id="flexboxInline"></div>
 <script>
-description('Test that setting and getting display: -webkit-flexbox and -webkit-inline-flexbox works as expected');
+description('Test that setting and getting display: -webkit-flex and -webkit-inline-flex works as expected');
 
 debug("Test getting |display| set through CSS");
 var flexboxElement = document.getElementById("flexbox");
-shouldBe("getComputedStyle(flexboxElement, '').getPropertyValue('display')", "'-webkit-flexbox'");
+shouldBe("getComputedStyle(flexboxElement, '').getPropertyValue('display')", "'-webkit-flex'");
 var inlineFlexboxElement = document.getElementById("flexboxInline");
-shouldBe("getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display')", "'-webkit-inline-flexbox'");
+shouldBe("getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display')", "'-webkit-inline-flex'");
 
 debug("");
 debug("Test getting and setting display through JS");
 var element = document.createElement("div");
 document.body.appendChild(element);
 shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
-element.style.display = "-webkit-flexbox";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-flexbox'");
+element.style.display = "-webkit-flex";
+shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-flex'");
 
 element = document.createElement("div");
 document.body.appendChild(element);
 shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'");
-element.style.display = "-webkit-inline-flexbox";
-shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-inline-flexbox'");
+element.style.display = "-webkit-inline-flex";
+shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-inline-flex'");
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>

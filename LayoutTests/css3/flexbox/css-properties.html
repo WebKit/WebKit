@@ -8,21 +8,21 @@
     <div id="flexitem"></div>
 </div>
 <script>
-description('Tests being able to set the display to -webkit-flexbox and -webkit-inline-flexbox.');
+description('Tests being able to set the display to -webkit-flex and -webkit-inline-flex.');
 
 var flexbox = document.getElementById("flexbox");
 
-flexbox.style.display = '-webkit-flexbox';
-shouldBeEqualToString('flexbox.style.display', '-webkit-flexbox');
+flexbox.style.display = '-webkit-flex';
+shouldBeEqualToString('flexbox.style.display', '-webkit-flex');
 
 flexbox.style.display = 'inline';
 shouldBeEqualToString('flexbox.style.display', 'inline');
 
-flexbox.style.display = '-webkit-inline-flexbox';
-shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flexbox');
+flexbox.style.display = '-webkit-inline-flex';
+shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flex');
 
 flexbox.style.display = 'junk';
-shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flexbox');
+shouldBeEqualToString('flexbox.style.display', '-webkit-inline-flex');
 
 flexbox.style.display = 'block';
 shouldBeEqualToString('flexbox.style.display', 'block');

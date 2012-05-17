@@ -1,17 +1,17 @@
-Test that setting and getting display: -webkit-flexbox and -webkit-inline-flexbox works as expected
+Test that setting and getting display: -webkit-flex and -webkit-inline-flex works as expected
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Test getting |display| set through CSS
-PASS getComputedStyle(flexboxElement, '').getPropertyValue('display') is '-webkit-flexbox'
-PASS getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display') is '-webkit-inline-flexbox'
+PASS getComputedStyle(flexboxElement, '').getPropertyValue('display') is '-webkit-flex'
+PASS getComputedStyle(inlineFlexboxElement, '').getPropertyValue('display') is '-webkit-inline-flex'
 
 Test getting and setting display through JS
 PASS getComputedStyle(element, '').getPropertyValue('display') is 'block'
-PASS getComputedStyle(element, '').getPropertyValue('display') is '-webkit-flexbox'
+PASS getComputedStyle(element, '').getPropertyValue('display') is '-webkit-flex'
 PASS getComputedStyle(element, '').getPropertyValue('display') is 'block'
-PASS getComputedStyle(element, '').getPropertyValue('display') is '-webkit-inline-flexbox'
+PASS getComputedStyle(element, '').getPropertyValue('display') is '-webkit-inline-flex'
 PASS successfullyParsed is true
 
 TEST COMPLETE

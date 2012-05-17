@@ -32,14 +32,14 @@ if (window.layoutTestController)
 </script>
 <body>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="first"  style="-webkit-flex: 1; -webkit-flex-order: 0"></div>
   <div class="second" style="-webkit-flex: 1;"></div>
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 3"></div>
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 20"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 4"></div>
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 3"></div>
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 2"></div>
@@ -47,21 +47,21 @@ if (window.layoutTestController)
 </div>
 
 <!-- The example from the spec. -->
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 1"></div>
   <div class="first"  style="-webkit-flex: 1"></div>
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 1"></div>
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 0"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 2"></div>
   <div class="second" style="-webkit-flex: 1"></div>
   <div class="third"  style="-webkit-flex: 1"></div>
   <div class="first"  style="-webkit-flex: 1; -webkit-flex-order: -10"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 2000000000"></div>
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 1000000000"></div>
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 1000000000"></div>
@@ -69,14 +69,14 @@ if (window.layoutTestController)
 </div>
 
 <!-- Floating numbers are ignored and we use the default of 1 instead. -->
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 2.5"></div>
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 2"></div>
   <div class="first"  style="-webkit-flex: 1; -webkit-flex-order: -1"></div>
   <div class="third"  style="-webkit-flex: 1"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 0"></div>
   <div class="first" style="-webkit-flex: 1; -webkit-flex-order: -1"></div>
   <div class="fourth"  style="-webkit-flex: 1; -webkit-flex-order: 1"></div>
@@ -85,21 +85,21 @@ if (window.layoutTestController)
 
 <!-- Values greater than what can be stored in an int are clamped from
      -2,147,483,646 (int min + 2) to 2,147,483,647. -->
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 4000000000"></div>
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 3000000000"></div>
   <div class="first"  style="-webkit-flex: 1;"></div>
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 2147483646"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: 4000000000"></div>
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: 3000000000"></div>
   <div class="first"  style="-webkit-flex: 1;"></div>
   <div class="fourth" style="-webkit-flex: 1; -webkit-flex-order: 2147483647"></div>
 </div>
 
-<div style="display: -webkit-flexbox" class="horizontal-box">
+<div style="display: -webkit-flex" class="horizontal-box">
   <div class="third"  style="-webkit-flex: 1; -webkit-flex-order: -2147483645"></div>
   <div class="first"  style="-webkit-flex: 1; -webkit-flex-order: -2147483646"></div>
   <div class="second" style="-webkit-flex: 1; -webkit-flex-order: -2147483647"></div>
@@ -107,7 +107,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- This should not crash. -->
-<div style="display: -webkit-flexbox" class="horizontal-box"></div>
+<div style="display: -webkit-flex" class="horizontal-box"></div>
 
 <div style="position:absolute; left: -10000px;">You should see identical green bars going from light green
 (left) to dark green (right).</div>

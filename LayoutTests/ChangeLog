@@ -1,3 +1,66 @@
+2012-05-16  Tony Chang  <tony@chromium.org>
+
+        rename display:-webkit-flexbox to display:-webkit-flex
+        https://bugs.webkit.org/show_bug.cgi?id=86529
+
+        Reviewed by Eric Seidel.
+
+        * css3/flexbox/anonymous-block-merge-crash.html:
+        * css3/flexbox/anonymous-block.html:
+        * css3/flexbox/auto-height-dynamic.html:
+        * css3/flexbox/child-overflow.html:
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/cross-axis-scrollbar.html:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/flexbox/display-flexbox-set-get-expected.txt:
+        * css3/flexbox/display-flexbox-set-get.html:
+        * css3/flexbox/flex-algorithm-min-max.html:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/flex-align-baseline.html:
+        * css3/flexbox/flex-align-column.html:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-align-max.html:
+        * css3/flexbox/flex-align-percent-height.html:
+        * css3/flexbox/flex-align-stretch.html:
+        * css3/flexbox/flex-align-vertical-writing-mode.html:
+        * css3/flexbox/flex-align.html:
+        * css3/flexbox/flex-flow-border.html:
+        * css3/flexbox/flex-flow-margins-auto-size.html:
+        * css3/flexbox/flex-flow-margins.html:
+        * css3/flexbox/flex-flow-orientations.html:
+        * css3/flexbox/flex-flow-overflow.html:
+        * css3/flexbox/flex-flow-padding.html:
+        * css3/flexbox/flex-flow.html:
+        * css3/flexbox/flex-item-child-overflow.html:
+        * css3/flexbox/flex-no-flex.html:
+        * css3/flexbox/flex-order.html:
+        * css3/flexbox/flex-pack.html:
+        * css3/flexbox/flexbox-overflow-auto-expected.html:
+        * css3/flexbox/flexbox-overflow-auto.html:
+        * css3/flexbox/floated-flexbox.html:
+        * css3/flexbox/insert-text-crash.html:
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/multiline-align.html:
+        * css3/flexbox/multiline-column-auto.html:
+        * css3/flexbox/multiline-line-pack-horizontal-column.html:
+        * css3/flexbox/multiline-line-pack.html:
+        * css3/flexbox/multiline-pack.html:
+        * css3/flexbox/multiline-reverse-wrap-baseline.html:
+        * css3/flexbox/multiline-reverse-wrap-overflow.html:
+        * css3/flexbox/multiline-shrink-to-fit.html:
+        * css3/flexbox/multiline.html:
+        * css3/flexbox/nested-stretch.html:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/preferred-widths-orthogonal.html:
+        * css3/flexbox/preferred-widths.html:
+        * css3/flexbox/repaint-rtl-column.html:
+        * css3/flexbox/repaint.html:
+        * css3/flexbox/true-centering.html:
+        * css3/flexbox/writing-modes.html:
+
 2012-05-16  Chris Rogers  <crogers@google.com>
 
         AudioParam must support fan-in (multiple audio connections)

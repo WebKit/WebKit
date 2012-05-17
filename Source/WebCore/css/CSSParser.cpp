@@ -532,8 +532,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        // -webkit-flexbox | -webkit-inline-flexbox | -webkit-grid | -webkit-inline-grid
-        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlexbox) || valueID == CSSValueNone)
+        // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
+        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlex) || valueID == CSSValueNone)
             return true;
 #if ENABLE(CSS_GRID_LAYOUT)
         if (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid)

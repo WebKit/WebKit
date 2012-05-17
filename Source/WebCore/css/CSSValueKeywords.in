@@ -332,8 +332,8 @@ table-cell
 table-caption
 -webkit-box
 -webkit-inline-box
--webkit-flexbox
--webkit-inline-flexbox
+-webkit-flex
+-webkit-inline-flex
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid
 -webkit-inline-grid

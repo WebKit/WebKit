@@ -841,7 +841,7 @@ public:
     virtual bool isFlexingChildren() const { return false; }
     virtual bool isStretchingChildren() const { return false; }
 
-    // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flexbox).
+    // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flex).
     virtual bool isFlexibleBox() const { return false; }
 
     bool isFlexibleBoxIncludingDeprecated() const
