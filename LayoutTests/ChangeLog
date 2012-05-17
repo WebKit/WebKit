@@ -1,3 +1,14 @@
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Remove passing tests, re-number some still-present issues.
+        https://bugs.webkit.org/show_bug.cgi?id=86441
+        https://bugs.webkit.org/show_bug.cgi?id=86701
+        https://bugs.webkit.org/show_bug.cgi?id=86712
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, update expectations after r117426.
