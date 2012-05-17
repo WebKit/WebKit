@@ -208,6 +208,9 @@ bool RenderTextControl::hasValidAvgCharWidth(AtomicString family)
 {
     static HashSet<AtomicString>* fontFamiliesWithInvalidCharWidthMap = 0;
 
+    if (family.isEmpty())
+        return false;
+
     if (!fontFamiliesWithInvalidCharWidthMap) {
         fontFamiliesWithInvalidCharWidthMap = new HashSet<AtomicString>;
 

@@ -2322,10 +2322,6 @@ http/tests/security/text-track-crossorigin.html
 # https://bugs.webkit.org/show_bug.cgi?id=73660
 fast/forms/select/listbox-in-multi-column.html
 
-# [Qt] REGRESSION(101967): It made editing/style/iframe-onload-crash-mac.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=73802
-editing/style/iframe-onload-crash-mac.html
-
 # [Qt] fails fast/inline/nested-text-descendants.html
 # https://bugs.webkit.org/show_bug.cgi?id=75321
 fast/inline/nested-text-descendants.html

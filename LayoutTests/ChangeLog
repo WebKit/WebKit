@@ -1,3 +1,13 @@
+2012-05-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] REGRESSION(101967): It made editing/style/iframe-onload-crash-mac.html timeout
+        https://bugs.webkit.org/show_bug.cgi?id=73802
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/qt/Skipped: Unskipped. Note that it is still skipped for wk2 because
+        setEditingBehavior is not implemented for WebKitTestRunner yet.
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         REGRESSION (r117449): Unreviewed, rolling out r117449.

@@ -977,8 +977,8 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
     while (current != targetNode) {
         ASSERT(current);
         ASSERT(current->contains(targetNode));
-        Node* child = current->firstChild();
-        Node* lastChild = current->lastChild();
+        NodeVector currentChildren;
+        getChildNodes(current, currentChildren);
         RefPtr<StyledElement> styledElement;
         if (current->isStyledElement() && isStyledInlineElementToRemove(static_cast<Element*>(current))) {
             styledElement = static_cast<StyledElement*>(current);
@@ -991,9 +991,10 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
-        while (child) {
-            Node* nextChild = child->nextSibling();
-
+        for (size_t i = 0; i < currentChildren.size(); ++i) {
+            Node* child = currentChildren[i].get();
+            if (!child->parentNode())
+                continue;
             if (!child->contains(targetNode) && elementsToPushDown.size()) {
                 for (size_t i = 0; i < elementsToPushDown.size(); i++) {
                     RefPtr<Element> wrapper = elementsToPushDown[i]->cloneElementWithoutChildren();
@@ -1011,10 +1012,6 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             // When reached targetNode, stop the outer loop upon the completion of the current inner loop
             if (child == targetNode || child->contains(targetNode))
                 current = child;
-
-            if (child == lastChild || child->contains(lastChild))
-                break;
-            child = nextChild;
         }
     }
 }
