@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="sandbox"></div>
+<pre id="console"></pre>
+<script>
+description("Tests to ensure that event dispatching behaves as the Shadow DOM spec describes.");
+
+function moveMouseOver(element)
+{
+    if (!window.eventSender || !window.internals)
+        return;
+
+    var defaultPaddingSize = 20;
+    var x = element.offsetLeft + element.offsetWidth / 2;
+    var y;
+    if (element.hasChildNodes() || window.internals.shadowRoot(element))
+        y = element.offsetTop + defaultPaddingSize;
+    else
+        y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+var eventRecords = {};
+
+function clearEventRecords()
+{
+    eventRecords = {};
+}
+
+function dispatchedEvent(eventType)
+{
+    var events = eventRecords[eventType];
+    if (!events)
+        return [];
+    return events;
+}
+
+function recordEvent(event)
+{
+    var eventType = event.type
+    if (!eventRecords[eventType]) {
+        eventRecords[eventType] = []
+    }
+    var eventString = '';
+    if (event.currentTarget)
+        eventString += ' @' + event.currentTarget.id;
+    if (event.target)
+        eventString += ' (target: ' + event.target.id + ')';
+    if (event.relatedTarget)
+        eventString += ' (related: ' + event.relatedTarget.id + ')';
+    if (event.eventPhase == 1)
+        eventString += '(capturing phase)';
+    if (event.target && event.currentTarget && event.target.id == event.currentTarget.id)
+        shouldBe("event.eventPhase", "2", true);
+    eventRecords[eventType].push(eventString);
+}
+
+function dumpNode(node)
+{
+    var output = node.nodeName + "\t";
+    if (node.id)
+        output += ' id=' + node.id;
+    if (node.className)
+        output += ' class=' + node.className;
+    return output;
+}
+
+function dumpComposedShadowTree(node, indent)
+{
+    indent = indent || "";
+    var output = indent + dumpNode(node) + "\n";
+    var child;
+    for (child = internals.firstChildByWalker(node); child; child = internals.nextSiblingByWalker(child))
+         output += dumpComposedShadowTree(child, indent + "\t");
+    return output;
+}
+
+function addEventListeners(nodes)
+{
+    for (var i = 0; i < nodes.length; ++i) {
+        var node = getNodeInShadowTreeStack(nodes[i]);
+        node.addEventListener('mouseover', recordEvent, false);
+        node.addEventListener('mouseout', recordEvent, false);
+        if (node.tagName == 'DIV' || node.tagName == 'DETAILS' || node.tagName == 'SUMMARY')
+            node.setAttribute('style', 'padding-top: 40px;');
+    }
+}
+
+function prepareDOMTree1(parent)
+{
+    parent.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'shadow-host'},
+                            createShadowRoot(
+                                createDOM('content', {'id': 'content', 'select': '#distributed-light-child',}),
+                                createDOM('div', {'id': 'shadow-root-child'})),
+                            createDOM('div', {'id': 'distributed-light-child'}),
+                            createDOM('div', {'id': 'non-distributed-light-child'}))));
+
+    addEventListeners(['top', 'shadow-host', 'shadow-host/', 'shadow-host/content', 'shadow-host/shadow-root-child',
+                       'distributed-light-child', 'non-distributed-light-child']);
+    getNodeInShadowTreeStack('shadow-host/').id = 'shadow-root';
+    parent.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+}
+
+function prepareDOMTree2(parent)
+{
+    parent.appendChild(
+        createDOM('div', {'id': 'top'},
+                  // 'details/summary' elements use Shadow DOM in its implementation.
+                  createDOM('details', {'id': 'details', 'open': true},
+                            createDOM('summary', {'id': 'summary'}))));
+
+    addEventListeners(['top', 'details', 'summary']);
+    parent.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+}
+
+function prepareDOMTree3(parent)
+{
+    parent.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'A'},
+                            createDOM('div', {'id': 'B'},
+                                      createShadowRoot(
+                                          createDOM('div', {'id': 'G'},
+                                                    createShadowRoot(
+                                                        createDOM('div', {'id': 'J'},
+                                                                  createShadowRoot(
+                                                                      createDOM('content', {'id': 'N', 'select': '#K'})),
+                                                                  createDOM('content', {'id': 'K', 'select': '#H'})),
+                                                        createDOM('div', {'id': 'L'},
+                                                                  createShadowRoot(
+                                                                      createDOM('content', {'id': 'O', 'select': '#M'})),
+                                                                  createDOM('content', {'id': 'M', 'select': '#I'}))),
+                                                    createDOM('content', {'id': 'H', 'select': '#C'}),
+                                                    createDOM('content', {'id': 'I', 'select': '#E'}))),
+                                      createDOM('div', {'id': 'C'},
+                                                createDOM('div', {'id': 'D'})),
+                                      createDOM('div', {'id': 'E'},
+                                                createDOM('div', {'id': 'F'}))))));
+
+    addEventListeners(['top', 'A', 'B', 'C', 'D', 'E', 'F', 'B/', 'B/G', 'B/H', 'B/I', 'B/G/', 'B/G/J', 'B/G/K', 'B/G/L', 'B/G/M',
+                       'B/G/J/', 'B/G/J/N', 'B/G/L/', 'B/G/L/O']);
+    getNodeInShadowTreeStack('B/').id = 'shadow-root-B';
+    getNodeInShadowTreeStack('B/G/').id = 'shadow-root-G';
+    getNodeInShadowTreeStack('B/G/J/').id = 'shadow-root-J';
+    getNodeInShadowTreeStack('B/G/L/').id = 'shadow-root-L';
+    parent.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+}
+
+function debugDispatchedEvent(eventType)
+{
+    debug('\n  ' + eventType);
+    var events = dispatchedEvent(eventType);
+    for (var i = 0; i < events.length; ++i)
+        debug('    ' + events[i])
+}
+
+function moveMouse(oldElementId, newElementId)
+{
+    clearEventRecords();
+    debug('\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
+    moveMouseOver(getNodeInShadowTreeStack(oldElementId));
+    // debugDispatchedEvent('mouseout');
+    // debugDispatchedEvent('mouseover');
+
+    clearEventRecords();
+    moveMouseOver(getNodeInShadowTreeStack(newElementId));
+    // isInnermostActiveElement(newElementId);
+
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var sandbox = document.getElementById('sandbox');
+    prepareDOMTree1(sandbox);
+
+    moveMouse('shadow-host', 'shadow-host/shadow-root-child');
+    moveMouse('shadow-host/shadow-root-child', 'shadow-host');
+
+    moveMouse('shadow-host', 'distributed-light-child');
+    moveMouse('distributed-light-child', 'shadow-host');
+
+    moveMouse('shadow-host/shadow-root-child', 'distributed-light-child');
+    moveMouse('distributed-light-child', 'shadow-host/shadow-root-child');
+
+    sandbox.innerHTML = '';
+    prepareDOMTree2(sandbox);
+
+    moveMouse('details', 'summary');
+    moveMouse('summary', 'details');
+
+    sandbox.innerHTML = '';
+    prepareDOMTree3(sandbox);
+
+    moveMouse('F', 'D');
+    moveMouse('B/G/L', 'D');
+    moveMouse('B/G/L', 'B/G/J');
+    moveMouse('A', 'D');
+    moveMouse('D', 'A');
+}
+
+test();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

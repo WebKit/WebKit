@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
+#include "MouseEvent.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> curren
     : m_node(node)
     , m_currentTarget(currentTarget)
     , m_target(target)
+    , m_relatedTarget(0)
 {
 }
 
@@ -45,6 +47,8 @@ void EventContext::handleLocalEvents(Event* event) const
 {
     event->setTarget(m_target.get());
     event->setCurrentTarget(m_currentTarget.get());
+    if (m_relatedTarget.get() && event->isMouseEvent())
+        toMouseEvent(event)->setRelatedTarget(m_relatedTarget.get());
     m_node->handleLocalEvents(event);
 }
 

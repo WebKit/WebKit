@@ -121,6 +121,12 @@ private:
     virtual bool dispatchEvent(EventDispatcher*) const;
 };
 
+inline MouseEvent* toMouseEvent(Event* event)
+{
+    ASSERT(event && event->isMouseEvent());
+    return static_cast<MouseEvent*>(event);
+}
+
 } // namespace WebCore
 
 #endif // MouseEvent_h

@@ -1,0 +1,246 @@
+Tests to ensure that event dispatching behaves as the Shadow DOM spec describes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=shadow-host
+			DIV	 id=distributed-light-child
+			DIV	 id=shadow-root-child
+
+
+Moving mouse from shadow-host to shadow-host/shadow-root-child
+
+  mouseout
+
+  mouseover
+     @shadow-root-child (target: shadow-root-child) (related: shadow-host)
+     @shadow-root (target: shadow-root-child) (related: shadow-host)
+
+Moving mouse from shadow-host/shadow-root-child to shadow-host
+
+  mouseout
+     @shadow-root-child (target: shadow-root-child) (related: shadow-host)
+     @shadow-root (target: shadow-root-child) (related: shadow-host)
+
+  mouseover
+
+Moving mouse from shadow-host to distributed-light-child
+
+  mouseout
+     @shadow-host (target: shadow-host) (related: distributed-light-child)
+     @top (target: shadow-host) (related: distributed-light-child)
+
+  mouseover
+     @distributed-light-child (target: distributed-light-child) (related: shadow-host)
+     @content (target: content) (related: shadow-host)
+     @shadow-root (target: content) (related: shadow-host)
+     @shadow-host (target: distributed-light-child) (related: shadow-host)
+     @top (target: distributed-light-child) (related: shadow-host)
+
+Moving mouse from distributed-light-child to shadow-host
+
+  mouseout
+     @distributed-light-child (target: distributed-light-child) (related: shadow-host)
+     @content (target: content) (related: shadow-host)
+     @shadow-root (target: content) (related: shadow-host)
+     @shadow-host (target: distributed-light-child) (related: shadow-host)
+     @top (target: distributed-light-child) (related: shadow-host)
+
+  mouseover
+     @shadow-host (target: shadow-host) (related: distributed-light-child)
+     @top (target: shadow-host) (related: distributed-light-child)
+
+Moving mouse from shadow-host/shadow-root-child to distributed-light-child
+
+  mouseout
+     @shadow-root-child (target: shadow-root-child) (related: content)
+     @shadow-root (target: shadow-root-child) (related: content)
+     @shadow-host (target: shadow-host) (related: distributed-light-child)
+     @top (target: shadow-host) (related: distributed-light-child)
+
+  mouseover
+     @distributed-light-child (target: distributed-light-child) (related: shadow-host)
+     @content (target: content) (related: shadow-root-child)
+     @shadow-root (target: content) (related: shadow-root-child)
+     @shadow-host (target: distributed-light-child) (related: shadow-host)
+     @top (target: distributed-light-child) (related: shadow-host)
+
+Moving mouse from distributed-light-child to shadow-host/shadow-root-child
+
+  mouseout
+     @distributed-light-child (target: distributed-light-child) (related: shadow-host)
+     @content (target: content) (related: shadow-root-child)
+     @shadow-root (target: content) (related: shadow-root-child)
+     @shadow-host (target: distributed-light-child) (related: shadow-host)
+     @top (target: distributed-light-child) (related: shadow-host)
+
+  mouseover
+     @shadow-root-child (target: shadow-root-child) (related: content)
+     @shadow-root (target: shadow-root-child) (related: content)
+     @shadow-host (target: shadow-host) (related: distributed-light-child)
+     @top (target: shadow-host) (related: distributed-light-child)
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DETAILS	 id=details
+			SUMMARY	 id=summary
+				DIV	
+
+
+Moving mouse from details to summary
+
+  mouseout
+     @details (target: details) (related: summary)
+     @top (target: details) (related: summary)
+
+  mouseover
+     @summary (target: summary) (related: details)
+     @details (target: summary) (related: details)
+     @top (target: summary) (related: details)
+
+Moving mouse from summary to details
+
+  mouseout
+     @summary (target: summary) (related: details)
+     @details (target: summary) (related: details)
+     @top (target: summary) (related: details)
+
+  mouseover
+     @details (target: details) (related: summary)
+     @top (target: details) (related: summary)
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=B
+				DIV	 id=G
+					DIV	 id=J
+						DIV	 id=C
+							DIV	 id=D
+					DIV	 id=L
+						DIV	 id=E
+							DIV	 id=F
+
+
+Moving mouse from F to D
+
+  mouseout
+     @F (target: F) (related: D)
+     @E (target: F) (related: D)
+     @I (target: I) (related: H)
+     @M (target: M) (related: K)
+     @O (target: O) (related: K)
+     @shadow-root-L (target: O) (related: K)
+     @L (target: M) (related: K)
+     @shadow-root-G (target: M) (related: K)
+     @G (target: I) (related: H)
+     @shadow-root-B (target: I) (related: H)
+     @B (target: F) (related: D)
+     @A (target: F) (related: D)
+     @top (target: F) (related: D)
+
+  mouseover
+     @D (target: D) (related: F)
+     @C (target: D) (related: F)
+     @H (target: H) (related: I)
+     @K (target: K) (related: M)
+     @N (target: N) (related: M)
+     @shadow-root-J (target: N) (related: M)
+     @J (target: K) (related: M)
+     @shadow-root-G (target: K) (related: M)
+     @G (target: H) (related: I)
+     @shadow-root-B (target: H) (related: I)
+     @B (target: D) (related: F)
+     @A (target: D) (related: F)
+     @top (target: D) (related: F)
+
+Moving mouse from B/G/L to D
+
+  mouseout
+     @L (target: L) (related: K)
+     @shadow-root-G (target: L) (related: K)
+     @G (target: G) (related: H)
+     @shadow-root-B (target: G) (related: H)
+     @B (target: B) (related: D)
+     @A (target: B) (related: D)
+     @top (target: B) (related: D)
+
+  mouseover
+     @D (target: D) (related: B)
+     @C (target: D) (related: B)
+     @H (target: H) (related: G)
+     @K (target: K) (related: L)
+     @N (target: N) (related: L)
+     @shadow-root-J (target: N) (related: L)
+     @J (target: K) (related: L)
+     @shadow-root-G (target: K) (related: L)
+     @G (target: H) (related: G)
+     @shadow-root-B (target: H) (related: G)
+     @B (target: D) (related: B)
+     @A (target: D) (related: B)
+     @top (target: D) (related: B)
+
+Moving mouse from B/G/L to B/G/J
+
+  mouseout
+     @L (target: L) (related: J)
+     @shadow-root-G (target: L) (related: J)
+
+  mouseover
+     @J (target: J) (related: L)
+     @shadow-root-G (target: J) (related: L)
+
+Moving mouse from A to D
+
+  mouseout
+     @A (target: A) (related: D)
+     @top (target: A) (related: D)
+
+  mouseover
+     @D (target: D) (related: A)
+     @C (target: D) (related: A)
+     @H (target: H) (related: A)
+     @K (target: K) (related: A)
+     @N (target: N) (related: A)
+     @shadow-root-J (target: N) (related: A)
+     @J (target: K) (related: A)
+     @shadow-root-G (target: K) (related: A)
+     @G (target: H) (related: A)
+     @shadow-root-B (target: H) (related: A)
+     @B (target: D) (related: A)
+     @A (target: D) (related: A)
+     @top (target: D) (related: A)
+
+Moving mouse from D to A
+
+  mouseout
+     @D (target: D) (related: A)
+     @C (target: D) (related: A)
+     @H (target: H) (related: A)
+     @K (target: K) (related: A)
+     @N (target: N) (related: A)
+     @shadow-root-J (target: N) (related: A)
+     @J (target: K) (related: A)
+     @shadow-root-G (target: K) (related: A)
+     @G (target: H) (related: A)
+     @shadow-root-B (target: H) (related: A)
+     @B (target: D) (related: A)
+     @A (target: D) (related: A)
+     @top (target: D) (related: A)
+
+  mouseover
+     @A (target: A) (related: D)
+     @top (target: A) (related: D)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

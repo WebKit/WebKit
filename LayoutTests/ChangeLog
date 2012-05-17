@@ -1,3 +1,18 @@
+2012-05-16  Hayato Ito  <hayato@chromium.org>
+
+        Implement a Shadow DOM spec's section 6 'Events'.
+        https://bugs.webkit.org/show_bug.cgi?id=78586
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching-expected.txt: Added.
+        * fast/dom/shadow/shadow-dom-event-dispatching.html: Added.
+        * platform/efl/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Moving caret up or down skips lines when there's a non-editable line

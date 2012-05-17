@@ -58,6 +58,8 @@ public:
     void previousSibling();
 
     void parent();
+    // This function ignores policy and always crosses an upper boundary.
+    void parentIncludingInsertionPointAndShadowRoot();
 
     void next();
     void previous();
@@ -99,6 +101,7 @@ private:
     Node* traverseLastChild(const Node*) const;
     Node* traverseChild(const Node*, TraversalDirection) const;
     Node* traverseParent(const Node*) const;
+    Node* traverseParentIncludingInsertionPointAndShadowRoot(const Node*) const;
 
     static Node* traverseNextSibling(const Node*);
     static Node* traversePreviousSibling(const Node*);

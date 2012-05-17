@@ -27,6 +27,7 @@
 #define EventDispatcher_h
 
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,10 +41,24 @@ class Node;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
+class TreeScope;
 
 enum EventDispatchBehavior {
     RetargetEvent,
     StayInsideShadowDOM
+};
+
+class EventRelatedTargetAdjuster {
+public:
+    EventRelatedTargetAdjuster(PassRefPtr<Node>, PassRefPtr<Node> relatedTarget);
+    void adjust(Vector<EventContext>&);
+private:
+    typedef HashMap<TreeScope*, EventTarget*> RelatedTargetMap;
+    EventTarget* findRelatedTarget(TreeScope*);
+
+    RefPtr<Node> m_node;
+    RefPtr<Node> m_relatedTarget;
+    RelatedTargetMap m_relatedTargetMap;
 };
 
 class EventDispatcher {
@@ -54,13 +69,12 @@ public:
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
 
     bool dispatchEvent(PassRefPtr<Event>);
-    PassRefPtr<EventTarget> adjustRelatedTarget(Event*, PassRefPtr<EventTarget>);
+    void adjustRelatedTarget(Event*, PassRefPtr<EventTarget> prpRelatedTarget);
     Node* node() const;
 
 private:
     EventDispatcher(Node*);
 
-    PassRefPtr<EventTarget> adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors);
     EventDispatchBehavior determineDispatchBehavior(Event*, Node* shadowRoot);
     void ensureEventAncestors(Event*);
     const EventContext* topEventContext();

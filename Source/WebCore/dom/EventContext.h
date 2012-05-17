@@ -42,13 +42,16 @@ public:
 
     Node* node() const;
     EventTarget* target() const;
+    EventTarget* relatedTarget() const;
     bool currentTargetSameAsTarget() const;
     void handleLocalEvents(Event*) const;
+    void setRelatedTarget(PassRefPtr<EventTarget>);
 
 private:
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
     RefPtr<EventTarget> m_target;
+    RefPtr<EventTarget> m_relatedTarget;
 };
 
 inline Node* EventContext::node() const
@@ -64,6 +67,16 @@ inline EventTarget* EventContext::target() const
 inline bool EventContext::currentTargetSameAsTarget() const
 {
     return m_currentTarget.get() == m_target.get();
+}
+
+inline EventTarget* EventContext::relatedTarget() const
+{
+    return m_relatedTarget.get();
+}
+
+inline void EventContext::setRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
+{
+    m_relatedTarget = relatedTarget;
 }
 
 }

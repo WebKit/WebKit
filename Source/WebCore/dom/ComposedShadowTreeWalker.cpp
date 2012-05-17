@@ -196,6 +196,28 @@ void ComposedShadowTreeWalker::parent()
     assertPostcondition();
 }
 
+void ComposedShadowTreeWalker::parentIncludingInsertionPointAndShadowRoot()
+{
+    ASSERT(m_node);
+    m_node = traverseParentIncludingInsertionPointAndShadowRoot(m_node);
+}
+
+Node* ComposedShadowTreeWalker::traverseParentIncludingInsertionPointAndShadowRoot(const Node* node) const
+{
+    if (ElementShadow* shadow = shadowOfParent(node)) {
+        if (InsertionPoint* insertionPoint = shadow->insertionPointFor(node))
+            return insertionPoint;
+    }
+    if (!node->isShadowRoot())
+        return node->parentNode();
+    const ShadowRoot* shadowRoot = toShadowRoot(node);
+    if (shadowRoot->isYoungest())
+        return shadowRoot->host();
+    InsertionPoint* assignedInsertionPoint = shadowRoot->assignedTo();
+    ASSERT(assignedInsertionPoint);
+    return assignedInsertionPoint;
+}
+
 Node* ComposedShadowTreeWalker::traverseParent(const Node* node) const
 {
     if (!canCrossUpperBoundary() && node->isShadowRoot()) {

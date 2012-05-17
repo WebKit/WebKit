@@ -1102,6 +1102,7 @@ fast/dom/shadow/content-element-in-meter-element.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-dom-event-dispatching.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-root-append.html
