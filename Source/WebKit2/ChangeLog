@@ -1,3 +1,22 @@
+2012-05-17  Timothy Hatcher  <timothy@apple.com>
+
+        Make the docked Web Inspector use autoresizing masks so the view doesn't jitter when
+        resizing the window.
+
+        https://webkit.org/b/86765
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter close]): Added. Zero out _inspectorProxy.
+        (-[WKWebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]): Perform the work on a delay to
+        prevent interfering with Cocoa's resizing.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Added setAutoresizingMask: call.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Removed setAutoresizingMask: call.
+        createInspectorWindow and platformAttach do this now.
+        (WebKit::WebInspectorProxy::platformDidClose): Call close on WKWebInspectorProxyObjCAdapter.
+        (WebKit::WebInspectorProxy::platformAttach): Added setAutoresizingMask: call.
+
 2012-05-16  Andreas Kling  <kling@webkit.org>
 
         Make PluginInfoStore properly thread-safe.

@@ -56,6 +56,7 @@ static const CGFloat windowContentBorderThickness = 55;
 @interface WKWebInspectorProxyObjCAdapter ()
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
+- (void)close;
 
 @end
 
@@ -78,6 +79,11 @@ static const CGFloat windowContentBorderThickness = 55;
     return self;
 }
 
+- (void)close
+{
+    _inspectorProxy = 0;
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
     static_cast<WebInspectorProxy*>(_inspectorProxy)->close();
@@ -85,7 +91,16 @@ static const CGFloat windowContentBorderThickness = 55;
 
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->inspectedViewFrameDidChange();
+    // Resizing the views while inside this notification can lead to bad results when entering
+    // or exiting full screen. To avoid that we need to perform the work after a delay. We only
+    // depend on this for enforcing the height constraints, so a small delay isn't terrible. Most
+    // of the time the views will already have the correct frames because of autoresizing masks.
+
+    dispatch_after(DISPATCH_TIME_NOW, dispatch_get_current_queue(), ^{
+        if (!_inspectorProxy)
+            return;
+        static_cast<WebInspectorProxy*>(_inspectorProxy)->inspectedViewFrameDidChange();
+    });
 }
 
 @end
@@ -143,6 +158,7 @@ void WebInspectorProxy::createInspectorWindow()
 
     NSView *contentView = [window contentView];
     [m_inspectorView.get() setFrame:[contentView bounds]];
+    [m_inspectorView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [contentView addSubview:m_inspectorView.get()];
 
     // Center the window initially before setting the frame autosave name so that the window will be in a good
@@ -173,7 +189,6 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_inspectorView);
 
     [m_inspectorView.get() setDrawsBackground:NO];
-    [m_inspectorView.get() setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
     m_inspectorProxyObjCAdapter.adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
 
@@ -207,6 +222,7 @@ void WebInspectorProxy::platformDidClose()
 
     m_inspectorView = 0;
 
+    [m_inspectorProxyObjCAdapter.get() close];
     m_inspectorProxyObjCAdapter = 0;
 }
 
@@ -266,6 +282,8 @@ void WebInspectorProxy::platformAttach()
     // The inspector view shares the width and the left starting point of the inspected view.
     NSRect inspectedViewFrame = [inspectedView frame];
     [m_inspectorView.get() setFrame:NSMakeRect(NSMinX(inspectedViewFrame), 0, NSWidth(inspectedViewFrame), inspectorPageGroup()->preferences()->inspectorAttachedHeight())];
+
+    [m_inspectorView.get() setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
 
     // Start out hidden if we are not visible yet. When platformOpen is called, hidden will be set to NO.
     [m_inspectorView.get() setHidden:!m_isVisible];
