@@ -42,7 +42,6 @@ public:
     virtual ~IDBIndexBackendProxy();
 
     virtual String name();
-    virtual String storeName();
     virtual String keyPath();
     virtual bool unique();
     virtual bool multiEntry();

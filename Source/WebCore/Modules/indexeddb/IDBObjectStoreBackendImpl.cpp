@@ -518,7 +518,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
         return 0;
     }
 
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(backingStore().get(), databaseId(), this, name, m_name, keyPath, unique, multiEntry);
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(backingStore().get(), databaseId(), this, name, keyPath, unique, multiEntry);
     ASSERT(index->name() == name);
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
@@ -665,7 +665,7 @@ void IDBObjectStoreBackendImpl::loadIndexes()
     ASSERT(multiEntryFlags.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_indexes.set(names[i], IDBIndexBackendImpl::create(backingStore().get(), databaseId(), this, ids[i], names[i], m_name, keyPaths[i], uniqueFlags[i], multiEntryFlags[i]));
+        m_indexes.set(names[i], IDBIndexBackendImpl::create(backingStore().get(), databaseId(), this, ids[i], names[i], keyPaths[i], uniqueFlags[i], multiEntryFlags[i]));
 }
 
 void IDBObjectStoreBackendImpl::removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)

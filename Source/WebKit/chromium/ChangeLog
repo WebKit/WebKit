@@ -1,5 +1,21 @@
 2012-05-17  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Remove IDBIndex.storeName
+        https://bugs.webkit.org/show_bug.cgi?id=86676
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBIndex.h:
+        (WebIDBIndex): Can't remove from here until Chromium is updated
+        * src/IDBIndexBackendProxy.cpp: Removed storeName()
+        * src/IDBIndexBackendProxy.h: Removed storeName()
+        (IDBIndexBackendProxy):
+        * src/WebIDBIndexImpl.cpp: Removed storeName()
+        * src/WebIDBIndexImpl.h: Removed storeName()
+        (WebIDBIndexImpl):
+
+2012-05-17  Joshua Bell  <jsbell@chromium.org>
+
         IndexedDB: Implement IDBObjectStore.autoIncrement
         https://bugs.webkit.org/show_bug.cgi?id=86662
 

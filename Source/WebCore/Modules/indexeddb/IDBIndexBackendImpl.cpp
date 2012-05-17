@@ -41,26 +41,24 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& keyPath, bool unique, bool multiEntry)
     : m_backingStore(backingStore)
     , m_databaseId(databaseId)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(id)
     , m_name(name)
-    , m_storeName(storeName)
     , m_keyPath(keyPath)
     , m_unique(unique)
     , m_multiEntry(multiEntry)
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique, bool multiEntry)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& keyPath, bool unique, bool multiEntry)
     : m_backingStore(backingStore)
     , m_databaseId(databaseId)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(InvalidId)
     , m_name(name)
-    , m_storeName(storeName)
     , m_keyPath(keyPath)
     , m_unique(unique)
     , m_multiEntry(multiEntry)
@@ -96,11 +94,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
         return;
     }
 
-    ExceptionCode ec = 0;
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = transaction->objectStore(index->m_storeName, ec);
-    ASSERT(objectStore && !ec);
-
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), direction, cursorType, transaction.get(), objectStore.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), direction, cursorType, transaction.get(), index->m_objectStoreBackend);
     callbacks->onSuccess(cursor.release());
 }
 

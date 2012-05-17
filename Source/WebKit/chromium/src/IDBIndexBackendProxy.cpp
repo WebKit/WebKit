@@ -60,11 +60,6 @@ String IDBIndexBackendProxy::name()
     return m_webIDBIndex->name();
 }
 
-String IDBIndexBackendProxy::storeName()
-{
-    return m_webIDBIndex->storeName();
-}
-
 String IDBIndexBackendProxy::keyPath()
 {
     return m_webIDBIndex->keyPath().string();
