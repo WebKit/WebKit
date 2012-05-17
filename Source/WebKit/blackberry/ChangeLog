@@ -1,5 +1,16 @@
 2012-05-17  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Cleanup headers in SelectionHandler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=86760
+
+        Reviewed by Antonio Gomes.
+
+        Clean up includes in SelectionHandler.cpp.
+
+        * WebKitSupport/SelectionHandler.cpp:
+
+2012-05-17  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] expandSelectionToGranularity should only use VisibleSelection and not range.
         https://bugs.webkit.org/show_bug.cgi?id=86759
 
