@@ -1,3 +1,13 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        REGRESSION (r117449): Unreviewed, rolling out r117449.
+        https://bugs.webkit.org/show_bug.cgi?id=86753
+
+        Broke many unskipped tests which lack expectations
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-17  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r117428): WebKit API/SPI was removed
