@@ -69,6 +69,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM)
@@ -387,6 +388,31 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
     return V8Proxy::instrumentedCallFunction(frame(), function, receiver, argc, args);
 }
 
+static inline void resourceInfo(const v8::Handle<v8::Function> function, String& resourceName, int& lineNumber)
+{
+    v8::ScriptOrigin origin = function->GetScriptOrigin();
+    if (origin.ResourceName().IsEmpty()) {
+        resourceName = "undefined";
+        lineNumber = 1;
+    } else {
+        resourceName = toWebCoreString(origin.ResourceName());
+        lineNumber = function->GetScriptLineNumber() + 1;
+    }
+}
+
+static inline String resourceString(const v8::Handle<v8::Function> function)
+{
+    String resourceName;
+    int lineNumber;
+    resourceInfo(function, resourceName, lineNumber);
+
+    StringBuilder builder;
+    builder.append(resourceName);
+    builder.append(':');
+    builder.append(String::number(lineNumber));
+    return builder.toString();
+}
+
 v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
     V8GCController::checkMemoryUsage();
@@ -398,20 +424,16 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
 
     InspectorInstrumentationCookie cookie;
     if (InspectorInstrumentation::hasFrontends() && context) {
-        String resourceName("undefined");
-        int lineNumber = 1;
-        v8::ScriptOrigin origin = function->GetScriptOrigin();
-        if (!origin.ResourceName().IsEmpty()) {
-            resourceName = toWebCoreString(origin.ResourceName());
-            lineNumber = function->GetScriptLineNumber() + 1;
-        }
+        String resourceName;
+        int lineNumber;
+        resourceInfo(function, resourceName, lineNumber);
         cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
     }
 
     v8::Local<v8::Value> result;
     {
 #if PLATFORM(CHROMIUM)
-        TRACE_EVENT0("v8", "v8.callFunction");
+        TRACE_EVENT1("v8", "v8.callFunction", "callsite", resourceString(function).utf8());
 #endif
         V8RecursionScope recursionScope(context);
         result = function->Call(receiver, argc, args);
