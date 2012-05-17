@@ -58,7 +58,7 @@ public:
     static PassRefPtr<SerializedScriptValue> create(const String& data, v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> create();
 
-    static SerializedScriptValue* nullValue(v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> nullValue(v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> undefinedValue(v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value, v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> numberValue(double value, v8::Isolate* = 0);

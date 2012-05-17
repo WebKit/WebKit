@@ -2098,18 +2098,12 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue());
 }
 
-SerializedScriptValue* SerializedScriptValue::nullValue(v8::Isolate* isolate)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue(v8::Isolate* isolate)
 {
-    // FIXME: This is not thread-safe. Move caching to callers.
-    // https://bugs.webkit.org/show_bug.cgi?id=70833
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (0));
-    if (!nullValue) {
-        Writer writer(isolate);
-        writer.writeNull();
-        String wireData = StringImpl::adopt(writer.data());
-        nullValue = adoptRef(new SerializedScriptValue(wireData));
-    }
-    return nullValue.get();
+    Writer writer(isolate);
+    writer.writeNull();
+    String wireData = StringImpl::adopt(writer.data());
+    return adoptRef(new SerializedScriptValue(wireData));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue(v8::Isolate* isolate)

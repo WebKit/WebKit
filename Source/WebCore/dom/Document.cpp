@@ -5060,7 +5060,7 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
         documentLoader->replaceRequestURLForSameDocumentNavigation(url);
 }
 
-void Document::statePopped(SerializedScriptValue* stateObject)
+void Document::statePopped(PassRefPtr<SerializedScriptValue> stateObject)
 {
     if (!frame())
         return;

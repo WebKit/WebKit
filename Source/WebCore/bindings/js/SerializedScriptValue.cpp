@@ -1859,10 +1859,9 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
     return deserialize(destinationContext, exception, 0);
 }
 
-SerializedScriptValue* SerializedScriptValue::nullValue()
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, emptyValue, (SerializedScriptValue::create()));
-    return emptyValue.get();
+    return SerializedScriptValue::create();
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
