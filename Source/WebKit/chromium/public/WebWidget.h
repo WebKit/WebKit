@@ -181,6 +181,10 @@ public:
     // If the selection range is empty, it returns the caret bounds.
     virtual bool selectionBounds(WebRect& start, WebRect& end) const { return false; }
 
+    // Returns the text direction at the start and end bounds of the current selection.
+    // If the selection range is empty, it returns false.
+    virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const { return false; }
+
     // Fetch the current selection range of this WebWidget. If there is no
     // selection, it will output a 0-length range with the location at the
     // caret. Returns true and fills the out-paramters on success; returns false

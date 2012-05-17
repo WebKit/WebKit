@@ -1,3 +1,25 @@
+2012-05-16  Hao Zheng  <zhenghao@chromium.org>
+
+        [chromium] Get text direction at the start and end of selection.
+        https://bugs.webkit.org/show_bug.cgi?id=86573
+
+        Reviewed by Adam Barth.
+
+        Add an interface to get text direction at the start and end of
+        selection for Android, as on Android different selection delimiters
+        are needed for RTL text. Unlike other platforms, the start and end
+        delimiters of selection are different, so we need determine the shape
+        of delimiter based on text direction.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::selectionTextDirection):
+        * src/WebViewImpl.cpp:
+        (WebKit):
+        (WebKit::WebViewImpl::selectionTextDirection):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-05-16  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Implement WebViewImpl::textInputInfo() for Android

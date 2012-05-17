@@ -148,6 +148,7 @@ public:
     virtual WebTextInputInfo textInputInfo();
     virtual WebTextInputType textInputType();
     virtual bool selectionBounds(WebRect& start, WebRect& end) const;
+    virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const;
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const;

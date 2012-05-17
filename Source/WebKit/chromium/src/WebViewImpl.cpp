@@ -2034,6 +2034,21 @@ bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
     return true;
 }
 
+bool WebViewImpl::selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+    FrameSelection* selection = frame->selection();
+    if (!selection)
+        return false;
+    if (!selection->toNormalizedRange())
+        return false;
+    start = selection->start().primaryDirection() == RTL ? WebTextDirectionRightToLeft : WebTextDirectionLeftToRight;
+    end = selection->end().primaryDirection() == RTL ? WebTextDirectionRightToLeft : WebTextDirectionLeftToRight;
+    return true;
+}
+
 bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
 {
     const Frame* focused = focusedWebCoreFrame();
