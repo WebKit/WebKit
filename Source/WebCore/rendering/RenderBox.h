@@ -527,30 +527,6 @@ protected:
 
     void paintRootBoxFillLayers(const PaintInfo&);
 
-    // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
-    // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
-    // the case of column spans), the default for fullRemoveInsert is false rather than true.
-    void moveChildTo(RenderBox* toBox, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
-    void moveChildTo(RenderBox* to, RenderObject* child, bool fullRemoveInsert = false)
-    {
-        moveChildTo(to, child, 0, fullRemoveInsert);
-    }
-    void moveAllChildrenTo(RenderBox* toBox, bool fullRemoveInsert = false)
-    {
-        moveAllChildrenTo(toBox, 0, fullRemoveInsert);
-    }
-    void moveAllChildrenTo(RenderBox* toBox, RenderObject* beforeChild, bool fullRemoveInsert = false)
-    {
-        moveChildrenTo(toBox, firstChild(), 0, beforeChild, fullRemoveInsert);
-    }
-    // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
-    // that all the kids from |startChild| onwards should be moved.
-    void moveChildrenTo(RenderBox* toBox, RenderObject* startChild, RenderObject* endChild, bool fullRemoveInsert = false)
-    {
-        moveChildrenTo(toBox, startChild, endChild, 0, fullRemoveInsert);
-    }
-    void moveChildrenTo(RenderBox* toBox, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
-   
     RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
  
 private:

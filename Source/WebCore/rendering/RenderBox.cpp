@@ -4019,29 +4019,6 @@ bool RenderBox::hasRelativeLogicalHeight() const
             || style()->logicalMaxHeight().isPercent();
 }
 
-void RenderBox::moveChildTo(RenderBox* toBox, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
-{
-    ASSERT(this == child->parent());
-    ASSERT(!beforeChild || toBox == beforeChild->parent());
-    if (fullRemoveInsert && toBox->isRenderBlock()) {
-        // Takes care of adding the new child correctly if toBlock and fromBlock
-        // have different kind of children (block vs inline).
-        toBox->addChild(virtualChildren()->removeChildNode(this, child), beforeChild);
-    } else
-        toBox->virtualChildren()->insertChildNode(toBox, virtualChildren()->removeChildNode(this, child, fullRemoveInsert), beforeChild, fullRemoveInsert);
-}
-
-void RenderBox::moveChildrenTo(RenderBox* toBox, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
-{
-    ASSERT(!beforeChild || toBox == beforeChild->parent());
-    for (RenderObject* child = startChild; child && child != endChild; ) {
-        // Save our next sibling as moveChildTo will clear it.
-        RenderObject* nextSibling = child->nextSibling();
-        moveChildTo(toBox, child, beforeChild, fullRemoveInsert);
-        child = nextSibling;
-    }
-}
-
 static void markBoxForRelayoutAfterSplit(RenderBox* box)
 {
     // FIXME: The table code should handle that automatically. If not,

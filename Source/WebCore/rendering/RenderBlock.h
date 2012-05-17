@@ -900,7 +900,11 @@ private:
     bool handleSpecialChild(RenderBox* child, const MarginInfo&);
     bool handleFloatingChild(RenderBox* child, const MarginInfo&);
     bool handlePositionedChild(RenderBox* child, const MarginInfo&);
-    bool handleRunInChild(RenderBox* child);
+
+    RenderBoxModelObject* createReplacementRunIn(RenderBoxModelObject* runIn);
+    void moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn);
+    void moveRunInToOriginalPosition(RenderObject* runIn);
+
     LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
     LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
     LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);

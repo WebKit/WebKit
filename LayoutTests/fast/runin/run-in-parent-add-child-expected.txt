@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {HTML} at (0,0) size 800x66
+    RenderBody {BODY} at (8,8) size 784x50
+      RenderBlock {DIV} at (0,0) size 784x50
+        RenderBlock {DIV} at (0,0) size 784x50 [color=#800080]
+          RenderInline (run-in) {DIV} at (0,0) size 50x50 [color=#008000]
+            RenderText {#text} at (0,0) size 50x50
+              text run at (0,0) width 50: "A"
+          RenderInline {SPAN} at (0,0) size 50x50 [color=#FFA500]
+            RenderText {#text} at (50,0) size 50x50
+              text run at (50,0) width 50: "B"
+          RenderText {#text} at (100,0) size 50x50
+            text run at (100,0) width 50: "C"

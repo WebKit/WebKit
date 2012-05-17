@@ -1,3 +1,30 @@
+2012-05-17  Abhishek Arya  <inferno@chromium.org>
+
+        Move run-in handling to addChild, instead of in layout.
+        https://bugs.webkit.org/show_bug.cgi?id=86387
+
+        Reviewed by Julien Chaffraix.
+
+        The following tests need the render tree results as they help
+        to show the positioning of the run-in with respect to the next
+        sibling block.
+
+        * fast/runin/insert-before-run-in-expected.png: Added.
+        * fast/runin/insert-before-run-in-expected.txt: Added.
+        * fast/runin/insert-before-run-in.html: Added.
+        * fast/runin/run-in-after-run-in-expected.png: Added.
+        * fast/runin/run-in-after-run-in-expected.txt: Added.
+        * fast/runin/run-in-after-run-in.html: Added.
+        * fast/runin/run-in-parent-add-child-expected.png: Added.
+        * fast/runin/run-in-parent-add-child-expected.txt: Added.
+        * fast/runin/run-in-parent-add-child.html: Added.
+        * fast/runin/run-in-parent-block-child-add-and-intrude-expected.png: Added.
+        * fast/runin/run-in-parent-block-child-add-and-intrude-expected.txt: Added.
+        * fast/runin/run-in-parent-block-child-add-and-intrude.html: Added.
+        * fast/runin/run-in-parent-block-child-add-expected.png: Added.
+        * fast/runin/run-in-parent-block-child-add-expected.txt: Added.
+        * fast/runin/run-in-parent-block-child-add.html: Added.
+
 2012-05-17  Robert Hogan  <robert@webkit.org>
 
         Rebaseline results after r117339

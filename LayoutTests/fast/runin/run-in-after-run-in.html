@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html style="font-family: ahem; font-size: 50px; -webkit-font-smoothing: none;">
+<!-- WebKit bug 86387 - Move run-in handling to addChild, instead of in layout. -->
+<!-- 'A' green box should be on its own line, followed by run-in orange 'B' box and purple 'C' box in the next line -->
+<style>
+.runin { display: run-in; }
+</style>
+</head>
+<body>
+<div>
+  <div class="runin" style="color: green">A</div>
+  <div class="runin" style="color: orange">B</div>
+  <div style="color: purple">C</div>
+</div>
+</body>
+</html>
