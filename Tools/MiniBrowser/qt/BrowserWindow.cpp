@@ -51,7 +51,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     Utils* utils = new Utils(this);
     engine()->rootContext()->setContextProperty("utils", utils);
     engine()->rootContext()->setContextProperty("options", options);
-    setSource(QUrl("qrc:/qml/BrowserWindow.qml"));
+    setSource(QUrl("qrc:///qml/BrowserWindow.qml"));
     connect(rootObject(), SIGNAL(pageTitleChanged(QString)), this, SLOT(onTitleChanged(QString)));
     connect(rootObject(), SIGNAL(newWindow(QString)), this, SLOT(newWindow(QString)));
     if (options->startFullScreen())
@@ -118,7 +118,7 @@ void BrowserWindow::updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPo
         QQuickItem* mockTouchPointItem = rootObject()->findChild<QQuickItem*>(mockTouchPointIdentifier, Qt::FindDirectChildrenOnly);
 
         if (!mockTouchPointItem) {
-            QQmlComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
+            QQmlComponent touchMockPointComponent(engine(), QUrl("qrc:///qml/MockTouchPoint.qml"));
             mockTouchPointItem = qobject_cast<QQuickItem*>(touchMockPointComponent.create());
             mockTouchPointItem->setObjectName(mockTouchPointIdentifier);
             mockTouchPointItem->setProperty("pointId", QVariant(touchPoint.id()));
