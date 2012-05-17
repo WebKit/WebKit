@@ -634,6 +634,7 @@ public:
 
     // Helper function to print GL errors to console.
     void printGLErrorToConsole(const String&);
+    void printGLWarningToConsole(const char* function, const char* reason);
 
     // Helper function to print warnings to console. Currently
     // used only to warn about use of obsolete functions.

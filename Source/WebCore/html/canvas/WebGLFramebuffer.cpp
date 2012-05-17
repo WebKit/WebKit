@@ -36,30 +36,39 @@ namespace WebCore {
 
 namespace {
 
-    bool isAttachmentComplete(WebGLSharedObject* attachedObject, GC3Denum attachment)
+    bool isAttachmentComplete(WebGLSharedObject* attachedObject, GC3Denum attachment, const char** reason)
     {
         ASSERT(attachedObject && attachedObject->object());
         ASSERT(attachedObject->isRenderbuffer());
+        ASSERT(reason);
         WebGLRenderbuffer* buffer = reinterpret_cast<WebGLRenderbuffer*>(attachedObject);
         switch (attachment) {
         case GraphicsContext3D::DEPTH_ATTACHMENT:
-            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_COMPONENT16)
+            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_COMPONENT16) {
+                *reason = "DEPTH_ATTACHMENT is not a depth format";
                 return false;
+            }
             break;
         case GraphicsContext3D::STENCIL_ATTACHMENT:
-            if (buffer->getInternalFormat() != GraphicsContext3D::STENCIL_INDEX8)
+            if (buffer->getInternalFormat() != GraphicsContext3D::STENCIL_INDEX8) {
+                *reason = "STENCIL_ATTACHMENT is not a stencil format";
                 return false;
+            }
             break;
         case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_STENCIL)
+            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_STENCIL) {
+                *reason = "DEPTH_STENCIL_ATTACHMENT is not a depth-stencil format";
                 return false;
+            }
             break;
         default:
             ASSERT_NOT_REACHED();
             return false;
         }
-        if (!buffer->getWidth() || !buffer->getHeight())
+        if (!buffer->getWidth() || !buffer->getHeight()) {
+            *reason = "attachment has a 0 dimension";
             return false;
+        }
         return true;
     }
 
@@ -319,70 +328,87 @@ GC3Denum WebGLFramebuffer::getColorBufferFormat() const
     return 0;
 }
 
-GC3Denum WebGLFramebuffer::checkStatus() const
+GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
 {
     unsigned int count = 0;
     GC3Dsizei width = 0, height = 0;
     if (isDepthAttached()) {
-        if (!isAttachmentComplete(m_depthAttachment.get(), GraphicsContext3D::DEPTH_ATTACHMENT))
+        if (!isAttachmentComplete(m_depthAttachment.get(), GraphicsContext3D::DEPTH_ATTACHMENT, reason))
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         width = getImageWidth(m_depthAttachment.get());
         height = getImageHeight(m_depthAttachment.get());
         count++;
     }
     if (isStencilAttached()) {
-        if (!isAttachmentComplete(m_stencilAttachment.get(), GraphicsContext3D::STENCIL_ATTACHMENT))
+        if (!isAttachmentComplete(m_stencilAttachment.get(), GraphicsContext3D::STENCIL_ATTACHMENT, reason))
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         if (!count) {
             width = getImageWidth(m_stencilAttachment.get());
             height = getImageHeight(m_stencilAttachment.get());
         } else {
-            if (width != getImageWidth(m_stencilAttachment.get()) || height != getImageHeight(m_stencilAttachment.get()))
+            if (width != getImageWidth(m_stencilAttachment.get()) || height != getImageHeight(m_stencilAttachment.get())) {
+                *reason = "STENCIL_ATTACHMENT has different dimensions than DEPTH_ATTACHMENT";
                 return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+            }
         }
         count++;
     }
     if (isDepthStencilAttached()) {
-        if (!isAttachmentComplete(m_depthStencilAttachment.get(), GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT))
+        if (!isAttachmentComplete(m_depthStencilAttachment.get(), GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, reason))
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-        if (!isValidRenderbuffer(m_depthStencilAttachment.get()))
+        if (!isValidRenderbuffer(m_depthStencilAttachment.get())) {
+            *reason = "DEPTH_STENCIL_ATTACHMENT is not valid";
             return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
+        }
         if (!count) {
             width = getImageWidth(m_depthStencilAttachment.get());
             height = getImageHeight(m_depthStencilAttachment.get());
         } else {
-            if (width != getImageWidth(m_depthStencilAttachment.get()) || height != getImageHeight(m_depthStencilAttachment.get()))
+            if (width != getImageWidth(m_depthStencilAttachment.get()) || height != getImageHeight(m_depthStencilAttachment.get())) {
+                *reason = "DEPTH_STENCIL_ATTACHMENT has different dimensions than other attachments";
                 return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+            }
         }
         count++;
     }
     // WebGL specific: no conflicting DEPTH/STENCIL/DEPTH_STENCIL attachments.
-    if (count > 1)
+    if (count > 1) {
+        *reason = "conflicting DEPTH/STENCIL/DEPTH_STENCIL attachments";
         return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
+    }
     if (isColorAttached()) {
         // FIXME: if color buffer is texture, is ALPHA, LUMINANCE or LUMINANCE_ALPHA valid?
-        if (!getColorBufferFormat())
+        if (!getColorBufferFormat()) {
+            *reason = "COLOR_ATTACHMENT0 is an unsupported format";
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-        if (!count) {
-            if (!getColorBufferWidth() || !getColorBufferHeight())
-                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-        } else {
-            if (width != getColorBufferWidth() || height != getColorBufferHeight())
-                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
         }
+        if (!count) {
+            if (!getColorBufferWidth() || !getColorBufferHeight())  {
+                *reason = "COLOR_ATTACHMENT0 has a 0 dimension";
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+            }
+        } else {
+            if (width != getColorBufferWidth() || height != getColorBufferHeight())  {
+                *reason = "COLOR_ATTACHMENT0 has different dimensions than other attachments";
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+            }
+        }
+
     } else {
-        if (!count)
+        if (!count) {
+            *reason = "no attachments";
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+        }
     }
     return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
 }
 
-bool WebGLFramebuffer::onAccess(GraphicsContext3D* context3d, bool needToInitializeRenderbuffers)
+bool WebGLFramebuffer::onAccess(GraphicsContext3D* context3d, bool needToInitializeRenderbuffers, const char** reason)
 {
-    if (checkStatus() != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+    if (checkStatus(reason) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
         return false;
     if (needToInitializeRenderbuffers)
-        return initializeRenderbuffers(context3d);
+        return initializeRenderbuffers(context3d, reason);
     return true;
 }
 
@@ -404,7 +430,7 @@ void WebGLFramebuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3D
     context3d->deleteFramebuffer(object);
 }
 
-bool WebGLFramebuffer::initializeRenderbuffers(GraphicsContext3D* g3d)
+bool WebGLFramebuffer::initializeRenderbuffers(GraphicsContext3D* g3d, const char** reason)
 {
     ASSERT(object());
     bool initColor = false, initDepth = false, initStencil = false;
@@ -431,8 +457,10 @@ bool WebGLFramebuffer::initializeRenderbuffers(GraphicsContext3D* g3d)
 
     // We only clear un-initialized renderbuffers when they are ready to be
     // read, i.e., when the framebuffer is complete.
-    if (g3d->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+    if (g3d->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        *reason = "framebuffer not complete";
         return false;
+    }
 
     GC3Dfloat colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
     GC3Dint stencilClearValue = 0;

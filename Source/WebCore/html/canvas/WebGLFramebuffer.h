@@ -61,13 +61,13 @@ public:
     // Return false if the framebuffer is incomplete; otherwise initialize
     // the buffers if they haven't been initialized and
     // needToInitializeRenderbuffers is true.
-    bool onAccess(GraphicsContext3D*, bool needToInitializeRenderbuffers);
+    bool onAccess(GraphicsContext3D*, bool needToInitializeRenderbuffers, const char** reason);
 
     // Software version of glCheckFramebufferStatus(), except that when
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for
     // glCheckFramebufferStatus() to return FRAMEBUFFER_UNSUPPORTED,
     // depending on hardware implementation.
-    GC3Denum checkStatus() const;
+    GC3Denum checkStatus(const char** reason) const;
 
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 
@@ -84,7 +84,7 @@ private:
     virtual bool isFramebuffer() const { return true; }
 
     // Return false if framebuffer is incomplete.
-    bool initializeRenderbuffers(GraphicsContext3D*);
+    bool initializeRenderbuffers(GraphicsContext3D*, const char** reason);
 
     // Check if the framebuffer is currently bound.
     bool isBound() const;
