@@ -3825,6 +3825,8 @@ BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
 BUGWK86712 : tables/mozilla/marvin/backgr_position-table.html = IMAGE
 BUGWK86712 : tables/mozilla_expected_failures/marvin/backgr_border-table-row.html = IMAGE
 
+BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
+
 // Needs rebaseline after bug 86441
 BUGWK86441 WIN LINUX MAC : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 WIN LINUX MAC : fast/multicol/shadow-breaking.html = IMAGE

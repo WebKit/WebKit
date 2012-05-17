@@ -1,3 +1,9 @@
+2012-05-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, marking acid3-test-77.html as fail.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Pravin D  <pravind.2k4@gmail.com>
 
         REGRESSION (r116331): RSS Headlines/links are missing (-webkit-box-flex broken?)
