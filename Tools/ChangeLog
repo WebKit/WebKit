@@ -1,3 +1,15 @@
+2012-05-17  Jon Lee  <jonlee@apple.com>
+
+        Update Apple buildbots to prioritize latest changelists
+        https://bugs.webkit.org/show_bug.cgi?id=86766
+
+        Reviewed by Brady Eidson.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (pickLatestBuild): Function to get the most pick the most recent build request.
+        (loadBuilderConfig): Configure builders in the AppleMac and AppleWin categories to
+        use the pickLatestBuild function when choosing which request to build next.
+
 2012-05-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix MiniBrowser by using correct syntax for qrc URLs
