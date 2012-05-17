@@ -1,5 +1,41 @@
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a micro benchmark for div.firstChild getter for an undefined firstChild
+        https://bugs.webkit.org/show_bug.cgi?id=86725
+
+        Reviewed by Ryosuke Niwa.
+
+        We are going to remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        In this bug, we add a micro benchmark for div.firstChild getter for an
+        undefined firstChild. This benchmark covers other undefined DOM attributes
+        that return a null.
+
+        (Note: In V8, div.firstChild for an undefined firstChild is currently slower
+        than div.firstChild for a defined firstChild.)
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: undefined-first-child= 541.408311042 runs/s
+        median= 541.205412054 runs/s, stdev= 1.29841219187 runs/s, min= 537.897310513 runs/s, max= 543.209876543 runs/s
+
+        RESULT Bindings: undefined-first-child= 541.00750695 runs/s
+        median= 540.540540541 runs/s, stdev= 0.967521230965 runs/s, min= 539.215686275 runs/s, max= 543.209876543 runs/s
+
+        RESULT Bindings: undefined-first-child= 523.630714897 runs/s
+        median= 523.560209424 runs/s, stdev= 1.01570919645 runs/s, min= 522.193211488 runs/s, max= 525.624178712 runs/s
+
+        RESULT Bindings: undefined-first-child= 553.077663588 runs/s
+        median= 553.459119497 runs/s, stdev= 0.805697397863 runs/s, min= 551.378446115 runs/s, max= 554.156171285 runs/s
+
+        RESULT Bindings: undefined-first-child= 541.5401432 runs/s
+        median= 541.538666618 runs/s, stdev= 0.954301364767 runs/s, min= 539.877300613 runs/s, max= 543.209876543 runs/s
+
+        * Bindings/undefined-first-child.html: Added.
+
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
         [Performance test] Add a micro benchmark for div.firstChild getter
         https://bugs.webkit.org/show_bug.cgi?id=86582
 
