@@ -29,25 +29,73 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FILTERS)
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
+#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEComposite.h"
+#include <arm_neon.h>
 
 namespace WebCore {
 
-extern "C" {
-void neonDrawCompositeArithmetic(unsigned char* source, unsigned char* destination, unsigned pixelArrayLength, float* coefficients);
+template <int b1, int b4>
+inline void FEComposite::computeArithmeticPixelsNeon(unsigned char* source, unsigned char* destination,
+    unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
+{
+    float32x4_t k1x4 = vdupq_n_f32(k1 / 255);
+    float32x4_t k2x4 = vdupq_n_f32(k2);
+    float32x4_t k3x4 = vdupq_n_f32(k3);
+    float32x4_t k4x4 = vdupq_n_f32(k4 * 255);
+    uint32x4_t max255 = vdupq_n_u32(255);
+
+    uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(source);
+    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(destination);
+    uint32_t* destinationEndPixel = destinationPixel + (pixelArrayLength >> 2);
+
+    while (destinationPixel < destinationEndPixel) {
+        uint32x2_t temporary1 = vset_lane_u32(*sourcePixel, temporary1, 0);
+        uint16x4_t temporary2 = vget_low_u16(vmovl_u8(vreinterpret_u8_u32(temporary1)));
+        float32x4_t sourcePixelAsFloat = vcvtq_f32_u32(vmovl_u16(temporary2));
+
+        temporary1 = vset_lane_u32(*destinationPixel, temporary1, 0);
+        temporary2 = vget_low_u16(vmovl_u8(vreinterpret_u8_u32(temporary1)));
+        float32x4_t destinationPixelAsFloat = vcvtq_f32_u32(vmovl_u16(temporary2));
+
+        float32x4_t result = vmulq_f32(sourcePixelAsFloat, k2x4);
+        result = vmlaq_f32(result, destinationPixelAsFloat, k3x4);
+        if (b1)
+            result = vmlaq_f32(result, vmulq_f32(sourcePixelAsFloat, destinationPixelAsFloat), k1x4);
+        if (b4)
+            result = vaddq_f32(result, k4x4);
+
+        // Convert result to uint so negative values are converted to zero.
+        uint16x4_t temporary3 = vmovn_u32(vminq_u32(vcvtq_u32_f32(result), max255));
+        uint8x8_t temporary4 = vmovn_u16(vcombine_u16(temporary3, temporary3));
+        *destinationPixel++ = vget_lane_u32(vreinterpret_u32_u8(temporary4), 0);
+        ++sourcePixel;
+    }
 }
 
-inline void FEComposite::platformArithmeticNeon(unsigned char* source, unsigned char* destination, unsigned pixelArrayLength, float* coefficients)
+inline void FEComposite::platformArithmeticNeon(unsigned char* source, unsigned char* destination,
+    unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
 {
-    neonDrawCompositeArithmetic(source, destination, pixelArrayLength, coefficients);
+    if (!k4) {
+        if (!k1) {
+            computeArithmeticPixelsNeon<0, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+            return;
+        }
+
+        computeArithmeticPixelsNeon<1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        return;
+    }
+
+    if (!k1) {
+        computeArithmeticPixelsNeon<0, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        return;
+    }
+    computeArithmeticPixelsNeon<1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
 }
 
 } // namespace WebCore
 
-#endif // CPU(ARM_NEON) && COMPILER(GCC)
-#endif // ENABLE(FILTERS)
+#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #endif // FECompositeArithmeticNEON_h

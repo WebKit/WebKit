@@ -31228,10 +31228,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\arm\FECompositeArithmeticNEON.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\arm\FECompositeArithmeticNEON.h"
 						>
 					</File>

@@ -3405,7 +3405,6 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/SpotLightSource.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp \
-        platform/graphics/filters/arm/FECompositeArithmeticNEON.cpp \
         platform/graphics/filters/arm/FELightingNEON.cpp \
         platform/graphics/filters/arm/FEGaussianBlurNEON.cpp \
 }

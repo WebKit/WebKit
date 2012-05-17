@@ -3832,7 +3832,6 @@
             'platform/graphics/filters/SourceGraphic.h',
             'platform/graphics/filters/SpotLightSource.cpp',
             'platform/graphics/filters/SpotLightSource.h',
-            'platform/graphics/filters/arm/FECompositeArithmeticNEON.cpp',
             'platform/graphics/filters/arm/FECompositeArithmeticNEON.h',
             'platform/graphics/filters/arm/FEGaussianBlurNEON.cpp',
             'platform/graphics/filters/arm/FEGaussianBlurNEON.h',

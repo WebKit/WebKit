@@ -124,7 +124,7 @@ void FEComposite::correctFilterResultIfNeeded()
     forceValidPreMultipliedPixels();
 }
 
-template <int b1, int b2, int b3, int b4>
+template <int b1, int b4>
 static inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength,
                                     float k1, float k2, float k3, float k4)
 {
@@ -138,13 +138,9 @@ static inline void computeArithmeticPixels(unsigned char* source, unsigned char*
     while (--pixelArrayLength >= 0) {
         unsigned char i1 = *source;
         unsigned char i2 = *destination;
-        float result = 0;
+        float result = k2 * i1 + k3 * i2;
         if (b1)
             result += scaledK1 * i1 * i2;
-        if (b2)
-            result += k2 * i1;
-        if (b3)
-            result += k3 * i2;
         if (b4)
             result += scaledK4;
 
@@ -164,19 +160,19 @@ static inline void arithmeticSoftware(unsigned char* source, unsigned char* dest
 {
     if (!k4) {
         if (!k1) {
-            computeArithmeticPixels<0, 1, 1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+            computeArithmeticPixels<0, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
             return;
         }
 
-        computeArithmeticPixels<1, 1, 1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        computeArithmeticPixels<1, 0>(source, destination, pixelArrayLength, k1, k2, k3, k4);
         return;
     }
 
     if (!k1) {
-        computeArithmeticPixels<0, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+        computeArithmeticPixels<0, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
         return;
     }
-    computeArithmeticPixels<1, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
+    computeArithmeticPixels<1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
 }
 
 inline void FEComposite::platformArithmeticSoftware(Uint8ClampedArray* source, Uint8ClampedArray* destination,
@@ -185,10 +181,9 @@ inline void FEComposite::platformArithmeticSoftware(Uint8ClampedArray* source, U
     int length = source->length();
     ASSERT(length == static_cast<int>(destination->length()));
     // The selection here eventually should happen dynamically.
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
+#if HAVE(ARM_NEON_INTRINSICS)
     ASSERT(!(length & 0x3));
-    float coefficients[4]  = { k1, k2, k3, k4 };
-    platformArithmeticNeon(source->data(), destination->data(), length, coefficients);
+    platformArithmeticNeon(source->data(), destination->data(), length, k1, k2, k3, k4);
 #else
     arithmeticSoftware(source->data(), destination->data(), length, k1, k2, k3, k4);
 #endif
