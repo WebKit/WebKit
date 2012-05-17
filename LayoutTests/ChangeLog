@@ -1,3 +1,9 @@
+2012-05-16  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, marking failing test.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-16  MORITA Hajime <morrita@google.com>
 
         Unreviewed, marking failing test.

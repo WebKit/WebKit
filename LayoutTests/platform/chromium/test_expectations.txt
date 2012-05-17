@@ -3818,3 +3818,6 @@ BUGWK86698 WIN : fast/backgrounds/repeat/negative-offset-repeat.html = IMAGE
 BUGWK86698 WIN : fast/forms/input-appearance-bkcolor.html = IMAGE
 BUGWK86698 WIN : fast/forms/input-appearance-height.html = IMAGE
 BUGWK86698 WIN : fast/forms/select-style.html = IMAGE
+
+BUGWK86701 : fast/repaint/layer-child-outline.html = IMAGE
+BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
