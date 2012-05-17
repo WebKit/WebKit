@@ -121,6 +121,8 @@ PerfTestRunner._runLoop = function () {
         this.gc();
         window.setTimeout(function () { PerfTestRunner._runner(); }, 0);
     } else {
+        if (this._description)
+            this.log("Description: " + this._description);
         this.logStatistics(this._results);
         if (this._logLines) {
             var logLines = this._logLines;
@@ -175,17 +177,19 @@ PerfTestRunner.initAndStartLoop = function() {
     this._runLoop();
 }
 
-PerfTestRunner.run = function (runFunction, loopsPerRun, runCount, doneFunction) {
+PerfTestRunner.run = function (runFunction, loopsPerRun, runCount, doneFunction, description) {
     this._runFunction = runFunction;
     this._loopsPerRun = loopsPerRun || 10;
     this._runCount = runCount || 20;
     this._doneFunction = doneFunction || function () {};
+    this._description = description || "";
     this.unit = 'ms';
     this.initAndStartLoop();
 }
 
 PerfTestRunner.runPerSecond = function (test) {
     this._doneFunction = function () { if (test.done) test.done(); };
+    this._description = test.description || "";
     this._runCount = test.runCount || 20;
     this._callsPerIteration = 1;
     this.unit = 'runs/s';

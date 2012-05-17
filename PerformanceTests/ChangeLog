@@ -1,3 +1,27 @@
+2012-05-16  Kentaro Hara  <haraken@chromium.org>
+
+        [Performance test] Support "description" for PerfTestRunner.run and PerfTestRunner.runPerSecond
+        https://bugs.webkit.org/show_bug.cgi?id=86696
+
+        Reviewed by Ryosuke Niwa.
+
+        We want to add some description for each PerfTestRunner.run and
+        PerfTestRunner.runPerSecond, so that people can know what each
+        run is testing.
+
+        Output example:
+
+        $ ./Tools/Scripts/run-perf-tests Bindings/first-child.html
+        Running Bindings/first-child.html (1 of 1)
+        DESCRIPTION: Benchmark for DOM attributes that return a Node object.
+        RESULT Bindings: first-child= 788.359076534 runs/s
+        median= 797.508097751 runs/s, stdev= 19.0972905207 runs/s, min= 746.666666667 runs/s, max= 801.001251564 runs/s
+
+        * resources/runner.js:
+        (PerfTestRunner.logStatistics):
+        (PerfTestRunner.printStatistics):
+        (PerfTestRunner.runPerSecond):
+
 2012-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix heap profiler performance test after r117234.
