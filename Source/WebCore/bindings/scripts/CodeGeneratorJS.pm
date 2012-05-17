@@ -776,8 +776,11 @@ sub GenerateHeader
     }
 
     # Class info
-    push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
-
+    if ($interfaceName eq "Node") {
+        push(@headerContent, "    static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;\n\n");
+    } else {
+        push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
+    }
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
         $structureFlags{"JSC::ImplementsHasInstance"} = 1;

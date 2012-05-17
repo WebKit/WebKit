@@ -1,3 +1,16 @@
+2012-05-17  Oliver Hunt  <oliver@apple.com>
+
+        Endeavour to make the windows test bot actually able to run tests.
+        https://bugs.webkit.org/show_bug.cgi?id=86772
+
+        Reviewed by Sam Weinig.
+
+        Remove the ClassInfo exports from the .def files as we're now using
+        WEBKIT_EXPORT declarations to get expected behaviour on windows.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-05-17  Timothy Hatcher  <timothy@apple.com>
 
         Make the docked Web Inspector use autoresizing masks so the view doesn't jitter when

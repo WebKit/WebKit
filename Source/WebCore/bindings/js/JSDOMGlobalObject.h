@@ -30,6 +30,10 @@
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSGlobalThis.h>
 
+#ifndef WEBKIT_EXPORTDATA
+#define WEBKIT_EXPORTDATA
+#endif
+
 namespace WebCore {
 
     class Document;
@@ -71,7 +75,7 @@ namespace WebCore {
 
         DOMWrapperWorld* world() { return m_world.get(); }
 
-        static const JSC::ClassInfo s_info;
+        static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
