@@ -1,5 +1,24 @@
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
+        [Performance test] In perftest.py, do not include 'description' in 'results'
+        https://bugs.webkit.org/show_bug.cgi?id=86696
+
+        Reviewed by Csaba Osztrogoná.
+
+        'results' in perftest.py should not include any data that is not expected
+        by the perf bot server. We do not need to send 'description' to the perf bot
+        server since 'description' is always the same.
+
+        Thus this patch just removes 'description' from 'results'.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.parse_output):
+        (PerfTest.output_statistics):
+        (ChromiumStylePerfTest.parse_output):
+        (PageLoadingPerfTest.run):
+
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
         [Performance test] Always fill results['description'] in perftest.py
         https://bugs.webkit.org/show_bug.cgi?id=86696
 

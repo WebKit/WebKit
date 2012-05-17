@@ -119,18 +119,17 @@ class PerfTest(object):
         if test_failed or set(self._statistics_keys) != set(results.keys()):
             return None
 
-        results['description'] = description_string
         results['unit'] = unit
 
         test_name = re.sub(r'\.\w+$', '', self._test_name)
-        self.output_statistics(test_name, results)
+        self.output_statistics(test_name, results, description_string)
 
         return {test_name: results}
 
-    def output_statistics(self, test_name, results):
+    def output_statistics(self, test_name, results, description_string):
         unit = results['unit']
-        if results['description']:
-            _log.info('DESCRIPTION: %s' % results['description'])
+        if description_string:
+            _log.info('DESCRIPTION: %s' % description_string)
         _log.info('RESULT %s= %s %s' % (test_name.replace('/', ': '), results['avg'], unit))
         _log.info(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:]]))
 
@@ -154,7 +153,6 @@ class ChromiumStylePerfTest(PerfTest):
             elif not len(line) == 0:
                 test_failed = True
                 _log.error(line)
-        results['description'] = ''
         return results if results and not test_failed else None
 
 
@@ -191,9 +189,8 @@ class PageLoadingPerfTest(PerfTest):
             'max': max(test_times),
             'median': test_times[middle] if len(test_times) % 2 else (test_times[middle - 1] + test_times[middle]) / 2,
             'stdev': math.sqrt(squareSum),
-            'description': '',
             'unit': 'ms'}
-        self.output_statistics(self.test_name(), results)
+        self.output_statistics(self.test_name(), results, '')
         return {self.test_name(): results}
 
 
