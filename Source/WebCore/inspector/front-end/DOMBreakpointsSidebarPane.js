@@ -211,6 +211,15 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
             DOMDebuggerAgent.setDOMBreakpoint(node.id, type);
     },
 
+    _removeAllBreakpoints: function()
+    {
+        for (var id in this._breakpointElements) {
+            var element = this._breakpointElements[id];
+            this._removeBreakpoint(element._node, element._type);
+        }
+        this._saveBreakpoints();
+    },
+
     _removeBreakpoint: function(node, type)
     {
         var breakpointId = this._createBreakpointId(node.id, type);
@@ -233,6 +242,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
             this._saveBreakpoints();
         }
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), removeBreakpoint.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all DOM breakpoints" : "Remove All DOM Breakpoints"), this._removeAllBreakpoints.bind(this));
         contextMenu.show(event);
     },
 
