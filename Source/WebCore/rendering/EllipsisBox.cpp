@@ -23,6 +23,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
@@ -96,10 +97,11 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     GraphicsContextStateSaver stateSaver(*context);
     LayoutUnit top = root()->selectionTop();
     LayoutUnit h = root()->selectionHeight();
-    // FIXME: We'll need to apply the correct clip rounding here: https://bugs.webkit.org/show_bug.cgi?id=63656
-    context->clip(IntRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h));
+    LayoutRect clipRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h);
+    alignSelectionRectToDevicePixels(clipRect);
+    context->clip(clipRect);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style->colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)

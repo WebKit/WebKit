@@ -3357,6 +3357,7 @@ LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock* rootBlock, const La
         return LayoutRect();
 
     LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    alignSelectionRectToDevicePixels(gapRect);
     if (paintInfo)
         paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;
@@ -3373,6 +3374,7 @@ LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock* rootBlock, const L
         return LayoutRect();
 
     LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
+    alignSelectionRectToDevicePixels(gapRect);
     if (paintInfo)
         paintInfo->context->fillRect(gapRect, selObj->selectionBackgroundColor(), selObj->style()->colorSpace());
     return gapRect;

@@ -213,6 +213,11 @@ inline RenderText* InlineTextBox::textRenderer() const
     return toRenderText(renderer());
 }
 
+void alignSelectionRectToDevicePixels(LayoutRect&);
+#if !ENABLE(SUBPIXEL_LAYOUT)
+void alignSelectionRectToDevicePixels(FloatRect&);
+#endif
+
 } // namespace WebCore
 
 #endif // InlineTextBox_h

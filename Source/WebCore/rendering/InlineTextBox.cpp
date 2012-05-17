@@ -807,6 +807,22 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = min(endPos - m_start, (int)m_len);
 }
 
+void alignSelectionRectToDevicePixels(LayoutRect& rect)
+{
+    LayoutUnit maxX = floorToInt(rect.maxX());
+    rect.setX(floorToInt(rect.x()));
+    rect.setWidth(maxX - rect.x());
+}
+
+#if !ENABLE(SUBPIXEL_LAYOUT)
+void alignSelectionRectToDevicePixels(FloatRect& rect)
+{
+    float maxX = floorf(rect.maxX());
+    rect.setX(floorf(rect.x()));
+    rect.setWidth(roundf(maxX - rect.x()));
+}
+#endif
+
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, Color textColor)
 {
     if (context->paintingDisabled())
@@ -844,15 +860,18 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     LayoutUnit selectionBottom = root()->selectionBottom();
     LayoutUnit selectionTop = root()->selectionTopAdjustedForPrecedingBlock();
 
-    int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
-    int selHeight = max<LayoutUnit>(0, selectionBottom - selectionTop);
+    LayoutUnit deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
+    LayoutUnit selHeight = max<LayoutUnit>(0, selectionBottom - selectionTop);
 
+#if ENABLE(SUBPIXEL_LAYOUT)
+    LayoutPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
+    LayoutRect clipRect(localOrigin, LayoutSize(m_logicalWidth, selHeight));
+    alignSelectionRectToDevicePixels(clipRect);
+#else
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-
     FloatRect clipRect(localOrigin, FloatSize(m_logicalWidth, selHeight));
-    float maxX = floorf(clipRect.maxX());
-    clipRect.setX(floorf(clipRect.x()));
-    clipRect.setWidth(maxX - clipRect.x());
+    alignSelectionRectToDevicePixels(clipRect);
+#endif
     context->clip(clipRect);
 
     context->drawHighlightForText(font, textRun, localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
