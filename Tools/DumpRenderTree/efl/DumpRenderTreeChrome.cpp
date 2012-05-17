@@ -210,7 +210,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_settings_icon_database_clear();
     ewk_settings_icon_database_path_set(0);
 
-    ewk_settings_web_database_clear();
+    ewk_web_database_remove_all();
     ewk_settings_web_database_default_quota_set(5 * 1024 * 1024);
 
     ewk_settings_memory_cache_clear();

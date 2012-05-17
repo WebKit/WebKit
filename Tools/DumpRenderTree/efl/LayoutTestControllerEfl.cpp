@@ -578,7 +578,7 @@ long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef)
 
 void LayoutTestController::clearAllDatabases()
 {
-    ewk_settings_web_database_clear();
+    ewk_web_database_remove_all();
 }
 
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)

@@ -1,3 +1,38 @@
+2012-05-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add API for Web Database handling
+        https://bugs.webkit.org/show_bug.cgi?id=85178
+
+        Reviewed by Antonio Gomes.
+
+        Add API for Web Database. This API will allow a browser
+        to query information about size, name, filename and remove
+        databases based on the origin. It will be also possible to
+        list all databases for a given origin.
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_security_origin.cpp:
+        (ewk_security_origin_web_database_get_all):
+        * ewk/ewk_security_origin.h:
+        * ewk/ewk_settings.cpp:
+        * ewk/ewk_settings.h:
+        * ewk/ewk_web_database.cpp: Added.
+        (_Ewk_Web_Database):
+        (ewk_web_database_display_name_get):
+        (ewk_web_database_expected_size_get):
+        (ewk_web_database_filename_get):
+        (ewk_web_database_name_get):
+        (ewk_web_database_security_origin_get):
+        (ewk_web_database_size_get):
+        (ewk_web_database_remove):
+        (ewk_web_database_remove_all):
+        (ewk_web_database_free):
+        (ewk_web_database_list_free):
+        (ewk_web_database_new):
+        * ewk/ewk_web_database.h: Added.
+        * ewk/ewk_web_database_private.h: Copied from Source/WebKit/efl/ewk/EWebKit.h.
+        (WebCore):
+
 2012-05-17  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL] [DRT] EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()

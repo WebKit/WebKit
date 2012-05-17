@@ -118,6 +118,24 @@ EAPI void         ewk_security_origin_web_database_quota_set(const Ewk_Security_
 EAPI void         ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin *o, int64_t quota);
 
 /**
+ * Return the list of web databases in the security origin.
+ *
+ * Each item of the list should be release using ewk_web_database_free() or
+ * use ewk_web_database_list_free() as convenience.
+ *
+ * This function won't work if Web SQL Database was not enabled when
+ * building WebKit and will just return 0.
+ *
+ * @param o security origin object
+ *
+ * @return list of web databases in the security origin
+ *
+ * @see ewk_web_database_free()
+ * @see ewk_web_database_list_free()
+ */
+EAPI Eina_List   *ewk_security_origin_web_database_get_all(const Ewk_Security_Origin *o);
+
+/**
  * Release all resources allocated by a security origin object.
  *
  * @param o security origin object

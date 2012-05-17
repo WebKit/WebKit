@@ -24,8 +24,12 @@
 #include "DatabaseTracker.h"
 #include "SecurityOrigin.h"
 #include "ewk_private.h"
+#include "ewk_security_origin_private.h"
+#include "ewk_web_database.h"
+#include "ewk_web_database_private.h"
 #include <Eina.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 struct _Ewk_Security_Origin {
@@ -83,6 +87,25 @@ void ewk_security_origin_web_database_quota_set(const Ewk_Security_Origin* origi
 void ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin* origin, int64_t quota)
 {
     WebCore::cacheStorage().storeUpdatedQuotaForOrigin(origin->securityOrigin.get(), quota);
+}
+
+Eina_List* ewk_security_origin_web_database_get_all(const Ewk_Security_Origin* origin)
+{
+    Eina_List* databases = 0;
+#if ENABLE(SQL_DATABASE)
+    Vector<WTF::String> names;
+
+    if (!WebCore::DatabaseTracker::tracker().databaseNamesForOrigin(origin->securityOrigin.get(), names))
+        return 0;
+
+    for (unsigned i = 0; i < names.size(); i++) {
+        Ewk_Web_Database* database = ewk_web_database_new(origin->securityOrigin.get(), names[i].utf8().data());
+        databases = eina_list_append(databases, database);
+    }
+#else
+    UNUSED_PARAM(origin);
+#endif
+    return databases;
 }
 
 void ewk_security_origin_free(Ewk_Security_Origin* origin)

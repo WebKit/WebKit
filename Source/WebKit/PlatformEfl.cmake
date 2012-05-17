@@ -120,6 +120,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_view_single.cpp
     efl/ewk/ewk_view_tiled.cpp
     efl/ewk/ewk_window_features.cpp
+    efl/ewk/ewk_web_database.cpp
 )
 
 LIST(APPEND WebKit_LIBRARIES
@@ -267,6 +268,7 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_web_database.h
 )
 
 INSTALL(FILES ${EWebKit_HEADERS}

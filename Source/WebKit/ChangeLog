@@ -1,5 +1,16 @@
 2012-05-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [EFL] Add API for Web Database handling
+        https://bugs.webkit.org/show_bug.cgi?id=85178
+
+        Reviewed by Antonio Gomes.
+
+        Added the new Web Database API to the buildsystem.
+
+        * PlatformEfl.cmake:
+
+2012-05-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [EFL] Fix link error caused by not directly linking with edbus
         https://bugs.webkit.org/show_bug.cgi?id=86747
 

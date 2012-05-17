@@ -41,6 +41,7 @@
 #include "ewk_security_policy.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
+#include "ewk_web_database.h"
 #include "ewk_window_features.h"
 
 #include <Evas.h>

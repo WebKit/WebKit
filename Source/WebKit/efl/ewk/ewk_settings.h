@@ -53,11 +53,6 @@ EAPI uint64_t         ewk_settings_web_database_default_quota_get(void);
 EAPI void             ewk_settings_web_database_default_quota_set(uint64_t maximum_size);
 
 /**
- * Removes all HTML5 Web Database databases.
- */
-EAPI void             ewk_settings_web_database_clear(void);
-
-/**
  * Sets the current path to the directory WebKit will write Web
  * Database databases.
  *
