@@ -1,5 +1,14 @@
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening after r116339.
+
+        Add platform-specific results for the tests below.
+
+        * platform/efl/fast/repaint/float-overflow-expected.txt: Added.
+        * platform/efl/fast/repaint/float-overflow-right-expected.txt: Added.
+
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening, unskip another passing test after r117426.
 
         * platform/efl/test_expectations.txt:

@@ -1,0 +1,143 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x588
+  RenderBlock {HTML} at (0,0) size 800x588
+    RenderBody {BODY} at (8,8) size 784x572
+      RenderBlock {DIV} at (2,0) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-2,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (-2,2) size 16x17
+                  text run at (-2,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,39) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-2,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (-8,2) size 16x17
+                  text run at (-8,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,78) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (-2,2) size 16x17
+                  text run at (-2,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,117) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (0,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (-8,2) size 16x17
+                  text run at (-8,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,156) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (0,2) size 16x17
+                  text run at (0,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,195) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderDeprecatedFlexibleBox {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (0,2) size 16x17
+                  text run at (0,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,234) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderDeprecatedFlexibleBox {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 32x10 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (0,2) size 16x17
+                  text run at (0,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,273) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderTable {TABLE} at (51,7) size 58x28 [border: (1px solid #800080)]
+          RenderTableSection {TBODY} at (6,6) size 46x16
+            RenderTableRow {TR} at (0,2) size 46x12
+              RenderTableCell {TD} at (2,2) size 42x12 [bgcolor=#FFC0CB] [r=0 c=0 rs=1 cs=1]
+                RenderBlock (floating) {DIV} at (1,1) size 40x10 [bgcolor=#ADD8E6]
+                  RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                    RenderText {#text} at (-4,2) size 16x17
+                      text run at (-4,2) width 16: "x"
+                  RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,312) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderTable {TABLE} at (51,7) size 58x28 [border: (1px solid #800080)]
+          RenderTableSection {TBODY} at (6,6) size 46x16
+            RenderTableRow {TR} at (0,2) size 46x12
+              RenderTableCell {TD} at (2,2) size 42x12 [bgcolor=#FFC0CB] [r=0 c=0 rs=1 cs=1]
+                RenderBlock (floating) {DIV} at (1,1) size 40x10 [bgcolor=#ADD8E6]
+                  RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                    RenderText {#text} at (-12,2) size 16x17
+                      text run at (-12,2) width 16: "x"
+                  RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,351) size 780x52 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock (anonymous) at (1,7) size 778x28
+          RenderTable {TABLE} at (50,0) size 58x28 [border: (1px solid #800080)]
+            RenderTableSection {TBODY} at (6,6) size 46x16
+              RenderTableRow {TR} at (0,2) size 46x12
+                RenderTableCell {TD} at (2,2) size 42x12 [bgcolor=#FFC0CB] [r=0 c=0 rs=1 cs=1]
+                  RenderBlock (floating) {DIV} at (1,1) size 40x10 [bgcolor=#ADD8E6]
+                    RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                      RenderText {#text} at (-12,2) size 16x17
+                        text run at (-12,2) width 16: "x"
+                    RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (2,405) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+      RenderBlock {DIV} at (2,444) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+      RenderBlock {DIV} at (2,483) size 780x37 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+      RenderBlock {DIV} at (2,522) size 780x50 [border: (1px dotted #D3D3D3)]
+        RenderBlock {DIV} at (1,1) size 0x6
+        RenderBlock {DIV} at (51,7) size 62x35 [border: (1px solid #800080)]
+          RenderBlock {DIV} at (6,6) size 32x20 [bgcolor=#FFC0CB]
+            RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+              RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+                RenderText {#text} at (0,2) size 16x17
+                  text run at (0,2) width 16: "x"
+              RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+layer at (59,426) size 40x10
+  RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+    RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+      RenderText {#text} at (0,2) size 16x17
+        text run at (0,2) width 16: "x"
+    RenderText {#text} at (0,0) size 0x0
+layer at (67,465) size 50x10
+  RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+    RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+      RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+        RenderText {#text} at (0,2) size 16x17
+          text run at (0,2) width 16: "x"
+      RenderText {#text} at (0,0) size 0x0
+layer at (61,498) size 62x22
+  RenderBlock {DIV} at (51,7) size 62x22 [border: (1px solid #800080)]
+    RenderBlock {DIV} at (6,6) size 50x10 [bgcolor=#FFC0CB]
+      RenderBlock (floating) {DIV} at (-8,0) size 40x10 [bgcolor=#ADD8E6]
+        RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]
+          RenderText {#text} at (0,2) size 16x17
+            text run at (0,2) width 16: "x"
+        RenderText {#text} at (0,0) size 0x0
