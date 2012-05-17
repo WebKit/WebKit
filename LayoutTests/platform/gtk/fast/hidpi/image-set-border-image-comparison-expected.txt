@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 280x19
+          text run at (0,0) width 280: "The first two tests should match the last two."
+        RenderBR {BR} at (280,15) size 0x0
+        RenderBR {BR} at (0,18) size 0x19
+      RenderBlock {DIV} at (0,36) size 40x13
+      RenderBlock (anonymous) at (0,49) size 784x18
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,67) size 40x13
+      RenderBlock (anonymous) at (0,80) size 784x18
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,98) size 40x13 [border:]
+      RenderBlock (anonymous) at (0,111) size 784x18
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,129) size 40x13 [border: (7px none #000000) (3px none #000000)]
+      RenderBlock (anonymous) at (0,142) size 784x18
+        RenderBR {BR} at (0,0) size 0x19

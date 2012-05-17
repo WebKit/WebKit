@@ -1,3 +1,13 @@
+2012-05-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, adding GTK baselines for new tests added in r115641, r116975 and r117339.
+
+        * platform/gtk/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/gtk/fast/hidpi/image-set-border-image-comparison-expected.txt: Added.
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.txt: Added.
+
 2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
