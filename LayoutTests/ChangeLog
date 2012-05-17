@@ -1,3 +1,61 @@
+2012-05-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening after r117339 (table baseline computation change).
+
+        * fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-001-expected.png: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-001-expected.txt: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-002a-expected.png: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-002a-expected.txt: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-003-expected.png: Removed.
+        * platform/chromium-linux-x86/css2.1/20110323/inline-table-003-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/iframe-expected.png:
+        * platform/chromium-mac-snowleopard/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/iframe-expected.png:
+        * platform/chromium-mac/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/iframe-expected.png:
+        * platform/chromium-mac/editing/selection/iframe-expected.txt: Added.
+        * platform/chromium-mac/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.png: Added.
+        * platform/chromium-win-vista/editing/selection: Removed.
+        * platform/chromium-win-vista/fast/css-generated-content: Added.
+        * platform/chromium-win-vista/fast/css-generated-content/inline-display-types-expected.png: Added.
+        * platform/chromium-win-vista/fast/inline-block: Added.
+        * platform/chromium-win-vista/fast/inline-block/001-expected.png: Added.
+        * platform/chromium-win-xp/fast/css-generated-content: Added.
+        * platform/chromium-win-xp/fast/css-generated-content/inline-display-types-expected.png: Added.
+        * platform/chromium-win-xp/fast/inline-block: Added.
+        * platform/chromium-win-xp/fast/inline-block/001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/chromium-win/editing/pasteboard/innerText-inline-table-expected.png:
+        * platform/chromium-win/editing/selection/iframe-expected.png:
+        * platform/chromium-win/editing/selection/inline-table-expected.png:
+        * platform/chromium-win/editing/selection/table-caret-3-expected.png:
+        * platform/chromium-win/fast/css-generated-content/inline-display-types-expected.png:
+        * platform/chromium-win/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.png:
+        * platform/chromium-win/fast/inline-block/001-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt: Removed.
+        * platform/qt/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt: Removed.
+
 2012-05-16  Jon Lee  <jonlee@apple.com>
 
         Animated GIFs in page cache get updated

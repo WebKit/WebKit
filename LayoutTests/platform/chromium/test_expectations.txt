@@ -1538,8 +1538,6 @@ BUGCR23473 MAC : fast/repaint/fixed-child-of-transformed-move-after-scroll.html 
 BUGCR23473 MAC : fast/repaint/fixed-move-after-scroll.html = IMAGE
 BUGCR23473 MAC : fast/repaint/float-in-new-block-with-layout-delta.html = IMAGE
 BUGCR23473 MAC : fast/repaint/float-move-during-layout.html = IMAGE
-BUGCR23473 MAC : fast/repaint/float-overflow.html = IMAGE
-BUGCR23473 MAC : fast/repaint/float-overflow-right.html = IMAGE
 BUGCR23473 MAC : fast/repaint/inline-block-resize.html = IMAGE
 BUGCR23473 MAC : fast/repaint/inline-color-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/inline-overflow.html = IMAGE
@@ -1591,6 +1589,10 @@ BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
+
+// Also needs a text rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84167
+BUGCR23473 MAC : fast/repaint/float-overflow.html = IMAGE
+BUGCR23473 MAC : fast/repaint/float-overflow-right.html = IMAGE
 
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
@@ -3796,7 +3798,7 @@ BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSIN
 
 // Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
 BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
-BUGWK84167 WIN LINUX : editing/selection/iframe.html = IMAGE+TEXT
+BUGWK84167 LINUX : editing/selection/iframe.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
 BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
