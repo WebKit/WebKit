@@ -1,3 +1,18 @@
+2012-05-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        ShadowRoot.selection should be ShadowRoot.getSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=86598
+
+        Reviewed by Hajime Morita.
+
+        In the latest spec, ShadowRoot.selection is changed to ShadowRoot.getSelection().
+        So update the tests.
+
+        * editing/shadow/selection-of-orphan-shadowroot.html:
+        * editing/shadow/selection-of-shadowroot.html: Removed unnecessary code to
+        call ShadowRoot.selection by using ShadowRoot.getSelection(). Now ShadowRoot.getSelection()
+        can be called directly.
+
 2012-05-17  MORITA Hajime <morrita@google.com>
 
         Unreviewed, marking tests which need rebaselining after r117412.

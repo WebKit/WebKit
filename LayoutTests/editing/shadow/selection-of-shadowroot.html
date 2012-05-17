@@ -66,14 +66,6 @@ function createComplexShadowTree(container) {
 var container = document.getElementById('container');
 createComplexShadowTree(container);
 
-for (var k = 0; k < treeScopes.length; ++k) {
-    if (!treeScopes[k].getSelection) {
-        treeScopes[k].getSelection = (function(self, k) {
-            return function() { return self.selection; }
-        })(treeScopes[k], k);
-    }
-}
-
 debug('In this test, we create a complex Shadow DOM and try to drag from a div in nested shadow root of older shadow root to a div in nested shadow root of younger shadow root. Then we get selection from the following TreeScopes:');
 for (var k = 0; k < treeScopes.length; ++k) {
     if (treeScopes[k] == document)

@@ -34,12 +34,12 @@ module core {
     ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
         readonly attribute Element activeElement;
-        readonly attribute DOMSelection selection;
         attribute boolean applyAuthorStyles;
 
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);
 
+        DOMSelection getSelection();
         Element getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
         NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString className);
         NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagName);

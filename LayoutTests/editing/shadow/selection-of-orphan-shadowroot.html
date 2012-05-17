@@ -17,7 +17,7 @@ var host = document.createElement('div');
 var shadowRoot = new WebKitShadowRoot(host);
 shadowRoot.innerHTML = "Kotori Otonashi"
 
-var selection = shadowRoot.selection;
+var selection = shadowRoot.getSelection();
 
 shouldBe('selection.anchorNode', 'null');
 shouldBe('selection.focusNode', 'null');
