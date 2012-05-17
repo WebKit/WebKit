@@ -1,3 +1,10 @@
+2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] svg/zoom/page/zoom-svg-float-border-padding.xml crashes
+        https://bugs.webkit.org/show_bug.cgi?id=79631
+
+        * platform/qt/Skipped: Try to unskip them.
+
 2012-05-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Web process hangs while waiting for plugin process connection during layouttests
