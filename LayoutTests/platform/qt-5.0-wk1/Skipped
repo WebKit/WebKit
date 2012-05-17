@@ -386,10 +386,6 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 
-# [Qt] REGRESSION: http/tests/xmlhttprequest/basic-auth-nopassword.html started to crash with newer Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=85632
-http/tests/xmlhttprequest/basic-auth-nopassword.html
-
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
 svg/css/text-gradient-shadow.svg
