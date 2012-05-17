@@ -2147,7 +2147,7 @@ ol.breakpoint-list {
 }
 
 .breakpoint-list li:hover {
-    color: rgb(15%, 15%, 15%);
+    background-color: rgba(56, 121, 217, 0.2);
 }
 
 .breakpoint-list .checkbox-elem {
