@@ -795,15 +795,14 @@ void Heap::collect(SweepToggle sweepToggle)
         m_bytesAbandoned = 0;
     }
 
-    // To avoid pathological GC churn in large heaps, we set the new allocation 
-    // limit to be the current size of the heap. This heuristic 
-    // is a bit arbitrary. Using the current size of the heap after this 
-    // collection gives us a 2X multiplier, which is a 1:1 (heap size :
-    // new bytes allocated) proportion, and seems to work well in benchmarks.
+    // To avoid pathological GC churn in large / growing heaps, we set the
+    // new allocation limit based on the current heap size. Note: This
+    // number only governs "emergency" GC caused by rapid allocation,
+    // so it's OK to be liberal here.
     size_t newSize = size();
     if (fullGC) {
         m_sizeAfterLastCollect = newSize;
-        m_bytesAllocatedLimit = max(newSize, m_minBytesPerCycle);
+        m_bytesAllocatedLimit = max(2 * newSize, m_minBytesPerCycle);
     }
     m_bytesAllocated = 0;
     double lastGCEndTime = WTF::currentTime();
