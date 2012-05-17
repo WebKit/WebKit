@@ -55,7 +55,7 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
         return toV8(namedItems.at(0).release(), isolate);
 
     if (collection->type() == FormControls)
-        return toV8(collection->base()->radioNodeList(name).get());
+        return toV8(collection->base()->radioNodeList(name).get(), isolate);
 
     return toV8(V8NamedNodesCollection::create(namedItems), isolate);
 }

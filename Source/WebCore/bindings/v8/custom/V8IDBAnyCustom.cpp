@@ -55,23 +55,23 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
     case IDBAny::NullType:
         return v8::Null();
     case IDBAny::DOMStringListType:
-        return toV8(impl->domStringList());
+        return toV8(impl->domStringList(), isolate);
     case IDBAny::IDBCursorType:
-        return toV8(impl->idbCursor());
+        return toV8(impl->idbCursor(), isolate);
     case IDBAny::IDBCursorWithValueType:
-        return toV8(impl->idbCursorWithValue());
+        return toV8(impl->idbCursorWithValue(), isolate);
     case IDBAny::IDBDatabaseType:
-        return toV8(impl->idbDatabase());
+        return toV8(impl->idbDatabase(), isolate);
     case IDBAny::IDBFactoryType:
-        return toV8(impl->idbFactory());
+        return toV8(impl->idbFactory(), isolate);
     case IDBAny::IDBIndexType:
-        return toV8(impl->idbIndex());
+        return toV8(impl->idbIndex(), isolate);
     case IDBAny::IDBKeyType:
-        return toV8(impl->idbKey());
+        return toV8(impl->idbKey(), isolate);
     case IDBAny::IDBObjectStoreType:
-        return toV8(impl->idbObjectStore());
+        return toV8(impl->idbObjectStore(), isolate);
     case IDBAny::IDBTransactionType:
-        return toV8(impl->idbTransaction());
+        return toV8(impl->idbTransaction(), isolate);
     case IDBAny::SerializedScriptValueType:
         return impl->serializedScriptValue()->deserialize(0, isolate);
     }
