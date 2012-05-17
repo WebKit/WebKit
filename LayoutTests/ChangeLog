@@ -1,3 +1,15 @@
+2012-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117372.
+        http://trac.webkit.org/changeset/117372
+        https://bugs.webkit.org/show_bug.cgi?id=86710
+
+        "triggerring crashes" (Requested by morrita on #webkit).
+
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction-expected.txt: Removed.
+        * webaudio/audioparam-summingjunction.html: Removed.
+
 2012-05-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r117373.
