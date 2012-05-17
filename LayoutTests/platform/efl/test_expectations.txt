@@ -461,3 +461,6 @@ BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 // Needs rebaseline after bug 86441
 BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
+
+// Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
+BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT

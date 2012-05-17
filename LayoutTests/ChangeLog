@@ -1,3 +1,28 @@
+2012-05-02  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: table-height-algorithm-023 and -024 fail
+        https://bugs.webkit.org/show_bug.cgi?id=85405
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/table-height-algorithm-023.htm: Added.
+        * css2.1/20110323/table-height-algorithm-024.htm: Added.
+            Tests from the CSS test suite.
+        * fast/table/mozilla-bug10296-vertical-align-1.html: Added.
+        * fast/table/mozilla-bug10296-vertical-align-2.html: Added.
+            I split out the part of bug10296-1.html that gets rebaselined here so that the new results
+            are visible. I also changed the text so that the expected result is less mysterious.
+
+        * platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+        * platform/chromium-win/tables/mozilla/bugs/bug10296-1-expected.txt:
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening after r116339.

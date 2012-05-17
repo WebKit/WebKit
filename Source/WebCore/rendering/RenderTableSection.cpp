@@ -370,7 +370,7 @@ int RenderTableSection::calcRowLogicalHeight()
 
             // find out the baseline
             EVerticalAlign va = cell->style()->verticalAlign();
-            if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB) {
+            if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH) {
                 LayoutUnit baselinePosition = cell->cellBaselinePosition();
                 if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
                     m_grid[r].baseline = max(m_grid[r].baseline, baselinePosition - cell->intrinsicPaddingBefore());
@@ -609,7 +609,7 @@ void RenderTableSection::layoutRows()
 
                 // If the baseline moved, we may have to update the data for our row. Find out the new baseline.
                 EVerticalAlign va = cell->style()->verticalAlign();
-                if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB) {
+                if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH) {
                     LayoutUnit baseline = cell->cellBaselinePosition();
                     if (baseline > cell->borderBefore() + cell->paddingBefore())
                         m_grid[r].baseline = max(m_grid[r].baseline, baseline);
@@ -626,6 +626,7 @@ void RenderTableSection::layoutRows()
                 case SUPER:
                 case TEXT_TOP:
                 case TEXT_BOTTOM:
+                case LENGTH:
                 case BASELINE: {
                     LayoutUnit b = cell->cellBaselinePosition();
                     if (b > cell->borderBefore() + cell->paddingBefore())

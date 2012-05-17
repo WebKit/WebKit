@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x365
+  RenderBlock {HTML} at (0,0) size 800x365
+    RenderBody {BODY} at (8,21) size 784x336
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 486x36
+          text run at (0,0) width 486: "Vertical alignment and table height"
+      RenderBlock {P} at (0,58) size 784x20
+        RenderText {#text} at (0,0) size 503x19
+          text run at (0,0) width 503: "In each of the following tables the cells with 'Data' should all have the same baseline:"
+      RenderTable {TABLE} at (0,94) size 452x121
+        RenderTableSection {TBODY} at (0,0) size 452x121
+          RenderTableRow {TR} at (0,2) size 452x117
+            RenderTableCell {TD} at (2,75) size 33x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x19
+                text run at (2,2) width 29: "Data"
+            RenderTableCell {TD} at (37,46) size 94x61 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,3) size 90x55
+                text run at (2,3) width 90: "Data"
+            RenderTableCell {TD} at (133,2) size 186x117 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 182x109
+                text run at (2,4) width 182: "Data"
+            RenderTableCell {TD} at (321,2) size 29x24 [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x19
+                text run at (2,2) width 25: "Top"
+            RenderTableCell {TD} at (352,48) size 47x24 [border: (1px solid #000000)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x19
+                text run at (2,2) width 43: "Middle"
+            RenderTableCell {TD} at (401,95) size 49x24 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Bottom"
+      RenderTable {TABLE} at (0,215) size 452x121
+        RenderTableSection {TBODY} at (0,0) size 452x121
+          RenderTableRow {TR} at (0,2) size 452x117
+            RenderTableCell {TD} at (2,2) size 29x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 25x19
+                text run at (2,2) width 25: "Top"
+            RenderTableCell {TD} at (33,48) size 47x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 43x19
+                text run at (2,2) width 43: "Middle"
+            RenderTableCell {TD} at (82,95) size 49x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Bottom"
+            RenderTableCell {TD} at (133,2) size 186x117 [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 182x109
+                text run at (2,4) width 182: "Data"
+            RenderTableCell {TD} at (321,75) size 33x24 [border: (1px solid #000000)] [r=0 c=4 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x19
+                text run at (2,2) width 29: "Data"
+            RenderTableCell {TD} at (356,46) size 94x61 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
+              RenderText {#text} at (2,3) size 90x55
+                text run at (2,3) width 90: "Data"

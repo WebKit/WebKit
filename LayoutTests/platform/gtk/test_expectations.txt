@@ -1333,6 +1333,9 @@ BUGWK86284 : svg/text/modify-tspan-position-bug.html = IMAGE
 BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
+// Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
+BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
