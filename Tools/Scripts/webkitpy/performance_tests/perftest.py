@@ -154,6 +154,7 @@ class ChromiumStylePerfTest(PerfTest):
             elif not len(line) == 0:
                 test_failed = True
                 _log.error(line)
+        results['description'] = ''
         return results if results and not test_failed else None
 
 
@@ -190,6 +191,7 @@ class PageLoadingPerfTest(PerfTest):
             'max': max(test_times),
             'median': test_times[middle] if len(test_times) % 2 else (test_times[middle - 1] + test_times[middle]) / 2,
             'stdev': math.sqrt(squareSum),
+            'description': '',
             'unit': 'ms'}
         self.output_statistics(self.test_name(), results)
         return {self.test_name(): results}
