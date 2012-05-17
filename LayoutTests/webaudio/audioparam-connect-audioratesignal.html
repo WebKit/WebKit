@@ -87,6 +87,10 @@ function runTest() {
 
     // Create a gain node controlling the gain of constantSource and make the connections.
     var gainNode = context.createGainNode();
+
+    // Intrinsic baseline gain of zero.
+    gainNode.gain.value = 0;
+
     constantSource.connect(gainNode);
     gainNode.connect(context.destination);
 

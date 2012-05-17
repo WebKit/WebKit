@@ -1,3 +1,14 @@
+2012-05-16  Chris Rogers  <crogers@google.com>
+
+        AudioParam must support fan-in (multiple audio connections)
+        https://bugs.webkit.org/show_bug.cgi?id=83610
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction-expected.txt: Added.
+        * webaudio/audioparam-summingjunction.html: Added.
+
 2012-05-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening after r117339 (table baseline computation change).
