@@ -48,7 +48,7 @@ namespace WebKit {
 class WebIntent {
 public:
     WebIntent() { }
-    WebIntent(const WebString& action, const WebString& type, const WebString& data);
+    WEBKIT_EXPORT WebIntent(const WebString& action, const WebString& type, const WebString& data);
     WebIntent(const WebIntent& other) { assign(other); }
     ~WebIntent() { reset(); }
 

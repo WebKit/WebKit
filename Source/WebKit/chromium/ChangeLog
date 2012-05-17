@@ -1,3 +1,10 @@
+2012-05-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed attempt to fix a Windows build breakage.
+
+        * public/WebIntent.h:
+        (WebIntent):
+
 2012-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117396.
