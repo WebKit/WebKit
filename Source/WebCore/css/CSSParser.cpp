@@ -1430,15 +1430,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     RefPtr<CSSValue> parsedValue;
 
     switch (propId) {
-        /* The comment to the left defines all valid value of this properties as defined
-         * in CSS 2, Appendix F. Property index
-         */
-
-        /* All the CSS properties are not supported by the renderer at the moment.
-         * Note that all the CSS2 Aural properties are only checked, if CSS_AURAL is defined
-         * (see parseAuralValues). As we don't support them at all this seems reasonable.
-         */
-
     case CSSPropertySize:                 // <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
         return parseSize(propId, important);
 
