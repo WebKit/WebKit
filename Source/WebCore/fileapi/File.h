@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class FileMetadata;
+struct FileMetadata;
 class KURL;
 
 class File : public Blob {
