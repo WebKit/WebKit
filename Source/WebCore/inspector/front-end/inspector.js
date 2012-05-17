@@ -53,8 +53,6 @@ var WebInspector = {
             this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
             this.panels.scripts = new WebInspector.ScriptsPanel();
-        if (hiddenPanels.indexOf("styles") === -1 && WebInspector.experimentsSettings.showStylesPanel.isEnabled())
-            this.panels.styles = new WebInspector.StylesPanel();
         if (hiddenPanels.indexOf("timeline") === -1)
             this.panels.timeline = new WebInspector.TimelinePanel();
         if (hiddenPanels.indexOf("profiles") === -1)

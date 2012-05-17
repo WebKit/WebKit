@@ -40,7 +40,10 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     WebInspector.settings.debuggerSidebarHidden = WebInspector.settings.createSetting("debuggerSidebarHidden", false);
 
     var scriptMapping = new WebInspector.DebuggerScriptMapping();
-    this._uiSourceCodeProvider = uiSourceCodeProviderForTest || new WebInspector.CompositeUISourceCodeProvider(scriptMapping.uiSourceCodeProviders());
+    var providers = scriptMapping.uiSourceCodeProviders();
+    if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled())
+        providers = providers.concat(new WebInspector.StylesUISourceCodeProvider());
+    this._uiSourceCodeProvider = uiSourceCodeProviderForTest || new WebInspector.CompositeUISourceCodeProvider(providers);
 
     new WebInspector.PresentationConsoleMessageHelper(this._uiSourceCodeProvider);
     new WebInspector.DebuggerResourceBinding(this._uiSourceCodeProvider);
@@ -195,6 +198,8 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
 WebInspector.ScriptsPanel.prototype = {
     get toolbarItemLabel()
     {
+        if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled())
+            return WebInspector.UIString("Source Code");
         return WebInspector.UIString("Scripts");
     },
 
@@ -390,7 +395,16 @@ WebInspector.ScriptsPanel.prototype = {
 
     canShowAnchorLocation: function(anchor)
     {
-        return this._debuggerEnabled && anchor.uiSourceCode;
+        if (this._debuggerEnabled && anchor.uiSourceCode)
+            return true;
+        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i) {
+            if (uiSourceCodes[i].url === anchor.href) {
+                anchor.uiSourceCode = uiSourceCodes[i];
+                return true;
+            }
+        }
+        return false;
     },
 
     showAnchorLocation: function(anchor)
@@ -447,9 +461,16 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _createSourceFrame: function(uiSourceCode)
     {
-        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, uiSourceCode);
-
-        sourceFrame._uiSourceCode = uiSourceCode;
+        var sourceFrame;
+        if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+            sourceFrame = new WebInspector.JavaScriptSourceFrame(this, uiSourceCode);
+        else if (uiSourceCode instanceof WebInspector.StyleSource)
+            sourceFrame = new WebInspector.StyleSourceFrame(uiSourceCode);
+        else {
+            console.assert(false, "Unknown UISourceCode type");
+            sourceFrame = new WebInspector.SourceFrame(uiSourceCode.url);
+        }
+         
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);
         return sourceFrame;
     },

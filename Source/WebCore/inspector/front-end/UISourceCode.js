@@ -34,7 +34,7 @@
  * @extends {WebInspector.Object}
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
- * @param {WebInspector.SourceMapping} sourceMapping
+ * @param {WebInspector.SourceMapping=} sourceMapping
  */
 WebInspector.UISourceCode = function(url, contentProvider, sourceMapping)
 {
@@ -153,11 +153,6 @@ WebInspector.UISourceCode.prototype = {
     isDirty: function()
     {
         return this._contentLoaded && typeof this._workingCopy !== "undefined" && this._workingCopy !== this._content;
-    },
-
-    commitWorkingCopy: function(callback)
-    {
-        // Overriden.
     },
 
     /**
