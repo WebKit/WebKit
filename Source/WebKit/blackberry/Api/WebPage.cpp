@@ -891,8 +891,12 @@ void WebPagePrivate::setLoadState(LoadState state)
                 m_virtualViewportWidth = m_webSettings->viewportWidth();
                 m_virtualViewportHeight = m_defaultLayoutSize.height();
             }
-            // Check if we have already process the meta viewport tag, this only happens on history navigation
-            if (!m_didRestoreFromPageCache) {
+            // Check if we have already process the meta viewport tag, this only happens on history navigation.
+            // Refreshing should keep these previous values as well.
+            FrameLoadType frameLoadType = FrameLoadTypeStandard;
+            if (m_mainFrame && m_mainFrame->loader())
+                frameLoadType = m_mainFrame->loader()->loadType();
+            if (!m_didRestoreFromPageCache && !(frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin)) {
                 m_viewportArguments = ViewportArguments();
 
                 // At the moment we commit a new load, set the viewport arguments

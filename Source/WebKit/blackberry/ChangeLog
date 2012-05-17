@@ -1,3 +1,22 @@
+2012-05-17  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] www.thestar.com/iphone Viewport Weirdness
+        https://bugs.webkit.org/show_bug.cgi?id=86756
+
+        Reviewed by George Staikos.
+
+        PR 156710
+        On high DPI devices, the virtual viewport size of this page was smaller
+        than screen size. During the refreshing of the page, we reset the scale
+        when the state was Committed, then layouted and rendered contents based
+        on the virtual viewport size and default scale 1, which caused a small
+        size thumbnail before we restored the previous view state.
+        Fixed it by keeping the previous scale, user scalable and
+        m_userViewportArguments during the Committed state of refreshing.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2012-05-17  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Cleanup headers in SelectionHandler.cpp
