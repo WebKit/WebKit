@@ -1,3 +1,11 @@
+2012-05-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding platform-specific baselines for
+        two tests affected by r117339.
+
+        * platform/gtk/fast/repaint/float-overflow-expected.txt: Added.
+        * platform/gtk/fast/repaint/float-overflow-right-expected.txt: Added.
+
 2012-05-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added platform specific expectation.
