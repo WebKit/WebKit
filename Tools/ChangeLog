@@ -1,3 +1,10 @@
+2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Roll out r117382 because of layout test crashes on EFL debug buildbot.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::initialize):
+
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
         [Performance test] In perftest.py, do not include 'description' in 'results'
