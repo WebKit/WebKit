@@ -1,3 +1,9 @@
+2012-05-17  MORITA Hajime <morrita@google.com>
+
+        Unreviewed, marking input-appearance-range.html as fail.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, marking backgr_position-table.html and some others as fail.

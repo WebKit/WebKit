@@ -2812,6 +2812,7 @@ BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-s
 BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
+BUGWK81713 WIN : fast/forms/range/input-appearance-range.html = IMAGE
 
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
@@ -3823,3 +3824,4 @@ BUGWK86701 : fast/repaint/table-cell-vertical-overflow.html = IMAGE
 
 BUGWK86712 : tables/mozilla/marvin/backgr_position-table.html = IMAGE
 BUGWK86712 : tables/mozilla_expected_failures/marvin/backgr_border-table-row.html = IMAGE
+
