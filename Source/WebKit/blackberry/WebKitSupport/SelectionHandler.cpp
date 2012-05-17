@@ -45,6 +45,7 @@
 #include "visible_units.h"
 
 #include <BlackBerryPlatformKeyboardEvent.h>
+#include <BlackBerryPlatformLog.h>
 
 #include <sys/keycodes.h>
 
