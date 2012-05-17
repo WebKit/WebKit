@@ -1,3 +1,9 @@
+2012-05-17  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, updating chrome test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Test expectation update.
