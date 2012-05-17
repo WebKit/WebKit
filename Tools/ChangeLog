@@ -1,3 +1,16 @@
+2012-05-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] appcache tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=86619
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Correctly set the application cache database path in EFL's
+        DumpRenderTree initialization code.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::initialize):
+
 2012-05-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add new build slave for EFL port.
