@@ -33,7 +33,6 @@
 namespace TestWebKitAPI {
 
 static bool finished;
-static int liveDOMExtensionCount;
 
 static const char* expectedMessages[] = {
 "GlobalObjectIsAvailableForFrame called",
@@ -60,13 +59,7 @@ static const char* expectedMessages[] = {
 "DidReconnectDOMWindowExtensionToGlobalObject called",
 "Main frame finished loading",
 "Extension states:\nFirst page, main frame, standard world - Connected\nFirst page, main frame, non-standard world - Connected\nFirst page, subframe, standard world - Connected\nFirst page, subframe, non-standard world - Connected\nSecond page, main frame, standard world - Disconnected\nSecond page, main frame, non-standard world - Disconnected",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"WillDestroyGlobalObjectForDOMWindowExtension called",
-"Extension states:\nFirst page, main frame, standard world - Destroyed\nFirst page, main frame, non-standard world - Destroyed\nFirst page, subframe, standard world - Destroyed\nFirst page, subframe, non-standard world - Destroyed\nSecond page, main frame, standard world - Destroyed\nSecond page, main frame, non-standard world - Destroyed",
+"Extension states:\nFirst page, main frame, standard world - Removed\nFirst page, main frame, non-standard world - Removed\nFirst page, subframe, standard world - Removed\nFirst page, subframe, non-standard world - Removed\nSecond page, main frame, standard world - Removed\nSecond page, main frame, non-standard world - Removed",
 "TestComplete"
 };
 
@@ -80,15 +73,8 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     WKStringRef bodyString = (WKStringRef)messageBody;
     messages.append(bodyString);
     
-    if (WKStringIsEqualToUTF8CString(messageName, "GlobalObjectIsAvailableForFrame"))
-        liveDOMExtensionCount++;
-    else if (WKStringIsEqualToUTF8CString(messageName, "WillDestroyGlobalObjectForDOMWindowExtension")) {
-        liveDOMExtensionCount--;
-        if (!liveDOMExtensionCount)
-            finished = true;
-    } else if (WKStringIsEqualToUTF8CString(messageName, "DidFinishLoadForMainFrame") || WKStringIsEqualToUTF8CString(messageName, "TestComplete"))
+    if (WKStringIsEqualToUTF8CString(messageName, "DidFinishLoadForMainFrame") || WKStringIsEqualToUTF8CString(messageName, "TestComplete"))
         finished = true;
-    
 }
 
 TEST(WebKit2, DOMWindowExtensionBasic)
@@ -129,20 +115,20 @@ TEST(WebKit2, DOMWindowExtensionBasic)
 
     Util::run(&finished);
     finished = false;
-    
-    // Make sure the 2 disconnected extensions in the page cache and the 4 active extensions are all destroyed.
+
+    // Make sure the 2 disconnected extensions in the page cache and the 4 active extensions are all removed.
     WKPageClose(webView.page());
 
     Util::run(&finished);
         
     const size_t expectedSize = sizeof(expectedMessages) / sizeof(const char*);
-    EXPECT_EQ(messages.size(), expectedSize);
+    EXPECT_EQ(expectedSize, messages.size());
     
     if (messages.size() != expectedSize)
         return;
     
     for (size_t i = 0; i < messages.size(); ++i)
-        EXPECT_EQ(WKStringIsEqualToUTF8CString(messages[i].get(), expectedMessages[i]), true);
+        EXPECT_WK_STREQ(expectedMessages[i], messages[i].get());
 }
 
 } // namespace TestWebKitAPI

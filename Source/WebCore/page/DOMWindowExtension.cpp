@@ -36,90 +36,82 @@ namespace WebCore {
 DOMWindowExtension::DOMWindowExtension(Frame* frame, DOMWrapperWorld* world)
     : DOMWindowProperty(frame)
     , m_world(world)
-    , m_disconnectedDOMWindow(0)
     , m_wasDetached(false)
 {
     ASSERT(this->frame());
     ASSERT(m_world);
 }
 
-DOMWindowExtension::~DOMWindowExtension()
+void DOMWindowExtension::disconnectFrameForPageCache()
 {
-    // DOMWindowExtension lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with when destroyed.
-    // This might happen if the DOMWindowExtension is destroyed while its DOMWindow is in a CachedPage.
-    if (m_disconnectedDOMWindow)
-        m_disconnectedDOMWindow->unregisterProperty(this);
-}
-
-void DOMWindowExtension::disconnectFrame()
-{
-    // The DOMWindow destructor calls disconnectFrame on all its DOMWindowProperties, even if it
-    // did that already when entering the page cache.
-    if (m_disconnectedFrame) {
-        ASSERT(!frame());
-        return;
-    }
-
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
     RefPtr<DOMWindowExtension> protector = this;
     
-    // DOMWindowProperties are disconnected from frames after they are detached.
-    // DOMWindowExtensions only want to stay prepared for client callbacks if they've never been detached.
-    if (!m_wasDetached) {
-        Frame* frame = this->frame();
-        frame->loader()->client()->dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
+    Frame* frame = this->frame();
+    frame->loader()->client()->dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
 
-        m_disconnectedFrame = frame;
-        m_disconnectedDOMWindow = frame->domWindow();
-    }
+    m_disconnectedFrame = frame;
 
-    DOMWindowProperty::disconnectFrame();
+    DOMWindowProperty::disconnectFrameForPageCache();
 }
 
-void DOMWindowExtension::reconnectFrame(Frame* frame)
+void DOMWindowExtension::reconnectFrameFromPageCache(Frame* frame)
 {
-    // DOMWindowProperties should never reconnect to a frame after they've been detached from the page.
-    ASSERT(!m_wasDetached);
     ASSERT(m_disconnectedFrame == frame);
     
-    DOMWindowProperty::reconnectFrame(frame);
+    DOMWindowProperty::reconnectFrameFromPageCache(frame);
     m_disconnectedFrame = 0;
-    m_disconnectedDOMWindow = 0;
 
     this->frame()->loader()->client()->dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
 }
 
-void DOMWindowExtension::willDetachPage()
+void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
 {
-    // willDetachPage might be called multiple times but we only want to react once.
-    if (m_wasDetached)
-        return;
-    
+    ASSERT(m_disconnectedFrame);
+
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
     RefPtr<DOMWindowExtension> protector = this;
     
-    Frame* frame = m_disconnectedFrame.get();
-    if (!frame)
-        frame = this->frame();
-    ASSERT(frame);
-
-    // DOMWindowExtension lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with when detached.
-    // This might be the disconnected DOMWindow if the DOMWindow is in a CachedPage that is pruned.
-    DOMWindow* associatedDOMWindow = m_disconnectedDOMWindow ? m_disconnectedDOMWindow : frame->domWindow();
-    associatedDOMWindow->unregisterProperty(this);
-    m_disconnectedDOMWindow = 0;
-    
-    frame->loader()->client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
-
+    m_disconnectedFrame->loader()->client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = 0;
 
-    DOMWindowProperty::willDetachPage();
-    
+    DOMWindowProperty::willDestroyGlobalObjectInCachedFrame();
+}
+
+void DOMWindowExtension::willDestroyGlobalObjectInFrame()
+{
+    ASSERT(!m_disconnectedFrame);
+
+    // Calling out to the client might result in this DOMWindowExtension being destroyed
+    // while there is still work to do.
+    RefPtr<DOMWindowExtension> protector = this;
+
+    if (!m_wasDetached) {
+        Frame* frame = this->frame();
+        ASSERT(frame);
+        frame->loader()->client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+    }
+
+    DOMWindowProperty::willDestroyGlobalObjectInFrame();
+}
+
+void DOMWindowExtension::willDetachGlobalObjectFromFrame()
+{
+    ASSERT(!m_disconnectedFrame);
+    ASSERT(!m_wasDetached);
+
+    // Calling out to the client might result in this DOMWindowExtension being destroyed
+    // while there is still work to do.
+    RefPtr<DOMWindowExtension> protector = this;
+
+    Frame* frame = this->frame();
+    ASSERT(frame);
+    frame->loader()->client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+
     m_wasDetached = true;
+    DOMWindowProperty::willDetachGlobalObjectFromFrame();
 }
 
 } // namespace WebCore

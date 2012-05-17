@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class DOMWindowExtension;
 class DOMWrapperWorld;
 class Frame;
@@ -45,11 +44,11 @@ public:
         return adoptRef(new DOMWindowExtension(frame, world));
     }
 
-    ~DOMWindowExtension();
-
-    virtual void disconnectFrame() OVERRIDE;
-    virtual void reconnectFrame(Frame*) OVERRIDE;
-    virtual void willDetachPage() OVERRIDE;
+    virtual void disconnectFrameForPageCache() OVERRIDE;
+    virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;
+    virtual void willDestroyGlobalObjectInCachedFrame() OVERRIDE;
+    virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
+    virtual void willDetachGlobalObjectFromFrame() OVERRIDE;
 
     DOMWrapperWorld* world() const { return m_world.get(); }
 
@@ -58,7 +57,6 @@ private:
 
     RefPtr<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;
-    DOMWindow* m_disconnectedDOMWindow;
     bool m_wasDetached;
 };
 

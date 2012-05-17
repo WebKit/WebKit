@@ -33,7 +33,6 @@
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 #include <assert.h>
 
 namespace TestWebKitAPI {
@@ -46,14 +45,15 @@ static void willDestroyGlobalObjectForDOMWindowExtensionCallback(WKBundlePageRef
 
 
 enum ExtensionState {
-    Uncreated = 0, Connected, Disconnected, Destroyed
+    Uncreated = 0, Connected, Disconnected, Destroyed, Removed
 };
 
-const char* stateNames[4] = {
+const char* stateNames[5] = {
     "Uncreated",
     "Connected",
     "Disconnected",
-    "Destroyed"
+    "Destroyed",
+    "Removed"
 };
 
 typedef struct {
@@ -67,6 +67,7 @@ public:
     
     virtual void initialize(WKBundleRef, WKTypeRef userData);
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef);
+    virtual void willDestroyPage(WKBundleRef, WKBundlePageRef);
     
     void globalObjectIsAvailableForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
     void willDisconnectDOMWindowExtensionFromGlobalObject(WKBundleDOMWindowExtensionRef);
@@ -85,7 +86,6 @@ private:
     ExtensionRecord m_extensionRecords[6];
     HashMap<WKBundleDOMWindowExtensionRef, int> m_extensionToRecordMap;
     bool m_finishedOneMainFrameLoad;
-    int m_numberOfDestroyedExtensions;
 };
 
 static InjectedBundleTest::Register<DOMWindowExtensionBasic> registrar("DOMWindowExtensionBasic");
@@ -93,7 +93,6 @@ static InjectedBundleTest::Register<DOMWindowExtensionBasic> registrar("DOMWindo
 DOMWindowExtensionBasic::DOMWindowExtensionBasic(const std::string& identifier)
     : InjectedBundleTest(identifier)
     , m_finishedOneMainFrameLoad(false)
-    , m_numberOfDestroyedExtensions(0)
 {
     m_extensionRecords[0].name = "First page, main frame, standard world";
     m_extensionRecords[1].name = "First page, main frame, non-standard world";
@@ -167,6 +166,21 @@ void DOMWindowExtensionBasic::didCreatePage(WKBundleRef bundle, WKBundlePageRef 
     
     WKBundlePageSetPageLoaderClient(page, &pageLoaderClient);
 }
+
+void DOMWindowExtensionBasic::willDestroyPage(WKBundleRef, WKBundlePageRef)
+{
+    HashMap<WKBundleDOMWindowExtensionRef, int>::iterator it = m_extensionToRecordMap.begin();
+    HashMap<WKBundleDOMWindowExtensionRef, int>::iterator end = m_extensionToRecordMap.end();
+    for (; it != end; ++it) {
+        updateExtensionStateRecord(it->first, Removed);
+        WKRelease(it->first);
+    }
+
+    m_extensionToRecordMap.clear();
+
+    sendExtensionStateMessage();
+    sendBundleMessage("TestComplete");
+}
     
 void DOMWindowExtensionBasic::updateExtensionStateRecord(WKBundleDOMWindowExtensionRef extension, ExtensionState state)
 {
@@ -211,19 +225,11 @@ void DOMWindowExtensionBasic::didReconnectDOMWindowExtensionToGlobalObject(WKBun
     sendBundleMessage("DidReconnectDOMWindowExtensionToGlobalObject called");
 }
 
-void DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension(WKBundleDOMWindowExtensionRef extension)
+void DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension(WKBundleDOMWindowExtensionRef)
 {
-    m_numberOfDestroyedExtensions++;
-
-    updateExtensionStateRecord(extension, Destroyed);
-    sendBundleMessage("WillDestroyGlobalObjectForDOMWindowExtension called");
-    
-    if (m_numberOfDestroyedExtensions == 6) {
-        sendExtensionStateMessage();
-        sendBundleMessage("TestComplete");
-    }
-    
-    WKRelease(extension);
+    // All of the items are candidates for the page cache and should not be evicted from the page
+    // cache before the test completes.
+    ASSERT_NOT_REACHED();
 }
 
 static void didFinishLoadForFrameCallback(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)

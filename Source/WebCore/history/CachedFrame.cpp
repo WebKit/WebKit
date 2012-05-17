@@ -250,6 +250,8 @@ void CachedFrame::destroy()
     ASSERT(m_view);
     ASSERT(m_document->frame() == m_view->frame());
 
+    m_domWindow->willDestroyCachedFrame();
+
     if (!m_isMainFrame) {
         m_view->frame()->detachFromPage();
         m_view->frame()->loader()->detachViewsAndDocumentLoader();

@@ -33,6 +33,7 @@ namespace WebCore {
 
 DOMWindowProperty::DOMWindowProperty(Frame* frame)
     : m_frame(frame)
+    , m_disconnectedDOMWindow(0)
 {
     if (m_frame)
         m_frame->domWindow()->registerProperty(this);
@@ -40,25 +41,53 @@ DOMWindowProperty::DOMWindowProperty(Frame* frame)
 
 DOMWindowProperty::~DOMWindowProperty()
 {
-    if (m_frame)
+    if (m_frame) {
+        ASSERT(!m_disconnectedDOMWindow);
         m_frame->domWindow()->unregisterProperty(this);
+    } else if (m_disconnectedDOMWindow)
+        m_disconnectedDOMWindow->unregisterProperty(this);
 }
 
-void DOMWindowProperty::disconnectFrame()
+void DOMWindowProperty::disconnectFrameForPageCache()
 {
+    ASSERT(m_frame);
+    ASSERT(!m_disconnectedDOMWindow);
+    m_disconnectedDOMWindow = m_frame->domWindow();
     m_frame = 0;
 }
 
-void DOMWindowProperty::reconnectFrame(Frame* frame)
+void DOMWindowProperty::reconnectFrameFromPageCache(Frame* frame)
 {
     ASSERT(frame);
     ASSERT(!m_frame);
+    ASSERT(m_disconnectedDOMWindow);
     m_frame = frame;
+    m_disconnectedDOMWindow = 0;
 }
 
-void DOMWindowProperty::willDetachPage()
+void DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()
 {
-    // Subclasses should override this function to handle this notification.
+    ASSERT(m_disconnectedDOMWindow);
+    // DOMWindowProperty lifetime isn't tied directly to the DOMWindow itself so it is important
+    // that it unregister itself from any DOMWindow it is associated with.
+    m_disconnectedDOMWindow->unregisterProperty(this);
+    m_disconnectedDOMWindow = 0;
+}
+
+void DOMWindowProperty::willDestroyGlobalObjectInFrame()
+{
+    ASSERT(m_frame);
+    ASSERT(!m_disconnectedDOMWindow);
+    // DOMWindowProperty lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
+    // itself from any DOMWindow it is associated with.
+    m_frame->domWindow()->unregisterProperty(this);
+    m_frame = 0;
+}
+
+void DOMWindowProperty::willDetachGlobalObjectFromFrame()
+{
+    ASSERT(m_frame);
+    ASSERT(!m_disconnectedDOMWindow);
 }
 
 }

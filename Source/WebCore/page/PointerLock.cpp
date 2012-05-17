@@ -46,9 +46,15 @@ PointerLock::~PointerLock()
     ASSERT(!m_controller);
 }
 
-void PointerLock::disconnectFrame()
+void PointerLock::disconnectFrameForPageCache()
 {
-    DOMWindowProperty::disconnectFrame();
+    DOMWindowProperty::disconnectFrameForPageCache();
+    m_controller = 0;
+}
+
+void PointerLock::willDestroyGlobalObjectInFrame()
+{
+    DOMWindowProperty::willDestroyGlobalObjectInFrame();
     m_controller = 0;
 }
 

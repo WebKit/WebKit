@@ -427,6 +427,11 @@ DOMWindow::~DOMWindow()
     }
 #endif
 
+    if (m_suspendedForPageCache)
+        willDestroyCachedFrame();
+    else
+        willDestroyDocumentInFrame();
+
     // As the ASSERTs above indicate, this clear should only be necesary if this DOMWindow is suspended for the page cache.
     // But we don't want to risk any of these objects hanging around after we've been destroyed.
     clearDOMWindowProperties();
@@ -467,6 +472,7 @@ Page* DOMWindow::page()
 
 void DOMWindow::frameDestroyed()
 {
+    willDestroyDocumentInFrame();
     FrameDestructionObserver::frameDestroyed();
     clearDOMWindowProperties();
 }
@@ -474,11 +480,36 @@ void DOMWindow::frameDestroyed()
 void DOMWindow::willDetachPage()
 {
     InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
+}
 
+void DOMWindow::willDestroyCachedFrame()
+{
+    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
     for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->willDetachPage();
+        properties[i]->willDestroyGlobalObjectInCachedFrame();
+}
+
+void DOMWindow::willDestroyDocumentInFrame()
+{
+    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
+    Vector<DOMWindowProperty*> properties;
+    copyToVector(m_properties, properties);
+    for (size_t i = 0; i < properties.size(); ++i)
+        properties[i]->willDestroyGlobalObjectInFrame();
+}
+
+void DOMWindow::willDetachDocumentFromFrame()
+{
+    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
+    Vector<DOMWindowProperty*> properties;
+    copyToVector(m_properties, properties);
+    for (size_t i = 0; i < properties.size(); ++i)
+        properties[i]->willDetachGlobalObjectFromFrame();
 }
 
 void DOMWindow::registerProperty(DOMWindowProperty* property)
@@ -499,6 +530,7 @@ void DOMWindow::clear()
     if (m_suspendedForPageCache)
         return;
     
+    willDestroyDocumentInFrame();
     clearDOMWindowProperties();
 }
 
@@ -516,24 +548,27 @@ void DOMWindow::resumeFromPageCache()
 
 void DOMWindow::disconnectDOMWindowProperties()
 {
+    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForPageCache.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
     for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->disconnectFrame();
+        properties[i]->disconnectFrameForPageCache();
 }
 
 void DOMWindow::reconnectDOMWindowProperties()
 {
     ASSERT(m_suspendedForPageCache);
+    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // unregister themselves from the DOMWindow as a result of the call to reconnectFromPageCache.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
     for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->reconnectFrame(m_frame);
+        properties[i]->reconnectFrameFromPageCache(m_frame);
 }
 
 void DOMWindow::clearDOMWindowProperties()
 {
-    disconnectDOMWindowProperties();
     m_properties.clear();
 
     m_screen = 0;
