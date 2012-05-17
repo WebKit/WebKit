@@ -292,16 +292,16 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
         // RenderFlowThread should start painting its content in a position that is offset
         // from the region rect's current position. The amount of offset is equal to the location of
         // region in flow coordinates.
-        LayoutPoint renderFlowThreadOffset;
+        IntPoint renderFlowThreadOffset;
         if (style()->isFlippedBlocksWritingMode()) {
             LayoutRect flippedRegionRect(regionRect);
             flipForWritingMode(flippedRegionRect);
-            renderFlowThreadOffset = LayoutPoint(paintOffset - flippedRegionRect.location());
+            renderFlowThreadOffset = roundedIntPoint(paintOffset - flippedRegionRect.location());
         } else
-            renderFlowThreadOffset = LayoutPoint(paintOffset - regionRect.location());
+            renderFlowThreadOffset = roundedIntPoint(paintOffset - regionRect.location());
 
         context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
-        info.rect.moveBy(-roundedIntPoint(renderFlowThreadOffset));
+        info.rect.moveBy(-renderFlowThreadOffset);
         
         layer()->paint(context, info.rect, 0, 0, region, RenderLayer::PaintLayerTemporaryClipRects);
 
