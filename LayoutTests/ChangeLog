@@ -1,3 +1,13 @@
+2012-05-17  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline two tests on Mac and update Mac expectations after r117339
+
+        Unreviewed gardening.
+
+        * platform/mac/fast/repaint/float-overflow-expected.txt:
+        * platform/mac/fast/repaint/float-overflow-right-expected.txt:
+        * platform/mac/test_expectations.txt:
+
 2012-05-17  Dan Bernstein  <mitz@apple.com>
 
         In vertical writing modes, pagination may split a line after a block shifts

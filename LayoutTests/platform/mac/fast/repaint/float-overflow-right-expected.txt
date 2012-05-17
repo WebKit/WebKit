@@ -90,7 +90,7 @@ layer at (0,0) size 800x588
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (2,351) size 780x52 [border: (1px dotted #D3D3D3)]
         RenderBlock {DIV} at (779,1) size 0x6
-        RenderBlock (anonymous) at (1,7) size 778x32
+        RenderBlock (anonymous) at (1,7) size 778x28
           RenderTable {TABLE} at (670,0) size 58x28 [border: (1px solid #800080)]
             RenderTableSection {TBODY} at (6,6) size 46x16
               RenderTableRow {TR} at (0,2) size 46x12
