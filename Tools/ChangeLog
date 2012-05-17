@@ -1,3 +1,17 @@
+2012-05-17  Li Yin  <li.yin@intel.com>
+
+        [chromium] run-webkit-tests can't work on ubuntu 12.04
+        https://bugs.webkit.org/show_bug.cgi?id=86565
+
+        Reviewed by Kent Tamura.
+
+        On ubuntu 12.04, the package ttf-thai-tlwg install the Garuda.ttf
+        into /usr/share/fonts/truetype/tlwg/Garuda.ttf, not /usr/share/fonts/truetype/thai/Garuda.ttf
+
+        * DumpRenderTree/chromium/TestShellLinux.cpp:
+        (checkAndLoadFontFile):
+        (setupFontconfig):
+
 2012-05-17  Elliot Poger  <epoger@chromium.org>
 
         Add setting of additional_expectations option to 

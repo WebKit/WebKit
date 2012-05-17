@@ -80,6 +80,25 @@ void TestShell::waitTestFinished()
 }
 
 #if !OS(ANDROID)
+static bool checkAndLoadFontFile(FcConfig* fontcfg, const char* path1, const char* path2)
+{
+    const char* font = path1;
+    if (access(font, R_OK) < 0) {
+        font = path2;
+        if (access(font, R_OK) < 0) {
+            fprintf(stderr, "You are missing %s or %s. Without this, some layout tests may fail. "
+                            "See http://code.google.com/p/chromium/wiki/LayoutTestsLinux "
+                            "for more.\n", path1, path2);
+            return false;
+        }
+    }
+    if (!FcConfigAppFontAddFile(fontcfg, (FcChar8 *) font)) {
+        fprintf(stderr, "Failed to load font %s\n", font);
+        return false;
+    }
+    return true;
+}
+
 static void setupFontconfig()
 {
     // We wish to make the layout tests reproducable with respect to fonts. Skia
@@ -147,7 +166,6 @@ static void setupFontconfig()
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Bold_Italic.ttf",
         "/usr/share/fonts/truetype/msttcorefonts/Verdana_Italic.ttf",
-        "/usr/share/fonts/truetype/thai/Garuda.ttf",
         // The DejaVuSans font is used by the css2.1 tests.
         "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_hi.ttf",
@@ -167,28 +185,14 @@ static void setupFontconfig()
         }
     }
 
+    if (!checkAndLoadFontFile(fontcfg, "/usr/share/fonts/truetype/thai/Garuda.ttf",
+                              "/usr/share/fonts/truetype/tlwg/Garuda.ttf"))
+        exit(1);
+
     // We special case these fonts because they're only needed in a
     // few layout tests.
-    static const char* const optionalFonts[] = {
-        "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf",
-    };
-    for (size_t i = 0; i < arraysize(optionalFonts); ++i) {
-        const char* font = optionalFonts[i];
-
-        // This font changed paths across Ubuntu releases, so try checking in both locations.
-        if (!strcmp(font, "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf")
-            && access(font, R_OK) < 0)
-            font = "/usr/share/fonts/truetype/ttf-punjabi-fonts/lohit_pa.ttf";
-
-        if (access(font, R_OK) < 0) {
-            fprintf(stderr, "You are missing %s. Without this, some layout tests may fail. "
-                            "See http://code.google.com/p/chromium/wiki/LayoutTestsLinux "
-                            "for more.\n", font);
-        } else if (!FcConfigAppFontAddFile(fontcfg, (FcChar8 *) font)) {
-            fprintf(stderr, "Failed to load font %s\n", font);
-            exit(1);
-        }
-    }
+    checkAndLoadFontFile(fontcfg, "/usr/share/fonts/truetype/ttf-indic-fonts-core/lohit_pa.ttf", 
+                         "/usr/share/fonts/truetype/ttf-punjabi-fonts/lohit_pa.ttf");
 
     // Also load the layout-test-specific "Ahem" font.
     std::string ahemPath = drtDirPath + "AHEM____.TTF";
