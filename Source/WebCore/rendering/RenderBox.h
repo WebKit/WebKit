@@ -73,6 +73,9 @@ public:
     LayoutUnit logicalWidth() const { return style()->isHorizontalWritingMode() ? width() : height(); }
     LayoutUnit logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
 
+    int pixelSnappedLogicalHeight() const { return style()->isHorizontalWritingMode() ? pixelSnappedHeight() : pixelSnappedWidth(); }
+    int pixelSnappedLogicalWidth() const { return style()->isHorizontalWritingMode() ? pixelSnappedWidth() : pixelSnappedHeight(); }
+
     void setLogicalLeft(LayoutUnit left)
     {
         if (style()->isHorizontalWritingMode())

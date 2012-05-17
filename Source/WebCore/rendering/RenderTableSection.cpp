@@ -618,7 +618,7 @@ void RenderTableSection::layoutRows()
 
             int oldIntrinsicPaddingBefore = cell->intrinsicPaddingBefore();
             int oldIntrinsicPaddingAfter = cell->intrinsicPaddingAfter();
-            int logicalHeightWithoutIntrinsicPadding = cell->logicalHeight() - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
+            int logicalHeightWithoutIntrinsicPadding = cell->pixelSnappedLogicalHeight() - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
 
             int intrinsicPaddingBefore = 0;
             switch (cell->style()->verticalAlign()) {
