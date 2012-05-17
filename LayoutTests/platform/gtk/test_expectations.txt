@@ -1336,6 +1336,9 @@ BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
 BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
 
+// This test is affecting other tests and seems to be behaving incorrectly itself
+BUGWK86771 SKIP : fast/dom/gc-10.html = FAIL
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

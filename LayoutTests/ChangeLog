@@ -1,3 +1,12 @@
+2012-05-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] fast/dom/gc-10.html behaves badly
+        https://bugs.webkit.org/show_bug.cgi?id=86771
+
+        Unreviewed, skipping fast/dom/gc-10.html as it badly affects other tests.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-17  Robert Hogan  <robert@webkit.org>
 
         Rebaseline two tests on Mac and update Mac expectations after r117339
