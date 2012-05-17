@@ -145,7 +145,6 @@ public:
     virtual bool confirmComposition();
     virtual bool confirmComposition(const WebString& text);
     virtual bool compositionRange(size_t* location, size_t* length);
-    virtual WebTextInputInfo textInputInfo();
     virtual WebTextInputType textInputType();
     virtual bool selectionBounds(WebRect& start, WebRect& end) const;
     virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const;

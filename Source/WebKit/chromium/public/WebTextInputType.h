@@ -39,8 +39,6 @@ enum WebTextInputType {
 
     // Input caret is in a normal editable node, any input method can be used.
     WebTextInputTypeText,
-    WebTextInputTypeTextArea,
-    WebTextInputTypeContentEditable,
 
     // Input caret is in a specific input field, and input method may be used
     // only if it's suitable for the specific input field.
