@@ -75,6 +75,7 @@ CachedImage::CachedImage(Image* image)
 
 CachedImage::~CachedImage()
 {
+    clearImage();
 }
 
 void CachedImage::decodedDataDeletionTimerFired(Timer<CachedImage>*)
@@ -302,7 +303,7 @@ void CachedImage::clear()
 #if ENABLE(SVG)
     m_svgImageCache.clear();
 #endif
-    m_image = 0;
+    clearImage();
     setEncodedSize(0);
 }
 
@@ -326,6 +327,15 @@ inline void CachedImage::createImage()
     }
 #endif
     m_image = BitmapImage::create(this);
+}
+
+inline void CachedImage::clearImage()
+{
+    // If our Image has an observer, it's always us so we need to clear the back pointer
+    // before dropping our reference.
+    if (m_image)
+        m_image->setImageObserver(0);
+    m_image.clear();
 }
 
 size_t CachedImage::maximumDecodedImageSize()
