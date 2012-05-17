@@ -584,27 +584,36 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       count = q[1];
       gstate es = gif_skip_block;
 
-      // NOTE: We use the spec-mandated block lengths below where applicable,
-      // instead of the value in q[1]. If the two disagree, the GIF is
-      // malformed; the main thing we want to avoid is having the GIF specify a
-      // smaller number in q[1] than the spec requires and then having our
-      // processing code for these extensions blindly read off the end of a
-      // too-short heap buffer.
+      // The GIF spec mandates lengths for three of the extensions below.
+      // However, it's possible for GIFs in the wild to deviate. For example,
+      // some GIFs that embed ICC color profiles using gif_application_extension
+      // violate the spec and treat this extension block like a sort of
+      // "extension + data" block, giving a size greater than 11 and filling the
+      // remaining bytes with data (then following with more data blocks as
+      // needed), instead of placing a true data block just after the 11 byte
+      // extension block.
+      //
+      // Accordingly, if the specified length is larger than the required value,
+      // we use it. If it's smaller, then we enforce the spec value, because the
+      // parsers for these extensions expect to have the specified number of
+      // bytes available, and if we don't ensure that, they could read off the
+      // end of the heap buffer. (In this case, it's likely the GIF is corrupt
+      // and we'll soon fail to decode anyway.)
       switch (*q)
       {
       case 0xf9:
         es = gif_control_extension;
-        count = 4;
+        count = std::max(count, 4);
         break;
 
       case 0x01:
         // ignoring plain text extension
-        count = 12;
+        count = std::max(count, 12);
         break;
 
       case 0xff:
         es = gif_application_extension;
-        count = 11;
+        count = std::max(count, 11);
         break;
 
       case 0xfe:
