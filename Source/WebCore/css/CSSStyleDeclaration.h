@@ -69,10 +69,6 @@ public:
     virtual bool cssPropertyMatches(const CSSProperty*) const = 0;
     virtual CSSStyleSheet* parentStyleSheet() const { return 0; }
 
-#ifndef NDEBUG
-    void showStyle();
-#endif
-
 protected:
     CSSStyleDeclaration() { }
 };

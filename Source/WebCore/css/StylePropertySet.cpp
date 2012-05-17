@@ -33,6 +33,12 @@
 #include <wtf/BitVector.h>
 #include <wtf/text/StringBuilder.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/text/CString.h>
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1022,5 +1028,12 @@ class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet>
     unsigned bitfield;
 };
 COMPILE_ASSERT(sizeof(StylePropertySet) == sizeof(SameSizeAsStylePropertySet), style_property_set_should_stay_small);
+
+#ifndef NDEBUG
+void StylePropertySet::showStyle()
+{
+    fprintf(stderr, "%s\n", asText().ascii().data());
+}
+#endif
 
 } // namespace WebCore

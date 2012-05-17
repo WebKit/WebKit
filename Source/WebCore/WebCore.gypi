@@ -2476,7 +2476,6 @@
             'css/CSSSelector.cpp',
             'css/CSSSelectorList.cpp',
             'css/CSSSelectorList.h',
-            'css/CSSStyleDeclaration.cpp',
             'css/CSSStyleRule.cpp',
             'css/CSSStyleRule.h',
             'css/CSSStyleSheet.cpp',

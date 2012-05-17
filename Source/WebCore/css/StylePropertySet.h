@@ -115,6 +115,10 @@ public:
 
     static unsigned averageSizeInBytes();
 
+#ifndef NDEBUG
+    void showStyle();
+#endif
+    
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const Vector<CSSProperty>&);

@@ -58,7 +58,6 @@
 #include "CSSSegmentedFontFace.cpp"
 #include "CSSSelector.cpp"
 #include "CSSSelectorList.cpp"
-#include "CSSStyleDeclaration.cpp"
 #include "CSSStyleRule.cpp"
 #include "CSSStyleSheet.cpp"
 #include "CSSTimingFunctionValue.cpp"
