@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,6 +39,7 @@
 WebInspector.ExtensionView = function(id, parent, src, className)
 {
     WebInspector.View.call(this);
+    this.element.className = "fill";
 
     this._id = id;
     this._iframe = document.createElement("iframe");
@@ -263,7 +264,9 @@ WebInspector.ExtensionSidebarPane.prototype = {
         if (this._extensionView)
             this._extensionView.detach(true);
 
-        this._extensionView = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension");
+        this._extensionView = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension fill");
+        if (!this.bodyElement.style.height)
+            this.setHeight("150px");
     },
 
     /**

@@ -993,6 +993,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 iframe.extension {
     width: 100%;
+    height: 100%;
 }
 
 iframe.panel.extension {
