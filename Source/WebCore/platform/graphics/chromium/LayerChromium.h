@@ -350,8 +350,6 @@ private:
     IntRect m_drawableContentRect;
     float m_contentsScale;
 
-    bool m_pageScaleDirty;
-
     CCLayerAnimationDelegate* m_layerAnimationDelegate;
 };
 

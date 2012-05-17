@@ -29,10 +29,13 @@
 #include "WebCommon.h"
 #include "WebLayer.h"
 
+namespace WebCore {
+class ContentLayerChromium;
+}
+
 namespace WebKit {
 class WebContentLayerClient;
 class WebContentLayerImpl;
-struct WebFloatRect;
 
 class WebContentLayer : public WebLayer {
 public:
@@ -47,14 +50,20 @@ public:
         return *this;
     }
 
-    // Sets whether the layer draws its content when compositing.
-    WEBKIT_EXPORT void setDrawsContent(bool);
-    WEBKIT_EXPORT bool drawsContent() const;
+    // Called when the WebContentLayerClient is going away and should not be used.
+    WEBKIT_EXPORT void clearClient();
+
+    // Set to true if the backside of this layer's contents should be visible when composited.
+    // Defaults to false.
+    WEBKIT_EXPORT void setDoubleSided(bool);
+
+    // Set to apply a scale factor used when painting and drawing this layer's content. Defaults to 1.0.
+    WEBKIT_EXPORT void setContentsScale(float);
 
 #if WEBKIT_IMPLEMENTATION
-    WebContentLayer(const WTF::PassRefPtr<WebContentLayerImpl>&);
-    WebContentLayer& operator=(const WTF::PassRefPtr<WebContentLayerImpl>&);
-    operator WTF::PassRefPtr<WebContentLayerImpl>() const;
+    WebContentLayer(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);
+    WebContentLayer& operator=(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);
+    operator WTF::PassRefPtr<WebCore::ContentLayerChromium>() const;
 #endif
 };
 

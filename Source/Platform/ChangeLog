@@ -1,3 +1,25 @@
+2012-05-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert GraphicsLayerChromium to use WebLayer types
+        https://bugs.webkit.org/show_bug.cgi?id=86269
+
+        Reviewed by Adrienne Walker.
+
+        Adds some new WebLayer / WebContentLayer APIs that WebCore::GraphicsLayerChromium needs.
+
+        * chromium/public/WebContentLayer.h:
+        (WebCore):
+        (WebKit):
+        (WebContentLayer):
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebKit::WebLayer::isNull):
+        (WebLayer):
+        * chromium/public/WebTransformationMatrix.h:
+        (WebKit::WebTransformationMatrix::~WebTransformationMatrix):
+            Fix a memory leak - WebPrivateOwnPtr<>s have to be explicitly cleared.
+        (WebTransformationMatrix):
+
 2012-05-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Clear the m_private pointer when destroying WebFilterOperations to avoid assert in WebPrivateOwnPtr

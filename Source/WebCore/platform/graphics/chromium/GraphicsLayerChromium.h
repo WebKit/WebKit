@@ -34,11 +34,12 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ContentLayerChromium.h"
-#include "LayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "cc/CCLayerAnimationDelegate.h"
 
+#include <public/WebContentLayer.h>
+#include <public/WebLayer.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -98,7 +99,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer*);
-    virtual bool hasContentsLayer() const { return m_contentsLayer; }
+    virtual bool hasContentsLayer() const { return !m_contentsLayer.isNull(); }
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String&, double timeOffset);
     virtual void pauseAnimation(const String& animationName, double timeOffset);
@@ -123,16 +124,14 @@ public:
     virtual void notifyAnimationFinished(double finishTime);
 
     // Exposed for tests.
-    LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
+    WebKit::WebLayer contentsLayer() const { return m_contentsLayer; }
 
 private:
     virtual void willBeDestroyed();
 
-    typedef HashMap<String, int> AnimationIdMap;
-
-    LayerChromium* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
-    LayerChromium* hostLayerForChildren() const;
-    LayerChromium* layerForParent() const;
+    WebKit::WebLayer primaryLayer() const  { return m_transformLayer.isNull() ? m_layer : m_transformLayer; }
+    WebKit::WebLayer hostLayerForChildren() const;
+    WebKit::WebLayer layerForParent() const;
 
     void updateNames();
     void updateChildList();
@@ -158,10 +157,9 @@ private:
 
     String m_nameBase;
 
-    RefPtr<ContentLayerChromium> m_layer;
-    RefPtr<LayerChromium> m_transformLayer;
-    RefPtr<LayerChromium> m_contentsLayer;
-    RefPtr<LinkHighlight> m_linkHighlight;
+    WebKit::WebContentLayer m_layer;
+    WebKit::WebLayer m_transformLayer;
+    WebKit::WebLayer m_contentsLayer;
 
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
@@ -175,6 +173,9 @@ private:
     bool m_inSetChildren;
     bool m_pageScaleChanged;
 
+    RefPtr<LinkHighlight> m_linkHighlight;
+
+    typedef HashMap<String, int> AnimationIdMap;
     AnimationIdMap m_animationIdMap;
 };
 

@@ -53,11 +53,6 @@ WebContentLayerImpl::~WebContentLayerImpl()
     clearDelegate();
 }
 
-void WebContentLayerImpl::setDrawsContent(bool drawsContent)
-{
-    setIsDrawable(drawsContent);
-}
-
 void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip)
 {
     if (!m_contentClient)

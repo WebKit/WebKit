@@ -24,10 +24,12 @@
  */
 
 #include "config.h"
-#include "platform/WebContentLayer.h"
+#include <public/WebContentLayer.h>
 
-#include "platform/WebFloatRect.h"
+#include "ContentLayerChromium.h"
 #include "WebContentLayerImpl.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -36,30 +38,35 @@ WebContentLayer WebContentLayer::create(WebContentLayerClient* contentClient)
     return WebContentLayer(WebContentLayerImpl::create(contentClient));
 }
 
-void WebContentLayer::setDrawsContent(bool drawsContent)
+void WebContentLayer::clearClient()
 {
-    unwrap<WebContentLayerImpl>()->setDrawsContent(drawsContent);
+    unwrap<ContentLayerChromium>()->clearDelegate();
 }
 
-bool WebContentLayer::drawsContent() const
+void WebContentLayer::setDoubleSided(bool doubleSided)
 {
-    return constUnwrap<WebContentLayerImpl>()->drawsContent();
+    m_private->setDoubleSided(doubleSided);
 }
 
-WebContentLayer::WebContentLayer(const PassRefPtr<WebContentLayerImpl>& node)
+void WebContentLayer::setContentsScale(float scale)
+{
+    m_private->setContentsScale(scale);
+}
+
+WebContentLayer::WebContentLayer(const PassRefPtr<ContentLayerChromium>& node)
     : WebLayer(node)
 {
 }
 
-WebContentLayer& WebContentLayer::operator=(const PassRefPtr<WebContentLayerImpl>& node)
+WebContentLayer& WebContentLayer::operator=(const PassRefPtr<ContentLayerChromium>& node)
 {
     m_private = node;
     return *this;
 }
 
-WebContentLayer::operator PassRefPtr<WebContentLayerImpl>() const
+WebContentLayer::operator PassRefPtr<ContentLayerChromium>() const
 {
-    return static_cast<WebContentLayerImpl*>(m_private.get());
+    return static_cast<ContentLayerChromium*>(m_private.get());
 }
 
 } // namespace WebKit

@@ -35,6 +35,7 @@ namespace WebCore { class LayerChromium; }
 
 namespace WebKit {
 class WebFilterOperations;
+class WebTransformationMatrix;
 struct WebFloatPoint;
 struct WebFloatRect;
 struct WebSize;
@@ -51,7 +52,7 @@ public:
         assign(layer);
         return *this;
     }
-    bool isNull() { return m_private.isNull(); }
+    bool isNull() const { return m_private.isNull(); }
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebLayer&);
     WEBKIT_EXPORT bool equals(const WebLayer&) const;
@@ -95,13 +96,19 @@ public:
     WEBKIT_EXPORT WebFloatPoint position() const;
 
     WEBKIT_EXPORT void setSublayerTransform(const SkMatrix44&);
+    WEBKIT_EXPORT void setSublayerTransform(const WebTransformationMatrix&);
     WEBKIT_EXPORT SkMatrix44 sublayerTransform() const;
 
     WEBKIT_EXPORT void setTransform(const SkMatrix44&);
+    WEBKIT_EXPORT void setTransform(const WebTransformationMatrix&);
     WEBKIT_EXPORT SkMatrix44 transform() const;
 
-    WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
-    WEBKIT_EXPORT void setDebugBorderWidth(float);
+    // Sets whether the layer draws its content when compositing.
+    WEBKIT_EXPORT void setDrawsContent(bool);
+    WEBKIT_EXPORT bool drawsContent() const;
+
+    WEBKIT_EXPORT void setPreserves3D(bool);
+    WEBKIT_EXPORT void setBackgroundColor(WebColor);
 
     // Clear the filters in use by passing in a newly instantiated
     // WebFilterOperations object.
@@ -113,6 +120,9 @@ public:
     // filtered layer sets certain properties (opacity, transforms), it may
     // conflict and hide the background filters.
     WEBKIT_EXPORT void setBackgroundFilters(const WebFilterOperations&);
+
+    WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
+    WEBKIT_EXPORT void setDebugBorderWidth(float);
 
     template<typename T> T to()
     {

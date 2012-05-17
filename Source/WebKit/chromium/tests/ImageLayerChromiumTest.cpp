@@ -121,13 +121,13 @@ TEST(ImageLayerChromiumTest, opaqueImages)
     RefPtr<Image> nonOpaqueImage = TestImage::create(IntSize(100, 100), false);
     ASSERT_TRUE(nonOpaqueImage.get());
 
-    ASSERT_FALSE(graphicsLayer->contentsLayer());
+    ASSERT_TRUE(graphicsLayer->contentsLayer().isNull());
 
     graphicsLayer->setContentsToImage(opaqueImage.get());
-    ASSERT_TRUE(graphicsLayer->contentsLayer()->opaque());
+    ASSERT_TRUE(graphicsLayer->contentsLayer().opaque());
 
     graphicsLayer->setContentsToImage(nonOpaqueImage.get());
-    ASSERT_FALSE(graphicsLayer->contentsLayer()->opaque());
+    ASSERT_FALSE(graphicsLayer->contentsLayer().opaque());
 }
 
 } // namespace
