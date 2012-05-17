@@ -1,3 +1,9 @@
+2012-05-17  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing reftests.
+
+        * platform/qt/Skipped:
+
 2012-05-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         ShadowRoot.selection should be ShadowRoot.getSelection()

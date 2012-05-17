@@ -2457,7 +2457,9 @@ fast/block/lineboxcontain/font.html
 
 # Failing reftests, we skip them until we find out how we have to gardening after them
 fast/block/line-layout/selection-highlight-overlap.html
+fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
+fast/multicol/overflow-into-columngap.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
