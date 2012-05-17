@@ -240,6 +240,9 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
     m_frontendClient = frontendClient.get();
     controller->setInspectorFrontendClient(frontendClient.release());
     m_frontendWebPage = inspectorPage;
+
+    // Web Inspector should not belong to any other page groups since it is a specialized debugger window.
+    m_frontendWebPage->handle()->page->setGroupName("__WebInspectorPageGroup__");
 #endif
 }
 

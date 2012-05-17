@@ -1,3 +1,17 @@
+2012-05-17  Tsarko Yaroslav  <eriktsarko@googlemail.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Bug 71271: [Qt] Web Inspector: local inspector client UI becomes unresponsive on debugger pause during
+        https://bugs.webkit.org/show_bug.cgi?id=71271
+
+        Web Inspector should not belong to any other page groups since it is a specialized debugger window.
+        The reason for this change is when debugger pauses web page it pauses all the pages in the page group of debuggee.
+        This leads that Web Inspector front-end is paused too leading to locked Web Inspector GUI (bugzilla ticket 71271).
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::openInspectorFrontend):
+
 2012-05-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert setDomainRelaxationForbiddenForURLScheme to use InternalSettings interface
