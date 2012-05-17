@@ -1,5 +1,11 @@
 2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, unksip one more now passing test.
+
+        * platform/qt/Skipped:
+
+2012-05-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, unksip a now passing test.
 
         * platform/qt/Skipped:

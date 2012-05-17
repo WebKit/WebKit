@@ -2283,10 +2283,6 @@ fast/parser/xhtml-innerhtml-null-byte.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=71120
 inspector/debugger/selected-call-frame-after-formatting-source.html
 
-# [Qt]REGRESSION(r92224): It made editing/text-iterator/basic-iteration.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=65605
-editing/text-iterator/basic-iteration.html
-
 # This test tickles another crasher on Qt.
 fast/loader/reload-zero-byte-plugin.html
 
