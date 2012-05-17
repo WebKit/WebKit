@@ -3790,8 +3790,6 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TI
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
 
-// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
-
 BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = TIMEOUT PASS
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
@@ -3819,3 +3817,4 @@ BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
 // Needs rebaseline after bug 86441
 BUGWK86441 WIN LINUX MAC : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 WIN LINUX MAC : fast/multicol/shadow-breaking.html = IMAGE
+

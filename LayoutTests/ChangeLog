@@ -1,3 +1,42 @@
+2012-05-17  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline Chromium results after r117477
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/css2.1/20110323/table-height-algorithm-023-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-023-expected.png.
+        * platform/chromium-linux/css2.1/20110323/table-height-algorithm-024-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-024-expected.png.
+        * platform/chromium-linux/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-1-expected.png.
+        * platform/chromium-linux/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-2-expected.png.
+        * platform/chromium-mac-leopard/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug10296-1-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/table-height-algorithm-023-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-023-expected.txt.
+        * platform/chromium-win/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/table-height-algorithm-024-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/table-height-algorithm-024-expected.txt.
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-1-expected.txt.
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/table/mozilla-bug10296-vertical-align-2-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] fast/dom/gc-10.html behaves badly
