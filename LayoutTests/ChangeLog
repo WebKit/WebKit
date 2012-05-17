@@ -1,3 +1,9 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, unskip test after r117205.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-02  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: table-height-algorithm-023 and -024 fail

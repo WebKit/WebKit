@@ -425,7 +425,6 @@ BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
 
 // Fullscreen API not enabled.
-BUGWK85870 : media/media-fullscreen-inline.html = TEXT
 BUGWK85870 : media/media-fullscreen-not-in-document.html = TEXT
 
 // This test is specific to QuickTime media engine.
