@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.Blob.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -77,14 +77,14 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
     v8::Local<v8::Value> firstArg = args[0];
     if (!firstArg->IsArray())
-        return throwError("First argument of the constructor is not of type Array", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("First argument of the constructor is not of type Array");
 
     String type;
     String endings = "transparent";
 
     if (args.Length() > 1) {
         if (!args[1]->IsObject())
-            return throwError("Second argument of the constructor is not of type Object", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Second argument of the constructor is not of type Object");
 
         Dictionary dictionary(args[1]);
 
@@ -95,7 +95,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
-                return throwError("The endings property must be either \"transparent\" or \"native\"", V8Proxy::TypeError);
+                return V8Proxy::throwTypeError("The endings property must be either \"transparent\" or \"native\"");
         }
 
         v8::TryCatch tryCatchType;

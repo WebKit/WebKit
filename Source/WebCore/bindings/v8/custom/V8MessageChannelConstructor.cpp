@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
     // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();

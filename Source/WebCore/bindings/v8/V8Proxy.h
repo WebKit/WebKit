@@ -239,7 +239,7 @@ namespace WebCore {
         static v8::Handle<v8::Value> throwError(ErrorType, const char* message, v8::Isolate* = 0);
 
         // Helpers for throwing syntax and type errors with predefined messages.
-        static v8::Handle<v8::Value> throwTypeError();
+        static v8::Handle<v8::Value> throwTypeError(const char* = 0);
         static v8::Handle<v8::Value> throwNotEnoughArgumentsError();
 
         v8::Local<v8::Context> context();

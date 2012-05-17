@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.Intent.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -76,7 +76,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 3) {
         if (!extractTransferables(args[3], messagePortArrayTransferList, arrayBufferArrayTransferList))
-            return throwError("Could not extract transferables", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[2], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow);

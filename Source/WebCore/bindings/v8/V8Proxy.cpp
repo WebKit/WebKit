@@ -609,9 +609,9 @@ v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message, v
     }
 }
 
-v8::Handle<v8::Value> V8Proxy::throwTypeError()
+v8::Handle<v8::Value> V8Proxy::throwTypeError(const char* message)
 {
-    return throwError(TypeError, "Type error");
+    return throwError(TypeError, (message ? message : "Type error"));
 }
 
 v8::Handle<v8::Value> V8Proxy::throwNotEnoughArgumentsError()

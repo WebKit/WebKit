@@ -95,7 +95,7 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
     RefPtr<V8CustomVoidCallback> callback;
     if (args.Length() > 0) {
         if (!args[0]->IsObject())
-            return throwError("Callback must be of valid type.", V8Proxy::TypeError);
+            return V8Proxy::throwTypeError("Callback must be of valid type.");
  
         callback = V8CustomVoidCallback::create(args[0], context);
     }

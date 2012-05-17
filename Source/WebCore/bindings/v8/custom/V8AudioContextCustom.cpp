@@ -44,7 +44,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     INC_STATS("DOM.AudioContext.Contructor");
 
     if (!args.IsConstructCall())
-        return throwError("AudioContext constructor cannot be called as a function.", V8Proxy::TypeError);
+        return V8Proxy::throwTypeError("AudioContext constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
