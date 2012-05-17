@@ -58,6 +58,7 @@
 #include "WebRange.h"
 #include "platform/WebRect.h"
 #include "WebScreenInfo.h"
+#include "platform/WebSerializedScriptValue.h"
 #include "platform/WebSize.h"
 #include "WebStorageNamespace.h"
 #include "WebTextCheckingCompletion.h"
@@ -1352,6 +1353,16 @@ void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& reque
         printf("Extras[%s] = %s\n", extras[i].utf8().data(),
                request.intent().extrasValue(extras[i]).utf8().data());
     }
+}
+
+void WebViewHost::deliveredIntentResult(WebFrame* frame, int id, const WebSerializedScriptValue& data)
+{
+    printf("Web intent success for id %d\n", id);
+}
+
+void WebViewHost::deliveredIntentFailure(WebFrame* frame, int id, const WebSerializedScriptValue& data)
+{
+    printf("Web intent failure for id %d\n", id);
 }
 
 // Public functions -----------------------------------------------------------

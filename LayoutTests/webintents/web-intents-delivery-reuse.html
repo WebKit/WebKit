@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+    shouldBeNull('webkitIntent');
+
+    webkitIntent = "foo";
+    shouldBeEqualToString("webkitIntent", "foo");
+    shouldBeEqualToString("window.webkitIntent", "foo");
+
+    webkitIntent = null;
+    shouldBeNull('webkitIntent');
+
+    webkitIntent = "bar";
+    shouldBeEqualToString("webkitIntent", "bar");
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

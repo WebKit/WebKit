@@ -1,0 +1,9 @@
+PASS window.webkitIntent is null
+PASS window.webkitIntent is defined.
+PASS window.webkitIntent.action is "aaa"
+PASS window.webkitIntent.type is "ttt"
+PASS window.webkitIntent.data is "data"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

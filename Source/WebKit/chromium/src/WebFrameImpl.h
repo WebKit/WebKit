@@ -55,7 +55,9 @@ struct WindowFeatures;
 namespace WebKit {
 class ChromePrintContext;
 class WebDataSourceImpl;
+class WebDeliveredIntentClient;
 class WebInputElement;
+class WebIntent;
 class WebFrameClient;
 class WebPerformance;
 class WebPluginContainerImpl;
@@ -210,9 +212,6 @@ public:
     virtual void increaseMatchCount(int count, int identifier);
     virtual void resetMatchCount();
 
-    virtual void handleIntentResult(int, const WebString&);
-    virtual void handleIntentFailure(int, const WebString&);
-
     virtual void sendOrientationChangeEvent(int orientation);
 
     virtual void addEventListener(const WebString& eventType,
@@ -223,6 +222,8 @@ public:
     virtual void dispatchMessageEventWithOriginCheck(
         const WebSecurityOrigin& intendedTargetOrigin,
         const WebDOMEvent&);
+
+    virtual void deliverIntent(const WebIntent&, WebDeliveredIntentClient*);
 
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;

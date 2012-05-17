@@ -1,3 +1,24 @@
+2012-05-16  Greg Billock  <gbillock@google.com>
+
+        IDL and implementation for Web Intents delivery
+        https://bugs.webkit.org/show_bug.cgi?id=83634
+
+        Reviewed by Adam Barth.
+
+        The embedder will implement the WebDeliveredIntentClient interface, which
+        will get notifications of postResult/postFailure from the service page.
+
+        * public/WebDeliveredIntentClient.h:
+        * public/WebFrame.h:
+        (WebKit):
+        (WebFrame):
+        * src/WebDeliveredIntentClient.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::deliverIntent):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-05-16  James Robinson  <jamesr@chromium.org>
 
         GraphicsContext3D interface should not be aware of CanvasRenderingContext

@@ -1,0 +1,9 @@
+PASS webkitIntent is null
+PASS webkitIntent is "foo"
+PASS window.webkitIntent is "foo"
+PASS webkitIntent is null
+PASS webkitIntent is "bar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

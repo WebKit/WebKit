@@ -32,11 +32,25 @@
 #include "WebIntent.h"
 
 #include "Intent.h"
+#include "MessagePort.h"
 #include "PlatformMessagePortChannel.h"
 #include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {
+
+WebIntent::WebIntent(const WebString& action, const WebString& type, const WebString& data)
+{
+#if ENABLE(WEB_INTENTS)
+    WebCore::ExceptionCode ec = 0;
+    WebCore::MessagePortArray ports;
+    RefPtr<WebCore::Intent> intent = WebCore::Intent::create(action, type, WebCore::SerializedScriptValue::createFromWire(data), ports, ec);
+    if (ec)
+        return;
+
+    m_private = intent.release();
+#endif
+}
 
 #if ENABLE(WEB_INTENTS)
 WebIntent::WebIntent(const PassRefPtr<WebCore::Intent>& intent)
@@ -128,6 +142,11 @@ WebMessagePortChannelArray* WebIntent::messagePortChannelsRelease() const
     }
 
     return webChannels;
+}
+
+WebIntent::operator WebCore::Intent*() const
+{
+    return m_private.get();
 }
 
 WebVector<WebString> WebIntent::extrasNames() const

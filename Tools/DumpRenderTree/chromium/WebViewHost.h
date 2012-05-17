@@ -58,6 +58,7 @@ class WebGeolocationClient;
 class WebGeolocationClientMock;
 class WebGeolocationServiceMock;
 class WebIntentServiceInfo;
+class WebSerializedScriptValue;
 class WebSharedWorkerClient;
 class WebSpeechInputController;
 class WebSpeechInputListener;
@@ -242,6 +243,8 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual bool willCheckAndDispatchMessageEvent(WebKit::WebFrame* source, WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);
     virtual void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
     virtual void dispatchIntent(WebKit::WebFrame*, const WebKit::WebIntentRequest&);
+    virtual void deliveredIntentResult(WebKit::WebFrame*, int, const WebKit::WebSerializedScriptValue&);
+    virtual void deliveredIntentFailure(WebKit::WebFrame*, int, const WebKit::WebSerializedScriptValue&);
 
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
     

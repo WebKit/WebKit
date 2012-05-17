@@ -48,6 +48,7 @@ namespace WebKit {
 class WebIntent {
 public:
     WebIntent() { }
+    WebIntent(const WebString& action, const WebString& type, const WebString& data);
     WebIntent(const WebIntent& other) { assign(other); }
     ~WebIntent() { reset(); }
 
@@ -80,6 +81,7 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebIntent(const WTF::PassRefPtr<WebCore::Intent>&);
+    operator WebCore::Intent*() const;
 #endif
 
 private:

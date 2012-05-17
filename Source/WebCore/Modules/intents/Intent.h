@@ -53,6 +53,8 @@ public:
     static PassRefPtr<Intent> create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, const MessagePortArray& ports, ExceptionCode&);
     static PassRefPtr<Intent> create(ScriptState*, const Dictionary&, ExceptionCode&);
 
+    virtual ~Intent() { }
+
     const String& action() const { return m_action; }
     const String& type() const { return m_type; }
     SerializedScriptValue* data() const { return m_data.get(); }
@@ -67,7 +69,6 @@ protected:
            const WTF::HashMap<String, String>& extras, const KURL& service);
 
 private:
-
     String m_action;
     String m_type;
     RefPtr<SerializedScriptValue> m_data;

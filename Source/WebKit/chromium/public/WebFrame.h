@@ -57,11 +57,13 @@ namespace WebKit {
 class WebAnimationController;
 class WebData;
 class WebDataSource;
+class WebDeliveredIntentClient;
 class WebDocument;
 class WebElement;
 class WebFormElement;
 class WebHistoryItem;
 class WebInputElement;
+class WebIntent;
 class WebPerformance;
 class WebRange;
 class WebSecurityOrigin;
@@ -605,16 +607,8 @@ public:
 
     // Web Intents ---------------------------------------------------------
 
-    // Forwards a web intents reply from the invoked activity back to the
-    // appropriate registered Javascript callback. The |intentIdentifier| is
-    // the WebIntent parameter received from the dispatchIntent method.
-    virtual void handleIntentResult(int intentIdentifier, const WebString&) = 0;
-
-    // Forwards a web intents failure notification from the invoked activity
-    // or intervening browser logic back to the appropriate registered
-    // Javascript callback. The |intentIdentifier| is the WebIntent parameter
-    // received from the dispatchIntent method.
-    virtual void handleIntentFailure(int intentIdentifier, const WebString&) = 0;
+    // Called on a target service page to deliver an intent to the window.
+    virtual void deliverIntent(const WebIntent&, WebDeliveredIntentClient*) = 0;
 
 
     // Utility -------------------------------------------------------------

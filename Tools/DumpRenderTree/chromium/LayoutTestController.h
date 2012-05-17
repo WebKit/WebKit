@@ -43,6 +43,7 @@
 
 #include "CppBoundClass.h"
 #include "Task.h"
+#include "WebDeliveredIntentClient.h"
 #include "platform/WebArrayBufferView.h"
 #include "platform/WebString.h"
 #include "WebTextDirection.h"
@@ -438,8 +439,11 @@ public:
     void workerThreadCount(CppVariant*);
 
     // Expects one string argument for sending successful result, zero
-    // for sending a failure result.
+    // arguments for sending a failure result.
     void sendWebIntentResponse(const CppArgumentList&, CppVariant*);
+
+    // Cause the web intent to be delivered to this context.
+    void deliverWebIntent(const CppArgumentList&, CppVariant*);
 
 public:
     // The following methods are not exposed to JavaScript.
@@ -704,6 +708,9 @@ private:
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;
+
+    // Mock object for testing delivering web intents.
+    OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;
 
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 

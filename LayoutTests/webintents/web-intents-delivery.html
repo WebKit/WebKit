@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+  shouldBeNull("window.webkitIntent");
+
+  if (window.layoutTestController) {
+    window.layoutTestController.deliverWebIntent("aaa", "ttt", "data");
+  }
+
+  shouldBeDefined("window.webkitIntent");
+  shouldBeEqualToString("window.webkitIntent.action", "aaa");
+  shouldBeEqualToString("window.webkitIntent.type", "ttt");
+  shouldBeEqualToString("window.webkitIntent.data", "data");
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

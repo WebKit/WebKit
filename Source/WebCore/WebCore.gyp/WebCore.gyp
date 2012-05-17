@@ -1021,6 +1021,7 @@
             'generator_include_dirs': [
               '--include', '../Modules/filesystem',
               '--include', '../Modules/indexeddb',
+              '--include', '../Modules/intents',
               '--include', '../Modules/mediastream',
               '--include', '../Modules/webaudio',
               '--include', '../Modules/webdatabase',

@@ -988,8 +988,8 @@ END
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)), info.GetIsolate());\n");
         }
     } elsif ($attribute->signature->type eq "MessagePortArray") {
-        AddToImplIncludes("V8Array.h");
         AddToImplIncludes("MessagePort.h");
+        AddToImplIncludes("V8MessagePort.h");
         my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
         push(@implContentDecls, <<END);
     MessagePortArray* ports = imp->${getterFunc}();

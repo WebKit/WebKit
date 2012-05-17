@@ -31,6 +31,8 @@ module window {
         Supplemental=DOMWindow
     ] DOMWindowIntents {
         attribute IntentConstructor WebKitIntent;
+
+        readonly attribute [Replaceable] DeliveredIntent webkitIntent;
     };
 
 }

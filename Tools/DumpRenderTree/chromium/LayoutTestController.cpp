@@ -49,6 +49,7 @@
 #include "WebGeolocationClientMock.h"
 #include "WebIDBFactory.h"
 #include "WebInputElement.h"
+#include "WebIntent.h"
 #include "WebIntentRequest.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
@@ -79,12 +80,23 @@ using namespace WebCore;
 using namespace WebKit;
 using namespace std;
 
+class EmptyWebDeliveredIntentClient : public WebKit::WebDeliveredIntentClient {
+public:
+    EmptyWebDeliveredIntentClient() { }
+    ~EmptyWebDeliveredIntentClient() { }
+
+    virtual void postResult(const WebSerializedScriptValue& data) const { }
+    virtual void postFailure(const WebSerializedScriptValue& data) const { }
+    virtual void destroy() { }
+};
+
 LayoutTestController::LayoutTestController(TestShell* shell)
     : m_shell(shell)
     , m_closeRemainingWindows(false)
     , m_deferMainResourceDataLoad(false)
     , m_showDebugLayerTree(false)
     , m_workQueue(this)
+    , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
 {
 
@@ -271,6 +283,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
     bindProperty("workerThreadCount", &LayoutTestController::workerThreadCount);
     bindMethod("sendWebIntentResponse", &LayoutTestController::sendWebIntentResponse);
+    bindMethod("deliverWebIntent", &LayoutTestController::deliverWebIntent);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -2151,6 +2164,27 @@ void LayoutTestController::sendWebIntentResponse(const CppArgumentList& argument
         request->postFailure(WebKit::WebSerializedScriptValue::serialize(v8value));
     }
     result->setNull();
+}
+
+void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() <  3)
+        return;
+
+    v8::HandleScope scope;
+    v8::Local<v8::Context> ctx = m_shell->webView()->mainFrame()->mainWorldScriptContext();
+    result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
+    v8::Context::Scope cscope(ctx);
+
+    WebString action = cppVariantToWebString(arguments[0]);
+    WebString type = cppVariantToWebString(arguments[1]);
+    WebKit::WebCString data = cppVariantToWebString(arguments[2]).utf8();
+    WebSerializedScriptValue serializedData = WebSerializedScriptValue::serialize(
+        v8::String::New(data.data(), data.length()));
+
+    WebIntent intent(action, type, serializedData.toString());
+
+    m_shell->webView()->mainFrame()->deliverIntent(intent, m_intentClient.get());
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
