@@ -36,7 +36,7 @@ namespace WebCore {
 class NetworkInfoController;
 class Page;
 
-class NetworkInfoClient : public RefCounted<NetworkInfoClient> {
+class NetworkInfoClient {
 public:
     virtual ~NetworkInfoClient() { }
 

@@ -1,3 +1,17 @@
+2012-05-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        Memory leak in NetworkInfoClient
+        https://bugs.webkit.org/show_bug.cgi?id=86603
+
+        Reviewed by Adam Barth.
+
+        Fix a memory leak in NetworkInfoClient by using OwnPtr and making
+        the client to be owned by the View.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+
 2012-05-17  Hironori Bono  <hbono@chromium.org>
 
         [Refactoring] Move platform-specific code in Editor::respondToChangedSelection to the WebKit layer

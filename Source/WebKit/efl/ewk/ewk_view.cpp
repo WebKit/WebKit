@@ -239,6 +239,9 @@ struct _Ewk_View_Private_Data {
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
     OwnPtr<PageClientEfl> pageClient;
+#if ENABLE(NETWORK_INFO)
+    OwnPtr<WebCore::NetworkInfoClientEfl> networkInfoClient;
+#endif
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
@@ -728,7 +731,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
 
 #if ENABLE(NETWORK_INFO)
-    WebCore::provideNetworkInfoTo(priv->page.get(), new WebCore::NetworkInfoClientEfl);
+    priv->networkInfoClient = adoptPtr(new WebCore::NetworkInfoClientEfl);
+    WebCore::provideNetworkInfoTo(priv->page.get(), priv->networkInfoClient.get());
 #endif
 
 #if ENABLE(VIBRATION)
