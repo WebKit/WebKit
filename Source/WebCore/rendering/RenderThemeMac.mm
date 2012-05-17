@@ -734,18 +734,22 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo,
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
-    bool useNewGradient = true;
 #if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
-    // See comment in RenderThemeMac::textField() for a complete explanation of this.
-    useNewGradient = WebCore::deviceScaleFactor(o->frame()) != 1;
-    if (useNewGradient) {
-        useNewGradient = o->style()->hasAppearance()
-            && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
-            && !o->style()->hasBackgroundImage();
+    bool useNSTextFieldCell = o->style()->hasAppearance()
+        && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
+        && !o->style()->hasBackgroundImage();
+
+    // We do not use NSTextFieldCell to draw styled text fields on Lion and SnowLeopard because
+    // there are a number of bugs on those platforms that require NSTextFieldCell to be in charge
+    // of painting its own background. We need WebCore to paint styled backgrounds, so we'll use
+    // this WebCoreSystemInterface function instead.
+    if (!useNSTextFieldCell) {
+        wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
+        return false;
     }
 #endif
 
-    NSTextFieldCell* textField = this->textField(useNewGradient);
+    NSTextFieldCell *textField = this->textField();
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
@@ -2164,7 +2168,7 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     return m_sliderThumbVertical.get();
 }
 
-NSTextFieldCell* RenderThemeMac::textField(bool useNewGradient) const
+NSTextFieldCell* RenderThemeMac::textField() const
 {
     if (!m_textField) {
         m_textField.adoptNS([[WebCoreTextFieldCell alloc] initTextCell:@""]);
@@ -2173,26 +2177,14 @@ NSTextFieldCell* RenderThemeMac::textField(bool useNewGradient) const
         [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
 #if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
         [m_textField.get() setDrawsBackground:YES];
+        [m_textField.get() setBackgroundColor:[NSColor whiteColor]];
 #else
-        UNUSED_PARAM(useNewGradient);
+        // Post-Lion, WebCore can be in charge of paintinng the background thanks to
+        // the workaround in place for <rdar://problem/11385461>, which is implemented
+        // above as _coreUIDrawOptionsWithFrame.
         [m_textField.get() setDrawsBackground:NO];
 #endif
     }
-
-#if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
-    // This is a workaround for <rdar://problem/11385461> on Lion and SnowLeopard. Newer versions of the
-    // OS can always use the newer version of the text field with the workaround above in
-    // _coreUIDrawOptionsWithFrame. With this workaround for older OS's, when the deviceScaleFactor is 1,
-    // we have an old-school gradient bezel in text fields whether they are styled or not. This is fine and
-    // matches shipping Safari. When the deviceScaleFactor is greater than 1, text fields will have newer,
-    // AppKit-matching gradients that look much more appropriate at the higher resolutions. However, if the
-    // text field is styled  in any way, we'll revert to the old-school bezel, which doesn't look great in
-    // HiDPI, but it looks better than the CSS border, which is the only alternative until 11385461 is resolved.
-    if (useNewGradient)
-        [m_textField.get() setBackgroundColor:[NSColor whiteColor]];
-    else
-        [m_textField.get() setBackgroundColor:[NSColor clearColor]];
-#endif
 
     return m_textField.get();
 }
