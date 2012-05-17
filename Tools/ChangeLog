@@ -1,3 +1,17 @@
+2012-05-17  Elliot Poger  <epoger@chromium.org>
+
+        Add setting of additional_expectations option to 
+        chromium_unittest.test_overrides_and_builder_names(),
+        so we can test order in which the base and chromium expectations files
+        are combined.
+
+        https://bugs.webkit.org/show_bug.cgi?id=86642
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_overrides_and_builder_names):
+
 2012-05-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Web process hangs while waiting for plugin process connection during layouttests

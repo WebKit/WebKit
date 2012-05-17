@@ -290,18 +290,40 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         port._filesystem = filesystem
         port.path_from_chromium_base = lambda *comps: '/' + '/'.join(comps)
 
-        overrides_path = port.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt')
-        OVERRIDES = 'foo'
-        filesystem.files[overrides_path] = OVERRIDES
+        chromium_overrides_path = port.path_from_chromium_base(
+            'webkit', 'tools', 'layout_tests', 'test_expectations.txt')
+        CHROMIUM_OVERRIDES = 'contents of %s\n' % chromium_overrides_path
+
+        filesystem.write_text_file(chromium_overrides_path, CHROMIUM_OVERRIDES)
+
+        additional_expectations_path = port.path_from_chromium_base(
+            'additional_expectations.txt')
+        ADDITIONAL_EXPECTATIONS = 'contents of %s\n' % additional_expectations_path
+        filesystem.write_text_file(additional_expectations_path, ADDITIONAL_EXPECTATIONS)
 
         port._options.builder_name = 'DUMMY_BUILDER_NAME'
-        self.assertEquals(port.test_expectations_overrides(), OVERRIDES)
+        port._options.additional_expectations = []
+        self.assertEquals(port.test_expectations_overrides(),
+                          CHROMIUM_OVERRIDES)
+        port._options.additional_expectations = [additional_expectations_path]
+        self.assertEquals(port.test_expectations_overrides(),
+                          CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
         port._options.builder_name = 'builder (deps)'
-        self.assertEquals(port.test_expectations_overrides(), OVERRIDES)
+        port._options.additional_expectations = []
+        self.assertEquals(port.test_expectations_overrides(),
+                          CHROMIUM_OVERRIDES)
+        port._options.additional_expectations = [additional_expectations_path]
+        self.assertEquals(port.test_expectations_overrides(),
+                          CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
         port._options.builder_name = 'builder'
-        self.assertEquals(port.test_expectations_overrides(), None)
+        port._options.additional_expectations = []
+        self.assertEquals(port.test_expectations_overrides(),
+                          None)
+        port._options.additional_expectations = [additional_expectations_path]
+        self.assertEquals(port.test_expectations_overrides(),
+                          ADDITIONAL_EXPECTATIONS)
 
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
