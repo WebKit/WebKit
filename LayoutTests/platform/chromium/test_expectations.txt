@@ -1012,7 +1012,8 @@ BUGCR64938 : editing/selection/5354455-1.html = TEXT
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
 // New test added in r82159
-BUGCR77706 : editing/spelling/grammar.html = FAIL
+BUGCR77706 LINUX XP WIN7 SNOWLEOPARD LION : editing/spelling/grammar.html = TEXT
+BUGCR77706 VISTA SLOW : editing/spelling/grammar.html = TEXT
 // Chromium does not have a grammar checker.
 BUGWK74393 : editing/spelling/grammar-paste.html = FAIL TIMEOUT
 
@@ -1497,9 +1498,6 @@ BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
 // Actual is just slightly off in color than expected
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-
-// Looks the same to me... huh. Variation of above?
-BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
 
 BUGCR23477 MAC : fast/backgrounds/bgCompositeCopy.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
@@ -2354,7 +2352,7 @@ BUGCR67416 LEOPARD : fast/text/emphasis.html = IMAGE
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 LINUX WIN : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 LINUX WIN : fast/text/emphasis-avoid-ruby.html = IMAGE
-BUGCR67540 LINUX WIN : fast/repaint/text-emphasis-h.html = FAIL
+BUGCR67540 LINUX WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 LINUX WIN : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67442 LINUX WIN : fast/canvas/fillText-shadow.html = TEXT
@@ -2363,7 +2361,7 @@ BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow
 BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = PASS CRASH
 
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
-BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT TEXT
+BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = TIMEOUT TEXT
 
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
@@ -2444,7 +2442,7 @@ WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 // We don't handle reflections in the right way to support this.
-BUGWK47949 : compositing/reflections/reflection-opacity.html = IMAGE
+BUGWK47949 LINUX WIN LEOPARD LION : compositing/reflections/reflection-opacity.html = IMAGE
 
 // Flaky because it's a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
@@ -2853,9 +2851,8 @@ BUGWK65199 LINUX WIN LEOPARD SNOWLEOPARD : fast/writing-mode/broken-ideograph-sm
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
-BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT TEXT
-BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = MISSING FAIL
-BUGWK74694 LINUX SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING FAIL
+BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = MISSING PASS
+BUGWK74694 LINUX SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
 
 BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
@@ -2910,10 +2907,6 @@ BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PA
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 
 BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
-
-// Tests that are known to fail on Mac10.6 with Skia graphics.
-BUGWK68436 SNOWLEOPARD DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
-BUGWK68436 SNOWLEOPARD : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia graphics.
 BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
@@ -3069,8 +3062,6 @@ BUGWK73607 LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = PASS CRA
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
-
-BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
 
 BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+TEXT
 
@@ -3535,7 +3526,6 @@ BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = 
 
 BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH TEXT PASS
 
-BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
 BUGWK83324 WIN DEBUG : fast/js/cross-global-object-inline-global-var.html = PASS TEXT
 
@@ -3765,4 +3755,4 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
-BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
+BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH PASS
