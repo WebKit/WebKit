@@ -46,6 +46,7 @@
 #include <PageGroup.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
+#include <ResourceLoadScheduler.h>
 #include <ScriptValue.h>
 #include <Settings.h>
 #include <TextIterator.h>
@@ -678,6 +679,11 @@ void DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(Evas_Object* ewkVie
         return;
 
     corePage->settings()->setAuthorAndUserStylesEnabled(enabled);
+}
+
+void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)
+{
+    WebCore::resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::setComposition(Evas_Object* ewkView, const char* text, int start, int length)

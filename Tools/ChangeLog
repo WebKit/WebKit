@@ -1,3 +1,18 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] DRT needs an implementation of layoutTestController.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=86101
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing implementation setSerializeHTTPLoads to allow
+        testing resource load order.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setSerializeHTTPLoads):
+
 2012-05-18  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] plumb the frame for which a drag was initiated to the WebViewClient

@@ -342,12 +342,6 @@ fast/viewport/viewport-legacy-xhtmlmp.html
 # viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 fast/viewport/viewport-133.html
 
-# EFL's LayoutTestController does not implement setSerializeHTTPLoads
-fast/preloader/document-write-2.html
-fast/preloader/document-write.html
-http/tests/local/link-stylesheet-load-order-preload.html
-http/tests/local/link-stylesheet-load-order.html
-
 # EFL's LayoutTestController does not implement setTextDirection
 fast/html/set-text-direction.html
 

@@ -1,3 +1,21 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] DRT needs an implementation of layoutTestController.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=86101
+
+        Reviewed by Ryosuke Niwa.
+
+        Unskip test cases which rely on LayoutTestController's setSerializeHTTPLoads
+        implementation and add EFL expectations for tests same as in mac port (MIME
+        type is "application/javascript" instead of "application/x-javascript").
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/loader/file-protocol-fragment-expected.txt: Removed. The current
+        result matches the base expectation, so removed the platform-specific results.
+        * platform/efl/fast/preloader/document-write-2-expected.txt: Added.
+        * platform/efl/fast/preloader/document-write-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Mac rebaseline after r117556.

@@ -1,3 +1,17 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] DRT needs an implementation of layoutTestController.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=86101
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing implementation setSerializeHTTPLoads to EFL's
+        DumpRenderTreeSupport to allow testing resource load order.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setSerializeHTTPLoads):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] appcache tests are flaky
