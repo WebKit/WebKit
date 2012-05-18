@@ -675,7 +675,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenClientGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenClientGtk.h \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp \
-	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPopupMenuProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPopupMenuProxyGtk.h \

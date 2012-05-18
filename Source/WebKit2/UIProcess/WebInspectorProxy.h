@@ -89,8 +89,6 @@ public:
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange();
-#elif PLATFORM(GTK)
-    void windowDestroyed();
 #endif
 
     void showConsole();
@@ -174,6 +172,10 @@ private:
 
     void onWebViewWindowPosChangingEvent(WPARAM, LPARAM);
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
+#endif
+
+#if PLATFORM(GTK)
+    void createInspectorWindow();
 #endif
 
     static const unsigned minimumWindowWidth = 500;

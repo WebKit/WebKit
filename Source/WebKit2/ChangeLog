@@ -1,5 +1,70 @@
 2012-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow to attach/detach the inspector in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=86823
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Also rename WebInspectorGtk.cpp as WebInspectorProxyGtk.cpp since
+        it implements the platform specific methods of WebInspectorProxy.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerAdd): Allow to add a WebView containing
+        the inspector as an internal child.
+        (webkitWebViewBaseContainerRemove): Check whether the widget
+        removed is the inspector web view.
+        (webkitWebViewBaseContainerForall): When includeInternals is True,
+        add also the inspector web view if it's present.
+        (resizeWebKitWebViewBaseFromAllocation): Allocate space for the
+        inspector web view if it's present.
+        (webkitWebViewBaseSetInspectorViewHeight): Private function used
+        by the inspector proxy to set the height of the inspector web
+        view.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy): Remove unneeded method windowDestroyed.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp: Renamed from Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp.
+        (WebKit::inspectorFilesBasePath):
+        (WebKit::inspectorWindowClosed): Renamed as inspectorWindowClosed
+        instead of inspectorWindowDestroyed, since this is called when the
+        window manager requests to close the window, and not when the
+        widget is destroyed. Also remove the call to windowDestroyed that
+        has been removed.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::createInspectorWindow): Helper
+        function to create the inspector window and add the inspector
+        view. Also set the inspector window as transient for the
+        inspected view toplevel window. And use a weak pointer to make
+        sure inspector window pointer is NULL when it's destroyed, not
+        only when the window is closed.
+        (WebKit::WebInspectorProxy::platformOpen): Call platformAttach if
+        the inspector is opened attached, or createInspectorWindow
+        otherwise.
+        (WebKit::WebInspectorProxy::platformDidClose): Always set the view
+        inspector pointer to NULL.
+        (WebKit::WebInspectorProxy::platformBringToFront): Implement it by
+        showing the toplevel window where the inspector view is contained.
+        (WebKit::WebInspectorProxy::platformIsFront): Implement it by
+        checking whether the toplevel window where the inspector view is
+        contained is active or not.
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Return
+        early if there's no inspector window.
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight): Return
+        the height of the inpected view.
+        (WebKit::WebInspectorProxy::platformAttach): Remove the view from
+        the current window if there's one, and insert the inspector view
+        into the inspected view.
+        (WebKit::WebInspectorProxy::platformDetach): Remove the inspector
+        view from the inspected view and create a new window for it if
+        it's visible.
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight): Call
+        webkitWebViewBaseSetInspectorViewHeight().
+
+2012-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Return TRUE for events handled to avoid their propagation.
 
         Reviewed by Gustavo Noronha Silva.

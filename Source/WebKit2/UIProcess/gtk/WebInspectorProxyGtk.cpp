@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +32,8 @@
 
 #include "WebKitWebViewBasePrivate.h"
 #include "WebProcessProxy.h"
-
 #include <WebCore/FileSystem.h>
-#include <WebCore/NotImplemented.h>
+#include <WebCore/GtkUtilities.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -54,24 +54,15 @@ static const char* inspectorFilesBasePath()
     return inspectorFilesPath;
 }
 
-static gboolean inspectorWindowDestroyed(GtkWidget* window, GdkEvent*, gpointer userData)
+static gboolean inspectorWindowClosed(GtkWidget* window, GdkEvent*, gpointer userData)
 {
     WebInspectorProxy* inspectorProxy = static_cast<WebInspectorProxy*>(userData);
 
     // Inform WebProcess about webinspector closure. Not doing so,
     // results in failure of subsequent invocation of webinspector.
     inspectorProxy->close();
-    inspectorProxy->windowDestroyed();
 
     return FALSE;
-}
-
-void WebInspectorProxy::windowDestroyed()
-{
-    ASSERT(m_inspectorView);
-    ASSERT(m_inspectorWindow);
-    m_inspectorView = 0;
-    m_inspectorWindow = 0;
 }
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
@@ -82,18 +73,35 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::createInspectorWindow()
 {
     ASSERT(!m_inspectorWindow);
     m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+    GtkWidget* inspectedViewParent = gtk_widget_get_toplevel(m_page->viewWidget());
+    if (WebCore::widgetIsOnscreenToplevelWindow(inspectedViewParent))
+        gtk_window_set_transient_for(GTK_WINDOW(m_inspectorWindow), GTK_WINDOW(inspectedViewParent));
+
     gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
     gtk_window_set_default_size(GTK_WINDOW(m_inspectorWindow), initialWindowWidth, initialWindowHeight);
-    g_signal_connect(m_inspectorWindow, "delete-event", G_CALLBACK(inspectorWindowDestroyed), this);
+    g_signal_connect(m_inspectorWindow, "delete-event", G_CALLBACK(inspectorWindowClosed), this);
 
     gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
     gtk_widget_show(m_inspectorView);
-    gtk_widget_show(m_inspectorWindow);
+
+    g_object_add_weak_pointer(G_OBJECT(m_inspectorWindow), reinterpret_cast<void**>(&m_inspectorWindow));
+    gtk_window_present(GTK_WINDOW(m_inspectorWindow));
+}
+
+void WebInspectorProxy::platformOpen()
+{
+    ASSERT(!m_inspectorWindow);
+    ASSERT(m_inspectorView);
+
+    if (m_isAttached)
+        platformAttach();
+    else
+        createInspectorWindow();
 }
 
 void WebInspectorProxy::platformDidClose()
@@ -101,23 +109,29 @@ void WebInspectorProxy::platformDidClose()
     if (m_inspectorWindow) {
         gtk_widget_destroy(m_inspectorWindow);
         m_inspectorWindow = 0;
-        m_inspectorView = 0;
     }
+    m_inspectorView = 0;
 }
 
 void WebInspectorProxy::platformBringToFront()
 {
-    notImplemented();
+    GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
+    if (WebCore::widgetIsOnscreenToplevelWindow(parent))
+        gtk_window_present(GTK_WINDOW(parent));
 }
 
 bool WebInspectorProxy::platformIsFront()
 {
-    notImplemented();
+    GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
+    if (WebCore::widgetIsOnscreenToplevelWindow(parent))
+        return m_isVisible && gtk_window_is_active(GTK_WINDOW(parent));
     return false;
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
+    if (!m_inspectorWindow)
+        return;
     GOwnPtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), url.utf8().data()));
     gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), title.get());
 }
@@ -137,23 +151,42 @@ String WebInspectorProxy::inspectorBaseURL() const
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
-    notImplemented();
-    return 0;
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(m_page->viewWidget(), &allocation);
+    return allocation.height;
 }
 
 void WebInspectorProxy::platformAttach()
 {
-    notImplemented();
+    GRefPtr<GtkWidget> inspectorView = m_inspectorView;
+    if (m_inspectorWindow) {
+        gtk_container_remove(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
+        gtk_widget_destroy(m_inspectorWindow);
+        m_inspectorWindow = 0;
+    }
+
+    gtk_container_add(GTK_CONTAINER(m_page->viewWidget()), m_inspectorView);
+    gtk_widget_show(m_inspectorView);
 }
 
 void WebInspectorProxy::platformDetach()
 {
-    notImplemented();
+    if (!m_page->isValid())
+        return;
+
+    GRefPtr<GtkWidget> inspectorView = m_inspectorView;
+    gtk_container_remove(GTK_CONTAINER(m_page->viewWidget()), m_inspectorView);
+    if (!m_isVisible)
+        return;
+
+    createInspectorWindow();
 }
 
-void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 {
-    notImplemented();
+    if (!m_isAttached)
+        return;
+    webkitWebViewBaseSetInspectorViewHeight(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
 }
 
 } // namespace WebKit

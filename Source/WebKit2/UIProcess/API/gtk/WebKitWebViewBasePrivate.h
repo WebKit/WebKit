@@ -45,5 +45,6 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebC
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);
+void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase*, unsigned height);
 
 #endif // WebKitWebViewBasePrivate_h
