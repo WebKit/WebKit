@@ -54,7 +54,6 @@ fast/events/context-onmousedown-event.html
 fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/fire-mousedown-while-pressing-mouse-button.html
-fast/events/mouseup-from-button2.html
 fast/events/open-window-from-another-frame.html
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/popup-blocking-click-in-iframe.html
