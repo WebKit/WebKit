@@ -758,9 +758,6 @@ fast/dom/Window/window-resize.html
 # BUG: window has wrong pixel and color depth
 fast/dom/Window/window-screen-properties.html
 
-# BUG: wrong test result, keypress should not be emitted
-fast/events/arrow-keys-on-body.html
-
 # BUG: wrong test result, window should not have been scrolled
 fast/events/attempt-scroll-with-no-scrollbars.html
 

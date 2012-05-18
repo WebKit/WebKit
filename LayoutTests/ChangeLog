@@ -1,3 +1,11 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Unskip test after r117218.
+
+        * platform/efl/Skipped:
+
 2012-05-18  Yi Shen  <yi.4.shen@nokia.com>
 
         REGRESSION (r102553): Smart links do not work
