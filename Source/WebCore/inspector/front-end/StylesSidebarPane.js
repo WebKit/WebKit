@@ -1186,7 +1186,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleSelectorContainerClick: function(event)
     {
-        if (this._checkWillCancelEditing())
+        if (this._checkWillCancelEditing() || !this.editable)
             return;
         if (event.target === this._selectorContainer)
             this.addNewBlankProperty(0).startEditing();
