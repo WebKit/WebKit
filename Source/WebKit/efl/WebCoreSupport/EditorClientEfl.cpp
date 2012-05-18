@@ -441,6 +441,10 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
     if (command.execute(event))
         return true;
 
+    // Don't allow text insertion for nodes that cannot edit.
+    if (!frame->editor()->canEdit())
+        return false;
+
     // Don't insert null or control characters as they can result in unexpected behaviour
     if (event->charCode() < ' ')
         return false;
