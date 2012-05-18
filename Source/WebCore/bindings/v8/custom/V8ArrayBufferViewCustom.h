@@ -139,7 +139,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (args[0]->IsNull()) {
         // Invalid first argument
         // FIXME: use forthcoming V8Proxy::throwTypeError().
-        return V8Proxy::throwError(V8Proxy::TypeError, "Type error");
+        return V8Proxy::throwTypeError();
     }
 
     // See whether the first argument is a ArrayBuffer.

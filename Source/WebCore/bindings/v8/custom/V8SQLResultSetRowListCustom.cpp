@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
     }
 
     if (!args[0]->IsNumber()) {
-        V8Proxy::throwError(V8Proxy::TypeError, "Item index must be a number.");
+        V8Proxy::throwTypeError("Item index must be a number.");
         return v8::Undefined();
     }
 

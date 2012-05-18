@@ -73,7 +73,7 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
     else {
         v8::Local<v8::Value> value = m_filter->ToObject()->Get(v8::String::New("acceptNode"));
         if (!value->IsFunction()) {
-            V8Proxy::throwError(V8Proxy::TypeError, "NodeFilter object does not have an acceptNode function");
+            V8Proxy::throwTypeError("NodeFilter object does not have an acceptNode function");
             return NodeFilter::FILTER_REJECT;
         }
         callback = v8::Handle<v8::Function>::Cast(value);

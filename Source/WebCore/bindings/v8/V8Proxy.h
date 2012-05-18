@@ -320,13 +320,6 @@ namespace WebCore {
         return v8::Local<v8::Object>();
     }
 
-    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type, v8::Isolate* isolate = 0)
-    {
-        if (!v8::V8::IsExecutionTerminating())
-            V8Proxy::throwError(type, message, isolate);
-        return v8::Undefined();
-    }
-
     inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())
