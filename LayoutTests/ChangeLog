@@ -1,3 +1,26 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Add baselines for new tests added in r117477 and r117339
+        https://bugs.webkit.org/show_bug.cgi?id=86834
+
+        Unreviewed, add EFL baselines for new tests added in r117477 and
+        r117339.
+
+        * platform/efl/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/efl/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/efl/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/efl/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/efl/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/efl/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/efl/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+
 2012-05-18  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85515
