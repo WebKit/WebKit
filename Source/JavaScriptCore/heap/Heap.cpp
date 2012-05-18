@@ -178,99 +178,19 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
     return true;
 }
 
-class CountFunctor {
-public:
-    typedef size_t ReturnType;
-
-    CountFunctor();
-    void count(size_t);
-    ReturnType returnValue();
-
-private:
-    ReturnType m_count;
+struct Count : public MarkedBlock::CountFunctor {
+    void operator()(JSCell*) { count(1); }
 };
 
-inline CountFunctor::CountFunctor()
-    : m_count(0)
-{
-}
-
-inline void CountFunctor::count(size_t count)
-{
-    m_count += count;
-}
-
-inline CountFunctor::ReturnType CountFunctor::returnValue()
-{
-    return m_count;
-}
-
-struct ClearMarks : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock*);
+struct CountIfGlobalObject : MarkedBlock::CountFunctor {
+    void operator()(JSCell* cell) {
+        if (!cell->isObject())
+            return;
+        if (!asObject(cell)->isGlobalObject())
+            return;
+        count(1);
+    }
 };
-
-inline void ClearMarks::operator()(MarkedBlock* block)
-{
-    block->clearMarks();
-}
-
-struct Sweep : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock*);
-};
-
-inline void Sweep::operator()(MarkedBlock* block)
-{
-    block->sweep();
-}
-
-struct MarkCount : CountFunctor {
-    void operator()(MarkedBlock*);
-};
-
-inline void MarkCount::operator()(MarkedBlock* block)
-{
-    count(block->markCount());
-}
-
-struct Size : CountFunctor {
-    void operator()(MarkedBlock*);
-};
-
-inline void Size::operator()(MarkedBlock* block)
-{
-    count(block->markCount() * block->cellSize());
-}
-
-struct Capacity : CountFunctor {
-    void operator()(MarkedBlock*);
-};
-
-inline void Capacity::operator()(MarkedBlock* block)
-{
-    count(block->capacity());
-}
-
-struct Count : public CountFunctor {
-    void operator()(JSCell*);
-};
-
-inline void Count::operator()(JSCell*)
-{
-    count(1);
-}
-
-struct CountIfGlobalObject : CountFunctor {
-    void operator()(JSCell*);
-};
-
-inline void CountIfGlobalObject::operator()(JSCell* cell)
-{
-    if (!cell->isObject())
-        return;
-    if (!asObject(cell)->isGlobalObject())
-        return;
-    count(1);
-}
 
 class RecordType {
 public:
@@ -363,9 +283,9 @@ void Heap::lastChanceToFinalize()
         WTFLogAlways("ERROR: JavaScriptCore heap deallocated while %ld values were still protected", static_cast<unsigned long>(size));
 
     m_weakSet.finalizeAll();
-    canonicalizeCellLivenessData();
-    clearMarks();
-    sweep();
+    m_objectSpace.canonicalizeCellLivenessData();
+    m_objectSpace.clearMarks();
+    m_objectSpace.sweep();
     m_globalData->smallStrings.finalizeSmallStrings();
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
@@ -540,7 +460,7 @@ void Heap::markRoots(bool fullGC)
 #endif
     {
         GCPHASE(clearMarks);
-        clearMarks();
+        m_objectSpace.clearMarks();
     }
 
     m_storageSpace.startedCopying();
@@ -661,29 +581,19 @@ void Heap::markRoots(bool fullGC)
     m_operationInProgress = NoOperation;
 }
 
-void Heap::clearMarks()
-{
-    m_objectSpace.forEachBlock<ClearMarks>();
-}
-
-void Heap::sweep()
-{
-    m_objectSpace.forEachBlock<Sweep>();
-}
-
 size_t Heap::objectCount()
 {
-    return m_objectSpace.forEachBlock<MarkCount>();
+    return m_objectSpace.objectCount();
 }
 
 size_t Heap::size()
 {
-    return m_objectSpace.forEachBlock<Size>() + m_storageSpace.size();
+    return m_objectSpace.size() + m_storageSpace.size();
 }
 
 size_t Heap::capacity()
 {
-    return m_objectSpace.forEachBlock<Capacity>() + m_storageSpace.capacity();
+    return m_objectSpace.capacity() + m_storageSpace.capacity();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -758,7 +668,7 @@ void Heap::collect(SweepToggle sweepToggle)
 #endif
     {
         GCPHASE(Canonicalize);
-        canonicalizeCellLivenessData();
+        m_objectSpace.canonicalizeCellLivenessData();
     }
 
     markRoots(fullGC);
@@ -777,8 +687,9 @@ void Heap::collect(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_MARKED();
 
     {
-        GCPHASE(ResetAllocator);
-        resetAllocators();
+        GCPHASE(ResetAllocators);
+        m_objectSpace.resetAllocators();
+        m_weakSet.resetAllocator();
     }
     
     {
@@ -789,7 +700,7 @@ void Heap::collect(SweepToggle sweepToggle)
     if (sweepToggle == DoSweep) {
         SamplingRegion samplingRegion("Garbage Collection: Sweeping");
         GCPHASE(Sweeping);
-        sweep();
+        m_objectSpace.sweep();
         m_objectSpace.shrink();
         m_weakSet.shrink();
         m_bytesAbandoned = 0;
@@ -808,17 +719,6 @@ void Heap::collect(SweepToggle sweepToggle)
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
     JAVASCRIPTCORE_GC_END();
-}
-
-void Heap::canonicalizeCellLivenessData()
-{
-    m_objectSpace.canonicalizeCellLivenessData();
-}
-
-void Heap::resetAllocators()
-{
-    m_objectSpace.resetAllocators();
-    m_weakSet.resetAllocator();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)

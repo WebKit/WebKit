@@ -188,22 +188,12 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
         JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
-        // Call this function before any operation that needs to know which cells
-        // in the heap are live. (For example, call this function before
-        // conservative marking, eager sweeping, or iterating the cells in a MarkedBlock.)
-        void canonicalizeCellLivenessData();
-
-        void resetAllocators();
-
-        void clearMarks();
         void markRoots(bool fullGC);
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         
-        void sweep();
-
         RegisterFile& registerFile();
         BlockAllocator& blockAllocator();
 

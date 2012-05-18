@@ -100,6 +100,18 @@ namespace JSC {
             void returnValue() { }
         };
 
+        class CountFunctor {
+        public:
+            typedef size_t ReturnType;
+
+            CountFunctor() : m_count(0) { }
+            void count(size_t count) { m_count += count; }
+            ReturnType returnValue() { return m_count; }
+
+        private:
+            ReturnType m_count;
+        };
+
         static MarkedBlock* create(Heap*, size_t cellSize, bool cellsNeedDestruction);
         static MarkedBlock* recycle(MarkedBlock*, Heap*, size_t cellSize, bool cellsNeedDestruction);
         static void destroy(MarkedBlock*);

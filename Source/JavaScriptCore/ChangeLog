@@ -1,5 +1,43 @@
 2012-05-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Refactored the Heap to move more MarkedSpace logic into MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=86790
+
+        Reviewed by Gavin Barraclough.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::markRoots):
+        (JSC):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap): Took all the functors from here...
+
+        * heap/MarkedBlock.h:
+        (CountFunctor):
+        (JSC::MarkedBlock::CountFunctor::CountFunctor):
+        (JSC::MarkedBlock::CountFunctor::count):
+        (JSC::MarkedBlock::CountFunctor::returnValue):
+        (MarkedBlock):
+        * heap/MarkedSpace.h:
+        (JSC::ClearMarks::operator()):
+        (JSC):
+        (JSC::Sweep::operator()):
+        (JSC::MarkCount::operator()):
+        (JSC::Size::operator()):
+        (JSC::Capacity::operator()):
+        (MarkedSpace):
+        (JSC::MarkedSpace::clearMarks):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::capacity): and put them here.
+
+2012-05-17  Geoffrey Garen  <ggaren@apple.com>
+
         Increase the GC allocation trigger
         https://bugs.webkit.org/show_bug.cgi?id=86699
 
