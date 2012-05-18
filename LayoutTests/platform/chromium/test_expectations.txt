@@ -3721,7 +3721,6 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
-BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT PASS
 BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-events.html = TIMEOUT PASS
 BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT PASS
 

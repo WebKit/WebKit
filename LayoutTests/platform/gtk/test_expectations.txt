@@ -1324,8 +1324,6 @@ BUGWK86443 : plugins/npruntime/delete-plugin-within-setProperty.html = FAIL
 
 BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE
 
-BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = FAIL
-
 BUGWK86284 : svg/text/add-tspan-position-bug.html = IMAGE
 BUGWK86284 : svg/text/modify-tspan-position-bug.html = IMAGE
 

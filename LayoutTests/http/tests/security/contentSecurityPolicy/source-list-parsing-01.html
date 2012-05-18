@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src='resources/source-list-parsing-base.js'></script>
+<script src='resources/multiple-iframe-test.js'></script>
 <script>
 var tests = [
-    ['yes', 'script-src 127.0.0.1:8000'],
-    ['yes', 'script-src http://127.0.0.1:8000'],
-    ['no',  'script-src https://127.0.0.1:8000'],
-    ['no',  'script-src https://127.0.0.1:*'],
-    ['no',  'script-src https://127.0.0.1:*  ']
+    ['yes', 'script-src 127.0.0.1:8000', 'resources/script.js'],
+    ['yes', 'script-src http://127.0.0.1:8000', 'resources/script.js'],
+    ['no',  'script-src https://127.0.0.1:8000', 'resources/script.js'],
+    ['no',  'script-src https://127.0.0.1:*', 'resources/script.js'],
+    ['no',  'script-src https://127.0.0.1:*  ', 'resources/script.js']
 ];
 </script>
 </head>

@@ -1,3 +1,32 @@
+2012-05-18  Mike West  <mkwst@chromium.org>
+
+        Deflaking http/tests/security/contentSecurityPolicy/script-src-redirect.html
+        https://bugs.webkit.org/show_bug.cgi?id=86433
+
+        Reviewed by Adam Barth.
+
+        As it turns out, this was a straightforward typo on my part. Loading
+        the wrong JS file is a surefire way to break tests. I've rewritten the
+        test function to make it more difficult to make such a mistake in the
+        future, and pushed that change to source-list-parsing-* tests that use
+        the same methodology.
+
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js: Renamed from LayoutTests/http/tests/security/contentSecurityPolicy/resources/source-list-parsing-base.js.
+        (test):
+        (finishTesting):
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-01.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-03.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-04.html:
+        * platform/chromium/test_expectations.txt: Unskipping.
+        * platform/mac-lion/Skipped: Unskipping.
+        * platform/gtk/test_expectations.txt: Unskipping.
+        * platform/efl/test_expectations.txt: Unskipping.
+        * platform/qt/Skipped: Unskipping.
+        * platform/mac/Skipped: Unskipping.
+
 2012-05-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: remove unnecessary indirection from profile types
