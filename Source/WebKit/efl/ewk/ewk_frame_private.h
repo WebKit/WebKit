@@ -22,6 +22,7 @@
 #define ewk_frame_private_h
 
 #include "ewk_frame.h"
+#include "ewk_intent_request.h"
 #include <Evas.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -67,6 +68,7 @@ void ewk_frame_view_create_for_view(Evas_Object* ewkFrame, Evas_Object* view);
 bool ewk_frame_uri_changed(Evas_Object* ewkFrame);
 void ewk_frame_force_layout(Evas_Object* ewkFrame);
 void ewk_frame_icon_changed(Evas_Object* ewkFrame);
+void ewk_frame_intent_new(Evas_Object* ewkFrame, Ewk_Intent_Request* request);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 

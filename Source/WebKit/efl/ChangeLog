@@ -1,3 +1,46 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add simple implementation of Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=86354
+
+        Reviewed by Eric Seidel.
+
+        Add new EFL wrappers for WebCore's Intent and IntentRequest.
+        Implement dispatchIntent() in EFL's FrameLoaderClient and emit a new
+        "intent,new" signal on the frame to notify clients of new intent
+        requests.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore):
+        (WebCore::FrameLoaderClientEfl::dispatchIntent):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (FrameLoaderClientEfl):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_intent_new):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_frame_private.h:
+        * ewk/ewk_intent.cpp: Added.
+        (_Ewk_Intent):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_data_get):
+        (ewk_intent_service_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_new):
+        (ewk_intent_free):
+        * ewk/ewk_intent.h: Added.
+        * ewk/ewk_intent_private.h: Added.
+        (WebCore):
+        * ewk/ewk_intent_request.cpp: Added.
+        (_Ewk_Intent_Request):
+        (ewk_intent_request_ref):
+        (ewk_intent_request_unref):
+        (ewk_intent_request_intent_get):
+        (ewk_intent_request_result_post):
+        (ewk_intent_request_failure_post):
+        (ewk_intent_request_new):
+        * ewk/ewk_intent_request.h: Added.
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][DRT] Call resetInternalsObject() after each test.

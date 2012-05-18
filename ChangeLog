@@ -1,3 +1,14 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add simple implementation of Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=86354
+
+        Reviewed by Eric Seidel.
+
+        Enable WEB_INTENTS flag by default on EFL port.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-05-17  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r117428): WebKit API/SPI was removed

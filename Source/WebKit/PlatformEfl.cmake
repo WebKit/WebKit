@@ -119,6 +119,8 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_view.cpp
     efl/ewk/ewk_view_single.cpp
     efl/ewk/ewk_view_tiled.cpp
+    efl/ewk/ewk_intent.cpp
+    efl/ewk/ewk_intent_request.cpp
     efl/ewk/ewk_window_features.cpp
     efl/ewk/ewk_web_database.cpp
 )
@@ -267,6 +269,8 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_security_policy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_intent.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_intent_request.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_web_database.h
 )

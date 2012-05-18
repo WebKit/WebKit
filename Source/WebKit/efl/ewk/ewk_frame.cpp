@@ -1518,6 +1518,18 @@ void ewk_frame_load_progress_changed(Evas_Object* ewkFrame)
     ewk_view_load_progress_changed(smartData->view);
 }
 
+/**
+ * @internal
+ * Reports new intent.
+ *
+ * Emits signal: "intent,new" with pointer to a Ewk_Intent_Request.
+ */
+void ewk_frame_intent_new(Evas_Object* ewkFrame, Ewk_Intent_Request* request)
+{
+#if ENABLE(WEB_INTENTS)
+    evas_object_smart_callback_call(ewkFrame, "intent,new", request);
+#endif
+}
 
 /**
  * @internal
