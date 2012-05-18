@@ -1,3 +1,18 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] More random gardening.
+
+        Remove a few tests which do not exist anymore from the skipped
+        list, and rebaseline and add expectations for a few others.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/html/font-weight-bold-for-b-and-strong-expected.txt: Added.
+        * platform/efl/fast/invalid/004-expected.txt:
+        * platform/efl/fast/invalid/010-expected.png:
+        * platform/efl/fast/invalid/010-expected.txt:
+        * platform/efl/fast/text/zero-font-size-expected.png: Added.
+        * platform/efl/fast/text/zero-font-size-expected.txt: Added.
+
 2012-05-18  Peter Kasting  <pkasting@google.com>
 
         [chromium] More expectations updates, mostly for flaky tests.

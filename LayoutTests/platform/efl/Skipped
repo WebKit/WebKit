@@ -1137,8 +1137,6 @@ fast/inline/inline-box-background-long-image.html
 fast/inline/inline-box-background-repeat-x.html
 fast/inline/inline-box-background-repeat-y.html
 fast/inline/inline-box-background.html
-fast/invalid/004.html
-fast/invalid/010.html
 fast/invalid/nestedh3s.html
 fast/invalid/residual-style.html
 fast/js/constructor-length.html
@@ -1439,8 +1437,6 @@ transitions/default-timing-function.html
 transitions/move-after-transition.html
 transitions/svg-text-shadow-transition.html
 transitions/svg-transitions.html
-fast/dom/Window/window-properties.html
-fast/dom/prototype-inheritance-2.html
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 editing/input/reveal-contenteditable-on-input-vertically.html
@@ -1580,7 +1576,6 @@ fast/forms/password-placeholder-text-security.html
 fast/forms/textarea-placeholder-visibility-1.html
 fast/forms/textarea-placeholder-visibility-2.html
 fast/forms/textarea-scrollbar.html
-fast/html/font-weight-bold-for-b-and-strong.html
 fast/js/global-constructors.html
 fast/line-grid/line-grid-floating.html
 fast/line-grid/line-grid-inside-columns.html
@@ -1608,7 +1603,6 @@ fast/selectors/177a.html
 fast/spatial-navigation/snav-multiple-select-focusring.html
 fast/text/delete-hard-break-character.html
 fast/text/unicode-variation-selector.html
-fast/text/zero-font-size.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
 fast/viewport/viewport-65.html
