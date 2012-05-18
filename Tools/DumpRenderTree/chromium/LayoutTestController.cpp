@@ -2216,6 +2216,11 @@ void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, C
     }
 }
 
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+{
+    // Not Implemented
+}
+
 void LayoutTestController::setTextDirection(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();

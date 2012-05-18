@@ -1996,6 +1996,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
 
     bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
+    bool shouldMarkLink = textCheckingOptions & TextCheckingTypeLink;
     bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
     bool shouldShowCorrectionPanel = textCheckingOptions & TextCheckingTypeShowCorrectionPanel;
     bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & TextCheckingTypeCorrection);
@@ -2080,7 +2081,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
-            if (!(shouldPerformReplacement || shouldShowCorrectionPanel) || !doReplacement)
+            if (!(shouldPerformReplacement || shouldShowCorrectionPanel || shouldMarkLink) || !doReplacement)
                 continue;
 
             String replacedString = plainText(rangeToReplace.get());

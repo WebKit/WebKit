@@ -1,0 +1,2 @@
+The www.foo.com should be underlined and there is an anchor node created for it.
+PASS: the anchor for 'www.foo.com' has been created.

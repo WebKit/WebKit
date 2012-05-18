@@ -888,3 +888,8 @@ void LayoutTestController::setPageVisibility(const char*)
 {
     notImplemented();
 }
+
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+{
+    notImplemented();
+}

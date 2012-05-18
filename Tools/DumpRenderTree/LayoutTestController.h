@@ -101,6 +101,7 @@ public:
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);
     void setJavaScriptProfilingEnabled(bool profilingEnabled);
     void setJavaScriptCanAccessClipboard(bool flag);
+    void setAutomaticLinkDetectionEnabled(bool flag);
     void setMainFrameIsFirstResponder(bool flag);
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     void setMockGeolocationError(int code, JSStringRef message);

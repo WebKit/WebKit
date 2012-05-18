@@ -2455,3 +2455,6 @@ inspector/extensions/extensions-audits-content-script.html
 # [Qt][GTK] New fast/multicol/split-in-top-margin.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=86445
 fast/multicol/split-in-top-margin.html
+
+# LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+editing/inserting/typing-space-to-trigger-smart-link.html

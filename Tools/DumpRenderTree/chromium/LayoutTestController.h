@@ -430,6 +430,9 @@ public:
 
     void selectionAsMarkup(const CppArgumentList&, CppVariant*);
 
+    // Switch the link detection.
+    void setAutomaticLinkDetectionEnabled(bool);
+
 #if ENABLE(POINTER_LOCK)
     void didLosePointerLock(const CppArgumentList&, CppVariant*);
     void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);

@@ -1780,6 +1780,9 @@ BUGWK SKIP : http/tests/appcache/origins-with-appcache.html = FAIL
 // LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 BUGWK SKIP : http/tests/appcache/origin-usage.html = FAIL
 
+// LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
+
 // Failures from WebKit merge 51711:51724
 BUGCR32003 : fast/js/string-property-deletion.html = TEXT
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.setAutomaticLinkDetectionEnabled(true);
+    }
+
+    var targetDiv = document.getElementById('test');
+    var targetText = targetDiv.firstChild;
+    window.getSelection().setPosition(targetText, 15);
+    pressKey(" ");
+    document.getElementById('log').textContent = targetDiv.innerHTML;
+    var expectedContents = "The <a href=\"http://www.foo.com\">www.foo.com</a> should be underlined and there is an anchor node created for it.";
+    if (expectedContents == targetDiv.innerHTML)
+        document.getElementById('log').textContent = "PASS: the anchor for 'www.foo.com' has been created."
+    else
+        document.getElementById('log').textContent = "Failed: the expected content was '" + expectedContents + "', but the actual result was '" + targetDiv.innerHTML + "'."
+
+    if (window.layoutTestController)
+        layoutTestController.setAutomaticLinkDetectionEnabled(false);
+}
+
+function pressKey(key)
+{
+    if (window.KeyEvent) {
+        var ev = document.createEvent("KeyboardEvent");
+        ev.initKeyEvent("keypress", true, true, window,  0,0,0,0, 0, key.charCodeAt(0));
+        document.body.dispatchEvent(ev);
+    } else {
+        var ev = document.createEvent("TextEvent");
+        ev.initTextEvent('textInput', true, true, null, key.charAt(0));
+        document.body.dispatchEvent(ev);
+    }
+}
+</script>
+</head>
+<body>
+<div id="test" contenteditable>The www.foo.comshould be underlined and there is an anchor node created for it.</div>
+<pre id="log"></pre>
+</body>
+<script>
+runTest()
+</script>
+</html>

@@ -240,6 +240,8 @@ public slots:
     void setPageVisibility(const char*);
     void resetPageVisibility();
 
+    void setAutomaticLinkDetectionEnabled(bool);
+
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.
     void abortModal() {}
 

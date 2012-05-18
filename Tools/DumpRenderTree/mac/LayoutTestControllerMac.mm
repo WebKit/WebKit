@@ -620,6 +620,11 @@ void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
     [[[mainFrame webView] preferences] setJavaScriptCanAccessClipboard:enabled];
 }
 
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool enabled)
+{
+    [[mainFrame webView] setAutomaticLinkDetectionEnabled:enabled];
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
 {
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];

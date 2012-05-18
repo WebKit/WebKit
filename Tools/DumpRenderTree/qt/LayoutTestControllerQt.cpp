@@ -974,6 +974,11 @@ void LayoutTestController::setPageVisibility(const char*)
     // FIXME: Implement this.
 }
 
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+{
+    // FIXME: Implement this.
+}
+
 QString LayoutTestController::layerTreeAsText()
 {
     return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());

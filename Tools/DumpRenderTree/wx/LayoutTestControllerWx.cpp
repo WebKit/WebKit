@@ -647,3 +647,8 @@ void LayoutTestController::setPageVisibility(const char*)
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+{
+    // FIXME: Implement this.
+}

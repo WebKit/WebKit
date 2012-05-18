@@ -462,3 +462,6 @@ BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
 BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
+
+// EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
+BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL

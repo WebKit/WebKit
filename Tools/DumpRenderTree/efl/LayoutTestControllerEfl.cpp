@@ -849,3 +849,8 @@ void LayoutTestController::setPageVisibility(const char* visibility)
     else if (newVisibility == "preview")
         ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_PREVIEW, false);
 }
+
+void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+{
+    notImplemented();
+}

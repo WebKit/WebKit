@@ -653,6 +653,9 @@ http/tests/xmlhttprequest/upload-onloadstart-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 
+// LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+editing/inserting/typing-space-to-trigger-smart-link.html
+
 ################################################################################
 ######################### Start list of r41995 failures ########################
 ################################################################################
