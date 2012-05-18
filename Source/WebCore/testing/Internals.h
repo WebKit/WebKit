@@ -96,6 +96,8 @@ public:
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
 
+    PassRefPtr<ClientRect> absoluteCaretBounds(Document*, ExceptionCode&);
+
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
     PassRefPtr<ClientRectList> inspectorHighlightRects(Document*, ExceptionCode&);

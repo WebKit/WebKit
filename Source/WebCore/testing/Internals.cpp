@@ -399,6 +399,16 @@ void Internals::selectColorInColorChooser(Element* element, const String& colorV
 }
 #endif
 
+PassRefPtr<ClientRect> Internals::absoluteCaretBounds(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame() || !document->frame()->selection()) {
+        ec = INVALID_ACCESS_ERR;
+        return ClientRect::create();
+    }
+
+    return ClientRect::create(document->frame()->selection()->absoluteCaretBounds());
+}
+
 PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
 {
     if (!element) {

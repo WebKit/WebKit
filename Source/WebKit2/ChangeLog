@@ -1,3 +1,15 @@
+2012-05-18  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Expose FrameSelection::absoluteCaretBounds via window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=86390
+
+        Reviewed by Ryosuke Niwa.
+
+        Exports necessary symbols.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to attach/detach the inspector in WebKit2

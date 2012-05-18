@@ -68,6 +68,8 @@ module window {
         void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
 
+        ClientRect absoluteCaretBounds(in Document document) raises(DOMException);
+
         ClientRect boundingBox(in Element element) raises(DOMException);
 
         ClientRectList inspectorHighlightRects(in Document document) raises (DOMException);
