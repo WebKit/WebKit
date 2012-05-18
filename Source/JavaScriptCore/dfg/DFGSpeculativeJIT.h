@@ -463,10 +463,9 @@ public:
                 fillAction = LoadPtr;
 #else
             ASSERT(info.tagGPR() == source || info.payloadGPR() == source);
-            if (node.hasConstant()) {
-                JSValue v = valueOfJSConstant(nodeIndex);
+            if (node.hasConstant())
                 fillAction = info.tagGPR() == source ? SetJSConstantTag : SetJSConstantPayload;
-            } else if (info.payloadGPR() == source)
+            else if (info.payloadGPR() == source)
                 fillAction = Load32Payload;
             else { // Fill the Tag
                 switch (info.spillFormat()) {
