@@ -1,3 +1,11 @@
+2012-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Fix
+        ietestcenter/css3/valuesandunits/units-000.htm expectations after
+        r117609.
+
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed gardening.

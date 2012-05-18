@@ -364,7 +364,7 @@ BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
-BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
+BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH IMAGE
 
 BUGWK86876 DEBUG : svg/text/text-tselect-02-f.svg = CRASH
 BUGWK86876 DEBUG : svg/custom/acid3-test-77.html = PASS CRASH
