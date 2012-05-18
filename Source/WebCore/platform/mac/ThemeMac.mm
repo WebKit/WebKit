@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2011, 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
+#import "WebCoreNSCellExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
@@ -76,31 +77,6 @@ NSRect focusRingClipRect;
 }
 
 @end
-
-#define BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION))
-
-#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
-
-@interface NSCell (WebFocusRingDrawing)
-- (void)_web_drawFocusRingWithFrame:(NSRect)cellFrame inView:(NSView *)controlView;
-@end
-
-@implementation NSCell (WebFocusRingDrawing)
-
-- (void)_web_drawFocusRingWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSaveGState(cgContext);
-    NSSetFocusRingStyle(NSFocusRingOnly);
-    CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), 0);
-    [self drawFocusRingMaskWithFrame:cellFrame inView:controlView];
-    CGContextEndTransparencyLayer(cgContext);
-    CGContextRestoreGState(cgContext);
-}
-
-@end
-
-#endif
 
 // FIXME: Default buttons really should be more like push buttons and not like buttons.
 
