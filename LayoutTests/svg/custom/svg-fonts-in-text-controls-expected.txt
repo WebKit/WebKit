@@ -7,5 +7,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Textarea offsetWidth: 121
-Input offsetWidth: 108
+Input offsetWidth: 106
 

@@ -1,5 +1,19 @@
 2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        SnowLeopard and SVG rebaselines after r117556.
+
+        * platform/mac-snowleopard/fast/forms/basic-inputs-expected.png:
+        * platform/mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-appearance-height-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-value-expected.png:
+        * platform/mac-snowleopard/fast/forms/placeholder-position-expected.png:
+        * platform/mac-snowleopard/fast/forms/plaintext-mode-2-expected.png:
+        * platform/mac-snowleopard/fast/forms/search-vertical-alignment-expected.png:
+        * svg/custom/svg-fonts-in-text-controls-expected.txt:
+
+2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac rebaseline after r117556.
 
         * platform/mac/css3/selectors3/html/css3-modsel-23-expected.txt:
