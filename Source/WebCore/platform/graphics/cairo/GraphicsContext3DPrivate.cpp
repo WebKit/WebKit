@@ -31,19 +31,14 @@
 
 namespace WebCore {
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, HostWindow* window)
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context)
 {
-    return adoptPtr(new GraphicsContext3DPrivate(context, window));
+    return adoptPtr(new GraphicsContext3DPrivate(context));
 }
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, HostWindow* window)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context)
     : m_context(context)
-    , m_window(window)
-#if PLATFORM(GTK)
-    , m_glContext(GLContext::createOffscreenContext(GLContext::getContextForWidget(m_window->platformPageClient())))
-#else
-    , m_glContext(GLContext::createOffscreenContext())
-#endif
+    , m_glContext(GLContext::createOffscreenContext(GLContext::sharingContext()))
 {
 }
 

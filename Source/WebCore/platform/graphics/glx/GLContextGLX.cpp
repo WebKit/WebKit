@@ -80,37 +80,34 @@ void GLContextGLX::cleanupActiveContextsAtExit()
     gSharedDisplay = 0;
 }
 
-GLContext* GLContextGLX::createOffscreenSharingContext()
-{
-    return createContext(0, m_context);
-}
-
-GLContextGLX* GLContextGLX::createWindowContext(XID window, GLXContext sharingContext)
+PassOwnPtr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext* sharingContext)
 {
     Display* display = sharedDisplay();
     XWindowAttributes attributes;
     if (!XGetWindowAttributes(display, window, &attributes))
-        return 0;
+        return nullptr;
 
     XVisualInfo visualInfo;
     visualInfo.visualid = XVisualIDFromVisual(attributes.visual);
 
     int numReturned = 0;
     XVisualInfo* visualInfoList = XGetVisualInfo(display, VisualIDMask, &visualInfo, &numReturned);
-    GLXContext context = glXCreateContext(display, visualInfoList, sharingContext, True);
+
+    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context : 0;
+    GLXContext context = glXCreateContext(display, visualInfoList, glxSharingContext, True);
     XFree(visualInfoList);
 
     if (!context)
-        return 0;
+        return nullptr;
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
     GLContextGLX* contextWrapper = new GLContextGLX(context);
     contextWrapper->m_window = window;
-    return contextWrapper;
+    return adoptPtr(contextWrapper);
 }
 
-GLContextGLX* GLContextGLX::createPbufferContext(GLXContext sharingContext)
+PassOwnPtr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
 {
     int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -128,7 +125,7 @@ GLContextGLX* GLContextGLX::createPbufferContext(GLXContext sharingContext)
     GLXFBConfig* configs = glXChooseFBConfig(display, 0, fbConfigAttributes, &returnedElements);
     if (!returnedElements) {
         XFree(configs);
-        return 0;
+        return nullptr;
     }
 
     // We will be rendering to a texture, so our pbuffer does not need to be large.
@@ -136,22 +133,22 @@ GLContextGLX* GLContextGLX::createPbufferContext(GLXContext sharingContext)
     GLXPbuffer pbuffer = glXCreatePbuffer(display, configs[0], pbufferAttributes);
     if (!pbuffer) {
         XFree(configs);
-        return 0;
+        return nullptr;
     }
 
     GLXContext context = glXCreateNewContext(display, configs[0], GLX_RGBA_TYPE, sharingContext, GL_TRUE);
     XFree(configs);
     if (!context)
-        return 0;
+        return nullptr;
 
     // GLXPbuffer and XID are both the same types underneath, so we have to share
     // a constructor here with the window path.
     GLContextGLX* contextWrapper = new GLContextGLX(context);
     contextWrapper->m_pbuffer = pbuffer;
-    return contextWrapper;
+    return adoptPtr(contextWrapper);
 }
 
-GLContextGLX* GLContextGLX::createPixmapContext(GLXContext sharingContext)
+PassOwnPtr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
 {
     static int visualAttributes[] = {
         GLX_RGBA,
@@ -165,34 +162,34 @@ GLContextGLX* GLContextGLX::createPixmapContext(GLXContext sharingContext)
     Display* display = sharedDisplay();
     XVisualInfo* visualInfo = glXChooseVisual(display, DefaultScreen(display), visualAttributes);
     if (!visualInfo)
-        return 0;
+        return nullptr;
 
     GLXContext context = glXCreateContext(display, visualInfo, sharingContext, GL_TRUE);
     if (!context) {
         XFree(visualInfo);
-        return 0;
+        return nullptr;
     }
 
     Pixmap pixmap = XCreatePixmap(display, DefaultRootWindow(display), 1, 1, visualInfo->depth);
     if (!pixmap) {
         XFree(visualInfo);
-        return 0;
+        return nullptr;
     }
 
     GLXPixmap glxPixmap = glXCreateGLXPixmap(display, visualInfo, pixmap);
     if (!glxPixmap) {
         XFreePixmap(display, pixmap);
         XFree(visualInfo);
-        return 0;
+        return nullptr;
     }
 
-    return new GLContextGLX(context, pixmap, glxPixmap);
+    return adoptPtr(new GLContextGLX(context, pixmap, glxPixmap));
 }
 
-GLContextGLX* GLContextGLX::createContext(XID window, GLXContext sharingContext)
+PassOwnPtr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
 {
     if (!sharedDisplay())
-        return 0;
+        return nullptr;
 
     static bool initialized = false;
     static bool success = true;
@@ -201,17 +198,18 @@ GLContextGLX* GLContextGLX::createContext(XID window, GLXContext sharingContext)
         initialized = true;
     }
     if (!success)
-        return 0;
+        return nullptr;
 
-    GLContextGLX* context = window ? createWindowContext(window, sharingContext) : 0;
+    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context : 0;
+    OwnPtr<GLContextGLX> context = window ? createWindowContext(window, sharingContext) : nullptr;
     if (!context)
-        context = createPbufferContext(sharingContext);
+        context = createPbufferContext(glxSharingContext);
     if (!context)
-        context = createPixmapContext(sharingContext);
+        context = createPixmapContext(glxSharingContext);
     if (!context)
-        return 0;
+        return nullptr;
 
-    return context;
+    return context.release();
 }
 
 GLContextGLX::GLContextGLX(GLXContext context)

@@ -36,7 +36,7 @@ class GraphicsContext3DPrivate
 #endif
 {
 public:
-    static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D*, HostWindow*);
+    static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D*);
     ~GraphicsContext3DPrivate();
     bool makeContextCurrent();
     PlatformGraphicsContext3D platformContext();
@@ -46,11 +46,10 @@ public:
 #endif
 
 private:
-    GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*);
+    GraphicsContext3DPrivate(GraphicsContext3D*);
 
     GraphicsContext3D* m_context;
-    HostWindow* m_window;
-    GLContext* m_glContext;
+    OwnPtr<GLContext> m_glContext;
 };
 
 }

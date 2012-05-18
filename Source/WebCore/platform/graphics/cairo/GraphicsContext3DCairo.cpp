@@ -63,7 +63,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     return context.release();
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow*, bool)
     : m_currentWidth(0)
     , m_currentHeight(0)
     , m_attrs(attributes)
@@ -74,7 +74,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
-    , m_private(GraphicsContext3DPrivate::create(this, hostWindow))
+    , m_private(GraphicsContext3DPrivate::create(this))
 {
     makeContextCurrent();
 

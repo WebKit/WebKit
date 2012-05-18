@@ -4788,7 +4788,6 @@ if TARGET_X11
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
 	Source/WebCore/platform/graphics/glx/GLContextGLX.h \
-	Source/WebCore/platform/graphics/gtk/GLContextGtk.cpp \
 	Source/WebCore/platform/graphics/cairo/GLContext.cpp \
 	Source/WebCore/platform/graphics/cairo/GLContext.h \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \

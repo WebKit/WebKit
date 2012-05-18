@@ -73,6 +73,7 @@ private:
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
     OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
+    OwnPtr<WebCore::GLContext> m_context;
 #endif
 
     AcceleratedCompositingContext(WebKitWebView*);

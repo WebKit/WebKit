@@ -1,3 +1,20 @@
+2012-05-18  Martin Robinson  <mrobinson@igalia.com>
+
+        OOM running webgl/sdk/tests/conformance/context/context-creation-and-destruction.html
+        https://bugs.webkit.org/show_bug.cgi?id=80509
+
+        Reviewed by Alejandro G. Castro.
+
+        AcceleratedCompositingContext context now fully owns the GLContext for its
+        window. This simplifies this quite a bit. We also properly clean it up when
+        destroying the layer tree, to go more easily on resources.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::glContext):
+        (WebKit::AcceleratedCompositingContext::attachRootGraphicsLayer):
+
 2012-05-18  MORITA Hajime <morrita@google.com>
 
         Another unreviewed attempt to fix build breakage on r117572.

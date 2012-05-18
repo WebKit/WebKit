@@ -21,23 +21,37 @@
 
 #if USE(OPENGL)
 
+#include <wtf/MainThread.h>
+
 #if USE(GLX)
 #include "GLContextGLX.h"
 #endif
 
 namespace WebCore {
 
+GLContext* GLContext::sharingContext()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(OwnPtr<GLContext>, sharing, (createOffscreenContext()));
+    return sharing.get();
+}
+
+PassOwnPtr<GLContext> GLContext::createContextForWindow(uint64_t windowHandle, GLContext* sharingContext)
+{
+#if USE(GLX)
+    return GLContextGLX::createContext(windowHandle, sharingContext);
+#endif
+    return nullptr;
+}
+
 GLContext::GLContext()
 {
 }
 
-GLContext* GLContext::createOffscreenContext(GLContext* sharing)
+PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharing)
 {
-    if (sharing)
-        return sharing->createOffscreenSharingContext();
-
 #if USE(GLX)
-    return GLContextGLX::createContext(0, 0);
+    return GLContextGLX::createContext(0, sharing);
 #endif
 }
 
@@ -53,12 +67,14 @@ GLContext::~GLContext()
 
 bool GLContext::makeContextCurrent()
 {
+    ASSERT(isMainThread());
     gCurrentContext = this;
     return true;
 }
 
 GLContext* GLContext::getCurrent()
 {
+    ASSERT(isMainThread());
     return gCurrentContext;
 }
 
