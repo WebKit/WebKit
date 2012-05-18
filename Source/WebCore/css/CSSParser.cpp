@@ -3375,9 +3375,13 @@ PassRefPtr<CSSValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowC
         if (value->unit == CSSParserValue::Operator && value->iValue == ',')
             allowComma = false;
         else if (value->id != CSSValueAuto) {
-            if (!validUnit(value, FLength | FPercent))
-                return 0;
-            parsedValue2 = createPrimitiveNumericValue(value);
+            if (!validUnit(value, FLength | FPercent)) {
+                if (!inShorthand())
+                    return 0;
+                // We need to rewind the value list, so that when it is advanced we'll end up back at this value.
+                m_valueList->previous();
+            } else
+                parsedValue2 = createPrimitiveNumericValue(value);
         }
     } else if (!parsedValue2 && propId == CSSPropertyWebkitBackgroundSize) {
         // For backwards compatibility we set the second value to the first if it is omitted.

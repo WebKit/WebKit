@@ -67,6 +67,33 @@
  shouldBe("checkComputedStyleValue()", "true");
  debug("")
 
+ e.style.background = "url(dummy://test.png) red 50px 60px / 50% no-repeat fixed";
+ shouldBe("e.style.background", "'red url(dummy://test.png) no-repeat fixed 50px 60px / 50%'");
+ shouldBe("e.style.backgroundSize", "'50%'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 50px 60px / 50%'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'50%'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "red repeat scroll padding-box padding-box top left / 100px url(dummy://test.png)";
+ shouldBe("e.style.background", "'red url(dummy://test.png) repeat scroll padding-box padding-box 0% 0% / 100px'");
+ shouldBe("e.style.backgroundSize", "'100px'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'100px'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "50% / auto fixed url(dummy://test.png) repeat content-box red";
+ shouldBe("e.style.background", "'red url(dummy://test.png) repeat fixed content-box content-box 50% 50% / auto'");
+ shouldBe("e.style.backgroundSize", "'auto'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat fixed 50% 50% / auto'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'auto'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
  e.style.background = "";
  e.style.background = "red / cover url(dummy://test.png) repeat";
  shouldBe("e.style.background", "''");

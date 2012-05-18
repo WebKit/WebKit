@@ -38,6 +38,27 @@ PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy:/
 PASS computedStyle.getPropertyValue("background-size") is 'auto'
 PASS checkComputedStyleValue() is true
 
+PASS e.style.background is 'red url(dummy://test.png) no-repeat fixed 50px 60px / 50%'
+PASS e.style.backgroundSize is '50%'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 50px 60px / 50%'
+PASS computedStyle.getPropertyValue("background-size") is '50%'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is 'red url(dummy://test.png) repeat scroll padding-box padding-box 0% 0% / 100px'
+PASS e.style.backgroundSize is '100px'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px'
+PASS computedStyle.getPropertyValue("background-size") is '100px'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is 'red url(dummy://test.png) repeat fixed content-box content-box 50% 50% / auto'
+PASS e.style.backgroundSize is 'auto'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat fixed 50% 50% / auto'
+PASS computedStyle.getPropertyValue("background-size") is 'auto'
+PASS checkComputedStyleValue() is true
+
 PASS e.style.background is ''
 PASS e.style.backgroundSize is ''
 PASS checkStyle() is true
