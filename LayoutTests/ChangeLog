@@ -1,3 +1,14 @@
+2012-05-18  Terry Anderson  <tdanderson@chromium.org>
+
+        Percentage height replaced elements sometimes cause overflow of table contents
+        https://bugs.webkit.org/show_bug.cgi?id=85581
+
+        Reviewed by Eric Seidel.
+
+        * fast/replaced/table-replaced-element-expected.txt: Added.
+        * fast/replaced/table-replaced-element.html: Added.
+        New layout test.
+
 2012-05-18  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fixing mac baselines after r117613.
