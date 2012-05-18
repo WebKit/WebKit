@@ -1,5 +1,38 @@
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a binding benchmark for div.getAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=86814
+
+        Reviewed by Ryosuke Niwa.
+
+        We should remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        This patch adds a benchmark for div.getAttribute(). This benchmark
+        covers 'getAttribute' in Dromaeo/dom-attr.html, and other DOM methods
+        that return a String.
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: get-attribute= 250.088158538 runs/s
+        median= 250.469728765 runs/s, stdev= 4.66551901315 runs/s, min= 240.673886883 runs/s, max= 256.739409499 runs/s
+
+        RESULT Bindings: get-attribute= 250.209764698 runs/s
+        median= 250.626959986 runs/s, stdev= 4.12030002477 runs/s, min= 241.254523522 runs/s, max= 255.102040816 runs/s
+
+        RESULT Bindings: get-attribute= 248.907532887 runs/s
+        median= 250.312891114 runs/s, stdev= 3.23173125874 runs/s, min= 240.673886883 runs/s, max= 251.572327044 runs/s
+
+        RESULT Bindings: get-attribute= 250.243680844 runs/s
+        median= 250.783797637 runs/s, stdev= 4.19327170024 runs/s, min= 240.963855422 runs/s, max= 255.102040816 runs/s
+
+        RESULT Bindings: get-attribute= 245.329046608 runs/s
+        median= 244.948040416 runs/s, stdev= 2.24314248534 runs/s, min= 240.384615385 runs/s, max= 248.756218905 runs/s
+
+        * Bindings/get-attribute.html: Added.
+
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a binding benchmark for getElementById()
         https://bugs.webkit.org/show_bug.cgi?id=86808
 
