@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 755x18
           text run at (0,0) width 755: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire correctly."
       RenderBlock {P} at (0,34) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (129,2) size 4x18
-          text run at (129,2) width 4: " "
-        RenderTextControl {INPUT} at (135,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (127,2) size 4x18
+          text run at (127,2) width 4: " "
+        RenderTextControl {INPUT} at (133,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,73) size 784x72
         RenderBR {BR} at (0,0) size 0x18
@@ -23,13 +23,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,54) size 322x18
           text run at (0,54) width 322: "Test Passed. Text field 2's onFocus event has fired."
       RenderBlock {P} at (0,161) size 784x0
-layer at (13,47) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 82x13
-      text run at (1,0) width 82: "My Text Field 1"
-layer at (146,47) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 82x13
-      text run at (1,0) width 82: "My Text Field 2"
+layer at (13,47) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 82x13
+      text run at (0,0) width 82: "My Text Field 1"
+layer at (144,47) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 82x13
+      text run at (0,0) width 82: "My Text Field 2"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body
 selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body

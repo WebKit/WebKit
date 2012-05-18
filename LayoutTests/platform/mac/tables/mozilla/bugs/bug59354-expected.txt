@@ -32,29 +32,29 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (1,30) size 454x109 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
                       RenderBlock (anonymous) at (5,5) size 444x18
                         RenderBR {BR} at (222,0) size 0x18
-                      RenderTable {TABLE} at (90,23) size 273x81
-                        RenderTableSection {TBODY} at (0,0) size 273x81
-                          RenderTableRow {TR} at (0,2) size 273x77
-                            RenderTableCell {TD} at (2,2) size 269x77 [r=0 c=0 rs=1 cs=1]
-                              RenderBlock {FORM} at (1,1) size 267x59
-                                RenderTable {TABLE} at (0,0) size 267x59 [border: (1px outset #808080)]
-                                  RenderTableSection {TBODY} at (1,1) size 265x57
-                                    RenderTableRow {TR} at (0,0) size 265x57
-                                      RenderTableCell {TD} at (0,0) size 265x57 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                                        RenderBlock (anonymous) at (1,1) size 263x18
-                                          RenderText {#text} at (78,0) size 107x18
-                                            text run at (78,0) width 107: "User Preferences"
-                                        RenderTable {TABLE} at (1,19) size 263x37 [border: (1px outset #808080)]
-                                          RenderTableSection {TBODY} at (1,1) size 261x35
-                                            RenderTableRow {TR} at (0,1) size 261x33
+                      RenderTable {TABLE} at (91,23) size 271x81
+                        RenderTableSection {TBODY} at (0,0) size 271x81
+                          RenderTableRow {TR} at (0,2) size 271x77
+                            RenderTableCell {TD} at (2,2) size 267x77 [r=0 c=0 rs=1 cs=1]
+                              RenderBlock {FORM} at (1,1) size 265x59
+                                RenderTable {TABLE} at (0,0) size 265x59 [border: (1px outset #808080)]
+                                  RenderTableSection {TBODY} at (1,1) size 263x57
+                                    RenderTableRow {TR} at (0,0) size 263x57
+                                      RenderTableCell {TD} at (0,0) size 263x57 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                                        RenderBlock (anonymous) at (1,1) size 261x18
+                                          RenderText {#text} at (77,0) size 107x18
+                                            text run at (77,0) width 107: "User Preferences"
+                                        RenderTable {TABLE} at (1,19) size 261x37 [border: (1px outset #808080)]
+                                          RenderTableSection {TBODY} at (1,1) size 259x35
+                                            RenderTableRow {TR} at (0,1) size 259x33
                                               RenderTableCell {TH} at (1,3) size 119x28 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                                                 RenderInline {NOBR} at (0,0) size 109x18
                                                   RenderText {#text} at (5,5) size 109x18
                                                     text run at (5,5) width 109: "Email Address :"
-                                              RenderTableCell {TD} at (121,1) size 139x33 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                                                RenderTextControl {INPUT} at (7,7) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                                              RenderTableCell {TD} at (121,1) size 137x33 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                                RenderTextControl {INPUT} at (7,7) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                                                 RenderText {#text} at (0,0) size 0x0
-layer at (239,99) size 119x13 scrollWidth 198
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 196x13
-      text run at (1,0) width 196: "simon.king@pipinghotnetworks.com"
+layer at (240,99) size 117x13 scrollWidth 197
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 196x13
+      text run at (0,0) width 196: "simon.king@pipinghotnetworks.com"

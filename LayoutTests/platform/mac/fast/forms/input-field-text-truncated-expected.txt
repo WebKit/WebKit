@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (11,50) size 294x15
   RenderBlock {DIV} at (3,3) size 294x15
-    RenderText {#text} at (1,0) size 99x15
-      text run at (1,0) width 99: "something gjpqy"
+    RenderText {#text} at (0,0) size 99x15
+      text run at (0,0) width 99: "something gjpqy"
