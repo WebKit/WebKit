@@ -1,5 +1,24 @@
 2012-05-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r117558.
+        http://trac.webkit.org/changeset/117558
+        https://bugs.webkit.org/show_bug.cgi?id=86827
+
+        Wrong rebaseline per rolling out 117556 (Requested by rniwa on
+        #webkit).
+
+        * platform/mac-snowleopard/fast/forms/basic-inputs-expected.png:
+        * platform/mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-appearance-height-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/mac-snowleopard/fast/forms/input-value-expected.png:
+        * platform/mac-snowleopard/fast/forms/placeholder-position-expected.png:
+        * platform/mac-snowleopard/fast/forms/plaintext-mode-2-expected.png:
+        * platform/mac-snowleopard/fast/forms/search-vertical-alignment-expected.png:
+        * svg/custom/svg-fonts-in-text-controls-expected.txt:
+
+2012-05-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r117557.
         http://trac.webkit.org/changeset/117557
         https://bugs.webkit.org/show_bug.cgi?id=86826
