@@ -41,7 +41,9 @@ public:
         Fixed,
         Variable
     };
-
+    
+    enum { Size = 3 };
+    
     AdjacencyList(Kind kind)
 #if !ASSERT_DISABLED
         : m_kind(kind)
@@ -74,21 +76,21 @@ public:
     
     const Edge& child(unsigned i) const
     {
-        ASSERT(i < 3);
+        ASSERT(i < Size);
         ASSERT(m_kind == Fixed);
         return m_words[i];
     }    
     
     Edge& child(unsigned i)
     {
-        ASSERT(i < 3);
+        ASSERT(i < Size);
         ASSERT(m_kind == Fixed);
         return m_words[i];
     }
     
     void setChild(unsigned i, Edge nodeUse)
     {
-        ASSERT(i < 30);
+        ASSERT(i < Size);
         ASSERT(m_kind == Fixed);
         m_words[i] = nodeUse;
     }
@@ -150,7 +152,7 @@ public:
     }
     
 private:
-    Edge m_words[3];
+    Edge m_words[Size];
 #if !ASSERT_DISABLED
     Kind m_kind;
 #endif

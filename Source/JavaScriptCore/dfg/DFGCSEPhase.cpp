@@ -45,10 +45,11 @@ public:
             m_replacements[i] = NoNode;
     }
     
-    void run()
+    bool run()
     {
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
-            performBlockCSE(*m_graph.m_blocks[block]);
+            performBlockCSE(m_graph.m_blocks[block].get());
+        return true; // Maybe we'll need to make this reason about whether it changed the graph in an actionable way?
     }
     
 private:
@@ -139,52 +140,6 @@ private:
         return NoNode;
     }
     
-    bool isPredictedNumerical(Node& node)
-    {
-        PredictedType left = m_graph[node.child1()].prediction();
-        PredictedType right = m_graph[node.child2()].prediction();
-        return isNumberPrediction(left) && isNumberPrediction(right);
-    }
-    
-    bool logicalNotIsPure(Node& node)
-    {
-        PredictedType prediction = m_graph[node.child1()].prediction();
-        return isBooleanPrediction(prediction) || !prediction;
-    }
-    
-    bool byValIsPure(Node& node)
-    {
-        return m_graph[node.child2()].shouldSpeculateInteger()
-            && ((node.op() == PutByVal || node.op() == PutByValAlias)
-                ? isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
-                : isActionableArrayPrediction(m_graph[node.child1()].prediction()));
-    }
-    
-    bool clobbersWorld(NodeIndex nodeIndex)
-    {
-        Node& node = m_graph[nodeIndex];
-        if (node.flags() & NodeClobbersWorld)
-            return true;
-        if (!(node.flags() & NodeMightClobber))
-            return false;
-        switch (node.op()) {
-        case ValueAdd:
-        case CompareLess:
-        case CompareLessEq:
-        case CompareGreater:
-        case CompareGreaterEq:
-        case CompareEq:
-            return !isPredictedNumerical(node);
-        case LogicalNot:
-            return !logicalNotIsPure(node);
-        case GetByVal:
-            return !byValIsPure(node);
-        default:
-            ASSERT_NOT_REACHED();
-            return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
-        }
-    }
-    
     NodeIndex impureCSE(Node& node)
     {
         NodeIndex child1 = canonicalize(node.child1());
@@ -215,7 +170,7 @@ private:
                     }
                 }
             }
-            if (clobbersWorld(index))
+            if (m_graph.clobbersWorld(index))
                 break;
         }
         return NoNode;
@@ -238,7 +193,7 @@ private:
             default:
                 break;
             }
-            if (clobbersWorld(index))
+            if (m_graph.clobbersWorld(index))
                 break;
         }
         return NoNode;
@@ -254,14 +209,14 @@ private:
             Node& node = m_graph[index];
             switch (node.op()) {
             case GetByVal:
-                if (!byValIsPure(node))
+                if (!m_graph.byValIsPure(node))
                     return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return index;
                 break;
             case PutByVal:
             case PutByValAlias:
-                if (!byValIsPure(node))
+                if (!m_graph.byValIsPure(node))
                     return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return node.child3().index();
@@ -280,7 +235,7 @@ private:
                 // A push cannot affect previously existing elements in the array.
                 break;
             default:
-                if (clobbersWorld(index))
+                if (m_graph.clobbersWorld(index))
                     return NoNode;
                 break;
             }
@@ -331,7 +286,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValIsPure(node)) {
+                if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -340,7 +295,7 @@ private:
                 return false;
                 
             default:
-                if (clobbersWorld(index))
+                if (m_graph.clobbersWorld(index))
                     return false;
                 break;
             }
@@ -377,7 +332,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValIsPure(node)) {
+                if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -386,7 +341,7 @@ private:
                 return NoNode;
                 
             default:
-                if (clobbersWorld(index))
+                if (m_graph.clobbersWorld(index))
                     return NoNode;
                 break;
             }
@@ -416,7 +371,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValIsPure(node)) {
+                if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -425,7 +380,7 @@ private:
                 return NoNode;
                 
             default:
-                if (clobbersWorld(index))
+                if (m_graph.clobbersWorld(index))
                     return NoNode;
                 break;
             }
@@ -461,12 +416,12 @@ private:
                 break;
                 
             case PutByVal:
-                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && byValIsPure(node))
+                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && m_graph.byValIsPure(node))
                     break;
                 return NoNode;
 
             default:
-                if (clobbersWorld(index))
+                if (m_graph.clobbersWorld(index))
                     return NoNode;
                 break;
             }
@@ -610,6 +565,7 @@ private:
         case IsObject:
         case IsFunction:
         case DoubleAsInt32:
+        case LogicalNot:
             setReplacement(pureCSE(node));
             break;
             
@@ -635,18 +591,9 @@ private:
         case CompareGreater:
         case CompareGreaterEq:
         case CompareEq: {
-            if (isPredictedNumerical(node)) {
+            if (m_graph.isPredictedNumerical(node)) {
                 NodeIndex replacementIndex = pureCSE(node);
-                if (replacementIndex != NoNode && isPredictedNumerical(m_graph[replacementIndex]))
-                    setReplacement(replacementIndex);
-            }
-            break;
-        }
-            
-        case LogicalNot: {
-            if (logicalNotIsPure(node)) {
-                NodeIndex replacementIndex = pureCSE(node);
-                if (replacementIndex != NoNode && logicalNotIsPure(m_graph[replacementIndex]))
+                if (replacementIndex != NoNode && m_graph.isPredictedNumerical(m_graph[replacementIndex]))
                     setReplacement(replacementIndex);
             }
             break;
@@ -659,12 +606,12 @@ private:
             break;
             
         case GetByVal:
-            if (byValIsPure(node))
+            if (m_graph.byValIsPure(node))
                 setReplacement(getByValLoadElimination(node.child1().index(), node.child2().index()));
             break;
             
         case PutByVal:
-            if (byValIsPure(node) && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
+            if (m_graph.byValIsPure(node) && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
                 node.setOp(PutByValAlias);
             break;
             
@@ -704,14 +651,19 @@ private:
 #endif
     }
     
-    void performBlockCSE(BasicBlock& block)
+    void performBlockCSE(BasicBlock* block)
     {
-        m_currentBlock = &block;
+        if (!block)
+            return;
+        if (!block->isReachable)
+            return;
+        
+        m_currentBlock = block;
         for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
 
-        for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
-            m_compileIndex = block[m_indexInBlock];
+        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
+            m_compileIndex = block->at(m_indexInBlock);
             performNodeCSE(m_graph[m_compileIndex]);
         }
     }
@@ -723,9 +675,9 @@ private:
     FixedArray<unsigned, LastNodeType> m_lastSeen;
 };
 
-void performCSE(Graph& graph)
+bool performCSE(Graph& graph)
 {
-    runPhase<CSEPhase>(graph);
+    return runPhase<CSEPhase>(graph);
 }
 
 } } // namespace JSC::DFG

@@ -126,10 +126,8 @@ void Graph::dump(NodeIndex nodeIndex)
     unsigned refCount = node.refCount();
     bool skipped = !refCount;
     bool mustGenerate = node.mustGenerate();
-    if (mustGenerate) {
-        ASSERT(refCount);
+    if (mustGenerate)
         --refCount;
-    }
     
     printWhiteSpace((node.codeOrigin.inlineDepth() - 1) * 2);
 
@@ -278,12 +276,18 @@ void Graph::dump()
     NodeIndex lastNodeIndex = NoNode;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
+        if (!block)
+            continue;
         dataLog("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
+        dataLog("  Predecessors:");
+        for (size_t i = 0; i < block->m_predecessors.size(); ++i)
+            dataLog(" #%u", block->m_predecessors[i]);
+        dataLog("\n");
         dataLog("  Phi Nodes:\n");
         for (size_t i = 0; i < block->phis.size(); ++i) {
-            // Dumping the dead Phi nodes is just annoying!
-            if (at(block->phis[i]).refCount())
-                dump(block->phis[i]);
+            dumpCodeOrigin(lastNodeIndex, block->phis[i]);
+            dump(block->phis[i]);
+            lastNodeIndex = block->phis[i];
         }
         dataLog("  vars before: ");
         if (block->cfaHasVisited)
@@ -304,6 +308,9 @@ void Graph::dump()
             dumpOperands(block->valuesAtTail, WTF::dataFile());
         else
             dataLog("<empty>");
+        dataLog("\n");
+        dataLog("  var links: ");
+        dumpOperands(block->variablesAtTail, WTF::dataFile());
         dataLog("\n");
     }
 }
@@ -360,6 +367,54 @@ void Graph::predictArgumentTypes()
         dataLog("Argument [%zu] prediction: %s\n", arg, predictionToString(at(m_arguments[arg]).variableAccessData()->prediction()));
 #endif
     }
+}
+
+void Graph::handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex)
+{
+    BasicBlock* successor = m_blocks[successorIndex].get();
+    if (!successor->isReachable) {
+        successor->isReachable = true;
+        worklist.append(successorIndex);
+    }
+    
+    successor->m_predecessors.append(blockIndex);
+}
+
+void Graph::determineReachability()
+{
+    Vector<BlockIndex, 16> worklist;
+    worklist.append(0);
+    m_blocks[0]->isReachable = true;
+    while (!worklist.isEmpty()) {
+        BlockIndex index = worklist.last();
+        worklist.removeLast();
+        
+        BasicBlock* block = m_blocks[index].get();
+        ASSERT(block->isLinked);
+        
+        Node& node = at(block->last());
+        ASSERT(node.isTerminal());
+        
+        if (node.isJump())
+            handleSuccessor(worklist, index, node.takenBlockIndex());
+        else if (node.isBranch()) {
+            handleSuccessor(worklist, index, node.takenBlockIndex());
+            handleSuccessor(worklist, index, node.notTakenBlockIndex());
+        }
+    }
+}
+
+void Graph::resetReachability()
+{
+    for (BlockIndex blockIndex = m_blocks.size(); blockIndex--;) {
+        BasicBlock* block = m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        block->isReachable = false;
+        block->m_predecessors.clear();
+    }
+    
+    determineReachability();
 }
 
 } } // namespace JSC::DFG

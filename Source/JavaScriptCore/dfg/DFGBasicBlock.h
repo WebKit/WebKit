@@ -56,12 +56,43 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     {
     }
     
+    ~BasicBlock()
+    {
+    }
+    
     void ensureLocals(unsigned newNumLocals)
     {
         variablesAtHead.ensureLocals(newNumLocals);
         variablesAtTail.ensureLocals(newNumLocals);
         valuesAtHead.ensureLocals(newNumLocals);
         valuesAtTail.ensureLocals(newNumLocals);
+    }
+    
+    size_t numNodes() const { return phis.size() + size(); }
+    NodeIndex nodeIndex(size_t i) const
+    {
+        if (i < phis.size())
+            return phis[i];
+        return at(i - phis.size());
+    }
+    bool isPhiIndex(size_t i) const { return i < phis.size(); }
+    
+    bool isInPhis(NodeIndex nodeIndex) const
+    {
+        for (size_t i = 0; i < phis.size(); ++i) {
+            if (phis[i] == nodeIndex)
+                return true;
+        }
+        return false;
+    }
+    
+    bool isInBlock(NodeIndex index) const
+    {
+        for (size_t i = 0; i < numNodes(); ++i) {
+            if (nodeIndex(i) == index)
+                return true;
+        }
+        return false;
     }
 
     // This value is used internally for block linking and OSR entry. It is mostly meaningless

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,8 @@ void AbstractState::initialize(Graph& graph)
     PROFILE(FLAG_FOR_BLOCK_INITIALIZATION);
     BasicBlock* root = graph.m_blocks[0].get();
     root->cfaShouldRevisit = true;
+    root->cfaHasVisited = false;
+    root->cfaFoundConstants = false;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
         Node& node = graph[root->variablesAtHead.argument(i)];
         ASSERT(node.op() == SetArgument);
@@ -141,11 +143,33 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(PredictFloat64Array);
         else
             root->valuesAtHead.argument(i).makeTop();
+        
+        root->valuesAtTail.argument(i).clear();
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        if (!graph.localIsCaptured(i))
+        if (graph.localIsCaptured(i))
+            root->valuesAtHead.local(i).makeTop();
+        else
+            root->valuesAtHead.local(i).clear();
+        root->valuesAtTail.local(i).clear();
+    }
+    for (BlockIndex blockIndex = 1 ; blockIndex < graph.m_blocks.size(); ++blockIndex) {
+        BasicBlock* block = graph.m_blocks[blockIndex].get();
+        if (!block)
             continue;
-        root->valuesAtHead.local(i).makeTop();
+        if (!block->isReachable)
+            continue;
+        block->cfaShouldRevisit = false;
+        block->cfaHasVisited = false;
+        block->cfaFoundConstants = false;
+        for (size_t i = 0; i < block->valuesAtHead.numberOfArguments(); ++i) {
+            block->valuesAtHead.argument(i).clear();
+            block->valuesAtTail.argument(i).clear();
+        }
+        for (size_t i = 0; i < block->valuesAtHead.numberOfLocals(); ++i) {
+            block->valuesAtHead.local(i).clear();
+            block->valuesAtTail.local(i).clear();
+        }
     }
 }
 
@@ -543,8 +567,6 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child1()).filter(PredictInt32);
         else if (child.shouldSpeculateNumber())
             forNode(node.child1()).filter(PredictNumber);
-        else
-            clobberStructures(indexInBlock);
         forNode(nodeIndex).set(PredictBoolean);
         break;
     }
@@ -1276,7 +1298,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         // The block transfers the value from head to tail.
         source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Transfering from head to tail.\n");
+        dataLog("          Transfering ");
+        source.dump(WTF::dataFile());
+        dataLog(" from head to tail.\n");
 #endif
         break;
             
@@ -1284,7 +1308,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         // The block refines the value with additional speculations.
         source = forNode(nodeIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Refining.\n");
+        dataLog("          Refining to ");
+        source.dump(WTF::dataFile());
+        dataLog("\n");
 #endif
         break;
             
@@ -1296,7 +1322,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         else
             source = forNode(node.child1());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Setting.\n");
+        dataLog("          Setting to ");
+        source.dump(WTF::dataFile());
+        dataLog("\n");
 #endif
         break;
         
@@ -1372,12 +1400,25 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     ASSERT(terminal.isTerminal());
     
     switch (terminal.op()) {
-    case Jump:
+    case Jump: {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
+#endif
         return merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
+    }
         
-    case Branch:
-        return merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get())
-            | merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
+    case Branch: {
+        bool changed = false;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
+#endif
+        changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
+#endif
+        changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
+        return changed;
+    }
         
     case Return:
     case Throw:

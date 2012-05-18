@@ -1,3 +1,17 @@
+2012-04-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have control flow graph simplification
+        https://bugs.webkit.org/show_bug.cgi?id=84553
+
+        Reviewed by Oliver Hunt.
+
+        Merged r115512 from dfgopt.
+
+        JSValue::toBoolean(ExecState*) -> JSValue::toBoolean()
+        
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+
 2012-05-18  Anders Carlsson  <andersca@apple.com>
 
         Missing plugin msg becomes "insecure plugin version" after Real Player page refresh

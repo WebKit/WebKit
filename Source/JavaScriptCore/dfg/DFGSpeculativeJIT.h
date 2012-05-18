@@ -193,6 +193,16 @@ public:
         return at(nodeUse.index());
     }
     
+    BlockIndex nextBlock()
+    {
+        for (BlockIndex result = m_block + 1; ; result++) {
+            if (result >= m_jit.graph().m_blocks.size())
+                return NoBlock;
+            if (m_jit.graph().m_blocks[result])
+                return result;
+        }
+    }
+    
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
     FPRReg fillDouble(NodeIndex);
 #if USE(JSVALUE64)
@@ -307,7 +317,10 @@ public:
     // Called on an operand once it has been consumed by a parent node.
     void use(NodeIndex nodeIndex)
     {
-        VirtualRegister virtualRegister = at(nodeIndex).virtualRegister();
+        Node& node = at(nodeIndex);
+        if (!node.hasResult())
+            return;
+        VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
         // use() returns true when the value becomes dead, and any
@@ -1864,7 +1877,7 @@ public:
     {
         if (haveEdgeCodeToEmit(destination))
             emitEdgeCode(destination);
-        if (destination == m_block + 1
+        if (destination == nextBlock()
             && fallThroughMode == AtFallThroughPoint)
             return;
         addBranch(m_jit.jump(), destination);

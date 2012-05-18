@@ -43,13 +43,17 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
+        bool changed = false;
+        
         AbstractState state(m_graph);
         InsertionSet<NodeIndex> insertionSet;
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+            if (!block)
+                continue;
             if (!block->cfaFoundConstants)
                 continue;
             state.beginBasicBlock(block);
@@ -60,29 +64,53 @@ public:
                 NodeIndex nodeIndex = block->at(indexInBlock);
                 Node& node = m_graph[nodeIndex];
                 if (!node.shouldGenerate()
-                    || (node.flags() & (NodeClobbersWorld | NodeMightClobber))
+                    || m_graph.clobbersWorld(node)
                     || node.hasConstant())
                     continue;
                 JSValue value = state.forNode(nodeIndex).value();
                 if (!value)
                     continue;
+                
                 Node phantom(Phantom, node.codeOrigin);
+                
+                if (node.op() == GetLocal) {
+                    ASSERT(m_graph[node.child1()].op() == Phi);
+                    ASSERT(!m_graph[node.child1()].hasResult());
+                    
+                    ASSERT(block->variablesAtHead.operand(node.local()) == nodeIndex);
+                    ASSERT(block->isInPhis(node.child1().index()));
+                    block->variablesAtHead.operand(node.local()) = node.child1().index();
+                    
+                    NodeIndex tailNodeIndex = block->variablesAtTail.operand(node.local());
+                    if (tailNodeIndex == nodeIndex)
+                        block->variablesAtTail.operand(node.local()) = node.child1().index();
+                    else {
+                        ASSERT(m_graph[tailNodeIndex].op() == Flush
+                               || m_graph[tailNodeIndex].op() == SetLocal);
+                    }
+                }
+                
                 phantom.children = node.children;
                 phantom.ref();
+                
                 m_graph.convertToConstant(nodeIndex, value);
                 NodeIndex phantomNodeIndex = m_graph.size();
                 m_graph.append(phantom);
                 insertionSet.append(indexInBlock, phantomNodeIndex);
+                
+                changed = true;
             }
-            state.reset();
             insertionSet.execute(*block);
+            state.reset();
         }
+        
+        return changed;
     }
 };
 
-void performConstantFolding(Graph& graph)
+bool performConstantFolding(Graph& graph)
 {
-    runPhase<ConstantFoldingPhase>(graph);
+    return runPhase<ConstantFoldingPhase>(graph);
 }
 
 } } // namespace JSC::DFG

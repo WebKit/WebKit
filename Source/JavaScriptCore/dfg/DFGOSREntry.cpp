@@ -42,7 +42,6 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
-    ASSERT(codeBlock->numberOfDFGOSREntries());
 
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLog("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
@@ -50,6 +49,13 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     JSGlobalData* globalData = &exec->globalData();
     OSREntryData* entry = codeBlock->dfgOSREntryDataForBytecodeIndex(bytecodeIndex);
+    
+    if (!entry) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("    OSR failed because the entrypoint was optimized out.\n");
+#endif
+        return 0;
+    }
     
     ASSERT(entry->m_bytecodeIndex == bytecodeIndex);
     

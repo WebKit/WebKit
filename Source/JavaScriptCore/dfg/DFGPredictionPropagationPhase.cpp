@@ -40,7 +40,7 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
@@ -77,6 +77,8 @@ public:
             doRoundOfDoubleVoting();
             propagateBackward();
         } while (m_changed);
+        
+        return true;
     }
     
 private:
@@ -832,9 +834,9 @@ private:
 #endif
 };
     
-void performPredictionPropagation(Graph& graph)
+bool performPredictionPropagation(Graph& graph)
 {
-    runPhase<PredictionPropagationPhase>(graph);
+    return runPhase<PredictionPropagationPhase>(graph);
 }
 
 } } // namespace JSC::DFG

@@ -105,12 +105,30 @@ public:
     
     void deref(NodeIndex nodeIndex)
     {
+        if (!at(nodeIndex).refCount())
+            dump();
         if (at(nodeIndex).deref())
             derefChildren(nodeIndex);
     }
     void deref(Edge nodeUse)
     {
         deref(nodeUse.index());
+    }
+    
+    void changeIndex(Edge& edge, NodeIndex newIndex, bool changeRef = true)
+    {
+        if (changeRef) {
+            ref(newIndex);
+            deref(edge.index());
+        }
+        edge.setIndex(newIndex);
+    }
+    
+    void changeEdge(Edge& edge, Edge newEdge)
+    {
+        ref(newEdge);
+        deref(edge);
+        edge = newEdge;
     }
     
     void clearAndDerefChild1(Node& node)
@@ -346,6 +364,78 @@ public:
         return isCaptured(static_cast<int>(virtualRegister));
     }
     
+    unsigned numSuccessors(BasicBlock* block)
+    {
+        return at(block->last()).numSuccessors();
+    }
+    BlockIndex successor(BasicBlock* block, unsigned index)
+    {
+        return at(block->last()).successor(index);
+    }
+    BlockIndex successorForCondition(BasicBlock* block, bool condition)
+    {
+        return at(block->last()).successorForCondition(condition);
+    }
+    
+    bool isPredictedNumerical(Node& node)
+    {
+        PredictedType left = at(node.child1()).prediction();
+        PredictedType right = at(node.child2()).prediction();
+        return isNumberPrediction(left) && isNumberPrediction(right);
+    }
+    
+    bool byValIsPure(Node& node)
+    {
+        return at(node.child2()).shouldSpeculateInteger()
+            && ((node.op() == PutByVal || node.op() == PutByValAlias)
+                ? isActionableMutableArrayPrediction(at(node.child1()).prediction())
+                : isActionableArrayPrediction(at(node.child1()).prediction()));
+    }
+    
+    bool clobbersWorld(Node& node)
+    {
+        if (node.flags() & NodeClobbersWorld)
+            return true;
+        if (!(node.flags() & NodeMightClobber))
+            return false;
+        switch (node.op()) {
+        case ValueAdd:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq:
+        case CompareEq:
+            return !isPredictedNumerical(node);
+        case GetByVal:
+            return !byValIsPure(node);
+        default:
+            ASSERT_NOT_REACHED();
+            return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
+        }
+    }
+    
+    bool clobbersWorld(NodeIndex nodeIndex)
+    {
+        return clobbersWorld(at(nodeIndex));
+    }
+    
+    void determineReachability();
+    void resetReachability();
+    
+    unsigned numChildren(Node& node)
+    {
+        if (node.flags() & NodeHasVarArgs)
+            return node.numChildren();
+        return AdjacencyList::Size;
+    }
+    
+    Edge child(Node& node, unsigned index)
+    {
+        if (node.flags() & NodeHasVarArgs)
+            return m_varArgChildren[node.firstChild() + index];
+        return node.children.child(index);
+    }
+    
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
@@ -363,6 +453,8 @@ public:
     unsigned m_localVars;
     unsigned m_parameterSlots;
 private:
+    
+    void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);
     
     bool addImmediateShouldSpeculateInteger(Node& add, Node& variable, Node& immediate)
     {

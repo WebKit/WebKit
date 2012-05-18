@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGValidate.h"
+
 namespace JSC { namespace DFG {
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -40,6 +42,7 @@ void Phase::beginPhase()
 
 void Phase::endPhase()
 {
+    validate(m_graph, DumpGraph);
 }
 #endif
 

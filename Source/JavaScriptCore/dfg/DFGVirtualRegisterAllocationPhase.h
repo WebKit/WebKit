@@ -42,7 +42,7 @@ class Graph;
 // for look-up tables for the linear scan register allocator that the backend
 // uses.
 
-void performVirtualRegisterAllocation(Graph&);
+bool performVirtualRegisterAllocation(Graph&);
 
 } } // namespace JSC::DFG
 

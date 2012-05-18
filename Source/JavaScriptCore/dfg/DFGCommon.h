@@ -49,6 +49,12 @@
 #else
 #define DFG_ENABLE_JIT_ASSERT 0
 #endif
+// Enable validation of the graph.
+#if !ASSERT_DISABLED
+#define DFG_ENABLE_VALIDATION 1
+#else
+#define DFG_ENABLE_VALIDATION 0
+#endif
 // Consistency check contents compiler data structures.
 #define DFG_ENABLE_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.

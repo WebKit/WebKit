@@ -39,7 +39,7 @@ class Graph;
 // We inserted many can-be-redundant Phi nodes when building the graph.
 // This phase will just remove them.
 
-void performRedundantPhiElimination(Graph&);
+bool performRedundantPhiElimination(Graph&);
 
 } } // namespace JSC::DFG
 

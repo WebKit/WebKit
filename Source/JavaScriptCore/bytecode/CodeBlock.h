@@ -259,7 +259,17 @@ namespace JSC {
         DFG::OSREntryData* dfgOSREntryData(unsigned i) { return &m_dfgData->osrEntry[i]; }
         DFG::OSREntryData* dfgOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
         {
-            return binarySearch<DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(m_dfgData->osrEntry.begin(), m_dfgData->osrEntry.size(), bytecodeIndex);
+            if (!m_dfgData)
+                return 0;
+            if (m_dfgData->osrEntry.isEmpty())
+                return 0;
+            DFG::OSREntryData* result = binarySearch<
+                DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(
+                    m_dfgData->osrEntry.begin(), m_dfgData->osrEntry.size(),
+                    bytecodeIndex, WTF::KeyMustNotBePresentInArray);
+            if (result->m_bytecodeIndex != bytecodeIndex)
+                return 0;
+            return result;
         }
         
         void appendOSRExit(const DFG::OSRExit& osrExit)

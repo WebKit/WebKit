@@ -40,7 +40,7 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Preserved vars: ");
@@ -54,6 +54,10 @@ public:
 #endif
         for (size_t blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+            if (!block)
+                continue;
+            if (!block->isReachable)
+                continue;
             for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 NodeIndex nodeIndex = block->at(indexInBlock);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -66,22 +70,21 @@ public:
         
                 if (!node.shouldGenerate() || node.op() == Phi || node.op() == Flush)
                     continue;
-            
-                // GetLocal nodes are effectively phi nodes in the graph, referencing
-                // results from prior blocks.
-                if (node.op() != GetLocal) {
-                    // First, call use on all of the current node's children, then
-                    // allocate a VirtualRegister for this node. We do so in this
-                    // order so that if a child is on its last use, and a
-                    // VirtualRegister is freed, then it may be reused for node.
-                    if (node.flags() & NodeHasVarArgs) {
-                        for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                            scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
-                    } else {
-                        scoreBoard.use(node.child1());
-                        scoreBoard.use(node.child2());
-                        scoreBoard.use(node.child3());
-                    }
+                
+                if (node.op() == GetLocal)
+                    ASSERT(!m_graph[node.child1()].hasResult());
+                
+                // First, call use on all of the current node's children, then
+                // allocate a VirtualRegister for this node. We do so in this
+                // order so that if a child is on its last use, and a
+                // VirtualRegister is freed, then it may be reused for node.
+                if (node.flags() & NodeHasVarArgs) {
+                    for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                        scoreBoard.useIfHasResult(m_graph.m_varArgChildren[childIdx]);
+                } else {
+                    scoreBoard.useIfHasResult(node.child1());
+                    scoreBoard.useIfHasResult(node.child2());
+                    scoreBoard.useIfHasResult(node.child3());
                 }
 
                 if (!node.hasResult())
@@ -122,12 +125,14 @@ public:
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Num callee registers: %u\n", calleeRegisters);
 #endif
+        
+        return true;
     }
 };
 
-void performVirtualRegisterAllocation(Graph& graph)
+bool performVirtualRegisterAllocation(Graph& graph)
 {
-    runPhase<VirtualRegisterAllocationPhase>(graph);
+    return runPhase<VirtualRegisterAllocationPhase>(graph);
 }
 
 } } // namespace JSC::DFG

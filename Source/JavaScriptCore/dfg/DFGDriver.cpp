@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,14 @@
 
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
+#include "DFGCFGSimplificationPhase.h"
 #include "DFGCSEPhase.h"
 #include "DFGConstantFoldingPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGRedundantPhiEliminationPhase.h"
+#include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 
 namespace JSC { namespace DFG {
@@ -66,12 +68,25 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     // that references any of the tables directly, yet.
     codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 
-    performRedundantPhiElimination(dfg);
+    validate(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
-    performCFA(dfg);
-    performConstantFolding(dfg);
-    performCSE(dfg);
+    unsigned cnt = 1;
+    for (;; ++cnt) {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
+#endif
+        bool changed = false;
+        performCFA(dfg);
+        changed |= performConstantFolding(dfg);
+        changed |= performCFGSimplification(dfg);
+        performCSE(dfg);
+        if (!changed)
+            break;
+    }
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
+#endif
     performVirtualRegisterAllocation(dfg);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)

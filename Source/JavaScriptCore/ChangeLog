@@ -1,5 +1,277 @@
 2012-05-18  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should have control flow graph simplification
+        https://bugs.webkit.org/show_bug.cgi?id=84553
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r115512 from dfgopt.
+
+        This change gives the DFG the ability to simplify the control flow graph
+        as part of an optimization fixpoint that includes CSE, CFA, and constant
+        folding. This required a number of interesting changes including:
+        
+        - Solidifying the set of invariants that the DFG obeys. For example, the
+          head and tail of each basic block must advertise the set of live locals
+          and the set of available locals, respectively. It must do so by
+          referring to the first access to the local in the block (for head) and
+          the last one (for tail). This patch introduces the start of a
+          validation step that may be turned on even with asserts disabled. To
+          ensure that these invariants are preserved, I had to remove the
+          redundant phi elimination phase. For now I just remove the call, but in
+          the future we will probably remove it entirely unless we find a use for
+          it.
+        
+        - Making it easier to get the boolean version of a JSValue. This is a
+          pure operation, but we previously did not treat it as such.
+        
+        - Fixing the merging and filtering of AbstractValues that correspond to
+          concrete JSValues. This was previously broken and was limiting the
+          effect of running constant folding. Fixing this meant that I had to
+          change how constant folding eliminates GetLocal nodes, so as to ensure
+          that the resulting graph still obeys DFG rules.
+        
+        - Introducing simplified getters for some of the things that DFG phases
+          want to know about, like the Nth child of a node (now just
+          graph.child(...) if you don't care about performance too much) or
+          getting successors of a basic block.
+        
+        The current CFG simplifier can handle almost all of the cases that it
+        ought to handle; the noteworthy one that is not yet handled is removing
+        basic blocks that just have jumps. To do this right we need to be able
+        to remove jump-only blocks that also perform keep-alive on some values.
+        To make this work, we need to be able to hoist the keep-alive into (or
+        just above) a Branch. This is not fundamentally difficult but I opted to
+        let this patch omit this optimization. We can handle this later.
+        
+        This is a big win on programs that include inline functions that are
+        often called with constant arguments. Of course, SunSpider, V8, and
+        Kraken don't count. Those benchmarks are completely neutral with this
+        change.
+
+        * API/JSValueRef.cpp:
+        (JSValueToBoolean):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::dfgOSREntryDataForBytecodeIndex):
+        * bytecode/Operands.h:
+        (JSC::Operands::setOperandFirstTime):
+        (Operands):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::operator!=):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::validateIgnoringValue):
+        (AbstractValue):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::child):
+        (JSC::DFG::AdjacencyList::setChild):
+        (AdjacencyList):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::~BasicBlock):
+        (BasicBlock):
+        (JSC::DFG::BasicBlock::numNodes):
+        (JSC::DFG::BasicBlock::nodeIndex):
+        (JSC::DFG::BasicBlock::isPhiIndex):
+        (JSC::DFG::BasicBlock::isInPhis):
+        (JSC::DFG::BasicBlock::isInBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::performCFA):
+        * dfg/DFGCFAPhase.h:
+        (DFG):
+        * dfg/DFGCFGSimplificationPhase.cpp: Added.
+        (DFG):
+        (CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::killUnreachable):
+        (JSC::DFG::CFGSimplificationPhase::findOperandSource):
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::jettisonBlock):
+        (JSC::DFG::CFGSimplificationPhase::fixPhis):
+        (JSC::DFG::CFGSimplificationPhase::fixJettisonedPredecessors):
+        (JSC::DFG::CFGSimplificationPhase::removePotentiallyDeadPhiReference):
+        (JSC::DFG::CFGSimplificationPhase::OperandSubstitution::OperandSubstitution):
+        (OperandSubstitution):
+        (JSC::DFG::CFGSimplificationPhase::OperandSubstitution::dump):
+        (JSC::DFG::CFGSimplificationPhase::skipGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::fixTailOperand):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        (JSC::DFG::performCFGSimplification):
+        * dfg/DFGCFGSimplificationPhase.h: Added.
+        (DFG):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::run):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::impureCSE):
+        (JSC::DFG::CSEPhase::globalVarLoadElimination):
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::checkStructureLoadElimination):
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+        (JSC::DFG::performCSE):
+        * dfg/DFGCSEPhase.h:
+        (DFG):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (JSC::DFG::performConstantFolding):
+        * dfg/DFGConstantFoldingPhase.h:
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGEdge.h:
+        (Edge):
+        (JSC::DFG::Edge::operator UnspecifiedBoolType*):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::performFixup):
+        * dfg/DFGFixupPhase.h:
+        (DFG):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::handleSuccessor):
+        (DFG):
+        (JSC::DFG::Graph::determineReachability):
+        (JSC::DFG::Graph::resetReachability):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::deref):
+        (JSC::DFG::Graph::changeIndex):
+        (Graph):
+        (JSC::DFG::Graph::changeEdge):
+        (JSC::DFG::Graph::numSuccessors):
+        (JSC::DFG::Graph::successor):
+        (JSC::DFG::Graph::successorForCondition):
+        (JSC::DFG::Graph::isPredictedNumerical):
+        (JSC::DFG::Graph::byValIsPure):
+        (JSC::DFG::Graph::clobbersWorld):
+        (JSC::DFG::Graph::numChildren):
+        (JSC::DFG::Graph::child):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::numSuccessors):
+        (Node):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::successorForCondition):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::endPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runPhase):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::performPredictionPropagation):
+        * dfg/DFGPredictionPropagationPhase.h:
+        (DFG):
+        * dfg/DFGRedundantPhiEliminationPhase.cpp:
+        (JSC::DFG::RedundantPhiEliminationPhase::run):
+        (JSC::DFG::performRedundantPhiElimination):
+        * dfg/DFGRedundantPhiEliminationPhase.h:
+        (DFG):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        (ScoreBoard):
+        (JSC::DFG::ScoreBoard::useIfHasResult):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::nextBlock):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::use):
+        (JSC::DFG::SpeculativeJIT::jump):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp: Added.
+        (DFG):
+        (Validate):
+        (JSC::DFG::Validate::Validate):
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::reportValidationContext):
+        (JSC::DFG::Validate::dumpData):
+        (JSC::DFG::Validate::dumpGraphIfAppropriate):
+        (JSC::DFG::validate):
+        * dfg/DFGValidate.h: Added.
+        (DFG):
+        (JSC::DFG::validate):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        (JSC::DFG::performVirtualRegisterAllocation):
+        * dfg/DFGVirtualRegisterAllocationPhase.h:
+        (DFG):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncSome):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSObject.cpp:
+        (JSC):
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp:
+        (JSC::JSString::toBoolean):
+        * runtime/JSString.h:
+        (JSString):
+        (JSC::JSCell::toBoolean):
+        (JSC::JSValue::toBoolean):
+        * runtime/JSValue.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorMultiline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
+2012-05-18  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, build fix.
 
         * dfg/DFGSpeculativeJIT.h:

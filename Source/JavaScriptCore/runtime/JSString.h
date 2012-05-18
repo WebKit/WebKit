@@ -134,7 +134,7 @@ namespace JSC {
         unsigned length() { return m_length; }
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
+        JS_EXPORT_PRIVATE bool toBoolean() const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
         double toNumber(ExecState*) const;
@@ -468,23 +468,23 @@ namespace JSC {
 
     inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSString::s_info; }
 
-    inline bool JSCell::toBoolean(ExecState* exec) const
+    inline bool JSCell::toBoolean() const
     {
         if (isString()) 
-            return static_cast<const JSString*>(this)->toBoolean(exec);
+            return static_cast<const JSString*>(this)->toBoolean();
         return !structure()->typeInfo().masqueradesAsUndefined();
     }
 
     // --- JSValue inlines ----------------------------
     
-    inline bool JSValue::toBoolean(ExecState* exec) const
+    inline bool JSValue::toBoolean() const
     {
         if (isInt32())
             return asInt32();
         if (isDouble())
             return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
         if (isCell())
-            return asCell()->toBoolean(exec);
+            return asCell()->toBoolean();
         return isTrue(); // false, null, and undefined all convert to false.
     }
 

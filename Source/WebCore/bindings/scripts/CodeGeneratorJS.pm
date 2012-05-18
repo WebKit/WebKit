@@ -165,7 +165,7 @@ END
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
+    impl->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean());
     return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
@@ -1869,6 +1869,7 @@ sub GenerateImplementation
 
                         push(@implContent, "void ${putFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                         push(@implContent, "{\n");
+                        push(@implContent, "    UNUSED_PARAM(exec);\n");
 
                         if ($dataNode->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                             if ($interfaceName eq "DOMWindow") {
@@ -2905,7 +2906,7 @@ sub JSValueToNative
     my $conditional = $signature->extendedAttributes->{"Conditional"};
     my $type = $codeGenerator->StripModule($signature->type);
 
-    return "$value.toBoolean(exec)" if $type eq "boolean";
+    return "$value.toBoolean()" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float";
     return "$value.toInt32(exec)" if $type eq "long" or $type eq "short";

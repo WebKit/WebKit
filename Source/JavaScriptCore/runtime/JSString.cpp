@@ -230,7 +230,7 @@ bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
     return false;
 }
 
-bool JSString::toBoolean(ExecState*) const
+bool JSString::toBoolean() const
 {
     return m_length;
 }

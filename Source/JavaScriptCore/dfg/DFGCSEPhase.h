@@ -39,7 +39,7 @@ class Graph;
 // a wide range of subexpression similarities. It's known to produce big wins
 // on a few benchmarks, and is relatively cheap to run.
 
-void performCSE(Graph&);
+bool performCSE(Graph&);
 
 } } // namespace JSC::DFG
 

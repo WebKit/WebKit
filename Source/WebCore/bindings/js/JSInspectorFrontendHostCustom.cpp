@@ -114,9 +114,9 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
             ContextMenuItem* menuItem = new ContextMenuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, ustringToString(label.toString(exec)->value(exec)));
             if (!enabled.isUndefined())
-                menuItem->setEnabled(enabled.toBoolean(exec));
+                menuItem->setEnabled(enabled.toBoolean());
             if (!checked.isUndefined())
-                menuItem->setChecked(checked.toBoolean(exec));
+                menuItem->setChecked(checked.toBoolean());
             items.append(menuItem);
         }
     }

@@ -126,6 +126,16 @@ public:
         setLocal(operand, value);
     }
     
+    void setOperandFirstTime(int operand, const T& value)
+    {
+        if (operandIsArgument(operand)) {
+            setArgumentFirstTime(operandToArgument(operand), value);
+            return;
+        }
+        
+        setLocalFirstTime(operand, value);
+    }
+    
     void clear()
     {
         for (size_t i = 0; i < m_arguments.size(); ++i)

@@ -37,7 +37,7 @@ class Graph;
 // Fix portions of the graph that are inefficient given the predictions that
 // we have. This should run after prediction propagation but before CSE.
 
-void performFixup(Graph&);
+bool performFixup(Graph&);
 
 } } // namespace JSC::DFG::Phase
 

@@ -41,15 +41,19 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
             fixupBlock(m_graph.m_blocks[blockIndex].get());
+        return true;
     }
 
 private:
     void fixupBlock(BasicBlock* block)
     {
+        if (!block)
+            return;
+        ASSERT(block->isReachable);
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             m_compileIndex = block->at(m_indexInBlock);
             fixupNode(m_graph[m_compileIndex]);
@@ -383,9 +387,9 @@ private:
     InsertionSet<NodeIndex> m_insertionSet;
 };
     
-void performFixup(Graph& graph)
+bool performFixup(Graph& graph)
 {
-    runPhase<FixupPhase>(graph);
+    return runPhase<FixupPhase>(graph);
 }
 
 } } // namespace JSC::DFG

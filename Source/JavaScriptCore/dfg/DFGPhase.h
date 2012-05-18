@@ -73,10 +73,10 @@ private:
 };
 
 template<typename PhaseType>
-void runPhase(Graph& graph)
+bool runPhase(Graph& graph)
 {
     PhaseType phase(graph);
-    phase.run();
+    return phase.run();
 }
 
 } } // namespace JSC::DFG

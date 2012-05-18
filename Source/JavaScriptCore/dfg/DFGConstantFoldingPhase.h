@@ -38,7 +38,7 @@ class Graph;
 // inferred constants, and replaces those nodes with constants whilst injecting
 // Phantom nodes to keep the children alive (which is necessary for OSR exit).
 
-void performConstantFolding(Graph&);
+bool performConstantFolding(Graph&);
 
 } } // namespace JSC::DFG
 

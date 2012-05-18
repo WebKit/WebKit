@@ -214,14 +214,14 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
 
     PropertySlot enumerableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().enumerable, enumerableSlot)) {
-        desc.setEnumerable(enumerableSlot.getValue(exec, exec->propertyNames().enumerable).toBoolean(exec));
+        desc.setEnumerable(enumerableSlot.getValue(exec, exec->propertyNames().enumerable).toBoolean());
         if (exec->hadException())
             return false;
     }
 
     PropertySlot configurableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().configurable, configurableSlot)) {
-        desc.setConfigurable(configurableSlot.getValue(exec, exec->propertyNames().configurable).toBoolean(exec));
+        desc.setConfigurable(configurableSlot.getValue(exec, exec->propertyNames().configurable).toBoolean());
         if (exec->hadException())
             return false;
     }
@@ -236,7 +236,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
 
     PropertySlot writableSlot(description);
     if (description->getPropertySlot(exec, exec->propertyNames().writable, writableSlot)) {
-        desc.setWritable(writableSlot.getValue(exec, exec->propertyNames().writable).toBoolean(exec));
+        desc.setWritable(writableSlot.getValue(exec, exec->propertyNames().writable).toBoolean());
         if (exec->hadException())
             return false;
     }

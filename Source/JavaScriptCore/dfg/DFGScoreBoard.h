@@ -120,11 +120,24 @@ public:
             // Clear the use count & add to the free list.
             m_used[index] = 0;
             m_free.append(index);
+        } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog(" Virtual register %u is at %u/%u uses.", index, m_used[index], node.refCount());
+#endif
         }
     }
     void use(Edge child)
     {
         use(child.indexUnchecked());
+    }
+    
+    void useIfHasResult(Edge child)
+    {
+        if (!child)
+            return;
+        if (!m_graph[child].hasResult())
+            return;
+        use(child);
     }
 
     unsigned highWatermark()

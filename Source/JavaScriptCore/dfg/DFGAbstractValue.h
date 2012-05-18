@@ -323,7 +323,10 @@ struct AbstractValue {
     
     bool isClear() const
     {
-        return m_type == PredictNone && m_structure.isClear();
+        bool result = m_type == PredictNone && m_structure.isClear();
+        if (result)
+            ASSERT(!m_value);
+        return result;
     }
     
     void makeTop()
@@ -417,15 +420,30 @@ struct AbstractValue {
             && m_structure == other.m_structure
             && m_value == other.m_value;
     }
+    bool operator!=(const AbstractValue& other) const
+    {
+        return !(*this == other);
+    }
     
     bool merge(const AbstractValue& other)
     {
+#if !ASSERT_DISABLED
+        AbstractValue oldMe = *this;
+#endif
         bool result = false;
-        result |= mergePrediction(m_type, other.m_type);
-        result |= m_structure.addAll(other.m_structure);
-        if (m_value != other.m_value)
-            m_value = JSValue();
+        if (isClear()) {
+            *this = other;
+            result = !other.isClear();
+        } else {
+            result |= mergePrediction(m_type, other.m_type);
+            result |= m_structure.addAll(other.m_structure);
+            if (m_value != other.m_value) {
+                result |= !!m_value;
+                m_value = JSValue();
+            }
+        }
         checkConsistency();
+        ASSERT(result == (*this != oldMe));
         return result;
     }
     
@@ -452,7 +470,7 @@ struct AbstractValue {
         // into the information gleaned from the StructureSet.
         m_structure.filter(m_type);
         
-        if (!!m_value && !validate(m_value))
+        if (!!m_value && !validateIgnoringValue(m_value))
             clear();
         
         checkConsistency();
@@ -470,10 +488,34 @@ struct AbstractValue {
         // the new type (None) rather than the one passed (Array).
         m_structure.filter(m_type);
 
-        if (!!m_value && !validate(m_value))
+        if (!!m_value && !validateIgnoringValue(m_value))
             clear();
         
         checkConsistency();
+    }
+    
+    bool validateIgnoringValue(JSValue value) const
+    {
+        if (isTop())
+            return true;
+        
+        if (mergePredictions(m_type, predictionFromValue(value)) != m_type)
+            return false;
+        
+        if (value.isEmpty()) {
+            ASSERT(m_type & PredictEmpty);
+            return true;
+        }
+        
+        if (m_structure.isTop())
+            return true;
+        
+        if (!!value && value.isCell()) {
+            ASSERT(m_type & PredictCell);
+            return m_structure.contains(value.asCell()->structure());
+        }
+        
+        return true;
     }
     
     bool validate(JSValue value) const

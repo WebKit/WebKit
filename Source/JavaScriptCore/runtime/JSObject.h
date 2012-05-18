@@ -138,7 +138,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-        JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
         JS_EXPORT_PRIVATE JSString* toString(ExecState*) const;

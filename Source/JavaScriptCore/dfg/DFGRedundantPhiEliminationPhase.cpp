@@ -39,7 +39,7 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
         bool changed = false;
         do {
@@ -63,7 +63,8 @@ public:
                 break;
             }
         }
-
+        
+        return true;
     }
 
 private:
@@ -166,9 +167,9 @@ private:
 
 };
 
-void performRedundantPhiElimination(Graph& graph)
+bool performRedundantPhiElimination(Graph& graph)
 {
-    runPhase<RedundantPhiEliminationPhase>(graph);
+    return runPhase<RedundantPhiEliminationPhase>(graph);
 }
 
 } } // namespace JSC::DFG

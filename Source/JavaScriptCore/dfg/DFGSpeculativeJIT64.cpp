@@ -604,7 +604,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, NodeIndex br
     BlockIndex taken = branchNode.takenBlockIndex();
     BlockIndex notTaken = branchNode.notTakenBlockIndex();
     
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         invert = !invert;
         BlockIndex tmp = taken;
         taken = notTaken;
@@ -671,7 +671,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node& node, NodeIndex branchNo
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         cond = JITCompiler::invert(cond);
         callResultCondition = JITCompiler::Zero;
         BlockIndex tmp = taken;
@@ -813,7 +813,7 @@ void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node& node, NodeIndex branch
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         invert = !invert;
         BlockIndex tmp = taken;
         taken = notTaken;
@@ -1838,7 +1838,7 @@ void SpeculativeJIT::emitBranch(Node& node)
         if (at(node.child1()).shouldSpeculateInteger()) {
             bool invert = false;
             
-            if (taken == (m_block + 1)) {
+            if (taken == nextBlock()) {
                 invert = true;
                 BlockIndex tmp = taken;
                 taken = notTaken;
@@ -1866,7 +1866,7 @@ void SpeculativeJIT::emitBranch(Node& node)
             if (isBooleanPrediction(m_state.forNode(node.child1()).m_type)) {
                 MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
                 
-                if (taken == (m_block + 1)) {
+                if (taken == nextBlock()) {
                     condition = MacroAssembler::Zero;
                     BlockIndex tmp = taken;
                     taken = notTaken;
@@ -2843,7 +2843,7 @@ void SpeculativeJIT::compile(Node& node)
             
             MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
             
-            if (taken == (m_block + 1)) {
+            if (taken == nextBlock()) {
                 condition = MacroAssembler::Zero;
                 BlockIndex tmp = taken;
                 taken = notTaken;

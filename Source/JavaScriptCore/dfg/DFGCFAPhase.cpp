@@ -42,7 +42,7 @@ public:
     {
     }
     
-    void run()
+    bool run()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
@@ -65,12 +65,16 @@ public:
             m_changed = false;
             performForwardCFA();
         } while (m_changed);
+        
+        return true;
     }
     
 private:
     void performBlockCFA(BlockIndex blockIndex)
     {
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        if (!block)
+            return;
         if (!block->cfaShouldRevisit)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -126,9 +130,9 @@ private:
 #endif
 };
 
-void performCFA(Graph& graph)
+bool performCFA(Graph& graph)
 {
-    runPhase<CFAPhase>(graph);
+    return runPhase<CFAPhase>(graph);
 }
 
 } } // namespace JSC::DFG

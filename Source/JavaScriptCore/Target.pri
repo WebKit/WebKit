@@ -93,6 +93,7 @@ SOURCES += \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \
     dfg/DFGCFAPhase.cpp \
+    dfg/DFGCFGSimplificationPhase.cpp \
     dfg/DFGConstantFoldingPhase.cpp \
     dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGCSEPhase.cpp \
@@ -115,6 +116,7 @@ SOURCES += \
     dfg/DFGSpeculativeJIT32_64.cpp \
     dfg/DFGSpeculativeJIT64.cpp \
     dfg/DFGThunks.cpp \
+    dfg/DFGValidate.cpp \
     dfg/DFGVirtualRegisterAllocationPhase.cpp \
     interpreter/AbstractPC.cpp \
     interpreter/CallFrame.cpp \

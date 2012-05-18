@@ -62,6 +62,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCapabilities.cpp
     dfg/DFGCFAPhase.cpp
+    dfg/DFGCFGSimplificationPhase.cpp
     dfg/DFGConstantFoldingPhase.cpp
     dfg/DFGCorrectableJumpPoint.cpp
     dfg/DFGCSEPhase.cpp
@@ -84,6 +85,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGThunks.cpp
+    dfg/DFGValidate.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
 
     heap/BlockAllocator.cpp

@@ -422,11 +422,6 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
         getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
 }
 
-bool JSObject::toBoolean(ExecState*) const
-{
-    return true;
-}
-
 double JSObject::toNumber(ExecState* exec) const
 {
     JSValue primitive = toPrimitive(exec, PreferNumber);

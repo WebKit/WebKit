@@ -180,7 +180,7 @@ namespace JSC { namespace DFG {
     macro(IsString, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
     macro(IsFunction, NodeResultBoolean) \
-    macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
+    macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \

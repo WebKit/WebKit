@@ -829,7 +829,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
 
     MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
     
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         condition = MacroAssembler::NotEqual;
         BlockIndex tmp = taken;
         taken = notTaken;
@@ -859,7 +859,7 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         condition = JITCompiler::invert(condition);
         BlockIndex tmp = taken;
         taken = notTaken;
@@ -1275,8 +1275,11 @@ bool SpeculativeJIT::compile()
         m_jit.move(TrustedImm32(0), GPRInfo::regT0);
 
     ASSERT(!m_compileIndex);
-    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
-        compile(*m_jit.graph().m_blocks[m_block]);
+    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
+        BasicBlock* block = m_jit.graph().m_blocks[m_block].get();
+        if (block)
+            compile(*block);
+    }
     linkBranches();
     return true;
 }
@@ -1284,8 +1287,10 @@ bool SpeculativeJIT::compile()
 void SpeculativeJIT::createOSREntries()
 {
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
-        BasicBlock& block = *m_jit.graph().m_blocks[blockIndex];
-        if (!block.isOSRTarget)
+        BasicBlock* block = m_jit.graph().m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        if (!block->isOSRTarget)
             continue;
 
         // Currently we only need to create OSR entry trampolines when using edge code
@@ -1307,9 +1312,12 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
 {
     unsigned osrEntryIndex = 0;
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
-        BasicBlock& block = *m_jit.graph().m_blocks[blockIndex];
-        if (block.isOSRTarget)
-            m_jit.noticeOSREntry(block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
+        BasicBlock* block = m_jit.graph().m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        if (!block->isOSRTarget)
+            continue;
+        m_jit.noticeOSREntry(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
     }
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
 }
@@ -2800,7 +2808,7 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node& node, Edge value, JSValue 
         
         // The branch instruction will branch to the taken block.
         // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
-        if (taken == (m_block + 1)) {
+        if (taken == nextBlock()) {
             condition = MacroAssembler::NotEqual;
             BlockIndex tmp = taken;
             taken = notTaken;
@@ -3066,7 +3074,7 @@ bool SpeculativeJIT::compileRegExpExec(Node& node)
     BlockIndex notTaken = branchNode.notTakenBlockIndex();
     
     bool invert = false;
-    if (taken == (m_block + 1)) {
+    if (taken == nextBlock()) {
         invert = true;
         BlockIndex tmp = taken;
         taken = notTaken;

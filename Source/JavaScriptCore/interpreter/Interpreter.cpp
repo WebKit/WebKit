@@ -2620,7 +2620,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
         int dst = vPC[1].u.operand;
         int src = vPC[2].u.operand;
-        JSValue result = jsBoolean(!callFrame->r(src).jsValue().toBoolean(callFrame));
+        JSValue result = jsBoolean(!callFrame->r(src).jsValue().toBoolean());
         CHECK_FOR_EXCEPTION();
         callFrame->uncheckedR(dst) = result;
 
@@ -3929,7 +3929,7 @@ skip_id_custom_self:
          */
         int cond = vPC[1].u.operand;
         int target = vPC[2].u.operand;
-        if (callFrame->r(cond).jsValue().toBoolean(callFrame)) {
+        if (callFrame->r(cond).jsValue().toBoolean()) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
             NEXT_INSTRUCTION();
@@ -3949,7 +3949,7 @@ skip_id_custom_self:
          */
         int cond = vPC[1].u.operand;
         int target = vPC[2].u.operand;
-        if (!callFrame->r(cond).jsValue().toBoolean(callFrame)) {
+        if (!callFrame->r(cond).jsValue().toBoolean()) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
             NEXT_INSTRUCTION();
@@ -3966,7 +3966,7 @@ skip_id_custom_self:
         */
         int cond = vPC[1].u.operand;
         int target = vPC[2].u.operand;
-        if (callFrame->r(cond).jsValue().toBoolean(callFrame)) {
+        if (callFrame->r(cond).jsValue().toBoolean()) {
             vPC += target;
             NEXT_INSTRUCTION();
         }
@@ -3982,7 +3982,7 @@ skip_id_custom_self:
         */
         int cond = vPC[1].u.operand;
         int target = vPC[2].u.operand;
-        if (!callFrame->r(cond).jsValue().toBoolean(callFrame)) {
+        if (!callFrame->r(cond).jsValue().toBoolean()) {
             vPC += target;
             NEXT_INSTRUCTION();
         }

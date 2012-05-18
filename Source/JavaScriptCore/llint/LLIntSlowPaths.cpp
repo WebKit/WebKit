@@ -500,7 +500,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
 LLINT_SLOW_PATH_DECL(slow_path_not)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsBoolean(!LLINT_OP_C(2).jsValue().toBoolean(exec)));
+    LLINT_RETURN(jsBoolean(!LLINT_OP_C(2).jsValue().toBoolean()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_eq)
@@ -1088,13 +1088,13 @@ LLINT_SLOW_PATH_DECL(slow_path_jmp_scopes)
 LLINT_SLOW_PATH_DECL(slow_path_jtrue)
 {
     LLINT_BEGIN();
-    LLINT_BRANCH(op_jtrue, LLINT_OP_C(1).jsValue().toBoolean(exec));
+    LLINT_BRANCH(op_jtrue, LLINT_OP_C(1).jsValue().toBoolean());
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jfalse)
 {
     LLINT_BEGIN();
-    LLINT_BRANCH(op_jfalse, !LLINT_OP_C(1).jsValue().toBoolean(exec));
+    LLINT_BRANCH(op_jfalse, !LLINT_OP_C(1).jsValue().toBoolean());
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_jless)

@@ -2759,9 +2759,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_not)
 
     JSValue src = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    JSValue result = jsBoolean(!src.toBoolean(callFrame));
+    JSValue result = jsBoolean(!src.toBoolean());
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2772,9 +2770,7 @@ DEFINE_STUB_FUNCTION(int, op_jtrue)
 
     JSValue src1 = stackFrame.args[0].jsValue();
 
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    bool result = src1.toBoolean(callFrame);
+    bool result = src1.toBoolean();
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }

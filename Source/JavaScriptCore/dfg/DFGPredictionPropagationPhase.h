@@ -43,7 +43,7 @@ class Graph;
 // arithmetic nodes) do not qualify for any of these categories. But after running
 // this phase, we'll have full information for the expected type of each node.
 
-void performPredictionPropagation(Graph&);
+bool performPredictionPropagation(Graph&);
 
 } } // namespace JSC::DFG::Phase
 

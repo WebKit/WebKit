@@ -1129,7 +1129,7 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return JSValue::decode(encodedOp).toBoolean(exec);
+    return JSValue::decode(encodedOp).toBoolean();
 }
 
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)

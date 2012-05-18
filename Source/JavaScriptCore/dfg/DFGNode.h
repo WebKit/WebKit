@@ -75,7 +75,7 @@ struct OpInfo {
 // Node represents a single operation in the data flow graph.
 struct Node {
     enum VarArgTag { VarArg };
-
+    
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : codeOrigin(codeOrigin)
@@ -202,7 +202,8 @@ struct Node {
         m_op = JSConstant;
         if (m_flags & NodeMustGenerate)
             m_refCount--;
-        m_flags &= ~NodeMustGenerate;
+        ASSERT(!(m_flags & NodeClobbersWorld));
+        m_flags &= ~(NodeMustGenerate | NodeMightClobber);
         m_opInfo = constantNumber;
         children.reset();
     }
@@ -466,6 +467,37 @@ struct Node {
     {
         ASSERT(isBranch());
         return m_opInfo2;
+    }
+    
+    unsigned numSuccessors()
+    {
+        switch (op()) {
+        case Jump:
+            return 1;
+        case Branch:
+            return 2;
+        default:
+            return 0;
+        }
+    }
+    
+    BlockIndex successor(unsigned index)
+    {
+        switch (index) {
+        case 0:
+            return takenBlockIndex();
+        case 1:
+            return notTakenBlockIndex();
+        default:
+            ASSERT_NOT_REACHED();
+            return NoBlock;
+        }
+    }
+    
+    BlockIndex successorForCondition(bool condition)
+    {
+        ASSERT(isBranch());
+        return condition ? takenBlockIndex() : notTakenBlockIndex();
     }
     
     bool hasHeapPrediction()

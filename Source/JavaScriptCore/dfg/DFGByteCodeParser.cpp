@@ -97,10 +97,6 @@ private:
     void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
-    // Find reachable code and setup predecessor links in the graph's BasicBlocks.
-    void determineReachability();
-    // Enqueue a block onto the worklist, if necessary.
-    void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex, BlockIndex successor);
     // Link block successors.
     void linkBlock(BasicBlock*, Vector<BlockIndex>& possibleTargets);
     void linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BlockIndex>& possibleTargets);
@@ -2606,41 +2602,6 @@ void ByteCodeParser::linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<Bl
     }
 }
 
-void ByteCodeParser::handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex)
-{
-    BasicBlock* successor = m_graph.m_blocks[successorIndex].get();
-    if (!successor->isReachable) {
-        successor->isReachable = true;
-        worklist.append(successorIndex);
-    }
-    
-    successor->m_predecessors.append(blockIndex);
-}
-
-void ByteCodeParser::determineReachability()
-{
-    Vector<BlockIndex, 16> worklist;
-    worklist.append(0);
-    m_graph.m_blocks[0]->isReachable = true;
-    while (!worklist.isEmpty()) {
-        BlockIndex index = worklist.last();
-        worklist.removeLast();
-        
-        BasicBlock* block = m_graph.m_blocks[index].get();
-        ASSERT(block->isLinked);
-        
-        Node& node = m_graph[block->last()];
-        ASSERT(node.isTerminal());
-        
-        if (node.isJump())
-            handleSuccessor(worklist, index, node.takenBlockIndex());
-        else if (node.isBranch()) {
-            handleSuccessor(worklist, index, node.takenBlockIndex());
-            handleSuccessor(worklist, index, node.notTakenBlockIndex());
-        }
-    }
-}
-
 void ByteCodeParser::buildOperandMapsIfNecessary()
 {
     if (m_haveBuiltOperandMaps)
@@ -2852,7 +2813,13 @@ bool ByteCodeParser::parse()
     parseCodeBlock();
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
-    determineReachability();
+    m_graph.determineReachability();
+    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        ASSERT(block);
+        if (!block->isReachable)
+            m_graph.m_blocks[blockIndex].clear();
+    }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     dataLog("Processing local variable phis.\n");
 #endif

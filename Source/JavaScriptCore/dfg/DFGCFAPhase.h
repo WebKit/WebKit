@@ -39,7 +39,7 @@ class Graph;
 // the code block. It's also responsible for identifying dead code, and in the
 // future should be used as a hook for constant propagation.
 
-void performCFA(Graph&);
+bool performCFA(Graph&);
 
 } } // namespace JSC::DFG
 
