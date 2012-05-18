@@ -1,3 +1,36 @@
+2012-05-18  Kentaro Hara  <haraken@chromium.org>
+
+        [perf-test] Add a binding benchmark for div.setAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=86815
+
+        Reviewed by Ryosuke Niwa.
+
+        We should remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        This patch adds a benchmark for div.setAttribute(). This benchmark
+        covers 'setAttribute' in Dromaeo/dom-attr.html and other DOM methods
+        that return an undefined.
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: set-attribute= 793.745073252 runs/s
+        median= 791.589665765 runs/s, stdev= 6.00467159709 runs/s, min= 785.27607362 runs/s, max= 808.080808081 runs/s
+
+        RESULT Bindings: set-attribute= 790.858444164 runs/s
+        median= 787.918921436 runs/s, stdev= 7.86264953655 runs/s, min= 780.234070221 runs/s, max= 806.04534005 runs/s
+
+        RESULT Bindings: set-attribute= 787.277571417 runs/s
+        median= 784.31372549 runs/s, stdev= 7.45363346657 runs/s, min= 778.588807786 runs/s, max= 804.020100503 runs/s
+
+        RESULT Bindings: set-attribute= 782.401393791 runs/s
+        median= 779.062978802 runs/s, stdev= 6.48250081621 runs/s, min= 777.642770352 runs/s, max= 796.019900498 runs/s
+
+        RESULT Bindings: set-attribute= 791.792516608 runs/s
+        median= 791.556728232 runs/s, stdev= 6.49182980397 runs/s, min= 779.220779221 runs/s, max= 808.080808081 runs/s
+
+        * Bindings/set-attribute.html: Added.
+
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
         [perf-test] Add a binding benchmark for div.getAttribute()
