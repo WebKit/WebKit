@@ -1,3 +1,19 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Update a few text expectations after r116761 and the jhbuild and
+        font updates.  tables/mozilla is still being skipped, but I will
+        unskip it after all the new expectations are landed.
+
+        * platform/efl/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug55694-expected.txt:
+        * platform/efl/tables/mozilla/marvin/x_caption_align_top-expected.txt:
+
 2012-05-18  Tony Chang  <tony@chromium.org>
 
         remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off
