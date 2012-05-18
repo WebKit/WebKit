@@ -43,7 +43,7 @@ void V8HTMLMediaElement::controllerAccessorSetter(v8::Local<v8::String> name, v8
         controller = V8MediaController::toNative(value->ToObject());
     
     if (!controller) {
-        throwError("Value is not of type MediaController");
+        V8Proxy::throwTypeError("Value is not of type MediaController");
         return;
     }
 

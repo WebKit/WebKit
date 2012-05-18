@@ -47,13 +47,13 @@ void V8AudioBufferSourceNode::bufferAccessorSetter(v8::Local<v8::String> name, v
     if (V8AudioBuffer::HasInstance(value)) {
         buffer = V8AudioBuffer::toNative(value->ToObject());
         if (buffer && !imp->setBuffer(buffer)) {
-            throwError("AudioBuffer unsupported number of channels");
+            V8Proxy::throwTypeError("AudioBuffer unsupported number of channels");
             return;
         }
     }
     
     if (!buffer) {
-        throwError("Value is not of type AudioBuffer");
+        V8Proxy::throwTypeError("Value is not of type AudioBuffer");
         return;
     }
 }

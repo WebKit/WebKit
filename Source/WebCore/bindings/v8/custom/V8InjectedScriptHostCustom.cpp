@@ -83,7 +83,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Ar
         return v8::Undefined();
 
     if (!args[0]->IsInt32()) {
-        throwError("argument has to be an integer");
+        V8Proxy::throwTypeError("argument has to be an integer");
         return v8::Undefined();
     }
 

@@ -149,7 +149,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
             v8::Local<v8::Value> function = global->Get(v8::String::New("open"));
             // If the open property is not a function throw a type error.
             if (!function->IsFunction()) {
-                throwError("open is not a function");
+                V8Proxy::throwTypeError("open is not a function");
                 return v8::Undefined();
             }
             // Wrap up the arguments and call the function.

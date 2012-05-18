@@ -60,20 +60,20 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
 {
     ArrayBuffer* buf = V8ArrayBuffer::toNative(args[0]->ToObject());
     if (!buf)
-        return throwError("Could not convert argument 0 to a ArrayBuffer");
+        return V8Proxy::throwTypeError("Could not convert argument 0 to a ArrayBuffer");
     bool ok;
     uint32_t offset = 0;
     int argLen = args.Length();
     if (argLen > 1) {
         offset = toUInt32(args[1], ok);
         if (!ok)
-            return throwError("Could not convert argument 1 to a number");
+            return V8Proxy::throwTypeError("Could not convert argument 1 to a number");
     }
     uint32_t length = 0;
     if (argLen > 2) {
         length = toUInt32(args[2], ok);
         if (!ok)
-            return throwError("Could not convert argument 2 to a number");
+            return V8Proxy::throwTypeError("Could not convert argument 2 to a number");
     } else {
         if ((buf->byteLength() - offset) % sizeof(ElementType))
             return V8Proxy::throwError(V8Proxy::RangeError, "ArrayBuffer length minus the byteOffset is not a multiple of the element size.");
@@ -153,7 +153,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (args[0]->IsObject()) {
         srcArray = args[0]->ToObject();
         if (srcArray.IsEmpty())
-            return throwError("Could not convert argument 0 to an array");
+            return V8Proxy::throwTypeError("Could not convert argument 0 to an array");
         len = toUInt32(srcArray->Get(v8::String::New("length")));
         doInstantiation = true;
     } else {
