@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "PixelDumpSupport.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
+#include "WebCoreTestSupport.h"
 #include "WorkQueue.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
@@ -251,6 +252,9 @@ static void runTest(const char* cTestPathOrURL)
     gLayoutTestController->setDeveloperExtrasEnabled(false);
 
     browser->clearExtraViews();
+
+    // FIXME: Move to DRTChrome::resetDefaultsToConsistentValues() after bug 85209 lands.
+    WebCoreTestSupport::resetInternalsObject(DumpRenderTreeSupportEfl::globalContextRefForFrame(browser->mainFrame()));
 
     ewk_view_uri_set(browser->mainView(), "about:blank");
 

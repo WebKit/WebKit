@@ -89,6 +89,7 @@ public:
     static String historyItemTarget(const Ewk_History_Item*);
     static bool isTargetItem(const Ewk_History_Item*);
     static void evaluateScriptInIsolatedWorld(const Evas_Object* ewkFrame, int worldID, JSObjectRef globalObject, const String& script);
+    static JSGlobalContextRef globalContextRefForFrame(const Evas_Object* ewkFrame);
 
     static void setMockScrollbarsEnabled(bool);
 

@@ -1,3 +1,17 @@
+2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL][DRT] Call resetInternalsObject() after each test.
+        https://bugs.webkit.org/show_bug.cgi?id=86793
+
+        Reviewed by Antonio Gomes.
+
+        We need to reset the internals object's settings after running
+        each test so that there are no interferences between each test's
+        results.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (runTest):
+
 2012-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117526.

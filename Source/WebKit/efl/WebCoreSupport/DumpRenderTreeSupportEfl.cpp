@@ -27,6 +27,7 @@
 #include "ewk_private.h"
 #include "ewk_view_private.h"
 
+#include <APICast.h>
 #include <AnimationController.h>
 #include <CSSComputedStyleDeclaration.h>
 #include <DocumentLoader.h>
@@ -575,6 +576,15 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
     // The code below is only valid for JSC, V8 specific code is to be added
     // when V8 will be supported in EFL port. See Qt implemenation.
     proxy->executeScriptInWorld(scriptWorld.get(), script, true);
+}
+
+JSGlobalContextRef DumpRenderTreeSupportEfl::globalContextRefForFrame(const Evas_Object* ewkFrame)
+{
+    WebCore::Frame* coreFrame = EWKPrivate::coreFrame(ewkFrame);
+    if (!coreFrame)
+        return 0;
+
+    return toGlobalRef(coreFrame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec());
 }
 
 void DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(bool enable)
