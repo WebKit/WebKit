@@ -133,8 +133,8 @@ class SCM:
     def _subclass_must_implement():
         raise NotImplementedError("subclasses must implement")
 
-    @staticmethod
-    def in_working_directory(path):
+    @classmethod
+    def in_working_directory(cls, path):
         SCM._subclass_must_implement()
 
     def find_checkout_root(path):

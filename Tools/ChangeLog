@@ -1,3 +1,25 @@
+2012-05-18  Dirk Pranke  <dpranke@chromium.org>
+
+        scm.add() doesn't work properly with svn 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=86779
+
+        Reviewed by Eric Seidel.
+
+        Re-land the change in r117526 with a fix to maintain
+        compatibility with SVN 1.4.4 (yay Leopard!); turns out
+        that "svn info foo" works correctly in 1.4.4 but
+        "svn info" from the directory "foo" doesn't if foo is
+        not part of a checkout. in_working_directory() and
+        value_from_svn_info() were using the arguments inconsistently,
+        leading to weird errors.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM):
+        (SCM.in_working_directory):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN):
+        (SVN.in_working_directory):
+
 2012-05-18  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Moving myself from committer to reviewer.
