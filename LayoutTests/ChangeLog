@@ -1,6 +1,19 @@
 2012-05-17  Peter Kasting  <pkasting@google.com>
 
         [chromium] Prune unnecessary failure expectations.
+        http://code.google.com/p/chromium/issues/detail?id=32670
+        https://bugs.webkit.org/show_bug.cgi?id=74694
+        https://bugs.webkit.org/show_bug.cgi?id=82129
+        https://bugs.webkit.org/show_bug.cgi?id=83503
+        https://bugs.webkit.org/show_bug.cgi?id=86439
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Prune unnecessary failure expectations.
         http://code.google.com/p/chromium/issues/detail?id=23489
         http://code.google.com/p/chromium/issues/detail?id=67540
         http://code.google.com/p/chromium/issues/detail?id=68436

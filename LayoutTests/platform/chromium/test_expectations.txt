@@ -1816,7 +1816,6 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 
 // WebKit roll 53341:53451
-BUGCR32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
 BUGCR32673 LINUX WIN : fast/forms/textarea-scrollbar-height.html = TEXT
 
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
@@ -2851,8 +2850,9 @@ BUGWK65199 LINUX WIN LEOPARD SNOWLEOPARD : fast/writing-mode/broken-ideograph-sm
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
-BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = MISSING PASS
-BUGWK74694 LINUX SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
+BUGWK74694 LINUX RELEASE : http/tests/cache/history-only-cached-subresource-loads.html = MISSING PASS
+BUGWK74694 LINUX RELEASE : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
+BUGWK74694 SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
 
 BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
@@ -3508,7 +3508,8 @@ BUG_OJAN SKIP : fast/js/function-names.html = FAIL
 BUG_OJAN SKIP : fast/js/global-constructors.html = FAIL
 
 // This should only be a layer change.
-BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = TEXT
+BUGWK82129 MAC WIN : fast/box-shadow/shadow-buffer-partial.html = TEXT
+BUGWK82129 LINUX X86 : fast/box-shadow/shadow-buffer-partial.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
 BUGWK82669 LINUX WIN LEOPARD : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
@@ -3536,8 +3537,6 @@ BUGWK19688 SKIP : fast/images/exif-orientation-css.html = FAIL
 BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
-
-BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
 
 BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
 BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
@@ -3723,8 +3722,8 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
 BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT PASS
-BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-events.html = TIMEOUT
-BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
+BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-events.html = TIMEOUT PASS
+BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT PASS
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
