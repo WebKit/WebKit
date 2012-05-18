@@ -454,9 +454,16 @@ void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSA
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    // We should only get here if index is outside the existing vector.
-    ASSERT(!array->canSetIndex(index));
-    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), true);
+    if (index >= 0) {
+        // We should only get here if index is outside the existing vector.
+        ASSERT(!array->canSetIndex(index));
+        JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), true);
+        return;
+    }
+    
+    PutPropertySlot slot(true);
+    array->methodTable()->put(
+        array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
@@ -464,9 +471,16 @@ void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, 
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    // We should only get here if index is outside the existing vector.
-    ASSERT(!array->canSetIndex(index));
-    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), false);
+    if (index >= 0) {
+        // We should only get here if index is outside the existing vector.
+        ASSERT(!array->canSetIndex(index));
+        JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), false);
+        return;
+    }
+    
+    PutPropertySlot slot(false);
+    array->methodTable()->put(
+        array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)

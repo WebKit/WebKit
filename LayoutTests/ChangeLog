@@ -1,3 +1,16 @@
+2012-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Setting array index -1 and looping over array causes bad behavior
+        https://bugs.webkit.org/show_bug.cgi?id=86733
+        <rdar://problem/11477670>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-negative-array-index-expected.txt: Added.
+        * fast/js/dfg-negative-array-index.html: Added.
+        * fast/js/script-tests/dfg-negative-array-index.js: Added.
+        (foo):
+
 2012-05-17  Peter Kasting  <pkasting@google.com>
 
         [chromium] More rebaselines/expectation updates.

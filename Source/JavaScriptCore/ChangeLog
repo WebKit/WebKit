@@ -1,3 +1,13 @@
+2012-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Setting array index -1 and looping over array causes bad behavior
+        https://bugs.webkit.org/show_bug.cgi?id=86733
+        <rdar://problem/11477670>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGOperations.cpp:
+
 2012-05-17  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
