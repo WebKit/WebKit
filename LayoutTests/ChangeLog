@@ -10,6 +10,20 @@
 
         [EFL] Unreviewed gardening.
 
+        Work a bit on the infamous "Needs rebaseline" list by removing a few
+        tests which are actually passing and updating some expectations.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/forms/caret-rtl-expected.png:
+        * platform/efl/fast/forms/caret-rtl-expected.txt:
+        * platform/efl/fast/forms/listbox-clip-expected.png:
+        * platform/efl/fast/forms/listbox-clip-expected.txt:
+        * platform/efl/fast/forms/search-styled-expected.txt:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
         Rebaseline test after r117412.
 
         * platform/efl/fast/borders/border-antialiasing-expected.png:

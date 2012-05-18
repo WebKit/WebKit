@@ -1081,8 +1081,6 @@ media/encrypted-media/
 fast/events/constructors/media-key-event-constructor.html
 
 # Needs a rebaseline
-fast/events/clear-drag-state.html
-fast/events/clear-edit-drag-state.html
 fast/events/constructors/webgl-context-event-constructor.html
 fast/events/dont-loose-last-event.html
 fast/events/drag-and-drop-set-drag-data-arguments.html
@@ -1112,7 +1110,6 @@ fast/files/not-enough-arguments.html
 fast/files/revoke-blob-url.html
 fast/files/url-required-arguments.html
 fast/forms/001.html
-fast/forms/caret-rtl.html
 fast/forms/float-before-fieldset.html
 fast/forms/form-element-geometry.html
 fast/forms/input-baseline.html
@@ -1120,13 +1117,11 @@ fast/forms/input-paste-undo.html
 fast/forms/input-placeholder-visibility-1.html
 fast/forms/input-step-as-double.html
 fast/forms/input-text-scroll-left-on-blur.html
-fast/forms/listbox-clip.html
 fast/forms/number/spin-button-events.html
 fast/forms/number/spin-in-multi-column.html
 fast/forms/placeholder-position.html
 fast/forms/placeholder-pseudo-style.html
 fast/forms/radio/radio_checked_name.html
-fast/forms/search-styled.html
 fast/forms/select/listbox-in-multi-column.html
 fast/forms/textarea-placeholder-pseudo-style.html
 fast/frames/frame-set-rotation-hit.html
