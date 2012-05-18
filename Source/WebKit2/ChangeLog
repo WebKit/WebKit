@@ -1,3 +1,15 @@
+2012-05-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Return TRUE for events handled to avoid their propagation.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseButtonPressEvent):
+        (webkitWebViewBaseButtonReleaseEvent):
+        (webkitWebViewBaseScrollEvent):
+        (webkitWebViewBaseMotionNotifyEvent):
+
 2012-05-18  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] fast/events/page-visibility-iframe-move-test.html fails
