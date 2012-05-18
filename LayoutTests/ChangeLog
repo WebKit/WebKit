@@ -1,3 +1,15 @@
+2012-05-18  Joe Thomas  <joethomas@motorola.com>
+
+        Refactor LayoutTests/fast/backgrounds/background-shorthand-with-backgroundSize-style.html
+        https://bugs.webkit.org/show_bug.cgi?id=86782
+
+        Reviewed by Tony Chang.
+
+        Refactored the testcase to include round-trip testing.
+
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+
 2012-05-18  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=86859

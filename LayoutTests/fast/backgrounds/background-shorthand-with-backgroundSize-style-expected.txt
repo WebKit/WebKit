@@ -1,42 +1,64 @@
-Bug 27577: [CSS3 Backgrounds and Borders] Add background-size to the background shorthand
+Tests background shortand property with background-size
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS e.style.background is 'red url(dummy://test.png) no-repeat border-box border-box 50% 50% / cover'
+PASS e.style.backgroundSize is 'cover'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50% 50% / cover'
+PASS computedStyle.getPropertyValue("background-size") is 'cover'
+PASS checkComputedStyleValue() is true
 
-PASS testCover.style.background is 'red url(dummy://test.png) no-repeat border-box border-box 50% 50% / cover'
-PASS testCover.style.backgroundSize is 'cover'
-PASS testContain.style.background is 'red url(dummy://test.png) no-repeat padding-box padding-box 20px 50% / contain'
-PASS testContain.style.backgroundSize is 'contain'
-PASS testPercentage.style.background is 'red url(dummy://test.png) no-repeat 50px 60px / 50% 75%'
-PASS testPercentage.style.backgroundSize is '50% 75%'
-PASS testPixels.style.background is 'red url(dummy://test.png) repeat padding-box border-box 0% 0% / 100px 200px'
-PASS testPixels.style.backgroundSize is '100px 200px'
-PASS testAuto.style.background is 'red url(dummy://test.png) repeat content-box border-box 50% 50% / auto'
-PASS testAuto.style.backgroundSize is 'auto'
-PASS testBrokenCover.style.background is ''
-PASS testBrokenCover.style.backgroundSize is ''
-PASS testBrokenContain.style.background is ''
-PASS testBrokenContain.style.backgroundSize is ''
-PASS testBrokenPixels.style.background is ''
-PASS testBrokenPixels.style.backgroundSize is ''
+PASS e.style.background is 'red url(dummy://test.png) no-repeat padding-box padding-box 20px 50% / contain'
+PASS e.style.backgroundSize is 'contain'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 20px 50% / contain'
+PASS computedStyle.getPropertyValue("background-size") is 'contain'
+PASS checkComputedStyleValue() is true
 
-PASS window.getComputedStyle(testCover,null).getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50% 50% / cover'
-PASS window.getComputedStyle(testCover,null).getPropertyValue("background-size") is 'cover'
-PASS window.getComputedStyle(testContain,null).getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 20px 50% / contain'
-PASS window.getComputedStyle(testContain,null).getPropertyValue("background-size") is 'contain'
-PASS window.getComputedStyle(testPercentage,null).getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50px 60px / 50% 75%'
-PASS window.getComputedStyle(testPercentage,null).getPropertyValue("background-size") is '50% 75%'
-PASS window.getComputedStyle(testPixels,null).getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px 200px'
-PASS window.getComputedStyle(testPixels,null).getPropertyValue("background-size") is '100px 200px'
-PASS window.getComputedStyle(testAuto,null).getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 50% 50% / auto'
-PASS window.getComputedStyle(testAuto,null).getPropertyValue("background-size") is 'auto'
-PASS window.getComputedStyle(testBrokenCover,null).getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
-PASS window.getComputedStyle(testBrokenCover,null).getPropertyValue("background-size") is 'auto'
-PASS window.getComputedStyle(testBrokenContain,null).getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
-PASS window.getComputedStyle(testBrokenContain,null).getPropertyValue("background-size") is 'auto'
-PASS window.getComputedStyle(testBrokenPixels,null).getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
-PASS window.getComputedStyle(testBrokenPixels,null).getPropertyValue("background-size") is 'auto'
+PASS e.style.background is 'red url(dummy://test.png) no-repeat 50px 60px / 50% 75%'
+PASS e.style.backgroundSize is '50% 75%'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50px 60px / 50% 75%'
+PASS computedStyle.getPropertyValue("background-size") is '50% 75%'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is 'red url(dummy://test.png) repeat border-box border-box 0% 0% / 100px 200px'
+PASS e.style.backgroundSize is '100px 200px'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px 200px'
+PASS computedStyle.getPropertyValue("background-size") is '100px 200px'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is 'red url(dummy://test.png) repeat content-box content-box 50% 50% / auto'
+PASS e.style.backgroundSize is 'auto'
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 50% 50% / auto'
+PASS computedStyle.getPropertyValue("background-size") is 'auto'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is ''
+PASS e.style.backgroundSize is ''
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
+PASS computedStyle.getPropertyValue("background-size") is 'auto'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is ''
+PASS e.style.backgroundSize is ''
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
+PASS computedStyle.getPropertyValue("background-size") is 'auto'
+PASS checkComputedStyleValue() is true
+
+PASS e.style.background is ''
+PASS e.style.backgroundSize is ''
+PASS checkStyle() is true
+PASS computedStyle.getPropertyValue("background") is 'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'
+PASS computedStyle.getPropertyValue("background-size") is 'auto'
+PASS checkComputedStyleValue() is true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,60 +1,101 @@
 <!DOCTYPE html>
 <html>
 <script src="../js/resources/js-test-pre.js"></script>
-<div id="test-cover" style="background: center / cover red url(dummy://test.png) no-repeat border-box"></div>
-<div id="test-contain" style="background: red 20px / contain url(dummy://test.png) no-repeat padding-box"></div>
-<div id="test-percentage" style="background: red url(dummy://test.png) 50px 60px / 50% 75% no-repeat"></div>
-<div id="test-pixels" style="background: red url(dummy://test.png) repeat top left / 100px 200px border-box padding-box"></div>
-<div id="test-auto" style="background: red url(dummy://test.png) repeat 50% / auto auto border-box content-box"></div>
-<div id="test-broken-cover" style="background: red / cover url(dummy://test.png) repeat"></div>
-<div id="test-broken-contain" style="background: red url(dummy://test.png) repeat 25px / contain contain"></div>
-<div id="test-broken-pixels" style="background: red top left / 100px cover url(dummy://test.png) repeat"></div>
+<div id="test"> </div>
 <script>
- if (window.layoutTestController)
-     layoutTestController.dumpAsText();
- description("Bug 27577: [CSS3 Backgrounds and Borders] Add background-size to the background shorthand ");
- var testCover = document.getElementById("test-cover");
- var testContain = document.getElementById("test-contain");
- var testPercentage = document.getElementById("test-percentage");
- var testPixels = document.getElementById("test-pixels");
- var testAuto = document.getElementById("test-auto");
- var testBrokenCover = document.getElementById("test-broken-cover");
- var testBrokenContain = document.getElementById("test-broken-contain");
- var testBrokenPixels = document.getElementById("test-broken-pixels");
- debug("");
- shouldBe("testCover.style.background", "'red url(dummy://test.png) no-repeat border-box border-box 50% 50% / cover'");
- shouldBe("testCover.style.backgroundSize", "'cover'");
- shouldBe("testContain.style.background", "'red url(dummy://test.png) no-repeat padding-box padding-box 20px 50% / contain'");
- shouldBe("testContain.style.backgroundSize", "'contain'");
- shouldBe("testPercentage.style.background", "'red url(dummy://test.png) no-repeat 50px 60px / 50% 75%'");
- shouldBe("testPercentage.style.backgroundSize", "'50% 75%'");
- shouldBe("testPixels.style.background", "'red url(dummy://test.png) repeat padding-box border-box 0% 0% / 100px 200px'");
- shouldBe("testPixels.style.backgroundSize", "'100px 200px'");
- shouldBe("testAuto.style.background", "'red url(dummy://test.png) repeat content-box border-box 50% 50% / auto'");
- shouldBe("testAuto.style.backgroundSize", "'auto'");
- shouldBe("testBrokenCover.style.background", "''");
- shouldBe("testBrokenCover.style.backgroundSize", "''");
- shouldBe("testBrokenContain.style.background", "''");
- shouldBe("testBrokenContain.style.backgroundSize", "''");
- shouldBe("testBrokenPixels.style.background", "''");
- shouldBe("testBrokenPixels.style.backgroundSize", "''");
- debug("");
- shouldBe('window.getComputedStyle(testCover,null).getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50% 50% / cover'");
- shouldBe('window.getComputedStyle(testCover,null).getPropertyValue("background-size")', "'cover'");
- shouldBe('window.getComputedStyle(testContain,null).getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 20px 50% / contain'");
- shouldBe('window.getComputedStyle(testContain,null).getPropertyValue("background-size")', "'contain'");
- shouldBe('window.getComputedStyle(testPercentage,null).getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50px 60px / 50% 75%'");
- shouldBe('window.getComputedStyle(testPercentage,null).getPropertyValue("background-size")', "'50% 75%'");
- shouldBe('window.getComputedStyle(testPixels,null).getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px 200px'");
- shouldBe('window.getComputedStyle(testPixels,null).getPropertyValue("background-size")', "'100px 200px'");
- shouldBe('window.getComputedStyle(testAuto,null).getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 50% 50% / auto'");
- shouldBe('window.getComputedStyle(testAuto,null).getPropertyValue("background-size")', "'auto'");
- shouldBe('window.getComputedStyle(testBrokenCover,null).getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
- shouldBe('window.getComputedStyle(testBrokenCover,null).getPropertyValue("background-size")', "'auto'");
- shouldBe('window.getComputedStyle(testBrokenContain,null).getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
- shouldBe('window.getComputedStyle(testBrokenContain,null).getPropertyValue("background-size")', "'auto'");
- shouldBe('window.getComputedStyle(testBrokenPixels,null).getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
- shouldBe('window.getComputedStyle(testBrokenPixels,null).getPropertyValue("background-size")', "'auto'");
+ description("Tests background shortand property with background-size");
+
+ var e = document.getElementById('test');
+ var computedStyle = window.getComputedStyle(e, null);
+
+ function checkStyle() {
+     var before = e.style.background;
+     e.style.background = 'none';
+     e.style.background = before;
+     return (e.style.background == before);
+ }
+
+ function checkComputedStyleValue() {
+     var before = window.getComputedStyle(e, null).getPropertyValue('background');
+     e.style.background = 'none';
+     e.style.background = before;
+     return (window.getComputedStyle(e, null).getPropertyValue('background') == before);
+ }
+
+ e.style.background = "center / cover red url(dummy://test.png) no-repeat border-box";
+ shouldBe("e.style.background", "'red url(dummy://test.png) no-repeat border-box border-box 50% 50% / cover'");
+ shouldBe("e.style.backgroundSize", "'cover'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50% 50% / cover'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'cover'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "red 20px / contain url(dummy://test.png) no-repeat padding-box";
+ shouldBe("e.style.background", "'red url(dummy://test.png) no-repeat padding-box padding-box 20px 50% / contain'");
+ shouldBe("e.style.backgroundSize", "'contain'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 20px 50% / contain'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'contain'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "red url(dummy://test.png) 50px 60px / 50% 75% no-repeat";
+ shouldBe("e.style.background", "'red url(dummy://test.png) no-repeat 50px 60px / 50% 75%'");
+ shouldBe("e.style.backgroundSize", "'50% 75%'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 50px 60px / 50% 75%'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'50% 75%'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "red url(dummy://test.png) repeat top left / 100px 200px border-box border-box";
+ shouldBe("e.style.background", "'red url(dummy://test.png) repeat border-box border-box 0% 0% / 100px 200px'");
+ shouldBe("e.style.backgroundSize", "'100px 200px'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / 100px 200px'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'100px 200px'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "red url(dummy://test.png) repeat 50% / auto auto content-box content-box";
+ shouldBe("e.style.background", "'red url(dummy://test.png) repeat content-box content-box 50% 50% / auto'");
+ shouldBe("e.style.backgroundSize", "'auto'");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 50% 50% / auto'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'auto'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "";
+ e.style.background = "red / cover url(dummy://test.png) repeat";
+ shouldBe("e.style.background", "''");
+ shouldBe("e.style.backgroundSize", "''");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'auto'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "";
+ e.style.background = "red url(dummy://test.png) repeat 25px / contain contain";
+ shouldBe("e.style.background", "''");
+ shouldBe("e.style.backgroundSize", "''");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'auto'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
+
+ e.style.background = "";
+ e.style.background = "red top left / 100px cover url(dummy://test.png) repeat";
+ shouldBe("e.style.background", "''");
+ shouldBe("e.style.backgroundSize", "''");
+ shouldBe("checkStyle()", "true");
+ shouldBe('computedStyle.getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto'");
+ shouldBe('computedStyle.getPropertyValue("background-size")', "'auto'");
+ shouldBe("checkComputedStyleValue()", "true");
+ debug("")
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
