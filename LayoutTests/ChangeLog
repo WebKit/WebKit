@@ -1,3 +1,16 @@
+2012-05-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add resource to UISourceCode constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=86853
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/scripts-file-selector.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/scripts-sorting.html:
+        * inspector/debugger/ui-source-code.html:
+
 2012-05-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: error when expanding an HTMLAllCollection object in the console

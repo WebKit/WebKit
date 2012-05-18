@@ -51,7 +51,7 @@ function test()
     }
     function createUISouceCode(url)
     {
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, contentProvider, null, false);
+        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, contentProvider, null, false);
         uiSourceCode.requestContent = function(callback)
         {
             InspectorTest.addResult("Source requested for " + url);

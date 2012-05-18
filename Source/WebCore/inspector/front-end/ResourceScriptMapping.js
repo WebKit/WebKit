@@ -87,30 +87,27 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         var resource = null;
         var request = null;
-        var isInlineScript = false;
-        if (script.isInlineScript()) {
-            // First lookup the resource that has already been loaded. We are only interested in Document resources.
+        if (!script.isAnonymousScript()) {
+            // First lookup the resource that has already been loaded.
             resource = WebInspector.resourceForURL(script.sourceURL);
-            if (resource && resource.type !== WebInspector.resourceTypes.Document)
-                resource = null;
             // Ignore resource in case it has not yet finished loading.
             if (resource && resource.request && !resource.request.finished)
                 resource = null;
             if (!resource) {
-                // When there is no resource, lookup in-flight requests of type Document.
+                // When there is no resource, lookup in-flight requests.
                 request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
-                if (request && request.type !== WebInspector.resourceTypes.Document)
-                    request = null;
             }
-            // If either of these exists, we bind script to the resource.
-            if (request || resource) {
-                isInlineScript = true;
-                var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
-                if (rawSourceCode) {
-                    rawSourceCode.addScript(script);
-                    this._bindScriptToRawSourceCode(script, rawSourceCode);
-                    return;
-                }
+        }
+        console.assert(!resource || !request);
+
+        var isInlineScript = script.isInlineScript() && (request || resource);
+        // If either of these exists, we bind script to the resource.
+        if (isInlineScript) {
+            var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
+            if (rawSourceCode) {
+                rawSourceCode.addScript(script);
+                this._bindScriptToRawSourceCode(script, rawSourceCode);
+                return;
             }
         }
 

@@ -118,7 +118,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            var uiSourceCode = new WebInspector.JavaScriptSource(sourceURL, contentProvider, this, false);
+            var uiSourceCode = new WebInspector.JavaScriptSource(sourceURL, null, contentProvider, this, false);
             uiSourceCode.isContentScript = script.isContentScript;
             this._uiSourceCodeByURL[sourceURL] = uiSourceCode;
             this._sourceMapForUISourceCode.put(uiSourceCode, sourceMap);

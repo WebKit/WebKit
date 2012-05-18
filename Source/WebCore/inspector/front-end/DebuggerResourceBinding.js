@@ -60,7 +60,7 @@ WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, ne
             return;
         }
 
-        var resource = WebInspector.resourceForURL(script.sourceURL);
+        var resource = uiSourceCode.resource();
         if (resource)
             resource.addRevision(newSource);
 
@@ -77,7 +77,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
      */
     canSetContent: function(resource)
     {
-        var uiSourceCode = this._uiSourceCodeForResource(resource);
+        var uiSourceCode = WebInspector.JavaScriptSource.javaScriptSourceForResource.get(resource);
         return !!uiSourceCode && uiSourceCode.isEditable();
     },
 
@@ -92,27 +92,13 @@ WebInspector.DebuggerResourceBinding.prototype = {
         if (!majorChange)
             return;
 
-        var uiSourceCode = this._uiSourceCodeForResource(resource);
+        var uiSourceCode = WebInspector.JavaScriptSource.javaScriptSourceForResource.get(resource);
         if (!uiSourceCode) {
             userCallback("Resource is not editable");
             return;
         }
 
         resource.requestContent(this._setContentWithInitialContent.bind(this, uiSourceCode, content, userCallback));
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     * @return {WebInspector.UISourceCode}
-     */
-    _uiSourceCodeForResource: function(resource)
-    {
-        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i) {
-            if (uiSourceCodes[i].url === resource.url)
-                return uiSourceCodes[i];
-        }
-        return null;
     },
 
     /**

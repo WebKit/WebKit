@@ -94,8 +94,7 @@ WebInspector.StylesUISourceCodeProvider.prototype.__proto__ = WebInspector.Objec
  */
 WebInspector.StyleSource = function(resource)
 {
-    WebInspector.UISourceCode.call(this, resource.url, resource);
-    this._resource = resource;
+    WebInspector.UISourceCode.call(this, resource.url, resource, resource);
 }
 
 WebInspector.StyleSource.prototype = {
@@ -110,10 +109,9 @@ WebInspector.StyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototy
  */
 WebInspector.StyleSourceFrame = function(styleSource)
 {
-    this._resource = styleSource._resource;
     this._styleSource = styleSource;
     WebInspector.SourceFrame.call(this, this._styleSource);
-    this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
+    this._styleSource.resource().addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
 WebInspector.StyleSourceFrame.prototype = {
@@ -130,7 +128,7 @@ WebInspector.StyleSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
-        this._resource.setContent(text, true, function() {});
+        this._styleSource.resource().setContent(text, true, function() {});
     },
 
     afterTextChanged: function(oldRange, newRange)
@@ -139,7 +137,7 @@ WebInspector.StyleSourceFrame.prototype = {
         {
             var text = this._textModel.text;
             this._styleSource.setWorkingCopy(text);
-            this._resource.setContent(text, false, function() {});
+            this._styleSource.resource().setContent(text, false, function() {});
         }
         const updateTimeout = 200;
         this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
@@ -154,8 +152,8 @@ WebInspector.StyleSourceFrame.prototype = {
 
     _contentChanged: function(event)
     {
-        this._styleSource.contentChanged(this._resource.content || "");
-        this.setContent(this._resource.content, false, "text/stylesheet");
+        this._styleSource.contentChanged(this._styleSource.resource().content || "");
+        this.setContent(this._styleSource.resource().content, false, "text/stylesheet");
     }
 }
 

@@ -32,12 +32,13 @@
  * @constructor
  * @extends {WebInspector.UISourceCode}
  * @param {string} url
+ * @param {WebInspector.Resource} resource
  * @param {WebInspector.ContentProvider} contentProvider
  * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.JavaScriptSource = function(url, contentProvider, sourceMapping, isEditable)
+WebInspector.JavaScriptSource = function(url, resource, contentProvider, sourceMapping, isEditable)
 {
-    WebInspector.UISourceCode.call(this, url, contentProvider, sourceMapping);
+    WebInspector.UISourceCode.call(this, url, resource, contentProvider, sourceMapping);
     this._isEditable = isEditable;
 
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
@@ -46,7 +47,11 @@ WebInspector.JavaScriptSource = function(url, contentProvider, sourceMapping, is
         if (!this._formatted)
             WebInspector.breakpointManager.restoreBreakpoints(this);
     }.bind(this), 0);
+    if (resource)
+        WebInspector.JavaScriptSource.javaScriptSourceForResource.put(resource, this);
 }
+
+WebInspector.JavaScriptSource.javaScriptSourceForResource = new Map();
 
 WebInspector.JavaScriptSource.prototype = {
     /**

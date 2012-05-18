@@ -159,6 +159,14 @@ WebInspector.Script.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isAnonymousScript: function()
+    {
+        return !this.sourceURL;
+    },
+
+    /**
      * @param {DebuggerAgent.Location} rawLocation
      * @return {WebInspector.UILocation}
      */
