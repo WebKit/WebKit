@@ -323,6 +323,11 @@ private:
     {
         BasicBlock* sourceBlock = m_graph.m_blocks[sourceBlockIndex].get();
         BasicBlock* destinationBlock = m_graph.m_blocks[destinationBlockIndex].get();
+        if (!destinationBlock) {
+            // If we're trying to kill off the source block and the destination block is already
+            // dead, then we're done!
+            return;
+        }
         for (size_t i = 0; i < destinationBlock->phis.size(); ++i) {
             NodeIndex phiNodeIndex = destinationBlock->phis[i];
             Node& phiNode = m_graph[phiNodeIndex];
