@@ -402,9 +402,10 @@ void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(WTF::Unicode::Dire
 template <class Iterator, class Run>
 bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
 {
-    // This gets called from bidiFirst when setting up our start position.
-    // FIXME: Re-enable this assert once https://bugs.webkit.org/show_bug.cgi?id=76574 is fixed.
-    // ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
+    // When we're "inIsolate()" we're resolving the parent context which
+    // ignores (skips over) the isolated content, including embedding levels.
+    // We should never accrue embedding levels while skipping over isolated content.
+    ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
 
     using namespace WTF::Unicode;
 

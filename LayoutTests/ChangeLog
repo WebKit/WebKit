@@ -1,3 +1,13 @@
+2012-05-18  Eric Seidel  <eric@webkit.org>
+
+        Assertion failure in BidiResolver::commitExplicitEmbedding() (!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty()) at wikipedia.org
+        https://bugs.webkit.org/show_bug.cgi?id=76574
+
+        Reviewed by Levi Weintraub.
+
+        * fast/text/bidi-isolate-embedding-crash-expected.txt: Added.
+        * fast/text/bidi-isolate-embedding-crash.html: Added.
+
 2012-05-18  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Updating non-mac platform expectations after r117640.
