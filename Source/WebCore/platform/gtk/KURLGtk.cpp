@@ -31,7 +31,10 @@ namespace WebCore {
 
 String KURL::fileSystemPath() const
 {
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(m_string.utf8().data()));
+    if (!isValid() || !isLocalFile())
+        return String();
+
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path().utf8().data()));
     GOwnPtr<char> filename(g_file_get_path(file.get()));
     return filenameToString(filename.get());
 }
