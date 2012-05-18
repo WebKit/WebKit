@@ -1,5 +1,12 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening; update results after r117640.
+
+        * platform/efl/fast/forms/form-hides-table-expected.txt:
+        * platform/efl/fast/table/form-with-table-style-expected.txt:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed gardening.
 
         Try to add the right expectation for fast/forms/plaintext-mode-2.html
