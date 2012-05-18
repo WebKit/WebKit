@@ -82,13 +82,13 @@ static void openFileSystem(ScriptExecutionContext*, const String& basePath, cons
     AsyncFileSystem::openFileSystem(basePath, identifier, create, callbacks);
 }
 
-void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, DOMFileSystemBase::Type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousMode)
+void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
 {
     // AsyncFileSystem::openFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
     context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), false, callbacks));
 }
 
-void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, DOMFileSystemBase::Type, long long, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSystemType, long long, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
 {
     // AsyncFileSystem::openFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
     context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), true, callbacks));

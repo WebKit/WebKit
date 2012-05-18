@@ -68,6 +68,50 @@ DOMFileSystemBase::~DOMFileSystemBase()
 {
 }
 
+#if !PLATFORM(CHROMIUM)
+// static
+bool DOMFileSystemBase::isValidType(FileSystemType type)
+{
+    return type == FileSystemTypeTemporary || type == FileSystemTypePersistent;
+}
+
+// static
+bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
+{
+    if (!url.protocolIs("filesystem"))
+        return false;
+
+    if (!url.innerURL())
+        return false;
+
+    String typeString = url.innerURL()->path().substring(1);
+    if (typeString == temporaryPathPrefix)
+        type = FileSystemTypeTemporary;
+    else if (typeString == persistentPathPrefix)
+        type = FileSystemTypePersistent;
+    else
+        return false;
+
+    filePath = decodeURLEscapeSequences(url.path());
+    return true;
+}
+
+bool DOMFileSystemBase::supportsToURL() const
+{
+    ASSERT(isValidType(m_type));
+    return true;
+}
+
+KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
+{
+    ASSERT(DOMFilePath::isAbsolute(fullPath));
+    KURL url = m_filesystemRootURL;
+    // Remove the extra leading slash.
+    url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
+    return url;
+}
+#endif
+
 SecurityOrigin* DOMFileSystemBase::securityOrigin() const
 {
     return m_context->securityOrigin();

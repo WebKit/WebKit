@@ -40,7 +40,7 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create()
     return adoptPtr(new AsyncFileSystemGtk());
 }
 
-void AsyncFileSystem::openFileSystem(const KURL& basePath, const String& storageIdentifier, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
     callbacks->didFail(NOT_SUPPORTED_ERR);
