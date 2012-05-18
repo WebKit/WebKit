@@ -1,5 +1,157 @@
 2012-05-18  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add 7 micro benchmarks for DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=86816
+
+        Reviewed by Ryosuke Niwa.
+
+        We should remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+        This patch adds seven micro benchmarks for DOM bindings.
+
+        id-getter.html covers 'element.property' in Dromaeo/dom-attr.html,
+        'innerHTML' in Dromaeo/dom-modify.html, and other DOM attributes that
+        return a String.
+
+        id-setter.html covers 'element.property = value' in Dromaeo/dom-attr.html,
+        and other DOM attributes that sets a String.
+
+        undefined-id-getter.html covers undefined DOM attributes that return an empty String.
+
+        append-child.html covers 'appendChild' and 'removeChild' in Dromaeo/dom-modify.html.
+
+        insert-before.html covers 'insertBefore' in Dromaeo/dom-modify.html and replaceChild().
+
+        create-element.html covers 'createElement', 'createTextNode' and 'cloneNode'
+        in Dromaeo/dom-modify.html, and other DOM methods that return a new Node object.
+
+        node-list-access.html covers 'childNodes' in Dromaeo/dom-traverse.html,
+        and other DOM attributes that access NodeList.
+
+        Test results in my Linux desktop:
+
+        [id-getter]
+        RESULT Bindings: id-getter= 550.517821097 runs/s
+        median= 550.688360451 runs/s, stdev= 0.970723739106 runs/s, min= 548.628428928 runs/s, max= 552.070263488 runs/s
+
+        RESULT Bindings: id-getter= 550.655839847 runs/s
+        median= 550.688360451 runs/s, stdev= 1.03312821884 runs/s, min= 549.313358302 runs/s, max= 552.070263488 runs/s
+
+        RESULT Bindings: id-getter= 550.277753355 runs/s
+        median= 550.344180225 runs/s, stdev= 1.19960683464 runs/s, min= 547.945205479 runs/s, max= 552.070263488 runs/s
+
+        RESULT Bindings: id-getter= 550.072271009 runs/s
+        median= 550.344180225 runs/s, stdev= 1.38925152131 runs/s, min= 547.263681592 runs/s, max= 552.070263488 runs/s
+
+        RESULT Bindings: id-getter= 548.802050235 runs/s
+        median= 548.628428928 runs/s, stdev= 1.18244513683 runs/s, min= 545.905707196 runs/s, max= 550.688360451 runs/s
+
+        [id-setter]
+        RESULT Bindings: id-setter= 211.370591663 runs/s
+        median= 210.803689065 runs/s, stdev= 1.4555795889 runs/s, min= 209.973753281 runs/s, max= 214.285714286 runs/s
+
+        RESULT Bindings: id-setter= 215.439081352 runs/s
+        median= 214.797136038 runs/s, stdev= 1.50920388121 runs/s, min= 213.049267643 runs/s, max= 218.446601942 runs/s
+
+        RESULT Bindings: id-setter= 216.721698466 runs/s
+        median= 215.956886352 runs/s, stdev= 1.54090749644 runs/s, min= 214.285714286 runs/s, max= 219.78021978 runs/s
+
+        RESULT Bindings: id-setter= 216.343019087 runs/s
+        median= 215.827338129 runs/s, stdev= 1.46619894553 runs/s, min= 215.053763441 runs/s, max= 218.97810219 runs/s
+
+        RESULT Bindings: id-setter= 216.799288017 runs/s
+        median= 215.956886352 runs/s, stdev= 1.49100776978 runs/s, min= 215.311004785 runs/s, max= 219.78021978 runs/s
+
+        [undefined-id-getter]
+        RESULT Bindings: undefined-id-getter= 494.104255241 runs/s
+        median= 494.132368875 runs/s, stdev= 1.13092821109 runs/s, min= 490.797546012 runs/s, max= 495.662949195 runs/s
+
+        RESULT Bindings: undefined-id-getter= 493.921802916 runs/s
+        median= 493.827160494 runs/s, stdev= 1.25097443119 runs/s, min= 490.196078431 runs/s, max= 495.662949195 runs/s
+
+        RESULT Bindings: undefined-id-getter= 491.976485667 runs/s
+        median= 492.004920049 runs/s, stdev= 0.947090576896 runs/s, min= 490.196078431 runs/s, max= 493.827160494 runs/s
+
+        RESULT Bindings: undefined-id-getter= 491.987710185 runs/s
+        median= 494.132368875 runs/s, stdev= 8.66602543327 runs/s, min= 454.545454545 runs/s, max= 495.662949195 runs/s
+
+        RESULT Bindings: undefined-id-getter= 494.195515847 runs/s
+        median= 494.437577256 runs/s, stdev= 1.06135681702 runs/s, min= 490.797546012 runs/s, max= 495.662949195 runs/s
+
+        [append-child]
+        RESULT Bindings: append-child= 260.628237026 runs/s
+        median= 260.926399352 runs/s, stdev= 2.55231060598 runs/s, min= 256.739409499 runs/s, max= 265.604249668 runs/s
+
+        RESULT Bindings: append-child= 280.796193436 runs/s
+        median= 280.791435348 runs/s, stdev= 2.53961321867 runs/s, min= 277.427490542 runs/s, max= 286.085825748 runs/s
+
+        RESULT Bindings: append-child= 279.856209714 runs/s
+        median= 280.25477707 runs/s, stdev= 2.85447647301 runs/s, min= 275.344180225 runs/s, max= 284.237726098 runs/s
+
+        RESULT Bindings: append-child= 280.834502714 runs/s
+        median= 280.25477707 runs/s, stdev= 2.67738046429 runs/s, min= 277.427490542 runs/s, max= 287.206266319 runs/s
+
+        RESULT Bindings: append-child= 274.723872106 runs/s
+        median= 273.291925466 runs/s, stdev= 3.03671746706 runs/s, min= 272.614622057 runs/s, max= 282.413350449 runs/s
+
+        [insert-before]
+        RESULT Bindings: insert-before= 180.986913006 runs/s
+        median= 180.878552972 runs/s, stdev= 0.758038687299 runs/s, min= 180.18018018 runs/s, max= 183.968462549 runs/s
+
+        RESULT Bindings: insert-before= 186.339916144 runs/s
+        median= 186.170212766 runs/s, stdev= 0.869022097127 runs/s, min= 185.676392573 runs/s, max= 189.798339265 runs/s
+
+        RESULT Bindings: insert-before= 189.45344838 runs/s
+        median= 189.349112426 runs/s, stdev= 0.811854866567 runs/s, min= 187.79342723 runs/s, max= 192.539109507 runs/s
+
+        RESULT Bindings: insert-before= 189.363295991 runs/s
+        median= 189.349112426 runs/s, stdev= 0.75387713097 runs/s, min= 188.014101058 runs/s, max= 192.076830732 runs/s
+
+        RESULT Bindings: insert-before= 189.252041642 runs/s
+        median= 189.349112426 runs/s, stdev= 0.840447225363 runs/s, min= 187.573270809 runs/s, max= 192.076830732 runs/s
+
+        [create-element]
+        RESULT Bindings: create-element= 280.675830077 runs/s
+        median= 280.701824914 runs/s, stdev= 0.788606343054 runs/s, min= 279.441117764 runs/s, max= 282.542885974 runs/s
+
+        RESULT Bindings: create-element= 276.427631436 runs/s
+        median= 277.227722772 runs/s, stdev= 3.39874667549 runs/s, min= 262.417994377 runs/s, max= 279.162512463 runs/s
+
+        RESULT Bindings: create-element= 277.156894411 runs/s
+        median= 277.227722772 runs/s, stdev= 1.13255119226 runs/s, min= 274.914089347 runs/s, max= 278.884462151 runs/s
+
+        RESULT Bindings: create-element= 278.066825356 runs/s
+        median= 278.191822254 runs/s, stdev= 0.686497782792 runs/s, min= 276.953511375 runs/s, max= 279.162512463 runs/s
+
+        RESULT Bindings: create-element= 276.431538109 runs/s
+        median= 276.406712734 runs/s, stdev= 0.759593662298 runs/s, min= 275.229357798 runs/s, max= 278.053624628 runs/s
+
+        [node-list-access]
+        RESULT Bindings: node-list-access= 222.747504073 runs/s
+        median= 222.772277228 runs/s, stdev= 0.789027527555 runs/s, min= 221.674876847 runs/s, max= 224.159402242 runs/s
+
+        RESULT Bindings: node-list-access= 220.722448287 runs/s
+        median= 221.266217576 runs/s, stdev= 1.65463497875 runs/s, min= 217.391304348 runs/s, max= 222.222222222 runs/s
+
+        RESULT Bindings: node-list-access= 222.195870443 runs/s
+        median= 222.222222222 runs/s, stdev= 0.489709262091 runs/s, min= 221.13022113 runs/s, max= 223.048327138 runs/s
+
+        RESULT Bindings: node-list-access= 221.431121677 runs/s
+        median= 221.538545435 runs/s, stdev= 0.608292116087 runs/s, min= 220.048899756 runs/s, max= 222.772277228 runs/s
+
+        RESULT Bindings: node-list-access= 219.001367135 runs/s
+        median= 221.538545435 runs/s, stdev= 4.65773933007 runs/s, min= 209.973753281 runs/s, max= 222.496909765 runs/s
+
+        * Bindings/append-child.html: Added.
+        * Bindings/create-element.html: Added.
+        * Bindings/id-getter.html: Added.
+        * Bindings/id-setter.html: Added.
+        * Bindings/insert-before.html: Added.
+        * Bindings/node-list-access.html: Added.
+        * Bindings/undefined-id-getter.html: Added.
+
+2012-05-18  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a binding benchmark for div.setAttribute()
         https://bugs.webkit.org/show_bug.cgi?id=86815
 
