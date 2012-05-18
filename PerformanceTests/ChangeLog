@@ -1,5 +1,19 @@
 2012-05-18  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Remove Bindings/dom-attributes.html
+        https://bugs.webkit.org/show_bug.cgi?id=86820
+
+        Reviewed by Ryosuke Niwa.
+
+        Bindings/dom-attributes.html is just a collection of random
+        DOM attributes and methods. Now we've added more reasonable
+        micro benchmarks by classifying DOM binding call paths, we
+        can remove Bindings/dom-attributes.html.
+
+        * Bindings/dom-attributes.html: Removed.
+
+2012-05-18  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a binding benchmark for getElementById() for an undefined id
         https://bugs.webkit.org/show_bug.cgi?id=86812
 
