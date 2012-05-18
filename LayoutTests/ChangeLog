@@ -1,3 +1,13 @@
+2012-05-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: remove unnecessary indirection from profile types
+        https://bugs.webkit.org/show_bug.cgi?id=86845
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest):
+
 2012-05-18  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][WK2] Cleaning skip list. Unskip passing tests.

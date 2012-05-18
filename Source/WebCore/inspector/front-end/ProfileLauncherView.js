@@ -38,7 +38,6 @@ WebInspector.ProfileLauncherView = function(profilesPanel)
 
     this._panel = profilesPanel;
     this._profileRunning = false;
-    this._optionIdPrefix = "profile-type-";
 
     this.element.addStyleClass("profile-launcher-view");
     this.element.addStyleClass("panel-enabler-view");
@@ -52,8 +51,6 @@ WebInspector.ProfileLauncherView = function(profilesPanel)
 
     this._profileTypeSelectorForm = this._contentElement.createChild("form");
     this._contentElement.createChild("div", "flexible-space");
-
-    this._boundProfileTypeChangeListener = this._profileTypeChanged.bind(this);
 
     this._controlButton = this._contentElement.createChild("button", "control-profiling");
     this._controlButton.addEventListener("click", this._controlButtonClicked.bind(this), false);
@@ -71,6 +68,9 @@ WebInspector.ProfileLauncherView.prototype = {
         this._panel.addEventListener(WebInspector.ProfilesPanel.EventTypes.ProfileFinished, this._onProfileFinished, this);
     },
 
+    /**
+     * @param {WebInspector.ProfileType} profileType
+     */
     addProfileType: function(profileType)
     {
         var checked = !this._profileTypeSelectorForm.children.length;
@@ -80,13 +80,11 @@ WebInspector.ProfileLauncherView.prototype = {
         labelElement.insertBefore(optionElement, labelElement.firstChild);
         optionElement.type = "radio";
         optionElement.name = "profile-type";
-        var optionId = this._optionIdPrefix + profileType.id;
-        optionElement.id = optionId;
         if (checked) {
             optionElement.checked = checked;
             this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
         }
-        optionElement.addEventListener("change", this._boundProfileTypeChangeListener, false);
+        optionElement.addEventListener("change", this._profileTypeChanged.bind(this, profileType), false);
         var descriptionElement = labelElement.createChild("p");
         descriptionElement.textContent = profileType.description;
     },
@@ -109,10 +107,12 @@ WebInspector.ProfileLauncherView.prototype = {
         }
     },
 
-    _profileTypeChanged: function(event)
+    /**
+     * @param {WebInspector.ProfileType} profileType
+     */
+    _profileTypeChanged: function(profileType, event)
     {
-        var selectedProfileType = this._panel.getProfileType(event.target.id.substring(this._optionIdPrefix.length));
-        this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, selectedProfileType);
+        this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
     },
 
     _onProfileStarted: function(event)

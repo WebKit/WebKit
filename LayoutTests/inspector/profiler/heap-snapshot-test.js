@@ -513,7 +513,12 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
     callback = InspectorTest.safeWrap(callback);
     var uid = InspectorTest._nextUid++;
     var snapshot = generator();
-    var profile = new WebInspector.HeapProfileHeader(UserInitiatedProfileName + "." + uid, uid, snapshot.maxJSObjectId);
+    var profileType = WebInspector.panels.profiles.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId);
+    var profile = profileType.createProfile({
+        title: UserInitiatedProfileName + "." + uid,
+        uid: uid,
+        maxJSObjectId: snapshot.maxJSObjectId
+    });
     delete snapshot.maxJSObjectId;
     function pushGeneratedSnapshot(typeId, uid)
     {
@@ -525,8 +530,6 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
     }
     InspectorTest.override(ProfilerAgent, "getProfile", pushGeneratedSnapshot);
     InspectorTest._takeAndOpenSnapshotCallback = callback;
-    var profileType = WebInspector.panels.profiles.getProfileType(profile.typeId);
-    profile = profileType.createProfile(profile);
     WebInspector.panels.profiles.addProfileHeader(profile);
     WebInspector.panels.profiles.showProfile(profile);
 };
