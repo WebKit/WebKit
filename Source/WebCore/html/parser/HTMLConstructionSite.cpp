@@ -335,7 +335,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
-    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), true);
+    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), true, m_isParsingFragment);
     if (m_fragmentScriptingPermission == FragmentScriptingAllowed)
         element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     attachLater(currentNode(), element);

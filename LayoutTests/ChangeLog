@@ -1,3 +1,13 @@
+2012-05-18  Pablo Flouret  <pablof@motorola.com>
+
+        Script elements inserted while fragment parsing should have their "already started" flag set.
+        https://bugs.webkit.org/show_bug.cgi?id=86376
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/parser/script-already-started-flag-in-fragment-parsing-mode-expected.txt: Added.
+        * fast/parser/script-already-started-flag-in-fragment-parsing-mode.html: Added.
+
 2012-05-18  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Expose FrameSelection::absoluteCaretBounds via window.internals

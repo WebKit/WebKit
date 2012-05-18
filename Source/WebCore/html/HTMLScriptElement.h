@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLScriptElement : public HTMLElement, public ScriptElement {
 public:
-    static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
+    static PassRefPtr<HTMLScriptElement> create(const QualifiedName&, Document*, bool wasInsertedByParser, bool alreadyStarted = false);
 
     String text() const { return scriptContent(); }
     void setText(const String&);
