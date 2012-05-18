@@ -1325,6 +1325,69 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCulling)
     EXPECT_TRUE(childOfAnimatingSurface->visibleLayerRect().isEmpty());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3dForFlatteningSurface)
+{
+    // Verify the behavior of back-face culling for a renderSurface that is created
+    // when it flattens its subtree, and its parent has preserves-3d.
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> frontFacingSurface = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> backFacingSurface = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+
+    parent->createRenderSurface();
+    parent->addChild(frontFacingSurface);
+    parent->addChild(backFacingSurface);
+    frontFacingSurface->addChild(child1);
+    backFacingSurface->addChild(child2);
+
+    // RenderSurfaces are not double-sided
+    frontFacingSurface->setDoubleSided(false);
+    backFacingSurface->setDoubleSided(false);
+
+    TransformationMatrix backfaceMatrix;
+    backfaceMatrix.translate(50, 50);
+    backfaceMatrix.rotate3d(0, 1, 0, 180);
+    backfaceMatrix.translate(-50, -50);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true); // parent transform style is preserve3d.
+    setLayerPropertiesForTesting(frontFacingSurface.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false); // surface transform style is flat.
+    setLayerPropertiesForTesting(backFacingSurface.get(),  backfaceMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false); // surface transform style is flat.
+    setLayerPropertiesForTesting(child1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+    parent->renderSurface()->setContentRect(IntRect(IntPoint(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    // Verify which renderSurfaces were created.
+    EXPECT_TRUE(frontFacingSurface->renderSurface());
+    EXPECT_FALSE(backFacingSurface->renderSurface()); // because it should be culled
+    EXPECT_FALSE(child1->renderSurface());
+    EXPECT_FALSE(child2->renderSurface());
+
+    // Verify the renderSurfaceLayerList. The back-facing surface should be culled.
+    ASSERT_EQ(2u, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+    EXPECT_EQ(frontFacingSurface->id(), renderSurfaceLayerList[1]->id());
+
+    // Verify root surface's layerList.
+    ASSERT_EQ(1u, renderSurfaceLayerList[0]->renderSurface()->layerList().size());
+    EXPECT_EQ(frontFacingSurface->id(), renderSurfaceLayerList[0]->renderSurface()->layerList()[0]->id());
+
+    // Verify frontFacingSurface's layerList.
+    ASSERT_EQ(2u, renderSurfaceLayerList[1]->renderSurface()->layerList().size());
+    EXPECT_EQ(frontFacingSurface->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[0]->id());
+    EXPECT_EQ(child1->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[1]->id());
+}
+
 // FIXME:
 // continue working on https://bugs.webkit.org/show_bug.cgi?id=68942
 //  - add a test to verify clipping that changes the "center point"

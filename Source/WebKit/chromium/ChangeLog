@@ -1,3 +1,14 @@
+2012-05-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] add back-face visibility check for renderSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=86870
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-05-18  Greg Billock  <gbillock@google.com>
 
         Enable web intents flag for chromium build

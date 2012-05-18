@@ -66,6 +66,14 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
 }
 
 template<typename LayerType>
+static inline bool layerIsInExisting3DRenderingContext(LayerType* layer)
+{
+    // According to current W3C spec on CSS transforms, a layer is part of an established
+    // 3d rendering context if its parent has transform-style of preserves-3d.
+    return layer->parent() && layer->parent()->preserves3D();
+}
+
+template<typename LayerType>
 static IntRect calculateVisibleLayerRect(LayerType* layer)
 {
     ASSERT(layer->targetRenderSurface());
@@ -211,7 +219,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
 
     // If the layer flattens its subtree (i.e. the layer doesn't preserve-3d), but it is
     // treated as a 3D object by its parent (i.e. parent does preserve-3d).
-    if (layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && descendantDrawsContent)
+    if (layerIsInExisting3DRenderingContext(layer) && !layer->preserves3D() && descendantDrawsContent)
         return true;
 
     // On the main thread side, animating transforms are unknown, and may cause a RenderSurface on the impl side.
@@ -382,6 +390,14 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     layer->setUsesLayerClipping(false);
 
     if (subtreeShouldRenderToSeparateSurface(layer, isScaleOrTranslation(combinedTransform))) {
+
+        // We need to check back-face visibility before continuing with this surface.
+        // We cannot early exit here, however, if the transform is animating and not known on the main thread.
+        // FIXME: Also compute back-face visibility for surfaces that are not in existing 3D rendering context, using
+        //        the layer's local transform. https://bugs.webkit.org/show_bug.cgi?id=84195
+        if (layerIsInExisting3DRenderingContext(layer) && transformToParentIsKnown(layer) && !layer->doubleSided() && combinedTransform.isBackFaceVisible())
+            return false;
+
         if (!layer->renderSurface())
             layer->createRenderSurface();
 
