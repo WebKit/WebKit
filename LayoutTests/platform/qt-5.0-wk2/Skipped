@@ -401,11 +401,6 @@ fast/history/form-submit-in-frame-via-onclick.html
 fast/history/form-submit-in-frame.html
 http/tests/loading/state-object-security-exception.html
 
-# [Qt][WK2] fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html crashes regularly
-# https://bugs.webkit.org/show_bug.cgi?id=79656
-fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html
-fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
-
 ###################################
 # Unskipping 'compositing' tests. #
 ###################################
