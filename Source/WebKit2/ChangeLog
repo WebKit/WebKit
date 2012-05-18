@@ -1,3 +1,21 @@
+2012-05-18  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt][WK2] fast/events/page-visibility-iframe-move-test.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=86731
+
+        Reviewed by Simon Hausmann.
+
+        Set the page visibility on a single page instead of on all pages
+        from the page group.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetPageVisibilityState):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPageVisibilityState):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-05-18  MORITA Hajime  <morrita@google.com>
 
         Yet another unreviewed build fix on r117572, this time for wk2...

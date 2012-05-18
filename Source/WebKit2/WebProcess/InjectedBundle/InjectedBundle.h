@@ -156,7 +156,7 @@ public:
 
     static bool isProcessingUserGesture();
 
-    void setPageVisibilityState(WebPageGroupProxy*, int state, bool isInitialState);
+    void setPageVisibilityState(WebPage*, int state, bool isInitialState);
 
 private:
     InjectedBundle(const String&);

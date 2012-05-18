@@ -458,12 +458,10 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
     ASSERT_NOT_REACHED();
 }
 
-void InjectedBundle::setPageVisibilityState(WebPageGroupProxy* pageGroup, int state, bool isInitialState)
+void InjectedBundle::setPageVisibilityState(WebPage* page, int state, bool isInitialState)
 {
 #if ENABLE(PAGE_VISIBILITY_API)
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->setVisibilityState(static_cast<PageVisibilityState>(state), isInitialState);
+    page->corePage()->setVisibilityState(static_cast<PageVisibilityState>(state), isInitialState);
 #endif
 }
 

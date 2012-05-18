@@ -90,7 +90,7 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSwitchNetworkLoaderToNewTestingSession(WKBundleRef bundle);
 
-WK_EXPORT void WKBundleSetPageVisibilityState(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, int state, bool isInitialState);
+WK_EXPORT void WKBundleSetPageVisibilityState(WKBundleRef bundle, WKBundlePageRef page, int state, bool isInitialState);
 
 #ifdef __cplusplus
 }
