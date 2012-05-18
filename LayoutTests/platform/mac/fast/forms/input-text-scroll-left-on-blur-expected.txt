@@ -4,28 +4,28 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (127,2) size 4x18
-          text run at (127,2) width 4: " "
-        RenderTextControl {INPUT} at (133,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (258,2) size 4x18
-          text run at (258,2) width 4: " "
-        RenderTextControl {INPUT} at (264,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (129,2) size 4x18
+          text run at (129,2) width 4: " "
+        RenderTextControl {INPUT} at (135,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (262,2) size 4x18
+          text run at (262,2) width 4: " "
+        RenderTextControl {INPUT} at (268,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,39) size 784x36
         RenderText {#text} at (0,0) size 784x36
           text run at (0,0) width 784: "Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and third"
           text run at (0,18) width 125: "scrolled to the right."
-layer at (13,13) size 117x13 scrollWidth 318
-  RenderBlock {DIV} at (3,3) size 117x13
-    RenderText {#text} at (0,0) size 317x13
-      text run at (0,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
-layer at (144,13) size 117x13 scrollX 200 scrollWidth 317
-  RenderBlock {DIV} at (3,3) size 117x13
-    RenderText {#text} at (-199,0) size 317x13
-      text run at (-199,0) width 316: "this text field has a lot of text in it so that it needs to scroll"
-layer at (275,13) size 117x13 scrollX 201 scrollWidth 318
-  RenderBlock {DIV} at (3,3) size 117x13
-    RenderText {#text} at (0,0) size 317x13
-      text run at (0,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
+layer at (13,13) size 119x13 scrollWidth 319
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 317x13
+      text run at (1,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
+layer at (146,13) size 119x13 scrollX 199 scrollWidth 318
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (-198,0) size 317x13
+      text run at (-198,0) width 316: "this text field has a lot of text in it so that it needs to scroll"
+layer at (279,13) size 119x13 scrollX 200 scrollWidth 319
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 317x13
+      text run at (1,0) width 317: "this text field has a lot of text in it so that it needs to scroll"
 caret: position 66 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 4 {INPUT} of body

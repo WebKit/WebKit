@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 550x18
         text run at (0,0) width 550: "This tests that a negative outline-offset won't get in the way of a cursor in a text control."
       RenderBR {BR} at (550,14) size 0x0
-      RenderTextControl {INPUT} at (2,20) size 214x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderTextControl {INPUT} at (2,20) size 216x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (12,30) size 210x23
-  RenderBlock {DIV} at (2,2) size 210x23
-    RenderText {#text} at (0,0) size 34x23
-      text run at (0,0) width 34: "abc"
+layer at (12,30) size 212x23
+  RenderBlock {DIV} at (2,2) size 212x23
+    RenderText {#text} at (1,0) size 34x23
+      text run at (1,0) width 34: "abc"
 caret: position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body

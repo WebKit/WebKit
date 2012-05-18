@@ -27,17 +27,17 @@ layer at (0,0) size 800x600
           text run at (478,0) width 175: "no text is currently selected."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,96) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (127,2) size 4x18
-          text run at (127,2) width 4: " "
+        RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (129,2) size 4x18
+          text run at (129,2) width 4: " "
         RenderInline {A} at (0,0) size 162x18 [color=#0000EE]
-          RenderText {#text} at (131,2) size 162x18
-            text run at (131,2) width 162: "drop me into the text field"
+          RenderText {#text} at (133,2) size 162x18
+            text run at (133,2) width 162: "drop me into the text field"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (13,109) size 117x13 scrollWidth 120
-  RenderBlock {DIV} at (3,3) size 117x13
-    RenderText {#text} at (0,0) size 119x13
-      text run at (0,0) width 119: "http://www.ibm.com/"
+layer at (13,109) size 119x13 scrollWidth 121
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 119x13
+      text run at (1,0) width 119: "http://www.ibm.com/"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 selection end:   position 19 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

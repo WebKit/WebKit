@@ -6,35 +6,35 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 368x18
         text run at (0,0) width 368: "This tests that aqua-style search fields do not honor height."
       RenderBR {BR} at (368,14) size 0x0
-      RenderTextControl {INPUT} at (0,22) size 100x17 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 94x11
+      RenderTextControl {INPUT} at (0,22) size 102x17 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 96x11
           RenderBlock {DIV} at (0,1) size 8x9
-          RenderBlock {DIV} at (8,0) size 73x11
-          RenderBlock {DIV} at (81,1) size 13x9
-      RenderText {#text} at (100,20) size 4x18
-        text run at (100,20) width 4: " "
-      RenderTextControl {INPUT} at (106,20) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 117x13
+          RenderBlock {DIV} at (8,0) size 75x11
+          RenderBlock {DIV} at (83,1) size 13x9
+      RenderText {#text} at (102,20) size 4x18
+        text run at (102,20) width 4: " "
+      RenderTextControl {INPUT} at (108,20) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
           RenderBlock {DIV} at (0,1) size 8x11
-          RenderBlock {DIV} at (8,0) size 96x13
-          RenderBlock {DIV} at (104,1) size 13x11
-      RenderText {#text} at (231,20) size 4x18
-        text run at (231,20) width 4: " "
-      RenderTextControl {INPUT} at (237,18) size 146x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 140x16
+          RenderBlock {DIV} at (8,0) size 98x13
+          RenderBlock {DIV} at (106,1) size 13x11
+      RenderText {#text} at (235,20) size 4x18
+        text run at (235,20) width 4: " "
+      RenderTextControl {INPUT} at (241,18) size 148x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (3,3) size 142x16
           RenderBlock {DIV} at (0,1) size 10x13
-          RenderBlock {DIV} at (10,0) size 114x16
-          RenderBlock {DIV} at (124,1) size 16x13
+          RenderBlock {DIV} at (10,0) size 116x16
+          RenderBlock {DIV} at (126,1) size 16x13
       RenderText {#text} at (0,0) size 0x0
-layer at (19,33) size 73x11
-  RenderBlock {DIV} at (0,0) size 73x11
-    RenderText {#text} at (0,0) size 20x11
-      text run at (0,0) width 20: "mini"
-layer at (125,31) size 96x13
-  RenderBlock {DIV} at (0,0) size 96x13
-    RenderText {#text} at (0,0) size 29x13
-      text run at (0,0) width 29: "small"
-layer at (258,29) size 114x16
-  RenderBlock {DIV} at (0,0) size 114x16
-    RenderText {#text} at (0,0) size 45x16
-      text run at (0,0) width 45: "regular"
+layer at (19,33) size 75x11
+  RenderBlock {DIV} at (0,0) size 75x11
+    RenderText {#text} at (1,0) size 20x11
+      text run at (1,0) width 20: "mini"
+layer at (127,31) size 98x13
+  RenderBlock {DIV} at (0,0) size 98x13
+    RenderText {#text} at (1,0) size 29x13
+      text run at (1,0) width 29: "small"
+layer at (262,29) size 116x16
+  RenderBlock {DIV} at (0,0) size 116x16
+    RenderText {#text} at (1,0) size 45x16
+      text run at (1,0) width 45: "regular"
