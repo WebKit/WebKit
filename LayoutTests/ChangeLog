@@ -1,3 +1,13 @@
+2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines.
+
+        * platform/chromium-mac-leopard/fast/lists/003-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug10296-1-expected.txt: Removed.
+        * platform/chromium-mac/fast/lists/003-vertical-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.txt:
+
 2012-05-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11419933> Problems with flipped writing modes and compositing
