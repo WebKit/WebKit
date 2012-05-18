@@ -171,9 +171,7 @@ public:
     // MergeToSuccessors.
     bool mergeToSuccessors(Graph&, BasicBlock*);
 
-#ifndef NDEBUG
     void dump(FILE* out);
-#endif
     
 private:
     void clobberStructures(unsigned);
@@ -189,6 +187,7 @@ private:
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     bool m_haveStructures;
+    bool m_foundConstants;
     
     bool m_isValid;
 };

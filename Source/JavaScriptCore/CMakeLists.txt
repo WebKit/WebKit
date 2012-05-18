@@ -62,6 +62,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCapabilities.cpp
     dfg/DFGCFAPhase.cpp
+    dfg/DFGConstantFoldingPhase.cpp
     dfg/DFGCorrectableJumpPoint.cpp
     dfg/DFGCSEPhase.cpp
     dfg/DFGDriver.cpp

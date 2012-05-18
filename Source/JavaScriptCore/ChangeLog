@@ -1,3 +1,82 @@
+2012-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have constant propagation
+        https://bugs.webkit.org/show_bug.cgi?id=84004
+
+        Reviewed by Gavin Barraclough.
+        
+        Merge r114554 from dfgopt.
+        
+        Changes AbstractValue to be able to hold a "set" of constants, where
+        the maximum set size is 1 - so merging a value containing constant A
+        with another value containing constant B where A != B will result in
+        the AbstractValue claiming that it does not know any constants (i.e.
+        it'll just have a predicted type and possible a structure).
+        
+        Added a constant folding phase that uses this new information to
+        replace pure operations known to have constant results with
+        JSConstants. This is OSR-exit-aware, in that it will prepend a Phantom
+        that refers to all of the kids of the node we replaced.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::clear):
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::makeTop):
+        (JSC::DFG::AbstractValue::clobberValue):
+        (AbstractValue):
+        (JSC::DFG::AbstractValue::valueIsTop):
+        (JSC::DFG::AbstractValue::value):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::operator==):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::initialize):
+        (AdjacencyList):
+        (JSC::DFG::AdjacencyList::reset):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (BasicBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::constantCSE):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp: Added.
+        (DFG):
+        (ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (JSC::DFG::performConstantFolding):
+        * dfg/DFGConstantFoldingPhase.h: Added.
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.h:
+        (Graph):
+        (JSC::DFG::Graph::convertToConstant):
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstant):
+        (Node):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/JSValue.h:
+        (JSValue):
+
 2012-05-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Fix build for Qt by using ASSERT_UNUSED in DFGSpeculativeJIT

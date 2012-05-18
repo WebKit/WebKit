@@ -123,6 +123,22 @@ private:
         return NoNode;
     }
     
+    NodeIndex constantCSE(Node& node)
+    {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& otherNode = m_graph[index];
+            if (otherNode.op() != JSConstant)
+                continue;
+            
+            if (otherNode.constantNumber() != node.constantNumber())
+                continue;
+            
+            return index;
+        }
+        return NoNode;
+    }
+    
     bool isPredictedNumerical(Node& node)
     {
         PredictedType left = m_graph[node.child1()].prediction();
@@ -595,6 +611,12 @@ private:
         case IsFunction:
         case DoubleAsInt32:
             setReplacement(pureCSE(node));
+            break;
+            
+        case JSConstant:
+            // This is strange, but necessary. Some phases will convert nodes to constants,
+            // which may result in duplicated constants. We use CSE to clean this up.
+            setReplacement(constantCSE(node));
             break;
             
         case GetArrayLength:

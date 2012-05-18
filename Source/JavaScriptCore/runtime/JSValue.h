@@ -240,7 +240,7 @@ namespace JSC {
         JSCell* asCell() const;
         JS_EXPORT_PRIVATE bool isValidCallee();
 
-        char* description();
+        char* description() const;
 
         JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
 

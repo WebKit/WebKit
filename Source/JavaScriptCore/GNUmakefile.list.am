@@ -154,6 +154,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
 	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.cpp \
 	Source/JavaScriptCore/dfg/DFGCorrectableJumpPoint.h \
+	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.h \
 	Source/JavaScriptCore/dfg/DFGDoubleFormatState.h \

@@ -197,6 +197,16 @@ struct Node {
         return m_opInfo;
     }
     
+    void convertToConstant(unsigned constantNumber)
+    {
+        m_op = JSConstant;
+        if (m_flags & NodeMustGenerate)
+            m_refCount--;
+        m_flags &= ~NodeMustGenerate;
+        m_opInfo = constantNumber;
+        children.reset();
+    }
+    
     JSCell* weakConstant()
     {
         return bitwise_cast<JSCell*>(m_opInfo);

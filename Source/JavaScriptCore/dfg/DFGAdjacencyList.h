@@ -114,9 +114,17 @@ public:
         child(2) = child3;
     }
     
-    void initialize(NodeIndex child1, NodeIndex child2, NodeIndex child3)
+    void initialize(NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
     {
         initialize(Edge(child1), Edge(child2), Edge(child3));
+    }
+    
+    void reset()
+    {
+#if !ASSERT_DISABLED
+        m_kind = Fixed;
+#endif
+        initialize();
     }
 
     unsigned firstChild() const

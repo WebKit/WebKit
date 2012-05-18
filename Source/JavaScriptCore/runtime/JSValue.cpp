@@ -172,7 +172,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     return;
 }
 
-char* JSValue::description()
+char* JSValue::description() const
 {
     static const size_t size = 128;
     static char description[size];

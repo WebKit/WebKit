@@ -79,7 +79,7 @@ public:
             Insertion<ElementType>& insertion = m_insertions[indexInInsertions];
             size_t firstIndex = insertion.index() + indexInInsertions;
             size_t indexOffset = indexInInsertions + 1;
-            for (size_t i = lastIndex; i-- > firstIndex;)
+            for (size_t i = lastIndex; --i > firstIndex;)
                 collection[i] = collection[i - indexOffset];
             collection[firstIndex] = insertion.element();
             lastIndex = firstIndex;

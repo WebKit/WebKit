@@ -136,6 +136,16 @@ public:
         deref(node.child3());
         node.children.child3() = Edge();
     }
+    
+    void convertToConstant(NodeIndex nodeIndex, unsigned constantNumber)
+    {
+        at(nodeIndex).convertToConstant(constantNumber);
+    }
+    
+    void convertToConstant(NodeIndex nodeIndex, JSValue value)
+    {
+        convertToConstant(nodeIndex, m_codeBlock->addOrFindConstant(value));
+    }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump();

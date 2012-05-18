@@ -31,6 +31,7 @@
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCSEPhase.h"
+#include "DFGConstantFoldingPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
@@ -68,9 +69,10 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     performRedundantPhiElimination(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
+    performCFA(dfg);
+    performConstantFolding(dfg);
     performCSE(dfg);
     performVirtualRegisterAllocation(dfg);
-    performCFA(dfg);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("Graph after optimization:\n");

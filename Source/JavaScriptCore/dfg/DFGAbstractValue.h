@@ -317,10 +317,11 @@ struct AbstractValue {
     {
         m_type = PredictNone;
         m_structure.clear();
+        m_value = JSValue();
         checkConsistency();
     }
     
-    bool isClear()
+    bool isClear() const
     {
         return m_type == PredictNone && m_structure.isClear();
     }
@@ -329,6 +330,7 @@ struct AbstractValue {
     {
         m_type = PredictTop;
         m_structure.makeTop();
+        m_value = JSValue();
         checkConsistency();
     }
     
@@ -341,9 +343,24 @@ struct AbstractValue {
         checkConsistency();
     }
     
+    void clobberValue()
+    {
+        m_value = JSValue();
+    }
+    
     bool isTop() const
     {
         return m_type == PredictTop && m_structure.isTop();
+    }
+    
+    bool valueIsTop() const
+    {
+        return !m_value && m_type;
+    }
+    
+    JSValue value() const
+    {
+        return m_value;
     }
     
     static AbstractValue top()
@@ -355,11 +372,19 @@ struct AbstractValue {
     
     void set(JSValue value)
     {
-        m_structure.clear();
-        if (value.isCell())
-            m_structure.add(value.asCell()->structure());
+        if (!!value && value.isCell()) {
+            // Have to be careful here! It's tempting to set the structure to the
+            // value's structure, but that would be wrong, since that would
+            // constitute a proof that this value will always have the same
+            // structure. The whole point of a value having a structure is that
+            // it may change in the future - for example between when we compile
+            // the code and when we run it.
+            m_structure.makeTop();
+        } else
+            m_structure.clear();
         
         m_type = predictionFromValue(value);
+        m_value = value;
         
         checkConsistency();
     }
@@ -370,6 +395,7 @@ struct AbstractValue {
         m_structure.add(structure);
         
         m_type = predictionFromStructure(structure);
+        m_value = JSValue();
         
         checkConsistency();
     }
@@ -381,17 +407,24 @@ struct AbstractValue {
         else
             m_structure.clear();
         m_type = type;
+        m_value = JSValue();
         checkConsistency();
     }
     
     bool operator==(const AbstractValue& other) const
     {
-        return m_type == other.m_type && m_structure == other.m_structure;
+        return m_type == other.m_type
+            && m_structure == other.m_structure
+            && m_value == other.m_value;
     }
     
     bool merge(const AbstractValue& other)
     {
-        bool result = mergePrediction(m_type, other.m_type) | m_structure.addAll(other.m_structure);
+        bool result = false;
+        result |= mergePrediction(m_type, other.m_type);
+        result |= m_structure.addAll(other.m_structure);
+        if (m_value != other.m_value)
+            m_value = JSValue();
         checkConsistency();
         return result;
     }
@@ -402,6 +435,7 @@ struct AbstractValue {
         
         if (type & PredictCell)
             m_structure.makeTop();
+        m_value = JSValue();
 
         checkConsistency();
     }
@@ -417,6 +451,10 @@ struct AbstractValue {
         // sure that new information gleaned from the PredictedType needs to be fed back
         // into the information gleaned from the StructureSet.
         m_structure.filter(m_type);
+        
+        if (!!m_value && !validate(m_value))
+            clear();
+        
         checkConsistency();
     }
     
@@ -431,6 +469,10 @@ struct AbstractValue {
         // to ensure that the structure filtering does the right thing is to filter on
         // the new type (None) rather than the one passed (Array).
         m_structure.filter(m_type);
+
+        if (!!m_value && !validate(m_value))
+            clear();
+        
         checkConsistency();
     }
     
@@ -438,6 +480,9 @@ struct AbstractValue {
     {
         if (isTop())
             return true;
+        
+        if (!!m_value)
+            return m_value == value;
         
         if (mergePredictions(m_type, predictionFromValue(value)) != m_type)
             return false;
@@ -450,7 +495,7 @@ struct AbstractValue {
         if (m_structure.isTop())
             return true;
         
-        if (value.isCell()) {
+        if (!!value && value.isCell()) {
             ASSERT(m_type & PredictCell);
             return m_structure.contains(value.asCell()->structure());
         }
@@ -463,6 +508,12 @@ struct AbstractValue {
         if (!(m_type & PredictCell))
             ASSERT(m_structure.isClear());
         
+        if (isClear())
+            ASSERT(!m_value);
+        
+        if (!!m_value)
+            ASSERT(mergePredictions(m_type, predictionFromValue(m_value)) == m_type);
+        
         // Note that it's possible for a prediction like (Final, []). This really means that
         // the value is bottom and that any code that uses the value is unreachable. But
         // we don't want to get pedantic about this as it would only increase the computational
@@ -473,11 +524,14 @@ struct AbstractValue {
     {
         fprintf(out, "(%s, ", predictionToString(m_type));
         m_structure.dump(out);
+        if (!!m_value)
+            fprintf(out, ", %s", m_value.description());
         fprintf(out, ")");
     }
 
     StructureAbstractValue m_structure;
     PredictedType m_type;
+    JSValue m_value;
 };
 
 } } // namespace JSC::DFG
