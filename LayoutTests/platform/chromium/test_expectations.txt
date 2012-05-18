@@ -32,7 +32,8 @@ BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
 BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 DEBUG : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
-BUGCR24182 SLOW LINUX WIN LEOPARD DEBUG : jquery/traversing.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : jquery/traversing.html = PASS
+BUGCR24182 SLOW LEOPARD DEBUG : jquery/traversing.html = PASS TEXT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
@@ -95,7 +96,7 @@ BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
 
 // Animation API is disabled.  Dean Jackson has promised (as of Aug. 25, 2011)
 // to re-enable these "in the next few weeks".
-BUGPKASTING SKIP : animations/animation-api-1.html = TEXT
+BUG54151 SKIP : animations/animation-api-1.html = TEXT
 
 // Unskip after implementing DRT support for setDefersLoading and goBack.
 BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
@@ -1861,7 +1862,7 @@ BUGCR40680 SKIP : fast/media/media-query-list-06.html = FAIL
 BUGCR40680 SKIP : fast/media/media-query-list-07.html = FAIL
 
 // Caused by http://trac.webkit.org/changeset/56394.
-BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT
+BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT PASS
 
 // Due to the differences in handling text encodings in KURL and googleurl.
 BUGWK20559 : http/tests/navigation/anchor-frames-gbk.html = TEXT
@@ -3647,7 +3648,7 @@ BUGWK85174 : fast/files/blob-constructor.html = CRASH
 BUGWK85174 : fast/dom/HTMLAnchorElement/anchor-download-unset.html = TIMEOUT
 BUGWK85174 : fast/filesystem/file-writer-gc-blob.html = TIMEOUT
 BUGWK85174 : fast/filesystem/workers/file-writer-gc-blob.html = TEXT
-BUGWK85174 MAC LINUX : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
+BUGWK85174 : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT TIMEOUT
 BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
@@ -3684,7 +3685,7 @@ BUGWK83076 SNOWLEOPARD RELEASE : storage/read-transactions-running-concurrently.
 // broken in/after r115646
 BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT
 
-BUGDPRANKE MAC LINUX : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
+BUGDPRANKE : http/tests/security/sandboxed-iframe-modify-self.html = TEXT
 BUGDPRANKE MAC LINUX : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 
@@ -3728,7 +3729,7 @@ BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TE
 
 BUGWK86592 LINUX : fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
-BUGWK86592 LINUX : http/tests/inspector/resource-har-pages.html = TEXT PASS
+BUGWK86592 LINUX WIN : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-add.html = TEXT PASS
 BUGWK86592 LINUX : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/link-no-URL.html = TEXT PASS
@@ -3758,3 +3759,18 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
 BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH PASS
+
+BUG86907 WIN : http/tests/inspector/compiler-script-mapping.html = PASS TEXT
+
+BUG86908 WIN : http/tests/security/cross-frame-access-put.html = PASS TEXT
+
+BUG86909 WIN SLOW : compositing/geometry/object-clip-rects-assertion.html = PASS
+BUG86909 WIN : http/tests/inspector/appcache/appcache-iframe-manifests.html = PASS TIMEOUT
+BUG86909 VISTA SLOW : http/tests/inspector/network/async-xhr-json-mime-type.html = PASS
+BUG86909 VISTA SLOW : http/tests/inspector/network/network-cachedresources-with-same-urls.html = PASS
+BUG86909 WIN : http/tests/inspector/network/network-content-replacement-xhr.html = PASS TIMEOUT
+BUG86909 VISTA SLOW : http/tests/security/escape-form-data-field-names.html = PASS
+BUG86909 VISTA SLOW : http/tests/security/feed-urls-from-remote.html = PASS
+BUG86909 WIN DEBUG : http/tests/security/referrer-policy-redirect-link.html = PASS TIMEOUT
+BUG86909 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html = PASS TIMEOUT
+BUG86909 WIN SLOW : platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html = PASS

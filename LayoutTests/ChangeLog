@@ -1,3 +1,18 @@
+2012-05-18  Peter Kasting  <pkasting@google.com>
+
+        [chromium] More expectations updates, mostly for flaky tests.
+        http://code.google.com/p/chromium/issues/detail?id=24182
+        https://bugs.webkit.org/show_bug.cgi?id=54151
+        https://bugs.webkit.org/show_bug.cgi?id=85174
+        https://bugs.webkit.org/show_bug.cgi?id=86592
+        https://bugs.webkit.org/show_bug.cgi?id=86907
+        https://bugs.webkit.org/show_bug.cgi?id=86908
+        https://bugs.webkit.org/show_bug.cgi?id=86909
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening; update results after r117640.
