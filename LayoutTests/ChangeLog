@@ -1,3 +1,13 @@
+2012-05-18  Levi Weintraub  <leviw@chromium.org>
+
+        REGRESSION (r117640) fast/table/form-with-table and fast/forms/form-hides-table fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86920
+
+        Unreviewed. Updating expectations after r117640.
+
+        * platform/mac/fast/forms/form-hides-table-expected.txt:
+        * platform/mac/fast/table/form-with-table-style-expected.txt:
+
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] More random gardening.
