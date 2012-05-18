@@ -2511,8 +2511,13 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext
 {
-    [self _exitAcceleratedCompositingMode];
-    [self _enterAcceleratedCompositingMode:layerTreeContext];
+    if (_data->_layerHostingView) {
+        CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+        [[_data->_layerHostingView.get() layer] setSublayers:[NSArray arrayWithObject:renderLayer]];
+    } else {
+        [self _exitAcceleratedCompositingMode];
+        [self _enterAcceleratedCompositingMode:layerTreeContext];
+    }
 }
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
