@@ -364,6 +364,10 @@ BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
+BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
+
+BUGWK86876 DEBUG : svg/text/text-tselect-02-f.svg = CRASH
+BUGWK86876 DEBUG : svg/custom/acid3-test-77.html = PASS CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -1303,7 +1307,6 @@ BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = FAIL
 // Started failing after it was added in r116563
 BUGWK86061 : http/tests/security/referrer-policy-redirect-link.html = FAIL
 
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures

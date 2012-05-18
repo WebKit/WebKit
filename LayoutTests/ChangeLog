@@ -1,3 +1,10 @@
+2012-05-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding test expectations for a few tests
+        crashing on the debug builds.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-18  Joe Thomas  <joethomas@motorola.com>
 
         Refactor LayoutTests/fast/backgrounds/background-shorthand-with-backgroundSize-style.html
