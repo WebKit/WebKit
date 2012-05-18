@@ -81,6 +81,14 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return WebInspector.resourceTypes.Document;
+    },
+    
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
@@ -180,7 +188,6 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspect
  */
 WebInspector.CompilerSourceMappingContentProvider = function(sourceURL)
 {
-    this._mimeType = "text/javascript";
     this._sourceURL = sourceURL;
 }
 
@@ -194,6 +201,14 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return WebInspector.resourceTypes.Script;
+    },
+    
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
@@ -205,7 +220,7 @@ WebInspector.CompilerSourceMappingContentProvider.prototype = {
         } catch(e) {
             console.error(e.message);
         }
-        callback(sourceCode, false, this._mimeType);
+        callback(sourceCode, false, "text/javascript");
     },
 
     /**
@@ -225,11 +240,13 @@ WebInspector.CompilerSourceMappingContentProvider.prototype.__proto__ = WebInspe
 /**
  * @constructor
  * @implements {WebInspector.ContentProvider}
+ * @param {WebInspector.ResourceType} contentType 
+ * @param {string} content 
  */
-WebInspector.StaticContentProvider = function(mimeType, content)
+WebInspector.StaticContentProvider = function(contentType, content)
 {
-    this._mimeType = mimeType;
     this._content = content;
+    this._contentType = contentType;
 }
 
 WebInspector.StaticContentProvider.prototype = {
@@ -242,11 +259,19 @@ WebInspector.StaticContentProvider.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return WebInspector.resourceTypes.Script;
+    },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
     {
-        callback(this._content, false, this._mimeType);
+        callback(this._content, false, this._contentType.canonicalMimeType());
     },
 
     /**

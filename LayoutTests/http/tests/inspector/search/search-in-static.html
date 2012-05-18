@@ -18,7 +18,7 @@ function test()
 
     function step3()
     {
-        staticContentProvider = new WebInspector.StaticContentProvider("text/plain", resource.content);
+        staticContentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, resource.content);
         InspectorTest.addResult(resource.url);
 
         var text = "searchTestUniqueString";

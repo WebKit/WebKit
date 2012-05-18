@@ -368,6 +368,14 @@ WebInspector.Resource.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return this.type;
+    },
+
+    /**
      * @param {function(?string, boolean, string)} callback
      */
     requestContent: function(callback)
@@ -383,13 +391,7 @@ WebInspector.Resource.prototype = {
 
     canonicalMimeType: function()
     {
-        if (this.type === WebInspector.resourceTypes.Document)
-            return "text/html";
-        if (this.type === WebInspector.resourceTypes.Script)
-            return "text/javascript";
-        if (this.type === WebInspector.resourceTypes.Stylesheet)
-            return "text/css";
-        return this.mimeType;
+        return this.type.canonicalMimeType() || this.mimeType;
     },
 
     /**
@@ -523,6 +525,14 @@ WebInspector.ResourceRevision.prototype = {
     contentURL: function()
     {
         return this._resource.url;
+    },
+
+    /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return this._resource.contentType();
     },
 
     /**

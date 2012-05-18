@@ -40,6 +40,14 @@
     content: url(Images/resourceJSIcon.png);
 }
 
+.navigator-stylesheet-tree-item .icon {
+    content: url(Images/resourceCSSIcon.png);
+}
+
+.navigator-document-tree-item .icon {
+    content: url(Images/resourceDocumentIcon.png);
+}
+
 .navigator li {
     height: 17px;
     white-space: nowrap;

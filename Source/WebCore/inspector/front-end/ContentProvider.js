@@ -40,6 +40,11 @@ WebInspector.ContentProvider.prototype = {
     contentURL: function() { },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function() { },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback) { },

@@ -58,6 +58,14 @@ WebInspector.Script.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return WebInspector.resourceTypes.Script;
+    },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)

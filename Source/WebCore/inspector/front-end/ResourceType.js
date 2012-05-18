@@ -91,6 +91,20 @@ WebInspector.ResourceType.prototype = {
     toString: function()
     {
         return this._name;
+    },
+
+    /**
+     * @return {string}
+     */
+    canonicalMimeType: function()
+    {
+        if (this === WebInspector.resourceTypes.Document)
+            return "text/html";
+        if (this === WebInspector.resourceTypes.Script)
+            return "text/javascript";
+        if (this === WebInspector.resourceTypes.Stylesheet)
+            return "text/css";
+        return "";
     }
 }
 

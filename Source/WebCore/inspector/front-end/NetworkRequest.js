@@ -684,6 +684,14 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return this._type;
+    },
+
+    /**
      * @param {function(?string, boolean, string)} callback
      */
     requestContent: function(callback)

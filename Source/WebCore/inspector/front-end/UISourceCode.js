@@ -100,6 +100,14 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @return {WebInspector.ResourceType}
+     */
+    contentType: function()
+    {
+        return this._contentProvider.contentType();
+    },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)

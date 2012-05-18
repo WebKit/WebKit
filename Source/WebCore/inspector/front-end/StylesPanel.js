@@ -99,7 +99,6 @@ WebInspector.StyleSource = function(resource)
 }
 
 WebInspector.StyleSource.prototype = {
-    
 }
 
 WebInspector.StyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;

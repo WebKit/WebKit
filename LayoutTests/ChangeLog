@@ -1,3 +1,15 @@
+2012-05-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: add ContentProvider::contentType and use it when rendering navigator tree.
+        https://bugs.webkit.org/show_bug.cgi?id=86833
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/search/search-in-static.html:
+        * inspector/debugger/scripts-file-selector.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/scripts-sorting.html:
+
 2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, rolling out r117559.

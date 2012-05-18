@@ -422,7 +422,7 @@ WebInspector.SnippetScriptMapping.prototype.__proto__ = WebInspector.Object.prot
  */
 WebInspector.SnippetContentProvider = function(snippet)
 {
-    WebInspector.StaticContentProvider.call(this, "text/javascript", snippet.content);
+    WebInspector.StaticContentProvider.call(this, WebInspector.resourceTypes.Script, snippet.content);
 }
 
 WebInspector.SnippetContentProvider.prototype.__proto__ = WebInspector.StaticContentProvider.prototype;

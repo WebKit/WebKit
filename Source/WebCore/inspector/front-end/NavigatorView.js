@@ -73,7 +73,7 @@ WebInspector.NavigatorView.prototype = {
         if (this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
             return;
 
-        var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, "");
+        var scriptTreeElement = new WebInspector.NavigatorSourceTreeElement(this, uiSourceCode, "");
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
         this._updateScriptTitle(uiSourceCode);
         this._addUISourceCodeListeners(uiSourceCode);
@@ -407,7 +407,7 @@ WebInspector.NavigatorTreeOutline.prototype = {
        var result = [];
        if (this.children.length) {
            for (var treeElement = this.children[0]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, this, true)) {
-               if (treeElement instanceof WebInspector.NavigatorScriptTreeElement)
+               if (treeElement instanceof WebInspector.NavigatorSourceTreeElement)
                    result.push(treeElement.uiSourceCode);
            }
        }
@@ -561,15 +561,15 @@ WebInspector.NavigatorFolderTreeElement.prototype.__proto__ = WebInspector.BaseN
  * @param {WebInspector.UISourceCode} uiSourceCode
  * @param {string} title
  */
-WebInspector.NavigatorScriptTreeElement = function(navigatorView, uiSourceCode, title)
+WebInspector.NavigatorSourceTreeElement = function(navigatorView, uiSourceCode, title)
 {
-    WebInspector.BaseNavigatorTreeElement.call(this, title, ["navigator-script-tree-item"], false);
+    WebInspector.BaseNavigatorTreeElement.call(this, title, ["navigator-" + uiSourceCode.contentType().name() + "-tree-item"], false);
     this._navigatorView = navigatorView;
     this._uiSourceCode = uiSourceCode;
     this.tooltip = uiSourceCode.url;
 }
 
-WebInspector.NavigatorScriptTreeElement.prototype = {
+WebInspector.NavigatorSourceTreeElement.prototype = {
     /**
      * @return {WebInspector.UISourceCode}
      */
@@ -619,4 +619,4 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     }
 }
 
-WebInspector.NavigatorScriptTreeElement.prototype.__proto__ = WebInspector.BaseNavigatorTreeElement.prototype;
+WebInspector.NavigatorSourceTreeElement.prototype.__proto__ = WebInspector.BaseNavigatorTreeElement.prototype;
