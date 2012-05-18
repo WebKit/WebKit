@@ -3623,20 +3623,20 @@ void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
     m_loaderClient.didFailToInitializePlugin(this, mimeType);
 }
 
-void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType)
+void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& urlString)
 {
     String pluginIdentifier;
     String pluginVersion;
 
 #if PLATFORM(MAC)
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());
+    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
 
     pluginIdentifier = plugin.bundleIdentifier;
     pluginVersion = plugin.versionString;
 #endif
 
-    m_loaderClient.didBlockInsecurePluginVersion(this, mimeType, pluginIdentifier, pluginVersion);
+    m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginIdentifier, pluginVersion);
 }
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const

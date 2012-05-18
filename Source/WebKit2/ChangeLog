@@ -1,3 +1,22 @@
+2012-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Plug-ins blacklist mechanism can tell clients about plug-in with null identifier
+        https://bugs.webkit.org/show_bug.cgi?id=86788
+        <rdar://problem/11479503>
+
+        Reviewed by John Sullivan.
+
+        Pass along the URL string of the blocked plug-in so we can find the plug-in even if there was no
+        MIME type specified in the <embed> or <object> tag.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2012-05-17  Oliver Hunt  <oliver@apple.com>
 
         Endeavour to make the windows test bot actually able to run tests.
