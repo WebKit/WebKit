@@ -1,3 +1,13 @@
+2012-05-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Fix build for Qt by using ASSERT_UNUSED in DFGSpeculativeJIT
+        https://bugs.webkit.org/show_bug.cgi?id=86902
+
+        Reviewed by Andreas Kling.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+
 2012-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have out-of-line slow paths

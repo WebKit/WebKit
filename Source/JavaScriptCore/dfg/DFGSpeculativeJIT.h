@@ -432,7 +432,7 @@ public:
             ASSERT(info.gpr() == source);
             if (node.hasConstant()) {
                 JSValue value = valueOfJSConstant(nodeIndex);
-                ASSERT(value.isCell());
+                ASSERT_UNUSED(value, value.isCell());
                 fillAction = SetCellConstant;
             } else {
 #if USE(JSVALUE64)
