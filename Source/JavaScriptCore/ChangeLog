@@ -1,5 +1,14 @@
 2012-05-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        Rolled out r117495 because it caused som out of memory crashes.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+
+2012-05-17  Geoffrey Garen  <ggaren@apple.com>
+
         Refactored the Heap to move more MarkedSpace logic into MarkedSpace
         https://bugs.webkit.org/show_bug.cgi?id=86790
 
