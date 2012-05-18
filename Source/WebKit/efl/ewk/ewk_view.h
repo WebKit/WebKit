@@ -2603,6 +2603,8 @@ EAPI void ewk_view_setting_enable_xss_auditor_set(Evas_Object *o, Eina_Bool enab
 /**
  * Returns whether video captions display feature is enabled.
  *
+ * Video captions display is disabled by default.
+ *
  * @param o view object to query whether video captions display feature is enabled.
  *
  * @return @c EINA_TRUE if the video captions display feature is enabled,
@@ -2624,6 +2626,8 @@ EAPI void ewk_view_setting_should_display_captions_set(Evas_Object *o, Eina_Bool
 /**
  * Returns whether video subtitles display feature is enabled.
  *
+ * Video subtitles display is disabled by default.
+ *
  * @param o view object to query whether video subtitles display feature is enabled.
  *
  * @return @c EINA_TRUE if the video subtitles display feature is enabled,
@@ -2644,6 +2648,8 @@ EAPI void ewk_view_setting_should_display_subtitles_set(Evas_Object *o, Eina_Boo
 
 /**
  * Returns whether video text descriptions display feature is enabled.
+ *
+ * Video text descriptions display is disabled by default.
  *
  * @param o view object to query whether video text descriptions display feature is enabled.
  *

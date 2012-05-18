@@ -1,3 +1,14 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Default values for ewk_view video tracks settings should be documented
+        https://bugs.webkit.org/show_bug.cgi?id=85169
+
+        Reviewed by Antonio Gomes.
+
+        Document default values for video tracks settings in ewk_view.
+
+        * ewk/ewk_view.h:
+
 2012-05-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Text input events are emitted for nodes that do not allow editing.
