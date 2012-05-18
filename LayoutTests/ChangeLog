@@ -1,3 +1,12 @@
+2012-05-18  Joe Thomas  <joethomas@motorola.com>
+
+        Remove one-space indentation from LayoutTests/fast/backgrounds/background-shorthand-with-backgroundSize-style.html
+        https://bugs.webkit.org/show_bug.cgi?id=86897
+
+        Reviewed by Tony Chang.
+
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+
         2012-05-17  Levi Weintraub  <leviw@chromium.org>
 
         Standalone table-columns should be wrapped in anonymous tables
