@@ -1,3 +1,11 @@
+2012-05-18  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK2] Cleaning skip list. Unskip passing tests.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] media/media-document-audio-repaint.html needs rebaselining after r117326

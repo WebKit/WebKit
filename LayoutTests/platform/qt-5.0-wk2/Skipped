@@ -77,9 +77,6 @@ fast/loader/policy-delegate-action-hit-test-zoomed.html
 # https://bugs.webkit.org/show_bug.cgi?id=83263
 fast/events/page-visibility-iframe-move-test.html
 
-svg/custom/mouse-move-on-svg-container.xhtml
-svg/custom/mouse-move-on-svg-root-standalone.svg
-svg/custom/mouse-move-on-svg-root.xhtml
 svg/custom/use-events-crash.svg
 
 # eventSender.mouseScrollBy() is unimplemented
@@ -115,14 +112,6 @@ fast/invalid/residual-style.html
 http/tests/appcache/auth.html
 http/tests/xmlhttprequest/logout.html
 
-# Unexplained failures that were formerly in the setCanOpenWindows or setCloseRemainingWindowsWhenComplete lists.
-http/tests/security/cross-frame-access-call.html
-http/tests/security/frameNavigation/opener.html
-http/tests/security/window-events-clear-port.html
-http/tests/xmlhttprequest/close-window.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
-
 # Unexplained plugin failures
 plugins/embed-prefers-plugins-for-images.html
 plugins/npp-set-window-called-during-destruction.html
@@ -130,28 +119,8 @@ plugins/reloadplugins-and-pages.html
 plugins/mouse-click-iframe-to-plugin.html
 
 # Unexplained failures
-fast/dom/frame-loading-via-document-write.html
 fast/table/giantCellspacing.html
-http/tests/eventsource/eventsource-reconnect.html
-http/tests/eventsource/eventsource-status-code-states.html
-http/tests/incremental/frame-focus-before-load.html
-http/tests/media/video-load-twice.html
-http/tests/misc/location-replace-crossdomain.html
-http/tests/misc/object-image-error-with-onload.html
-http/tests/plugins/post-url-file.html
-http/tests/xmlhttprequest/send-on-abort.html
 media/video-zoom-controls.html
-storage/transaction-error-callback.html
-storage/open-database-creation-callback-isolated-world.html
-storage/statement-error-callback-isolated-world.html
-storage/statement-success-callback-isolated-world.html
-storage/transaction-callback-isolated-world.html
-storage/transaction-error-callback-isolated-world.html
-storage/transaction-success-callback-isolated-world.html
-editing/pasteboard/paste-plaintext-user-select-none.html
-fast/css-generated-content/first-letter-in-nested-before.html
-fast/frames/set-parent-src-synchronously.html
-fast/text/complex-synthetic-bold-space-width.html
 
 ########################################
 
@@ -159,7 +128,6 @@ fast/text/complex-synthetic-bold-space-width.html
 # Skipped because of Qt 4.7.0          #
 # remove after we have rebaselined     #
 ########################################
-css1/text_properties/letter_spacing.html
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counter-15-b.html
 css2.1/t1202-counters-09-b.html
@@ -168,7 +136,6 @@ fast/forms/textarea-appearance-wrap.html
 fast/js/regexp-range-bound-ffff.html
 fast/js/switch-behaviour.html
 fast/text/format-control.html
-fast/text/zero-width-characters.html
 fast/url/anchor.html
 http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
@@ -178,29 +145,9 @@ fast/notifications
 # layoutTestController.setScrollbarPolicy is unimplemented
 fast/overflow/scrollbar-restored-and-then-locked.html
 
-# Worker caught exception: Error: INVALID_STATE_ERR: DOM Exception 11
-fast/workers/storage
-
-# SECURITY_ERR: DOM Exception 18
-fast/js/exceptions-thrown-in-callbacks.html
-storage/change-version-handle-reuse.html
-storage/test-authorizer.html
-storage/transaction-callback-exception-crash.html
-storage/multiple-transactions.html
-storage/read-and-write-transactions-dont-run-together.html
-storage/sql-data-types.html
-storage/change-version-no-crash-on-preflight-failure.html
-storage/close-during-stress-test.html
-storage/multiple-transactions-on-different-handles.html
-storage/open-database-empty-version.html
-storage/read-transactions-running-concurrently.html
-
 # FAIL: Timed out waiting for notifyDone to be called
 http/tests/appcache
-fast/dom/beforeload/video-before-load.html
 media/video-source-moved.html
-http/tests/misc/object-image-error.html
-http/tests/security/contentSecurityPolicy/media-src-allowed.html
 
 # These tests always fail (with and without --singly). It needs investigation.
 editing/selection/caret-mode-paragraph-keys-navigation.html
@@ -219,46 +166,22 @@ fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
 fast/media/print-restores-previous-mediatype.html
 fast/media/view-mode-media-feature.html
-http/tests/navigation/forward-to-fragment-fires-onload.html
-http/tests/xmlviewer/dumpAsText/frames.html
 platform/qt/fast/history/back-to-unreachable-url-then-forward.html
 platform/qt/fast/spatial-navigation/snav-ensure-scrolls-with-scrollbars-disabled-by-webkit.html
 platform/qt/view/fixed-layout-size.html
-# WebProcess crashes intermittently: "FAIL: TestControllerRunLoop timed out."
-http/tests/security/contentSecurityPolicy/media-src-blocked.html
 
-# unskipped by r86675, but fail on Qt-WK2 platform
-http/tests/uri/css-href.php
 
 # Qt specific results committed in r89901, but fail on Qt-WK2 platform
-svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 
-# new failing tests
-fast/events/mouseover-button.html
 
 # [Qt][WK2] fast/inline/absolute-positioned-inline-in-centred-block.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=67607
 fast/inline/absolute-positioned-inline-in-centred-block.html
 
-# New editing tests introduced in r95335, r95337 and r95645 fail on Qt-WK2 platform
-editing/deleting/merge-paragraph-from-address.html
-editing/deleting/merge-paragraph-from-h6-with-style.html
-editing/deleting/merge-paragraph-from-h6.html
-editing/deleting/merge-paragraph-from-listing.html
-editing/deleting/merge-paragraph-from-p-with-style.html
-editing/deleting/merge-paragraph-into-blockquote.html
-editing/deleting/merge-paragraph-into-h1-with-style.html
-editing/deleting/merge-paragraph-into-h1.html
-editing/deleting/merge-paragraph-into-pre.html
-
 # [Qt][WK] fast/forms/submit-to-blank-multiple-times.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=68309
 fast/forms/submit-to-blank-multiple-times.html
-
-# [Qt][WK2] fast/events/media-element-focus-tab.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=68315
-fast/events/media-element-focus-tab.html
 
 # Missing layoutTestController.setUserStyleSheetEnabled() implementation
 platform/qt/fast/loader/user-stylesheet-qrc-path.html
@@ -275,37 +198,17 @@ fast/hidpi
 # https://bugs.webkit.org/show_bug.cgi?id=70245
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
 
-# new failing tests
-css2.1/20110323/floating-replaced-height-008.htm
-css2.1/20110323/height-width-inline-table-001.htm
-css2.1/20110323/height-width-table-001.htm
-css2.1/20110323/inline-block-replaced-height-008.htm
-css2.1/20110323/inline-replaced-height-008.htm
-
 # [Qt][WK2] fast/events/drag-selects-image.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=70907
 fast/events/drag-selects-image.html
 
 # [Qt][WK2] Metric mismatches (fast/text/justify-padding-distribution.html and svg/as-object/svg-embedded-in-html-in-iframe.html)
 # https://bugs.webkit.org/show_bug.cgi?id=70915
-fast/text/justify-padding-distribution.html
 svg/as-object/svg-embedded-in-html-in-iframe.html
-
-# [Qt][WK2] fast/css/font-face-descending-unicode-range.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=70922
-fast/css/font-face-descending-unicode-range.html
 
 # [Qt][WK2] fast/transforms/scrollIntoView-transformed.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=70935
 fast/transforms/scrollIntoView-transformed.html
-
-# [Qt][WK2] Assertion hit and crash with fast/multicol/pagination-* tests
-# https://bugs.webkit.org/show_bug.cgi?id=74511
-fast/multicol/pagination-h-horizontal-bt.html
-fast/multicol/pagination-h-horizontal-tb.html
-fast/multicol/pagination-h-vertical-rl.html
-fast/multicol/pagination-v-horizontal-bt.html
-fast/multicol/pagination-v-vertical-lr.html
 
 # [Qt][WK2] fast/forms/access-key-for-all-elements.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73917
@@ -323,15 +226,10 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml
 
-# Frame::findString does nothing on pages that prevent selection
-# https://bugs.webkit.org/show_bug.cgi?id=40361
-editing/text-iterator/findString-selection-disabled.html
-
 # Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 editing/selection/click-in-margins-inside-editable-div.html
 fast/block/basic/020.html
 fast/dom/access-key-iframe.html
-fast/forms/basic-selects.html
 fast/history/visited-link-background-color.html
 fast/layers/layer-visibility-sublayer.html
 fast/layers/layer-visibility.html
@@ -340,11 +238,7 @@ fast/repaint/layer-hide-when-needs-layout.html
 fast/replaced/no-focus-ring-embed.html
 fast/replaced/no-focus-ring-object.html
 fast/text/whitespace/028.html
-http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
-security/autocomplete-cleared-on-back.html
-# Crashing test on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
-editing/execCommand/align-in-span.html
 
 # It made the following test(s) timeout
 editing/selection/drag-in-iframe.html
@@ -358,10 +252,6 @@ editing/input/reveal-caret-of-multiline-contenteditable.html
 # https://bugs.webkit.org/show_bug.cgi?id=75540
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
 
-# [Qt][WK2]REGRESSION(r104068): editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html made the next test fail
-# https://bugs.webkit.org/show_bug.cgi?id=75615
-editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
-
 # [Qt][WK2]fast/loader/submit-form-while-parsing-2.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=75950
 fast/loader/submit-form-while-parsing-2.html
@@ -369,20 +259,6 @@ fast/loader/submit-form-while-parsing-2.html
 # [Qt][WK2] css3/filters/should-not-have-compositing-layer.html is failing since added in 104622
 # https://bugs.webkit.org/show_bug.cgi?id=76061
 css3/filters/should-not-have-compositing-layer.html
-
-# Hardware filters don't work with GL yet
-# https://bugs.webkit.org/show_bug.cgi?id=75778
-css3/filters/crash-hw-sw-switch.html
-css3/filters/effect-blur-hw.html
-css3/filters/effect-combined-hw.html
-css3/filters/effect-drop-shadow-hw.html
-css3/filters/effect-grayscale-hw.html
-css3/filters/effect-hue-rotate-hw.html
-css3/filters/effect-invert-hw.html
-css3/filters/effect-opacity-hw.html
-css3/filters/effect-saturate-hw.html
-css3/filters/effect-sepia-hw.html
-css3/filters/custom
 
 # Unskipped on Qt5, but still fail on qt-wk2 platform
 editing/input/emacs-ctrl-o.html
@@ -394,22 +270,12 @@ platform/qt/plugins/qt-qwidget-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
 
-# Skipped because they were still failing after http://trac.webkit.org/changeset/106812 .
-# Check https://bugs.webkit.org/show_bug.cgi?id=62731 and https://bugs.webkit.org/show_bug.cgi?id=42333
-# for future reference.
-fast/history/form-submit-in-frame-via-onclick.html
-fast/history/form-submit-in-frame.html
-http/tests/loading/state-object-security-exception.html
-
 ###################################
 # Unskipping 'compositing' tests. #
 ###################################
 
 # Most of these tests crash or doesn't generate expected results.
 compositing/reflections
-
-# Does not transform child as expected.
-compositing/flat-with-transformed-child.html
 
 # Flaky tests.
 compositing/masks/simple-composited-mask.html
@@ -436,13 +302,6 @@ compositing/tiling/crash-huge-layer.html
 compositing/visibility/visibility-image-layers-dynamic.html
 compositing/visibility/visibility-image-layers.html
 compositing/visibility/visibility-simple-webgl-layer.html
-
-# Black square instead of green square is displayed.
-compositing/masks/layer-mask-placement.html
-
-# Blur effect doesnt show up.
-compositing/culling/filter-occlusion-blur-large.html
-compositing/culling/filter-occlusion-blur.html
 
 # The following tests doesnt match expected text files.
 compositing/geometry/fixed-position-composited-switch.html
@@ -487,13 +346,6 @@ compositing/tiling/crash-reparent-tiled-layer.html
 compositing/video/video-poster.html
 compositing/layers-inside-overflow-scroll.html
 
-# The following tests get image mismatch.
-compositing/culling/filter-occlusion-alpha-large.html
-compositing/culling/filter-occlusion-alpha.html
-compositing/backface-visibility-hierarchical-transform.html
-compositing/backface-visibility.html
-compositing/images/direct-pdf-image.html
-compositing/visibility/visibility-simple-video-layer.html
 
 # The following tests doesnt match both expected image and text.
 compositing/geometry/ancestor-overflow-change.html
