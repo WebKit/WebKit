@@ -1,3 +1,13 @@
+2012-05-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11419933> Problems with flipped writing modes and compositing
+        https://bugs.webkit.org/show_bug.cgi?id=86032
+
+        Reviewed by Anders Carlsson.
+
+        * compositing/bounds-in-flipped-writing-mode-expected.txt: Added.
+        * compositing/bounds-in-flipped-writing-mode.html: Added.
+
 2012-05-17  Peter Kasting  <pkasting@google.com>
 
         [chromium] Prune unnecessary failure expectations.
