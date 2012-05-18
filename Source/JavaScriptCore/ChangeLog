@@ -1,3 +1,146 @@
+2012-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have out-of-line slow paths
+        https://bugs.webkit.org/show_bug.cgi?id=83992
+
+        Reviewed by Oliver Hunt.
+        
+        Merge of r114472 and r114553 from dfgopt.
+        
+        Introduces the notion of slow path code generation closures in the DFG.
+        These are defined in DFGSlowPathGenerator.h, though they are fairly
+        extensible so DFGSpeculativeJIT64.cpp and DFGSpeculativeJIT32_64.cpp
+        define a couple special-purpose ones. A slow path generation closure
+        (DFG::SlowPathGenerator) is executed after the main speculative path is
+        generated. This makes them great for scheduling slow path code out of
+        the way of the hot paths.
+        
+        This patch also converts most - but not all - of the DFG to use slow
+        path generators instead of inline slow paths.
+        
+        The result is a sub-1% improvement on SunSpider and V8, and a miniscule
+        regression on Kraken.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        (TrustedImmPtr):
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        (TrustedImm32):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGCommon.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (DFG):
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (PropertyAccessRecord):
+        (JITCompiler):
+        * dfg/DFGSilentRegisterSavePlan.h: Added.
+        (DFG):
+        (SilentRegisterSavePlan):
+        (JSC::DFG::SilentRegisterSavePlan::SilentRegisterSavePlan):
+        (JSC::DFG::SilentRegisterSavePlan::spillAction):
+        (JSC::DFG::SilentRegisterSavePlan::fillAction):
+        (JSC::DFG::SilentRegisterSavePlan::nodeIndex):
+        (JSC::DFG::SilentRegisterSavePlan::gpr):
+        (JSC::DFG::SilentRegisterSavePlan::fpr):
+        * dfg/DFGSlowPathGenerator.h: Added.
+        (DFG):
+        (SlowPathGenerator):
+        (JSC::DFG::SlowPathGenerator::SlowPathGenerator):
+        (JSC::DFG::SlowPathGenerator::~SlowPathGenerator):
+        (JSC::DFG::SlowPathGenerator::generate):
+        (JSC::DFG::SlowPathGenerator::label):
+        (JSC::DFG::SlowPathGenerator::call):
+        (JumpingSlowPathGenerator):
+        (JSC::DFG::JumpingSlowPathGenerator::JumpingSlowPathGenerator):
+        (JSC::DFG::JumpingSlowPathGenerator::linkFrom):
+        (JSC::DFG::JumpingSlowPathGenerator::jumpTo):
+        (CallSlowPathGenerator):
+        (JSC::DFG::CallSlowPathGenerator::CallSlowPathGenerator):
+        (JSC::DFG::CallSlowPathGenerator::call):
+        (JSC::DFG::CallSlowPathGenerator::setUp):
+        (JSC::DFG::CallSlowPathGenerator::recordCall):
+        (JSC::DFG::CallSlowPathGenerator::tearDown):
+        (CallResultAndNoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndNoArgumentsSlowPathGenerator::CallResultAndNoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndNoArgumentsSlowPathGenerator::generateInternal):
+        (CallResultAndOneArgumentSlowPathGenerator):
+        (JSC::DFG::CallResultAndOneArgumentSlowPathGenerator::CallResultAndOneArgumentSlowPathGenerator):
+        (JSC::DFG::CallResultAndOneArgumentSlowPathGenerator::generateInternal):
+        (CallResultAndTwoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndTwoArgumentsSlowPathGenerator::CallResultAndTwoArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndTwoArgumentsSlowPathGenerator::generateInternal):
+        (CallResultAndThreeArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndThreeArgumentsSlowPathGenerator::CallResultAndThreeArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndThreeArgumentsSlowPathGenerator::generateInternal):
+        (CallResultAndFourArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFourArgumentsSlowPathGenerator::CallResultAndFourArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFourArgumentsSlowPathGenerator::generateInternal):
+        (CallResultAndFiveArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFiveArgumentsSlowPathGenerator::CallResultAndFiveArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndFiveArgumentsSlowPathGenerator::generateInternal):
+        (JSC::DFG::slowPathCall):
+        (AssigningSlowPathGenerator):
+        (JSC::DFG::AssigningSlowPathGenerator::AssigningSlowPathGenerator):
+        (JSC::DFG::AssigningSlowPathGenerator::generateInternal):
+        (JSC::DFG::slowPathMove):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::~SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (DFG):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForFPR):
+        (JSC::DFG::SpeculativeJIT::silentSpill):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegistersImpl):
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::pickCanTrample):
+        (JSC::DFG::SpeculativeJIT::silentFillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (ValueToNumberSlowPathGenerator):
+        (JSC::DFG::ValueToNumberSlowPathGenerator::ValueToNumberSlowPathGenerator):
+        (JSC::DFG::ValueToNumberSlowPathGenerator::generateInternal):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::generateInternal):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (ValueToNumberSlowPathGenerator):
+        (JSC::DFG::ValueToNumberSlowPathGenerator::ValueToNumberSlowPathGenerator):
+        (JSC::DFG::ValueToNumberSlowPathGenerator::generateInternal):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::generateInternal):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-18  Tony Chang  <tony@chromium.org>
 
         remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off

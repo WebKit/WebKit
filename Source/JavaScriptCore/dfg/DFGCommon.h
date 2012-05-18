@@ -123,6 +123,8 @@ inline bool isX86()
 #endif
 }
 
+enum SpillRegistersMode { NeedToSpill, DontSpill };
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

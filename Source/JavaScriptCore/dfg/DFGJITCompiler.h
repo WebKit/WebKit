@@ -28,15 +28,15 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <assembler/LinkBuffer.h>
-#include <assembler/MacroAssembler.h>
-#include <bytecode/CodeBlock.h>
-#include <dfg/DFGCCallHelpers.h>
-#include <dfg/DFGFPRInfo.h>
-#include <dfg/DFGGPRInfo.h>
-#include <dfg/DFGGraph.h>
-#include <dfg/DFGRegisterBank.h>
-#include <jit/JITCode.h>
+#include "CodeBlock.h"
+#include "DFGCCallHelpers.h"
+#include "DFGFPRInfo.h"
+#include "DFGGPRInfo.h"
+#include "DFGGraph.h"
+#include "DFGRegisterBank.h"
+#include "JITCode.h"
+#include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
 namespace JSC {
 
@@ -48,6 +48,7 @@ namespace DFG {
 
 class JITCodeGenerator;
 class NodeToRegisterMap;
+class SlowPathGenerator;
 class SpeculativeJIT;
 class SpeculationRecovery;
 
@@ -130,22 +131,43 @@ struct PropertyAccessRecord {
     enum RegisterMode { RegistersFlushed, RegistersInUse };
     
 #if USE(JSVALUE64)
-    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::PatchableJump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
+    PropertyAccessRecord(
+        CodeOrigin codeOrigin,
+        MacroAssembler::DataLabelPtr structureImm,
+        MacroAssembler::PatchableJump structureCheck,
+        MacroAssembler::DataLabelCompact loadOrStore,
+        SlowPathGenerator* slowPathGenerator,
+        MacroAssembler::Label done,
+        int8_t baseGPR,
+        int8_t valueGPR,
+        int8_t scratchGPR,
+        RegisterMode registerMode = RegistersInUse)
 #elif USE(JSVALUE32_64)
-    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::PatchableJump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
+    PropertyAccessRecord(
+        CodeOrigin codeOrigin,
+        MacroAssembler::DataLabelPtr structureImm,
+        MacroAssembler::PatchableJump structureCheck,
+        MacroAssembler::DataLabelCompact tagLoadOrStore,
+        MacroAssembler::DataLabelCompact payloadLoadOrStore,
+        SlowPathGenerator* slowPathGenerator,
+        MacroAssembler::Label done,
+        int8_t baseGPR,
+        int8_t valueTagGPR,
+        int8_t valueGPR,
+        int8_t scratchGPR,
+        RegisterMode registerMode = RegistersInUse)
 #endif
         : m_codeOrigin(codeOrigin)
-        , m_deltaCheckImmToCall(deltaCheckImmToCall)
-        , m_functionCall(functionCall)
-        , m_deltaCallToStructCheck(deltaCallToStructCheck)
+        , m_structureImm(structureImm)
+        , m_structureCheck(structureCheck)
 #if USE(JSVALUE64)
-        , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
+        , m_loadOrStore(loadOrStore)
 #elif USE(JSVALUE32_64)
-        , m_deltaCallToTagLoadOrStore(deltaCallToTagLoadOrStore)
-        , m_deltaCallToPayloadLoadOrStore(deltaCallToPayloadLoadOrStore)
+        , m_tagLoadOrStore(tagLoadOrStore)
+        , m_payloadLoadOrStore(payloadLoadOrStore)
 #endif
-        , m_deltaCallToSlowCase(deltaCallToSlowCase)
-        , m_deltaCallToDone(deltaCallToDone)
+        , m_slowPathGenerator(slowPathGenerator)
+        , m_done(done)
         , m_baseGPR(baseGPR)
 #if USE(JSVALUE32_64)
         , m_valueTagGPR(valueTagGPR)
@@ -157,17 +179,16 @@ struct PropertyAccessRecord {
     }
 
     CodeOrigin m_codeOrigin;
-    MacroAssembler::DataLabelPtr m_deltaCheckImmToCall;
-    MacroAssembler::Call m_functionCall;
-    MacroAssembler::PatchableJump m_deltaCallToStructCheck;
+    MacroAssembler::DataLabelPtr m_structureImm;
+    MacroAssembler::PatchableJump m_structureCheck;
 #if USE(JSVALUE64)
-    MacroAssembler::DataLabelCompact m_deltaCallToLoadOrStore;
+    MacroAssembler::DataLabelCompact m_loadOrStore;
 #elif USE(JSVALUE32_64)
-    MacroAssembler::DataLabelCompact m_deltaCallToTagLoadOrStore;
-    MacroAssembler::DataLabelCompact m_deltaCallToPayloadLoadOrStore;
+    MacroAssembler::DataLabelCompact m_tagLoadOrStore;
+    MacroAssembler::DataLabelCompact m_payloadLoadOrStore;
 #endif
-    MacroAssembler::Label m_deltaCallToSlowCase;
-    MacroAssembler::Label m_deltaCallToDone;
+    SlowPathGenerator* m_slowPathGenerator;
+    MacroAssembler::Label m_done;
     int8_t m_baseGPR;
 #if USE(JSVALUE32_64)
     int8_t m_valueTagGPR;
@@ -193,7 +214,7 @@ public:
         , m_currentCodeOriginIndex(0)
     {
     }
-
+    
     bool compile(JITCode& entry);
     bool compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
@@ -316,6 +337,7 @@ private:
     void link(LinkBuffer&);
 
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
+    void compileExceptionHandlers();
     void linkOSRExits();
     
     // The dataflow graph currently being generated.

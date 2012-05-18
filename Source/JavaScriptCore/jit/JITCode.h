@@ -107,7 +107,7 @@ namespace JSC {
         
         void* dataAddressAtOffset(size_t offset) const
         {
-            ASSERT(offset < size());
+            ASSERT(offset <= size()); // use <= instead of < because it is valid to ask for an address at the exclusive end of the code.
             return reinterpret_cast<char*>(m_ref.code().dataLocation()) + offset;
         }
 

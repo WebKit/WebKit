@@ -28,9 +28,43 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGSlowPathGenerator.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace DFG {
+
+SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
+    : m_compileOkay(true)
+    , m_jit(jit)
+    , m_compileIndex(0)
+    , m_indexInBlock(0)
+    , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
+    , m_blockHeads(jit.graph().m_blocks.size())
+    , m_arguments(jit.codeBlock()->numParameters())
+    , m_variables(jit.graph().m_localVars)
+    , m_lastSetOperand(std::numeric_limits<int>::max())
+    , m_state(m_jit.graph())
+{
+}
+
+SpeculativeJIT::~SpeculativeJIT()
+{
+    WTF::deleteAllValues(m_slowPathGenerators);
+}
+
+void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
+{
+    m_slowPathGenerators.append(slowPathGenerator.leakPtr());
+}
+
+void SpeculativeJIT::runSlowPathGenerators()
+{
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("Running %lu slow path generators.\n", m_slowPathGenerators.size());
+#endif
+    for (unsigned i = 0; i < m_slowPathGenerators.size(); ++i)
+        m_slowPathGenerators[i]->generate(this);
+}
 
 // On Windows we need to wrap fmod; on other platforms we can call it directly.
 // On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
@@ -1591,13 +1625,10 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
             DoubleOperand op1(this, node.child1());
             FPRReg fpr = op1.fpr();
             GPRReg gpr = result.gpr();
-            JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
+            JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
+            
+            addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this, toInt32, gpr, fpr));
 
-            silentSpillAllRegisters(gpr);
-            callOperation(toInt32, gpr, fpr);
-            silentFillAllRegisters(gpr);
-
-            truncatedToInteger.link(&m_jit);
             integerResult(gpr, m_compileIndex);
             return;
         }
@@ -2008,17 +2039,14 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         MacroAssembler::Jump fixed = m_jit.jump();
         notNaN.link(&m_jit);
 
-        MacroAssembler::Jump done;
+        MacroAssembler::Jump failed;
         if (signedness == SignedTypedArray)
-            done = m_jit.branchTruncateDoubleToInt32(fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful);
+            failed = m_jit.branchTruncateDoubleToInt32(fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
         else
-            done = m_jit.branchTruncateDoubleToUint32(fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful);
+            failed = m_jit.branchTruncateDoubleToUint32(fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
+        
+        addSlowPathGenerator(slowPathCall(failed, this, toInt32, gpr, fpr));
 
-        silentSpillAllRegisters(gpr);
-        callOperation(toInt32, gpr, fpr);
-        silentFillAllRegisters(gpr);
-
-        done.link(&m_jit);
         fixed.link(&m_jit);
         value.adopt(result);
         valueGPR = gpr;

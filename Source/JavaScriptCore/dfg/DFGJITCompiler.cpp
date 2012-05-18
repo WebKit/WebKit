@@ -32,6 +32,7 @@
 #include "DFGOSRExitCompiler.h"
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
+#include "DFGSlowPathGenerator.h"
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
 #include "JSGlobalData.h"
@@ -78,9 +79,10 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
 
     bool compiledSpeculative = speculative.compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
+}
 
-    linkOSRExits();
-
+void JITCompiler::compileExceptionHandlers()
+{
     // Iterate over the m_calls vector, checking for jumps to link.
     bool didLinkExceptionCheck = false;
     for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
@@ -148,19 +150,19 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
-        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
+        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->call());
         info.codeOrigin = m_propertyAccesses[i].m_codeOrigin;
         info.callReturnLocation = callReturnLocation;
-        info.patch.dfg.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCheckImmToCall), callReturnLocation);
-        info.patch.dfg.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToStructCheck));
+        info.patch.dfg.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_structureImm), callReturnLocation);
+        info.patch.dfg.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_structureCheck));
 #if USE(JSVALUE64)
-        info.patch.dfg.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToLoadOrStore));
+        info.patch.dfg.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_loadOrStore));
 #else
-        info.patch.dfg.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToTagLoadOrStore));
-        info.patch.dfg.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore));
+        info.patch.dfg.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_tagLoadOrStore));
+        info.patch.dfg.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_payloadLoadOrStore));
 #endif
-        info.patch.dfg.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToSlowCase));
-        info.patch.dfg.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToDone));
+        info.patch.dfg.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->label()));
+        info.patch.dfg.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_done));
         info.patch.dfg.baseGPR = m_propertyAccesses[i].m_baseGPR;
 #if USE(JSVALUE64)
         info.patch.dfg.valueGPR = m_propertyAccesses[i].m_valueGPR;
@@ -199,6 +201,12 @@ bool JITCompiler::compile(JITCode& entry)
     SpeculativeJIT speculative(*this);
     compileBody(speculative);
 
+    // Generate slow path code.
+    speculative.runSlowPathGenerators();
+    
+    compileExceptionHandlers();
+    linkOSRExits();
+    
     // Create OSR entry trampolines if necessary.
     speculative.createOSREntries();
 
@@ -267,6 +275,12 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     notifyCall(callArityCheck, CodeOrigin(0), token);
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jump(fromArityCheck);
+    
+    // Generate slow path code.
+    speculative.runSlowPathGenerators();
+    
+    compileExceptionHandlers();
+    linkOSRExits();
     
     // Create OSR entry trampolines if necessary.
     speculative.createOSREntries();

@@ -200,15 +200,15 @@ namespace JSC {
 #endif
                 int8_t valueGPR;
                 int8_t scratchGPR;
-                int16_t deltaCallToDone;
-                int16_t deltaCallToStructCheck;
-                int16_t deltaCallToSlowCase;
-                int16_t deltaCheckImmToCall;
+                int32_t deltaCallToDone;
+                int32_t deltaCallToStructCheck;
+                int32_t deltaCallToSlowCase;
+                int32_t deltaCheckImmToCall;
 #if USE(JSVALUE64)
-                int16_t deltaCallToLoadOrStore;
+                int32_t deltaCallToLoadOrStore;
 #else
-                int16_t deltaCallToTagLoadOrStore;
-                int16_t deltaCallToPayloadLoadOrStore;
+                int32_t deltaCallToTagLoadOrStore;
+                int32_t deltaCallToPayloadLoadOrStore;
 #endif
             } dfg;
             struct {

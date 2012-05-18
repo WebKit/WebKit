@@ -171,6 +171,8 @@ public:
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
     struct TrustedImmPtr {
+        TrustedImmPtr() { }
+        
         explicit TrustedImmPtr(const void* value)
             : m_value(value)
         {
@@ -219,6 +221,8 @@ public:
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
     struct TrustedImm32 {
+        TrustedImm32() { }
+        
         explicit TrustedImm32(int32_t value)
             : m_value(value)
         {
