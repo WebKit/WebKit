@@ -120,6 +120,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
 #endif
+    , m_imageSmoothingEnabled(true)
 {
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
@@ -2264,5 +2265,19 @@ PlatformLayer* CanvasRenderingContext2D::platformLayer() const
     return canvas()->buffer() ? canvas()->buffer()->platformLayer() : 0;
 }
 #endif
+
+bool CanvasRenderingContext2D::webkitImageSmoothingEnabled() const
+{
+    return m_imageSmoothingEnabled;
+}
+
+void CanvasRenderingContext2D::setWebkitImageSmoothingEnabled(bool enabled)
+{
+    if (enabled == m_imageSmoothingEnabled)
+        return;
+
+    drawingContext()->setImageInterpolationQuality(enabled ? DefaultInterpolationQuality : InterpolationNone);
+    m_imageSmoothingEnabled = enabled;
+}
 
 } // namespace WebCore

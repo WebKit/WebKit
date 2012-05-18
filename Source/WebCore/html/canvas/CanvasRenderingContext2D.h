@@ -222,6 +222,9 @@ public:
     LineCap getLineCap() const { return state().m_lineCap; }
     LineJoin getLineJoin() const { return state().m_lineJoin; }
 
+    bool webkitImageSmoothingEnabled() const;
+    void setWebkitImageSmoothingEnabled(bool);
+
 private:
     struct State : FontSelectorClient {
         State();
@@ -326,13 +329,14 @@ private:
     virtual PlatformLayer* platformLayer() const OVERRIDE;
 #endif
 
-    Path m_path;    
+    Path m_path;
     Vector<State, 1> m_stateStack;
     unsigned m_unrealizedSaveCount;
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
 #endif
+    bool m_imageSmoothingEnabled;
 };
 
 } // namespace WebCore

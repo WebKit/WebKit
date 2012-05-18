@@ -231,6 +231,8 @@ module html {
             raises(DOMException);
 
         readonly attribute float webkitBackingStorePixelRatio;
+
+        attribute boolean webkitImageSmoothingEnabled;
     };
 
 }
