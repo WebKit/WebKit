@@ -285,7 +285,7 @@ InjectedScript.prototype = {
                         return "Arguments should belong to the same JavaScript world as the target object.";
 
                     var resolvedArg = this._objectForId(parsedArgId);
-                    if (!resolvedArg)
+                    if (!this._isDefined(resolvedArg))
                         return "Could not find object with given id";
 
                     resolvedArgs.push(resolvedArg);

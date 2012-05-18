@@ -14,7 +14,7 @@ function test()
             return;
         }
         var htmlAllCollection = WebInspector.RemoteObject.fromPayload(result);
-        htmlAllCollection.callFunctionJSON("function() { return this.length; }", [], didGetLength.bind(this));
+        htmlAllCollection.callFunctionJSON("function(collection) { return this.length + collection.length; }", [{objectId: htmlAllCollection.objectId}], didGetLength.bind(this));
     }
 
     function didGetLength(len)
