@@ -1142,12 +1142,6 @@ fast/invalid/010.html
 fast/invalid/nestedh3s.html
 fast/invalid/residual-style.html
 fast/js/constructor-length.html
-fast/lists/ol-reversed-dynamic-simple.html
-fast/lists/ol-reversed-dynamic.html
-fast/lists/ol-reversed-nested-items.html
-fast/lists/ol-reversed-nested-list.html
-fast/lists/ol-reversed-simple.html
-fast/lists/ol-reversed-simple.xhtml
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-image-from-local.html

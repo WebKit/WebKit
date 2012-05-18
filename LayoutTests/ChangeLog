@@ -1,3 +1,9 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening; unskip a few passing tests.
+
+        * platform/efl/Skipped:
+
 2012-05-18  Joe Thomas  <joethomas@motorola.com>
 
         Remove one-space indentation from LayoutTests/fast/backgrounds/background-shorthand-with-backgroundSize-style.html
