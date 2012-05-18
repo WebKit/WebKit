@@ -3346,6 +3346,13 @@ LayoutRect RenderBlock::blockSelectionGap(RenderBlock* rootBlock, const LayoutPo
     return gapRect;
 }
 
+static inline void alignSelectionRectToDevicePixels(LayoutRect& rect)
+{
+    LayoutUnit maxX = floorToInt(rect.maxX());
+    rect.setX(floorToInt(rect.x()));
+    rect.setWidth((maxX - rect.x()).round());
+}
+
 LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
                                                 RenderObject* selObj, LayoutUnit logicalLeft, LayoutUnit logicalTop, LayoutUnit logicalHeight, const PaintInfo* paintInfo)
 {

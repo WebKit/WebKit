@@ -97,7 +97,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     GraphicsContextStateSaver stateSaver(*context);
     LayoutUnit top = root()->selectionTop();
     LayoutUnit h = root()->selectionHeight();
-    LayoutRect clipRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h);
+    FloatRect clipRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h);
     alignSelectionRectToDevicePixels(clipRect);
     context->clip(clipRect);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
