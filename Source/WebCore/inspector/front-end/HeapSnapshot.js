@@ -825,7 +825,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     _flagsOfNode: function(node)
     {
-        return this._flags[node.nodeIndex];
+        return this._flags[node.nodeIndex / this._nodeFieldCount];
     },
 
     /**
@@ -1155,7 +1155,7 @@ WebInspector.HeapSnapshot.prototype = {
             var node = iter.edge.node;
             if (node.isDetachedDOMTree) {
                 for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next())
-                    this._flags[edgesIter.edge.node.nodeIndex] |= flag;
+                    this._flags[edgesIter.edge.node.nodeIndex / this._nodeFieldCount] |= flag;
             }
         }
     },
@@ -1172,6 +1172,11 @@ WebInspector.HeapSnapshot.prototype = {
         var edgeToNodeOffset = this._edgeToNodeOffset;
         var edgeTypeOffset = this._edgeTypeOffset;
         var edgeFieldsCount = this._edgeFieldsCount;
+        var containmentEdges = this._containmentEdges;
+        var nodes = this._nodes;
+        var nodeCount = this.nodeCount;
+        var nodeFieldCount = this._nodeFieldCount;
+        var firstEdgeIndexOffset = this._firstEdgeIndexOffset;
 
         var flags = this._flags;
         var list = [];
@@ -1180,31 +1185,31 @@ WebInspector.HeapSnapshot.prototype = {
                 list.push(iter.edge.node.nodeIndex);
         }
 
-        var node = new WebInspector.HeapSnapshotNode(this);
         while (list.length) {
             var nodeIndex = list.pop();
-            if (flags[nodeIndex] & flag)
+            var nodeOrdinal = nodeIndex / nodeFieldCount;
+            if (flags[nodeOrdinal] & flag)
                 continue;
-            node.nodeIndex = nodeIndex;
-            flags[nodeIndex] |= flag;
-            var edgesCount = node.edgesCount;
-            var edges = node.rawEdges;
-            for (var j = 0; j < edgesCount; ++j) {
-                var edgeIndex = j * edgeFieldsCount;
-                nodeIndex = edges.item(edgeIndex + edgeToNodeOffset);
-                if (flags[nodeIndex] & flag)
+            flags[nodeOrdinal] |= flag;
+            var beginEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
+            var endEdgeIndex = nodeOrdinal < nodeCount - 1
+                               ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
+                               : containmentEdges.length;
+            for (var edgeIndex = beginEdgeIndex; edgeIndex < endEdgeIndex; edgeIndex += edgeFieldsCount) {
+                var childNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
+                if (flags[childNodeIndex / nodeFieldCount] & flag)
                     continue;
-                var type = edges.item(edgeIndex + edgeTypeOffset);
+                var type = containmentEdges[edgeIndex + edgeTypeOffset];
                 if (type === hiddenEdgeType || type === invisibleEdgeType || type === internalEdgeType)
                     continue;
-                list.push(nodeIndex);
+                list.push(childNodeIndex);
             }
         }
     },
 
     _calculateFlags: function()
     {
-        this._flags = new Array(this.nodeCount);
+        this._flags = new Uint32Array(this.nodeCount);
         this._markDetachedDOMTreeNodes();
         this._markQueriableHeapObjects();
     },
