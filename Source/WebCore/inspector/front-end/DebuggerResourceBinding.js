@@ -55,15 +55,17 @@ WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, ne
      */
     function didEditScriptSource(error)
     {
-        callback(error);
-        if (error)
+        if (error) {
+            callback(error);
             return;
+        }
 
         var resource = WebInspector.resourceForURL(script.sourceURL);
         if (resource)
             resource.addRevision(newSource);
 
         uiSourceCode.contentChanged(newSource);
+        callback();
     }
     WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
 }
