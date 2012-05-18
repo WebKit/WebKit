@@ -1,3 +1,12 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Rebaseline test after r117412.
+
+        * platform/efl/fast/borders/border-antialiasing-expected.png:
+        * platform/efl/test_expectations.txt:
+
 2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Web Intents code is not compiling
