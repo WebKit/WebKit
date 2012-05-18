@@ -1302,17 +1302,6 @@
             '<(chromium_src_dir)/build/linux/system.gyp:gtk',
           ],
         }],
-        ['OS=="linux"', {
-          'direct_dependent_settings': {
-            'defines': [
-              # Mozilla on Linux effectively uses uname -sm, but when running
-              # 32-bit x86 code on an x86_64 processor, it uses
-              # "Linux i686 (x86_64)".  Matching that would require making a
-              # run-time determination.
-              'WEBCORE_NAVIGATOR_PLATFORM="Linux i686"',
-            ],
-          },
-        }],
         ['OS=="mac"', {
           'dependencies': [
             'webkit_system_interface',
