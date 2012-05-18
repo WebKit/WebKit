@@ -1,5 +1,11 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening; run CSS grid layout tests after r117613.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed gardening; unskip a few passing tests.
 
         * platform/efl/Skipped:

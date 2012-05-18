@@ -300,9 +300,6 @@ BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
 
-// CSS Grid Layout is not yet enabled.
-BUGWK60731 : fast/css-grid-layout = TEXT
-
 BUGWK85483 : fast/css/transformed-mask.html = TEXT
 
 BUGWK85484 : fast/css/resize-corner-tracking-transformed.html = TEXT
