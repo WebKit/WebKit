@@ -47,10 +47,16 @@ WebInspector.ShowMoreDataGridNode = function(callback, startPosition, endPositio
     this.showNext = document.createElement("button");
     this.showNext.setAttribute("type", "button");
     this.showNext.addEventListener("click", this._showNextChunk.bind(this), false);
+    this.showNext.textContent = WebInspector.UIString("Show %d before", this._chunkSize);
 
     this.showAll = document.createElement("button");
     this.showAll.setAttribute("type", "button");
     this.showAll.addEventListener("click", this._showAll.bind(this), false);
+
+    this.showLast = document.createElement("button");
+    this.showLast.setAttribute("type", "button");
+    this.showLast.addEventListener("click", this._showLastChunk.bind(this), false);
+    this.showLast.textContent = WebInspector.UIString("Show %d after", this._chunkSize);
 
     this._updateLabels();
     this.selectable = false;
@@ -67,11 +73,21 @@ WebInspector.ShowMoreDataGridNode.prototype = {
         this._callback(this._startPosition, this._endPosition);
     },
 
+    _showLastChunk: function()
+    {
+        this._callback(this._endPosition - this._chunkSize, this._endPosition);
+    },
+
     _updateLabels: function()
     {
         var totalSize = this._endPosition - this._startPosition;
-        var nextChunkSize = Math.min(this._chunkSize, totalSize);
-        this.showNext.textContent = WebInspector.UIString("Show next %d", nextChunkSize);
+        if (totalSize > this._chunkSize) {
+            this.showNext.removeStyleClass("hidden");
+            this.showLast.removeStyleClass("hidden");
+        } else {
+            this.showNext.addStyleClass("hidden");
+            this.showLast.addStyleClass("hidden");
+        }
         this.showAll.textContent = WebInspector.UIString("Show all %d", totalSize);
     },
 
@@ -81,8 +97,8 @@ WebInspector.ShowMoreDataGridNode.prototype = {
         if (this.depth)
             cell.style.setProperty("padding-left", (this.depth * this.dataGrid.indentWidth) + "px");
         cell.appendChild(this.showNext);
-        if (this.showAll)
-            cell.appendChild(this.showAll);
+        cell.appendChild(this.showAll);
+        cell.appendChild(this.showLast);
         this._element.appendChild(cell);
 
         var columns = this.dataGrid.columns;
