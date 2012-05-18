@@ -82,9 +82,16 @@ class SVN(SCM, SVNRepository):
         else:
             self._patch_directories = patch_directories
 
-    @staticmethod
-    def in_working_directory(path):
-        return os.path.isdir(os.path.join(path, '.svn'))
+    @classmethod
+    def in_working_directory(cls, path):
+        if os.path.isdir(os.path.join(path, '.svn')):
+            # This is a fast shortcut for svn info that is usually correct for SVN < 1.7,
+            # but doesn't work for SVN >= 1.7.
+            return True
+
+        svn_info_args = [cls.executable_name, 'info', path]
+        exit_code = Executive().run_command(svn_info_args, return_exit_code=True)
+        return (exit_code == 0)
 
     def find_uuid(self, path):
         if not self.in_working_directory(path):

@@ -1,3 +1,21 @@
+2012-05-17  Dirk Pranke  <dpranke@chromium.org>
+
+        scm.add() doesn't work properly with svn 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=86779
+
+        Reviewed by Ojan Vafai.
+
+        The code relied on '.svn' directories being present
+        in order to tell if a directory had already been added to the
+        repository; this is no longer true in SVN 1.7.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM):
+        (SCM.in_working_directory):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN):
+        (SVN.in_working_directory):
+
 2012-05-17  Jon Lee  <jonlee@apple.com>
 
         Update Apple buildbots to prioritize latest changelists
