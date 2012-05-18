@@ -3627,9 +3627,9 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 {
     String pluginIdentifier;
     String pluginVersion;
+    String newMimeType = mimeType;
 
 #if PLATFORM(MAC)
-    String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
 
     pluginIdentifier = plugin.bundleIdentifier;

@@ -1,3 +1,10 @@
+2012-05-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WebKit2 GTK/Qt build fix attempt after r117516.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
 2012-05-17  Anders Carlsson  <andersca@apple.com>
 
         Plug-ins blacklist mechanism can tell clients about plug-in with null identifier
