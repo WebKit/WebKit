@@ -2812,7 +2812,6 @@ BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-s
 BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
-BUGWK81713 WIN : fast/forms/range/input-appearance-range.html = IMAGE
 
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
@@ -3795,8 +3794,3 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
 BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH
-
-// Needs rebaseline after bug 86441
-BUGWK86441 WIN LINUX MAC : fast/borders/border-antialiasing.html = IMAGE
-BUGWK86441 WIN LINUX MAC : fast/multicol/shadow-breaking.html = IMAGE
-

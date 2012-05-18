@@ -1,3 +1,18 @@
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] More rebaselines/expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=86441
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium-linux/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-17  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=86786
