@@ -33,25 +33,86 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 BUGWK84239 : css3/font-feature-settings-rendering.html = FAIL
 
 // EventSender.beginDragWithFiles is not implemented
-BUGWK84333 : fast/files/file-reader-directory-crash.html = TIMEOUT
-BUGWK84333 : fast/events/drop-handler-should-not-stop-navigate.html = TIMEOUT
-BUGWK84333 : fast/events/drop-with-file-paths.html = TEXT
-BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-entry.html = TEXT
 BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-file.html = TEXT
 BUGWK84333 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
+BUGWK84333 : editing/pasteboard/drop-file-svg.html = TEXT
 BUGWK84333 : editing/pasteboard/file-drag-to-editable.html = TEXT
 BUGWK84333 : editing/pasteboard/file-input-files-access.html = TEXT
+BUGWK84333 : fast/events/drop-handler-should-not-stop-navigate.html = TIMEOUT
+BUGWK84333 : fast/events/drop-with-file-paths.html = TEXT
+BUGWK84333 : fast/files/file-reader-directory-crash.html = TIMEOUT
+BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 
 // LayoutTestController.pathToLocalResource needs special handling of file URLs to /tmp.
 BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
 
 // Missing execCommand('copy') and execCommand('paste').
-BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
+BUGWK84338 : editing/deleting/paste-with-transparent-background-color.html = TEXT
 BUGWK84338 : editing/input/paste-text-ending-with-interchange-newline.html = TEXT
 BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEXT
+BUGWK84338 : editing/inserting/insert-3786362-fix.html = TEXT
+BUGWK84338 : editing/inserting/insert-3907422-fix.html = TEXT
+BUGWK84338 : editing/inserting/insert-paste-bidi-control.html = TEXT
+BUGWK84338 : editing/pasteboard/19644-1.html = TEXT
+BUGWK84338 : editing/pasteboard/19644-2.html = TEXT
+BUGWK84338 : editing/pasteboard/4242293-1.html = TEXT
+BUGWK84338 : editing/pasteboard/4922709.html = TEXT
+BUGWK84338 : editing/pasteboard/5065605.html = TEXT
+BUGWK84338 : editing/pasteboard/5665299.html = TEXT
+BUGWK84338 : editing/pasteboard/5761530-1.html = TEXT
+BUGWK84338 : editing/pasteboard/5780697-2.html = TEXT
+BUGWK84338 : editing/pasteboard/avoid-copying-body-with-background.html = TEXT
+BUGWK84338 : editing/pasteboard/block-wrappers-necessary.html = TEXT
+BUGWK84338 : editing/pasteboard/clipboard-customData.html = TEXT
+BUGWK84338 : editing/pasteboard/contenteditable-pre-2.html = TEXT
+BUGWK84338 : editing/pasteboard/contenteditable-pre.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-backslash-with-euc.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-in-password-field.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-null-characters.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-paste-bidi.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-paste-float.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-resolves-urls.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-text-with-backgroundcolor.html = TEXT
+BUGWK84338 : editing/pasteboard/copy-two-pasteboard-types-both-work.html = TEXT
+BUGWK84338 : editing/pasteboard/data-transfer-items.html = TEXT
+BUGWK84338 : editing/pasteboard/display-block-on-spans.html = TEXT
+BUGWK84338 : editing/pasteboard/do-not-copy-unnecessary-styles-2.html = TEXT
+BUGWK84338 : editing/pasteboard/do-not-copy-unnecessary-styles.html = TEXT
+BUGWK84338 : editing/pasteboard/emacs-ctrl-k-with-move.html = TEXT
+BUGWK84338 : editing/pasteboard/get-data-text-plain-paste.html = TEXT
+BUGWK84338 : editing/pasteboard/onpaste-text-html-types.html = TEXT
+BUGWK84338 : editing/pasteboard/onpaste-text-html.html = TEXT
+BUGWK84338 : editing/pasteboard/page-zoom.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-4039777-fix.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-and-sanitize.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-before-tab-span.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-blockquote-and-paragraph-break.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-blockquote-before-blockquote.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-code-in-pre.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-event-only-once.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-into-table-cell.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-list-001.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-list-002.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-list-003.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-list-004.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-noscript-svg.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-noscript-xhtml.xhtml = TEXT
+BUGWK84338 : editing/pasteboard/paste-noscript.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-placeholder-input.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-plaintext-user-select-none.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-pre-001.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-removing-iframe.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-sanitize-crash-1.html = TEXT
+BUGWK84338 : editing/pasteboard/paste-sanitize-crash-2.html = TEXT
 BUGWK84338 : editing/style/apply-through-end-of-document.html = TEXT
 BUGWK84338 : editing/style/non-inheritable-styles.html = TEXT
+BUGWK84338 : editing/style/smoosh-styles-003.html = TEXT
+BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
+BUGWK84338 : fast/forms/plaintext-mode-1.html = TEXT
+BUGWK84338 : fast/forms/plaintext-mode-2.html = TEXT
+BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
@@ -465,3 +526,53 @@ BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
 
 // EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
+
+// Missing deletebutton controller implementation.
+BUGWK86615 : editing/deleting/5408255.html = TEXT
+BUGWK86615 : editing/deleting/regional-indicators.html = TEXT
+
+// Missing drag'n'drop support.
+BUGWK86623 : editing/pasteboard/drag-and-drop-image-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-and-drop-objectimage-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-to-data-url.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-image-in-about-blank-frame.html = TEXT
+BUGWK86623 : editing/pasteboard/files-during-page-drags.html = TEXT
+BUGWK86623 : editing/selection/drag-text-delay.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-input-textarea.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-list.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-url-text.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-inputtext-acquires-style.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-link.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
+BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
+
+// Missing drag'n'drop, needs baselines
+BUGWK86623 : editing/pasteboard/drag-drop-dead-frame.html = MISSING
+BUGWK86623 : editing/pasteboard/drag-drop-modifies-page.html = MISSING
+BUGWK86623 : editing/pasteboard/drag-image-to-contenteditable-in-iframe.html = MISSING
+BUGWK86623 : editing/pasteboard/drop-text-without-selection.html = MISSING
+BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
+BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
+
+// Missing spell checking support (Efl's port does not support spell checking, Gtk port uses Enchant library https://bugs.webkit.org/show_bug.cgi?id=61787)
+BUGWK86637 : editing/spelling/grammar.html = TEXT
+BUGWK86637 : editing/spelling/grammar-paste.html = TEXT
+BUGWK86637 : editing/spelling/markers.html = TEXT
+BUGWK86633 : editing/spelling/spellcheck-attribute.html = TEXT
+BUGWK86633 : editing/spelling/spelling-attribute-at-child.html = TEXT
+BUGWK86633 : editing/spelling/spelling-attribute-change.html = TEXT
+BUGWK86633 : editing/spelling/spelling-backspace-between-lines.html = TEXT
+BUGWK86633 : editing/spelling/spelling-hasspellingmarker.html = TEXT
+BUGWK86633 : editing/spelling/spelling-insert-html.html = TEXT
+BUGWK86633 : editing/spelling/spelling-linebreak.html = TEXT
+BUGWK86633 : editing/spelling/spelling-unified-emulation.html = TEXT
+
+// EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
+BUGWK86637 : editing/spelling/spellcheck-async.html = TEXT
+BUGWK86637 : editing/spelling/spellcheck-async-mutation.html = TEXT
+BUGWK86637 : editing/spelling/spellcheck-paste.html = TEXT
+BUGWK86637 : editing/spelling/spellcheck-paste-disabled.html = TEXT
+BUGWK86637 : editing/spelling/spellcheck-queue.html = TEXT
+BUGWK86637 : editing/spelling/spellcheck-sequencenum.html = TEXT
+BUGWK86637 : editing/spelling/spelling-marker-description.html = TEXT
