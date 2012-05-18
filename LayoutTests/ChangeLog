@@ -1,3 +1,31 @@
+2012-05-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Add results for compositing tests dependent on scrollbars thickness.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Qt's QStyle scrollbar theme has a scrollbar thickness of 16px while
+        the standard results expect a thickness of 15px.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/compositing/iframes/become-composited-nested-iframes-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/become-overlapped-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/composited-parent-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/enter-compositing-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-resize-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-nested-iframes-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/scrolling-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-out-of-view-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/tiled-layers-hidpi-expected.txt: Added.
+
 2012-05-18  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] fast/events/page-visibility-iframe-move-test.html fails
