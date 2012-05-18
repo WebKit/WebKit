@@ -1,3 +1,9 @@
+2012-05-18  MORITA Hajime  <morrita@google.com>
+
+        Yet another unreviewed build fix on r117572, this time for wk2...
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2012-05-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WebKit2 GTK/Qt build fix attempt after r117516.
