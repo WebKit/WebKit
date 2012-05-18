@@ -148,6 +148,11 @@ void CCLayerTreeHost::initializeLayerRenderer()
                                                       m_proxy->layerRendererCapabilities().maxTextureSize);
 
     m_layerRendererInitialized = true;
+
+    m_settings.defaultTileSize = IntSize(min(m_settings.defaultTileSize.width(), m_proxy->layerRendererCapabilities().maxTextureSize),
+                                         min(m_settings.defaultTileSize.height(), m_proxy->layerRendererCapabilities().maxTextureSize));
+    m_settings.maxUntiledLayerSize = IntSize(min(m_settings.maxUntiledLayerSize.width(), m_proxy->layerRendererCapabilities().maxTextureSize),
+                                             min(m_settings.maxUntiledLayerSize.height(), m_proxy->layerRendererCapabilities().maxTextureSize));
 }
 
 CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()

@@ -3389,6 +3389,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
         layerTreeViewSettings.threadedAnimationEnabled = page()->settings()->threadedAnimationEnabled();
 
+        layerTreeViewSettings.defaultTileSize = settingsImpl()->defaultTileSize();
+        layerTreeViewSettings.maxUntiledLayerSize = settingsImpl()->maxUntiledLayerSize();
+
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
 

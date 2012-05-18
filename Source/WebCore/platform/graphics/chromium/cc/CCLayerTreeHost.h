@@ -83,7 +83,9 @@ struct CCSettings {
             , perTilePainting(false)
             , partialSwapEnabled(false)
             , threadedAnimationEnabled(false)
-            , maxPartialTextureUpdates(std::numeric_limits<size_t>::max()) { }
+            , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
+            , defaultTileSize(IntSize(256, 256))
+            , maxUntiledLayerSize(IntSize(512, 512)) { }
 
     bool acceleratePainting;
     bool showFPSCounter;
@@ -96,6 +98,8 @@ struct CCSettings {
     bool partialSwapEnabled;
     bool threadedAnimationEnabled;
     size_t maxPartialTextureUpdates;
+    IntSize defaultTileSize;
+    IntSize maxUntiledLayerSize;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost

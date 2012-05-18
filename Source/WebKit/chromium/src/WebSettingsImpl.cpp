@@ -51,6 +51,8 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_showPlatformLayerTree(false)
     , m_showPaintRects(false)
     , m_viewportEnabled(false)
+    , m_defaultTileSize(WebSize(256, 256))
+    , m_maxUntiledLayerSize(WebSize(512, 512))
 {
     ASSERT(settings);
 }
@@ -571,6 +573,16 @@ void WebSettingsImpl::setThreadedAnimationEnabled(bool enabled)
 void WebSettingsImpl::setViewportEnabled(bool enabled)
 {
     m_viewportEnabled = enabled;
+}
+
+void WebSettingsImpl::setDefaultTileSize(WebSize size)
+{
+    m_defaultTileSize = size;
+}
+
+void WebSettingsImpl::setMaxUntiledLayerSize(WebSize size)
+{
+    m_maxUntiledLayerSize = size;
 }
 
 } // namespace WebKit

@@ -43,13 +43,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 
-// Start tiling when the width and height of a layer are larger than this size.
-static int maxUntiledSize = 512;
-
-// When tiling is enabled, use tiles of this size:
-static int defaultTileWidth = 256;
-static int defaultTileHeight = 256;
-
 using namespace std;
 
 namespace WebCore {
@@ -101,7 +94,7 @@ TiledLayerChromium::TiledLayerChromium()
     , m_didPaint(false)
     , m_tilingOption(AutoTile)
 {
-    m_tiler = CCLayerTilingData::create(IntSize(defaultTileWidth, defaultTileHeight), CCLayerTilingData::HasBorderTexels);
+    m_tiler = CCLayerTilingData::create(IntSize(), CCLayerTilingData::HasBorderTexels);
 }
 
 TiledLayerChromium::~TiledLayerChromium()
@@ -115,13 +108,24 @@ PassOwnPtr<CCLayerImpl> TiledLayerChromium::createCCLayerImpl()
 
 void TiledLayerChromium::updateTileSizeAndTilingOption()
 {
-    const IntSize tileSize(min(defaultTileWidth, contentBounds().width()), min(defaultTileHeight, contentBounds().height()));
+    ASSERT(layerTreeHost());
+
+    const CCSettings& settings = layerTreeHost()->settings();
+    const IntSize& defaultTileSize = settings.defaultTileSize;
+    const IntSize& maxUntiledLayerSize = settings.maxUntiledLayerSize;
+    int layerWidth = contentBounds().width();
+    int layerHeight = contentBounds().height();
+
+    const IntSize tileSize(min(defaultTileSize.width(), layerWidth), min(defaultTileSize.height(), layerHeight));
 
     // Tile if both dimensions large, or any one dimension large and the other
-    // extends into a second tile. This heuristic allows for long skinny layers
-    // (e.g. scrollbars) that are Nx1 tiles to minimize wasted texture space.
-    const bool anyDimensionLarge = contentBounds().width() > maxUntiledSize || contentBounds().height() > maxUntiledSize;
-    const bool anyDimensionOneTile = contentBounds().width() <= defaultTileWidth || contentBounds().height() <= defaultTileHeight;
+    // extends into a second tile but the total layer area isn't larger than that
+    // of the largest possible untiled layer. This heuristic allows for long skinny layers
+    // (e.g. scrollbars) that are Nx1 tiles to minimize wasted texture space but still avoids
+    // creating very large tiles.
+    const bool anyDimensionLarge = layerWidth > maxUntiledLayerSize.width() || layerHeight > maxUntiledLayerSize.height();
+    const bool anyDimensionOneTile = (layerWidth <= defaultTileSize.width() || layerHeight <= defaultTileSize.height())
+                                      && (layerWidth * layerHeight) <= (maxUntiledLayerSize.width() * maxUntiledLayerSize.height());
     const bool autoTiled = anyDimensionLarge && !anyDimensionOneTile;
 
     bool isTiled;

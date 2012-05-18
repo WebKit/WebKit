@@ -1,3 +1,17 @@
+2012-05-17  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Expose layer tiling size options to WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=86425
+
+        Adding entries for tile size and max untiled layer size.
+        
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit):
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+
 2012-05-17  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileUtilities to Platform.h

@@ -32,6 +32,7 @@
 #define WebSettings_h
 
 #include "platform/WebCommon.h"
+#include "platform/WebSize.h"
 #include <unicode/uscript.h>
 
 #define HAS_WEBAUDIO_FEATURE_ENABLE 1
@@ -145,6 +146,9 @@ public:
     virtual void setThreadedAnimationEnabled(bool) = 0;
     virtual void setViewportEnabled(bool) = 0;
     virtual bool viewportEnabled() const = 0;
+    virtual void setDefaultTileSize(WebSize) = 0;
+    virtual void setMaxUntiledLayerSize(WebSize) = 0;
+
 
 protected:
     ~WebSettings() { }

@@ -48,6 +48,8 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.perTilePainting = perTilePainting;
     settings.partialSwapEnabled = partialSwapEnabled;
     settings.threadedAnimationEnabled = threadedAnimationEnabled;
+    settings.defaultTileSize = defaultTileSize;
+    settings.maxUntiledLayerSize = maxUntiledLayerSize;
 
     // FIXME: showFPSCounter / showPlatformLayerTree / maxPartialTextureUpdates aren't supported currently.
     return settings;

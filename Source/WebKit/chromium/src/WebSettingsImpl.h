@@ -98,6 +98,8 @@ public:
     virtual void setShowFPSCounter(bool);
     virtual void setShowPlatformLayerTree(bool);
     virtual void setShowPaintRects(bool);
+    virtual void setDefaultTileSize(WebSize);
+    virtual void setMaxUntiledLayerSize(WebSize);
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
     virtual void setForceCompositingMode(bool);
@@ -144,6 +146,8 @@ public:
     bool showFPSCounter() const { return m_showFPSCounter; }
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
     bool showPaintRects() const { return m_showPaintRects; }
+    WebSize defaultTileSize() const { return m_defaultTileSize; }
+    WebSize maxUntiledLayerSize() const { return m_maxUntiledLayerSize; }
 
 private:
     WebCore::Settings* m_settings;
@@ -151,6 +155,8 @@ private:
     bool m_showPlatformLayerTree;
     bool m_showPaintRects;
     bool m_viewportEnabled;
+    WebSize m_defaultTileSize;
+    WebSize m_maxUntiledLayerSize;
 };
 
 } // namespace WebKit

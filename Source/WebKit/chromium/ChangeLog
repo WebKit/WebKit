@@ -1,3 +1,28 @@
+2012-05-17  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Expose layer tiling size options to WebSettings.
+        https://bugs.webkit.org/show_bug.cgi?id=86425
+
+        This will allow tiling parameters to be set via command line flags
+        passed to the Renderer.
+
+        Reviewed by Adrienne Walker.
+
+        * public/WebSettings.h:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setDefaultTileSize):
+        (WebKit):
+        (WebKit::WebSettingsImpl::setMaxUntiledLayerSize):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::defaultTileSize):
+        (WebKit::WebSettingsImpl::maxUntiledLayerSize):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-05-17  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileUtilities to Platform.h
