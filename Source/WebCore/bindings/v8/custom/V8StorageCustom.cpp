@@ -136,7 +136,7 @@ static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, cons
         return v8::True();
     }
 
-    return deletionNotHandledByInterceptor();
+    return v8::Handle<v8::Boolean>();
 }
 
 v8::Handle<v8::Boolean> V8Storage::indexedPropertyDeleter(uint32_t index, const v8::AccessorInfo& info)

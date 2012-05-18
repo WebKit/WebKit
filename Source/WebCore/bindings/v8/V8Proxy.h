@@ -320,11 +320,6 @@ namespace WebCore {
         return v8::Local<v8::Object>();
     }
 
-    inline static v8::Local<v8::Boolean> deletionNotHandledByInterceptor()
-    {
-        return v8::Local<v8::Boolean>();
-    }
-
     inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())
