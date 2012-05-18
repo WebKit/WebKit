@@ -1,3 +1,9 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Unreviewed, remove ENABLE_CSS_GRID_LAYOUT option after r117613.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-05-18  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Expose FrameSelection::absoluteCaretBounds via window.internals
