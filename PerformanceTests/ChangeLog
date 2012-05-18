@@ -1,5 +1,39 @@
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a benchmark for body.scrollTop
+        https://bugs.webkit.org/show_bug.cgi?id=86806
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently Bindings/dom-attributes.html is just a collection of random
+        DOM attributes and methods. We should remove it and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        This patch adds a benchmark for body.scrollTop, which covers other
+        DOM attributes that return small integers.
+
+        (Note: Performance optimization for the benchmark will be coming soon.)
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: scroll-top= 209.410654239 runs/s
+        median= 211.64021164 runs/s, stdev= 4.09958741195 runs/s, min= 201.005025126 runs/s, max= 212.483399734 runs/s
+
+        RESULT Bindings: scroll-top= 195.651111157 runs/s
+        median= 196.319018405 runs/s, stdev= 1.77011627406 runs/s, min= 191.846522782 runs/s, max= 197.28729963 runs/s
+        RESULT Bindings: scroll-top= 200.004907612 runs/s
+        median= 201.511335013 runs/s, stdev= 3.27455403827 runs/s, min= 193.236714976 runs/s, max= 202.53164557 runs/s
+
+        RESULT Bindings: scroll-top= 209.582737512 runs/s
+        median= 210.803689065 runs/s, stdev= 3.16769655464 runs/s, min= 203.045685279 runs/s, max= 211.920529801 runs/s
+
+        RESULT Bindings: scroll-top= 199.924607687 runs/s
+        median= 201.13144338 runs/s, stdev= 3.11080503619 runs/s, min= 193.003618818 runs/s, max= 202.02020202 runs/s
+
+        * Bindings/scroll-top.html: Added.
+
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a micro benchmark for div.firstChild getter for an undefined firstChild
         https://bugs.webkit.org/show_bug.cgi?id=86725
 
