@@ -852,3 +852,6 @@ plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
 # https://bugs.webkit.org/show_bug.cgi?id=86786
 mathml/presentation/mo-stretch.html
 mathml/presentation/mroot-pref-width.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86859
+editing/spelling/spellcheck-async-remove-frame.html
