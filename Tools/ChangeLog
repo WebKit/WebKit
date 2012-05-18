@@ -1,3 +1,9 @@
+2012-05-18  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed. Moving myself from committer to reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Buildbot output does not print result stats anymore
