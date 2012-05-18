@@ -254,7 +254,8 @@ GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForward
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     guint limit = WKBackForwardListGetBackListCount(backForwardList->priv->wkList);
-    return webkitBackForwardListCreateList(backForwardList, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
+    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
+    return webkitBackForwardListCreateList(backForwardList, wkList.get());
 }
 
 /**
@@ -269,7 +270,8 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListCreateList(backForwardList, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
+    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
+    return webkitBackForwardListCreateList(backForwardList, wkList.get());
 }
 
 /**
@@ -284,7 +286,8 @@ GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForw
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     guint limit = WKBackForwardListGetForwardListCount(backForwardList->priv->wkList);
-    return webkitBackForwardListCreateList(backForwardList, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
+    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
+    return webkitBackForwardListCreateList(backForwardList, wkList.get());
 }
 
 /**
@@ -299,5 +302,6 @@ GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardLis
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListCreateList(backForwardList, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
+    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
+    return webkitBackForwardListCreateList(backForwardList, wkList.get());
 }

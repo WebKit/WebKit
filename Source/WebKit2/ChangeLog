@@ -1,3 +1,19 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leaks in WebKitBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=86872
+
+        Reviewed by Martin Robinson.
+
+         Fix memory leaks by adopting WKArray of WebBackForwardListItems
+         allocations using AdoptWK.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkit_back_forward_list_get_back_list):
+        (webkit_back_forward_list_get_back_list_with_limit):
+        (webkit_back_forward_list_get_forward_list):
+        (webkit_back_forward_list_get_forward_list_with_limit):
+
 2012-05-18  Anders Carlsson  <andersca@apple.com>
 
         PDF page does not show up when opened in the background
