@@ -554,7 +554,7 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
     WebCore::IntPoint targetPosition;
     // FIXME: Factory this get right fat finger code into a helper.
     const FatFingersResult lastFatFingersResult = m_webPage->m_touchEventHandler->lastFatFingersResult();
-    if (lastFatFingersResult.positionWasAdjusted() && lastFatFingersResult.nodeAsElementIfApplicable()) {
+    if (lastFatFingersResult.resultMatches(location, FatFingers::Text) && lastFatFingersResult.positionWasAdjusted() && lastFatFingersResult.nodeAsElementIfApplicable()) {
         targetNode = lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
         targetPosition = lastFatFingersResult.adjustedPosition();
     } else {
