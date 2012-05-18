@@ -1,5 +1,14 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unreviewed gardening.
+
+        Try to add the right expectation for fast/forms/plaintext-mode-2.html
+        after r117597.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening; run CSS grid layout tests after r117613.
 
         * platform/efl/test_expectations.txt:

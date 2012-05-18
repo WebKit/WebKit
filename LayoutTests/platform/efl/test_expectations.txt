@@ -111,7 +111,7 @@ BUGWK84338 : editing/style/non-inheritable-styles.html = TEXT
 BUGWK84338 : editing/style/smoosh-styles-003.html = TEXT
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
 BUGWK84338 : fast/forms/plaintext-mode-1.html = TEXT
-BUGWK84338 : fast/forms/plaintext-mode-2.html = TEXT
+BUGWK84338 : fast/forms/plaintext-mode-2.html = TEXT MISSING
 BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
 // Missing showModalDialog implementation
