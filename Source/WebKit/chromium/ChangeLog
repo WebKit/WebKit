@@ -1,3 +1,32 @@
+2012-05-18  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Multithreaded compositor unit tests intermittently failing
+        https://bugs.webkit.org/show_bug.cgi?id=74623
+
+        Reviewed by Adrienne Walker.
+
+        The flakiness of the CCLayerTreeHost tests stem from processing tasks after the
+        tests finish. To fix this, I've disabled the dispatch* methods after endTest is
+        called, effectively preventing any further tasks scheduled by the tests from
+        being processed. I have also reworked the checks in
+        CCLayerTreeHostTestWriteLayersRedraw to make the test more robust.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsAnimate):
+        (WTF::CCLayerTreeHostTest::dispatchAddInstantAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsAnimateAndCommit):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (WTF::CCLayerTreeHostTest::dispatchAcquireLayerTextures):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsRedraw):
+        (WTF::CCLayerTreeHostTest::dispatchSetVisible):
+        (WTF::CCLayerTreeHostTest::dispatchSetInvisible):
+        (CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::endTest):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::afterTest):
+
 2012-05-18  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85515
