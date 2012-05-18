@@ -1,5 +1,40 @@
 2012-05-18  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a binding benchmark for getElementsByTagName()
+        https://bugs.webkit.org/show_bug.cgi?id=86810
+
+        Reviewed by Ryosuke Niwa.
+
+        We should remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        This patch adds a benchmark for document.getElementsByTagName().
+        This benchmark covers 'getElementsByTagName (not in document)',
+        'getElementsByTagName', 'getElementsByName (not in document)'
+        and 'getElementsByName' in Dromaeo/dom-query.html, and other DOM
+        methods that return a NodeList.
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: get-elements-by-tag-name= 364.542328875 runs/s
+        median= 366.972477064 runs/s, stdev= 5.25387955333 runs/s, min= 351.317440402 runs/s, max= 368.421052632 runs/s
+
+        RESULT Bindings: get-elements-by-tag-name= 364.341569369 runs/s
+        median= 366.492146597 runs/s, stdev= 4.867374197 runs/s, min= 352.644836272 runs/s, max= 367.936925099 runs/s
+
+        RESULT Bindings: get-elements-by-tag-name= 363.924242967 runs/s
+        median= 366.013071895 runs/s, stdev= 5.16768212289 runs/s, min= 351.317440402 runs/s, max= 367.936925099 runs/s
+
+        RESULT Bindings: get-elements-by-tag-name= 365.332594438 runs/s
+        median= 367.454068241 runs/s, stdev= 6.17046918572 runs/s, min= 350.0 runs/s, max= 370.37037037 runs/s
+
+        RESULT Bindings: get-elements-by-tag-name= 363.999514324 runs/s
+        median= 366.492146597 runs/s, stdev= 5.31235674905 runs/s, min= 350.877192982 runs/s, max= 368.421052632 runs/s
+
+        * Bindings/get-elements-by-tag-name.html: Added.
+
+2012-05-18  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add 7 micro benchmarks for DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=86816
 
