@@ -326,6 +326,9 @@ namespace WebCore {
         void setRegionBasedColumnsEnabled(bool enabled) { m_regionBasedColumnsEnabled = enabled; }
         bool regionBasedColumnsEnabled() const { return m_regionBasedColumnsEnabled; }
 
+        void setCSSGridLayoutEnabled(bool enabled) { m_cssGridLayoutEnabled = enabled; }
+        bool cssGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
+
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
@@ -653,6 +656,7 @@ namespace WebCore {
         bool m_isCSSCustomFilterEnabled : 1;
         bool m_cssRegionsEnabled : 1;
         bool m_regionBasedColumnsEnabled : 1;
+        bool m_cssGridLayoutEnabled : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;

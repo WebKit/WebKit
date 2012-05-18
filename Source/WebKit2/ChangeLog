@@ -1,3 +1,22 @@
+2012-05-18  Tony Chang  <tony@chromium.org>
+
+        remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off
+        https://bugs.webkit.org/show_bug.cgi?id=86767
+
+        Reviewed by Ojan Vafai.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSGridLayoutEnabled):
+        (WKPreferencesGetCSSGridLayoutEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-05-18  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Expose FrameSelection::absoluteCaretBounds via window.internals

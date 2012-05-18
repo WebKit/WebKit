@@ -192,6 +192,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)cssRegionsEnabled;
 - (void)setCSSRegionsEnabled:(BOOL)enabled;
 
+- (BOOL)cssGridLayoutEnabled;
+- (void)setCSSGridLayoutEnabled:(BOOL)enabled;
+
 - (BOOL)showDebugBorders;
 - (void)setShowDebugBorders:(BOOL)show;
 

@@ -96,6 +96,10 @@ WK_EXPORT void WKPreferencesSetCSSRegionsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCSSRegionsEnabled(WKPreferencesRef);
 
 // Defaults to false
+WK_EXPORT void WKPreferencesSetCSSGridLayoutEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetCSSGridLayoutEnabled(WKPreferencesRef);
+
+// Defaults to false
 WK_EXPORT void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 

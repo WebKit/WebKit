@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="grid" style="display: -webkit-grid"></div>
+
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description("Verifies that display: -webkit-grid does nothing by default.");
+
+shouldBe("document.getElementById('grid').style.display", "''");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

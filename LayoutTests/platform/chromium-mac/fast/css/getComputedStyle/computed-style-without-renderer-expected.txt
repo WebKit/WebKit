@@ -155,6 +155,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-font-kerning: auto
     -webkit-font-smoothing: auto
     -webkit-font-variant-ligatures: normal
+    -webkit-grid-column: auto
+    -webkit-grid-row: auto
     -webkit-highlight: none
     -webkit-hyphenate-character: auto
     -webkit-hyphenate-limit-after: auto

@@ -129,9 +129,8 @@ public:
     bool parseTransitionShorthand(bool important);
     bool parseAnimationShorthand(bool important);
 
-#if ENABLE(CSS_GRID_LAYOUT)
+    bool cssGridLayoutEnabled() const;
     bool parseGridTrackList(CSSPropertyID, bool important);
-#endif
 
     bool parseDashboardRegions(CSSPropertyID, bool important);
 

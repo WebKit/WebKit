@@ -64,6 +64,7 @@ struct CSSParserContext {
     bool isHTMLDocument;
     bool isCSSCustomFilterEnabled;
     bool isCSSRegionsEnabled;
+    bool isCSSGridLayoutEnabled;
     bool needsSiteSpecificQuirks;
     bool enforcesCSSMIMETypeInNoQuirksMode;
 };

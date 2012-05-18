@@ -307,6 +307,11 @@ void WebSettingsImpl::setExperimentalCSSRegionsEnabled(bool enabled)
     m_settings->setCSSRegionsEnabled(enabled);
 }
 
+void WebSettingsImpl::setExperimentalCSSGridLayoutEnabled(bool enabled)
+{
+    m_settings->setCSSGridLayoutEnabled(enabled);
+}
+
 void WebSettingsImpl::setExperimentalCSSCustomFilterEnabled(bool enabled)
 {
     m_settings->setCSSCustomFilterEnabled(enabled);

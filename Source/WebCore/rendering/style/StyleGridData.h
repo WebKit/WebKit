@@ -26,8 +26,6 @@
 #ifndef StyleGridData_h
 #define StyleGridData_h
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 #include "Length.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -61,7 +59,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_LAYOUT_GRID)
 
 #endif // StyleGridData_h

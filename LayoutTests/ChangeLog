@@ -1,3 +1,18 @@
+2012-05-18  Tony Chang  <tony@chromium.org>
+
+        remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off
+        https://bugs.webkit.org/show_bug.cgi?id=86767
+
+        Reviewed by Ojan Vafai.
+
+        * fast/css-grid-layout/display-grid-set-get.html: Enable grid layout for the test.
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html: Enable grid layout for the test.
+        * fast/css-grid-layout/grid-columns-rows-get-set.html: Enable grid layout for the test.
+        * fast/css-grid-layout/grid-disabled-by-default-expected.txt: Added.
+        * fast/css-grid-layout/grid-disabled-by-default.html: Added.
+        * fast/css-grid-layout/grid-item-column-row-get-set.html: Enable grid layout for the test.
+        * platform/chromium/test_expectations.txt: Run grid layout tests.
+
 2012-05-18  Pablo Flouret  <pablof@motorola.com>
 
         Script elements inserted while fragment parsing should have their "already started" flag set.

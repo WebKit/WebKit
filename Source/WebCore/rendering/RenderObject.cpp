@@ -150,11 +150,9 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return new (arena) RenderRubyText(node);
 
     switch (style->display()) {
-#if ENABLE(CSS_GRID_LAYOUT)
     // For now, we don't show grid elements.
     case GRID:
     case INLINE_GRID:
-#endif
     case NONE:
         return 0;
     case INLINE:

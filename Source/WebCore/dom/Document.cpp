@@ -1086,6 +1086,11 @@ bool Document::cssRegionsEnabled() const
     return settings() && settings()->cssRegionsEnabled(); 
 }
 
+bool Document::cssGridLayoutEnabled() const
+{
+    return settings() && settings()->cssGridLayoutEnabled();
+}
+
 static bool validFlowName(const String& flowName)
 {
     if (equalIgnoringCase(flowName, "auto")

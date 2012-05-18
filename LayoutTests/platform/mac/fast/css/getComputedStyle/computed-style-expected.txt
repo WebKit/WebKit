@@ -158,6 +158,8 @@ zoom: 1;
 -webkit-font-variant-ligatures: normal;
 -webkit-grid-column: auto;
 -webkit-grid-row: auto;
+-webkit-grid-column: auto;
+-webkit-grid-row: auto;
 -webkit-highlight: none;
 -webkit-hyphenate-character: auto;
 -webkit-hyphenate-limit-after: auto;

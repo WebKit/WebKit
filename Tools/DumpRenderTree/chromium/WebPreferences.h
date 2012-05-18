@@ -83,6 +83,7 @@ struct WebPreferences {
     bool developerExtrasEnabled;
     bool experimentalWebGLEnabled;
     bool experimentalCSSRegionsEnabled;
+    bool experimentalCSSGridLayoutEnabled;
     bool javaEnabled;
     bool javaScriptCanAccessClipboard;
     bool javaScriptCanOpenWindowsAutomatically;

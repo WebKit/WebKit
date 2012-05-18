@@ -370,6 +370,8 @@ public:
 
     bool regionBasedColumnsEnabled() const;
 
+    bool cssGridLayoutEnabled() const;
+
     /**
      * Retrieve all nodes that intersect a rect in the window's document, until it is fully enclosed by
      * the boundaries of a node.

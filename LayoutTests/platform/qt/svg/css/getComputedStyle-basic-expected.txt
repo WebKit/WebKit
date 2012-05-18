@@ -310,6 +310,10 @@ rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-column) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-column) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-grid-row) : auto
+rect: style.getPropertyCSSValue(-webkit-grid-row) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
 rect: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
@@ -838,6 +842,10 @@ g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
 g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-column) : auto
+g: style.getPropertyCSSValue(-webkit-grid-column) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-grid-row) : auto
+g: style.getPropertyCSSValue(-webkit-grid-row) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none
 g: style.getPropertyCSSValue(-webkit-highlight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-character) : auto

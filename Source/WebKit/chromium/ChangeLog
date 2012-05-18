@@ -1,3 +1,17 @@
+2012-05-18  Tony Chang  <tony@chromium.org>
+
+        remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off
+        https://bugs.webkit.org/show_bug.cgi?id=86767
+
+        Reviewed by Ojan Vafai.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setExperimentalCSSGridLayoutEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-05-18  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Multithreaded compositor unit tests intermittently failing

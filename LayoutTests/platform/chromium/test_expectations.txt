@@ -2745,9 +2745,6 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS T
 
 BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
 
-// CSS Grid Layout is not enabled yet.
-BUGWK60731 SKIP : fast/css-grid-layout = PASS
-
 // two regions reftests failing on Chromium
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = PASS IMAGE
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE

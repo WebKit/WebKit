@@ -187,6 +187,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
     , isHTMLDocument(false)
     , isCSSCustomFilterEnabled(false)
     , isCSSRegionsEnabled(false)
+    , isCSSGridLayoutEnabled(false)
     , needsSiteSpecificQuirks(false)
     , enforcesCSSMIMETypeInNoQuirksMode(true)
 {
@@ -199,6 +200,7 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
     , isHTMLDocument(document->isHTMLDocument())
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
     , isCSSRegionsEnabled(document->cssRegionsEnabled())
+    , isCSSGridLayoutEnabled(document->cssGridLayoutEnabled())
     , needsSiteSpecificQuirks(document->settings() ? document->settings()->needsSiteSpecificQuirks() : false)
     , enforcesCSSMIMETypeInNoQuirksMode(!document->settings() || document->settings()->enforceCSSMIMETypeInNoQuirksMode())
 {
@@ -212,6 +214,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isHTMLDocument == b.isHTMLDocument
         && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
+        && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode;
 }
@@ -528,18 +531,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueLtr || valueID == CSSValueRtl)
             return true;
         break;
-    case CSSPropertyDisplay:
-        // inline | block | list-item | run-in | inline-block | table |
-        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
-        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlex) || valueID == CSSValueNone)
-            return true;
-#if ENABLE(CSS_GRID_LAYOUT)
-        if (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid)
-            return true;
-#endif
-        break;
     case CSSPropertyEmptyCells: // show | hide | inherit
         if (valueID == CSSValueShow || valueID == CSSValueHide)
             return true;
@@ -827,7 +818,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:
-    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFloat:
     case CSSPropertyFontStyle:
@@ -1430,6 +1420,17 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     RefPtr<CSSValue> parsedValue;
 
     switch (propId) {
+    case CSSPropertyDisplay:
+        // inline | block | list-item | run-in | inline-block | table |
+        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
+        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
+        // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
+        if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlex) || id == CSSValueNone)
+            validPrimitive = true;
+        else if (cssGridLayoutEnabled() && (id == CSSValueWebkitGrid || id == CSSValueWebkitInlineGrid))
+            validPrimitive = true;
+        break;
+
     case CSSPropertySize:                 // <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
         return parseSize(propId, important);
 
@@ -2144,16 +2145,20 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         return false;
     }
-#if ENABLE(CSS_GRID_LAYOUT)
+
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:
+        if (!cssGridLayoutEnabled())
+            return false;
         return parseGridTrackList(propId, important);
 
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow:
+        if (!cssGridLayoutEnabled())
+            return false;
         validPrimitive = id == CSSValueAuto || validUnit(value, FInteger);
         break;
-#endif
+
     case CSSPropertyWebkitMarginCollapse: {
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
@@ -2432,7 +2437,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:
-    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFloat:
     case CSSPropertyFontStyle:
@@ -3837,7 +3841,6 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
     return false;
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
 bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
@@ -3862,8 +3865,6 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
     addProperty(propId, values.release(), important);
     return true;
 }
-#endif
-
 
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -7252,6 +7253,11 @@ static bool validFlowName(const String& flowName)
 bool CSSParser::cssRegionsEnabled() const
 {
     return m_context.isCSSRegionsEnabled;
+}
+
+bool CSSParser::cssGridLayoutEnabled() const
+{
+    return m_context.isCSSGridLayoutEnabled;
 }
 
 bool CSSParser::parseFlowThread(const String& flowName)

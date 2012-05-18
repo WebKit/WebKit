@@ -1557,6 +1557,8 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->experimentalWebGLEnabled = cppVariantToBool(value);
     else if (key == "WebKitCSSRegionsEnabled")
         prefs->experimentalCSSRegionsEnabled = cppVariantToBool(value);
+    else if (key == "WebKitCSSGridLayoutEnabled")
+        prefs->experimentalCSSGridLayoutEnabled = cppVariantToBool(value);
     else if (key == "WebKitHyperlinkAuditingEnabled")
         prefs->hyperlinkAuditingEnabled = cppVariantToBool(value);
     else if (key == "WebKitEnableCaretBrowsing")

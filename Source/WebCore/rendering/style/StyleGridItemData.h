@@ -31,7 +31,6 @@
 #ifndef StyleGridItemData_h
 #define StyleGridItemData_h
 
-#if ENABLE(CSS_GRID_LAYOUT)
 
 #include "Length.h"
 #include <wtf/PassRefPtr.h>
@@ -67,7 +66,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_LAYOUT_GRID)
 
 #endif // StyleGridItemData_h

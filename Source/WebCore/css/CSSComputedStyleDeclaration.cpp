@@ -236,13 +236,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitFontVariantLigatures,
-#if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyWebkitGridColumns,
     CSSPropertyWebkitGridRows,
-
     CSSPropertyWebkitGridColumn,
     CSSPropertyWebkitGridRow,
-#endif
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
@@ -894,7 +891,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
 }
 #endif
 
-#if ENABLE(CSS_GRID_LAYOUT)
 static PassRefPtr<CSSValue> valueForGridTrackBreadth(const Length& trackLength, const RenderStyle* style)
 {
     if (trackLength.isPercent())
@@ -927,7 +923,6 @@ static PassRefPtr<CSSValue> valueForGridPosition(const Length& position)
     ASSERT(position.isFixed());
     return cssValuePool().createValue(position.value(), CSSPrimitiveValue::CSS_NUMBER);
 }
-#endif
 
 static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList)
 {
@@ -1702,7 +1697,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             }
             return list.release();
         }
-#if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyWebkitGridColumns: {
             return valueForGridTrackList(style->gridColumns(), style.get());
         }
@@ -1714,7 +1708,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return valueForGridPosition(style->gridItemColumn());
         case CSSPropertyWebkitGridRow:
             return valueForGridPosition(style->gridItemRow());
-#endif
+
         case CSSPropertyHeight:
             if (renderer) {
                 // According to http://www.w3.org/TR/CSS2/visudet.html#the-height-property,

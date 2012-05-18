@@ -1913,9 +1913,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case TABLE:
     case BOX:
     case FLEX:
-#if ENABLE(CSS_GRID_LAYOUT)
     case GRID:
-#endif
         return display;
 
     case LIST_ITEM:
@@ -1929,10 +1927,8 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
         return BOX;
     case INLINE_FLEX:
         return FLEX;
-#if ENABLE(CSS_GRID_LAYOUT)
     case INLINE_GRID:
         return GRID;
-#endif
 
     case INLINE:
     case RUN_IN:
@@ -3063,8 +3059,6 @@ bool StyleResolver::useSVGZoomRules()
     return m_element && m_element->isSVGElement();
 }
 
-#if ENABLE(CSS_GRID_LAYOUT)
-
 static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, Length& length)
 {
     Length workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
@@ -3123,7 +3117,6 @@ static bool createGridPosition(CSSValue* value, Length& position)
     position.setValue(primitiveValue->getIntValue());
     return true;
 }
-#endif
 
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
 {
@@ -3912,7 +3905,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         return;
     }
 #endif
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumns: {
         Vector<Length> lengths;
         if (!createGridTrackList(value, lengths, this))
@@ -3942,7 +3934,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         m_style->setGridItemRow(row);
         return;
     }
-#endif
 
     // These properties are implemented in the StyleBuilder lookup table.
     case CSSPropertyBackgroundAttachment:

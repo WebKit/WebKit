@@ -75,6 +75,7 @@ namespace WebKit {
     macro(CSSCustomFilterEnabled, cssCustomFilterEnabled, Bool, bool, true) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false) \
     macro(RegionBasedColumnsEnabled, regionBasedColumnsEnabled, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     macro(TabsToLinks, tabsToLinks, Bool, bool, DEFAULT_WEBKIT_TABSTOLINKS_ENABLED) \

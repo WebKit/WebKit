@@ -51,6 +51,8 @@
 #include "StyleBoxData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFlexibleBoxData.h"
+#include "StyleGridData.h"
+#include "StyleGridItemData.h"
 #include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
@@ -74,11 +76,6 @@
 #if ENABLE(CSS_FILTERS)
 #include "FilterOperations.h"
 #include "StyleFilterData.h"
-#endif
-
-#if ENABLE(CSS_GRID_LAYOUT)
-#include "StyleGridData.h"
-#include "StyleGridItemData.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -820,13 +817,11 @@ public:
     EFlexWrap flexWrap() const { return static_cast<EFlexWrap>(rareNonInheritedData->m_flexibleBox->m_flexWrap); }
     EFlexLinePack flexLinePack() const { return static_cast<EFlexLinePack>(rareNonInheritedData->m_flexibleBox->m_flexLinePack); }
 
-#if ENABLE(CSS_GRID_LAYOUT)
     const Vector<Length>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
     const Vector<Length>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
 
     const Length& gridItemColumn() const { return rareNonInheritedData->m_gridItem->m_gridColumn; }
     const Length& gridItemRow() const { return rareNonInheritedData->m_gridItem->m_gridRow; }
-#endif
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     void getBoxShadowExtent(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const { getShadowExtent(boxShadow(), top, right, bottom, left); }
@@ -1259,13 +1254,10 @@ public:
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setFlexLinePack(EFlexLinePack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexLinePack, p); }
-#if ENABLE(CSS_GRID_LAYOUT)
     void setGridColumns(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, lengths); }
     void setGridRows(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, lengths); }
-
     void setGridItemColumn(const Length& columnPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridColumn, columnPosition); }
     void setGridItemRow(const Length& rowPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRow, rowPosition); }
-#endif
 
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
@@ -1651,7 +1643,6 @@ public:
     static StyleImage* initialMaskBoxImageSource() { return 0; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
 
-#if ENABLE(CSS_GRID_LAYOUT)
     // The initial value is 'none' for grid tracks.
     static Vector<Length> initialGridTrackValue()
     {
@@ -1667,7 +1658,6 @@ public:
     // 'auto' is the default.
     static Length initialGridItemColumn() { return Length(); }
     static Length initialGridItemRow() { return Length(); }
-#endif
 
     static unsigned initialTabSize() { return 8; }
 

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitCSSGridLayoutEnabled", true);
+</script>
 <style>
 .gridWithFixed {
     display: -webkit-grid;

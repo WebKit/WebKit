@@ -191,6 +191,7 @@ Settings::Settings(Page* page)
     , m_isCSSCustomFilterEnabled(false)
     , m_cssRegionsEnabled(false)
     , m_regionBasedColumnsEnabled(false)
+    , m_cssGridLayoutEnabled(false)
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)

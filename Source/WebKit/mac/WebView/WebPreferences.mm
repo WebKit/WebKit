@@ -370,6 +370,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         // CSS Shaders also need WebGL enabled (which is disabled by default), so we can keep it enabled for now.
         [NSNumber numberWithBool:YES], WebKitCSSCustomFilterEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitCSSGridLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
@@ -1361,6 +1362,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSRegionsEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitCSSRegionsEnabledPreferenceKey];
+}
+
+- (BOOL)cssGridLayoutEnabled
+{
+    return [self _boolValueForKey:WebKitCSSGridLayoutEnabledPreferenceKey];
+}
+
+- (void)setCSSGridLayoutEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitCSSGridLayoutEnabledPreferenceKey];
 }
 
 - (BOOL)showDebugBorders

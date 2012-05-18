@@ -91,6 +91,7 @@ public:
     virtual void setWebAudioEnabled(bool);
     virtual void setExperimentalWebGLEnabled(bool);
     virtual void setExperimentalCSSRegionsEnabled(bool);
+    virtual void setExperimentalCSSGridLayoutEnabled(bool);
     virtual void setExperimentalCSSCustomFilterEnabled(bool);
     virtual void setOpenGLMultisamplingEnabled(bool);
     virtual void setPrivilegedWebGLExtensionsEnabled(bool);

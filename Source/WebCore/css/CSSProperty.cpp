@@ -547,13 +547,10 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFlexLinePack:
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitFontSizeDelta:
-#if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:
-
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow:
-#endif
     case CSSPropertyWebkitLineClamp:
     case CSSPropertyWebkitLogicalWidth:
     case CSSPropertyWebkitLogicalHeight:

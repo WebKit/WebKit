@@ -49,7 +49,6 @@ my (
     $blobSupport,
     $channelMessagingSupport,
     $cssFiltersSupport,
-    $cssGridLayoutSupport,
     $cssShadersSupport,
     $cssVariablesSupport,
     $dataTransferItemsSupport,
@@ -144,9 +143,6 @@ my @features = (
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
-
-    { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
-      define => "ENABLE_CSS_GRID_LAYOUT", default => 0, value => \$cssGridLayoutSupport },
 
     { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },

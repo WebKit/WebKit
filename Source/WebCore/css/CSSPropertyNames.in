@@ -266,6 +266,10 @@ z-index
 -webkit-flex-pack
 -webkit-flex-wrap
 -webkit-font-size-delta
+-webkit-grid-columns
+-webkit-grid-rows
+-webkit-grid-column
+-webkit-grid-row
 -webkit-highlight
 -webkit-hyphenate-character
 -webkit-hyphenate-limit-after
@@ -375,12 +379,6 @@ z-index
 -webkit-wrap
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 -webkit-tap-highlight-color
-#endif
-#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
--webkit-grid-columns
--webkit-grid-rows
--webkit-grid-column
--webkit-grid-row
 #endif
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region
