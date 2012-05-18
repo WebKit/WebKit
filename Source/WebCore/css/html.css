@@ -510,8 +510,6 @@ input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
-    padding-left: 1px;
-    padding-right: 1px;
 }
 
 input[type="password"] {

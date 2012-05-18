@@ -1,3 +1,19 @@
+2012-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit erroneously add 1px padding in input elements
+        https://bugs.webkit.org/show_bug.cgi?id=86784
+
+        Reviewed by Kent Tamura.
+
+        Add a regression.
+
+        Also rebaseline tests in separate commits per getting rid of extra 1px padding on left and right.
+        Input elements' widths got shrunk by 2px in most cases and the text moved 1px to the start
+        (left for LTR and right for RTL).
+
+        * fast/forms/input-textarea-padding-match-expected.html: Added.
+        * fast/forms/input-textarea-padding-match.html: Added.
+
 2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines.

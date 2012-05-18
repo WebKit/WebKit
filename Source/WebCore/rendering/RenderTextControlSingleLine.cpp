@@ -478,10 +478,6 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
 
     textBlockStyle->setDisplay(BLOCK);
 
-    // We're adding one extra pixel of padding to match WinIE.
-    textBlockStyle->setPaddingLeft(Length(1, Fixed));
-    textBlockStyle->setPaddingRight(Length(1, Fixed));
-
     return textBlockStyle.release();
 }
 
