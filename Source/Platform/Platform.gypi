@@ -47,6 +47,7 @@
             'chromium/public/WebDragData.h',
             'chromium/public/WebExternalTextureLayer.h',
             'chromium/public/WebFileSystem.h',
+            'chromium/public/WebFileUtilities.h',
             'chromium/public/WebFilterOperation.h',
             'chromium/public/WebFilterOperations.h',
             'chromium/public/WebFloatPoint.h',

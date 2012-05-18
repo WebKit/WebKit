@@ -301,33 +301,33 @@ bool PlatformSupport::cookiesEnabled(const Document* document)
 
 bool PlatformSupport::fileExists(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->fileExists(path);
+    return WebKit::Platform::current()->fileUtilities()->fileExists(path);
 }
 
 bool PlatformSupport::deleteFile(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->deleteFile(path);
+    return WebKit::Platform::current()->fileUtilities()->deleteFile(path);
 }
 
 bool PlatformSupport::deleteEmptyDirectory(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->deleteEmptyDirectory(path);
+    return WebKit::Platform::current()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
 bool PlatformSupport::getFileSize(const String& path, long long& result)
 {
-    return webKitPlatformSupport()->fileUtilities()->getFileSize(path, result);
+    return WebKit::Platform::current()->fileUtilities()->getFileSize(path, result);
 }
 
 void PlatformSupport::revealFolderInOS(const String& path)
 {
-    webKitPlatformSupport()->fileUtilities()->revealFolderInOS(path);
+    WebKit::Platform::current()->fileUtilities()->revealFolderInOS(path);
 }
 
 bool PlatformSupport::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
-    if (!webKitPlatformSupport()->fileUtilities()->getFileModificationTime(path, modificationTime))
+    if (!WebKit::Platform::current()->fileUtilities()->getFileModificationTime(path, modificationTime))
         return false;
     result = static_cast<time_t>(modificationTime);
     return true;
@@ -335,62 +335,62 @@ bool PlatformSupport::getFileModificationTime(const String& path, time_t& result
 
 String PlatformSupport::directoryName(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->directoryName(path);
+    return WebKit::Platform::current()->fileUtilities()->directoryName(path);
 }
 
 String PlatformSupport::pathByAppendingComponent(const String& path, const String& component)
 {
-    return webKitPlatformSupport()->fileUtilities()->pathByAppendingComponent(path, component);
+    return WebKit::Platform::current()->fileUtilities()->pathByAppendingComponent(path, component);
 }
 
 bool PlatformSupport::makeAllDirectories(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->makeAllDirectories(path);
+    return WebKit::Platform::current()->fileUtilities()->makeAllDirectories(path);
 }
 
 String PlatformSupport::getAbsolutePath(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->getAbsolutePath(path);
+    return WebKit::Platform::current()->fileUtilities()->getAbsolutePath(path);
 }
 
 bool PlatformSupport::isDirectory(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->isDirectory(path);
+    return WebKit::Platform::current()->fileUtilities()->isDirectory(path);
 }
 
 KURL PlatformSupport::filePathToURL(const String& path)
 {
-    return webKitPlatformSupport()->fileUtilities()->filePathToURL(path);
+    return WebKit::Platform::current()->fileUtilities()->filePathToURL(path);
 }
 
 PlatformFileHandle PlatformSupport::openFile(const String& path, FileOpenMode mode)
 {
-    return webKitPlatformSupport()->fileUtilities()->openFile(path, mode);
+    return WebKit::Platform::current()->fileUtilities()->openFile(path, mode);
 }
 
 void PlatformSupport::closeFile(PlatformFileHandle& handle)
 {
-    webKitPlatformSupport()->fileUtilities()->closeFile(handle);
+    WebKit::Platform::current()->fileUtilities()->closeFile(handle);
 }
 
 long long PlatformSupport::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return webKitPlatformSupport()->fileUtilities()->seekFile(handle, offset, origin);
+    return WebKit::Platform::current()->fileUtilities()->seekFile(handle, offset, origin);
 }
 
 bool PlatformSupport::truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return webKitPlatformSupport()->fileUtilities()->truncateFile(handle, offset);
+    return WebKit::Platform::current()->fileUtilities()->truncateFile(handle, offset);
 }
 
 int PlatformSupport::readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return webKitPlatformSupport()->fileUtilities()->readFromFile(handle, data, length);
+    return WebKit::Platform::current()->fileUtilities()->readFromFile(handle, data, length);
 }
 
 int PlatformSupport::writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return webKitPlatformSupport()->fileUtilities()->writeToFile(handle, data, length);
+    return WebKit::Platform::current()->fileUtilities()->writeToFile(handle, data, length);
 }
 
 #if ENABLE(FILE_SYSTEM)

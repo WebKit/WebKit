@@ -150,7 +150,6 @@
                 'public/WebFileInfo.h',
                 'public/WebFileSystemCallbacks.h',
                 'public/WebFileSystemEntry.h',
-                'public/WebFileUtilities.h',
                 'public/WebFileWriter.h',
                 'public/WebFileWriterClient.h',
                 'public/WebFindOptions.h',

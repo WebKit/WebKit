@@ -44,6 +44,7 @@ class WebAudioBus;
 class WebBlobRegistry;
 class WebClipboard;
 class WebFileSystem;
+class WebFileUtilities;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebMimeRegistry;
@@ -64,6 +65,9 @@ public:
 
     // Must return non-null.
     virtual WebClipboard* clipboard() { return 0; }
+
+    // Must return non-null.
+    virtual WebFileUtilities* fileUtilities() { return 0; }
 
     // Must return non-null.
     virtual WebMimeRegistry* mimeRegistry() { return 0; }
