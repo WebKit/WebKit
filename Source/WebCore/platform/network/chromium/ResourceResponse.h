@@ -36,13 +36,17 @@ namespace WebCore {
 
     class ResourceResponse : public ResourceResponseBase {
     public:
+        // FIXME: move this to ResourceResponseBase and implement for all ports (see history in http://webkit.org/b/86522).
+        enum HTTPVersion { Unknown, HTTP_0_9, HTTP_1_0, HTTP_1_1 };
+
         class ExtraData : public RefCounted<ExtraData> {
         public:
             virtual ~ExtraData() { }
         };
 
         ResourceResponse()
-            : m_appCacheID(0)
+            : m_httpVersion(Unknown)
+            , m_appCacheID(0)
             , m_isMultipartPayload(false)
             , m_wasFetchedViaSPDY(false)
             , m_wasNpnNegotiated(false)
@@ -55,6 +59,7 @@ namespace WebCore {
 
         ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
             : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
+            , m_httpVersion(Unknown)
             , m_appCacheID(0)
             , m_isMultipartPayload(false)
             , m_wasFetchedViaSPDY(false)
@@ -65,6 +70,9 @@ namespace WebCore {
             , m_remotePort(0)
         {
         }
+
+        HTTPVersion httpVersion() const { return m_httpVersion; }
+        void setHTTPVersion(HTTPVersion version) { m_httpVersion = version; }
 
         const CString& getSecurityInfo() const { return m_securityInfo; }
         void setSecurityInfo(const CString& securityInfo) { m_securityInfo = securityInfo; }
@@ -127,6 +135,9 @@ namespace WebCore {
 
         PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData>) const;
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>);
+
+        // HTTP version used in the response, if known.
+        HTTPVersion m_httpVersion;
 
         // The id of the appcache this response was retrieved from, or zero if
         // the response was not retrieved from an appcache.

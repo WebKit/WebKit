@@ -50,6 +50,8 @@ class WebURLResponsePrivate;
 
 class WebURLResponse {
 public:
+    enum HTTPVersion { Unknown, HTTP_0_9, HTTP_1_0, HTTP_1_1 };
+
     class ExtraData {
     public:
         virtual ~ExtraData() { }
@@ -106,6 +108,9 @@ public:
 
     WEBKIT_EXPORT WebString suggestedFileName() const;
     WEBKIT_EXPORT void setSuggestedFileName(const WebString&);
+
+    WEBKIT_EXPORT HTTPVersion httpVersion() const;
+    WEBKIT_EXPORT void setHTTPVersion(HTTPVersion);
 
     WEBKIT_EXPORT int httpStatusCode() const;
     WEBKIT_EXPORT void setHTTPStatusCode(int);

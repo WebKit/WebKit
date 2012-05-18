@@ -62,6 +62,7 @@
 #include "PeerConnection00.h"
 #include "PlatformCursor.h"
 #include "ReferrerPolicy.h"
+#include "ResourceResponse.h"
 #include "Settings.h"
 #include "SpeechRecognitionError.h"
 #include "StorageInfo.h"
@@ -109,6 +110,7 @@
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebReferrerPolicy.h>
+#include <public/WebURLResponse.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
@@ -584,3 +586,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyOrigin, ReferrerPolicyOrigin);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebContentSecurityPolicyTypeReportOnly, ContentSecurityPolicy::ReportOnly);
 COMPILE_ASSERT_MATCHING_ENUM(WebContentSecurityPolicyTypeEnforcePolicy, ContentSecurityPolicy::EnforcePolicy);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebURLResponse::Unknown, ResourceResponse::Unknown);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLResponse::HTTP_0_9, ResourceResponse::HTTP_0_9);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLResponse::HTTP_1_0, ResourceResponse::HTTP_1_0);
+COMPILE_ASSERT_MATCHING_ENUM(WebURLResponse::HTTP_1_1, ResourceResponse::HTTP_1_1);

@@ -211,6 +211,16 @@ void WebURLResponse::setSuggestedFileName(const WebString& suggestedFileName)
     m_private->m_resourceResponse->setSuggestedFilename(suggestedFileName);
 }
 
+WebURLResponse::HTTPVersion WebURLResponse::httpVersion() const
+{
+    return static_cast<HTTPVersion>(m_private->m_resourceResponse->httpVersion());
+}
+
+void WebURLResponse::setHTTPVersion(HTTPVersion version)
+{
+    m_private->m_resourceResponse->setHTTPVersion(static_cast<ResourceResponse::HTTPVersion>(version));
+}
+
 int WebURLResponse::httpStatusCode() const
 {
     return m_private->m_resourceResponse->httpStatusCode();
