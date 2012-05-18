@@ -1,3 +1,13 @@
+2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] media/media-document-audio-repaint.html needs rebaselining after r117326
+        https://bugs.webkit.org/show_bug.cgi?id=86839
+
+        Unreviewed gardening, EFL rebaseline after r117326.
+
+        * platform/efl/media/media-document-audio-repaint-expected.png:
+        * platform/efl/media/media-document-audio-repaint-expected.txt:
+
 2012-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html crashes regularly
