@@ -1,0 +1,87 @@
+<html>
+<head>
+<style type="text/css">
+
+    div {
+        position: absolute;
+        border: solid;
+        width: 100px;
+        height: 100px;
+    }
+
+    div.clipping {
+        color: red;
+        overflow: hidden;
+    }
+
+    div.noClipping {
+        color: green;
+        overflow: visible;
+        left: 10px;
+        top: 50px;
+    }
+
+    div.noTransform {
+        left: 150px;
+        top: 50px;
+    }
+
+    div.withTransform {
+        left: 300px;
+        top: 50px;
+        -webkit-transform: rotate(20deg);
+    }
+
+    div.outer {
+        left: 450px;
+        top: 50px;
+        -webkit-transform: rotate(-20deg);
+    }
+
+    div.inner {
+        left: 20px;
+        top: 10px;
+    }
+
+    iframe {
+        border: solid;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        left: 200px;
+        top: 300px;
+    }
+</style>
+</head>
+
+<body>
+Click on the links. Highlight should be clipped at the red border, while it should overflow on the green.<br>
+<div class="noClipping">
+    <a href="#">Div with overflow visible. Lorem ipsum dolor sit amet, consectetur adipisicing...</a>
+</div>
+<div class="clipping noTransform">
+    <a href="#">Div with overflow hidden without transform. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</a>
+</div>
+<div class="clipping withTransform">
+    <a href="#">Div with overflow hidden with transform. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</a>
+</div>
+<br>
+
+<div class="clipping outer">
+<div class="clipping inner">
+    <a href="#">Nested divs with overflow hidden with transform. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</a>
+</div>
+</div>
+<br>
+<iframe src="data:text/html,
+    <style> div.overflowHiddenNoTransformi { color: red; border: solid; overflow: hidden; left: 150px; top: 100px; width: 100px; height: 100px; }</style>
+    <body>
+      Inside an iframe.
+  <div class='overflowHiddenNoTransformi'>
+    <a href='#'>Div with overflow hidden without transform. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</a>
+  </div>
+    </body>
+    "></iframe>
+</body>
+</html>
+

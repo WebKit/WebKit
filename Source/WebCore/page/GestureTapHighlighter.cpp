@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 
 namespace WebCore {
@@ -134,16 +135,16 @@ inline void addHighlightRect(Path& path, const LayoutRect& rect, const LayoutRec
             contains(next, rect.maxX()) ? squared : rounded);
 }
 
-Path pathForRenderer(RenderObject* o)
+Path absolutePathForRenderer(RenderObject* const o)
 {
     ASSERT(o);
-    Path path;
 
     Vector<IntRect> rects;
-    o->addFocusRingRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
+    LayoutPoint frameOffset = ownerFrameToMainFrameOffset(o);
+    o->addFocusRingRects(rects, frameOffset);
 
     if (rects.isEmpty())
-        return path;
+        return Path();
 
     // The basic idea is to allow up to three different boxes in order to highlight
     // text with line breaks more nicer than using a bounding box.
@@ -184,12 +185,51 @@ Path pathForRenderer(RenderObject* o)
             drawableRects.append(rects.last());
     }
 
+    // Clip the overflow rects if needed, before the ring path is formed to
+    // ensure rounded highlight rects. This clipping has the problem with nested
+    // divs with transforms, which could be resolved by proper Path::intersecting.
+    for (int i = drawableRects.size() - 1; i >= 0; --i) {
+        LayoutRect& ringRect = drawableRects.at(i);
+        LayoutPoint ringRectLocation = ringRect.location();
+
+        ringRect.moveBy(-frameOffset);
+
+        RenderLayer* layer = o->enclosingLayer();
+        RenderObject* currentRenderer = o;
+
+        // Check ancestor layers for overflow clip and intersect them.
+        while (layer) {
+            RenderObject* layerRenderer = layer->renderer();
+
+            if (layerRenderer->hasOverflowClip() && layerRenderer != currentRenderer) {
+                ringRect.move(currentRenderer->offsetFromAncestorContainer(layerRenderer));
+                currentRenderer = layerRenderer;
+
+                ASSERT(layerRenderer->isBox());
+                ringRect.intersect(toRenderBox(layerRenderer)->borderBoxRect());
+
+                if (ringRect.isEmpty())
+                    break;
+            }
+            layer = layer->parent();
+        }
+
+        if (ringRect.isEmpty()) {
+            drawableRects.remove(i);
+            continue;
+        }
+        // After clipping, reset the original position so that parents' transforms apply correctly.
+        ringRect.setLocation(ringRectLocation);
+    }
+
+    Path path;
     for (size_t i = 0; i < drawableRects.size(); ++i) {
         LayoutRect prev = i ? drawableRects.at(i - 1) : LayoutRect();
         LayoutRect next = i < (drawableRects.size() - 1) ? drawableRects.at(i + 1) : LayoutRect();
         addHighlightRect(path, drawableRects.at(i), prev, next);
     }
 
+    path.transform(localToAbsoluteTransform(o));
     return path;
 }
 
@@ -201,14 +241,10 @@ Path pathForNodeHighlight(const Node* node)
 {
     RenderObject* renderer = node->renderer();
 
-    Path path;
     if (!renderer || (!renderer->isBox() && !renderer->isRenderInline()))
-        return path;
+        return Path();
 
-    path = pathForRenderer(renderer);
-    path.transform(localToAbsoluteTransform(renderer));
-
-    return path;
+    return absolutePathForRenderer(renderer);
 }
 
 } // namespace GestureTapHighlighter
