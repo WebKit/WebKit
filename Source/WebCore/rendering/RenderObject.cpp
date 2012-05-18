@@ -271,8 +271,10 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
     bool needsTable = false;
 
-    if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
+    if (newChild->style()->display() == TABLE_COLUMN_GROUP)
         needsTable = !isTable();
+    else if (newChild->style()->display() == TABLE_COLUMN)
+        needsTable = !isTable() && style()->display() != TABLE_COLUMN_GROUP;
     else if (newChild->isTableCaption())
         needsTable = !isTable();
     else if (newChild->isTableSection())

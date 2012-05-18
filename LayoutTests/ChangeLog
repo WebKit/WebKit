@@ -1,3 +1,25 @@
+        2012-05-17  Levi Weintraub  <leviw@chromium.org>
+
+        Standalone table-columns should be wrapped in anonymous tables
+        https://bugs.webkit.org/show_bug.cgi?id=86671
+
+        Reviewed by Julien Chaffraix.
+
+        Adding 2 test cases and updating test results for two with changed expectations.
+
+        * fast/table/table-column-generates-anonymous-table-expected.html: Added.
+        * fast/table/table-column-generates-anonymous-table.html: Added.
+        * fast/table/table-column-group-generates-anonymous-table-expected.html: Added.
+        * fast/table/table-column-group-generates-anonymous-table.html: Added.
+        * platform/chromium-linux/fast/forms/form-hides-table-expected.txt: Added. An anonymous
+        table is now generated to enclose the misparented table column.
+        * platform/chromium-linux/fast/table/form-with-table-style-expected.txt: Added.
+        * platform/chromium-linux/fast/table/form-with-table-style-expected.png: Modified. The
+        expectations previously were wrong in that the table column occupied height the
+        equivalent of its line-height. This is correctly no longer the case.
+        * platform/chromium/test_expectations.txt: Modified. Skipping modified tests on other
+        platforms until I can rebaseline.
+
 2012-05-18  Tony Chang  <tony@chromium.org>
 
         Unreviewed, skip grid layout tests that are failing after r117613.
