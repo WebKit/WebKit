@@ -1,3 +1,17 @@
+2012-05-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add shortcut to dump Security Origin and Web Database information
+        https://bugs.webkit.org/show_bug.cgi?id=86521
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added key combination (CTRL+s) to dump information about the
+        security origin and databases of the main frame. Useful for API
+        testing and debugging.
+
+        * EWebLauncher/main.c:
+        (on_key_down):
+
 2012-05-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] DRT needs an implementation of layoutTestController.setSerializeHTTPLoads
