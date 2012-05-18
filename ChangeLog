@@ -1,3 +1,12 @@
+2012-05-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Get IndexedDB closer to building for GTK+.
+
+        Reviewed by Philippe Normand.
+
+        * configure.ac: Make out the IndexedDB imply USE_LEVELDB, as LevelDB is the
+        only IndexedDB backend at the moment. Also mark IndexedDB as incomplete.
+
 2012-05-18  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt] Gesture tap highlighter needs to take overflow clip into account.

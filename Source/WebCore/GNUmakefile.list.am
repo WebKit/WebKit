@@ -1070,10 +1070,13 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBCursorBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBCursor.cpp \
 	Source/WebCore/Modules/indexeddb/IDBCursor.h \
+	Source/WebCore/Modules/indexeddb/IDBCursorWithValue.cpp \
+	Source/WebCore/Modules/indexeddb/IDBCursorWithValue.h \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseCallbacks.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseCallbacksImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/IDBDatabaseError.h \
@@ -1091,12 +1094,14 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBIndexBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndexBackendImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBIndexBackendInterface.h \
-	Source/WebCore/Modules/indexeddb/IDBIndexBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
+	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKey.h \
-	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
+	Source/WebCore/Modules/indexeddb/IDBKeyPathBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKeyPathBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBKeyPath.cpp \
+	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.h \
 	Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.cpp \
@@ -1106,16 +1111,24 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
-	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
+	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.cpp \
+	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.h \
 	Source/WebCore/Modules/indexeddb/IDBRequest.cpp \
 	Source/WebCore/Modules/indexeddb/IDBRequest.h \
+	Source/WebCore/Modules/indexeddb/IDBTracing.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBTransactionBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionCallbacks.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.h \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
+	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.cpp \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.h \
+	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.cpp \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.h \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
@@ -4970,8 +4983,27 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
 	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl
-
+webcore_sources += \
+	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBKeyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBVersionChangeRequestCustom.cpp
 endif # END ENABLE_INDEXED_DATABASE
+
+# ----
+# LevelDB
+# ----
+if USE_LEVELDB
+webcore_sources += \
+	Source/WebCore/platform/leveldb/LevelDBComparator.h \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
+	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
+	Source/WebCore/platform/leveldb/LevelDBIterator.h \
+	Source/WebCore/platform/leveldb/LevelDBSlice.h \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.h \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h
+endif # end USE_LEVELDB
 
 # ----
 # FileSystem API support

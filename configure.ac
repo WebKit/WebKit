@@ -666,7 +666,7 @@ AC_MSG_RESULT([$enable_dom_storage])
 AC_MSG_CHECKING([whether to enable the indexed database API])
 AC_ARG_ENABLE(indexed_database,
               AC_HELP_STRING([--enable-indexed-database],
-                             [enable the indexed database API [default=no]]),
+                             [enable the indexed database API (incomplete) [default=no]]),
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
 
@@ -1340,6 +1340,10 @@ AM_CONDITIONAL([USE_CLUTTER], [test "$with_accelerated_compositing" = "clutter"]
 AM_CONDITIONAL([USE_GLX], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([USE_OPENGL], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
 
+# IndexedDB implies LevelDB, but other features may one day require LevelDB.
+AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
+AM_CONDITIONAL([USE_LEVELDB],[test "$enable_indexed_database" = "yes"])
+
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
@@ -1364,7 +1368,6 @@ AM_CONDITIONAL([ENABLE_STYLE_SCOPED],[test "$enable_style_scoped" = "yes"])
 AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
-AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_TYPE_COLOR],[test "$enable_input_type_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])

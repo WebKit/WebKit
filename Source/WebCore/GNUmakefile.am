@@ -241,6 +241,10 @@ FEATURE_DEFINES += ENABLE_INDEXED_DATABASE=1
 webcore_cppflags += -DENABLE_INDEXED_DATABASE=1
 endif # END ENABLE_INDEXED_DATABASE
 
+if USE_LEVELDB
+webcore_cppflags += -DWTF_USE_LEVELDB
+endif # END USE_LEVELDB
+
 # ----
 # Support for <input type="file" directory>
 # ----
