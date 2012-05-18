@@ -1660,10 +1660,8 @@ BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.htm
 BUGCR11001 : http/tests/history/back-to-post.php = TIMEOUT
 
 // Regressions from WebKit Merge 42932:42994 due to text metric changes.
-BUGCR11251 WIN DEBUG : fast/forms/textarea-width.html = FAIL
-BUGCR11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAIL
-BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = FAIL
-BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
+BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = TEXT
+BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = TEXT
 
 // WebKit 45017:45086
 BUGCR15217 : fast/js/dictionary-no-cache.html = FAIL
@@ -1900,7 +1898,7 @@ BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.
 
 // WebKit roll 58304:58400
 BUGUKAI MAC : fast/text/international/bold-bengali.html = IMAGE
-BUGUKAI WIN : fast/text/international/bold-bengali.html = IMAGE+TEXT
+BUGUKAI VISTA WIN7 : fast/text/international/bold-bengali.html = IMAGE+TEXT
 
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.
@@ -2383,9 +2381,6 @@ BUGWK52061 DEBUG : transitions/suspend-transform-transition.html = PASS IMAGE
 BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
-
-// V8 test failures introduced by r75408
-BUGCR69181 LINUX WIN DEBUG : fast/js/large-expressions.html = TIMEOUT TEXT
 
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
@@ -2935,7 +2930,6 @@ BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfte
 
 BUG_EPOGER SNOWLEOPARD DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
-
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
 
 // Alpha channel differences
@@ -2954,7 +2948,6 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-color.h
 BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-width.html = IMAGE
 BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-color.html = IMAGE
 BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.html = IMAGE
-
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
 
@@ -3020,7 +3013,6 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
-
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
@@ -3163,7 +3155,6 @@ BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
-
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
@@ -3558,7 +3549,6 @@ BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
 BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
 
-
 BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
 BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TIMEOUT
 
@@ -3610,24 +3600,12 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
-
-BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
-BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
-BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
-BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
-
 BUGWK84432 WIN : fast/filesystem/op-restricted-names.html = TEXT
 BUGWK84432 WIN : fast/filesystem/op-restricted-unicode.html = TEXT
 BUGWK84432 WIN : fast/filesystem/read-directory.html = TEXT
 BUGWK84432 WIN : fast/filesystem/simple-readonly-file-object.html = TEXT
 
-BUGCR124313 XP DEBUG : fast/css/font-face-opentype.html = CRASH
-BUGCR124313 XP DEBUG : fast/css/font-face-woff.html = CRASH
-
 BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TEXT PASS
-
-// Uncomment after CR124779 is resolved (if the test is still flaky)
-// BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
 
 BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 
@@ -3664,8 +3642,6 @@ BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE
 
 BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
 
-// Requires rebaseline after bug 83978
-
 BUGWK84972 MAC WIN DEBUG : webaudio/audioparam-exponentialRampToValueAtTime.html = PASS CRASH
 BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
 
@@ -3687,16 +3663,12 @@ BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
-
-
 // Skip until SUBPIXEL_LAYOUT is enabled
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
 
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
-
-BUGWK85553 DEBUG : http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html = TIMEOUT
 
 BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
