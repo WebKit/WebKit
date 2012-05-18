@@ -172,30 +172,3 @@ WebInspector.EditableResourceSourceFrame.prototype = {
 }
 
 WebInspector.EditableResourceSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;
-
-/**
- * @extends {WebInspector.ResourceSourceFrame}
- * @constructor
- */
-WebInspector.ResourceRevisionSourceFrame = function(revision)
-{
-    WebInspector.ResourceSourceFrame.call(this, revision.resource);
-    this._revision = revision;
-}
-
-WebInspector.ResourceRevisionSourceFrame.prototype = {
-    get resource()
-    {
-        return this._revision.resource;
-    },
-
-    /**
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestContent: function(callback)
-    {
-        this._revision.requestContent(callback);
-    },
-}
-
-WebInspector.ResourceRevisionSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;

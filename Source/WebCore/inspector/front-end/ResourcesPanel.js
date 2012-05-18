@@ -2068,7 +2068,7 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
     sourceView: function()
     {
         if (!this._sourceView)
-            this._sourceView = new WebInspector.ResourceRevisionSourceFrame(this._revision);
+            this._sourceView = new WebInspector.SourceFrame(this._revision);
         return this._sourceView;
     }
 }
