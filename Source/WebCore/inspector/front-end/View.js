@@ -396,7 +396,6 @@ WebInspector.View._assert = function(condition, message)
 {
     if (!condition) {
         console.trace();
-        console.error("assert: " + new Error().stack);
         throw new Error(message);
     }
 }
