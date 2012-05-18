@@ -3057,7 +3057,7 @@ bool Editor::unifiedTextCheckerEnabled() const
     return WebCore::unifiedTextCheckerEnabled(m_frame);
 }
 
-void Editor::willDetachPage() OVERRIDE
+void Editor::willDetachPage()
 {
     if (EditorClient* editorClient = client())
         editorClient->frameWillDetachPage(frame());
