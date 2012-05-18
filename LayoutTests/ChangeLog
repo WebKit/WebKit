@@ -1,3 +1,12 @@
+2012-05-17  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Fix bad baseline from http://trac.webkit.org/changeset/117480/.
+        https://bugs.webkit.org/show_bug.cgi?id=84167
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.txt:
+
 2012-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         Setting array index -1 and looping over array causes bad behavior
