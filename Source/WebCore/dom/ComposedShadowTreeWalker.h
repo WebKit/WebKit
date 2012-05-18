@@ -27,6 +27,7 @@
 #ifndef ComposedShadowTreeWalker_h
 #define ComposedShadowTreeWalker_h
 
+#include "InsertionPoint.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -80,9 +81,7 @@ private:
             ASSERT(!m_node->isShadowRoot());
         else
             ASSERT(!m_node->isShadowRoot() || toShadowRoot(m_node)->isYoungest());
-        // FIXME: Add an assertion once InsertionPoint have isActive() function.
-        // https://bugs.webkit.org/show_bug.cgi?id=82010
-        // ASSERT(!isInsertionPoint(m_node) || !toInsertionPoint(node)->isActive());
+        ASSERT(!isInsertionPoint(m_node) || !toInsertionPoint(m_node)->isActive());
 #endif
     }
 
