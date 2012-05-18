@@ -1,3 +1,16 @@
+2012-05-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Buildbot output does not print result stats anymore
+        https://bugs.webkit.org/show_bug.cgi?id=85366
+
+        Reviewed by Ryosuke Niwa.
+
+        Make run-webkit-tests pass --verbose to new-run-webkit-tests
+        on EFL Debug bot.
+
+        * Scripts/run-webkit-tests:
+        (runningOnBuildBot):
+
 2012-05-18  Tony Chang  <tony@chromium.org>
 
         remove the CSS_GRID_LAYOUT compiler define, but default grid layout to off
