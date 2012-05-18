@@ -174,7 +174,7 @@ WebInspector.CPUProfileView.prototype = {
 
     refreshVisibleData: function()
     {
-        var child = this.dataGrid.children[0];
+        var child = this.dataGrid.rootNode().children[0];
         while (child) {
             child.refresh();
             child = child.traverseNextNode(false, null, true);
