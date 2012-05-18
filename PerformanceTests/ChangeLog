@@ -1,5 +1,47 @@
 2012-05-17  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a binding benchmark for getElementById()
+        https://bugs.webkit.org/show_bug.cgi?id=86808
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently Bindings/dom-attributes.html is just a collection
+        of random DOM attributes and methods. We should remove it and
+        instead add more reasonable micro benchmarks by classifying
+        DOM binding call paths.
+
+        This patch adds a benchmark for document.getElementById(),
+        which covers other DOM methods that return a Node Object.
+
+        The reason why we want to add a benchmark for document.getElementById()
+        in spite of the fact that Dromaeo/dom-query.html is already testing
+        document.getElementById(), is that Dromaeo/dom-query.html outputs one
+        result for several benchmarks (i.e. getElementById().nodeType,
+        getElementsByTagName()[0].nodeType etc), and thus we cannot observe
+        regression of getElementById() itself. (Catching regression of
+        getElementById() would be critical.)
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: get-element-by-id= 300.933707795 runs/s
+        median= 302.267002519 runs/s, stdev= 3.04954648504 runs/s, min= 295.930949445 runs/s, max= 305.34351145 runs/s
+
+        RESULT Bindings: get-element-by-id= 302.030324483 runs/s
+        median= 302.267481977 runs/s, stdev= 1.78518068367 runs/s, min= 298.507462687 runs/s, max= 304.568527919 runs/s
+
+        RESULT Bindings: get-element-by-id= 301.993483538 runs/s
+        median= 302.648171501 runs/s, stdev= 1.87604126626 runs/s, min= 296.662546354 runs/s, max= 304.568527919 runs/s
+
+        RESULT Bindings: get-element-by-id= 301.936607982 runs/s
+        median= 302.45758701 runs/s, stdev= 1.88991087072 runs/s, min= 298.879202989 runs/s, max= 304.955527319 runs/s
+
+        RESULT Bindings: get-element-by-id= 301.952234563 runs/s
+        median= 302.648171501 runs/s, stdev= 1.59929752614 runs/s, min= 299.625468165 runs/s, max= 304.568527919 runs/s
+
+        * Bindings/get-element-by-id.html: Added.
+
+2012-05-17  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a benchmark for body.scrollTop
         https://bugs.webkit.org/show_bug.cgi?id=86806
 
