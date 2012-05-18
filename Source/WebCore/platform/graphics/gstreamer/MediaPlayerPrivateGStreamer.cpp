@@ -1588,6 +1588,7 @@ static HashSet<String> mimeTypeCache()
     for (unsigned i = 0; i < (sizeof(mimeTypes) / sizeof(*mimeTypes)); ++i)
         cache.add(String(mimeTypes[i]));
 
+    typeListInitialized = true;
     return cache;
 }
 
