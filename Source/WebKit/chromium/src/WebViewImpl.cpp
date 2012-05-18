@@ -3134,7 +3134,8 @@ bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
     return true;
 }
 
-void WebViewImpl::startDragging(const WebDragData& dragData,
+void WebViewImpl::startDragging(Frame* frame,
+                                const WebDragData& dragData,
                                 WebDragOperationsMask mask,
                                 const WebImage& dragImage,
                                 const WebPoint& dragImageOffset)
@@ -3143,7 +3144,7 @@ void WebViewImpl::startDragging(const WebDragData& dragData,
         return;
     ASSERT(!m_doingDragAndDrop);
     m_doingDragAndDrop = true;
-    m_client->startDragging(dragData, mask, dragImage, dragImageOffset);
+    m_client->startDragging(WebFrameImpl::fromFrame(frame), dragData, mask, dragImage, dragImageOffset);
 }
 
 void WebViewImpl::observeNewNavigation()

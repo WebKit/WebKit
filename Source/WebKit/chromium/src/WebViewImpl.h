@@ -448,6 +448,7 @@ public:
 
     // Start a system drag and drop operation.
     void startDragging(
+        WebCore::Frame*,
         const WebDragData& dragData,
         WebDragOperationsMask mask,
         const WebImage& dragImage,

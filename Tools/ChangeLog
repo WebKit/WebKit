@@ -1,3 +1,16 @@
+2012-05-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] plumb the frame for which a drag was initiated to the WebViewClient
+
+        https://bugs.webkit.org/show_bug.cgi?id=86670
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::startDragging):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] appcache tests are flaky

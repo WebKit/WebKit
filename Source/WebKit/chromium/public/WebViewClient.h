@@ -250,6 +250,8 @@ public:
     virtual void showContextMenu(WebFrame*, const WebContextMenuData&) { }
 
     // Called when a drag-n-drop operation should begin.
+    virtual void startDragging(WebFrame*, const WebDragData& dragData, WebDragOperationsMask mask, const WebImage& dragImage, const WebPoint& dragImageOffset) { startDragging(dragData, mask, dragImage, dragImageOffset); }
+    // FIXME: Remove once the chromium side has landed.
     virtual void startDragging(
         const WebDragData&, WebDragOperationsMask, const WebImage&, const WebPoint&) { }
 

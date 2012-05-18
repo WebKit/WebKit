@@ -87,10 +87,7 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
 
     IntSize offsetSize(eventPos - dragImageOrigin);
     WebPoint offsetPoint(offsetSize.width(), offsetSize.height());
-    m_webView->startDragging(
-        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-        dragImage ? WebImage(*dragImage) : WebImage(),
-        offsetPoint);
+    m_webView->startDragging(frame, dragData, static_cast<WebDragOperationsMask>(dragOperationMask), dragImage ? WebImage(*dragImage) : WebImage(), offsetPoint);
 }
 
 void DragClientImpl::dragControllerDestroyed()

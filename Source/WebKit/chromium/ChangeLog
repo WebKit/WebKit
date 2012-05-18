@@ -1,3 +1,20 @@
+2012-05-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] plumb the frame for which a drag was initiated to the WebViewClient
+        https://bugs.webkit.org/show_bug.cgi?id=86670
+
+        Reviewed by Kent Tamura.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::startDragging):
+        (WebViewClient):
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::startDragging):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-05-17  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move Web Workers methods to Platform.h
