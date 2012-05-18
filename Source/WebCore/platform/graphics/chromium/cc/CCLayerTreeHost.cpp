@@ -143,8 +143,8 @@ void CCLayerTreeHost::initializeLayerRenderer()
     // Update m_settings based on partial update capability.
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
-    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
-                                                      TextureManager::reclaimLimitBytes(viewportSize()),
+    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(deviceViewportSize()),
+                                                      TextureManager::reclaimLimitBytes(deviceViewportSize()),
                                                       m_proxy->layerRendererCapabilities().maxTextureSize);
 
     m_layerRendererInitialized = true;
@@ -367,6 +367,10 @@ void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
         return;
 
     m_viewportSize = viewportSize;
+
+    m_deviceViewportSize = viewportSize;
+    m_deviceViewportSize.scale(m_settings.deviceScaleFactor);
+
     setNeedsCommit();
 }
 
@@ -483,9 +487,9 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
 
     if (!rootLayer->renderSurface())
         rootLayer->createRenderSurface();
-    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), viewportSize()));
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), deviceViewportSize()));
 
-    IntRect rootClipRect(IntPoint(), viewportSize());
+    IntRect rootClipRect(IntPoint(), deviceViewportSize());
     rootLayer->setClipRect(rootClipRect);
 
     LayerList updateList;
@@ -494,10 +498,12 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
     rootRenderSurface->clearLayerList();
 
-    TransformationMatrix identityMatrix;
     {
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        TransformationMatrix identityMatrix;
+        TransformationMatrix deviceScaleTransform;
+        deviceScaleTransform.scale(m_settings.deviceScaleFactor);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
     // Reset partial texture update requests.
@@ -575,7 +581,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
-    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), viewportSize()), recordMetricsForFrame);
+    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), deviceViewportSize()), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(CCOcclusionTracker::preferredMinimumTrackingSize());
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);

@@ -85,7 +85,9 @@ struct CCSettings {
             , threadedAnimationEnabled(false)
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
             , defaultTileSize(IntSize(256, 256))
-            , maxUntiledLayerSize(IntSize(512, 512)) { }
+            , maxUntiledLayerSize(IntSize(512, 512))
+            , deviceScaleFactor(1)
+    { }
 
     bool acceleratePainting;
     bool showFPSCounter;
@@ -100,6 +102,7 @@ struct CCSettings {
     size_t maxPartialTextureUpdates;
     IntSize defaultTileSize;
     IntSize maxUntiledLayerSize;
+    float deviceScaleFactor;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
@@ -213,6 +216,8 @@ public:
     void setViewportSize(const IntSize&);
 
     const IntSize& viewportSize() const { return m_viewportSize; }
+    // Gives the viewport size in device/content space.
+    const IntSize& deviceViewportSize() const { return m_deviceViewportSize; }
 
     void setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor);
 
@@ -281,6 +286,7 @@ private:
     CCSettings m_settings;
 
     IntSize m_viewportSize;
+    IntSize m_deviceViewportSize;
     bool m_visible;
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;

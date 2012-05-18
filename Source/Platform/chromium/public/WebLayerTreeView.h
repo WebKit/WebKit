@@ -59,6 +59,7 @@ public:
             , threadedAnimationEnabled(false)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
+            , deviceScaleFactor(1)
         {
         }
 
@@ -72,6 +73,7 @@ public:
         bool threadedAnimationEnabled;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
+        float deviceScaleFactor;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;
 #endif

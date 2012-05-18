@@ -50,6 +50,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.threadedAnimationEnabled = threadedAnimationEnabled;
     settings.defaultTileSize = defaultTileSize;
     settings.maxUntiledLayerSize = maxUntiledLayerSize;
+    settings.deviceScaleFactor = deviceScaleFactor;
 
     // FIXME: showFPSCounter / showPlatformLayerTree / maxPartialTextureUpdates aren't supported currently.
     return settings;

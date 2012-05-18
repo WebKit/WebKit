@@ -778,6 +778,7 @@ private:
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
     bool m_compositorSurfaceReady;
+    float m_deviceScaleInCompositor;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 

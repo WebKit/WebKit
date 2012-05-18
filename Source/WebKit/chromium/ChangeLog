@@ -1,3 +1,60 @@
+2012-05-17  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Scale all compositor output by the defaultDeviceScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=86051
+
+        Reviewed by James Robinson.
+
+        Add the applyDefaultDeviceScaleInCompositor setting. When enabled, we
+        apply the scale factor during compositing instead of applying it through
+        the pageScaleFactor.
+
+        NonCompositedContentHost is the GraphicLayerClient for the GraphicsLayer
+        containing the document's body. It needs to report the page/device scale
+        that should be used when scaling the contents of the GraphicsLayer, and
+        when changes occur to them such that its contentsSize or contentsScale
+        is affected.
+
+        Store the deviceScaleFactor being used in the compositor. The remainder
+        of the deviceScaleFactor() is being applied to the pageScale.
+
+        * public/WebSettings.h:
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setViewport):
+        * src/NonCompositedContentHost.h:
+        (NonCompositedContentHost):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::applyDefaultDeviceScaleFactorInCompositor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::setDeviceScaleFactor):
+        (WebKit::WebViewImpl::enableFixedLayoutMode):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * src/WebViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImpl):
+        (CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers):
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers):
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::beginTest):
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::afterTest):
+        (WTF):
+        (WTF::TEST_F):
+        * tests/LayerRendererChromiumTest.cpp:
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+
 2012-05-17  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Expose layer tiling size options to WebSettings.

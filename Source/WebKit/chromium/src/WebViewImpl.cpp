@@ -396,6 +396,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
     , m_compositorSurfaceReady(false)
+    , m_deviceScaleInCompositor(1)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
@@ -2361,6 +2362,12 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     if (!scaleFactor)
         scaleFactor = 1;
 
+    if (m_deviceScaleInCompositor != 1) {
+        // Don't allow page scaling when compositor scaling is being used,
+        // as they are currently incompatible.
+        ASSERT(scaleFactor == 1);
+    }
+
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
     WebPoint clampedOrigin = clampOffsetAtScale(origin, scaleFactor);
     page()->setPageScaleFactor(scaleFactor, clampedOrigin);
@@ -2381,6 +2388,13 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
         return;
 
     page()->setDeviceScaleFactor(scaleFactor);
+
+    if (m_deviceScaleInCompositor != 1) {
+        // Don't allow page scaling when compositor scaling is being used,
+        // as they are currently incompatible. This means the deviceScale
+        // needs to match the one in the compositor.
+        ASSERT(scaleFactor == m_deviceScaleInCompositor);
+    }
 }
 
 bool WebViewImpl::isFixedLayoutModeEnabled() const
@@ -2408,10 +2422,8 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
 
 #if USE(ACCELERATED_COMPOSITING)
     // Also notify the base layer, which RenderLayerCompositor does not see.
-    if (m_nonCompositedContentHost) {
-        m_nonCompositedContentHost->topLevelRootLayer()->deviceOrPageScaleFactorChanged();
+    if (m_nonCompositedContentHost)
         updateLayerTreeViewport();
-    }
 #endif
 }
 
@@ -2445,8 +2457,8 @@ bool WebViewImpl::computePageScaleFactorLimits()
     if (!mainFrame() || !page() || !page()->mainFrame() || !page()->mainFrame()->view())
         return false;
 
-    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
-    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor) * deviceScaleFactor();
+    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor) * (deviceScaleFactor() / m_deviceScaleInCompositor);
+    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor) * (deviceScaleFactor() / m_deviceScaleInCompositor);
 
     int viewWidthNotIncludingScrollbars = page()->mainFrame()->view()->visibleContentRect(false).width();
     int contentsWidth = mainFrame()->contentsSize().width;
@@ -3395,6 +3407,17 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
 
+        if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->settings()->defaultDeviceScaleFactor() != 1) {
+            ASSERT(page()->settings()->defaultDeviceScaleFactor());
+
+            m_deviceScaleInCompositor = page()->settings()->defaultDeviceScaleFactor();
+            layerTreeViewSettings.deviceScaleFactor = m_deviceScaleInCompositor;
+            setDeviceScaleFactor(m_deviceScaleInCompositor);
+            // When applying a scale factor in the compositor, we disallow page
+            // scaling as they are currently incompatible.
+            setPageScaleFactorLimits(1, 1);
+        }
+
         m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
         if (!m_layerTreeView.isNull()) {
             m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
@@ -3538,7 +3561,12 @@ void WebViewImpl::updateLayerTreeViewport()
         // layer.
         layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
     }
-    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
+
+    // This part of the deviceScale will be used to scale the contents of
+    // the NCCH's GraphicsLayer.
+    float deviceScale = m_deviceScaleInCompositor;
+    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, deviceScale, layerAdjustX);
+
     m_layerTreeView.setViewportSize(size());
     m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }

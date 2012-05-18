@@ -66,7 +66,7 @@ class ScopedEnsureFramebufferAllocation;
 
 class LayerRendererChromiumClient {
 public:
-    virtual const IntSize& viewportSize() const = 0;
+    virtual const IntSize& deviceViewportSize() const = 0;
     virtual const CCSettings& settings() const = 0;
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
@@ -89,10 +89,6 @@ public:
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
-
-    const IntSize& viewportSize() { return m_client->viewportSize(); }
-    int viewportWidth() { return viewportSize().width(); }
-    int viewportHeight() { return viewportSize().height(); }
 
     void viewportChanged();
 
@@ -150,6 +146,10 @@ protected:
     bool initialize();
 
 private:
+    const IntSize& viewportSize() { return m_client->deviceViewportSize(); }
+    int viewportWidth() { return viewportSize().width(); }
+    int viewportHeight() { return viewportSize().height(); }
+
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);

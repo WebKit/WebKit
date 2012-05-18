@@ -30,12 +30,14 @@
 
 #include "config.h"
 
+#include "WebFrame.h"
+
+#include "Frame.h"
 #include "FrameTestHelpers.h"
 #include "ResourceError.h"
 #include "WebDocument.h"
 #include "WebFindOptions.h"
 #include "WebFormElement.h"
-#include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebRange.h"
 #include "WebScriptSource.h"
@@ -233,11 +235,18 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
     webView->layout();
 
     EXPECT_EQ(2, webView->deviceScaleFactor());
+
+    // Device scale factor should be a component of page scale factor in fixed-layout, so a scale of 1 becomes 2.
+    webView->setPageScaleFactorLimits(1, 2);
+    EXPECT_EQ(2, webView->pageScaleFactor());
+
+    // Force the layout to happen before leaving the test.
+    webView->mainFrame()->contentAsText(1024).utf8();
 }
 #endif
 
 #if ENABLE(GESTURE_EVENTS)
-TEST_F(WebFrameTest, FAILS_DivAutoZoomParamsTest)
+TEST_F(WebFrameTest, DivAutoZoomParamsTest)
 {
     registerMockedHttpURLLoad("get_scale_for_auto_zoom_into_div_test.html");
 
@@ -297,7 +306,6 @@ TEST_F(WebFrameTest, FAILS_DivAutoZoomParamsTest)
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
     EXPECT_FLOAT_EQ(3, scale);
 
-
     // Test for Non-doubletap scaling
     webViewImpl->setPageScaleFactor(1, WebPoint(0, 0));
     webViewImpl->setDeviceScaleFactor(4);
@@ -305,6 +313,9 @@ TEST_F(WebFrameTest, FAILS_DivAutoZoomParamsTest)
     // Test zooming into div.
     webViewImpl->computeScaleAndScrollForHitRect(WebRect(250, 250, 10, 10), WebViewImpl::FindInPage, scale, scroll);
     EXPECT_NEAR(pageWidth / divWidth, scale, 0.1);
+
+    // Drop any pending fake mouse events from zooming before leaving the test.
+    webViewImpl->page()->mainFrame()->eventHandler()->clear();
 }
 #endif
 

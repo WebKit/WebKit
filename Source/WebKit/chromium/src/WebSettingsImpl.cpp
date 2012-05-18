@@ -51,6 +51,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_showPlatformLayerTree(false)
     , m_showPaintRects(false)
     , m_viewportEnabled(false)
+    , m_applyDefaultDeviceScaleFactorInCompositor(false)
     , m_defaultTileSize(WebSize(256, 256))
     , m_maxUntiledLayerSize(WebSize(512, 512))
 {
@@ -115,6 +116,11 @@ void WebSettingsImpl::setMinimumLogicalFontSize(int size)
 void WebSettingsImpl::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
 {
     m_settings->setDefaultDeviceScaleFactor(defaultDeviceScaleFactor);
+}
+
+void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDefaultDeviceScaleFactorInCompositor)
+{
+    m_applyDefaultDeviceScaleFactorInCompositor = applyDefaultDeviceScaleFactorInCompositor;
 }
 
 void WebSettingsImpl::setDefaultTextEncodingName(const WebString& encoding)

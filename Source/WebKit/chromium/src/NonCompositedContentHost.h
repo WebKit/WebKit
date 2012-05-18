@@ -57,7 +57,7 @@ public:
     void invalidateRect(const WebCore::IntRect&);
     void setBackgroundColor(const WebCore::Color&);
     void setScrollLayer(WebCore::GraphicsLayer*);
-    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale, int layerAdjustX);
+    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float deviceScale, int layerAdjustX);
     void protectVisibleTileTextures();
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
@@ -73,6 +73,11 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
+    // The deviceScaleFactor given to the GraphicsLayer can be non-1 when the
+    // contents are scaled in the compositor instead of by the pageScaleFactor.
+    // However, the pageScaleFactor is always baked into the GraphicsLayer's
+    // size, so it is always 1 for the GraphicsLayer.
+    virtual float deviceScaleFactor() const OVERRIDE { return m_deviceScaleFactor; }
 
     WebCore::LayerChromium* scrollLayer();
 
@@ -81,6 +86,7 @@ private:
     WebCore::IntSize m_viewportSize;
     int m_layerAdjustX;
     bool m_showDebugBorders;
+    float m_deviceScaleFactor;
 };
 
 } // namespace WebKit
