@@ -3746,10 +3746,6 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html
 BUGWK86592 LINUX : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
 
-// Need rebaselining after patch from WK86671
-BUGLEVIW MAC WIN : fast/forms/form-hides-table.html = FAIL PASS
-BUGLEVIW MAC WIN : fast/table/form-with-table-style.html = FAIL
-
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
