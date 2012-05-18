@@ -196,7 +196,8 @@ EAPI Evas_Object     *ewk_settings_icon_database_icon_object_get(const char *url
  * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
  * when the network cannot be reached.
  *
- * By default, the path is @c ~/.webkit.
+ * By default, the path is @c NULL, indicating that the feature is disabled. Once the path is set, the feature is enabled
+ * and the path cannot be changed.
  *
  * @param path where to store cache, must be write-able.
  *
@@ -210,7 +211,7 @@ EAPI void             ewk_settings_application_cache_path_set(const char *path);
  * The Offline Application Caching APIs are part of HTML5 and allow applications to store data locally that is accessed
  * when the network cannot be reached.
  *
- * By default, the path is @c ~/.webkit.
+ * By default, the path is @c NULL, indicating that the feature is disabled.
  *
  * @return eina_stringshare'd path value.
  *

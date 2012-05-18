@@ -1,5 +1,21 @@
 2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] appcache tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=86619
+
+        Reviewed by Ryosuke Niwa.
+
+        No longer set the application cache path in ewk_main since the 
+        path can only be set once and this prevents DRT (or apps) to set
+        it. Update the ewk_settings documentation to reflect these 
+        changes.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.h:
+
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Add simple implementation of Web Intents
         https://bugs.webkit.org/show_bug.cgi?id=86354
 

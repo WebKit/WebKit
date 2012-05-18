@@ -162,6 +162,8 @@ bool DumpRenderTreeChrome::initialize()
         ewk_settings_local_storage_path_set(path);
         eina_str_join(path, sizeof(path), '/', drtTemp, "Databases");
         ewk_settings_web_database_path_set(path);
+        eina_str_join(path, sizeof(path), '/', drtTemp, "Applications");
+        ewk_settings_application_cache_path_set(path);
     }
 
     return true;

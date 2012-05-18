@@ -1,3 +1,16 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] appcache tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=86619
+
+        Reviewed by Ryosuke Niwa.
+
+        Correctly set the application cache database path in EFL's
+        DumpRenderTree initialization code.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::initialize):
+
 2012-05-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][DRT] Call resetInternalsObject() after each test.
