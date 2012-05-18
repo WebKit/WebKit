@@ -42,7 +42,7 @@ WebInspector.ScriptsSearchScope = function(uiSourceCodeProvider)
 WebInspector.ScriptsSearchScope.prototype = {
     /**
      * @param {WebInspector.SearchConfig} searchConfig
-     * @param {function(Object)} searchResultCallback
+     * @param {function(WebInspector.FileBasedSearchResultsPane.SearchResult)} searchResultCallback
      * @param {function(boolean)} searchFinishedCallback
      */
     performSearch: function(searchConfig, searchResultCallback, searchFinishedCallback)
@@ -97,7 +97,7 @@ WebInspector.ScriptsSearchScope.prototype = {
      */
     createSearchResultsPane: function(searchConfig)
     {
-        return new WebInspector.ScriptsSearchResultsPane(searchConfig);
+        return new WebInspector.FileBasedSearchResultsPane(searchConfig);
     },
 
     /**
@@ -125,66 +125,5 @@ WebInspector.ScriptsSearchScope.prototype = {
 }
 
 WebInspector.ScriptsSearchScope.prototype.__proto__ = WebInspector.SearchScope.prototype;
-
-/**
- * @constructor
- * @extends {WebInspector.FileBasedSearchResultsPane}
- * @param {WebInspector.SearchConfig} searchConfig
- */
-WebInspector.ScriptsSearchResultsPane = function(searchConfig)
-{
-    WebInspector.FileBasedSearchResultsPane.call(this, searchConfig)
-
-    this._linkifier = new WebInspector.Linkifier(new WebInspector.ScriptsSearchResultsPane.LinkifierFormatter());
-}
-
-WebInspector.ScriptsSearchResultsPane.prototype = {
-    /**
-     * @param {Object} file
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     */
-    createAnchor: function(file, lineNumber, columnNumber)
-    {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ file;
-        var rawLocation = uiSourceCode.uiLocationToRawLocation(lineNumber, columnNumber);
-        var anchor = this._linkifier.linkifyRawLocation(rawLocation);
-        anchor.removeChildren();
-        return anchor;
-    },
-    
-    /**
-     * @param {Object} file
-     * @return {string}
-     */
-    fileName: function(file)
-    {
-        var uiSourceCode = file;
-        return uiSourceCode.url;
-    },
-}
-
-WebInspector.ScriptsSearchResultsPane.prototype.__proto__ = WebInspector.FileBasedSearchResultsPane.prototype;
-
-/**
- * @constructor
- * @implements {WebInspector.LinkifierFormatter}
- */
-WebInspector.ScriptsSearchResultsPane.LinkifierFormatter = function()
-{
-}
-
-WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype = {
-    /**
-     * @param {Element} anchor
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    formatLiveAnchor: function(anchor, uiLocation)
-    {
-        // Empty because we don't want to ever update anchor contents after creation.
-    }
-}
-
-WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.__proto__ = WebInspector.LinkifierFormatter.prototype;
 
 WebInspector.settings.searchInContentScripts = WebInspector.settings.createSetting("searchInContentScripts", false);

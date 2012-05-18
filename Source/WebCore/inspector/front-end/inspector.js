@@ -653,7 +653,7 @@ WebInspector._registerShortcuts = function()
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
     
     var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
-    section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all scripts"));
+    section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all sources"));
     
     if (WebInspector.isMac()) {
         keys = [
