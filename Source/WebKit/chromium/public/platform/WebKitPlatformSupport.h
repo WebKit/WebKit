@@ -59,7 +59,6 @@ class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 class WebStorageNamespace; // FIXME: Does this belong in platform?
 class WebThemeEngine;
-class WebWorkerRunLoop;
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
@@ -157,11 +156,6 @@ public:
     // This value must be checked again after a context loss event as the platform's capabilities may have changed.
     virtual bool canAccelerate2dCanvas() { return false; }
 
-
-    // WebWorker ----------------------------------------------------------
-
-    virtual void didStartWorkerRunLoop(const WebWorkerRunLoop&) { }
-    virtual void didStopWorkerRunLoop(const WebWorkerRunLoop&) { }
 
 protected:
     ~WebKitPlatformSupport() { }

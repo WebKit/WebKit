@@ -107,6 +107,7 @@
             'chromium/public/WebVector.h',
             'chromium/public/WebVideoFrame.h',
             'chromium/public/WebVideoFrameProvider.h',
+            'chromium/public/WebWorkerRunLoop.h',
             'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
             'chromium/src/WebFloatQuad.cpp',

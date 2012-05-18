@@ -1,3 +1,27 @@
+2012-05-17  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move Web Workers methods to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=86799
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::didStartWorkerRunLoop):
+        (WebKit::Platform::didStopWorkerRunLoop):
+        * chromium/public/WebWorkerRunLoop.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebWorkerRunLoop):
+        (Task):
+        (WebKit::WebWorkerRunLoop::Task::~Task):
+        (WebKit::operator==):
+        (WebKit::operator<):
+
 2012-05-17  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Scale all compositor output by the defaultDeviceScaleFactor

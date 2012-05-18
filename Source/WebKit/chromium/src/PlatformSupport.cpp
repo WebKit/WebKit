@@ -48,7 +48,6 @@
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
-#include "WebWorkerRunLoop.h"
 #include "platform/WebAudioBus.h"
 #include "platform/WebCookie.h"
 #include "platform/WebCookieJar.h"
@@ -96,6 +95,7 @@
 #include "WorkerContextProxy.h"
 #include <public/WebClipboard.h>
 #include <public/WebMimeRegistry.h>
+#include <public/WebWorkerRunLoop.h>
 #include <wtf/Assertions.h>
 
 // We are part of the WebKit implementation.
@@ -906,12 +906,12 @@ bool PlatformSupport::popupsAllowed(NPP npp)
 #if ENABLE(WORKERS)
 void PlatformSupport::didStartWorkerRunLoop(WorkerRunLoop* loop)
 {
-    webKitPlatformSupport()->didStartWorkerRunLoop(WebWorkerRunLoop(loop));
+    WebKit::Platform::current()->didStartWorkerRunLoop(WebWorkerRunLoop(loop));
 }
 
 void PlatformSupport::didStopWorkerRunLoop(WorkerRunLoop* loop)
 {
-    webKitPlatformSupport()->didStopWorkerRunLoop(WebWorkerRunLoop(loop));
+    WebKit::Platform::current()->didStopWorkerRunLoop(WebWorkerRunLoop(loop));
 }
 
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)

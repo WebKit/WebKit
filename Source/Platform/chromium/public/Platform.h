@@ -56,6 +56,7 @@ class WebURL;
 class WebURLLoader;
 class WebSocketStreamHandle;
 class WebThread;
+class WebWorkerRunLoop;
 
 class Platform {
 public:
@@ -327,6 +328,12 @@ public:
 
     // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebMediaStreamCenter* createMediaStreamCenter(WebMediaStreamCenterClient*) { return 0; }
+
+
+    // WebWorker ----------------------------------------------------------
+
+    virtual void didStartWorkerRunLoop(const WebWorkerRunLoop&) { }
+    virtual void didStopWorkerRunLoop(const WebWorkerRunLoop&) { }
 
 protected:
     ~Platform() { }

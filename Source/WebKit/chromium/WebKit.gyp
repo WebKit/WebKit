@@ -283,7 +283,6 @@
                 'public/WebWidget.h',
                 'public/WebWidgetClient.h',
                 'public/WebWorkerInfo.h',
-                'public/WebWorkerRunLoop.h',
                 'public/android/WebInputEventFactory.h',
                 'public/android/WebSandboxSupport.h',
                 'public/gtk/WebInputEventFactory.h',
