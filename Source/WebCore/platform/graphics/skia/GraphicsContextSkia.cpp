@@ -629,7 +629,8 @@ void GraphicsContext::drawLineForText(const FloatPoint& pt,
     int thickness = SkMax32(static_cast<int>(strokeThickness()), 1);
     SkRect r;
     r.fLeft = WebCoreFloatToSkScalar(pt.x());
-    r.fTop = WebCoreFloatToSkScalar(pt.y());
+    // Avoid anti-aliasing lines. Currently, these are always horizontal.
+    r.fTop = WebCoreFloatToSkScalar(floorf(pt.y()));
     r.fRight = r.fLeft + WebCoreFloatToSkScalar(width);
     r.fBottom = r.fTop + SkIntToScalar(thickness);
 
