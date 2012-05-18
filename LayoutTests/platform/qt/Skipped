@@ -39,8 +39,7 @@
 # - failing transforms tests
 # - failing printing tests
 # - new tests without expected results
-# - Qt 4.7 related bugs
-# - Qt 4.8 related bugs
+# - Regressions occured after Qt version update
 # - new skipped tests yet to be sorted
 
 
@@ -660,11 +659,6 @@ http/tests/misc/xslt-bad-import.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/workers/shared-worker-methods.html
-
-# Caused by the way Qt caches network connections using user@hostname as the key
-# See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
-# Fixed in Qt 4.8
-http/tests/xmlhttprequest/re-login.html
 
 http/tests/xmlhttprequest/cache-override.html
 
@@ -1971,11 +1965,6 @@ canvas/philip/tests/2d.transformation.setTransform.skewed.html
 canvas/philip/tests/2d.transformation.transform.skewed.html
 canvas/philip/tests/type.prototype.html
 
-# [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
-# https://bugs.webkit.org/show_bug.cgi?id=40362
-canvas/philip/tests/2d.path.stroke.overlap.html
-
-
 # Failing tests after sync with Philip Taylor's upstream tests
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
 canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
@@ -2127,47 +2116,37 @@ fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
 fast/text/international/bdi-dir-default-to-auto.html
 
 # ============================================================================= #
-# Qt 4.7 related bugs
+# Regressions occured after Qt version update
 # ============================================================================= #
 
-# [Qt] editing/execCommand/move-selection-back-line.html fails with Qt 4.7.1
+# [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
+# https://bugs.webkit.org/show_bug.cgi?id=40362
+canvas/philip/tests/2d.path.stroke.overlap.html
+
+# [Qt] editing/execCommand/move-selection-back-line.html fails with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50144
 editing/execCommand/move-selection-back-line.html
 
-# [Qt] fast/forms/textarea-appearance-wrap.html fails with Qt 4.7.1
+# [Qt] fast/forms/textarea-appearance-wrap.html fails with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50145
 fast/forms/textarea-appearance-wrap.html
 
-# [Qt] 4 css2.1/t1202-counter tests fail with Qt 4.7.1
+# [Qt] 4 css2.1/t1202-counter tests fail with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50146
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counter-15-b.html
 css2.1/t1202-counters-09-b.html
 css2.1/t1202-counters-15-b.html
 
-# [Qt] 4 fast/text tests fail with Qt 4.7.1
+# [Qt] 4 fast/text tests fail with Qt >= 4.7.1 (fail with Qt 5 too)
 # https://bugs.webkit.org/show_bug.cgi?id=50147
 fast/text/format-control.html
-fast/text/justification-padding-mid-word.html
-fast/text/zero-width-characters.html
 fast/text/international/khmer-selection.html
 
-# ============================================================================= #
-# Qt 4.8 related bugs
-# ============================================================================= #
-
-# [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt 4.8
+# [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt >= 4.8
 # http://bugreports.qt.nokia.com/browse/QTBUG-19556
 # https://bugs.webkit.org/show_bug.cgi?id=60175
 http/tests/security/xss-DENIED-xsl-document.xml
-
-# [Qt]Update layout test results for newer Qt 4.8.x
-# https://bugs.webkit.org/show_bug.cgi?id=64527
-svg/text/lengthAdjust-text-metrics.html
-
-# ============================================================================= #
-# Fixed in Qt 4.8
-# ============================================================================= #
 
 # Support for third-party cookie blocking
 # https://bugs.webkit.org/show_bug.cgi?id=45455

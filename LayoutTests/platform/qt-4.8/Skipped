@@ -145,3 +145,8 @@ svg/text/text-text-06-t.svg
 svg/text/text-vkern-on-horizontal-text.svg
 svg/text/text-vkern.svg
 http/tests/misc/SVGFont-delayed-load.html
+
+# [Qt] 4 fast/text tests fail with Qt >= 4.7.1 (but pass with Qt 5)
+# https://bugs.webkit.org/show_bug.cgi?id=50147
+fast/text/format-control.html
+fast/text/international/khmer-selection.html

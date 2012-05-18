@@ -1,3 +1,10 @@
+2012-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skipped list cleanup.
+
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+
 2012-05-18  Mike West  <mkwst@chromium.org>
 
         Deflaking http/tests/security/contentSecurityPolicy/script-src-redirect.html
