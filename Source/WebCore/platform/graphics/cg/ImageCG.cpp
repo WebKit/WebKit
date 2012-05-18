@@ -91,6 +91,10 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     m_decodedSize = width * height * 4;
     m_size = IntSize(width, height);
 
+    // Since we don't have a decoder, we can't figure out the image orientation.
+    // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
+    m_sizeRespectingOrientation = IntSize(width, height);
+
     m_frames.grow(1);
     m_frames[0].m_frame = cgImage;
     m_frames[0].m_hasAlpha = true;
