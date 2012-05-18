@@ -1,5 +1,41 @@
 2012-05-18  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a binding benchmark for getElementById() for an undefined id
+        https://bugs.webkit.org/show_bug.cgi?id=86812
+
+        Reviewed by Ryosuke Niwa.
+
+        We should remove Bindings/dom-attributes.html and instead add more
+        reasonable micro benchmarks by classifying DOM binding call paths.
+
+        This patch adds a benchmark for document.getElementById() for an undefined id.
+        This benchmark covers 'getElementById (not in document)' in Dromaeo/dom-query.html,
+        and other Node-query methods that return a null.'
+
+        (Note: This benchmark is slower than document.getElementById() for a defined id.
+        We will fix the performance issue soon.)
+
+        Test results in my Linux desktop:
+
+        RESULT Bindings: undefined-get-element-by-id= 271.945751345 runs/s
+        median= 273.122389532 runs/s, stdev= 6.78219237299 runs/s, min= 257.4002574 runs/s, max= 281.690140845 runs/s
+
+        RESULT Bindings: undefined-get-element-by-id= 269.105872408 runs/s
+        median= 268.948655257 runs/s, stdev= 5.73707323755 runs/s, min= 257.4002574 runs/s, max= 278.128950695 runs/s
+
+        RESULT Bindings: undefined-get-element-by-id= 269.987513372 runs/s
+        median= 272.952853598 runs/s, stdev= 5.30252336078 runs/s, min= 255.754475703 runs/s, max= 273.97260274 runs/s
+
+        RESULT Bindings: undefined-get-element-by-id= 270.169625901 runs/s
+        median= 271.604938272 runs/s, stdev= 5.29502391906 runs/s, min= 258.064516129 runs/s, max= 278.481012658 runs/s
+
+        RESULT Bindings: undefined-get-element-by-id= 269.054631422 runs/s
+        median= 267.966292802 runs/s, stdev= 6.27197240579 runs/s, min= 258.064516129 runs/s, max= 278.481012658 runs/s
+
+        * Bindings/undefined-get-element-by-id.html: Added.
+
+2012-05-18  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Add a binding benchmark for getElementsByTagName()
         https://bugs.webkit.org/show_bug.cgi?id=86810
 
