@@ -35,6 +35,7 @@
 #include "TextCheckerClient.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 class Frame;
@@ -44,6 +45,7 @@ class SpellChecker;
 
 namespace WebKit {
 class WebViewImpl;
+class WebTextCheckingCompletionImpl;
 
 class EditorClientImpl : public WebCore::EditorClient, public WebCore::TextCheckerClient {
 public:
@@ -51,6 +53,7 @@ public:
 
     virtual ~EditorClientImpl();
     virtual void pageDestroyed();
+    virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE;
 
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
     virtual bool smartInsertDeleteEnabled();
@@ -114,6 +117,8 @@ public:
 
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
+    void didCheckString(WebTextCheckingCompletionImpl*);
+
 private:
     void modifySelection(WebCore::Frame*, WebCore::KeyboardEvent*);
 
@@ -141,6 +146,8 @@ private:
         SpellCheckForcedOff
     };
     int m_spellCheckThisFieldStatus;
+
+    WTF::HashSet<WebTextCheckingCompletionImpl*> m_pendingTextChecks;
 };
 
 } // namespace WebKit

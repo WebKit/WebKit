@@ -1,3 +1,13 @@
+2012-05-18  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=85515
+        Stale frame in WebCore::SpellChecker::didCheckSucceeded
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/EditorClientGtk.h:
+        (WebKit::EditorClient::frameWillDetachPage):
+
 2012-05-17  Hironori Bono  <hbono@chromium.org>
 
         [Refactoring] Move platform-specific code in Editor::respondToChangedSelection to the WebKit layer

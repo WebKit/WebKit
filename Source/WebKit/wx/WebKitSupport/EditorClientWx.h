@@ -45,6 +45,7 @@ public:
     virtual ~EditorClientWx();
     void setPage(Page*);
     virtual void pageDestroyed();
+    virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool shouldDeleteRange(Range*);
     virtual bool shouldShowDeleteInterface(HTMLElement*);

@@ -63,7 +63,8 @@ class EditorClient {
 public:
     virtual ~EditorClient() {  }
     virtual void pageDestroyed() = 0;
-    
+    virtual void frameWillDetachPage(Frame*) = 0;
+
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool shouldShowDeleteInterface(HTMLElement*) = 0;
     virtual bool smartInsertDeleteEnabled() = 0; 

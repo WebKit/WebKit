@@ -39,21 +39,29 @@ class SpellChecker;
 
 namespace WebKit {
 
+class EditorClientImpl;
+
 class WebTextCheckingCompletionImpl : public WebTextCheckingCompletion {
 public:
-    WebTextCheckingCompletionImpl(int identifier, WebCore::SpellChecker* spellchecker)
-        : m_identifier(identifier), m_spellChecker(spellchecker)
+    WebTextCheckingCompletionImpl(int identifier, WebCore::SpellChecker* spellchecker, EditorClientImpl* editorClient)
+        : m_identifier(identifier)
+        , m_spellChecker(spellchecker)
+        , m_editorClient(editorClient)
     {
     }
 
     virtual void didFinishCheckingText(const WebVector<WebTextCheckingResult>&);
     virtual void didCancelCheckingText();
 
+    void invalidate();
+    WebCore::SpellChecker* spellChecker() const { return m_spellChecker; }
+
 private:
     virtual ~WebTextCheckingCompletionImpl() { }
 
     int m_identifier;
     WebCore::SpellChecker* m_spellChecker;
+    EditorClientImpl* m_editorClient;
 };
 
 } // namespace WebKit

@@ -41,6 +41,7 @@ public:
     ~WebEditorClient();
 
     virtual void pageDestroyed();
+    virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleGrammarChecking();

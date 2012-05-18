@@ -841,7 +841,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 }
 
 Editor::Editor(Frame* frame)
-    : m_frame(frame)
+    : FrameDestructionObserver(frame)
     , m_deleteButtonController(adoptPtr(new DeleteButtonController(frame)))
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
@@ -3055,6 +3055,12 @@ void Editor::deviceScaleFactorChanged()
 bool Editor::unifiedTextCheckerEnabled() const
 {
     return WebCore::unifiedTextCheckerEnabled(m_frame);
+}
+
+void Editor::willDetachPage() OVERRIDE
+{
+    if (EditorClient* editorClient = client())
+        editorClient->frameWillDetachPage(frame());
 }
 
 } // namespace WebCore

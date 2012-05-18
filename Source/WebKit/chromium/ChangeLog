@@ -1,3 +1,33 @@
+2012-05-18  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=85515
+        Stale frame in WebCore::SpellChecker::didCheckSucceeded
+
+        Added WebTextCheckingCompletionImpl::invalidate() to mark
+        pending spellcheck request as invalid, and added frameWillDetachPage()
+        to fire it.
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::frameWillDetachPage):
+        (WebKit):
+        (WebKit::EditorClientImpl::requestCheckingOfString):
+        (WebKit::EditorClientImpl::didCheckString):
+        * src/EditorClientImpl.h:
+        (WebKit):
+        (EditorClientImpl):
+        * src/WebTextCheckingCompletionImpl.cpp:
+        (WebKit::WebTextCheckingCompletionImpl::didFinishCheckingText):
+        (WebKit::WebTextCheckingCompletionImpl::didCancelCheckingText):
+        (WebKit::WebTextCheckingCompletionImpl::invalidate):
+        (WebKit):
+        * src/WebTextCheckingCompletionImpl.h:
+        (WebKit):
+        (WebKit::WebTextCheckingCompletionImpl::WebTextCheckingCompletionImpl):
+        (WebTextCheckingCompletionImpl):
+        (WebKit::WebTextCheckingCompletionImpl::spellChecker):
+
 2012-05-18  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] plumb the frame for which a drag was initiated to the WebViewClient

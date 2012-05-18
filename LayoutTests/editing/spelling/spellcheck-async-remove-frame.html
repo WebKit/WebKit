@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+    internals.settings.setUnifiedTextCheckingEnabled(true);
+}
+
+function runTest() {
+    var textToSelect = "This text should be selected, but this frame shouldn't be focused.";
+    var frame = document.getElementById("frame");
+    var s = frame.contentDocument.getSelection();
+    s.setPosition(frame.contentDocument.body, 0);
+    frame.contentDocument.execCommand("InsertText", false, textToSelect);
+    frame.parentNode.removeChild(frame);
+    window.setTimeout(function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 50);
+}
+</script>
+</head>
+<body>
+<div>PASS unless crash.</div>
+<iframe id="frame" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>
+</body>
+</html>

@@ -41,6 +41,7 @@ public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
     virtual void pageDestroyed() OVERRIDE;
+    virtual void frameWillDetachPage(Frame*) OVERRIDE { }
 
     virtual bool isGrammarCheckingEnabled() OVERRIDE;
     virtual void toggleGrammarChecking() OVERRIDE;
