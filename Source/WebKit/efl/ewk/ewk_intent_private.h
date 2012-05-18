@@ -21,6 +21,10 @@
 #define ewk_intent_private_h
 
 #if ENABLE(WEB_INTENTS)
+
+#include "ewk_intent.h"
+#include "ewk_intent_request.h"
+
 // forward declarations
 namespace WebCore {
 class Intent;

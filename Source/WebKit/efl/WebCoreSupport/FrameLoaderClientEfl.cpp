@@ -55,7 +55,7 @@
 #include "Settings.h"
 #include "WebKitVersion.h"
 #include "ewk_frame_private.h"
-#include "ewk_intent_request.h"
+#include "ewk_intent_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include "ewk_view_private.h"

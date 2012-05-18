@@ -517,6 +517,18 @@ BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-
 BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 
+// Incomplete Web Intents support (disabled by default)
+BUGWK86866 SKIP : webintents/intent-tag.html = TEXT
+BUGWK86873 SKIP : webintents/web-intents-api.html = TEXT
+BUGWK86865 SKIP : webintents/web-intents-delivery.html = TEXT
+BUGWK86864 SKIP : webintents/web-intents-delivery-reuse.html = TEXT
+BUGWK86867 SKIP : webintents/web-intents-failure.html = TEXT
+BUGWK86864 SKIP : webintents/web-intents-invoke.html = TEXT
+BUGWK86864 SKIP : webintents/web-intents-invoke-port.html = TEXT
+BUGWK86864 SKIP : webintents/web-intents-obj-constructor.html = TEXT
+BUGWK86864 SKIP : webintents/web-intents-reload.html = TEXT
+BUGWK86867 SKIP : webintents/web-intents-reply.html = TEXT
+
 // Needs rebaseline after bug 86441
 BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE

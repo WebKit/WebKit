@@ -115,7 +115,7 @@ Ewk_Intent_Request* ewk_intent_request_new(PassRefPtr<WebCore::IntentRequest> co
     Ewk_Intent_Request* request = new Ewk_Intent_Request;
     request->__ref = 1;
     request->core = core;
-    request->intent = ewk_intent_new(core->intent());
+    request->intent = ewk_intent_new(request->core->intent());
 
     return request;
 }

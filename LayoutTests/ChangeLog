@@ -1,3 +1,17 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Web Intents code is not compiling
+        https://bugs.webkit.org/show_bug.cgi?id=85364
+
+        Reviewed by Adam Barth.
+
+        Move webintents test cases to test expectations until the needed
+        features are implemented and Web Intents are enabled by default
+        for EFL port.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-18  Joe Thomas  <joethomas@motorola.com>
 
         background-size specified by a single value in background shorthand fails to parse.

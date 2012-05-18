@@ -287,6 +287,12 @@ IF (ENABLE_WEB_AUDIO)
     )
 ENDIF ()
 
+IF (ENABLE_WEB_INTENTS)
+    LIST (APPEND WebCore_SOURCES
+        bindings/js/JSIntentConstructor.cpp
+    )
+ENDIF ()
+
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
 )

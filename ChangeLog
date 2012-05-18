@@ -1,3 +1,14 @@
+2012-05-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Web Intents code is not compiling
+        https://bugs.webkit.org/show_bug.cgi?id=85364
+
+        Reviewed by Adam Barth.
+
+        Remove broken CMake directive for WEB_INTENTS.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-05-18  Adrian Bunk  <bunk@stusta.de>
 
         [GTK] Remove the obsolete AM_PROG_CC_STDC

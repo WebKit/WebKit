@@ -2515,6 +2515,7 @@ IF (ENABLE_WEB_INTENTS)
         Modules/intents/NavigatorIntents.idl
     )
     LIST(APPEND WebCore_SOURCES
+       Modules/intents/DOMWindowIntents.cpp
        Modules/intents/Intent.cpp
        Modules/intents/IntentRequest.cpp
        Modules/intents/NavigatorIntents.cpp

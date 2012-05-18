@@ -1069,9 +1069,6 @@ http/tests/websocket/tests/hybi/
 # Microdata DOM API is not yet enabled.
 fast/dom/MicroData
 
-# Web Intents is not yet enabled.
-webintents/
-
 # Pointer Lock is not implemented.
 pointer-lock/
 
