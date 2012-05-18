@@ -63,6 +63,27 @@ void TextCheckerClientGtk::checkSpellingOfString(const UChar* text, int length, 
 {
     GOwnPtr<gchar> utf8Text(g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0));
     webkit_spell_checker_check_spelling_of_string(m_spellChecker.get(), utf8Text.get(), misspellingLocation, misspellingLength);
+
+    // We have the offset and length in Unicode characters, but we need to convert them to UTF-16 offsets.
+    // Unfortunately there doesn't seem to be a simple way to do this.
+    if (!*misspellingLength)
+        return;
+
+    bool pastStartOfWord = false;
+    for (int i = 0; i < length; i++) {
+        if (i >= *misspellingLocation + *misspellingLength)
+            return;
+        if (!pastStartOfWord && i > *misspellingLocation)
+            pastStartOfWord = true;
+
+        // If this character is part of a surrogate pair, we need to skip the next character (the trail)
+        // and to increase our offsets.
+        if (!U16_IS_SINGLE(text[i])) {
+            i++;
+            (*misspellingLength)++;
+            *misspellingLocation += pastStartOfWord ? 0 : 1;
+        }
+    }
 }
 
 String TextCheckerClientGtk::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)

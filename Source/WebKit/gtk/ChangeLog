@@ -1,5 +1,39 @@
 2012-05-18  Martin Robinson  <mrobinson@igalia.com>
 
+        Spell checker doesn't recognize contractions (apostrophes)
+        https://bugs.webkit.org/show_bug.cgi?id=86118
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The Enchant spell checker was breaking words on apostrophes, because
+        apparently they were always being detected as Pango word-end
+        characters. In reality, to know whether or not the apostrophe is a
+        word end character requires looking at a string with a larger
+        granularity than one character. In reality, WebCore has already
+        ensured that any apostrophes in the string belong to contractions by
+        using the WordBreakIterator.
+
+        Simplify the way the we break strings, by just manually trimming off
+        all non-graphable characters from the string and then finding the end
+        of the first word by looking for the next non-graphable character.
+        This has the side effect of removing the dependency on Pango and
+        eliminating one copy.
+
+        This change also cleans up some misbehavior on the part of the
+        WebCoreSupport layer which was not converting from Unicode character
+        offsets to UTF-16. These offsets can be different if any of the
+        characters in the UTF-16 string are surrogate pairs (non BMP
+        characters).
+
+        * WebCoreSupport/TextCheckerClientGtk.cpp:
+        (WebKit::TextCheckerClientGtk::checkSpellingOfString): Properly
+        convert from Unicode offsets to UTF-16 offsets.
+        * webkit/webkitspellcheckerenchant.cpp:
+        (findByteOffsetToFirstNonGraphableCharacter): Added this helper.
+        (checkSpellingOfString): Don't split words on apostrophes.
+
+2012-05-18  Martin Robinson  <mrobinson@igalia.com>
+
         OOM running webgl/sdk/tests/conformance/context/context-creation-and-destruction.html
         https://bugs.webkit.org/show_bug.cgi?id=80509
 
