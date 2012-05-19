@@ -261,6 +261,13 @@ UpdatableTile* TiledLayerChromium::createTile(int i, int j)
     m_tiler->addTile(tile.release(), i, j);
 
     addedTile->dirtyRect = m_tiler->tileRect(addedTile);
+
+    // Temporary diagnostic crash.
+    if (!addedTile)
+        CRASH();
+    if (!tileAt(i, j))
+        CRASH();
+
     return addedTile;
 }
 
@@ -363,6 +370,10 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             if (!tile)
                 tile = createTile(i, j);
 
+            // Temporary diagnostic crash
+            if (!m_tiler)
+                CRASH();
+
             if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
                 // Sets the dirty rect to a full-sized tile with border texels.
                 tile->dirtyRect = m_tiler->tileRect(tile);
@@ -412,6 +423,8 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
+            if (!tile)
+                CRASH();
             if (tile->updated)
                 tile->copyAndClearDirty();
             else if (!idle && occlusion && tile->isDirty())
