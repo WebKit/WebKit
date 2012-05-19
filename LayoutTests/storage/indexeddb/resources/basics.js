@@ -20,7 +20,7 @@ function test()
     shouldBeTrue("'transaction' in request");
     shouldBeNull("request.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("request.readyState", "'pending'");
+    shouldBeEqualToString("request.readyState", "pending");
     shouldBeTrue("'onsuccess' in request");
     shouldBeNull("request.onsuccess");
     shouldBeTrue("'onerror' in request");
@@ -43,7 +43,7 @@ function openCallback(evt)
     shouldBeTrue("'transaction' in event.target");
     shouldBeNull("event.target.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("event.target.readyState", "'done'");
+    shouldBeEqualToString("event.target.readyState", "done");
     shouldBeTrue("'onsuccess' in event.target");
     shouldBeTrue("'onerror' in event.target");
 

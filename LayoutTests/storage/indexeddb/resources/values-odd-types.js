@@ -60,7 +60,7 @@ function openACursor()
         if (cursor) {
             shouldBe("cursor.value.toString()", "validTypes[valueIndex].value.toString()");
             if (valueIndex == 1) {
-                shouldBe("cursor.value.toUTCString()", "'Thu, 01 Jan 1970 00:00:00 GMT'");
+                shouldBeEqualToString("cursor.value.toUTCString()", "Thu, 01 Jan 1970 00:00:00 GMT");
             }
             if (valueIndex == 3) {
                 shouldBe("cursor.value.width", "1");

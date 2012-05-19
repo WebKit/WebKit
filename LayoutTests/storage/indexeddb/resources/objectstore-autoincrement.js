@@ -27,7 +27,7 @@ function setVersionSuccess()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = setVersionCompleted;
 
@@ -41,7 +41,7 @@ function setVersionSuccess()
     var storeNames = evalAndLog("storeNames = db.objectStoreNames");
 
     shouldBeEqualToString("store.name", "StoreWithKeyPath");
-    shouldBe("store.keyPath", "'id'");
+    shouldBeEqualToString("store.keyPath", "id");
     shouldBe("storeNames.contains('StoreWithKeyPath')", "true");
     shouldBe("storeNames.contains('StoreWithAutoIncrement')", "true");
     shouldBe("storeNames.contains('PlainOldStore')", "true");
@@ -181,7 +181,7 @@ function testLongKeyPath()
         if (expected === null) {
             evalAndLog("expected = cursor.value.a.b.c.id + 1");
         } else {
-            shouldBe("cursor.value.foo", "'bar'");
+            shouldBeEqualToString("cursor.value.foo", "bar");
             shouldBe("cursor.value.a.b.c.id", "expected");
             evalAndLog("expected = cursor.value.a.b.c.id + 1");
         }

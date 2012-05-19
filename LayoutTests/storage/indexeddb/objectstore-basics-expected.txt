@@ -11,7 +11,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 createObjectStore():
 store = db.createObjectStore('storeName', null)
@@ -49,23 +49,23 @@ PASS storeNames.length is 1
 PASS db.createObjectStore('storeWithKeyPath', {keyPath: 'path'}).keyPath is "path"
 PASS db.createObjectStore('storeWithKeyGenerator', {autoIncrement: true}).autoIncrement is true
 Ask for an index that doesn't exist:
-index = store.index('asdf')
-PASS Exception thrown.
+Expecting exception from store.index('asdf')
+PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_FOUND_ERR
 createIndex():
 index = store.createIndex('indexName', 'x', {unique: true})
-PASS index !== null is true
+PASS index is non-null.
 PASS store.indexNames.contains('indexName') is true
 index = store.index('indexName')
-PASS index !== null is true
+PASS index is non-null.
 Ask for an index that doesn't exist:
-index = store.index('asdf')
-PASS Exception thrown.
+Expecting exception from store.index('asdf')
+PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_FOUND_ERR
 db.setVersion("version fail")
 PASS db.version is "version fail"
 setVersionTrans = event.target.result
-PASS setVersionTrans !== null is true
+PASS setVersionTrans is non-null.
 store = setVersionTrans.objectStore('storeName')
 index = store.createIndex('indexFail', 'x')
 PASS db.version is "new version"
@@ -85,9 +85,9 @@ store = transaction.objectStore('storeName')
 Try to insert data with a Date key:
 store.add({x: 'foo'}, testDate)
 Try to insert a value not handled by structured clone:
-store.add({x: 'bar', y: self}, 'bar')
-PASS Exception thrown
-PASS code is 25
+Expecting exception from store.add({x: 'bar', y: self}, 'bar')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
 Try to insert data where key path yields a Date key:
 store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():

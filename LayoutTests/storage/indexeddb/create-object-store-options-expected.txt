@@ -13,7 +13,7 @@ db.createObjectStore('a', {keyPath: 'a'})
 db.createObjectStore('b')
 db.createObjectStore('c', {autoIncrement: true});
 trans = db.transaction(['a', 'b'], 'readwrite')
-PASS trans.mode is 'readwrite'
+PASS trans.mode is "readwrite"
 trans.objectStore('a').put({'a': 0})
 Expecting TypeError exception from db.createObjectStore('d', 'bar');
 PASS Exception was thrown.

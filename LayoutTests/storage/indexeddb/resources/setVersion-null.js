@@ -26,7 +26,7 @@ function openSuccess()
 
 function postSetVersion()
 {
-    shouldBe("db.version", "'null'");
+    shouldBeEqualToString("db.version", "null");
     finishJSTest();
 }
 

@@ -210,17 +210,29 @@ PASS keyRange.upper is 'abf'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
 Passing an invalid key into only({})
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.only({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into upperBound({})
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.upperBound({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into lowerBound({})
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.lowerBound({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into bound(null, {})
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.bound(null, {})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into bound({},null)
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.bound({}, null)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into bound({}, {})
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from IDBKeyRange.bound({}, {})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Lower key greater than higher key, bound(4, 3)
 Expecting exception from IDBKeyRange.bound(4, 3)
 PASS Exception was thrown.

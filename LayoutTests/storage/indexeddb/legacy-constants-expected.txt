@@ -24,37 +24,37 @@ store.createIndex('index', 'value')
 
 populating store...
 trans = db.transaction('store', IDBTransaction.READ_WRITE)
-PASS trans.mode is 'readwrite'
+PASS trans.mode is "readwrite"
 store = trans.objectStore('store');
 store.put({value: 111}, 1)
 store.put({value: 222}, 2)
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is 'readonly'
+PASS trans.mode is "readonly"
 request = store.openCursor(null, IDBCursor.NEXT)
-PASS cursor.direction is 'next'
+PASS cursor.direction is "next"
 cursor.continue();
-PASS cursor.direction is 'next'
+PASS cursor.direction is "next"
 cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is 'readonly'
+PASS trans.mode is "readonly"
 request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)
-PASS cursor.direction is 'nextunique'
+PASS cursor.direction is "nextunique"
 cursor.continue();
-PASS cursor.direction is 'nextunique'
+PASS cursor.direction is "nextunique"
 cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is 'readonly'
+PASS trans.mode is "readonly"
 request = store.openCursor(null, IDBCursor.PREV)
-PASS cursor.direction is 'prev'
+PASS cursor.direction is "prev"
 cursor.continue();
-PASS cursor.direction is 'prev'
+PASS cursor.direction is "prev"
 cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is 'readonly'
+PASS trans.mode is "readonly"
 request = store.openCursor(null, IDBCursor.NEXT)
-PASS cursor.direction is 'next'
+PASS cursor.direction is "next"
 cursor.continue();
-PASS cursor.direction is 'next'
+PASS cursor.direction is "next"
 cursor.continue();
 PASS successfullyParsed is true
 

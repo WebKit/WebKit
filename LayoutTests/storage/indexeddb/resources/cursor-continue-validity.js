@@ -36,7 +36,7 @@ function setVersion()
 function deleteExisting()
 {
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
 
     deleteAllObjectStores(db);

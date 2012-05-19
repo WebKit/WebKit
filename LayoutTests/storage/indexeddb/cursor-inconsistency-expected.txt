@@ -10,7 +10,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 objectStore = db.createObjectStore('basicStore')
 objectStore.add('someValue1', 'someKey1').onerror = unexpectedErrorCallback
@@ -24,7 +24,7 @@ objectStore.openCursor(keyRange)
 
 checkCursor()
 storedCursor = event.target.result
-PASS storedCursor === event.target.result is true
+PASS storedCursor is event.target.result
 PASS storedCursor.key is "someKey1"
 PASS event.target.result.key is "someKey1"
 PASS storedCursor.value is "someValue1"
@@ -32,7 +32,7 @@ PASS event.target.result.value is "someValue1"
 event.target.result.continue()
 
 checkCursor()
-PASS storedCursor === event.target.result is true
+PASS storedCursor is event.target.result
 PASS storedCursor.key is "someKey2"
 PASS event.target.result.key is "someKey2"
 PASS storedCursor.value is "someValue2"
@@ -40,7 +40,7 @@ PASS event.target.result.value is "someValue2"
 event.target.result.continue()
 
 checkCursor()
-PASS storedCursor === event.target.result is true
+PASS storedCursor is event.target.result
 PASS storedCursor.key is "someKey3"
 PASS event.target.result.key is "someKey3"
 PASS storedCursor.value is "someValue3"
@@ -48,7 +48,7 @@ PASS event.target.result.value is "someValue3"
 event.target.result.continue()
 
 checkCursor()
-PASS storedCursor === event.target.result is true
+PASS storedCursor is event.target.result
 PASS storedCursor.key is "someKey4"
 PASS event.target.result.key is "someKey4"
 PASS storedCursor.value is "someValue4"

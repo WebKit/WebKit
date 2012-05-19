@@ -40,7 +40,7 @@ function addRemoveIDBObjects()
 {
     debug("addRemoveIDBObjects():");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.addEventListener('abort', testSetVersionAbort2, true);
     trans.oncomplete = unexpectedCompleteCallback;
 
@@ -66,7 +66,7 @@ function addRemoveAddIDBObjects()
 {
     debug("addRemoveAddIDBObjects():");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.addEventListener('abort', testSetVersionAbort3, false);
     trans.oncomplete = unexpectedCompleteCallback;
 
@@ -97,7 +97,7 @@ function addIDBObjects()
     debug("addIDBObjects():");
     shouldBeFalse("event.cancelable");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = testInactiveAbortedTransaction;
     trans.oncomplete = unexpectedCompleteCallback;
 
@@ -140,7 +140,7 @@ function addIDBObjectsAndCommit()
 {
     debug("addIDBObjectsAndCommit():");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
 
     store = evalAndLog("store = db.createObjectStore('storeFail', null)");
@@ -182,7 +182,7 @@ function removeIDBObjects()
 {
     debug("removeIDBObjects():");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = testSetVersionAbort6;
     trans.oncomplete = unexpectedCompleteCallback;
 
@@ -234,7 +234,7 @@ function setVersionSuccess()
     debug("");
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.addEventListener('complete', completeCallback, false);
     self.completeEventFired = false;
@@ -269,7 +269,7 @@ function testDOMStringList()
     evalAndLog("transaction = db.transaction(db.objectStoreNames)");
     testPassed("no exception thrown");
     for (var i = 0; i < db.objectStoreNames.length; ++i) {
-      shouldBeTrue("transaction.objectStore(" + JSON.stringify(db.objectStoreNames[i]) + ") != null");
+      shouldBeNonNull("transaction.objectStore(" + JSON.stringify(db.objectStoreNames[i]) + ")");
     }
     testPassed("all stores present in transaction");
     testInvalidMode();

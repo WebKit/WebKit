@@ -25,7 +25,7 @@ function prepareDatabase()
     debug("");
     debug("Creating empty stores and indexes");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = addData;
 
@@ -79,13 +79,13 @@ function verifyIndexes(indexName, callback)
         cursor = evalAndLog("cursor = event.target.result");
         if (cursor) {
             ex = expected.shift();
-            shouldBeTrue("ex != null");
+            shouldBeNonNull("ex");
             shouldBe("cursor.key", String(ex.key));
             shouldBeEqualToString("cursor.primaryKey", ex.primaryKey);
             shouldBeEqualToString("cursor.value.y", ex.y);
             cursor.continue();
         } else {
-            shouldBeTrue("expected.length === 0");
+            shouldBe("expected.length", "0");
         }
     };
 }
@@ -128,7 +128,7 @@ function createIndexOnStoreWithData()
     request.onsuccess = function() {
 
         var trans = evalAndLog("trans = event.target.result");
-        shouldBeTrue("trans !== null");
+        shouldBeNonNull("trans");
         trans.onabort = unexpectedAbortCallback;
         trans.oncomplete = function() { verifyIndexes('index-new', finishJSTest); };
 

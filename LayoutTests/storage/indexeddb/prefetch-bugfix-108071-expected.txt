@@ -11,7 +11,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 objectStore = db.createObjectStore('store', {keyPath: 'id'})
 
 resetObjectStore():

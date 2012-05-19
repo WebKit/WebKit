@@ -118,53 +118,23 @@ function test()
     checkBoundKeyRange("'aae'", "'abe'", true, false);
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
 
-    try {
-        debug("Passing an invalid key into only({})");
-        IDBKeyRange.only({});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into only({})");
+    evalAndExpectException("IDBKeyRange.only({})", "IDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into upperBound({})");
-        IDBKeyRange.upperBound({});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into upperBound({})");
+    evalAndExpectException("IDBKeyRange.upperBound({})", "IDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into lowerBound({})");
-        IDBKeyRange.lowerBound({});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into lowerBound({})");
+    evalAndExpectException("IDBKeyRange.lowerBound({})", "IDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into bound(null, {})");
-        IDBKeyRange.bound(null, {});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into bound(null, {})");
+    evalAndExpectException("IDBKeyRange.bound(null, {})", "IDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into bound({},null)");
-        IDBKeyRange.bound({}, null);
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into bound({},null)");
+    evalAndExpectException("IDBKeyRange.bound({}, null)", "IDBDatabaseException.DATA_ERR");
 
-    try {
-        debug("Passing an invalid key into bound({}, {})");
-        IDBKeyRange.bound({}, {});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into bound({}, {})");
+    evalAndExpectException("IDBKeyRange.bound({}, {})", "IDBDatabaseException.DATA_ERR");
 
     debug("Lower key greater than higher key, bound(4, 3)");
     evalAndExpectException("IDBKeyRange.bound(4, 3)", "IDBDatabaseException.DATA_ERR");

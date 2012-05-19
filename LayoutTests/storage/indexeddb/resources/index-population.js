@@ -84,7 +84,7 @@ function setVersion2Abort()
     debug("");
     debug("setVersion2Abort():");
     shouldBe("db.objectStoreNames.length", "1");
-    shouldBe("db.objectStoreNames[0]", "'store1'");
+    shouldBeEqualToString("db.objectStoreNames[0]", "store1");
     finishJSTest();
 }
 

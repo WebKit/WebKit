@@ -163,11 +163,11 @@ function checkStore()
             evalAndLog("getreq = store.get(cursor.key)");
             getreq.onerror = unexpectedErrorCallback;
             getreq.onsuccess = function() {
-                shouldBeTrue("getreq.result === count++");
+                shouldBe("getreq.result", "count++");
                 cursor.continue();
             };
         } else {
-            shouldBeTrue("count === keys.length");
+            shouldBe("count", "keys.length");
             finishUp();
         }
     };

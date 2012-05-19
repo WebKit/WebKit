@@ -27,7 +27,7 @@ function setVersionSuccess()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
 
     deleteAllObjectStores(db);
@@ -89,7 +89,7 @@ function createAnotherObjectStore()
 
     objectStore = evalAndLog('db.createObjectStore("test456")');
     var setVersionTrans = evalAndLog("setVersionTrans = event.target.result");
-    shouldBeTrue("setVersionTrans !== null");
+    shouldBeNonNull("setVersionTrans");
     setVersionTrans.oncomplete = unexpectedCompleteCallback;
     setVersionTrans.onabort = checkMetadata;
     setVersionTrans.abort();

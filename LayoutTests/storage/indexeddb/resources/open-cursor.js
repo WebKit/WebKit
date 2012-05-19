@@ -27,9 +27,9 @@ function cursorWithKeySuccess()
     debug("Cursor opened successfully.");
     // FIXME: check that we can iterate the cursor.
     cursor = event.target.result;
-    shouldBe("cursor.direction", "'next'");
-    shouldBe("cursor.key", "'myKey'");
-    shouldBe("cursor.value", "'myValue'");
+    shouldBeEqualToString("cursor.direction", "next");
+    shouldBeEqualToString("cursor.key", "myKey");
+    shouldBeEqualToString("cursor.value", "myValue");
     debug("");
     debug("Passing an invalid key into .continue({}).");
     evalAndExpectException("cursor.continue({})", "IDBDatabaseException.DATA_ERR");
@@ -67,9 +67,9 @@ function cursorSuccess()
     debug("Cursor opened successfully.");
     // FIXME: check that we can iterate the cursor.
     cursor = event.target.result;
-    shouldBe("cursor.direction", "'next'");
-    shouldBe("cursor.key", "'myKey'");
-    shouldBe("cursor.value", "'myValue'");
+    shouldBeEqualToString("cursor.direction", "next");
+    shouldBeEqualToString("cursor.key", "myKey");
+    shouldBeEqualToString("cursor.value", "myValue");
     debug("");
     debug("Passing an invalid key into .continue({}).");
     evalAndExpectException("event.target.result.continue({})", "IDBDatabaseException.DATA_ERR");
@@ -90,7 +90,7 @@ function setVersionSuccess()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
 
     deleteAllObjectStores(db);

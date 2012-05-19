@@ -5,10 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-IDBTransaction = self.IDBTransaction || self.IDBTransaction;
-PASS IDBTransaction == null is false
-IDBDatabaseException = self.IDBDatabaseException || self.IDBDatabaseException;
-PASS IDBDatabaseException == null is false
 indexedDB.open(name)
 db = openreq.result
 request = db.setVersion('1')

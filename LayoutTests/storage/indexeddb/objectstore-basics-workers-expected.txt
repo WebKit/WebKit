@@ -12,7 +12,7 @@ Starting worker: resources/objectstore-basics.js
 [Worker] db.setVersion('new version')
 [Worker] setVersionSuccess():
 [Worker] trans = event.target.result
-PASS [Worker] trans !== null is true
+PASS [Worker] trans is non-null.
 [Worker] Deleted all object stores.
 [Worker] createObjectStore():
 [Worker] store = db.createObjectStore('storeName', null)
@@ -50,23 +50,23 @@ PASS [Worker] storeNames.length is 1
 PASS [Worker] db.createObjectStore('storeWithKeyPath', {keyPath: 'path'}).keyPath is "path"
 PASS [Worker] db.createObjectStore('storeWithKeyGenerator', {autoIncrement: true}).autoIncrement is true
 [Worker] Ask for an index that doesn't exist:
-[Worker] index = store.index('asdf')
-PASS [Worker] Exception thrown.
+[Worker] Expecting exception from store.index('asdf')
+PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.NOT_FOUND_ERR
 [Worker] createIndex():
 [Worker] index = store.createIndex('indexName', 'x', {unique: true})
-PASS [Worker] index !== null is true
+PASS [Worker] index is non-null.
 PASS [Worker] store.indexNames.contains('indexName') is true
 [Worker] index = store.index('indexName')
-PASS [Worker] index !== null is true
+PASS [Worker] index is non-null.
 [Worker] Ask for an index that doesn't exist:
-[Worker] index = store.index('asdf')
-PASS [Worker] Exception thrown.
+[Worker] Expecting exception from store.index('asdf')
+PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.NOT_FOUND_ERR
 [Worker] db.setVersion("version fail")
 PASS [Worker] db.version is "version fail"
 [Worker] setVersionTrans = event.target.result
-PASS [Worker] setVersionTrans !== null is true
+PASS [Worker] setVersionTrans is non-null.
 [Worker] store = setVersionTrans.objectStore('storeName')
 [Worker] index = store.createIndex('indexFail', 'x')
 PASS [Worker] db.version is "new version"
@@ -86,9 +86,9 @@ PASS [Worker] store.indexNames.item(100) is null
 [Worker] Try to insert data with a Date key:
 [Worker] store.add({x: 'foo'}, testDate)
 [Worker] Try to insert a value not handled by structured clone:
-[Worker] store.add({x: 'bar', y: self}, 'bar')
-PASS [Worker] Exception thrown
-PASS [Worker] code is 25
+[Worker] Expecting exception from store.add({x: 'bar', y: self}, 'bar')
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is DOMException.DATA_CLONE_ERR
 [Worker] Try to insert data where key path yields a Date key:
 [Worker] store.add({x: testDateB, y: 'value'}, 'key')
 [Worker] addSuccess():

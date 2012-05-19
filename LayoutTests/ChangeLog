@@ -1,3 +1,254 @@
+2012-05-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB layout tests should make better use of test library functions
+        https://bugs.webkit.org/show_bug.cgi?id=86932
+
+        Reviewed by Ojan Vafai.
+
+        Use functions like shouldBeEqualToString, shouldBeNull,  evalAndExpectException
+        and so forth where possible.
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/createObjectStore-null-name-expected.txt:
+        * storage/indexeddb/cursor-added-bug-expected.txt:
+        * storage/indexeddb/cursor-continue-expected.txt:
+        * storage/indexeddb/cursor-continue-validity-expected.txt:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-inconsistency-expected.txt:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-key-order-expected.txt:
+        * storage/indexeddb/cursor-primary-key-order-expected.txt:
+        * storage/indexeddb/cursor-skip-deleted-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/data-corruption-expected.txt:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/duplicates-expected.txt:
+        * storage/indexeddb/error-causes-abort-by-default-expected.txt:
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/factory-basics-expected.txt:
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/factory-deletedatabase-expected.txt:
+        * storage/indexeddb/get-keyrange-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics-workers-expected.txt:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/index-population-expected.txt:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/legacy-constants-expected.txt:
+        * storage/indexeddb/mutating-cursor-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-clear-expected.txt:
+        * storage/indexeddb/objectstore-count-expected.txt:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/opencursor-key-expected.txt:
+        * storage/indexeddb/prefetch-bugfix-108071-expected.txt:
+        * storage/indexeddb/queued-commands-expected.txt:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/resources/basics.js:
+        (test):
+        (openCallback):
+        * storage/indexeddb/resources/create-object-store-options.js:
+        (setVersionComplete):
+        * storage/indexeddb/resources/createObjectStore-null-name.js:
+        (createAndPopulateObjectStore):
+        * storage/indexeddb/resources/cursor-added-bug.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/cursor-continue-validity.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/cursor-continue.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/cursor-delete.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/cursor-inconsistency.js:
+        (setVersionSuccess):
+        (checkCursor):
+        * storage/indexeddb/resources/cursor-index-delete.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/cursor-key-order.js:
+        (checkStore.curreq.onsuccess.getreq.onsuccess):
+        (checkStore.curreq.onsuccess):
+        (checkStore):
+        * storage/indexeddb/resources/cursor-primary-key-order.js:
+        (checkStore.cursorRequest.onsuccess):
+        (checkStore):
+        * storage/indexeddb/resources/cursor-skip-deleted.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/cursor-update.js:
+        (setVersionSuccess):
+        (basicUpdateCursor.request.onsuccess):
+        (basicUpdateCursor):
+        (autoIncrementUpdateCursor.request.onsuccess):
+        (autoIncrementUpdateCursor):
+        (keyPathUpdateCursor.request.onsuccess):
+        (keyPathUpdateCursor):
+        (keyCursor):
+        * storage/indexeddb/resources/data-corruption.js:
+        (setVersionSuccess):
+        (doCheck):
+        * storage/indexeddb/resources/database-basics.js:
+        (setVersionSuccess):
+        (createAnotherObjectStore):
+        * storage/indexeddb/resources/database-quota.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/duplicates.js:
+        (deleteExisting):
+        (cursor1Continue):
+        (cursor1Continue2):
+        (openObjectCursor):
+        (cursor2Continue):
+        (cursor2Continue2):
+        (last):
+        * storage/indexeddb/resources/error-causes-abort-by-default.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/exception-in-event-aborts.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/factory-basics.js:
+        (test):
+        * storage/indexeddb/resources/factory-cmp.js:
+        (test):
+        (testValidKeys):
+        (testIdenticalKeys):
+        * storage/indexeddb/resources/factory-deletedatabase.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/get-keyrange.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/index-basics.js:
+        (deleteExisting):
+        (cursor1Continue):
+        (cursor1Continue2):
+        (cursor1Continue3):
+        (openObjectCursor):
+        (cursor2Continue):
+        (cursor2Continue2):
+        (cursor2Continue3):
+        (last):
+        * storage/indexeddb/resources/index-count.js:
+        (prepareDatabase):
+        (verifyCount.request.onsuccess):
+        (verifyCount):
+        (verifyCountWithRange.nextTest.request.onsuccess):
+        (verifyCountWithRange.nextTest):
+        (verifyCountWithRange):
+        (verifyCountWithKey.nextTest.request.onsuccess):
+        (verifyCountWithKey.nextTest):
+        (verifyCountWithKey):
+        * storage/indexeddb/resources/index-cursor.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/index-multientry.js:
+        (prepareDatabase):
+        (verifyIndexes.request.onsuccess):
+        (verifyIndexes):
+        * storage/indexeddb/resources/index-population.js:
+        (setVersion2Abort):
+        * storage/indexeddb/resources/index-unique.js:
+        (deleteExisting):
+        (cursorSuccess):
+        (keyCursorSuccess):
+        * storage/indexeddb/resources/key-type-array.js:
+        (test):
+        * storage/indexeddb/resources/keyrange.js:
+        (test):
+        * storage/indexeddb/resources/legacy-constants.js:
+        (populateStore):
+        (checkNext.request.onsuccess):
+        (checkNext):
+        (checkNextNoDuplicate.request.onsuccess):
+        (checkNextNoDuplicate):
+        (checkPrev.request.onsuccess):
+        (checkPrev):
+        (checkPrevNoDuplicate.request.onsuccess):
+        (checkPrevNoDuplicate):
+        * storage/indexeddb/resources/mutating-cursor.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+        (setVersionSuccess):
+        (testLongKeyPath.cursorRequest.onsuccess):
+        (testLongKeyPath):
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (setVersionSuccess):
+        (createIndex):
+        (createAnotherIndex):
+        (addDateSuccess):
+        (addAgainFailure):
+        * storage/indexeddb/resources/objectstore-clear.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/objectstore-count.js:
+        (prepareDatabase):
+        (verifyCount.request.onsuccess):
+        (verifyCount):
+        (verifyCountWithRange.nextTest.request.onsuccess):
+        (verifyCountWithRange.nextTest):
+        (verifyCountWithRange):
+        (verifyCountWithKey.nextTest.request.onsuccess):
+        (verifyCountWithKey.nextTest):
+        (verifyCountWithKey):
+        * storage/indexeddb/resources/objectstore-cursor.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/objectstore-removeobjectstore.js:
+        (deleteExisting):
+        (deleteObjectStore):
+        * storage/indexeddb/resources/open-cursor.js:
+        (cursorWithKeySuccess):
+        (cursorSuccess):
+        (setVersionSuccess):
+        * storage/indexeddb/resources/opencursor-key.js:
+        (testObjectStore.request.onsuccess):
+        (testObjectStore):
+        (testIndex.request.onsuccess):
+        (testIndex):
+        (testIndexWithKey.request.onsuccess):
+        (testIndexWithKey):
+        * storage/indexeddb/resources/prefetch-bugfix-108071.js:
+        (setVersionSuccess):
+        * storage/indexeddb/resources/queued-commands.js:
+        * storage/indexeddb/resources/request-event-propagation.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/setVersion-null.js:
+        (postSetVersion):
+        * storage/indexeddb/resources/shared.js:
+        (evalAndExpectExceptionClass):
+        * storage/indexeddb/resources/transaction-abort.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/transaction-and-objectstore-calls.js:
+        (created):
+        (afterComplete):
+        * storage/indexeddb/resources/transaction-basics.js:
+        (addRemoveIDBObjects):
+        (addRemoveAddIDBObjects):
+        (addIDBObjects):
+        (addIDBObjectsAndCommit):
+        (removeIDBObjects):
+        (setVersionSuccess):
+        (testDOMStringList):
+        * storage/indexeddb/resources/transaction-event-propagation.js:
+        (deleteExisting):
+        * storage/indexeddb/resources/transaction-rollback.js:
+        (addSuccess):
+        (getSuccess):
+        * storage/indexeddb/resources/two-version-changes.js:
+        (test):
+        * storage/indexeddb/resources/values-odd-types.js:
+        (openACursor.request.onsuccess):
+        (openACursor):
+        * storage/indexeddb/setVersion-null-expected.txt:
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-rollback-expected.txt:
+        * storage/indexeddb/two-version-changes-expected.txt:
+        * storage/indexeddb/values-odd-types-expected.txt:
+
 2012-05-19  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed gardening.

@@ -10,7 +10,7 @@ db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
 db.createObjectStore(null);
-PASS objectStore.name is 'null'
+PASS objectStore.name is "null"
 PASS successfullyParsed is true
 
 TEST COMPLETE

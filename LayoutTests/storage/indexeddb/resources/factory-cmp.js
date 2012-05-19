@@ -9,7 +9,7 @@ function test()
 {
     removeVendorPrefixes();
 
-    shouldBeTrue("typeof indexedDB.cmp === 'function'");
+    shouldBeEqualToString("typeof indexedDB.cmp", "function");
 
     testValidKeys();
     testInvalidKeys();
@@ -90,10 +90,10 @@ function testValidKeys()
     for (i = 0; i < keys.length - 1; i += 1) {
         key1 = keys[i];
         key2 = keys[i + 1];
-        shouldBeTrue("indexedDB.cmp(" + key1 + "," + key2 + ") === -1");
-        shouldBeTrue("indexedDB.cmp(" + key2 + "," + key1 + ") === 1");
-        shouldBeTrue("indexedDB.cmp(" + key1 + "," + key1 + ") === 0");
-        shouldBeTrue("indexedDB.cmp(" + key2 + "," + key2 + ") === 0");
+        shouldBe("indexedDB.cmp(" + key1 + "," + key2 + ")", "-1");
+        shouldBe("indexedDB.cmp(" + key2 + "," + key1 + ")", "1");
+        shouldBe("indexedDB.cmp(" + key1 + "," + key1 + ")", "0");
+        shouldBe("indexedDB.cmp(" + key2 + "," + key2 + ")", "0");
     }
 }
 
@@ -135,7 +135,7 @@ function testIdenticalKeys()
     debug("");
     debug("compare identical keys");
 
-    shouldBeTrue("indexedDB.cmp(0, -0) === 0");
+    shouldBe("indexedDB.cmp(0, -0)", "0");
 }
 
 test();

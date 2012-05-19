@@ -9,12 +9,6 @@ function test()
 {
     removeVendorPrefixes();
 
-    evalAndLog("IDBTransaction = self.IDBTransaction || self.IDBTransaction;");
-    shouldBeFalse("IDBTransaction == null");
-
-    evalAndLog("IDBDatabaseException = self.IDBDatabaseException || self.IDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
-
     name = self.location.pathname;
     openreq = evalAndLog("indexedDB.open(name)");
     openreq.onsuccess = openSuccess;

@@ -5,10 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-PASS typeof indexedDB.open === 'function' is true
-PASS typeof indexedDB.cmp === 'function' is true
-PASS typeof indexedDB.getDatabaseNames === 'function' is true
-PASS typeof indexedDB.deleteDatabase === 'function' is true
+PASS typeof indexedDB.open is "function"
+PASS typeof indexedDB.cmp is "function"
+PASS typeof indexedDB.getDatabaseNames is "function"
+PASS typeof indexedDB.deleteDatabase is "function"
 indexedDB.getDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false

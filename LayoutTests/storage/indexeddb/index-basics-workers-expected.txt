@@ -11,7 +11,7 @@ Starting worker: resources/index-basics.js
 [Worker] db.setVersion('new version')
 [Worker] setVersionSuccess():
 [Worker] trans = event.target.result
-PASS [Worker] trans !== null is true
+PASS [Worker] trans is non-null.
 [Worker] Deleted all object stores.
 [Worker] db.createObjectStore('storeName', null)
 [Worker] store.createIndex('indexName', 'x')
@@ -67,41 +67,45 @@ PASS [Worker] event.target.result is undefined
 PASS [Worker] event.target.result is "key2"
 [Worker] indexObject.openKeyCursor()
 PASS [Worker] event.target.source is indexObject
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value"
 PASS [Worker] event.target.result.primaryKey is "key"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value2"
 PASS [Worker] event.target.result.primaryKey is "key2"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value3"
 PASS [Worker] event.target.result.primaryKey is "key3"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is true
+PASS [Worker] event.target.result is null
 [Worker] indexObject.openCursor()
 PASS [Worker] event.target.source is indexObject
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value"
 PASS [Worker] event.target.result.value.x is "value"
 PASS [Worker] event.target.result.value.y is "zzz"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value2"
 PASS [Worker] event.target.result.value.x is "value2"
 PASS [Worker] event.target.result.value.y is "zzz2"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is false
+PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value3"
 PASS [Worker] event.target.result.value.x is "value3"
 PASS [Worker] event.target.result.value.y is "456"
 [Worker] event.target.result.continue()
-PASS [Worker] event.target.result === null is true
+PASS [Worker] event.target.result is null
 [Worker] Passing an invalid key into indexObject.get({}).
-PASS [Worker] Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+[Worker] Expecting exception from indexObject.get({})
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] Passing an invalid key into indexObject.getKey({}).
-PASS [Worker] Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+[Worker] Expecting exception from indexObject.getKey({})
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

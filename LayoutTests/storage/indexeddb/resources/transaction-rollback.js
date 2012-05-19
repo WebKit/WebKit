@@ -52,7 +52,7 @@ function setVersionComplete()
 function addSuccess()
 {
     debug("addSuccess():");
-    shouldBe("event.target.result", "'rollbackKey123'");
+    shouldBeEqualToString("event.target.result", "rollbackKey123");
 
     request = evalAndLog("store.openCursor()");
     request.onsuccess = openCursorSuccess;
@@ -84,7 +84,7 @@ function getSuccess()
     debug("getSuccess():");
     shouldBe("event.target.result", "undefined");
 
-    shouldBe("cursor.value", "'rollbackValue'");
+    shouldBeEqualToString("cursor.value", "rollbackValue");
     finishJSTest();
 }
 

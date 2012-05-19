@@ -73,204 +73,204 @@ curreq = store.openCursor()
 cursor = curreq.result
 PASS compare(cursor.key, -Infinity) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, -Number.MAX_VALUE) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, -1) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, -Number.MIN_VALUE) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 0) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, Number.MIN_VALUE) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 1) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, Number.MAX_VALUE) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, Infinity) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, new Date(0)) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, new Date(1000)) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, new Date(1317399931023)) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '\0') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 'a') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 'aa') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 'b') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, 'ba') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '¢') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '水') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '𝄞') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, '�') is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, []) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [-Infinity]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [-Number.MAX_VALUE]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [-1]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [-Number.MIN_VALUE]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [0]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [Number.MIN_VALUE]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [1]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [Number.MAX_VALUE]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [Infinity]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [new Date(0)]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [new Date(1000)]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [new Date(1317399931023)]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['\0']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['a']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['aa']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['b']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['ba']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['¢']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['水']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['𝄞']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, ['�']) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [[]]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [[], []]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [[], [], []]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [[[]]]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
+PASS getreq.result is count++
 cursor = curreq.result
 PASS compare(cursor.key, [[[[]]]]) is true
 getreq = store.get(cursor.key)
-PASS getreq.result === count++ is true
-PASS count === keys.length is true
+PASS getreq.result is count++
+PASS count is keys.length
 
 validate compare function
 PASS compare(undefined, undefined) is true

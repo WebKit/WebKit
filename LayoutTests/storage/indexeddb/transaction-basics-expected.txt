@@ -16,7 +16,7 @@ PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addRemoveIDBObjects():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
@@ -29,7 +29,7 @@ PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addRemoveAddIDBObjects():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
@@ -46,7 +46,7 @@ request = startSetVersion('version fail')
 addIDBObjects():
 PASS event.cancelable is false
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 
@@ -92,7 +92,7 @@ PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addIDBObjectsAndCommit():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 
@@ -138,7 +138,7 @@ PASS db.objectStoreNames.contains('storeFail') is true
 request = startSetVersion('version fail')
 removeIDBObjects():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = trans.objectStore('storeFail')
 store.deleteIndex('indexFail')
 db.deleteObjectStore('storeFail')
@@ -151,7 +151,7 @@ db.setVersion('new version')
 
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 db.createObjectStore('storeName', null)
 PASS event.cancelable is false
@@ -166,7 +166,7 @@ db.objectStoreNames is [object DOMStringList]
 ... which contains: ["storeName"]
 transaction = db.transaction(db.objectStoreNames)
 PASS no exception thrown
-PASS transaction.objectStore("storeName") != null is true
+PASS transaction.objectStore("storeName") is non-null.
 PASS all stores present in transaction
 
 Verify that specifying an invalid mode raises an exception

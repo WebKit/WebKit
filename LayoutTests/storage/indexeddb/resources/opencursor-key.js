@@ -92,7 +92,7 @@ function testObjectStore()
         cursor = event.target.result;
 
         if (count == 0) {
-            shouldBe("cursor.key", "'237-23-7739'");
+            shouldBeEqualToString("cursor.key", "237-23-7739");
             shouldBe("JSON.stringify(cursor.value)", "JSON.stringify(objectStoreData[7].value)");
             shouldBe("cursor.primaryKey", "cursor.key");
             evalAndLog("cursor.continue()");
@@ -122,19 +122,19 @@ function testIndex()
             shouldBe("cursor.key", '180');
             shouldBe("JSON.stringify(cursor.value)",
                      "JSON.stringify(objectStoreData[2].value)");
-            shouldBe("cursor.primaryKey", "'237-23-7734'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7734");
             evalAndLog("cursor.continue()");
         } else if (count == 1) {
             shouldBe("cursor.key", '180');
             shouldBe("JSON.stringify(cursor.value)",
                      "JSON.stringify(objectStoreData[6].value)");
-            shouldBe("cursor.primaryKey", "'237-23-7738'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7738");
             evalAndLog("cursor.continue()");
         } else if (count == 2) {
             shouldBe("cursor.key", '180');
             shouldBe("JSON.stringify(cursor.value)",
                      "JSON.stringify(objectStoreData[10].value)");
-            shouldBe("cursor.primaryKey", "'237-23-7742'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7742");
             evalAndLog("cursor.continue()");
         } else if (count == 3) {
             shouldBeNull("cursor");
@@ -160,15 +160,15 @@ function testIndexWithKey()
 
         if (count == 0) {
             shouldBe("cursor.key", '180');
-            shouldBe("cursor.primaryKey", "'237-23-7734'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7734");
             evalAndLog("cursor.continue()");
         } else if (count == 1) {
             shouldBe("cursor.key", '180');
-            shouldBe("cursor.primaryKey", "'237-23-7738'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7738");
             evalAndLog("cursor.continue()");
         } else if (count == 2) {
             shouldBe("cursor.key", '180');
-            shouldBe("cursor.primaryKey", "'237-23-7742'");
+            shouldBeEqualToString("cursor.primaryKey", "237-23-7742");
             evalAndLog("cursor.continue()");
         } else if (count == 3) {
             shouldBeNull("cursor");

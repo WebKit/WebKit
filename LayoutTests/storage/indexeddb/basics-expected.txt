@@ -23,7 +23,7 @@ PASS request.source is indexedDB
 PASS 'transaction' in request is true
 PASS request.transaction is null
 PASS 'readyState' in request is true
-PASS request.readyState is 'pending'
+PASS request.readyState is "pending"
 PASS 'onsuccess' in request is true
 PASS request.onsuccess is null
 PASS 'onerror' in request is true
@@ -39,7 +39,7 @@ PASS request.source is indexedDB
 PASS 'transaction' in event.target is true
 PASS event.target.transaction is null
 PASS 'readyState' in request is true
-PASS event.target.readyState is 'done'
+PASS event.target.readyState is "done"
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
 PASS successfullyParsed is true

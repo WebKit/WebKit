@@ -27,7 +27,7 @@ function deleteExisting()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     evalAndLog("trans.oncomplete = startTest");
 

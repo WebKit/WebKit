@@ -27,7 +27,7 @@ function setVersionSuccess()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = addData;
 
@@ -58,7 +58,7 @@ function getData()
 
 function doCheck()
 {
-    shouldBeTrue("event.target.result.x.toString() == testDate.toString()");
+    shouldBe("event.target.result.x.toString()", "testDate.toString()");
     finishJSTest();
 }
 

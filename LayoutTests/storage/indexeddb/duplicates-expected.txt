@@ -10,7 +10,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
@@ -26,33 +26,33 @@ PASS event.target.result is undefined
 indexObject.get('does not exist')
 PASS event.target.result is undefined
 indexObject.openKeyCursor()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.primaryKey is "key"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 indexObject.openCursor()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.value.x is "value"
 PASS event.target.result.value.y is "zzz"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 indexedDB.open('duplicates-2')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
@@ -68,27 +68,27 @@ PASS event.target.result is undefined
 indexObject.get('does not exist')
 PASS event.target.result is undefined
 indexObject.openKeyCursor()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.primaryKey is "key"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 indexObject.openCursor()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.value.x is "value"
 PASS event.target.result.value.y is "zzz"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

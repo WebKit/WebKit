@@ -41,7 +41,7 @@ PASS index2.unique is true
 
 setVersion2Abort():
 PASS db.objectStoreNames.length is 1
-PASS db.objectStoreNames[0] is 'store1'
+PASS db.objectStoreNames[0] is "store1"
 PASS successfullyParsed is true
 
 TEST COMPLETE

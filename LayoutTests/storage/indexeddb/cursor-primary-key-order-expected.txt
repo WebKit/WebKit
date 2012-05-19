@@ -86,7 +86,7 @@ PASS cursor.primaryKey is 'b'
 cursor = cursorRequest.result
 PASS cursor.key is 0
 PASS cursor.primaryKey is 'c'
-PASS count === keys.length is true
+PASS count is keys.length
 PASS successfullyParsed is true
 
 TEST COMPLETE

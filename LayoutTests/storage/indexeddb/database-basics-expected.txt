@@ -10,7 +10,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 Testing setVersion.
 db.setVersion("version a")
@@ -38,7 +38,7 @@ PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
 db.createObjectStore("test456")
 setVersionTrans = event.target.result
-PASS setVersionTrans !== null is true
+PASS setVersionTrans is non-null.
 PASS db.version is "version b"
 PASS db.objectStoreNames is ['test123']
 PASS db.objectStoreNames.length is 1

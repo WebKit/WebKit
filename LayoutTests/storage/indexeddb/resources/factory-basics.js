@@ -9,11 +9,11 @@ function test()
 {
     removeVendorPrefixes();
 
-    shouldBeTrue("typeof indexedDB.open === 'function'");
-    shouldBeTrue("typeof indexedDB.cmp === 'function'");
-    shouldBeTrue("typeof indexedDB.getDatabaseNames === 'function'");
+    shouldBeEqualToString("typeof indexedDB.open", "function");
+    shouldBeEqualToString("typeof indexedDB.cmp", "function");
+    shouldBeEqualToString("typeof indexedDB.getDatabaseNames", "function");
 
-    shouldBeTrue("typeof indexedDB.deleteDatabase === 'function'");
+    shouldBeEqualToString("typeof indexedDB.deleteDatabase", "function");
 
     name = 'storage/indexeddb/factory-basics';
 

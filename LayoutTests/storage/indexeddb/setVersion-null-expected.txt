@@ -8,7 +8,7 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 indexedDB.open(name)
 db = event.target.result
 db.setVersion(null);
-PASS db.version is 'null'
+PASS db.version is "null"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -26,7 +26,7 @@ function deleteExisting()
 {
     debug("deleteExisting():");
     var trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = setVersionCompleted;
 
@@ -86,7 +86,7 @@ function changeDataSuccess()
 function cursorSuccess()
 {
     debug("cursorSuccess():");
-    shouldBe("event.target.result", "null");
+    shouldBeNull("event.target.result");
 
     // A key cursor starting at 1 should not find anything.
     var request = evalAndLog("transaction.objectStore('store').index('index').openKeyCursor(IDBKeyRange.lowerBound(1))");
@@ -97,7 +97,7 @@ function cursorSuccess()
 function keyCursorSuccess()
 {
     debug("keyCursorSuccess():");
-    shouldBe("event.target.result", "null");
+    shouldBeNull("event.target.result");
 
     // Now we should be able to add a value with x: 1.
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'bar')");

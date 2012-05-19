@@ -19,7 +19,7 @@ transaction = db.transaction(['myObjectStore'], 'readwrite')
 store = transaction.objectStore('myObjectStore')
 store.add('rollbackValue', 'rollbackKey123')
 addSuccess():
-PASS event.target.result is 'rollbackKey123'
+PASS event.target.result is "rollbackKey123"
 store.openCursor()
 openCursorSuccess():
 cursor = event.target.result
@@ -30,7 +30,7 @@ store = transaction.objectStore('myObjectStore')
 store.get('rollbackKey123')
 getSuccess():
 PASS event.target.result is undefined
-PASS cursor.value is 'rollbackValue'
+PASS cursor.value is "rollbackValue"
 PASS successfullyParsed is true
 
 TEST COMPLETE

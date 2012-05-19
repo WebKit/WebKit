@@ -10,7 +10,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
@@ -66,41 +66,45 @@ indexObject4.getKey('value2')
 PASS event.target.result is "key2"
 indexObject.openKeyCursor()
 PASS event.target.source is indexObject
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.primaryKey is "key"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value3"
 PASS event.target.result.primaryKey is "key3"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 indexObject.openCursor()
 PASS event.target.source is indexObject
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value"
 PASS event.target.result.value.x is "value"
 PASS event.target.result.value.y is "zzz"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value2"
 PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
 event.target.result.continue()
-PASS event.target.result === null is false
+PASS event.target.result is non-null.
 PASS event.target.result.key is "value3"
 PASS event.target.result.value.x is "value3"
 PASS event.target.result.value.y is "456"
 event.target.result.continue()
-PASS event.target.result === null is true
+PASS event.target.result is null
 Passing an invalid key into indexObject.get({}).
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from indexObject.get({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 Passing an invalid key into indexObject.getKey({}).
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from indexObject.getKey({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

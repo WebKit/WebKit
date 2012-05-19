@@ -10,7 +10,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 objectStore = db.createObjectStore('test')
 objectStore.add('myValue1', 'myKey1')

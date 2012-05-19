@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-PASS indexedDB == null is false
-PASS IDBTransaction == null is false
+PASS indexedDB is non-null.
+PASS IDBTransaction is non-null.
 self.state = 'starting'
 indexedDB.open('two-versions-one-connection')
 db = event.target.result

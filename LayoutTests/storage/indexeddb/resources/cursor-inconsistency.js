@@ -28,7 +28,7 @@ function setVersionSuccess()
 {
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
-    shouldBeTrue("trans !== null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = openBasicCursor;
 
@@ -69,7 +69,7 @@ function checkCursor()
     if (storedCursor == null)
       storedCursor = evalAndLog("storedCursor = event.target.result");
 
-    shouldBeTrue("storedCursor === event.target.result");
+    shouldBe("storedCursor", "event.target.result");
     shouldBeEqualToString("storedCursor.key", "someKey" + counter);
     shouldBeEqualToString("event.target.result.key", "someKey" + counter);
     shouldBeEqualToString("storedCursor.value", "someValue" + counter);

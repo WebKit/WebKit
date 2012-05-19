@@ -9,7 +9,7 @@ indexedDB.open('objectstore-clear')
 db = event.target.result
 db.setVersion('new version')
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.createIndex('indexName', '')

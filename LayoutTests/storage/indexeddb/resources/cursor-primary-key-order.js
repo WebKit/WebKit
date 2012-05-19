@@ -89,7 +89,7 @@ function checkStore()
             shouldBe("cursor.primaryKey", self.keys[count++]);
             cursor.continue();
         } else {
-            shouldBeTrue("count === keys.length");
+            shouldBe("count", "keys.length");
             finishJSTest();
         }
     };

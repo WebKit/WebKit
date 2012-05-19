@@ -38,7 +38,7 @@ function cleanDatabase()
 function setVersionComplete()
 {
     trans = evalAndLog("trans = db.transaction(['a', 'b'], 'readwrite')");
-    shouldBe("trans.mode", "'readwrite'");
+    shouldBeEqualToString("trans.mode", "readwrite");
 
     req = evalAndLog("trans.objectStore('a').put({'a': 0})");
     req.onsuccess = putB;

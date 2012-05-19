@@ -29,7 +29,7 @@ function createAndPopulateObjectStore()
     deleteAllObjectStores(db);
 
     objectStore = evalAndLog("db.createObjectStore(null);");
-    shouldBe("objectStore.name", "'null'");
+    shouldBeEqualToString("objectStore.name", "null");
     finishJSTest();
 }
 

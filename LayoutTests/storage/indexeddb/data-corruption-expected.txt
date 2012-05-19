@@ -11,7 +11,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 db.createObjectStore('storeName')
 addData():
@@ -20,7 +20,7 @@ request = transaction.objectStore('storeName').add({x: testDate}, 'key')
 addData():
 transaction = db.transaction(['storeName'], 'readonly')
 request = transaction.objectStore('storeName').get('key')
-PASS event.target.result.x.toString() == testDate.toString() is true
+PASS event.target.result.x.toString() is testDate.toString()
 PASS successfullyParsed is true
 
 TEST COMPLETE

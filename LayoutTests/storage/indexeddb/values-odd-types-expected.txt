@@ -25,7 +25,7 @@ cursor.continue();
 valueIndex++;
 cursor = event.target.result;
 PASS cursor.value.toString() is validTypes[valueIndex].value.toString()
-PASS cursor.value.toUTCString() is 'Thu, 01 Jan 1970 00:00:00 GMT'
+PASS cursor.value.toUTCString() is "Thu, 01 Jan 1970 00:00:00 GMT"
 cursor.continue();
 valueIndex++;
 cursor = event.target.result;

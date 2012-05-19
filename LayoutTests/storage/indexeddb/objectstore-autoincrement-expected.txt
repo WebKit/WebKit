@@ -11,7 +11,7 @@ db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 Deleted all object stores.
 createObjectStore():
 store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})
@@ -20,7 +20,7 @@ db.createObjectStore('PlainOldStore', {autoIncrement: false})
 db.createObjectStore('StoreWithLongKeyPath', {keyPath: 'a.b.c.id', autoIncrement: true})
 storeNames = db.objectStoreNames
 PASS store.name is "StoreWithKeyPath"
-PASS store.keyPath is 'id'
+PASS store.keyPath is "id"
 PASS storeNames.contains('StoreWithKeyPath') is true
 PASS storeNames.contains('StoreWithAutoIncrement') is true
 PASS storeNames.contains('PlainOldStore') is true
@@ -76,13 +76,13 @@ store.openCursor()
 expected = null
 count = 0
 expected = cursor.value.a.b.c.id + 1
-PASS cursor.value.foo is 'bar'
+PASS cursor.value.foo is "bar"
 PASS cursor.value.a.b.c.id is expected
 expected = cursor.value.a.b.c.id + 1
-PASS cursor.value.foo is 'bar'
+PASS cursor.value.foo is "bar"
 PASS cursor.value.a.b.c.id is expected
 expected = cursor.value.a.b.c.id + 1
-PASS cursor.value.foo is 'bar'
+PASS cursor.value.foo is "bar"
 PASS cursor.value.a.b.c.id is expected
 expected = cursor.value.a.b.c.id + 1
 PASS count is 4

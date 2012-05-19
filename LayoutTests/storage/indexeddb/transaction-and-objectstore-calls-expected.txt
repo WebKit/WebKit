@@ -109,13 +109,13 @@ PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_FOUND_ERR
 
 trans = db.transaction(['store'])
-PASS trans != null is true
+PASS trans is non-null.
 store = trans.objectStore('store')
-PASS store != null is true
+PASS store is non-null.
 store.get('some_key')
 transaction complete, ensuring methods fail
-PASS trans != null is true
-PASS store != null is true
+PASS trans is non-null.
+PASS store is non-null.
 Expecting exception from trans.objectStore('store')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR

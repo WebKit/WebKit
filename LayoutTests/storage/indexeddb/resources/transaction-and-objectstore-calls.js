@@ -101,20 +101,20 @@ function created()
     debug("");
 
     trans = evalAndLog("trans = db.transaction(['store'])");
-    shouldBeTrue("trans != null");
+    shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
     trans.onerror = unexpectedErrorCallback;
     trans.oncomplete = afterComplete;
     evalAndLog("store = trans.objectStore('store')");
-    shouldBeTrue("store != null");
+    shouldBeNonNull("store");
     evalAndLog("store.get('some_key')");
 }
 
 function afterComplete()
 {
     debug("transaction complete, ensuring methods fail");
-    shouldBeTrue("trans != null");
-    shouldBeTrue("store != null");
+    shouldBeNonNull("trans");
+    shouldBeNonNull("store");
     evalAndExpectException("trans.objectStore('store')", "IDBDatabaseException.NOT_ALLOWED_ERR");
     evalAndExpectException("store.index('index')", "IDBDatabaseException.NOT_ALLOWED_ERR");
 

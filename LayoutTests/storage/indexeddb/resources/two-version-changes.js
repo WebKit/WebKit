@@ -8,8 +8,8 @@ description("Test behavior when the same connection calls setVersion twice");
 function test() {
     removeVendorPrefixes();
 
-    shouldBeFalse("indexedDB == null");
-    shouldBeFalse("IDBTransaction == null");
+    shouldBeNonNull("indexedDB");
+    shouldBeNonNull("IDBTransaction");
     openDBConnection();
 }
 

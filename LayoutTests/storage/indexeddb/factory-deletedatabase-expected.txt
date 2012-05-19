@@ -9,7 +9,7 @@ indexedDB.open('database-to-delete')
 db = event.target.result
 db.setVersion('new version')
 trans = event.target.result
-PASS trans !== null is true
+PASS trans is non-null.
 store = db.createObjectStore('storeName', null)
 store.createIndex('indexName', '')
 PASS store.indexNames.contains('indexName') is true

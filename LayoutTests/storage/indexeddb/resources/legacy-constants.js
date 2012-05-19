@@ -35,7 +35,7 @@ function populateStore()
     debug("");
     debug("populating store...");
     evalAndLog("trans = db.transaction('store', IDBTransaction.READ_WRITE)");
-    shouldBe("trans.mode", "'readwrite'");
+    shouldBeEqualToString("trans.mode", "readwrite");
     evalAndLog("store = trans.objectStore('store');");
     trans.onerror = unexpectedErrorCallback;
     trans.onabort = unexpectedAbortCallback;
@@ -48,7 +48,7 @@ function populateStore()
 function checkNext()
 {
     evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBe("trans.mode", "'readonly'");
+    shouldBeEqualToString("trans.mode", "readonly");
     store = trans.objectStore('store');
     evalAndLog("request = store.openCursor(null, IDBCursor.NEXT)");
     request.onsuccess = function()
@@ -56,7 +56,7 @@ function checkNext()
         cursor = event.target.result;
         if (!cursor)
             return;
-        shouldBe("cursor.direction", "'next'");
+        shouldBeEqualToString("cursor.direction", "next");
         evalAndLog("cursor.continue();");
     };
     trans.oncomplete = checkNextNoDuplicate;
@@ -65,7 +65,7 @@ function checkNext()
 function checkNextNoDuplicate()
 {
     evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBe("trans.mode", "'readonly'");
+    shouldBeEqualToString("trans.mode", "readonly");
     store = trans.objectStore('store');
     evalAndLog("request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)");
     request.onsuccess = function()
@@ -73,7 +73,7 @@ function checkNextNoDuplicate()
         cursor = event.target.result;
         if (!cursor)
             return;
-        shouldBe("cursor.direction", "'nextunique'");
+        shouldBeEqualToString("cursor.direction", "nextunique");
         evalAndLog("cursor.continue();");
     };
     trans.oncomplete = checkPrev;
@@ -82,7 +82,7 @@ function checkNextNoDuplicate()
 function checkPrev()
 {
     evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBe("trans.mode", "'readonly'");
+    shouldBeEqualToString("trans.mode", "readonly");
     store = trans.objectStore('store');
     evalAndLog("request = store.openCursor(null, IDBCursor.PREV)");
     request.onsuccess = function()
@@ -90,7 +90,7 @@ function checkPrev()
         cursor = event.target.result;
         if (!cursor)
             return;
-        shouldBe("cursor.direction", "'prev'");
+        shouldBeEqualToString("cursor.direction", "prev");
         evalAndLog("cursor.continue();");
     };
     trans.oncomplete = checkPrevNoDuplicate;
@@ -99,7 +99,7 @@ function checkPrev()
 function checkPrevNoDuplicate()
 {
     evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBe("trans.mode", "'readonly'");
+    shouldBeEqualToString("trans.mode", "readonly");
     store = trans.objectStore('store');
     evalAndLog("request = store.openCursor(null, IDBCursor.NEXT)");
     request.onsuccess = function()
@@ -107,7 +107,7 @@ function checkPrevNoDuplicate()
         cursor = event.target.result;
         if (!cursor)
             return;
-        shouldBe("cursor.direction", "'next'");
+        shouldBeEqualToString("cursor.direction", "next");
         evalAndLog("cursor.continue();");
     };
     trans.oncomplete = finishJSTest;
