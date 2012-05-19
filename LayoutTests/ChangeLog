@@ -1,3 +1,10 @@
+2012-05-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, add test expectations for further tests that
+        fail intermittently with an image diff due to repainting problems.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] More rebaselining needed after r117672
