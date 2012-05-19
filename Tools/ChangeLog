@@ -1,3 +1,15 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL][DRT] Make it possible to enable CSS Grid Layout.
+        https://bugs.webkit.org/show_bug.cgi?id=86921
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::overridePreference):
+
 2012-05-18  Dirk Pranke  <dpranke@chromium.org>
 
         scm.add() doesn't work properly with svn 1.7

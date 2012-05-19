@@ -420,6 +420,13 @@ bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const Stri
     return page->findString(text, options);
 }
 
+void DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(const Evas_Object* ewkView, bool enabled)
+{
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (corePage)
+        corePage->settings()->setCSSGridLayoutEnabled(enabled);
+}
+
 void DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
