@@ -76,7 +76,6 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* do
     : SVGStyledTransformableElement(tagName, document)
     , m_pathByteStream(SVGPathByteStream::create())
     , m_pathSegList(PathSegUnalteredRole)
-    , m_cachedBBoxRectIsValid(false)
     , m_isAnimValObserved(false)
 {
     ASSERT(hasTagName(SVGNames::pathTag));
@@ -266,7 +265,6 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             SVGPathSegList newList(PathSegUnalteredRole);
             buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
             m_pathSegList.value = newList;
-            m_cachedBBoxRectIsValid = false;
         }
 
         if (renderer)
@@ -349,8 +347,6 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
 
     invalidateSVGAttributes();
     
-    m_cachedBBoxRectIsValid = false;
-
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
     if (!renderer)
         return;
@@ -370,12 +366,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (!renderer)
         return FloatRect();
 
-    if (!m_cachedBBoxRectIsValid) {
-        m_cachedBBoxRect = renderer->path().boundingRect();
-        m_cachedBBoxRectIsValid = true;
-    }
-    
-    return m_cachedBBoxRect;
+    return renderer->path().boundingRect();
 }
 
 RenderObject* SVGPathElement::createRenderer(RenderArena* arena, RenderStyle*)

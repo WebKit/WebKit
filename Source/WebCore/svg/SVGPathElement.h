@@ -131,8 +131,6 @@ private:
 private:
     OwnPtr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
-    FloatRect m_cachedBBoxRect;
-    bool m_cachedBBoxRectIsValid;                       
     bool m_isAnimValObserved;
 };
 
