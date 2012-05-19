@@ -139,11 +139,34 @@ public:
                     }
                     
                     if (m_graph.successor(block, 0) == m_graph.successor(block, 1)) {
+                        BlockIndex targetBlockIndex = m_graph.successor(block, 0);
+                        BasicBlock* targetBlock = m_graph.m_blocks[targetBlockIndex].get();
+                        ASSERT(targetBlock);
+                        ASSERT(targetBlock->isReachable);
+                        if (targetBlock->m_predecessors.size() == 1) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                        dataLog("CFGSimplify: Branch merge on Block #%u to Block #%u.\n",
-                                blockIndex, m_graph.successor(block, 0));
+                            dataLog("CFGSimplify: Branch to same successor merge on Block #%u to Block #%u.\n",
+                                    blockIndex, targetBlockIndex);
 #endif
-                        mergeBlocks(blockIndex, m_graph.successor(block, 0), NoBlock);
+                            mergeBlocks(blockIndex, targetBlockIndex, NoBlock);
+                        } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                            dataLog("CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
+                                    blockIndex, targetBlockIndex);
+#endif
+                            ASSERT(m_graph[block->last()].isTerminal());
+                            Node& branch = m_graph[block->last()];
+                            ASSERT(branch.isTerminal());
+                            ASSERT(branch.op() == Branch);
+                            branch.setOpAndDefaultFlags(Phantom);
+                            ASSERT(branch.refCount() == 1);
+                            
+                            Node jump(Jump, branch.codeOrigin, OpInfo(targetBlockIndex));
+                            jump.ref();
+                            NodeIndex jumpNodeIndex = m_graph.size();
+                            m_graph.append(jump);
+                            block->append(jumpNodeIndex);
+                        }
                         innerChanged = outerChanged = true;
                         break;
                     }

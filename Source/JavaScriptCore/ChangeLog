@@ -1,5 +1,19 @@
 2012-05-18  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(117646): fast/canvas/webgl/glsl-conformance.html is crashing in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=86929
+
+        Reviewed by Oliver Hunt.
+        
+        The problem was that if CFG simplification saw a Branch with identical successors,
+        it would always perform a basic block merge. But that's wrong if the successor has
+        other predecessors.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+
+2012-05-18  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CFG simplification crashes if it's trying to remove an unreachable block
         that has an already-killed-off unreachable successor
         https://bugs.webkit.org/show_bug.cgi?id=86918
