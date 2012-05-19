@@ -137,7 +137,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
         }
     }
     else {
-        int contentHeight = box->maxYLayoutOverflow() - box->borderTop() + box->paddingBottom();
+        int contentHeight = box->layoutOverflowRect().maxY() - box->borderTop() + box->paddingBottom();
         int clientHeight = box->clientHeight();
         if (dir == MUP) {
             if (stopAtContentEdge)

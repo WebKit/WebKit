@@ -499,8 +499,8 @@ int RenderBox::scrollWidth() const
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
     if (style()->isLeftToRightDirection())
-        return snapSizeToPixel(max(clientWidth(), maxXLayoutOverflow() - borderLeft()), clientLeft());
-    return clientWidth() - min(ZERO_LAYOUT_UNIT, minXLayoutOverflow() - borderLeft());
+        return snapSizeToPixel(max(clientWidth(), layoutOverflowRect().maxX() - borderLeft()), clientLeft());
+    return clientWidth() - min(ZERO_LAYOUT_UNIT, layoutOverflowRect().x() - borderLeft());
 }
 
 int RenderBox::scrollHeight() const
@@ -509,7 +509,7 @@ int RenderBox::scrollHeight() const
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
-    return snapSizeToPixel(max(clientHeight(), maxYLayoutOverflow() - borderTop()), clientTop());
+    return snapSizeToPixel(max(clientHeight(), layoutOverflowRect().maxY() - borderTop()), clientTop());
 }
 
 int RenderBox::scrollLeft() const
@@ -3735,7 +3735,7 @@ void RenderBox::clearLayoutOverflow()
         return;
     }
     
-    m_overflow->resetLayoutOverflow(borderBoxRect());
+    m_overflow->setLayoutOverflow(borderBoxRect());
 }
 
 static bool percentageLogicalHeightIsResolvable(const RenderBox* box)

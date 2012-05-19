@@ -41,38 +41,23 @@ class RenderOverflow {
     WTF_MAKE_NONCOPYABLE(RenderOverflow); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderOverflow(const LayoutRect& layoutRect, const LayoutRect& visualRect) 
-        : m_minYLayoutOverflow(layoutRect.y())
-        , m_maxYLayoutOverflow(layoutRect.maxY())
-        , m_minXLayoutOverflow(layoutRect.x())
-        , m_maxXLayoutOverflow(layoutRect.maxX())
-        , m_minYVisualOverflow(visualRect.y())
-        , m_maxYVisualOverflow(visualRect.maxY())
-        , m_minXVisualOverflow(visualRect.x())
-        , m_maxXVisualOverflow(visualRect.maxX())
+        : m_layoutOverflow(layoutRect)
+        , m_visualOverflow(visualRect)
     {
     }
    
-    LayoutUnit minYLayoutOverflow() const { return m_minYLayoutOverflow; }
-    LayoutUnit maxYLayoutOverflow() const { return m_maxYLayoutOverflow; }
-    LayoutUnit minXLayoutOverflow() const { return m_minXLayoutOverflow; }
-    LayoutUnit maxXLayoutOverflow() const { return m_maxXLayoutOverflow; }
-    LayoutRect layoutOverflowRect() const;
+    const LayoutRect layoutOverflowRect() const { return m_layoutOverflow; }
+    const LayoutRect visualOverflowRect() const { return m_visualOverflow; }
 
-    LayoutUnit minYVisualOverflow() const { return m_minYVisualOverflow; }
-    LayoutUnit maxYVisualOverflow() const { return m_maxYVisualOverflow; }
-    LayoutUnit minXVisualOverflow() const { return m_minXVisualOverflow; }
-    LayoutUnit maxXVisualOverflow() const { return m_maxXVisualOverflow; }
-    LayoutRect visualOverflowRect() const;
-
-    void setMinYLayoutOverflow(LayoutUnit overflow) { m_minYLayoutOverflow = overflow; }
-    void setMaxYLayoutOverflow(LayoutUnit overflow) { m_maxYLayoutOverflow = overflow; }
-    void setMinXLayoutOverflow(LayoutUnit overflow) { m_minXLayoutOverflow = overflow; }
-    void setMaxXLayoutOverflow(LayoutUnit overflow) { m_maxXLayoutOverflow = overflow; }
+    void setMinYLayoutOverflow(LayoutUnit overflow) { m_layoutOverflow.setY(overflow); }
+    void setMaxYLayoutOverflow(LayoutUnit overflow) { m_layoutOverflow.setHeight(overflow - m_layoutOverflow.y()); }
+    void setMinXLayoutOverflow(LayoutUnit overflow) { m_layoutOverflow.setX(overflow); }
+    void setMaxXLayoutOverflow(LayoutUnit overflow) { m_layoutOverflow.setWidth(overflow - m_layoutOverflow.x()); }
     
-    void setMinYVisualOverflow(LayoutUnit overflow) { m_minYVisualOverflow = overflow; }
-    void setMaxYVisualOverflow(LayoutUnit overflow) { m_maxYVisualOverflow = overflow; }
-    void setMinXVisualOverflow(LayoutUnit overflow) { m_minXVisualOverflow = overflow; }
-    void setMaxXVisualOverflow(LayoutUnit overflow) { m_maxXVisualOverflow = overflow; }
+    void setMinYVisualOverflow(LayoutUnit overflow) { m_visualOverflow.setY(overflow); }
+    void setMaxYVisualOverflow(LayoutUnit overflow) { m_visualOverflow.setHeight(overflow - m_layoutOverflow.y()); }
+    void setMinXVisualOverflow(LayoutUnit overflow) { m_visualOverflow.setX(overflow); }
+    void setMaxXVisualOverflow(LayoutUnit overflow) { m_visualOverflow.setWidth(overflow - m_layoutOverflow.x()); }
     
     void move(LayoutUnit dx, LayoutUnit dy);
     
@@ -82,81 +67,45 @@ public:
     void setLayoutOverflow(const LayoutRect&);
     void setVisualOverflow(const LayoutRect&);
 
-    void resetLayoutOverflow(const LayoutRect& defaultRect);
-
 private:
-    LayoutUnit m_minYLayoutOverflow;
-    LayoutUnit m_maxYLayoutOverflow;
-    LayoutUnit m_minXLayoutOverflow;
-    LayoutUnit m_maxXLayoutOverflow;
-
-    LayoutUnit m_minYVisualOverflow;
-    LayoutUnit m_maxYVisualOverflow;
-    LayoutUnit m_minXVisualOverflow;
-    LayoutUnit m_maxXVisualOverflow;
+    LayoutRect m_layoutOverflow;
+    LayoutRect m_visualOverflow;
 };
-
-inline LayoutRect RenderOverflow::layoutOverflowRect() const
-{
-    return LayoutRect(m_minXLayoutOverflow, m_minYLayoutOverflow, m_maxXLayoutOverflow - m_minXLayoutOverflow, m_maxYLayoutOverflow - m_minYLayoutOverflow);
-}
-
-inline LayoutRect RenderOverflow::visualOverflowRect() const
-{
-    return LayoutRect(m_minXVisualOverflow, m_minYVisualOverflow, m_maxXVisualOverflow - m_minXVisualOverflow, m_maxYVisualOverflow - m_minYVisualOverflow);
-}
 
 inline void RenderOverflow::move(LayoutUnit dx, LayoutUnit dy)
 {
-    m_minYLayoutOverflow += dy;
-    m_maxYLayoutOverflow += dy;
-    m_minXLayoutOverflow += dx;
-    m_maxXLayoutOverflow += dx;
-    
-    m_minYVisualOverflow += dy;
-    m_maxYVisualOverflow += dy;
-    m_minXVisualOverflow += dx;
-    m_maxXVisualOverflow += dx;
+    m_layoutOverflow.move(dx, dy);
+    m_visualOverflow.move(dx, dy);
 }
 
 inline void RenderOverflow::addLayoutOverflow(const LayoutRect& rect)
 {
-    m_minYLayoutOverflow = std::min(rect.y(), m_minYLayoutOverflow);
-    m_maxYLayoutOverflow = std::max(rect.maxY(), m_maxYLayoutOverflow);
-    m_minXLayoutOverflow = std::min(rect.x(), m_minXLayoutOverflow);
-    m_maxXLayoutOverflow = std::max(rect.maxX(), m_maxXLayoutOverflow);
+    LayoutUnit maxX = std::max(rect.maxX(), m_layoutOverflow.maxX());
+    LayoutUnit maxY = std::max(rect.maxY(), m_layoutOverflow.maxY());
+    m_layoutOverflow.setX(std::min(rect.x(), m_layoutOverflow.x()));
+    m_layoutOverflow.setY(std::min(rect.y(), m_layoutOverflow.y()));
+    m_layoutOverflow.setWidth(maxX - m_layoutOverflow.x());
+    m_layoutOverflow.setHeight(maxY - m_layoutOverflow.y());
 }
 
 inline void RenderOverflow::addVisualOverflow(const LayoutRect& rect)
 {
-    m_minYVisualOverflow = std::min(rect.y(), m_minYVisualOverflow);
-    m_maxYVisualOverflow = std::max(rect.maxY(), m_maxYVisualOverflow);
-    m_minXVisualOverflow = std::min(rect.x(), m_minXVisualOverflow);
-    m_maxXVisualOverflow = std::max(rect.maxX(), m_maxXVisualOverflow);
+    LayoutUnit maxX = std::max(rect.maxX(), m_visualOverflow.maxX());
+    LayoutUnit maxY = std::max(rect.maxY(), m_visualOverflow.maxY());
+    m_visualOverflow.setX(std::min(rect.x(), m_visualOverflow.x()));
+    m_visualOverflow.setY(std::min(rect.y(), m_visualOverflow.y()));
+    m_visualOverflow.setWidth(maxX - m_visualOverflow.x());
+    m_visualOverflow.setHeight(maxY - m_visualOverflow.y());
 }
 
 inline void RenderOverflow::setLayoutOverflow(const LayoutRect& rect)
 {
-    m_minYLayoutOverflow = rect.y();
-    m_maxYLayoutOverflow = rect.maxY();
-    m_minXLayoutOverflow = rect.x();
-    m_maxXLayoutOverflow = rect.maxX();
+    m_layoutOverflow = rect;
 }
 
 inline void RenderOverflow::setVisualOverflow(const LayoutRect& rect)
 {
-    m_minYVisualOverflow = rect.y();
-    m_maxYVisualOverflow = rect.maxY();
-    m_minXVisualOverflow = rect.x();
-    m_maxXVisualOverflow = rect.maxX();
-}
-
-inline void RenderOverflow::resetLayoutOverflow(const LayoutRect& rect)
-{
-    m_minYLayoutOverflow = rect.y();
-    m_maxYLayoutOverflow = rect.maxY();
-    m_minXLayoutOverflow = rect.x();
-    m_maxXLayoutOverflow = rect.maxX();
+    m_visualOverflow = rect;
 }
 
 } // namespace WebCore
