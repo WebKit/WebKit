@@ -178,6 +178,12 @@ public:
     virtual bool selectWordAroundCaret();
     virtual void selectRange(const WebPoint& start, const WebPoint& end);
     virtual void selectRange(const WebRange&);
+    // FIXME: Remove this function after fixing crbug.com/85132. For detailed
+    // information, please refer to the comments in WebFrame.h
+    virtual int printBegin(const WebSize& printContentSize,
+                           const WebNode& constrainToNode,
+                           int printerDPI,
+                           bool* useBrowserOverlays);
     virtual int printBegin(const WebPrintParams&,
                            const WebNode& constrainToNode,
                            bool* useBrowserOverlays);

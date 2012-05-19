@@ -54,7 +54,6 @@
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
 #include "WebPermissions.h"
-#include "WebPrintParams.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
 #include "platform/WebSerializedScriptValue.h"
@@ -1809,8 +1808,8 @@ void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVa
     WebFrame* frame = m_shell->webView()->mainFrame();
     if (!frame)
         return;
-    WebPrintParams printParams(WebSize(pageWidthInPixels, pageHeightInPixels));
-    int numberOfPages = frame->printBegin(printParams);
+    WebSize size(pageWidthInPixels, pageHeightInPixels);
+    int numberOfPages = frame->printBegin(size);
     frame->printEnd();
     result->set(numberOfPages);
 }

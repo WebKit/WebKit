@@ -1449,6 +1449,21 @@ VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& poin
     return node->renderer()->positionForPoint(result.localPoint());
 }
 
+// TODO(kmadhusu@chromium.org): Remove this function after fixing
+// crbug.com/85132. For more information, please refer to the comments in
+// WebFrame.h
+int WebFrameImpl::printBegin(const WebSize& printContentSize,
+                             const WebNode& constrainToNode,
+                             int printerDPI,
+                             bool* useBrowserOverlays) {
+    WebRect printableArea(0, 0, printContentSize.width, printContentSize.height);
+    WebSize paperSize(printContentSize);
+    WebRect printContentArea(0, 0, printContentSize.width, printContentSize.height);
+    WebPrintParams printParams(printContentArea, printableArea, paperSize,
+                               printerDPI, WebPrintScalingOptionSourceSize);
+    return printBegin(printParams, constrainToNode, useBrowserOverlays);
+}
+
 int WebFrameImpl::printBegin(const WebPrintParams& printParams,
                              const WebNode& constrainToNode,
                              bool* useBrowserOverlays)

@@ -1,3 +1,26 @@
+2012-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117675.
+        http://trac.webkit.org/changeset/117675
+        https://bugs.webkit.org/show_bug.cgi?id=86938
+
+        Broke builds. You can't initialize members by members
+        themselves (Requested by rniwa on #webkit).
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebPlugin.h:
+        (WebPlugin):
+        (WebKit::WebPlugin::printBegin):
+        * public/WebPrintParams.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit):
+        (WebKit::WebFrameImpl::printBegin):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::printBegin):
+
 2012-05-18  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove obsolete WebViewClient::startDragging version

@@ -254,7 +254,10 @@ bool WebPluginContainerImpl::isPrintScalingDisabled() const
 
 int WebPluginContainerImpl::printBegin(const WebPrintParams& printParams) const
 {
-    return m_webPlugin->printBegin(printParams);
+    return m_webPlugin->printBegin(printParams.printContentArea, printParams.printerDPI);
+    // FIXME: After committing this CL, update the chrome plugin printBegin()
+    // function to use the overloaded printBegin function.
+    // return m_webPlugin->printBegin(printParams);
 }
 
 bool WebPluginContainerImpl::printPage(int pageNumber,
