@@ -1,5 +1,13 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Fix expectation for test from r117667 with the bot result.
+
+        The diff also happens to match the result for the other ports.
+
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.txt:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unskip a few tests which are actually passing.
 
         * platform/efl/Skipped:
