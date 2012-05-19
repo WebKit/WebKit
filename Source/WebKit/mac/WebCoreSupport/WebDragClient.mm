@@ -25,6 +25,8 @@
 
 #import "WebDragClient.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #import "WebArchive.h"
 #import "WebDOMOperations.h"
 #import "WebFrame.h"
@@ -134,3 +136,5 @@ void WebDragClient::dragControllerDestroyed()
 {
     delete this;
 }
+
+#endif // ENABLE(DRAG_SUPPORT)

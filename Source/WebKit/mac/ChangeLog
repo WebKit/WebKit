@@ -1,3 +1,25 @@
+2012-05-19  Andy Estes  <aestes@apple.com>
+
+        Fix build errors found when disabling ENABLE_DRAG_SUPPORT
+        https://bugs.webkit.org/show_bug.cgi?id=86947
+
+        Reviewed by Jon Honeycutt.
+
+        * WebCoreSupport/WebDragClient.h:
+        * WebCoreSupport/WebDragClient.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (matchesExtensionOrEquivalent):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView moveDragCaretToPoint:]):
+        (-[WebView removeDragCaret]):
+
 2012-04-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have control flow graph simplification

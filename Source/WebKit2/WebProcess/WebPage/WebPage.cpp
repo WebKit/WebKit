@@ -240,7 +240,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.contextMenuClient = new WebContextMenuClient(this);
 #endif
     pageClients.editorClient = new WebEditorClient(this);
+#if ENABLE(DRAG_SUPPORT)
     pageClients.dragClient = new WebDragClient(this);
+#endif
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
@@ -2100,6 +2102,8 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 }
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+
 #if PLATFORM(WIN)
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap& dataMap, uint32_t flags)
 {
@@ -2252,6 +2256,8 @@ void WebPage::mayPerformUploadDragDestinationAction()
         m_pendingDropExtensionsForFileUpload[i]->consumePermanently();
     m_pendingDropExtensionsForFileUpload.clear();
 }
+    
+#endif // ENABLE(DRAG_SUPPORT)
 
 WebUndoStep* WebPage::webUndoStep(uint64_t stepID)
 {

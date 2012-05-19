@@ -1623,6 +1623,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return static_cast<DragApplicationFlags>(flags);
 }
 
+#if ENABLE(DRAG_SUPPORT)
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
     IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
@@ -1699,7 +1700,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     NSArray *types = [pasteboard types];
     if (![types containsObject:NSFilenamesPboardType])
         return;
-    
+
     NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
     handles.allocate([files count]);
     for (unsigned i = 0; i < [files count]; i++) {
@@ -1724,7 +1725,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
     SandboxExtension::HandleArray sandboxExtensionForUpload;
     createSandboxExtensionsForFileUpload([draggingInfo draggingPasteboard], sandboxExtensionForUpload);
-    
+
     _data->_page->performDrag(&dragData, [[draggingInfo draggingPasteboard] name], sandboxExtensionHandle, sandboxExtensionForUpload);
 
     return YES;
@@ -1739,6 +1740,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
         return self;
     return nil;
 }
+#endif // ENABLE(DRAG_SUPPORT)
 
 - (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)loc
 {

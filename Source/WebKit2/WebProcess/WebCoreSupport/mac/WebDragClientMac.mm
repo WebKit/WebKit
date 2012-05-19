@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebDragClient.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #import "PasteboardTypes.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
@@ -145,3 +147,5 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMEl
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(DRAG_SUPPORT)

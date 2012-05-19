@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebDragClient.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include "WebPage.h"
 
 using namespace WebCore;
@@ -66,3 +68,5 @@ void WebDragClient::dragControllerDestroyed()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(DRAG_SUPPORT)

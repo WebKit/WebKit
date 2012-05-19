@@ -634,9 +634,12 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& me
     if (frameHasPlatformWidget(m_frame))
         return passSubframeEventToSubframe(mev, subframe, hoveredNode);
 
+#if ENABLE(DRAG_SUPPORT)
     // WebKit2 code path.
     if (m_mouseDownMayStartDrag && !m_mouseDownWasInSubframe)
         return false;
+#endif
+
     subframe->eventHandler()->handleMouseMoveEvent(mev.event(), hoveredNode);
     return true;
 }

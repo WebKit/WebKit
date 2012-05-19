@@ -710,9 +710,11 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     if (!frame)
         return;
 
+#if ENABLE(DRAG_SUPPORT)
     HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), true);
     if (hitResult.isSelected())
         result = frame->eventHandler()->eventMayStartDrag(platform(event));
+#endif
 }
 
 void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, bool& result)
@@ -724,9 +726,11 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
     
     HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), true);
     frame->eventHandler()->setActivationEventNumber(eventNumber);
+#if ENABLE(DRAG_SUPPORT)
     if (hitResult.isSelected())
         result = frame->eventHandler()->eventMayStartDrag(platform(event));
-    else 
+    else
+#endif
         result = !!hitResult.scrollbar();
 }
 

@@ -1,5 +1,25 @@
 2012-05-19  Andy Estes  <aestes@apple.com>
 
+        Fix build errors found when disabling ENABLE_DRAG_SUPPORT
+        https://bugs.webkit.org/show_bug.cgi?id=86947
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/API/mac/WKView.mm:
+        (createSandboxExtensionsForFileUpload):
+        (-[WKView performDragOperation:]):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+
+2012-05-19  Andy Estes  <aestes@apple.com>
+
         Plug-in process should only be enabled if Netscape plug-in API is enabled
         https://bugs.webkit.org/show_bug.cgi?id=86945
 

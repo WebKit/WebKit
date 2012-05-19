@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(DRAG_SUPPORT)
+
 #import <WebCore/DragClient.h>
 
 @class WebView;
@@ -40,3 +42,5 @@ public:
 private:
     WebView* m_webView;
 };
+
+#endif // ENABLE(DRAG_SUPPORT)

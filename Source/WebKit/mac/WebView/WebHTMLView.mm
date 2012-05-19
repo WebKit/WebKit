@@ -2285,15 +2285,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 @end
 
-static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
-{
-    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
-    return [filename _webkit_hasCaseInsensitiveSuffix:extensionAsSuffix]
-        || ([extension _webkit_isCaseInsensitiveEqualToString:@"jpeg"]
-            && [filename _webkit_hasCaseInsensitiveSuffix:@".jpg"]);
-}
-
-
 @implementation WebHTMLView
 
 + (void)initialize
@@ -3526,8 +3517,10 @@ static void setMenuTargets(NSMenu* menu)
             coreFrame->eventHandler()->setActivationEventNumber([event eventNumber]);
             [hitHTMLView _setMouseDownEvent:event];
             if ([hitHTMLView _isSelectionEvent:event]) {
+#if ENABLE(DRAG_SUPPORT)
                 if (Page* page = coreFrame->page())
                     result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome()->platformPageClient()));
+#endif
             } else if ([hitHTMLView _isScrollBarEvent:event])
                 result = true;
             [hitHTMLView _setMouseDownEvent:nil];
@@ -3549,12 +3542,14 @@ static void setMenuTargets(NSMenu* menu)
     if (hitHTMLView) {
         bool result = false;
         if ([hitHTMLView _isSelectionEvent:event]) {
+            [hitHTMLView _setMouseDownEvent:event];
+#if ENABLE(DRAG_SUPPORT)
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
-                [hitHTMLView _setMouseDownEvent:event];
                 if (Page* page = coreFrame->page())
                     result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome()->platformPageClient()));
-                [hitHTMLView _setMouseDownEvent:nil];
             }
+#endif
+            [hitHTMLView _setMouseDownEvent:nil];
         }
         return result;
     }
@@ -3598,6 +3593,7 @@ done:
     _private->handlingMouseDownEvent = NO;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 - (void)dragImage:(NSImage *)dragImage
                at:(NSPoint)at
            offset:(NSSize)offset
@@ -3674,6 +3670,14 @@ done:
     [self mouseUp:fakeEvent]; // This will also update the mouseover state.
 }
 
+static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
+{
+    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
+    return [filename _webkit_hasCaseInsensitiveSuffix:extensionAsSuffix]
+    || ([extension _webkit_isCaseInsensitiveEqualToString:@"jpeg"]
+        && [filename _webkit_hasCaseInsensitiveSuffix:@".jpg"]);
+}
+
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     NSFileWrapper *wrapper = nil;
@@ -3731,6 +3735,7 @@ noPromisedData:
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
+#endif
 
 - (void)mouseUp:(NSEvent *)event
 {

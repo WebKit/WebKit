@@ -26,6 +26,8 @@
 #ifndef WebDragClient_h
 #define WebDragClient_h
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include <WebCore/DragClient.h>
 
 namespace WebKit {
@@ -57,5 +59,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 #endif // WebDragClient_h

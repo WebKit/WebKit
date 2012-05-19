@@ -746,7 +746,9 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
     pageClients.chromeClient = new WebChromeClient(self);
     pageClients.contextMenuClient = new WebContextMenuClient(self);
     pageClients.editorClient = new WebEditorClient(self);
+#if ENABLE(DRAG_SUPPORT)
     pageClients.dragClient = new WebDragClient(self);
+#endif
     pageClients.inspectorClient = new WebInspectorClient(self);
     pageClients.alternativeTextClient = new WebAlternativeTextClient(self);
     _private->page = new Page(pageClients);
@@ -1955,12 +1957,14 @@ static inline IMP getMethod(id o, SEL s)
                         types:types];
 }
 
+#if ENABLE(DRAG_SUPPORT)
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag
 {
     if (!_private->page)
         return;
     _private->page->dragController()->setDidInitiateDrag(initiatedDrag);
 }
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
 
@@ -4015,6 +4019,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
 }
 
+#if ENABLE(DRAG_SUPPORT)
 // The following 2 internal NSView methods are called on the drag destination to make scrolling while dragging work.
 // Scrolling while dragging will only work if the drag destination is in a scroll view. The WebView is the drag destination. 
 // When dragging to a WebView, the document subview should scroll, but it doesn't because it is not the drag destination. 
@@ -4097,6 +4102,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         return self;
     return hitView;
 }
+#endif
 
 - (BOOL)acceptsFirstResponder
 {
@@ -4257,14 +4263,18 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {
+#if ENABLE(DRAG_SUPPORT)
     if (Page* page = core(self))
         page->dragController()->placeDragCaret(IntPoint([self convertPoint:point toView:nil]));
+#endif
 }
 
 - (void)removeDragCaret
 {
+#if ENABLE(DRAG_SUPPORT)
     if (Page* page = core(self))
         page->dragController()->dragEnded();
+#endif
 }
 
 - (void)setMainFrameURL:(NSString *)URLString

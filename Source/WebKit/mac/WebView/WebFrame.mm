@@ -797,6 +797,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->editor()->computeAndSetTypingStyle(core(style)->copy().get(), undoAction);
 }
 
+#if ENABLE(DRAG_SUPPORT)
 - (void)_dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (!_private->coreFrame)
@@ -809,6 +810,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime());
     _private->coreFrame->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
 }
+#endif
 
 - (BOOL)_canProvideDocumentSource
 {
