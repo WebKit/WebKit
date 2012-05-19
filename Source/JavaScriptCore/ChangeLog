@@ -1,3 +1,15 @@
+2012-05-19  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Windows build broken due to changes in the http://trac.webkit.org/changeset/117646
+        https://bugs.webkit.org/show_bug.cgi?id=86939
+
+        The changeset 117646 changed the JSString::toBoolean signature. This
+        change is for fixing the windows build break.
+
+        Reviewed by Ryosuke Niwa.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(117646): fast/canvas/webgl/glsl-conformance.html is crashing in the DFG
