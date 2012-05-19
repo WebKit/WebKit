@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,4) size 534x21
         text run at (0,4) width 534: "This tests that empty readonly text fields have the right height and baseline. "
-      RenderTextControl {INPUT} at (536,2) size 186x25
+      RenderTextControl {INPUT} at (536,2) size 184x25
       RenderText {#text} at (0,0) size 0x0
-layer at (546,12) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
+layer at (546,12) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21

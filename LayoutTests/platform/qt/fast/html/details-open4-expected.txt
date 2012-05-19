@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (16,0) size 65x21
             text run at (16,0) width 65: "summary"
         RenderBlock (anonymous) at (0,21) size 784x29
-          RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderTextControl {INPUT} at (2,2) size 184x25
           RenderText {#text} at (0,0) size 0x0
-layer at (12,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
+layer at (12,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 186x25
+        RenderTextControl {INPUT} at (2,2) size 184x25
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,45) size 784x42
         RenderText {#text} at (0,0) size 759x42
           text run at (0,0) width 759: "Tests clicking on an input element that has a value that self-destructs. If the test succeeds, there should be a"
           text run at (0,21) width 205: "blinking caret in the text field."
-layer at (12,12) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
+layer at (12,12) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body

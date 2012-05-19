@@ -34,12 +34,12 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (592,96) size 0x0
                 RenderText {#text} at (0,114) size 428x41
                   text run at (0,114) width 428: "Here are some form elements"
-                RenderTextControl {INPUT} at (2,157) size 366x45
-                RenderBR {BR} at (370,190) size 0x0
+                RenderTextControl {INPUT} at (2,157) size 364x45
+                RenderBR {BR} at (368,190) size 0x0
                 RenderText {#text} at (0,208) size 377x41
                   text run at (0,208) width 377: "that we can use for testing"
-                RenderTextControl {INPUT} at (379,206) size 366x45
-                RenderBR {BR} at (747,239) size 0x0
+                RenderTextControl {INPUT} at (379,206) size 364x45
+                RenderBR {BR} at (745,239) size 0x0
                 RenderBlock {INPUT} at (8,274) size 12x12
                 RenderText {#text} at (28,253) size 79x41
                   text run at (28,253) width 79: " Male"
@@ -97,12 +97,12 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 590x41
                   RenderText {#text} at (0,0) size 590x41
                     text run at (0,0) width 590: "This is an anchor point named \"anchor1\"."
-        layer at (12,488) size 362x41 scrollWidth 390
-          RenderBlock {DIV} at (2,2) size 362x41
-            RenderText {#text} at (1,0) size 388x41
-              text run at (1,0) width 388: "Initial text before user input"
-        layer at (389,537) size 362x41
-          RenderBlock {DIV} at (2,2) size 362x41
+        layer at (12,488) size 360x41 scrollWidth 389
+          RenderBlock {DIV} at (2,2) size 360x41
+            RenderText {#text} at (0,0) size 388x41
+              text run at (0,0) width 388: "Initial text before user input"
+        layer at (389,537) size 360x41
+          RenderBlock {DIV} at (2,2) size 360x41
         layer at (10,798) size 560x414
           RenderTextControl {TEXTAREA} at (2,469) size 560x414
             RenderBlock {DIV} at (2,2) size 556x82

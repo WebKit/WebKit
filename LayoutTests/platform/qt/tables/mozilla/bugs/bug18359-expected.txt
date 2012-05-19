@@ -11,25 +11,25 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x94
           RenderTableSection {TBODY} at (0,0) size 784x94
             RenderTableRow {TR} at (0,2) size 784x44
-              RenderTableCell {TD} at (2,2) size 72x44 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 74x44 [r=0 c=0 rs=1 cs=1]
                 RenderInline {B} at (0,0) size 55x42
                   RenderText {#text} at (1,1) size 55x42
                     text run at (1,1) width 55: "Trigger"
                     text run at (1,22) width 39: "URL:"
-              RenderTableCell {TD} at (76,8) size 597x31 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 591x25
+              RenderTableCell {TD} at (78,8) size 595x31 [r=0 c=1 rs=1 cs=1]
+                RenderTextControl {INPUT} at (3,3) size 589x25
               RenderTableCell {TD} at (675,4) size 107x39 [r=0 c=2 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 63x33 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (6,6) size 51x21
                     RenderText at (0,0) size 51x21
                       text run at (0,0) width 51: "Trigger"
             RenderTableRow {TR} at (0,48) size 784x44
-              RenderTableCell {TD} at (2,48) size 72x44 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,48) size 74x44 [r=1 c=0 rs=1 cs=1]
                 RenderInline {B} at (0,0) size 69x42
                   RenderText {#text} at (1,1) size 69x42
                     text run at (1,1) width 69: "Run Test"
                     text run at (1,22) width 44: "Case:"
-              RenderTableCell {TD} at (76,54) size 597x32 [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (78,54) size 595x32 [r=1 c=1 rs=1 cs=1]
                 RenderMenuList {SELECT} at (3,3) size 341x26 [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (4,2) size 313x21
                     RenderText at (0,0) size 96x21
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (6,6) size 89x21
                     RenderText at (0,0) size 89x21
                       text run at (0,0) width 89: "Trigger case"
-layer at (89,82) size 587x21
-  RenderBlock {DIV} at (2,2) size 587x21
-    RenderText {#text} at (1,0) size 120x21
-      text run at (1,0) width 120: "http://jimbob/jars/"
+layer at (91,82) size 585x21
+  RenderBlock {DIV} at (2,2) size 585x21
+    RenderText {#text} at (0,0) size 120x21
+      text run at (0,0) width 120: "http://jimbob/jars/"

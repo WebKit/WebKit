@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (10,128) size 52x21
   RenderBlock {DIV} at (2,2) size 52x21
-    RenderText {#text} at (1,0) size 35x21
-      text run at (1,0) width 35: "hello"
+    RenderText {#text} at (0,0) size 35x21
+      text run at (0,0) width 35: "hello"
 selection start: position 0 of child 2 {#text} of child 5 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body

@@ -7,7 +7,7 @@ layer at (0,0) size 784x673
         RenderText {#text} at (0,0) size 376x21
           text run at (0,0) width 376: "This tests the selection methods on the new text field."
       RenderBlock {P} at (0,37) size 768x29
-        RenderTextControl {INPUT} at (2,2) size 186x25
+        RenderTextControl {INPUT} at (2,2) size 184x25
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,82) size 768x567
         RenderBR {BR} at (0,0) size 0x21
@@ -74,9 +74,9 @@ layer at (0,0) size 784x673
           text run at (0,546) width 58: "Passed."
         RenderBR {BR} at (58,562) size 0x0
       RenderBlock {P} at (0,665) size 768x0
-layer at (12,49) size 182x21 scrollWidth 190
-  RenderBlock {DIV} at (2,2) size 182x21
-    RenderText {#text} at (1,0) size 188x21
-      text run at (1,0) width 188: "123456789 ABCDEFGHIJ"
+layer at (12,49) size 180x21 scrollWidth 189
+  RenderBlock {DIV} at (2,2) size 180x21
+    RenderText {#text} at (0,0) size 188x21
+      text run at (0,0) width 188: "123456789 ABCDEFGHIJ"
 selection start: position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {P} of body
 selection end:   position 12 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 1 {P} of body

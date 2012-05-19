@@ -6,60 +6,60 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 369x21
         text run at (0,0) width 369: "This tests that you can set the placeholder text color."
       RenderBR {BR} at (369,16) size 0x0
-      RenderTextControl {INPUT} at (2,23) size 186x25
-      RenderText {#text} at (190,25) size 4x21
-        text run at (190,25) width 4: " "
-      RenderTextControl {INPUT} at (196,23) size 186x25
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+      RenderTextControl {INPUT} at (2,23) size 184x25
+      RenderText {#text} at (188,25) size 4x21
+        text run at (188,25) width 4: " "
+      RenderTextControl {INPUT} at (194,23) size 184x25
+        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 180x21
           RenderBlock {DIV} at (0,10) size 0x0
-          RenderBlock {DIV} at (0,0) size 171x21
-          RenderBlock {DIV} at (171,5) size 11x11
-      RenderText {#text} at (384,25) size 4x21
-        text run at (384,25) width 4: " "
-      RenderTextControl {INPUT} at (390,23) size 186x25
-      RenderText {#text} at (578,25) size 4x21
-        text run at (578,25) width 4: " "
-      RenderTextControl {INPUT} at (584,23) size 186x25
-      RenderText {#text} at (772,25) size 4x21
-        text run at (772,25) width 4: " "
-      RenderTextControl {INPUT} at (2,52) size 186x25
-      RenderText {#text} at (190,54) size 4x21
-        text run at (190,54) width 4: " "
-      RenderTextControl {INPUT} at (196,52) size 186x25
+          RenderBlock {DIV} at (0,0) size 169x21
+          RenderBlock {DIV} at (169,5) size 11x11
+      RenderText {#text} at (380,25) size 4x21
+        text run at (380,25) width 4: " "
+      RenderTextControl {INPUT} at (386,23) size 184x25
+      RenderText {#text} at (572,25) size 4x21
+        text run at (572,25) width 4: " "
+      RenderTextControl {INPUT} at (578,23) size 184x25
+      RenderText {#text} at (764,25) size 4x21
+        text run at (764,25) width 4: " "
+      RenderTextControl {INPUT} at (2,52) size 184x25
+      RenderText {#text} at (188,54) size 4x21
+        text run at (188,54) width 4: " "
+      RenderTextControl {INPUT} at (194,52) size 184x25
       RenderText {#text} at (0,0) size 0x0
-layer at (12,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
-layer at (12,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#640000]
-    RenderText {#text} at (1,0) size 25x21
-      text run at (1,0) width 25: "text"
-layer at (206,33) size 171x21
-  RenderBlock {DIV} at (0,0) size 171x21
-layer at (206,33) size 171x21
-  RenderBlock {DIV} at (2,2) size 171x21 [color=#640000]
-    RenderText {#text} at (1,0) size 48x21
-      text run at (1,0) width 48: "search"
-layer at (400,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
-layer at (400,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#640000]
-    RenderText {#text} at (1,0) size 69x21
-      text run at (1,0) width 69: "password"
-layer at (594,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
-layer at (594,33) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#640000]
-    RenderText {#text} at (1,0) size 90x21
-      text run at (1,0) width 90: "disabled text"
-layer at (12,62) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
-layer at (12,62) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 48x21
-      text run at (1,0) width 48: "default"
-layer at (206,62) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
-layer at (206,62) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 113x21
-      text run at (1,0) width 113: "default disabled"
+layer at (12,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
+layer at (12,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#640000]
+    RenderText {#text} at (0,0) size 25x21
+      text run at (0,0) width 25: "text"
+layer at (204,33) size 169x21
+  RenderBlock {DIV} at (0,0) size 169x21
+layer at (204,33) size 169x21
+  RenderBlock {DIV} at (2,2) size 169x21 [color=#640000]
+    RenderText {#text} at (0,0) size 48x21
+      text run at (0,0) width 48: "search"
+layer at (396,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
+layer at (396,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#640000]
+    RenderText {#text} at (0,0) size 69x21
+      text run at (0,0) width 69: "password"
+layer at (588,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#545454]
+layer at (588,33) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#640000]
+    RenderText {#text} at (0,0) size 90x21
+      text run at (0,0) width 90: "disabled text"
+layer at (12,62) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
+layer at (12,62) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 48x21
+      text run at (0,0) width 48: "default"
+layer at (204,62) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
+layer at (204,62) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 113x21
+      text run at (0,0) width 113: "default disabled"

@@ -11,11 +11,11 @@ layer at (0,0) size 800x584
                 RenderTableSection {TBODY} at (2,2) size 282x130
                   RenderTableRow {TR} at (0,2) size 282x78
                     RenderTableCell {TD} at (2,2) size 278x78 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 202x41 [border: (2px solid #FF0000)]
-                        RenderTableSection {TBODY} at (2,2) size 198x37
-                          RenderTableRow {TR} at (0,2) size 198x33
-                            RenderTableCell {TD} at (2,2) size 194x33 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderTextControl {INPUT} at (4,4) size 186x25
+                      RenderTable {TABLE} at (2,2) size 200x41 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 196x37
+                          RenderTableRow {TR} at (0,2) size 196x33
+                            RenderTableCell {TD} at (2,2) size 192x33 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderTextControl {INPUT} at (4,4) size 184x25
                               RenderText {#text} at (0,0) size 0x0
                       RenderTable {TABLE} at (2,43) size 274x33 [border: (2px solid #FF0000)]
                         RenderTableSection {TBODY} at (2,2) size 270x29
@@ -38,7 +38,7 @@ layer at (0,0) size 800x584
               RenderText {#text} at (2,2) size 812x42
                 text run at (2,2) width 812: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,23) width 625: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
-layer at (30,30) size 182x21 scrollWidth 199
-  RenderBlock {DIV} at (2,2) size 182x21
-    RenderText {#text} at (1,0) size 197x21
-      text run at (1,0) width 197: "THIS NEEDS THIS VALUE"
+layer at (30,30) size 180x21 scrollWidth 198
+  RenderBlock {DIV} at (2,2) size 180x21
+    RenderText {#text} at (0,0) size 197x21
+      text run at (0,0) width 197: "THIS NEEDS THIS VALUE"
