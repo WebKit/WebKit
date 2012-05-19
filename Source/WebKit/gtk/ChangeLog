@@ -1,3 +1,17 @@
+2012-05-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r117628.
+        http://trac.webkit.org/changeset/117628
+        https://bugs.webkit.org/show_bug.cgi?id=86936
+
+        triggers 20+ timeouts in the editing test suite (Requested by
+        philn on #webkit).
+
+        * WebCoreSupport/TextCheckerClientGtk.cpp:
+        (WebKit::TextCheckerClientGtk::checkSpellingOfString):
+        * webkit/webkitspellcheckerenchant.cpp:
+        (checkSpellingOfString):
+
 2012-05-18  Martin Robinson  <mrobinson@igalia.com>
 
         Spell checker doesn't recognize contractions (apostrophes)

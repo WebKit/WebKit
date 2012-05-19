@@ -88,14 +88,6 @@ static void webkit_spell_checker_enchant_init(WebKitSpellCheckerEnchant* checker
     priv->enchantDicts = 0;
 }
 
-static size_t findByteOffsetToFirstNonGraphableCharacter(const char* utf8String)
-{
-    const char* firstNonGraphableCharacter = utf8String;
-    while (firstNonGraphableCharacter && g_unichar_isgraph(g_utf8_get_char(firstNonGraphableCharacter)))
-        firstNonGraphableCharacter = g_utf8_find_next_char(firstNonGraphableCharacter, 0);
-    return firstNonGraphableCharacter - utf8String;
-}
-
 static void checkSpellingOfString(WebKitSpellChecker* checker, const char* string, int* misspellingLocation, int* misspellingLength)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
@@ -104,33 +96,50 @@ static void checkSpellingOfString(WebKitSpellChecker* checker, const char* strin
     if (!dicts)
         return;
 
-    // At the time this code was written, WebCore only sends us one word at a
-    // time during spellchecking, with a chance of having some small amount of
-    // leading and trailing whitespace. For this reason we can merely chop off
-    // the whitespace and send the word directly to Enchant.
-    const char* firstWord = string;
-    while (firstWord && !g_unichar_isgraph(g_utf8_get_char(firstWord)))
-        firstWord = g_utf8_find_next_char(firstWord, NULL);
+    int length = g_utf8_strlen(string, -1);
 
-    // Either the string only had whitespace characters or no characters at all.
-    if (!firstWord)
-        return;
+    PangoLanguage* language(pango_language_get_default());
+    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, length + 1));
 
-    size_t byteOffsetToEndOfFirstWord = findByteOffsetToFirstNonGraphableCharacter(firstWord);
-    for (; dicts; dicts = dicts->next) {
-        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
-        int result = enchant_dict_check(dict, firstWord, byteOffsetToEndOfFirstWord);
+    // pango_get_log_attrs uses an aditional position at the end of the text.
+    pango_get_log_attrs(string, -1, -1, language, attrs.get(), length + 1);
 
-        if (result < 0) // Error during checking.
-            continue;
-        if (!result) { // Stop checking, as this word is correct for at least one dictionary.
-            *misspellingLocation = -1;
-            *misspellingLength = 0;
-            return;
+    for (int i = 0; i < length + 1; i++) {
+        // We go through each character until we find an is_word_start,
+        // then we get into an inner loop to find the is_word_end corresponding
+        // to it.
+        if (attrs.get()[i].is_word_start) {
+            int start = i;
+            int end = i;
+            int wordLength;
+
+            while (attrs.get()[end].is_word_end < 1)
+                end++;
+
+            wordLength = end - start;
+            // Set the iterator to be at the current word end, so we don't
+            // check characters twice.
+            i = end;
+
+            gchar* cstart = g_utf8_offset_to_pointer(string, start);
+            gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(string, end) - cstart);
+            GOwnPtr<gchar> word(g_new0(gchar, bytes + 1));
+
+            g_utf8_strncpy(word.get(), cstart, wordLength);
+
+            for (; dicts; dicts = dicts->next) {
+                EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+                if (enchant_dict_check(dict, word.get(), wordLength)) {
+                    *misspellingLocation = start;
+                    *misspellingLength = wordLength;
+                } else {
+                    // Stop checking, this word is ok in at least one dict.
+                    *misspellingLocation = -1;
+                    *misspellingLength = 0;
+                    break;
+                }
+            }
         }
-
-        *misspellingLocation = g_utf8_pointer_to_offset(string, firstWord);
-        *misspellingLength = g_utf8_pointer_to_offset(string, firstWord + byteOffsetToEndOfFirstWord) - *misspellingLocation;
     }
 }
 
