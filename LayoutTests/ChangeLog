@@ -1,3 +1,22 @@
+2012-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Lion rebaseline after r117672.
+
+        * platform/mac/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+        * platform/mac/fast/repaint/search-field-cancel-expected.txt:
+        * platform/mac/fast/repaint/subtree-root-skipped-expected.txt:
+        * platform/mac/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/mac/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.txt:
+
 2012-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r117672.
