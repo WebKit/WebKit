@@ -1,3 +1,12 @@
+2012-05-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, adding GTK baselines for new tests added in r117477.
+
+        * platform/gtk/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/gtk/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/gtk/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+
 2012-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Lion rebaseline after r117672.
