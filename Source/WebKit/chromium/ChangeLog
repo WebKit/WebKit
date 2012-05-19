@@ -1,3 +1,9 @@
+2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from r136942 to r137976.
+
+        * DEPS:
+
 2012-05-18  Aaron Colwell  <acolwell@chromium.org>
 
         Update Media Source implementation to reflect changes in 0.5 spec.
