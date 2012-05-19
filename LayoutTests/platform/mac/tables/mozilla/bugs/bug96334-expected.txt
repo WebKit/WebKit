@@ -11,11 +11,11 @@ layer at (0,0) size 800x585
                 RenderTableSection {TBODY} at (2,2) size 199x131
                   RenderTableRow {TR} at (0,2) size 199x87
                     RenderTableCell {TD} at (2,2) size 195x87 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 141x35 [border: (2px solid #FF0000)]
-                        RenderTableSection {TBODY} at (2,2) size 137x31
-                          RenderTableRow {TR} at (0,2) size 137x27
-                            RenderTableCell {TD} at (2,2) size 133x27 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderTextControl {INPUT} at (4,4) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderTable {TABLE} at (2,2) size 139x35 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 135x31
+                          RenderTableRow {TR} at (0,2) size 135x27
+                            RenderTableCell {TD} at (2,2) size 131x27 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderTextControl {INPUT} at (4,4) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                               RenderText {#text} at (0,0) size 0x0
                       RenderTable {TABLE} at (2,37) size 191x48 [border: (2px solid #FF0000)]
                         RenderTableSection {TBODY} at (2,2) size 187x44
@@ -39,7 +39,7 @@ layer at (0,0) size 800x585
               RenderText {#text} at (2,2) size 770x36
                 text run at (2,2) width 770: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,20) width 618: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
-layer at (31,31) size 119x13 scrollWidth 130
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 128x13
-      text run at (1,0) width 128: "THIS NEEDS THIS VALUE"
+layer at (31,31) size 117x13 scrollWidth 129
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 128x13
+      text run at (0,0) width 128: "THIS NEEDS THIS VALUE"

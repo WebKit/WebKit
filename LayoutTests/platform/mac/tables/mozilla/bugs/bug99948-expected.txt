@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 458x18
           text run at (0,0) width 458: "the purple text input control must be in the same line with the grey image"
-      RenderTable {TABLE} at (0,18) size 265x44
-        RenderTableSection {TBODY} at (0,0) size 265x44
-          RenderTableRow {TR} at (0,2) size 265x40
-            RenderTableCell {TD} at (2,2) size 261x40 [bgcolor=#CCDDFF] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,18) size 125x19 [bgcolor=#CCAAFF] [border: (2px inset #000000)]
-              RenderImage {IMG} at (131,4) size 126x26 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
-layer at (16,49) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
+      RenderTable {TABLE} at (0,18) size 263x44
+        RenderTableSection {TBODY} at (0,0) size 263x44
+          RenderTableRow {TR} at (0,2) size 263x40
+            RenderTableCell {TD} at (2,2) size 259x40 [bgcolor=#CCDDFF] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (3,18) size 123x19 [bgcolor=#CCAAFF] [border: (2px inset #000000)]
+              RenderImage {IMG} at (129,4) size 126x26 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
+layer at (16,49) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13

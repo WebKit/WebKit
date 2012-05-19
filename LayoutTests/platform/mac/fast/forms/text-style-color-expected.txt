@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,26) size 784x43
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,10) size 784x23
-          RenderInline {LABEL} at (0,0) size 451x18
+          RenderInline {LABEL} at (0,0) size 449x18
             RenderText {#text} at (0,2) size 322x18
               text run at (0,2) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderTextControl {INPUT} at (324,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,85) size 784x18
         RenderText {#text} at (0,0) size 145x18
@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,111) size 784x43
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,10) size 784x23
-          RenderInline {LABEL} at (0,0) size 451x18
+          RenderInline {LABEL} at (0,0) size 449x18
             RenderText {#text} at (0,2) size 322x18
               text run at (0,2) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 125x19 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+            RenderTextControl {INPUT} at (324,2) size 123x19 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
         RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,170) size 784x18
         RenderText {#text} at (0,0) size 212x18
@@ -31,10 +31,10 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,196) size 784x43
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,10) size 784x23
-          RenderInline {LABEL} at (0,0) size 451x18
+          RenderInline {LABEL} at (0,0) size 449x18
             RenderText {#text} at (0,2) size 322x18
               text run at (0,2) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 125x19 [bgcolor=#008000] [border: (2px inset #000000)]
+            RenderTextControl {INPUT} at (324,2) size 123x19 [bgcolor=#008000] [border: (2px inset #000000)]
         RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,255) size 784x18
         RenderText {#text} at (0,0) size 208x18
@@ -42,52 +42,52 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,281) size 784x43
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,10) size 784x23
-          RenderInline {LABEL} at (0,0) size 451x18
+          RenderInline {LABEL} at (0,0) size 449x18
             RenderText {#text} at (0,2) size 322x18
               text run at (0,2) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 125x19 [color=#FF0000] [bgcolor=#008000] [border: (2px inset #FF0000)]
+            RenderTextControl {INPUT} at (324,2) size 123x19 [color=#FF0000] [bgcolor=#008000] [border: (2px inset #FF0000)]
         RenderBlock {HR} at (0,41) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,340) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (129,2) size 4x18
-          text run at (129,2) width 4: " "
-        RenderTextControl {INPUT} at (135,2) size 125x19 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
-        RenderText {#text} at (262,2) size 4x18
-          text run at (262,2) width 4: " "
-        RenderTextControl {INPUT} at (268,2) size 125x19 [bgcolor=#008000] [border: (2px inset #000000)]
-        RenderText {#text} at (395,2) size 4x18
-          text run at (395,2) width 4: " "
-        RenderTextControl {INPUT} at (401,2) size 125x19 [color=#FF0000] [bgcolor=#008000] [border: (2px inset #FF0000)]
+        RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (127,2) size 4x18
+          text run at (127,2) width 4: " "
+        RenderTextControl {INPUT} at (133,2) size 123x19 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+        RenderText {#text} at (258,2) size 4x18
+          text run at (258,2) width 4: " "
+        RenderTextControl {INPUT} at (264,2) size 123x19 [bgcolor=#008000] [border: (2px inset #000000)]
+        RenderText {#text} at (389,2) size 4x18
+          text run at (389,2) width 4: " "
+        RenderTextControl {INPUT} at (395,2) size 123x19 [color=#FF0000] [bgcolor=#008000] [border: (2px inset #FF0000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (335,49) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 38x13
-      text run at (1,0) width 38: "default"
-layer at (335,134) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 18x13
-      text run at (1,0) width 18: "red"
-layer at (335,219) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 89x13
-      text run at (1,0) width 89: "default on green"
-layer at (335,304) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 69x13
-      text run at (1,0) width 69: "red on green"
-layer at (13,353) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 38x13
-      text run at (1,0) width 38: "default"
-layer at (146,353) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 18x13
-      text run at (1,0) width 18: "red"
-layer at (279,353) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 89x13
-      text run at (1,0) width 89: "default on green"
-layer at (412,353) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 69x13
-      text run at (1,0) width 69: "red on green"
+layer at (335,49) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 38x13
+      text run at (0,0) width 38: "default"
+layer at (335,134) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 18x13
+      text run at (0,0) width 18: "red"
+layer at (335,219) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 89x13
+      text run at (0,0) width 89: "default on green"
+layer at (335,304) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 69x13
+      text run at (0,0) width 69: "red on green"
+layer at (13,353) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 38x13
+      text run at (0,0) width 38: "default"
+layer at (144,353) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 18x13
+      text run at (0,0) width 18: "red"
+layer at (275,353) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 89x13
+      text run at (0,0) width 89: "default on green"
+layer at (406,353) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 69x13
+      text run at (0,0) width 69: "red on green"

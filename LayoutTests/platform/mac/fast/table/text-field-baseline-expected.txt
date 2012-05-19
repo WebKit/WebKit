@@ -21,14 +21,14 @@ layer at (0,0) size 800x419
           text run at (0,0) width 745: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and"
           text run at (0,18) width 320: "resize the window. The text field should not move."
       RenderBlock {FORM} at (0,104) size 784x283
-        RenderTable {DL} at (0,0) size 154x23
-          RenderTableSection (anonymous) at (0,0) size 154x23
-            RenderTableRow {DIV} at (0,0) size 154x23
+        RenderTable {DL} at (0,0) size 152x23
+          RenderTableSection (anonymous) at (0,0) size 152x23
+            RenderTableRow {DIV} at (0,0) size 152x23
               RenderTableCell {DT} at (0,2) size 25x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,0) size 129x23 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTableCell {DD} at (25,0) size 127x23 [r=0 c=1 rs=1 cs=1]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderBlock {HR} at (0,39) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,57) size 784x36
           RenderText {#text} at (0,0) size 781x36
@@ -41,37 +41,37 @@ layer at (0,0) size 800x419
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,0) size 209x23 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,23) size 234x23
               RenderTableCell {DT} at (0,25) size 25x18 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,23) size 209x23 [r=1 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,46) size 234x23
               RenderTableCell {DT} at (0,48) size 25x18 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,46) size 209x23 [r=2 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,69) size 234x23
               RenderTableCell {DT} at (0,71) size 25x18 [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,69) size 209x23 [r=3 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,92) size 234x23
               RenderTableCell {DT} at (0,94) size 25x18 [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,92) size 209x23 [r=4 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,115) size 234x23
               RenderTableCell {DT} at (0,117) size 25x18 [r=5 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,115) size 209x23 [r=5 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableRow {DIV} at (0,138) size 234x36
               RenderTableCell {DT} at (0,156) size 25x18 [r=6 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x18
@@ -81,21 +81,21 @@ layer at (0,0) size 800x419
                   RenderBR {BR} at (0,0) size 0x18
                   RenderText {#text} at (0,18) size 209x18
                     text run at (0,18) width 209: "Bar (should be aligned with Foo)"
-layer at (38,125) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (38,234) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (38,257) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (38,280) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 17x13
-      text run at (1,0) width 17: "Bar"
-layer at (38,303) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 17x13
-      text run at (1,0) width 17: "Bar"
-layer at (38,326) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (38,349) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
+layer at (38,125) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+layer at (38,234) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+layer at (38,257) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+layer at (38,280) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 17x13
+      text run at (0,0) width 17: "Bar"
+layer at (38,303) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 17x13
+      text run at (0,0) width 17: "Bar"
+layer at (38,326) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+layer at (38,349) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13

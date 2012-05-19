@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x23
-        RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,39) size 784x18
         RenderText {#text} at (0,0) size 567x18
           text run at (0,0) width 567: "Tests double-clicking on a word. If the test succeeds, the word \"word\" should be selected."
-layer at (13,13) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 72x13
-      text run at (1,0) width 72: "word another"
+layer at (13,13) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 72x13
+      text run at (0,0) width 72: "word another"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body
 selection end:   position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body

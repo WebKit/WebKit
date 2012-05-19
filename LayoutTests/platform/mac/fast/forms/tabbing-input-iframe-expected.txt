@@ -6,24 +6,24 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 442x18
         text run at (0,0) width 442: "This tests that you can tab out of a text field if an iframe comes after it."
       RenderBR {BR} at (442,14) size 0x0
-      RenderTextControl {INPUT} at (2,156) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {#text} at (129,156) size 4x18
-        text run at (129,156) width 4: " "
-      RenderPartObject {IFRAME} at (133,18) size 302x152 [border: (1px solid #000000)]
+      RenderTextControl {INPUT} at (2,156) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (127,156) size 4x18
+        text run at (127,156) width 4: " "
+      RenderPartObject {IFRAME} at (131,18) size 302x152 [border: (1px solid #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-      RenderText {#text} at (435,156) size 4x18
-        text run at (435,156) width 4: " "
-      RenderTextControl {INPUT} at (441,156) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (433,156) size 4x18
+        text run at (433,156) width 4: " "
+      RenderTextControl {INPUT} at (439,156) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (13,167) size 119x13
-  RenderBlock {DIV} at (3,3) size 119x13
-layer at (452,167) size 119x13 scrollWidth 125
-  RenderBlock {DIV} at (3,3) size 119x13
-    RenderText {#text} at (1,0) size 123x13
-      text run at (1,0) width 123: "This should have focus"
+layer at (13,167) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
+layer at (450,167) size 117x13 scrollWidth 124
+  RenderBlock {DIV} at (3,3) size 117x13
+    RenderText {#text} at (0,0) size 123x13
+      text run at (0,0) width 123: "This should have focus"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 selection end:   position 22 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

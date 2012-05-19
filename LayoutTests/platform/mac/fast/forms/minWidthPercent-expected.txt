@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 115x25 [r=0 c=0 rs=1 cs=1]
                 RenderTextControl {INPUT} at (1,3) size 113x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderText {#text} at (0,0) size 0x0
-layer at (14,16) size 107x13 scrollWidth 118
+layer at (14,16) size 107x13 scrollWidth 117
   RenderBlock {DIV} at (3,3) size 107x13
-    RenderText {#text} at (1,0) size 116x13
-      text run at (1,0) width 116: "Should fit in blue box"
+    RenderText {#text} at (0,0) size 116x13
+      text run at (0,0) width 116: "Should fit in blue box"
