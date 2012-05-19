@@ -839,7 +839,6 @@ fast/block/float/overhanging-tall-block.html
 
 # BUG: <select> form elements do not respect some properties when being rendered (probably a problem in the theme).
 fast/forms/basic-selects.html
-fast/forms/select-disabled-appearance.html
 
 # BUG: <textarea>s have some rendering with the proper size
 fast/forms/basic-textareas-quirks.html

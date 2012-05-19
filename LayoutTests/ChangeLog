@@ -1,3 +1,11 @@
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening after r116761 and the jhbuild/font changes.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/forms/select-disabled-appearance-expected.png:
+        * platform/efl/fast/forms/select-disabled-appearance-expected.txt:
+
 2012-05-18  Peter Kasting  <pkasting@google.com>
 
         [chromium] Fix broken expectations in r117651. 
