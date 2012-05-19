@@ -1,3 +1,11 @@
+2012-05-18  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Fix broken expectations in r117651. 
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-18  Aaron Colwell  <acolwell@chromium.org>
 
         Updated Media Source LayoutTests to use v0.5 spec signatures and added
