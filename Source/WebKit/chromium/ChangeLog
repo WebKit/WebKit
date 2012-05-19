@@ -1,3 +1,13 @@
+2012-05-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove obsolete WebViewClient::startDragging version
+        https://bugs.webkit.org/show_bug.cgi?id=86887
+
+        Reviewed by Adam Barth.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::startDragging):
+
 2012-05-18  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         [Chromium] Use overloaded printBegin() webkit API to support auto fit to page functionality.
