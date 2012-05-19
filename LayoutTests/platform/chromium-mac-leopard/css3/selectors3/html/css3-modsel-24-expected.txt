@@ -11,9 +11,9 @@ layer at (0,0) size 800x81
         RenderText {#text} at (250,3) size 4x18
           text run at (250,3) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,28) size 205x19 [color=#545454] [bgcolor=#00FF00] [border: (2px inset #545454)]
+        RenderTextControl {INPUT} at (2,28) size 203x19 [color=#545454] [bgcolor=#00FF00] [border: (2px inset #545454)]
         RenderText {#text} at (0,0) size 0x0
-layer at (13,47) size 199x13 scrollWidth 242
-  RenderBlock {DIV} at (3,3) size 199x13
-    RenderText {#text} at (1,0) size 240x13
-      text run at (1,0) width 240: "a text area (disabled) with green background"
+layer at (13,47) size 197x13 scrollWidth 240
+  RenderBlock {DIV} at (3,3) size 197x13
+    RenderText {#text} at (0,0) size 240x13
+      text run at (0,0) width 240: "a text area (disabled) with green background"

@@ -1,3 +1,495 @@
+2012-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More Chromium rebaselines after r117672.
+
+        * platform/chromium-linux-x86/css3: Added.
+        * platform/chromium-linux-x86/css3/selectors3: Added.
+        * platform/chromium-linux-x86/css3/selectors3/html: Added.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-23-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-24-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-68-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-69-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-24-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xml: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-68-expected.png: Added.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-linux-x86/http/tests/navigation: Added.
+        * platform/chromium-linux-x86/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Added.
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-23-expected.txt:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-69-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-23-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-69-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-23-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-69-expected.txt:
+        * platform/chromium-linux/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-linux/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-linux/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-linux/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-linux/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-linux/editing/selection/3690703-2-expected.png:
+        * platform/chromium-linux/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-linux/editing/selection/3690703-expected.png:
+        * platform/chromium-linux/editing/selection/3690703-expected.txt:
+        * platform/chromium-linux/editing/selection/3690719-expected.png:
+        * platform/chromium-linux/editing/selection/3690719-expected.txt:
+        * platform/chromium-linux/editing/selection/4895428-3-expected.png:
+        * platform/chromium-linux/editing/selection/4975120-expected.png:
+        * platform/chromium-linux/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-linux/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-linux/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-linux/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-linux/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-linux/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-linux/fast/css/input-search-padding-expected.png:
+        * platform/chromium-linux/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-linux/fast/css/line-height-expected.png:
+        * platform/chromium-linux/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-linux/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-linux/fast/dom/isindex-001-expected.png:
+        * platform/chromium-linux/fast/dom/isindex-002-expected.png:
+        * platform/chromium-linux/fast/events/autoscroll-expected.png:
+        * platform/chromium-linux/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-linux/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-linux/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-linux/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-linux/fast/html/details-open2-expected.png:
+        * platform/chromium-linux/fast/html/details-open4-expected.png:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-linux/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-linux/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-linux/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.txt:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/chromium-linux/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-linux/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-linux/fast/table/colspanMinWidth-expected.png:
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium-linux/fast/table/spanOverlapRepaint-expected.png:
+        * platform/chromium-linux/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-linux/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/chromium-linux/plugins/mouse-click-plugin-clears-selection-expected.png:
+        * platform/chromium-linux/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-linux/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-linux/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-linux/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-linux/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/chromium-linux/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac-leopard/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac-leopard/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/4975120-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac-leopard/fast/css/input-search-padding-expected.png:
+        * platform/chromium-mac-leopard/fast/css/line-height-expected.png:
+        * platform/chromium-mac-leopard/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-mac-leopard/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac-leopard/fast/dom/isindex-001-expected.png:
+        * platform/chromium-mac-leopard/fast/dom/isindex-002-expected.png:
+        * platform/chromium-mac-leopard/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac-leopard/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-mac-leopard/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac-leopard/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac-leopard/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac-leopard/fast/html/details-open2-expected.png:
+        * platform/chromium-mac-leopard/fast/html/details-open4-expected.png:
+        * platform/chromium-mac-leopard/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/subtree-root-skipped-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/replaced/replaced-breaking-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac-leopard/fast/table/003-expected.png:
+        * platform/chromium-mac-leopard/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-mac-leopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-leopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac-leopard/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-23-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-24-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-68-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-69-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-24-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-68-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/colspanMinWidth-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-mac/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-expected.png:
+        * platform/chromium-mac/editing/selection/3690719-expected.png:
+        * platform/chromium-mac/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac/editing/selection/4975120-expected.png:
+        * platform/chromium-mac/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/input-search-padding-expected.png:
+        * platform/chromium-mac/fast/css/line-height-expected.png:
+        * platform/chromium-mac/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/dom/isindex-001-expected.png:
+        * platform/chromium-mac/fast/dom/isindex-002-expected.png:
+        * platform/chromium-mac/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac/fast/html/details-open2-expected.png:
+        * platform/chromium-mac/fast/html/details-open4-expected.png:
+        * platform/chromium-mac/fast/invalid/residual-style-expected.txt: Added.
+        * platform/chromium-mac/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-mac/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-mac/fast/repaint/subtree-root-skipped-expected.txt: Added.
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.txt: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac/fast/table/003-expected.png:
+        * platform/chromium-mac/fast/table/colspanMinWidth-expected.png: Added.
+        * platform/chromium-mac/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-win-vista/css3: Added.
+        * platform/chromium-win-vista/css3/selectors3: Added.
+        * platform/chromium-win-vista/css3/selectors3/html: Added.
+        * platform/chromium-win-vista/css3/selectors3/html/css3-modsel-23-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/html/css3-modsel-24-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/html/css3-modsel-68-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/html/css3-modsel-69-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xhtml: Added.
+        * platform/chromium-win-vista/css3/selectors3/xhtml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xhtml/css3-modsel-24-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xhtml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xml: Added.
+        * platform/chromium-win-vista/css3/selectors3/xml/css3-modsel-23-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xml/css3-modsel-68-expected.png: Added.
+        * platform/chromium-win-vista/css3/selectors3/xml/css3-modsel-69-expected.png: Added.
+        * platform/chromium-win-vista/http/tests/navigation: Added.
+        * platform/chromium-win-vista/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Added.
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-23-expected.txt:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-69-expected.txt:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-23-expected.txt:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-69-expected.txt:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-23-expected.txt:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-69-expected.txt:
+        * platform/chromium-win/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-win/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/chromium-win/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-win/editing/inserting/before-after-input-element-expected.txt:
+        * platform/chromium-win/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-win/editing/pasteboard/4806874-expected.txt:
+        * platform/chromium-win/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-win/editing/pasteboard/drop-text-without-selection-expected.txt:
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.txt:
+        * platform/chromium-win/editing/selection/3690703-2-expected.png:
+        * platform/chromium-win/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-win/editing/selection/3690703-expected.png:
+        * platform/chromium-win/editing/selection/3690703-expected.txt:
+        * platform/chromium-win/editing/selection/3690719-expected.png:
+        * platform/chromium-win/editing/selection/3690719-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-3-expected.png:
+        * platform/chromium-win/editing/selection/4895428-3-expected.txt:
+        * platform/chromium-win/editing/selection/4975120-expected.png:
+        * platform/chromium-win/editing/selection/4975120-expected.txt:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.txt:
+        * platform/chromium-win/fast/css/input-search-padding-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-win/fast/css/line-height-expected.png:
+        * platform/chromium-win/fast/css/line-height-expected.txt:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/chromium-win/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-win/fast/css/text-overflow-input-expected.txt:
+        * platform/chromium-win/fast/dom/isindex-001-expected.png:
+        * platform/chromium-win/fast/dom/isindex-001-expected.txt:
+        * platform/chromium-win/fast/dom/isindex-002-expected.png:
+        * platform/chromium-win/fast/dom/isindex-002-expected.txt:
+        * platform/chromium-win/fast/events/autoscroll-expected.png:
+        * platform/chromium-win/fast/events/autoscroll-expected.txt:
+        * platform/chromium-win/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-win/fast/events/context-no-deselect-expected.txt:
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.txt:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.txt:
+        * platform/chromium-win/fast/html/details-open2-expected.png:
+        * platform/chromium-win/fast/html/details-open2-expected.txt:
+        * platform/chromium-win/fast/html/details-open4-expected.png:
+        * platform/chromium-win/fast/html/details-open4-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-win/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/chromium-win/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-win/fast/repaint/subtree-root-skipped-expected.txt:
+        * platform/chromium-win/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-win/fast/replaced/replaced-breaking-expected.txt:
+        * platform/chromium-win/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-win/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/chromium-win/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-win/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.txt:
+        * platform/chromium-win/fast/table/colspanMinWidth-expected.png:
+        * platform/chromium-win/fast/table/colspanMinWidth-expected.txt:
+        * platform/chromium-win/fast/table/spanOverlapRepaint-expected.png:
+        * platform/chromium-win/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/chromium-win/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-win/fast/table/text-field-baseline-expected.txt:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-win/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-win/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/chromium-win/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-win/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/chromium-win/plugins/mouse-click-plugin-clears-selection-expected.png:
+        * platform/chromium-win/plugins/mouse-click-plugin-clears-selection-expected.txt:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-win/svg/hixie/mixed/003-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug55545-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-win/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-win/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r117672.
