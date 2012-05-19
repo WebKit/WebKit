@@ -66,13 +66,13 @@ layer at (0,0) size 785x768
       RenderBlock {P} at (0,640) size 769x18
         RenderText {#text} at (0,0) size 70x19
           text run at (0,0) width 70: "Test case 6"
-      RenderTable {TABLE} at (0,674) size 217x78 [border: (3px solid #0000FF)]
-        RenderTableSection {TBODY} at (3,3) size 211x72
-          RenderTableRow {TR} at (0,2) size 211x40
-            RenderTableCell {TD} at (2,2) size 207x40 [border: (3px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (6,6) size 195x28 [bgcolor=#FFFFFF]
-          RenderTableRow {TR} at (0,44) size 211x26
-            RenderTableCell {TD} at (2,44) size 207x26 [border: (3px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,674) size 215x78 [border: (3px solid #0000FF)]
+        RenderTableSection {TBODY} at (3,3) size 209x72
+          RenderTableRow {TR} at (0,2) size 209x40
+            RenderTableCell {TD} at (2,2) size 205x40 [border: (3px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (6,6) size 193x28 [bgcolor=#FFFFFF]
+          RenderTableRow {TR} at (0,44) size 209x26
+            RenderTableCell {TD} at (2,44) size 205x26 [border: (3px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (4,4) size 70x18
                 RenderText {#text} at (0,0) size 32x19
                   text run at (0,0) width 32: "70px"
@@ -86,13 +86,13 @@ layer at (21,371) size 23x18
   RenderBlock {DIV} at (4,6) size 23x18
 layer at (21,471) size 193x18 scrollHeight 19
   RenderBlock {DIV} at (4,6) size 193x18
-    RenderText {#text} at (1,0) size 83x19
-      text run at (1,0) width 83: "width 100%"
-layer at (23,599) size 63x18 scrollWidth 71 scrollHeight 19
+    RenderText {#text} at (0,0) size 83x19
+      text run at (0,0) width 83: "width 100%"
+layer at (23,599) size 63x18 scrollWidth 70 scrollHeight 19
   RenderBlock {DIV} at (4,6) size 63x18
-    RenderText {#text} at (1,0) size 69x19
-      text run at (1,0) width 69: "max 70px"
-layer at (23,699) size 188x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 188x18
-    RenderText {#text} at (1,0) size 117x19
-      text run at (1,0) width 117: "min-width 100px"
+    RenderText {#text} at (0,0) size 69x19
+      text run at (0,0) width 69: "max 70px"
+layer at (23,699) size 186x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 186x18
+    RenderText {#text} at (0,0) size 117x19
+      text run at (0,0) width 117: "min-width 100px"

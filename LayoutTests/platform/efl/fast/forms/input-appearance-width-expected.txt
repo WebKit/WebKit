@@ -6,31 +6,31 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 344x19
         text run at (0,0) width 344: "This tests that the new text fields use the correct width."
       RenderBR {BR} at (344,15) size 0x0
-      RenderTextControl {INPUT} at (2,20) size 195x28 [bgcolor=#FFFFFF]
-      RenderBR {BR} at (199,41) size 0x0
+      RenderTextControl {INPUT} at (2,20) size 193x28 [bgcolor=#FFFFFF]
+      RenderBR {BR} at (197,41) size 0x0
       RenderTextControl {INPUT} at (0,52) size 200x28 [bgcolor=#FFFFFF]
       RenderBR {BR} at (200,73) size 0x0
-      RenderTextControl {INPUT} at (2,84) size 465x28 [bgcolor=#FFFFFF]
-      RenderBR {BR} at (469,105) size 0x0
+      RenderTextControl {INPUT} at (2,84) size 463x28 [bgcolor=#FFFFFF]
+      RenderBR {BR} at (467,105) size 0x0
       RenderTextControl {INPUT} at (0,116) size 200x28 [bgcolor=#FFFFFF]
       RenderBR {BR} at (200,137) size 0x0
-      RenderTextControl {INPUT} at (2,148) size 105x28 [bgcolor=#FFFFFF]
-      RenderBR {BR} at (109,169) size 0x0
-layer at (14,34) size 188x18
-  RenderBlock {DIV} at (4,6) size 188x18
+      RenderTextControl {INPUT} at (2,148) size 103x28 [bgcolor=#FFFFFF]
+      RenderBR {BR} at (107,169) size 0x0
+layer at (14,34) size 186x18
+  RenderBlock {DIV} at (4,6) size 186x18
 layer at (12,66) size 193x18 scrollHeight 19
   RenderBlock {DIV} at (4,6) size 193x18
-    RenderText {#text} at (1,0) size 132x19
-      text run at (1,0) width 132: "styled width 200px"
-layer at (14,98) size 458x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 458x18
-    RenderText {#text} at (1,0) size 51x19
-      text run at (1,0) width 51: "size 50"
-layer at (12,130) size 193x18 scrollWidth 209 scrollHeight 19
+    RenderText {#text} at (0,0) size 132x19
+      text run at (0,0) width 132: "styled width 200px"
+layer at (14,98) size 456x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 456x18
+    RenderText {#text} at (0,0) size 51x19
+      text run at (0,0) width 51: "size 50"
+layer at (12,130) size 193x18 scrollWidth 208 scrollHeight 19
   RenderBlock {DIV} at (4,6) size 193x18
-    RenderText {#text} at (1,0) size 207x19
-      text run at (1,0) width 207: "styled width 200px & size=10"
-layer at (14,162) size 98x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 98x18
-    RenderText {#text} at (1,0) size 51x19
-      text run at (1,0) width 51: "size 10"
+    RenderText {#text} at (0,0) size 207x19
+      text run at (0,0) width 207: "styled width 200px & size=10"
+layer at (14,162) size 96x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 96x18
+    RenderText {#text} at (0,0) size 51x19
+      text run at (0,0) width 51: "size 10"
