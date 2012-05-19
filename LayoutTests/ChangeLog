@@ -2,6 +2,16 @@
 
         [EFL] Unreviewed gardening.
 
+        Remove a test that does not exist anymore from the skipped list, and
+        improve the comment for the other test at the block which relies on v8
+        stuff.
+
+        * platform/efl/Skipped:
+
+2012-05-19  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
         Move skipped tests which depend on a showModalDialog()
         implementation from Skipped to test_expectations.txt to have all
         of them grouped together.

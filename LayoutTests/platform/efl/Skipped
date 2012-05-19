@@ -298,9 +298,8 @@ fast/loader/stop-provisional-loads.html
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
-# needs proper i18n/l10n support
+# This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
-fast/js/navigator-language.html
 
 # BUG: Needs setPrinting
 # https://bugs.webkit.org/show_bug.cgi?id=20011
