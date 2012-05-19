@@ -1,0 +1,10 @@
+Test Media Source event handler attributes
+
+onLoad()
+onSourceOpen()
+Calling webkitSourceEndOfStream to trigger a webkitsourceended event.
+onSourceEnded()
+Setting src attribute to "" to trigger a webkitsourceclosed event.
+onSourceClose()
+END OF TEST
+

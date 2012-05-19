@@ -165,9 +165,11 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual MediaPlayer::AddIdStatus sourceAddId(const String&, const String&) { return MediaPlayer::NotSupported; }
-    virtual bool sourceRemoveId(const String&) { return false; }
-    virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
+    virtual MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs) { return MediaPlayer::NotSupported; }
+    virtual PassRefPtr<TimeRanges> sourceBuffered(const String& id) { return TimeRanges::create(); }
+    virtual bool sourceRemoveId(const String& id) { return false; }
+    virtual bool sourceAppend(const String& id, const unsigned char* data, unsigned length) { return false; }
+    virtual bool sourceAbort(const String& id) { return false; }
     virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { };
 #endif
 

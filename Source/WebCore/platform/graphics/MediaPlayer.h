@@ -238,9 +238,11 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
     enum AddIdStatus { Ok, NotSupported, ReachedIdLimit };
-    AddIdStatus sourceAddId(const String& id, const String& type);
+    AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs);
     bool sourceRemoveId(const String& id);
-    bool sourceAppend(const unsigned char* data, unsigned length);
+    PassRefPtr<TimeRanges> sourceBuffered(const String& id);
+    bool sourceAppend(const String& id, const unsigned char* data, unsigned length);
+    bool sourceAbort(const String& id);
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     void sourceEndOfStream(EndOfStreamStatus);
 #endif

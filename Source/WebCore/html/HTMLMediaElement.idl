@@ -99,8 +99,18 @@ module html {
     // URL passed to src attribute to enable the media source logic.
     readonly attribute [V8EnabledAtRuntime=mediaSource, URL] DOMString webkitMediaSourceURL;
 
-    // Appends media to to the source.
-    [V8EnabledAtRuntime=mediaSource] void webkitSourceAppend(in Uint8Array data) raises (DOMException);
+    // Manages IDs for appending media to the source.
+    [V8EnabledAtRuntime=mediaSource] void webkitSourceAddId(in DOMString id, in DOMString type) raises (DOMException);
+    [V8EnabledAtRuntime=mediaSource] void webkitSourceRemoveId(in DOMString id) raises (DOMException);
+
+    // Returns the time ranges buffered for a specific source ID.
+    [V8EnabledAtRuntime=mediaSource] TimeRanges webkitSourceBuffered(in DOMString id) raises (DOMException);
+    
+    // Appends segment data.
+    [V8EnabledAtRuntime=mediaSource] void webkitSourceAppend(in DOMString id, in Uint8Array data) raises (DOMException);
+
+    // Aborts the current segment.
+    [V8EnabledAtRuntime=mediaSource] void webkitSourceAbort(in DOMString id) raises (DOMException);
 
     // Signals the end of stream.
     [V8EnabledAtRuntime=mediaSource] const unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
@@ -113,6 +123,10 @@ module html {
     [V8EnabledAtRuntime=mediaSource] const unsigned short SOURCE_OPEN = 1;
     [V8EnabledAtRuntime=mediaSource] const unsigned short SOURCE_ENDED = 2;
     readonly attribute [V8EnabledAtRuntime=mediaSource] unsigned short webkitSourceState;
+
+    attribute [V8EnabledAtRuntime=mediaSource] EventListener onwebkitsourceopen;
+    attribute [V8EnabledAtRuntime=mediaSource] EventListener onwebkitsourceended;
+    attribute [V8EnabledAtRuntime=mediaSource] EventListener onwebkitsourceclose;
 #endif
 
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA

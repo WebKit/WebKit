@@ -6,22 +6,22 @@
         <script>
             var seekTime = getClusterTimeForIndex(4);
 
-            function appendUntilEnd(videoTag, startIndex) 
+            function appendUntilEnd(videoTag, startIndex)
             {
                 for (var index = startIndex; index < getClusterCount(); index++) {
-                    videoTag.webkitSourceAppend(getCluster(index));
+                    appendCluster(videoTag, index);
                 }
 
                 videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NO_ERROR);
             }
 
-            function appendClustersForSeek(videoTag, clusterSeekTime) 
+            function appendClustersForSeek(videoTag, clusterSeekTime)
             {
                 var clusterIndex = getClusterIndexForTimestamp(clusterSeekTime);
                 var endIndex = clusterIndex + 2;
 
                 for (; (clusterIndex < endIndex) && (clusterIndex < getClusterCount()); clusterIndex++) {
-                    videoTag.webkitSourceAppend(getCluster(clusterIndex));
+                    appendCluster(videoTag, clusterIndex);
                 }
 
                 if (clusterIndex >= getClusterCount()) {
@@ -30,12 +30,12 @@
                 }
             }
 
-            function onSourceEvent(event) 
+            function onSourceEvent(event)
             {
                 consoleWrite('EVENT(' + event.type + ') : ' + getSourceStateName(event.target.webkitSourceState));
             }
 
-            function onFirstSourceOpen(event) 
+            function onFirstSourceOpen(event)
             {
                 // This is the first time the source is opened. We just want to append
                 // the headers and clusters until the end of stream. This is testing the
@@ -43,6 +43,7 @@
 
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceopen', onFirstSourceOpen);
+                addSourceId(videoTag);
 
                 expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
@@ -54,7 +55,7 @@
                 appendUntilEnd(videoTag, 0);
             }
 
-            function onFirstSourceEnded(event) 
+            function onFirstSourceEnded(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceended', onFirstSourceEnded);
@@ -65,7 +66,8 @@
                 videoTag.addEventListener('playing', triggerFirstSeek);
             }
 
-            function triggerFirstSeek(event) {
+            function triggerFirstSeek(event)
+            {
                 var videoTag = event.target;
                 videoTag.removeEventListener('playing', triggerFirstSeek);
 
@@ -76,7 +78,7 @@
                 videoTag.currentTime = seekTime;
             }
 
-            function onFirstSeeking(event) 
+            function onFirstSeeking(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeking', onFirstSeeking);
@@ -87,7 +89,7 @@
                 appendClustersForSeek(videoTag, videoTag.currentTime);
             }
 
-            function onFirstSeeked(event) 
+            function onFirstSeeked(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeked', onFirstSeeked);
@@ -100,7 +102,7 @@
                 videoTag.currentTime = seekTime;
             }
 
-            function onSecondSeeking(event) 
+            function onSecondSeeking(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeking', onSecondSeeking);
@@ -111,7 +113,7 @@
                 appendClustersForSeek(videoTag, videoTag.currentTime);
             }
 
-            function onSecondSeeked(event) 
+            function onSecondSeeked(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeked', onSecondSeeked);
@@ -123,7 +125,7 @@
                 setSrcToMediaSourceURL(videoTag);
             }
 
-            function onFirstSourceClose(event) 
+            function onFirstSourceClose(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceclose', onFirstSourceClose);
@@ -133,10 +135,11 @@
                 videoTag.addEventListener('webkitsourceopen', onSecondSourceOpen);
             }
 
-            function onSecondSourceOpen(event) 
+            function onSecondSourceOpen(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceopen', onSecondSourceOpen);
+                addSourceId(videoTag);
 
                 expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
@@ -148,7 +151,7 @@
                 appendUntilEnd(videoTag, 0);
             }
 
-            function onSecondSourceEnded(event) 
+            function onSecondSourceEnded(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceended', onSecondSourceEnded);
@@ -159,7 +162,8 @@
                 videoTag.addEventListener('playing', triggerSecondSourceClose);
             }
 
-            function triggerSecondSourceClose(event) {
+            function triggerSecondSourceClose(event)
+            {
                 var videoTag = event.target;
                 videoTag.removeEventListener('playing', triggerSecondSourceClose);
 
@@ -168,7 +172,7 @@
                 setSrcToMediaSourceURL(videoTag);
             }
 
-            function onSecondSourceClose(event) 
+            function onSecondSourceClose(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceclose', onSecondSourceClose);
@@ -177,17 +181,18 @@
                 videoTag.addEventListener('webkitsourceopen', onThirdSourceOpen);
             }
 
-            function onThirdSourceOpen(event) 
+            function onThirdSourceOpen(event)
             {
                 var videoTag = event.target;
                 videoTag.removeEventListener('webkitsourceopen', onThirdSourceOpen);
+                addSourceId(videoTag);
 
                 expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 endTest();
             }
 
-            function onLoad() 
+            function onLoad()
             {
                 findMediaElement();
 
@@ -206,7 +211,8 @@
                 video.addEventListener('webkitsourceopen', onFirstSourceOpen);
 
                 logSourceState(video);
-                loadWebMData(function(success) {
+                loadWebMData(function(success)
+                {
                     if (!success) {
                         failTest("Failed to load WebM data");
                         return;

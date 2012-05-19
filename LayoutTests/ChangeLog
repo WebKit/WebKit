@@ -1,3 +1,30 @@
+2012-05-18  Aaron Colwell  <acolwell@chromium.org>
+
+        Updated Media Source LayoutTests to use v0.5 spec signatures and added
+        new tests to verify the behavior of the new methods.
+        https://bugs.webkit.org/show_bug.cgi?id=83607
+
+        Reviewed by Darin Fisher.
+
+        * http/tests/media/media-source/video-media-source-event-attributes-expected.txt: Added.
+        * http/tests/media/media-source/video-media-source-event-attributes.html: Added. Tests onwebkitsourcexxx event attributes.
+        * http/tests/media/media-source/webm/video-media-source-abort-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-abort.html: Added. Tests basic webkitSourceAbort() functionality.
+        * http/tests/media/media-source/webm/video-media-source-add-and-remove-ids-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-add-and-remove-ids.html: Added. Tests webkitSourceAddId() & webkitSourceRemoveId().
+        * http/tests/media/media-source/webm/video-media-source-errors.html: Style fixes and add addSourceId() since we need to add an ID before appending data now.
+        * http/tests/media/media-source/webm/video-media-source-play.html: Style fixes and add addSourceId().
+        * http/tests/media/media-source/webm/video-media-source-seek.html: Style fixes and add addSourceId().
+        * http/tests/media/media-source/webm/video-media-source-state-changes.html: Style fixes and add addSourceId().
+        * http/tests/media/media-source/webm/webm-media-source.js:
+        (getData.request.onload): Style fix.
+        (getData): Style fix.
+        (loadWebMData): Style fix.
+        (addSourceId): New helper method that adds SOURCE_ID to the video tag so data can be appended with this ID.
+        (appendHeaders): Add SOURCE_ID parameter since the webkitSourceAppend() signature changed.
+        (appendCluster): Add SOURCE_ID parameter since the webkitSourceAppend() signature changed.
+        (appendUntilEndOfStream): Add SOURCE_ID parameter since the webkitSourceAppend() signature changed.
+
 2012-05-18  Eric Seidel  <eric@webkit.org>
 
         Assertion failure in BidiResolver::commitExplicitEmbedding() (!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty()) at wikipedia.org

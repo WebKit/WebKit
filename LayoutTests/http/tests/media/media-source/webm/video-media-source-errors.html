@@ -145,10 +145,12 @@
                 var functionName = onOpenFunction.name;
                 testCaseIndex++;
 
-                var eventHandlerFunction = function (event) {
+                var eventHandlerFunction = function (event)
+                {
                     consoleWrite("");
                     consoleWrite("running " + functionName);
                     event.target.removeEventListener('webkitsourceopen', eventHandlerFunction);
+                    addSourceId(event.target);
                     onOpenFunction(event);
                 };
                 videoTag.addEventListener('webkitsourceopen', eventHandlerFunction);

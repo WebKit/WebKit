@@ -1,3 +1,24 @@
+2012-05-18  Aaron Colwell  <acolwell@chromium.org>
+
+        Update Media Source implementation to reflect changes in 0.5 spec.
+        https://bugs.webkit.org/show_bug.cgi?id=83607
+
+        Reviewed by Darin Fisher.
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::sourceAddId): Update the signature to take the parsed type and codecs vector.
+        (WebKit::WebMediaPlayer::sourceBuffered): Add default implementation for new method.
+        (WebKit::WebMediaPlayer::sourceAppend): Update signature to include id parameter.
+        (WebKit::WebMediaPlayer::sourceAbort): Add default implementation for new method.
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::sourceAddId): Update the signature to take the parsed type and codecs vector.
+        (WebKit::WebMediaPlayerClientImpl::sourceBuffered): Added implementation for new method. Converts WebKit::WebTimeRanges to WebCore::TimeRanges.
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::sourceAppend): Update signature to include id parameter.
+        (WebKit::WebMediaPlayerClientImpl::sourceAbort): Implementation for new method.
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl): Added declarations for new methods and updated signatures for existing ones.
+
 2012-05-18  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] add back-face visibility check for renderSurfaces

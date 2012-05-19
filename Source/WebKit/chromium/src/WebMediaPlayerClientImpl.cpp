@@ -359,12 +359,12 @@ bool WebMediaPlayerClientImpl::canEnterFullscreen() const
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-WebCore::MediaPlayer::AddIdStatus WebMediaPlayerClientImpl::sourceAddId(const String& id, const String& type)
+WebCore::MediaPlayer::AddIdStatus WebMediaPlayerClientImpl::sourceAddId(const String& id, const String& type, const Vector<String>& codecs)
 {
     if (!m_webMediaPlayer)
         return WebCore::MediaPlayer::NotSupported;
 
-    return static_cast<WebCore::MediaPlayer::AddIdStatus>(m_webMediaPlayer->sourceAddId(id, type));
+    return static_cast<WebCore::MediaPlayer::AddIdStatus>(m_webMediaPlayer->sourceAddId(id, type, codecs));
 }
 
 bool WebMediaPlayerClientImpl::sourceRemoveId(const String& id)
@@ -375,11 +375,31 @@ bool WebMediaPlayerClientImpl::sourceRemoveId(const String& id)
     return m_webMediaPlayer->sourceRemoveId(id);
 }
 
-bool WebMediaPlayerClientImpl::sourceAppend(const unsigned char* data, unsigned length)
+PassRefPtr<TimeRanges> WebMediaPlayerClientImpl::sourceBuffered(const String& id)
+{
+    if (!m_webMediaPlayer)
+        return TimeRanges::create();
+
+    WebTimeRanges webRanges = m_webMediaPlayer->sourceBuffered(id);
+    RefPtr<TimeRanges> ranges = TimeRanges::create();
+    for (size_t i = 0; i < webRanges.size(); ++i)
+        ranges->add(webRanges[i].start, webRanges[i].end);
+    return ranges.release();
+}
+
+bool WebMediaPlayerClientImpl::sourceAppend(const String& id, const unsigned char* data, unsigned length)
 {
     if (m_webMediaPlayer)
-        return m_webMediaPlayer->sourceAppend(data, length);
+        return m_webMediaPlayer->sourceAppend(id, data, length);
     return false;
+}
+
+bool WebMediaPlayerClientImpl::sourceAbort(const String& id)
+{
+    if (!m_webMediaPlayer)
+        return false;
+
+    return m_webMediaPlayer->sourceAbort(id);
 }
 
 void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus status)

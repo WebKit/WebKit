@@ -15,6 +15,7 @@
                 if (firstOpen) {
                     firstOpen = false;
 
+                    addSourceId(videoTag);
                     appendHeaders(videoTag);
                     appendUntilEndOfStream(videoTag, 0);
                 }
@@ -68,7 +69,8 @@
                 video.addEventListener('seeking', onSeeking);
                 video.addEventListener('seeked', onSeeked);
 
-                loadWebMData(function(success) {
+                loadWebMData(function(success)
+                {
                     if (!success) {
                         failTest("Failed to load WebM data");
                         return;

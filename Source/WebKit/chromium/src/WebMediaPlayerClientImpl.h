@@ -154,9 +154,11 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual WebCore::MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type);
+    virtual WebCore::MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs);
     virtual bool sourceRemoveId(const String&);
-    virtual bool sourceAppend(const unsigned char* data, unsigned length);
+    virtual WTF::PassRefPtr<WebCore::TimeRanges> sourceBuffered(const String&);
+    virtual bool sourceAppend(const String&, const unsigned char* data, unsigned length);
+    virtual bool sourceAbort(const String&);
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
 #endif
 

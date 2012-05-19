@@ -76,4 +76,19 @@ String ContentType::type() const
     return strippedType;
 }
 
+Vector<String> ContentType::codecs() const
+{
+    String codecsParameter = parameter("codecs");
+
+    if (codecsParameter.isEmpty())
+        return Vector<String>();
+
+    Vector<String> codecs;
+    codecsParameter.split(",", codecs);
+    for (size_t i = 0; i < codecs.size(); ++i)
+        codecs[i] = codecs[i].simplifyWhiteSpace();
+
+    return codecs;
+}
+
 } // namespace WebCore

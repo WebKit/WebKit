@@ -173,9 +173,12 @@ public:
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
 
-    virtual AddIdStatus sourceAddId(const WebString& id, const WebString& type) { return AddIdStatusNotSupported; }
+    virtual AddIdStatus sourceAddId(const WebString& id, const WebString& type,
+                                    const WebVector<WebString>& codecs) { return AddIdStatusNotSupported; }
     virtual bool sourceRemoveId(const WebString& id) { return false; }
-    virtual bool sourceAppend(const unsigned char* data, unsigned length) { return false; }
+    virtual WebTimeRanges sourceBuffered(const WebString& id) { return WebTimeRanges(); };
+    virtual bool sourceAppend(const WebString& id, const unsigned char* data, unsigned length) { return false; }
+    virtual bool sourceAbort(const WebString& id) { return false; }
     virtual void sourceEndOfStream(EndOfStreamStatus)  { }
 
     // Returns whether keySystem is supported. If true, the result will be

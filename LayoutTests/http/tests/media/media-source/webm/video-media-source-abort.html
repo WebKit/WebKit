@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media-resources/video-test.js"></script>
+        <script src="webm-media-source.js"></script>
+        <script>
+            function abortDuringHeader(event)
+            {
+                var videoTag = event.target;
+
+                consoleWrite("Test aborting during headers.");
+                try {
+                  var headers = getHeaders();
+                  var partialHeader = headers.subarray(0, headers.length / 2);
+
+                  consoleWrite("Appending partial header.");
+                  videoTag.webkitSourceAppend(SOURCE_ID, partialHeader);
+
+                  consoleWrite("Aborting append.");
+                  videoTag.webkitSourceAbort(SOURCE_ID);
+
+                  consoleWrite("Appending full header.");
+                  videoTag.webkitSourceAppend(SOURCE_ID, headers);
+
+                  consoleWrite("Appending enough clusters to trigger loadeddata.");
+                  appendCluster(videoTag, 0);
+                  appendCluster(videoTag, 1);
+
+                  var eventHandler = function(event)
+                  {
+                      var v = event.target;
+                      v.removeEventListener('loadeddata', eventHandler);
+                      runNextTestCase(v)
+                  };
+                  videoTag.addEventListener('loadeddata', eventHandler);
+                } catch (e) {
+                    consoleWrite("Unexpected exception " + e);
+                }
+            }
+
+            function abortDuringCluster(event)
+            {
+                var videoTag = event.target;
+
+                consoleWrite("Test aborting in the middle of a cluster.");
+                try {
+                  appendHeaders(videoTag);
+                  var cluster = getCluster(0);
+                  var partialCluster = cluster.subarray(0, cluster.length / 2);
+
+                  consoleWrite("Appending partial cluster.");
+                  videoTag.webkitSourceAppend(SOURCE_ID, partialCluster);
+
+                  consoleWrite("Aborting append.");
+                  videoTag.webkitSourceAbort(SOURCE_ID);
+
+                  consoleWrite("Appending full header.");
+                  videoTag.webkitSourceAppend(SOURCE_ID, cluster);
+
+                  consoleWrite("Appending enough clusters to trigger loadeddata.");
+                  appendCluster(videoTag, 2);
+
+                  var eventHandler = function(event)
+                  {
+                      var v = event.target;
+                      v.removeEventListener('loadedmetadata', eventHandler);
+                      runNextTestCase(v)
+                  };
+                  videoTag.addEventListener('loadedmetadata', eventHandler);
+                } catch (e) {
+                    consoleWrite("Unexpected exception " + e);
+                }
+            }
+
+            var testCases = [
+                abortDuringHeader,
+                abortDuringCluster,
+            ];
+
+            var testCaseIndex = 0;
+
+            function runNextTestCase(videoTag)
+            {
+                if (testCaseIndex >= testCases.length) {
+                    endTest();
+                    return;
+                }
+
+                var onOpenFunction = testCases[testCaseIndex];
+                var functionName = onOpenFunction.name;
+                testCaseIndex++;
+
+                var eventHandlerFunction = function (event)
+                {
+                    consoleWrite("");
+                    consoleWrite("running " + functionName);
+                    event.target.removeEventListener('webkitsourceopen', eventHandlerFunction);
+                    addSourceId(event.target);
+                    onOpenFunction(event);
+                };
+                videoTag.addEventListener('webkitsourceopen', eventHandlerFunction);
+                setSrcToMediaSourceURL(videoTag);
+            }
+
+            function onError(event)
+            {
+                var videoTag = event.target;
+
+                var errorString = "UNKNOWN";
+                switch(videoTag.error.code) {
+                    case MediaError.MEDIA_ERR_ABORTED:
+                        errorString = "MEDIA_ERR_ABORTED";
+                        break;
+                    case MediaError.MEDIA_ERR_NETWORK:
+                        errorString = "MEDIA_ERR_NETWORK";
+                        break;
+                    case MediaError.MEDIA_ERR_DECODE:
+                        errorString = "MEDIA_ERR_DECODE";
+                        break;
+                    case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        errorString = "MEDIA_ERR_SRC_NOT_SUPPORTED";
+                        break;
+                }
+                consoleWrite("EVENT(error) : " + errorString);
+
+                if (videoTag.webkitSourceState != HTMLMediaElement.SOURCE_CLOSED) {
+                    consoleWrite("Unexpected source state. Expected SOURCE_CLOSED" +
+                                 " got " + getSourceStateName(videoTag.webkitSourceState));
+                }
+
+                runNextTestCase(videoTag);
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEvent('loadstart');
+                waitForEvent('loadeddata');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('playing');
+                waitForEvent('webkitsourceended');
+                waitForEvent('ended');
+                waitForEvent('emptied');
+
+                video.addEventListener('error', onError);
+
+                loadWebMData(function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    runNextTestCase(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests webkitSourceAbort() functionality</p>
+    </body>
+</html>

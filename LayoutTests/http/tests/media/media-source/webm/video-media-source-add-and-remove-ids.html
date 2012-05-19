@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media-resources/video-test.js"></script>
+        <script src="webm-media-source.js"></script>
+        <script>
+            var defaultSourceMimetype = "video/webm; codecs=\"vp8, vorbis\"";
+
+            function runOnSourceOpen(videoTag, onOpenFunction)
+            {
+                var eventHandlerFunction = function (event)
+                {
+                    event.target.removeEventListener('webkitsourceopen', eventHandlerFunction);
+                    onOpenFunction(event.target);
+                };
+                videoTag.addEventListener('webkitsourceopen', eventHandlerFunction);
+                setSrcToMediaSourceURL(videoTag);
+            }
+
+            // The index of the next cluster to send to appendData().
+            var nextClusterIndex = 0;
+
+            function expectExceptionOnAddId(videoTag, id, type, error)
+            {
+                try {
+                    videoTag.webkitSourceAddId(id, type);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function expectExceptionOnRemoveId(videoTag, id, error)
+            {
+                try {
+                    videoTag.webkitSourceRemoveId(id);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function expectExceptionOnAppend(videoTag, id, buf, error)
+            {
+                try {
+                    videoTag.webkitSourceAppend(id, buf);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function testAddIdFailureCases(videoTag)
+            {
+                // Test adding while closed.
+                expectExceptionOnAddId(videoTag, "123", defaultSourceMimetype, DOMException.INVALID_STATE_ERR);
+
+                runOnSourceOpen(videoTag, function (vt)
+                {
+                    consoleWrite("Test empty ID case");
+                    expectExceptionOnAddId(vt, "", defaultSourceMimetype, DOMException.INVALID_ACCESS_ERR);
+
+                    vt.webkitSourceAddId("123", defaultSourceMimetype);
+
+                    consoleWrite("Test adding the same ID again.");
+                    expectExceptionOnAddId(vt, "123", defaultSourceMimetype, DOMException.INVALID_STATE_ERR);
+                    vt.webkitSourceRemoveId("123");
+
+                    consoleWrite("Test empty type.");
+                    expectExceptionOnAddId(vt, "234", "", DOMException.INVALID_ACCESS_ERR);
+
+                    consoleWrite("Test an unsupported type.");
+                    expectExceptionOnAddId(vt, "234", "audio/x-unsupported-format", DOMException.NOT_SUPPORTED_ERR);
+
+                    consoleWrite("Test a supported type with an unsupported codec.");
+                    expectExceptionOnAddId(vt, "234", "video/webm; codecs=\"vp8, speex\"", DOMException.NOT_SUPPORTED_ERR);
+
+                    consoleWrite("Test reaching sourceID limit.");
+                    var reachedIdLimit = false;
+
+                    // The 20 here is an arbitrary upper limit to make sure the test terminates. This test
+                    // assumes that implementations won't support more than 20 sourceID's simultaneously.
+                    for (var i = 0; i < 20; ++i) {
+                        var sourceID = "sourceID-" + i;
+                        try {
+                            vt.webkitSourceAddId(sourceID, defaultSourceMimetype);
+                        } catch(e) {
+                            if (e.code != DOMException.QUOTA_EXCEEDED_ERR) {
+                                failTest("Unexpected exception " + e);
+                                throw e;
+                            }
+                            reachedIdLimit = true;
+                            break;
+                        }
+                    }
+
+                    if (!reachedIdLimit) {
+                        failTest("Failed to reach SourceID limit.");
+                        return;
+                    }
+
+                    // Test that SourceIDs can't be added while in the ended state.
+                    vt.webkitSourceEndOfStream(vt.EOS_NO_ERROR);
+                    expectExceptionOnAddId(vt, "123", defaultSourceMimetype, DOMException.INVALID_STATE_ERR);
+
+                    runNextTestCase(vt);
+                });
+            }
+
+            function testRemoveIdFailureCases(videoTag)
+            {
+                runOnSourceOpen(videoTag, function (vt)
+                {
+                    consoleWrite("Test empty ID case");
+                    expectExceptionOnRemoveId(vt, "", DOMException.INVALID_ACCESS_ERR);
+
+                    consoleWrite("Test removing an ID that was never added.");
+                    expectExceptionOnRemoveId(vt, "345", DOMException.SYNTAX_ERR);
+
+                    vt.webkitSourceAddId("123", defaultSourceMimetype);
+                    vt.webkitSourceRemoveId("123");
+                    expectExceptionOnRemoveId(vt, "123", DOMException.SYNTAX_ERR);
+
+                    consoleWrite("Test adding the same ID again.");
+                    vt.webkitSourceAddId("123", defaultSourceMimetype);
+
+                    consoleWrite("Test that an ID can be removed while in the ended state.");
+                    vt.webkitSourceEndOfStream(vt.EOS_NO_ERROR);
+                    vt.webkitSourceRemoveId("123");
+
+                    runNextTestCase(vt);
+                });
+            }
+
+            function testAppendFailureCases(videoTag)
+            {
+                runOnSourceOpen(videoTag, function (vt)
+                {
+                    vt.webkitSourceAddId("123", defaultSourceMimetype);
+
+                    consoleWrite("Test append with empty ID.");
+                    expectExceptionOnAppend(vt, "", getHeaders(), DOMException.INVALID_ACCESS_ERR);
+
+                    consoleWrite("Test append with an invalid ID");
+                    expectExceptionOnAppend(vt, "234", getHeaders(), DOMException.SYNTAX_ERR);
+
+                    consoleWrite("Test append with a null buffer.");
+                    expectExceptionOnAppend(vt, "123", null, DOMException.INVALID_ACCESS_ERR);
+
+                    consoleWrite("Test a successful append.");
+                    vt.webkitSourceAppend("123", getHeaders());
+
+                    vt.webkitSourceRemoveId("123");
+                    expectExceptionOnAppend(vt, "123", getCluster(0), DOMException.SYNTAX_ERR);
+
+                    runNextTestCase(vt);
+                });
+
+            }
+
+            var testCases = [
+                testAddIdFailureCases,
+                testRemoveIdFailureCases,
+                testAppendFailureCases,
+            ];
+
+            var testCaseIndex = 0;
+
+            function runNextTestCase(videoTag)
+            {
+                if (testCaseIndex >= testCases.length) {
+                    endTest();
+                    return;
+                }
+
+                var testCaseFunction = testCases[testCaseIndex];
+                testCaseIndex++;
+
+                consoleWrite("");
+                consoleWrite("running " + testCaseFunction.name);
+                testCaseFunction(videoTag);
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEvent('loadstart');
+                waitForEvent('webkitsourceopen');
+
+                loadWebMData(function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load WebM data");
+                        return;
+                    }
+                    runNextTestCase(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests webkitSourceAddId() &amp; webkitSourceRemoveId() methods</p>
+    </body>
+</html>

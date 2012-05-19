@@ -7,6 +7,7 @@
             function onSourceOpen(event) 
             {
                 var videoTag = event.target;
+                addSourceId(videoTag);
                 appendHeaders(videoTag);
                 appendUntilEndOfStream(videoTag, 0);
             }
@@ -24,7 +25,8 @@
 
                 video.addEventListener('webkitsourceopen', onSourceOpen);
 
-                loadWebMData(function(success) {
+                loadWebMData(function(success)
+                {
                     if (!success) {
                         failTest("Failed to load WebM data");
                         return;

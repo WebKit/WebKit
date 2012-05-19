@@ -149,10 +149,12 @@ public:
     virtual bool hasSingleSecurityOrigin() const { return true; }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type) { return MediaPlayer::NotSupported; }
-    virtual bool sourceRemoveId(const String& id) { return false; }
-    virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
-    virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus status) { }
+    virtual MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs) { return MediaPlayer::NotSupported; }
+    virtual PassRefPtr<TimeRanges> sourceBuffered(const String&) { return TimeRanges::create(); }
+    virtual bool sourceRemoveId(const String&) { return false; }
+    virtual bool sourceAppend(const String&, const unsigned char*, unsigned) { return false; }
+    virtual bool sourceAbort(const String&) { return false; }
+    virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -461,9 +463,14 @@ void MediaPlayer::pause()
 
 #if ENABLE(MEDIA_SOURCE)
 
-MediaPlayer::AddIdStatus MediaPlayer::sourceAddId(const String& id, const String& type)
+MediaPlayer::AddIdStatus MediaPlayer::sourceAddId(const String& id, const String& type, const Vector<String>& codecs)
 {
-    return m_private->sourceAddId(id, type);
+    return m_private->sourceAddId(id, type, codecs);
+}
+
+PassRefPtr<TimeRanges> MediaPlayer::sourceBuffered(const String& id)
+{
+    return m_private->sourceBuffered(id);
 }
 
 bool MediaPlayer::sourceRemoveId(const String& id)
@@ -471,9 +478,14 @@ bool MediaPlayer::sourceRemoveId(const String& id)
     return m_private->sourceRemoveId(id);
 }
 
-bool MediaPlayer::sourceAppend(const unsigned char* data, unsigned length)
+bool MediaPlayer::sourceAppend(const String& id, const unsigned char* data, unsigned length)
 {
-    return m_private->sourceAppend(data, length);
+    return m_private->sourceAppend(id, data, length);
+}
+
+bool MediaPlayer::sourceAbort(const String& id)
+{
+    return m_private->sourceAbort(id);
 }
 
 void MediaPlayer::sourceEndOfStream(MediaPlayer::EndOfStreamStatus status)

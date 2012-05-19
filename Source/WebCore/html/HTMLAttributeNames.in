@@ -253,6 +253,9 @@ onwebkitkeyadded
 onwebkitkeyerror
 onwebkitkeymessage
 onwebkitneedkey
+onwebkitsourceclose
+onwebkitsourceended
+onwebkitsourceopen
 onwebkittransitionend
 open
 optimum

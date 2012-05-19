@@ -11,13 +11,15 @@ var clusterInfo = [
 
 var headerData = null;
 var clusterData = [];
+var SOURCE_ID = "sourceID1";
 
 function getData(url, callback)
 {
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
     request.responseType = 'arraybuffer';
-    request.onload = function() {
+    request.onload = function()
+    {
         if (request.status != 200) {
             failTest("Unexpected status code " + request.status + " for " + url);
             callback(null);
@@ -29,8 +31,10 @@ function getData(url, callback)
     request.send();
 }
 
-function createClusterGetFunction(clusterIndex, callback) {
-    return function(data) {
+function createClusterGetFunction(clusterIndex, callback)
+{
+    return function(data)
+    {
         if (!data) {
             callback(false);
             return;
@@ -49,8 +53,10 @@ function createClusterGetFunction(clusterIndex, callback) {
     };
 }
 
-function loadWebMData(callback) {
-    getData("/media/resources/media-source/webm/test.webm.headers", function(data) {
+function loadWebMData(callback)
+{
+    getData("/media/resources/media-source/webm/test.webm.headers", function(data)
+    {
         if (!data) {
             callback(false);
             return;
@@ -108,6 +114,15 @@ function setSrcToMediaSourceURL(videoTag)
     videoTag.src = videoTag.webkitMediaSourceURL;
 }
 
+function addSourceId(videoTag)
+{
+    try {
+        videoTag.webkitSourceAddId(SOURCE_ID, 'video/webm; codecs="vp8, vorbis"');
+    } catch (e) {
+        failTest("Unexpected webkitSourceAddId() exception " + e);
+    }
+}
+
 function appendHeaders(videoTag)
 {
     if (!videoTag.webkitSourceAppend) {
@@ -115,7 +130,7 @@ function appendHeaders(videoTag)
         return;
     }
 
-    videoTag.webkitSourceAppend(getHeaders());
+    videoTag.webkitSourceAppend(SOURCE_ID, getHeaders());
 }
 
 function appendCluster(videoTag, clusterIndex)
@@ -132,7 +147,7 @@ function appendCluster(videoTag, clusterIndex)
 
     try {
         var cluster = getCluster(clusterIndex);
-        videoTag.webkitSourceAppend(cluster);
+        videoTag.webkitSourceAppend(SOURCE_ID, cluster);
     } catch (err) {
         consoleWrite(err);
     }
@@ -146,7 +161,7 @@ function appendUntilEndOfStream(videoTag, startIndex)
     }
 
     for (var clusterIndex = startIndex; clusterIndex < getClusterCount(); clusterIndex++) {
-        videoTag.webkitSourceAppend(getCluster(clusterIndex));
+        videoTag.webkitSourceAppend(SOURCE_ID, getCluster(clusterIndex));
     }
     videoTag.webkitSourceEndOfStream(videoTag.EOS_NO_ERROR);
 }

@@ -1,0 +1,24 @@
+Tests webkitSourceAbort() functionality
+
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running abortDuringHeader
+Test aborting during headers.
+Appending partial header.
+Aborting append.
+Appending full header.
+Appending enough clusters to trigger loadeddata.
+EVENT(loadeddata)
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running abortDuringCluster
+Test aborting in the middle of a cluster.
+Appending partial cluster.
+Aborting append.
+Appending full header.
+Appending enough clusters to trigger loadeddata.
+END OF TEST
+

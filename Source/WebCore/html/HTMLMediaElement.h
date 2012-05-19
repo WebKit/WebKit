@@ -174,12 +174,18 @@ public:
     const KURL& webkitMediaSourceURL() const { return m_mediaSourceURL; }
     void webkitSourceAddId(const String&, const String&, ExceptionCode&);
     void webkitSourceRemoveId(const String&, ExceptionCode&);
-    void webkitSourceAppend(PassRefPtr<Uint8Array> data, ExceptionCode&);
+    PassRefPtr<TimeRanges> webkitSourceBuffered(const String&, ExceptionCode&);
+    void webkitSourceAppend(const String&, PassRefPtr<Uint8Array> data, ExceptionCode&);
+    void webkitSourceAbort(const String&, ExceptionCode&);
     enum EndOfStreamStatus { EOS_NO_ERROR, EOS_NETWORK_ERR, EOS_DECODE_ERR };
     void webkitSourceEndOfStream(unsigned short, ExceptionCode&);
     enum SourceState { SOURCE_CLOSED, SOURCE_OPEN, SOURCE_ENDED };
     SourceState webkitSourceState() const;
     void setSourceState(SourceState);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitsourceopen);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitsourceended);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitsourceclose);
 #endif 
 
 #if ENABLE(ENCRYPTED_MEDIA)
