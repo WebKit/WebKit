@@ -454,6 +454,8 @@ public:
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void clearSelection();
+
+#if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(WIN)
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WebCore::DragDataMap&, uint32_t flags);
 #elif PLATFORM(QT) || PLATFORM(GTK)
@@ -465,6 +467,7 @@ public:
 
     void willPerformLoadDragDestinationAction();
     void mayPerformUploadDragDestinationAction();
+#endif // ENABLE(DRAG_SUPPORT)
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();

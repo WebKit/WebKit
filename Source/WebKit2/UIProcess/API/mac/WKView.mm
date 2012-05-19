@@ -1598,6 +1598,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return resultRect;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
@@ -1623,7 +1624,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return static_cast<DragApplicationFlags>(flags);
 }
 
-#if ENABLE(DRAG_SUPPORT)
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
     IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);

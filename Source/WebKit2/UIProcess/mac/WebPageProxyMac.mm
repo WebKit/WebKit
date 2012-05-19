@@ -294,6 +294,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     return result;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag)
 {
     RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle);
@@ -316,6 +317,7 @@ void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMem
     }
     m_pageClient->setPromisedData(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
 }
+#endif
 
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
 {

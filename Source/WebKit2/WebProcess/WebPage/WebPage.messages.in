@@ -140,6 +140,7 @@ messages -> WebPage {
     HideFindUI()
     CountStringMatches(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
 
+#if ENABLE(DRAG_SUPPORT)
     # Drag and drop.
 #if PLATFORM(WIN)
     PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, HashMap<UINT,Vector<String>> dataMap, uint32_t flags)
@@ -151,6 +152,7 @@ messages -> WebPage {
     PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::SandboxExtension::HandleArray sandboxExtensionsForUpload)
 #endif
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
+#endif
 
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);

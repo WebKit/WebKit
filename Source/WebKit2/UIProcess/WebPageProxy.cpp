@@ -891,6 +891,7 @@ void WebPageProxy::setViewportSize(const IntSize& size)
 }
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
 void WebPageProxy::dragEntered(DragData* dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -957,6 +958,7 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
         return;
     process()->send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation), m_pageID);
 }
+#endif // ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
