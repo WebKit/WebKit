@@ -15,15 +15,15 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 331x19
           text run at (0,0) width 331: "Readonly text fields don't scroll when selecting content."
       RenderBlock (anonymous) at (0,72) size 784x26
-        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 153x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,98) size 784x20
         RenderText {#text} at (0,0) size 82x19
           text run at (0,0) width 82: "ScrollLeft: 15"
         RenderBR {BR} at (82,15) size 0x0
-layer at (12,85) size 151x16 scrollX 15 scrollWidth 166
-  RenderBlock {DIV} at (2,3) size 151x16
-    RenderText {#text} at (1,0) size 164x16
-      text run at (1,0) width 164: "abcdefghijklmnopqrstuvwxyz"
+layer at (12,85) size 149x16 scrollX 15 scrollWidth 164
+  RenderBlock {DIV} at (2,3) size 149x16
+    RenderText {#text} at (0,0) size 164x16
+      text run at (0,0) width 164: "abcdefghijklmnopqrstuvwxyz"
 selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
 selection end:   position 26 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of body
