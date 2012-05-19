@@ -1,3 +1,13 @@
+2012-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening.
+
+        * platform/qt-4.8/Skipped: Copy/paste error fix after r117588.
+        * platform/qt/fast/forms/form-hides-table-expected.png: Added after r117640.
+        * platform/qt/fast/forms/form-hides-table-expected.txt: Updated after r117640.
+        * platform/qt/fast/table/form-with-table-style-expected.png: Updated after r117640.
+        * platform/qt/fast/table/form-with-table-style-expected.txt: Updated after r117640.
+
 2012-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Chromium rebaselines after r117672.
