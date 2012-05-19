@@ -1,3 +1,20 @@
+2012-05-18  Peter Kasting  <pkasting@google.com>
+
+        More baseline updates after r117640.
+        https://bugs.webkit.org/show_bug.cgi?id=86920
+
+        Unreviewed, test expectations update.
+
+        * fast/forms/form-hides-table-expected.txt: Removed.
+        * fast/table/form-with-table-style-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/form-hides-table-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/form-with-table-style-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/form-hides-table-expected.txt:
+        * platform/chromium-win/fast/table/form-with-table-style-expected.png:
+        * platform/chromium-win/fast/table/form-with-table-style-expected.txt:
+        * platform/gtk/fast/forms/form-hides-table-expected.txt: Added.
+        * platform/gtk/fast/table/form-with-table-style-expected.txt: Added.
+
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Fix expectation for test from r117667 with the bot result.
