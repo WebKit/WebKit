@@ -1,5 +1,11 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unskip a few tests which are actually passing.
+
+        * platform/efl/Skipped:
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unskip tests and add expectations after r116776.
 
         * platform/efl/Skipped:
