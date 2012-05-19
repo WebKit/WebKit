@@ -1,3 +1,16 @@
+2012-05-18  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r108181): corruption after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=86934
+        <rdar://problem/11487337>
+
+        Reviewed by Dan Bernstein.
+
+        Use the flipped Y coordinate when resetting the scrolled rect.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::resetScrolledRect):
+
 2012-05-19  Andy Estes  <aestes@apple.com>
 
         Fix build errors found when disabling ENABLE_DRAG_SUPPORT
