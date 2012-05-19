@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,93) size 10x46
         RenderText {#text} at (0,0) size 25x19
           text run at (0,0) width 25: "Foo"
-        RenderTextControl {INPUT} at (2,20) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,20) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderBlock {DIV} at (0,139) size 10x43
         RenderImage {IMG} at (0,0) size 25x25
         RenderText {#text} at (0,25) size 25x19
@@ -30,10 +30,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,32) size 25x19
           text run at (0,32) width 25: "Foo"
       RenderBlock {DIV} at (0,232) size 10x46
-        RenderTextControl {INPUT} at (2,2) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,28) size 25x19
           text run at (0,28) width 25: "Foo"
-layer at (13,124) size 188x18
-  RenderBlock {DIV} at (3,3) size 188x18
-layer at (13,245) size 188x18
-  RenderBlock {DIV} at (3,3) size 188x18
+layer at (13,124) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
+layer at (13,245) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
