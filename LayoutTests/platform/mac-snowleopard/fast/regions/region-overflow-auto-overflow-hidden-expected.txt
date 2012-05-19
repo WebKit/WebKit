@@ -11,7 +11,7 @@ layer at (0,0) size 800x422
 Flow Threads
   Thread with flow-name 'article'
     layer at (0,0) size 400x600
-      RenderFlowThread at (0,0) size 400x600
+      RenderNamedFlowThread at (0,0) size 400x600
         RenderBlock {DIV} at (0,0) size 400x688
           RenderBlock {DIV} at (0,0) size 400x396 [color=#A0A0A0]
             RenderInline {SPAN} at (0,0) size 400x381 [bgcolor=#A0A0A0]

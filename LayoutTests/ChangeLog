@@ -1,3 +1,16 @@
+2012-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More SnowLeopard rebaselines.
+
+        * platform/mac-snowleopard/canvas/philip/tests/2d.gradient.interpolate.colouralpha-expected.txt: Copied from LayoutTests/platform/mac/canvas/philip/tests/2d.gradient.interpolate.colouralpha-expected.txt.
+        * platform/mac-snowleopard/fast/css/font-family-pictograph-expected.txt: Copied from LayoutTests/platform/mac/fast/css/font-family-pictograph-expected.txt.
+        * platform/mac-snowleopard/fast/regions/region-overflow-auto-overflow-hidden-expected.txt:
+        * platform/mac-snowleopard/fast/regions/region-overflow-auto-overflow-visible-expected.txt:
+        * platform/mac-snowleopard/fast/repaint/canvas-putImageData-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/canvas-putImageData-expected.txt.
+        * platform/mac-snowleopard/media/controls-styling-expected.txt: Copied from LayoutTests/platform/mac/media/controls-styling-expected.txt.
+        * platform/mac-snowleopard/media/controls-without-preload-expected.txt:
+        * platform/mac-snowleopard/media/media-can-play-wav-audio-expected.txt: Copied from LayoutTests/platform/mac/media/media-can-play-wav-audio-expected.txt.
+
 2012-05-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, adding GTK baselines for new tests added in r117477.
