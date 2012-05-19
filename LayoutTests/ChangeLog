@@ -1,3 +1,10 @@
+2012-05-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update two pixel test results on Lion, which show marginal diffs.
+
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/mac/svg/hixie/mixed/003-expected.png:
+
 2012-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening.
