@@ -116,8 +116,33 @@ BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
+BUGWK84589 : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
+BUGWK84589 : fast/harness/show-modal-dialog.html = TEXT
+BUGWK84589 : fast/events/scroll-event-during-modal-dialog.html = TEXT
 BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGWK84589 : http/tests/security/cross-frame-access-get.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T1.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T10.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T2.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T3.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T4.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T5.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T6.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T7.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T8.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T9.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T1.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T2.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T3.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T4.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T5.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T6.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T7.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T8.html = TEXT
+BUGWK53676 : sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T9.html = TEXT
 
 // Issue with timing for suspend/resumeAnimations()?
 BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT

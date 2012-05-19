@@ -1,3 +1,14 @@
+2012-05-19  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Move skipped tests which depend on a showModalDialog()
+        implementation from Skipped to test_expectations.txt to have all
+        of them grouped together.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-19  Joe Thomas  <joethomas@motorola.com>
 
         The order of CSS properties is wrong in background shorthand
