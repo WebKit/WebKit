@@ -1,5 +1,28 @@
 2012-05-19  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] More rebaselining needed after r117672
+        https://bugs.webkit.org/show_bug.cgi?id=86944
+
+        Unreviewed EFL gardening. Add missing EFL expectations for several
+        CSS3 and forms tests.
+
+        * platform/efl/css3/selectors3/html/css3-modsel-23-expected.txt: Added.
+        * platform/efl/css3/selectors3/html/css3-modsel-24-expected.txt: Added.
+        * platform/efl/css3/selectors3/html/css3-modsel-68-expected.txt: Added.
+        * platform/efl/css3/selectors3/html/css3-modsel-69-expected.txt: Added.
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Added.
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Added.
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Added.
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Added.
+        * platform/efl/css3/selectors3/xml/css3-modsel-23-expected.txt: Added.
+        * platform/efl/css3/selectors3/xml/css3-modsel-24-expected.txt: Added.
+        * platform/efl/css3/selectors3/xml/css3-modsel-68-expected.txt: Added.
+        * platform/efl/css3/selectors3/xml/css3-modsel-69-expected.txt: Added.
+        * platform/efl/fast/forms/input-appearance-bkcolor-expected.txt: Added.
+        * platform/efl/fast/forms/textfield-outline-expected.txt: Added.
+
+2012-05-19  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Massive rebaselining needed after r117672
         https://bugs.webkit.org/show_bug.cgi?id=86940
 
