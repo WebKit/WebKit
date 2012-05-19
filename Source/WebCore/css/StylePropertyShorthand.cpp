@@ -28,16 +28,16 @@ namespace WebCore {
 const StylePropertyShorthand& backgroundShorthand()
 {
     static const CSSPropertyID backgroundProperties[] = {
-        CSSPropertyBackgroundColor,
         CSSPropertyBackgroundImage,
+        CSSPropertyBackgroundPositionX,
+        CSSPropertyBackgroundPositionY,
+        CSSPropertyBackgroundSize,
         CSSPropertyBackgroundRepeatX,
         CSSPropertyBackgroundRepeatY,
         CSSPropertyBackgroundAttachment,
-        CSSPropertyBackgroundClip,
         CSSPropertyBackgroundOrigin,
-        CSSPropertyBackgroundPositionX,
-        CSSPropertyBackgroundPositionY,
-        CSSPropertyBackgroundSize
+        CSSPropertyBackgroundClip,
+        CSSPropertyBackgroundColor
     };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, backgroundShorthand, (backgroundProperties, WTF_ARRAY_LENGTH(backgroundProperties)));
     return backgroundShorthand;

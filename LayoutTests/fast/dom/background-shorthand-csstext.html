@@ -32,9 +32,9 @@ function test()
         layoutTestController.dumpAsText();
     
     shouldBe("document.body.style.background == 'green'", true);
-    shouldBe("document.getElementById('div1').style.background == 'repeat-x, white repeat-y'", true);
-    shouldBe("document.getElementById('div2').style.background == 'blue 50% 50%'", true);
-    shouldBe("document.getElementById('div3').style.background == 'rgb(255, 255, 255) none repeat scroll'", true);
+    shouldBe("document.getElementById('div1').style.background == 'repeat-x, repeat-y white'", true);
+    shouldBe("document.getElementById('div2').style.background == '50% 50% blue'", true);
+    shouldBe("document.getElementById('div3').style.background == 'none repeat scroll rgb(255, 255, 255)'", true);
 }
 </script>
 </head>

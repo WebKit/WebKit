@@ -1,3 +1,18 @@
+2012-05-19  Joe Thomas  <joethomas@motorola.com>
+
+        The order of CSS properties is wrong in background shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=86152
+
+        Reviewed by Ryosuke Niwa.
+
+        Corrected the order of properties returned in StylePropertySet::getPropertyValue for background shorthand property to match the specification  
+        http://www.w3.org/TR/css3-background/#background.
+
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+        * fast/dom/background-shorthand-csstext-expected.txt:
+        * fast/dom/background-shorthand-csstext.html:
+
 2012-05-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, add test expectations for further tests that
