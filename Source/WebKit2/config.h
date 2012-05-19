@@ -65,7 +65,9 @@ static const type& name() \
 #define ENABLE_WEB_PROCESS_SANDBOX 1
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #define ENABLE_PLUGIN_PROCESS 1
+#endif
 
 #if PLATFORM(MAC)
 #define ENABLE_MEMORY_SAMPLER 1
