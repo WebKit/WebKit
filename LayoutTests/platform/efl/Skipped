@@ -897,15 +897,11 @@ fast/text/international/thai-line-breaks.html
 fast/text/international/vertical-text-glyph-test.html
 fast/text/justify-ideograph-complex.html
 fast/text/large-text-composed-char.html
-fast/writing-mode/japanese-lr-selection.html
-fast/writing-mode/japanese-lr-text.html
 fast/writing-mode/japanese-rl-selection.html
 fast/writing-mode/japanese-rl-text-with-broken-font.html
 fast/writing-mode/japanese-rl-text.html
 fast/writing-mode/japanese-ruby-horizontal-bt.html
-fast/writing-mode/japanese-ruby-vertical-lr.html
 fast/writing-mode/japanese-ruby-vertical-rl.html
-fast/writing-mode/vertical-font-fallback.html
 
 # BUG: form widgets do not respect RTL settings
 fast/forms/range/input-appearance-range-rtl.html

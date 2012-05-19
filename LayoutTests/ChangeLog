@@ -1,5 +1,19 @@
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unskip tests and add expectations after r116776.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.png: Added.
+        * platform/efl/fast/writing-mode/japanese-lr-selection-expected.txt: Added.
+        * platform/efl/fast/writing-mode/japanese-lr-text-expected.png: Added.
+        * platform/efl/fast/writing-mode/japanese-lr-text-expected.txt: Added.
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.png: Added.
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Added.
+        * platform/efl/fast/writing-mode/vertical-font-fallback-expected.png: Added.
+        * platform/efl/fast/writing-mode/vertical-font-fallback-expected.txt: Added.
+
+2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening after r116761 and the jhbuild/font changes.
 
         * platform/efl/Skipped:
