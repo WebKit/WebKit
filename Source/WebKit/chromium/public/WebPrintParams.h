@@ -59,6 +59,13 @@ struct WebPrintParams {
         : printerDPI(72)
         , printScalingOption(WebPrintScalingOptionFitToPrintableArea) { }
 
+    WebPrintParams(const WebSize& paperSize)
+        : printContentArea(WebRect(0, 0, paperSize.width, paperSize.height))
+        , printableArea(WebRect(0, 0, paperSize.width, paperSize.height))
+        , paperSize(paperSize)
+        , printerDPI(72)
+        , printScalingOption(printScalingOption) { }
+
     WebPrintParams(const WebRect& printContentArea, const WebRect& printableArea, const WebSize& paperSize, int printerDPI, WebPrintScalingOption printScalingOption)
         : printContentArea(printContentArea)
         , printableArea(printableArea)

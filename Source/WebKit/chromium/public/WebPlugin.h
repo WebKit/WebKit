@@ -98,12 +98,6 @@ public:
     // the printer's printable area.
     virtual bool isPrintScalingDisabled() { return false; }
 
-    // Sets up printing at the given print rect and printer DPI.
-    // printContentArea is in points ( a point is 1/72 of an inch). Returns the
-    // number of pages to be printed at these settings.
-    // FIXME: Remove this function after fixing crbug.com/85132. For detailed
-    // information, please refer to the comments in WebFrame.h
-    virtual int printBegin(const WebRect& printContentArea, int printerDPI) { return 0; }
     // Sets up printing with the specified printParams. Returns the number of
     // pages to be printed at these settings.
     virtual int printBegin(const WebPrintParams& printParams) { return 0; }

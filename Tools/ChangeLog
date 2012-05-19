@@ -1,3 +1,15 @@
+2012-05-18  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [chromium] User overloaded printBegin() webkit API to support auto fit to page functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=86684
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::numberOfPages):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::printPage):
+
 2012-05-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][DRT] Make it possible to enable CSS Grid Layout.
