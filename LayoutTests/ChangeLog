@@ -1,5 +1,43 @@
 2012-05-20  Philip Rogers  <pdr@google.com>
 
+        Accumulate SVG animations into first contributing element
+        https://bugs.webkit.org/show_bug.cgi?id=86385
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/animations/multiple-animations-ending-expected.txt: Added.
+        * svg/animations/multiple-animations-ending.html: Added.
+        * svg/animations/resources/multiple-animations-ending.svg: Added.
+        * svg/animations/script-tests/multiple-animations-ending.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (sample7):
+        (sample8):
+        (sample9):
+        (sample10):
+        (sample11):
+        (sample12):
+        (sample13):
+        (sample14):
+        (sample15):
+        (sample16):
+        (sample17):
+        (sample18):
+        (sample19):
+        (sample20):
+        (sample21):
+        (sample22):
+        (sample23):
+        (executeTest):
+        * svg/animations/svg-two-animate-elements-crash-expected.svg: Added.
+        * svg/animations/svg-two-animate-elements-crash.svg: Added.
+
+2012-05-20  Philip Rogers  <pdr@google.com>
+
         Fix hit testing on non-scaling strokes
         https://bugs.webkit.org/show_bug.cgi?id=82628
 

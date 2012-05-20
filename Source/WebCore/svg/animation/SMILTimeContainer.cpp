@@ -241,19 +241,23 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
                 continue;
         }
         
-        // Results are accumulated to the first animation that animates a particular element/attribute pair.
+        // Results are accumulated to the first animation that animates and contributes to a particular element/attribute pair.
         ElementAttributePair key(targetElement, attributeName); 
         SVGSMILElement* resultElement = resultsElements.get(key).get();
+        bool accumulatedResultElement = false;
         if (!resultElement) {
             if (!animation->hasValidAttributeType())
                 continue;
             resultElement = animation;
             resultsElements.add(key, resultElement);
+            accumulatedResultElement = true;
         }
 
         // This will calculate the contribution from the animation and add it to the resultsElement.
         if (animation->progress(elapsed, resultElement, seekToTime))
             contributingElements.add(resultElement);
+        else if (accumulatedResultElement)
+            resultsElements.remove(key);
 
         SMILTime nextFireTime = animation->nextProgressTime();
         if (nextFireTime.isFinite())
