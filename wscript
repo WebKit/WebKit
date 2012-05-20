@@ -25,6 +25,10 @@
 #
 # WebCore build script for the waf build system
 
+import glob
+import os
+import subprocess
+
 import Options
 
 from settings import *
@@ -34,6 +38,31 @@ import TaskGen
 from TaskGen import taskgen, feature, after
 import Task, ccroot
 
+def clean_derived_sources(ds_cmd):
+    cmd = ds_cmd + " -qp | grep -v '^# ' | grep -v '^[[:space:]]' | grep --only-matching '^.*:'"
+    output = subprocess.check_output(cmd, shell=True)
+    
+    targets = []
+    lines = output.split("\n")
+    for line in lines:
+        line = line.replace(":", "")
+        base = os.path.splitext(os.path.basename(line))[0]
+        if not base in targets:
+            targets.append(base)
+            if base == "UserAgentsStyleSheet":
+                targets.append("UserAgentsStyleSheetData")
+    
+    # we're in the DerivedSources directory when this command is run.
+    ds_files = glob.glob("*.*")
+    for ds_file in ds_files:
+        filename = os.path.basename(ds_file)
+        basename = os.path.splitext(filename)[0]
+        # For now, just remove JS*.h/.cpp and WebDOM*.h/.cpp when there are no longer targets
+        # for them. Other targets may generate supplemental files so we can't reliably clean them.
+        if not basename in targets and (basename.startswith("JS") or basename.startswith("WebDOM")):
+            print "INFO: %s is no longer generated but present in generated files directory. Removing." % filename
+            os.remove(ds_file)
+    
 def generate_webcore_derived_sources(conf):
     # build the derived sources
     derived_sources_dir = os.path.join(webcore_dir, 'DerivedSources')
@@ -50,7 +79,9 @@ def generate_webcore_derived_sources(conf):
     if building_on_win32:
         oldpath = os.environ["PATH"]
         os.environ["PATH"] = "/usr/bin" + os.pathsep + os.environ["PATH"]
-    os.system('make -f %s/DerivedSources.make WebCore=%s SOURCE_ROOT=%s all FEATURE_DEFINES="%s"' % (wc_dir, wc_dir, wc_dir, conf.env["FEATURE_DEFINES"]))
+    command = 'make -f %s/DerivedSources.make WebCore=%s SOURCE_ROOT=%s all FEATURE_DEFINES="%s"' % (wc_dir, wc_dir, wc_dir, conf.env["FEATURE_DEFINES"])
+    clean_derived_sources(command)
+    os.system(command)
     if building_on_win32:
         os.environ["PATH"] = oldpath
     
