@@ -1,3 +1,9 @@
+2012-05-20  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unskip passing test after r117709.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-20  Philip Rogers  <pdr@google.com>
 
         Accumulate SVG animations into first contributing element

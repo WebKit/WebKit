@@ -352,9 +352,6 @@ BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm 
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
-// Issue with SVG hittesting on strokes, fails on GTK as well.
-BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
-
 // Issue related to battery status and vibration API
 BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
 
