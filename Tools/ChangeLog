@@ -1,3 +1,13 @@
+2012-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [Chromium] Print layout test result on buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=86965
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/run-webkit-tests: Add chrome-bot to buildbot user list.
+        (runningOnBuildBot):
+
 2012-05-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Don't stop the build if a build system update check fails.
