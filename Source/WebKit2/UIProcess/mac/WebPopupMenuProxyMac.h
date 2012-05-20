@@ -26,6 +26,8 @@
 #ifndef WebPopupMenuProxyMac_h
 #define WebPopupMenuProxyMac_h
 
+#if USE(APPKIT)
+
 #include "WebPopupMenuProxy.h"
 #include <wtf/RetainPtr.h>
 
@@ -57,5 +59,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(APPKIT)
 
 #endif // WebPopupMenuProxyMac_h

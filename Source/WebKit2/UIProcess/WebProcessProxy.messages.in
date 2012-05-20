@@ -32,7 +32,7 @@ messages -> WebProcessProxy {
     PluginSyncMessageSendTimedOut(WTF::String pluginPath)
 #endif
 
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
     SecItemRequest(uint64_t requestID, WebKit::SecItemRequestData request) DispatchOnConnectionQueue
     SecKeychainItemRequest(uint64_t requestID, WebKit::SecKeychainItemRequestData request) DispatchOnConnectionQueue
 #endif

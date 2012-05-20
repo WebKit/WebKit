@@ -1,3 +1,17 @@
+2012-05-19  Andy Estes  <aestes@apple.com>
+
+        Use USE_APPKIT and USE_SECURITY_FRAMEWORK in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=86951
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebProcessProxy.messages.in: Change #if PLATFORM(MAC) to
+        the more specific #if USE(SECURITY_FRAMEWORK).
+        * UIProcess/mac/WebPageProxyMac.mm: Wrap some uses of AppKit classes
+        with #if USE(APPKIT).
+        * UIProcess/mac/WebPopupMenuProxyMac.h: Ditto.
+        * UIProcess/mac/WebPopupMenuProxyMac.mm: Ditto.
+
 2012-05-18  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r108181): corruption after scrolling

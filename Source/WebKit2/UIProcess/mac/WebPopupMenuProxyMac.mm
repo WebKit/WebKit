@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebPopupMenuProxyMac.h"
 
+#if USE(APPKIT)
+
 #import "NativeWebMouseEvent.h"
 #import "PageClientImpl.h"
 #import "PlatformPopupMenuData.h"
@@ -176,3 +178,5 @@ void WebPopupMenuProxyMac::hidePopupMenu()
 }
 
 } // namespace WebKit
+
+#endif // USE(APPKIT)

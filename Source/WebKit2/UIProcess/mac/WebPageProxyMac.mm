@@ -42,9 +42,11 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
 
+#if USE(APPKIT)
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
 @end
+#endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
 
@@ -121,6 +123,8 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
 }
 
+#if USE(APPKIT)
+
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)
 {
     isSpeaking = [NSApp isSpeaking];
@@ -140,6 +144,8 @@ void WebPageProxy::searchWithSpotlight(const String& string)
 {
     [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:nsStringFromWebCoreString(string)];
 }
+    
+#endif // USE(APPKIT)
 
 CGContextRef WebPageProxy::containingWindowGraphicsContext()
 {
@@ -358,7 +364,7 @@ void WebPageProxy::capitalizeWord()
 }
 
 void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
-{ 
+{
     if (m_isSmartInsertDeleteEnabled == isSmartInsertDeleteEnabled)
         return;
 
