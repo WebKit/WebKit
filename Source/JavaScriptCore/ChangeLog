@@ -1,3 +1,18 @@
+2012-05-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecompiler should emit trivially fewer jumps in loops
+        https://bugs.webkit.org/show_bug.cgi?id=85144
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r115587 from dfgopt.
+        
+        1-2% across the board win.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+
 2012-05-19  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Windows build broken due to changes in the http://trac.webkit.org/changeset/117646

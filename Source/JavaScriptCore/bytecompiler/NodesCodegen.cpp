@@ -1544,10 +1544,16 @@ RegisterID* DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 RegisterID* WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
-
-    generator.emitJump(scope->continueTarget());
-
     RefPtr<Label> topOfLoop = generator.newLabel();
+
+    generator.emitDebugHook(WillExecuteStatement, m_expr->lineNo(), m_expr->lineNo());
+    if (m_expr->hasConditionContextCodegen())
+        generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), true);
+    else {
+        RegisterID* cond = generator.emitNode(m_expr);
+        generator.emitJumpIfFalse(cond, scope->breakTarget());
+    }
+
     generator.emitLabel(topOfLoop.get());
     generator.emitLoopHint();
     
@@ -1579,11 +1585,17 @@ RegisterID* ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     if (m_expr1)
         generator.emitNode(generator.ignoredResult(), m_expr1);
-
-    RefPtr<Label> condition = generator.newLabel();
-    generator.emitJump(condition.get());
-
+    
     RefPtr<Label> topOfLoop = generator.newLabel();
+    if (m_expr2) {
+        if (m_expr2->hasConditionContextCodegen())
+            generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), true);
+        else {
+            RegisterID* cond = generator.emitNode(m_expr2);
+            generator.emitJumpIfFalse(cond, scope->breakTarget());
+        }
+    }
+
     generator.emitLabel(topOfLoop.get());
     generator.emitLoopHint();
 
@@ -1594,7 +1606,6 @@ RegisterID* ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_expr3)
         generator.emitNode(generator.ignoredResult(), m_expr3);
 
-    generator.emitLabel(condition.get());
     if (m_expr2) {
         if (m_expr2->hasConditionContextCodegen())
             generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), false);
