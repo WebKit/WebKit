@@ -55,7 +55,7 @@ void RenderSVGEllipse::createShape()
     m_radii = FloatSize();
 
     // Fallback to RenderSVGShape if shape has a non scaling stroke.
-    if (style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE) {
+    if (hasNonScalingStroke()) {
         RenderSVGShape::createShape();
         setIsPaintingFallback(true);
         return;

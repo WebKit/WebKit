@@ -97,6 +97,7 @@ protected:
     void processZeroLengthSubpaths();
 
     bool hasPath() const { return m_path.get(); }
+    bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -118,15 +119,17 @@ private:
 
     void updateCachedBoundaries();
 
+    AffineTransform nonScalingStrokeTransform() const;
+    bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
+    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
+
     Path* zeroLengthLinecapPath(const FloatPoint&);
-    bool setupNonScalingStrokeTransform(AffineTransform&, GraphicsContextStateSaver&);
-    Path* nonScalingStrokePath(const Path*, const AffineTransform&);
     bool shouldStrokeZeroLengthSubpath() const;
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
 
     void fillShape(RenderStyle*, GraphicsContext*, Path*, RenderSVGShape*);
     void strokePath(RenderStyle*, GraphicsContext*, Path*, RenderSVGResource*,
-                    const Color&, bool, const AffineTransform&, int);
+                    const Color&, int);
     void fillAndStrokePath(GraphicsContext*);
     void inflateWithStrokeAndMarkerBounds();
 

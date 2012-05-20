@@ -55,9 +55,8 @@ void RenderSVGRect::createShape()
     SVGRectElement* rect = static_cast<SVGRectElement*>(node());
     ASSERT(rect);
 
-    bool nonScalingStroke = style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE;
     // Fallback to RenderSVGShape if rect has rounded corners.
-    if (rect->hasAttribute(SVGNames::rxAttr) || rect->hasAttribute(SVGNames::ryAttr) || nonScalingStroke) {
+    if (rect->hasAttribute(SVGNames::rxAttr) || rect->hasAttribute(SVGNames::ryAttr) || hasNonScalingStroke()) {
        RenderSVGShape::createShape();
        setIsPaintingFallback(true);
        return;
@@ -138,6 +137,9 @@ void RenderSVGRect::strokeShape(GraphicsContext* context) const
 
 bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point) const
 {
+    if (isPaintingFallback())
+        return RenderSVGShape::shapeDependentStrokeContains(point);
+
     return m_outerStrokeRect.contains(point, FloatRect::InsideOrOnStroke) && !m_innerStrokeRect.contains(point, FloatRect::InsideButNotOnStroke);
 }
 

@@ -1,3 +1,16 @@
+2012-05-20  Philip Rogers  <pdr@google.com>
+
+        Fix hit testing on non-scaling strokes
+        https://bugs.webkit.org/show_bug.cgi?id=82628
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+        * svg/custom/non-scaling-stroke-expected.txt:
+        * svg/hittest/svg-shapes-non-scale-stroke-expected.txt: Added.
+        * svg/hittest/svg-shapes-non-scale-stroke.html: Added.
+
 2012-05-19  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB layout tests should make better use of test library functions

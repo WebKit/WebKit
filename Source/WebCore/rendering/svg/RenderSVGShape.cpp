@@ -100,12 +100,22 @@ void RenderSVGShape::strokeShape(GraphicsContext* context) const
 
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point) const
 {
+    ASSERT(m_path);
     BoundingRectStrokeStyleApplier applier(this, style());
+
+    if (hasNonScalingStroke()) {
+        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+        Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
+
+        return usePath->strokeContains(&applier, nonScalingTransform.mapPoint(point));
+    }
+
     return m_path->strokeContains(&applier, point);
 }
 
 bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
+    ASSERT(m_path);
     return m_path->contains(point, fillRule);
 }
 
@@ -197,6 +207,32 @@ void RenderSVGShape::layout()
     setNeedsLayout(false);
 }
 
+Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
+{
+    DEFINE_STATIC_LOCAL(Path, tempPath, ());
+
+    tempPath = *path;
+    tempPath.transform(strokeTransform);
+
+    return &tempPath;
+}
+
+bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
+{
+    if (!strokeTransform.isInvertible())
+        return false;
+
+    stateSaver.save();
+    stateSaver.context()->concatCTM(strokeTransform.inverse());
+    return true;
+}
+
+AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
+{
+    SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
+    return element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+}
+
 bool RenderSVGShape::shouldStrokeZeroLengthSubpath() const
 {
     // Spec(11.4): Any zero length subpath shall not be stroked if the "stroke-linecap" property has a value of butt
@@ -225,28 +261,6 @@ Path* RenderSVGShape::zeroLengthLinecapPath(const FloatPoint& linecapPosition)
     return &tempPath;
 }
 
-Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform)
-{
-    DEFINE_STATIC_LOCAL(Path, tempPath, ());
-
-    tempPath = *path;
-    tempPath.transform(strokeTransform);
-
-    return &tempPath;
-}
-
-bool RenderSVGShape::setupNonScalingStrokeTransform(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
-{
-    SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
-    strokeTransform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
-    if (!strokeTransform.isInvertible())
-        return false;
-
-    stateSaver.save();
-    stateSaver.context()->concatCTM(strokeTransform.inverse());
-    return true;
-}
-
 void RenderSVGShape::fillShape(RenderStyle* style, GraphicsContext* context, Path* path, RenderSVGShape* shape)
 {
     Color fallbackColor;
@@ -263,25 +277,23 @@ void RenderSVGShape::fillShape(RenderStyle* style, GraphicsContext* context, Pat
 }
 
 void RenderSVGShape::strokePath(RenderStyle* style, GraphicsContext* context, Path* path, RenderSVGResource* strokePaintingResource,
-                                const Color& fallbackColor, bool nonScalingStroke, const AffineTransform& nonScalingStrokeTransform,
-                                int applyMode)
+                                const Color& fallbackColor, int applyMode)
 {
     if (!style->svgStyle()->hasVisibleStroke())
         return;
-    Path* usePath = path;
-    if (nonScalingStroke) {
-        usePath = nonScalingStrokePath(path, nonScalingStrokeTransform);
-    }
+
     if (strokePaintingResource->applyResource(this, style, context, applyMode)) {
-        strokePaintingResource->postApplyResource(this, context, applyMode, usePath, this);
+        strokePaintingResource->postApplyResource(this, context, applyMode, path, this);
         return;
     }
+
     if (!fallbackColor.isValid())
         return;
+
     RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
     fallbackResource->setColor(fallbackColor);
     if (fallbackResource->applyResource(this, style, context, applyMode))
-        fallbackResource->postApplyResource(this, context, applyMode, usePath, this);
+        fallbackResource->postApplyResource(this, context, applyMode, path, this);
 }
 
 void RenderSVGShape::fillAndStrokePath(GraphicsContext* context)
@@ -295,23 +307,27 @@ void RenderSVGShape::fillAndStrokePath(GraphicsContext* context)
     if (!strokePaintingResource)
         return;
 
+    Path* usePath = m_path.get();
     GraphicsContextStateSaver stateSaver(*context, false);
-    AffineTransform nonScalingStrokeTransform;
-    bool nonScalingStroke = style->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE;
-    if (nonScalingStroke) {
-        if (!setupNonScalingStrokeTransform(nonScalingStrokeTransform, stateSaver))
+    AffineTransform nonScalingTransform;
+
+    if (hasNonScalingStroke()) {
+        nonScalingTransform = nonScalingStrokeTransform();
+        if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
             return;
+        usePath = nonScalingStrokePath(usePath, nonScalingTransform);
     }
 
-    strokePath(style, context, m_path.get(), strokePaintingResource, fallbackColor, nonScalingStroke, nonScalingStrokeTransform, ApplyToStrokeMode);
+    strokePath(style, context, usePath, strokePaintingResource, fallbackColor, ApplyToStrokeMode);
 
     // Spec(11.4): Any zero length subpath shall not be stroked if the "stroke-linecap" property has a value of butt
     // but shall be stroked if the "stroke-linecap" property has a value of round or square
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
         Path* usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
-        strokePath(style, context, usePath, strokePaintingResource, fallbackColor, nonScalingStroke, nonScalingStrokeTransform, ApplyToFillMode);
+        if (hasNonScalingStroke())
+            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
+        strokePath(style, context, usePath, strokePaintingResource, fallbackColor, ApplyToFillMode);
     }
-
 }
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
@@ -423,6 +439,7 @@ void RenderSVGShape::updateCachedBoundaries()
     m_fillBoundingBox = objectBoundingBox();
 
     // Add zero-length sub-path linecaps to the fill box
+    // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
     float strokeWidth = this->strokeWidth();
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i)
         m_fillBoundingBox.unite(zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth));
@@ -449,7 +466,18 @@ void RenderSVGShape::inflateWithStrokeAndMarkerBounds()
     FloatRect strokeRect;
     if (svgStyle->hasStroke()) {
         BoundingRectStrokeStyleApplier strokeStyle(this, style());
-        m_strokeAndMarkerBoundingBox.unite(path().strokeBoundingRect(&strokeStyle));
+
+        // SVG1.2 Tiny only defines non scaling stroke for the stroke but not markers.
+        if (hasNonScalingStroke()) {
+            AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+            if (nonScalingTransform.isInvertible()) {
+                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
+                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
+                strokeBoundingRect = nonScalingTransform.inverse().mapRect(strokeBoundingRect);
+                m_strokeAndMarkerBoundingBox.unite(strokeBoundingRect);
+            }
+        } else
+            m_strokeAndMarkerBoundingBox.unite(path().strokeBoundingRect(&strokeStyle));
     }
     if (svgStyle->hasMarkers()) {
         FloatRect markerBounds = calculateMarkerBoundsIfNeeded();
