@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "config.h"
 #include "PredictedType.h"
 
+#include "Arguments.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "ValueProfile.h"
@@ -117,6 +118,16 @@ const char* predictionToString(PredictedType value)
     else
         isTop = false;
     
+    if (value & PredictMyArguments)
+        ptr.strcat("Myarguments");
+    else
+        isTop = false;
+    
+    if (value & PredictForeignArguments)
+        ptr.strcat("Foreignarguments");
+    else
+        isTop = false;
+    
     if (value & PredictString)
         ptr.strcat("String");
     else
@@ -186,6 +197,10 @@ const char* predictionToAbbreviatedString(PredictedType prediction)
         return "<Float32array>";
     if (isFloat64ArrayPrediction(prediction))
         return "<Float64array>";
+    if (isMyArgumentsPrediction(prediction))
+        return "<Myarguments>";
+    if (isArgumentsPrediction(prediction))
+        return "<Arguments>";
     if (isObjectPrediction(prediction))
         return "<Object>";
     if (isCellPrediction(prediction))
@@ -213,6 +228,9 @@ PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
     
     if (classInfo == &JSString::s_info)
         return PredictString;
+    
+    if (classInfo == &Arguments::s_info)
+        return PredictArguments; // Cannot distinguish between MyArguments and ForeignArguments at this stage. That happens in the flow analysis.
     
     if (classInfo->isSubClassOf(&JSFunction::s_info))
         return PredictFunction;

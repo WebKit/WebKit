@@ -1,5 +1,23 @@
 2012-05-20  Filip Pizlo  <fpizlo@apple.com>
 
+        Predicted types should know about arguments
+        https://bugs.webkit.org/show_bug.cgi?id=85165
+
+        Reviewed by Oliver Hunt.
+        
+        Merge r115604 from dfgopt.
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionToAbbreviatedString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC):
+        (JSC::isMyArgumentsPrediction):
+        (JSC::isArgumentsPrediction):
+
+2012-05-20  Filip Pizlo  <fpizlo@apple.com>
+
         Bytecompiler should emit trivially fewer jumps in loops
         https://bugs.webkit.org/show_bug.cgi?id=85144
 

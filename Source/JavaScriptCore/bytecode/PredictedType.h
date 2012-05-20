@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,17 +49,20 @@ static const PredictedType PredictUint16Array       = 0x00000200; // It's defini
 static const PredictedType PredictUint32Array       = 0x00000400; // It's definitely an Uint32Array or one of its subclasses.
 static const PredictedType PredictFloat32Array      = 0x00000800; // It's definitely an Uint16Array or one of its subclasses.
 static const PredictedType PredictFloat64Array      = 0x00001000; // It's definitely an Uint16Array or one of its subclasses.
-static const PredictedType PredictObjectOther       = 0x00002000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
-static const PredictedType PredictObjectMask        = 0x00003fff; // Bitmask used for testing for any kind of object prediction.
-static const PredictedType PredictString            = 0x00004000; // It's definitely a JSString.
-static const PredictedType PredictCellOther         = 0x00008000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
-static const PredictedType PredictCell              = 0x0000ffff; // It's definitely a JSCell.
-static const PredictedType PredictInt32             = 0x00010000; // It's definitely an Int32.
-static const PredictedType PredictDoubleReal        = 0x00020000; // It's definitely a non-NaN double.
-static const PredictedType PredictDoubleNaN         = 0x00040000; // It's definitely a NaN.
-static const PredictedType PredictDouble            = 0x00060000; // It's either a non-NaN or a NaN double.
-static const PredictedType PredictNumber            = 0x00070000; // It's either an Int32 or a Double.
-static const PredictedType PredictBoolean           = 0x00080000; // It's definitely a Boolean.
+static const PredictedType PredictMyArguments       = 0x00002000; // It's definitely an Arguments object, and it's definitely the one for my current frame.
+static const PredictedType PredictForeignArguments  = 0x00004000; // It's definitely an Arguments object, and it's definitely not mine.
+static const PredictedType PredictArguments         = 0x00006000; // It's definitely an Arguments object.
+static const PredictedType PredictObjectOther       = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
+static const PredictedType PredictObjectMask        = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
+static const PredictedType PredictString            = 0x00010000; // It's definitely a JSString.
+static const PredictedType PredictCellOther         = 0x00020000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
+static const PredictedType PredictCell              = 0x0003ffff; // It's definitely a JSCell.
+static const PredictedType PredictInt32             = 0x00800000; // It's definitely an Int32.
+static const PredictedType PredictDoubleReal        = 0x01000000; // It's definitely a non-NaN double.
+static const PredictedType PredictDoubleNaN         = 0x02000000; // It's definitely a NaN.
+static const PredictedType PredictDouble            = 0x03000000; // It's either a non-NaN or a NaN double.
+static const PredictedType PredictNumber            = 0x03800000; // It's either an Int32 or a Double.
+static const PredictedType PredictBoolean           = 0x04000000; // It's definitely a Boolean.
 static const PredictedType PredictOther             = 0x08000000; // It's definitely none of the above.
 static const PredictedType PredictTop               = 0x0fffffff; // It can be any of the above.
 static const PredictedType PredictEmpty             = 0x10000000; // It's definitely an empty value marker.
@@ -191,6 +194,16 @@ inline bool isActionableArrayPrediction(PredictedType value)
 inline bool isArrayOrOtherPrediction(PredictedType value)
 {
     return !!(value & (PredictArray | PredictOther)) && !(value & ~(PredictArray | PredictOther));
+}
+
+inline bool isMyArgumentsPrediction(PredictedType value)
+{
+    return value == PredictMyArguments;
+}
+
+inline bool isArgumentsPrediction(PredictedType value)
+{
+    return !!value && (value & PredictArguments) == value;
 }
 
 inline bool isInt32Prediction(PredictedType value)
