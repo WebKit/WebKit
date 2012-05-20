@@ -342,6 +342,8 @@ BUGWK81836 DEBUG : inspector/timeline/timeline-injected-script-eval.html = CRASH
 BUGWK81836 DEBUG : inspector/styles/commit-selector.html = CRASH
 BUGWK81836 DEBUG : inspector/console/console-eval-global.html = CRASH
 
+BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = CRASH
+
 // Crashes due to debug assert until we fix issues with style elements in SVG
 BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
 
@@ -1258,7 +1260,8 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+BUGWK86971 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+BUGWK86971 : svg/custom/non-scaling-stroke.svg = FAIL
 
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT

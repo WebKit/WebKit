@@ -352,6 +352,9 @@ BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm 
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
+// Issue related to hit testing
+BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL
+
 // Issue related to battery status and vibration API
 BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
 

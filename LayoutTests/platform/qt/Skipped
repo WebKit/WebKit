@@ -1334,6 +1334,10 @@ svg/custom/svg-fonts-no-latin-glyph.html
 svg/custom/use-font-face-crash.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
+# Issue related to hit testing
+# https://bugs.webkit.org/show_bug.cgi?id=86971
+svg/custom/non-scaling-stroke.svg
+
 # [Qt] fontCache related assertion revealed by r105143
 # https://bugs.webkit.org/show_bug.cgi?id=76534
 svg/carto.net/combobox.svg

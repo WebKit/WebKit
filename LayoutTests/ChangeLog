@@ -1,3 +1,14 @@
+2012-05-20  Philip Rogers  <pdr@google.com>
+
+        Skip failing hit testing tests
+        https://bugs.webkit.org/show_bug.cgi?id=86971
+
+        Unreviewed, skipping tests.
+
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/Skipped:
+
 2012-05-20  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unskip passing test after r117709.
