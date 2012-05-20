@@ -1,3 +1,10 @@
+2012-05-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Don't stop the build if a build system update check fails.
+        
+        * waf/build/build_utils.py:
+        (download_if_newer):
+
 2012-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Sometimes --suffixes isn't supplied.

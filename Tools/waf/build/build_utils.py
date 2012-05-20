@@ -29,6 +29,7 @@ import os
 import platform
 import re
 import shutil
+import socket
 import sys
 import urllib2
 import urllib
@@ -103,7 +104,7 @@ def download_if_newer(url, destdir):
         urlobj = urllib2.urlopen(url, timeout=20)
     except:
         if os.path.exists(destfile):
-            return None # 
+            return None # We've at least got a file, use it for now.
         else:
             raise
     size = long(urlobj.info().getheader('Content-Length'))
@@ -113,14 +114,22 @@ def download_if_newer(url, destdir):
         if downloaded > total_size:
             downloaded = total_size
         sys.stdout.write('%s %d of %d bytes downloaded\r' % (filename, downloaded, total_size))
+    
+    try:
+        urlobj = urllib.urlopen(url)
+        size = long(urlobj.info().getheader('Content-Length'))
 
-    # NB: We don't check modified time as Python doesn't yet handle timezone conversion
-    # properly when converting strings to time objects.
-    if not os.path.exists(destfile) or os.path.getsize(destfile) != size:
-        urllib.urlretrieve(url, destfile, download_callback)
-        print ''
-        return destfile
-
+        # NB: We don't check modified time as Python doesn't yet handle timezone conversion
+        # properly when converting strings to time objects.
+        if not os.path.exists(destfile) or os.path.getsize(destfile) != size:
+            urllib.urlretrieve(url, destfile, download_callback)
+            print ''
+            return destfile
+    except Exception, e:
+        # if there's a connection error, just ignore it
+        print e
+        pass
+        
     return None
 
 
