@@ -161,12 +161,16 @@ exit $globalExitStatus;
 
 sub addDirectoriesIfNeeded($)
 {
+    # Git removes a directory once the last file in it is removed. We need
+    # explicitly check for the existence of each directory along the path
+    # (and create it if it doesn't) so as to support patches that move all files in
+    # directory A to A/B. That is, we cannot depend on %checkedDirectories.
     my ($path) = @_;
     my @dirs = File::Spec->splitdir($path);
     my $dir = ".";
     while (scalar @dirs) {
         $dir = File::Spec->catdir($dir, shift @dirs);
-        next if exists $checkedDirectories{$dir};
+        next if !isGit() && exists $checkedDirectories{$dir};
         if (! -e $dir) {
             mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
             scmAdd($dir);

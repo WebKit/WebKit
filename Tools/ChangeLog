@@ -1,3 +1,24 @@
+2012-05-20  Daniel Bates  <dbates@webkit.org>
+
+        svn-apply fails to apply a patch that moves files from directory A to A/B
+        https://bugs.webkit.org/show_bug.cgi?id=86973
+
+        Reviewed by Eric Seidel.
+
+        Fixes an issue where svn-apply fails to apply a patch that moves files in a
+        directory A to some sub-directory B in A with a Git checkout of WebKit.
+
+        Currently, svn-apply only creates new directories along a file system path that
+        it hasn't already processed. That is, if svn-apply creates/traverses all the
+        intermediate directories along the path A/B then it will assume the directory A/B
+        exists for all subsequent requests to create sub-directories in A/B (e.g. A/B/C).
+        When moving a file F in directory A to directory A/B using a Git checkout, Git
+        may remove directory A if F is the last file in A. Therefore, svn-apply will fail
+        to create sub-directory B in A (since A no longer exists).
+
+        * Scripts/svn-apply:
+        (addDirectoriesIfNeeded):
+
 2012-05-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [Chromium] Print layout test result on buildbot
