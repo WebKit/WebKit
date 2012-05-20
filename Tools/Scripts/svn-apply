@@ -386,8 +386,8 @@ sub scmWillDeleteFile($)
         my $svnOutput = svnStatus($path);
         return 1 if $svnOutput && substr($svnOutput, 0, 1) eq "D";
     } elsif (isGit()) {
-        my $gitOutput = `git diff-index --name-status HEAD -- $path`;
-        return 1 if $gitOutput && substr($gitOutput, 0, 1) eq "D";
+        my $command = runCommand("git", "diff-index", "--name-status", "HEAD", "--", $path);
+        return 1 if $command->{stdout} && substr($command->{stdout}, 0, 1) eq "D";
     }
     return 0;
 }

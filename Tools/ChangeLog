@@ -1,5 +1,32 @@
 2012-05-20  Daniel Bates  <dbates@webkit.org>
 
+        svn-apply cannot apply patches to files that contain space
+        characters in their path
+        https://bugs.webkit.org/show_bug.cgi?id=85742
+
+        Reviewed by Eric Seidel.
+
+        Fixes an issue where svn-apply cannot apply a patch to a file
+        if there is a space in its file path.
+
+        The regular expression we were using to fix up +++/--- lines
+        was too strict; it only matched file paths that contained non-
+        whitespace characters. Instead, it's sufficient to match file
+        paths whose characters aren't in the set {\t, \n, \r}.
+
+        * Scripts/VCSUtils.pm:
+        (parseSvnDiffHeader):
+        (runCommand): Added.
+        * Scripts/svn-apply:
+        (scmWillDeleteFile): Modified to call runCommand() so as to
+        handle querying git for a file whose path may contain a space
+        character.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Added test case "new file with spaces in its name".
+        * Scripts/webkitperl/VCSUtils_unittest/runCommand.pl: Added.
+
+2012-05-20  Daniel Bates  <dbates@webkit.org>
+
         svn-apply fails to apply a patch that moves files from directory A to A/B
         https://bugs.webkit.org/show_bug.cgi?id=86973
 

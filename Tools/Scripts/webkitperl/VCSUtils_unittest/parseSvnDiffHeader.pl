@@ -90,6 +90,31 @@ END
 },
 {
     # New test
+    diffName => "new file with spaces in its name",
+    inputText => <<'END',
+Index: WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
+===================================================================
+--- WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme	(revision 0)
++++ WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme	(revision 0)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
+===================================================================
+--- WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme	(revision 0)
++++ WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme	(revision 0)
+END
+    indexPath => "WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme",
+    isNew => 1,
+},
+"@@ -0,0 +1,8 @@\n"],
+    expectedNextLine => "+<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+},
+{
+    # New test
     diffName => "copied file",
     inputText => <<'END',
 Index: index_path.py
