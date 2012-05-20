@@ -300,9 +300,10 @@ def build(bld):
         # Qt specific file in common sources
         excludes.append('ContextShadow.cpp')
 
-        # FIXME: these three require headers that I can't seem to find in trunk.
+        # FIXME: these require headers that I can't seem to find in trunk.
         # Investigate how to resolve these issues.
         excludes.append('JSAbstractView.cpp')
+        excludes.append('JSIntentConstructor.cpp')
         excludes.append('JSPositionCallback.cpp')
         excludes.append('JSInspectorController.cpp')
         
@@ -376,6 +377,7 @@ def build(bld):
         excludes.append('AuthenticationCF.cpp')
         excludes.append('LoaderRunLoopCF.cpp')
         excludes.append('ResourceErrorCF.cpp')
+        excludes.append('RunLoopCF.cpp')
         
         # once we move over to the new FPD implementation, remove this.
         excludes.append('FontPlatformData.cpp')
