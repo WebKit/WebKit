@@ -2154,11 +2154,11 @@ static void neuterBinding(void* domObject)
     }
 }
 
-PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(ArrayBufferArray& arrayBuffers, bool& didThrow) 
+PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(ArrayBufferArray& arrayBuffers, bool& didThrow, v8::Isolate* isolate)
 {
     for (size_t i = 0; i < arrayBuffers.size(); i++) {
         if (arrayBuffers[i]->isNeutered()) {
-            throwError(INVALID_STATE_ERR);
+            throwError(INVALID_STATE_ERR, isolate);
             didThrow = true;
             return nullptr;
         }
@@ -2176,7 +2176,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
 
         bool result = arrayBuffers[i]->transfer(contents->at(i), neuteredViews);
         if (!result) {
-            throwError(INVALID_STATE_ERR);
+            throwError(INVALID_STATE_ERR, isolate);
             didThrow = true;
             return nullptr;
         }
@@ -2213,11 +2213,11 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
         // If there was an input error, throw a new exception outside
         // of the TryCatch scope.
         didThrow = true;
-        throwError(DATA_CLONE_ERR);
+        throwError(DATA_CLONE_ERR, isolate);
         return;
     case Serializer::InvalidStateError:
         didThrow = true;
-        throwError(INVALID_STATE_ERR);
+        throwError(INVALID_STATE_ERR, isolate);
         return;
     case Serializer::JSFailure:
         // If there was a JS failure (but no exception), there's not
@@ -2228,7 +2228,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
     case Serializer::Success:
         m_data = String(StringImpl::adopt(writer.data())).isolatedCopy();
         if (arrayBuffers)
-            m_arrayBufferContentsArray = transferArrayBuffers(*arrayBuffers, didThrow);
+            m_arrayBufferContentsArray = transferArrayBuffers(*arrayBuffers, didThrow, isolate);
         return;
     case Serializer::JSException:
         // We should never get here because this case was handled above.

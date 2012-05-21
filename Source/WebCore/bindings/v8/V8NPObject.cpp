@@ -92,14 +92,14 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
         // The holder object is not a subtype of HTMLPlugInElement, it must be an NPObject which has three
         // internal fields.
         if (args.Holder()->InternalFieldCount() != npObjectInternalFieldCount)
-            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPMethod called on non-NPObject");
+            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPMethod called on non-NPObject", args.GetIsolate());
 
         npObject = v8ObjectToNPObject(args.Holder());
     }
 
     // Verify that our wrapper wasn't using a NPObject which has already been deleted.
     if (!npObject || !_NPN_IsAlive(npObject))
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", args.GetIsolate());
 
     // Wrap up parameters.
     int numArgs = args.Length();
@@ -133,7 +133,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     }
 
     if (!retval)
-        V8Proxy::throwError(V8Proxy::GeneralError, "Error calling method on NPObject.");
+        V8Proxy::throwError(V8Proxy::GeneralError, "Error calling method on NPObject.", args.GetIsolate());
 
     for (int i = 0; i < numArgs; i++)
         _NPN_ReleaseVariantValue(&npArgs[i]);
@@ -325,7 +325,7 @@ v8::Handle<v8::Array> npObjectPropertyEnumerator(const v8::AccessorInfo& info, b
     // Verify that our wrapper wasn't using a NPObject which
     // has already been deleted.
     if (!npObject || !_NPN_IsAlive(npObject))
-        V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+        V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", info.GetIsolate());
 
     if (NP_CLASS_STRUCT_VERSION_HAS_ENUM(npObject->_class) && npObject->_class->enumerate) {
         uint32_t count;
