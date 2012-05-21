@@ -118,10 +118,9 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         cell->addChild(child);
         return;
     } 
-    
-    // If the next renderer is actually wrapped in an anonymous table cell, we need to go up and find that.
-    while (beforeChild && beforeChild->parent() != this)
-        beforeChild = beforeChild->parent();
+
+    if (beforeChild && beforeChild->parent() != this)
+        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);    
 
     RenderTableCell* cell = toRenderTableCell(child);
 

@@ -418,7 +418,8 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     }
         
     // Split our anonymous blocks.
-    RenderObject* newBeforeChild = splitAnonymousBlocksAroundChild(beforeChild);
+    RenderObject* newBeforeChild = splitAnonymousBoxesAroundChild(beforeChild);
+
     
     // Create a new anonymous box of the appropriate type.
     RenderBlock* newBox = newChildHasColumnSpan ? createAnonymousColumnSpanBlock() : createAnonymousColumnsBlock();
@@ -597,92 +598,6 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
     post->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-RenderObject* RenderBlock::splitAnonymousBlocksAroundChild(RenderObject* beforeChild)
-{
-    if (beforeChild->isTablePart())
-        beforeChild = splitTablePartsAroundChild(beforeChild);
-
-    while (beforeChild->parent() != this) {
-        RenderBlock* blockToSplit = toRenderBlock(beforeChild->parent());
-        if (blockToSplit->firstChild() != beforeChild) {
-            // We have to split the parentBlock into two blocks.
-            RenderBlock* post = toRenderBlock(blockToSplit->createAnonymousBoxWithSameTypeAs(this));
-            post->setChildrenInline(blockToSplit->childrenInline());
-            RenderBlock* parentBlock = toRenderBlock(blockToSplit->parent());
-            parentBlock->children()->insertChildNode(parentBlock, post, blockToSplit->nextSibling());
-            blockToSplit->moveChildrenTo(post, beforeChild, 0, blockToSplit->hasLayer());
-            post->setNeedsLayoutAndPrefWidthsRecalc();
-            blockToSplit->setNeedsLayoutAndPrefWidthsRecalc();
-            beforeChild = post;
-        } else
-            beforeChild = blockToSplit;
-    }
-    return beforeChild;
-}
-
-static void markTableForSectionAndCellRecalculation(RenderObject* child)
-{
-    RenderObject* curr = child;
-    while (!curr->isTable()) {
-        if (curr->isTableSection())
-            toRenderTableSection(curr)->setNeedsCellRecalc();
-        curr = curr->parent();
-    }
-
-    RenderTable* table = toRenderTable(curr);
-    table->setNeedsSectionRecalc();
-    table->setNeedsLayoutAndPrefWidthsRecalc();
-}
-
-static void moveAllTableChildrenTo(RenderObject* fromTablePart, RenderTable* toTable, RenderObject* startChild)
-{
-    for (RenderObject* curr = startChild; curr;) {
-        // Need to store next sibling as we won't have access to it
-        // after we are removed from table.
-        RenderObject* next = curr->nextSibling();
-        fromTablePart->removeChild(curr);
-        toTable->addChild(curr);
-        if (curr->isTableSection())
-            toRenderTableSection(curr)->setNeedsCellRecalc();
-        curr->setNeedsLayoutAndPrefWidthsRecalc();
-        curr = next; 
-    }
-
-    // This marks fromTable for section and cell recalculation.
-    markTableForSectionAndCellRecalculation(fromTablePart);
-
-    // startChild is now part of toTable. This marks toTable for section and cell recalculation.
-    markTableForSectionAndCellRecalculation(startChild);
-}
-
-RenderObject* RenderBlock::splitTablePartsAroundChild(RenderObject* beforeChild)
-{
-    ASSERT(beforeChild->isTablePart());
-
-    while (beforeChild->parent() != this && !beforeChild->isTable()) {
-        RenderObject* tablePartToSplit = beforeChild->parent();
-        if (tablePartToSplit->firstChild() != beforeChild) {
-            // Get our table container.
-            RenderObject* curr = tablePartToSplit;
-            while (!curr->isTable())
-                curr = curr->parent();
-            RenderTable* table = toRenderTable(curr);
-
-            // Create an anonymous table container next to our table container. 
-            RenderBlock* parentBlock = toRenderBlock(table->parent());
-            RenderTable* postTable = RenderTable::createAnonymousWithParentRenderer(parentBlock);
-            parentBlock->children()->insertChildNode(parentBlock, postTable, table->nextSibling());
-            
-            // Move all the children from beforeChild to the newly created anonymous table container.
-            moveAllTableChildrenTo(tablePartToSplit, postTable, beforeChild);
-
-            beforeChild = postTable;
-        } else
-            beforeChild = tablePartToSplit;
-    }
-    return beforeChild;
-}
-
 void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild)
 {
     RenderBlock* pre = 0;
@@ -694,7 +609,7 @@ void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, R
     block->deleteLineBoxTree();
 
     if (beforeChild && beforeChild->parent() != this)
-        beforeChild = splitAnonymousBlocksAroundChild(beforeChild);
+        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
     if (beforeChild != firstChild()) {
         pre = block->createAnonymousColumnsBlock();
@@ -798,7 +713,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
                 return;
             }
 
-            beforeChild = splitTablePartsAroundChild(beforeChild);
+            beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
             ASSERT(beforeChild->parent() == this);
             if (beforeChild->parent() != this) {
@@ -978,36 +893,6 @@ RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
     RootInlineBox* rootBox = createRootInlineBox();
     m_lineBoxes.appendLineBox(rootBox);
     return rootBox;
-}
-
-void RenderBlock::moveChildTo(RenderBlock* toBlock, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
-{
-    ASSERT(this == child->parent());
-    ASSERT(!beforeChild || toBlock == beforeChild->parent());
-    if (fullRemoveInsert) {
-        // Takes care of adding the new child correctly if toBlock and fromBlock
-        // have different kind of children (block vs inline).
-        toBlock->addChildIgnoringContinuation(children()->removeChildNode(this, child), beforeChild);
-    } else
-        toBlock->children()->insertChildNode(toBlock, children()->removeChildNode(this, child, false), beforeChild, false);
-}
-
-void RenderBlock::moveChildrenTo(RenderBlock* toBlock, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
-{
-    ASSERT(!beforeChild || toBlock == beforeChild->parent());
-    RenderObject* nextChild = startChild;
-    while (nextChild && nextChild != endChild) {
-        RenderObject* child = nextChild;
-        nextChild = child->nextSibling();
-        if (fullRemoveInsert) {
-            // Takes care of adding the new child correctly if toBlock and fromBlock
-            // have different kind of children (block vs inline).
-            toBlock->addChildIgnoringContinuation(children()->removeChildNode(this, child), beforeChild);
-        } else
-            toBlock->children()->insertChildNode(toBlock, children()->removeChildNode(this, child, false), beforeChild, false);
-        if (child == endChild)
-            return;
-    }
 }
 
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)

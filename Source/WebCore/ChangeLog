@@ -1,3 +1,47 @@
+2012-04-09  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect placement of new child to table when before child parent is not |this|.
+        https://bugs.webkit.org/show_bug.cgi?id=82630
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/table/table-row-split2.html
+               fast/table/table-section-split2.html
+               fast/table/table-split.html
+               fast/table/table-split2.html
+        and tested by layouttests in commits r97180, r108127, and a few others.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks): function rename, block->box.
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks): ditto.
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): ditto.
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::moveChildTo): move these functions from RenderBlock, needs to be
+        used in RenderBox::splitAnonymousBoxesAroundChild.
+        (WebCore):
+        (WebCore::RenderBox::moveChildrenTo): ditto.
+        (WebCore::markBoxForRelayoutAfterSplit): helper to mark a block or table part for complete relayout
+        after anonymous boxes are split around child.
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild): moved from RenderBlock to be able
+        to work with table parts.
+        * rendering/RenderBox.h:
+        (RenderBox):
+        (WebCore::RenderBox::moveChildTo):
+        (WebCore::RenderBox::moveAllChildrenTo):
+        (WebCore::RenderBox::moveChildrenTo):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild): no longer need the hack added in r95461.
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveChildren): function rename, block->box.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Use splitAnonymousBoxesAroundChild function when |beforeChild| != |this|.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): ditto. 
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): ditto.
+
 2012-04-06  Abhishek Arya  <inferno@chromium.org>
 
         Virtualize createAnonymousBoxWithSameTypeAs.

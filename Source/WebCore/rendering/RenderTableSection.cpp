@@ -181,9 +181,8 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     if (!beforeChild)
         setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
-    // If the next renderer is actually wrapped in an anonymous table row, we need to go up and find that.
-    while (beforeChild && beforeChild->parent() != this)
-        beforeChild = beforeChild->parent();
+    if (beforeChild && beforeChild->parent() != this)
+        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
     ASSERT(!beforeChild || beforeChild->isTableRow());
     RenderBox::addChild(child, beforeChild);
