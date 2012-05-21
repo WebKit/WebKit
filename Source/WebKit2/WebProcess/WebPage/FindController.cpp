@@ -156,7 +156,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
 
     bool found = m_webPage->corePage()->findString(string, core(options));
 
-    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(WTF::bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
 }
 
 void FindController::hideFindUI()

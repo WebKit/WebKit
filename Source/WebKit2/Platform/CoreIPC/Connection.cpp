@@ -31,7 +31,6 @@
 #include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
 
-using namespace std;
 using namespace WebCore;
 
 namespace CoreIPC {
@@ -141,7 +140,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection* connection
         MutexLocker locker(m_mutex);
         
         if (!m_didScheduleDispatchMessagesWork) {
-            m_runLoop->dispatch(bind(&SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork, this));
+            m_runLoop->dispatch(WTF::bind(&SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork, this));
             m_didScheduleDispatchMessagesWork = true;
         }
 
@@ -236,12 +235,12 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 void Connection::addQueueClient(QueueClient* queueClient)
 {
-    m_connectionQueue.dispatch(bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
 }
 
 void Connection::removeQueueClient(QueueClient* queueClient)
 {
-    m_connectionQueue.dispatch(bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
 }
 
 void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
@@ -274,7 +273,7 @@ void Connection::invalidate()
     // Reset the client.
     m_client = 0;
 
-    m_connectionQueue.dispatch(bind(&Connection::platformInvalidate, this));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::platformInvalidate, this));
 }
 
 void Connection::markCurrentlyDispatchedMessageAsInvalid()
@@ -317,7 +316,7 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> ar
     m_outgoingMessages.append(OutgoingMessage(messageID, arguments));
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
-    m_connectionQueue.dispatch(bind(&Connection::sendOutgoingMessages, this));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::sendOutgoingMessages, this));
     return true;
 }
 
@@ -565,7 +564,7 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
 {
-    m_connectionQueue.dispatch(bind(&Connection::connectionDidClose, this));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::connectionDidClose, this));
 }
 
 void Connection::connectionDidClose()
@@ -586,7 +585,7 @@ void Connection::connectionDidClose()
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(m_connectionQueue, this);
 
-    m_clientRunLoop->dispatch(bind(&Connection::dispatchConnectionDidClose, this));
+    m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchConnectionDidClose, this));
 }
 
 void Connection::dispatchConnectionDidClose()
@@ -666,7 +665,7 @@ void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
     MutexLocker locker(m_incomingMessagesLock);
     m_incomingMessages.append(incomingMessage);
 
-    m_clientRunLoop->dispatch(bind(&Connection::dispatchOneMessage, this));
+    m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchOneMessage, this));
 }
 
 void Connection::dispatchMessage(IncomingMessage& message)

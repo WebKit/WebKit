@@ -45,8 +45,6 @@
 #include <glib.h>
 #endif
 
-using namespace std;
-
 namespace CoreIPC {
 
 static const size_t messageMaxSize = 4096;
@@ -423,17 +421,17 @@ bool Connection::open()
 
     m_isConnected = true;
 #if PLATFORM(QT)
-    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, bind(&Connection::readyReadHandler, this));
+    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(GTK)
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), bind(&Connection::connectionDidClose, this));
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, bind(&Connection::readyReadHandler, this));
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(EFL)
-    m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, bind(&Connection::readyReadHandler, this));
+    m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
     // handler.
-    m_connectionQueue.dispatch(bind(&Connection::readyReadHandler, this));
+    m_connectionQueue.dispatch(WTF::bind(&Connection::readyReadHandler, this));
 
     return true;
 }
@@ -561,7 +559,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 #if PLATFORM(QT)
 void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
 {
-    m_connectionQueue.dispatchOnTermination(process, bind(&Connection::connectionDidClose, this));
+    m_connectionQueue.dispatchOnTermination(process, WTF::bind(&Connection::connectionDidClose, this));
 }
 #endif
 
