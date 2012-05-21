@@ -1,3 +1,15 @@
+2012-05-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Delete obsolete Chromium WebKit API method
+        https://bugs.webkit.org/show_bug.cgi?id=86933
+
+        Implementation was previously removed in r17512 and callers are updated.
+
+        Reviewed by Adam Barth.
+
+        * public/WebIDBIndex.h: Delete storeName()
+        (WebKit::WebIDBIndex::name):
+
 2012-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117675.

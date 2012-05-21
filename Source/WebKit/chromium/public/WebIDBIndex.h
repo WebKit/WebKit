@@ -47,12 +47,6 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    // FIXME: Remove method once callers are updated.
-    virtual WebString storeName() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebString();
-    }
     virtual WebIDBKeyPath keyPath() const
     {
         return WebIDBKeyPath(keyPathString());
