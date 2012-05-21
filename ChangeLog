@@ -1,3 +1,20 @@
+2012-05-21  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Do not enable Web Audio support by default at build time.
+        https://bugs.webkit.org/show_bug.cgi?id=86982
+
+        Reviewed by Philippe Normand.
+
+        Follow-up to r115800. Even though Web Audio support is disabled by
+        default in build-webkit, enabling it in OptionsEfl.cmake will turn
+        it on when building the port without build-webkit.
+
+        Since Web Audio support for the EFL port does not seem to be fully
+        working yet, it is better to disable it in all cases.
+
+        * Source/cmake/OptionsEfl.cmake: Remove option override for
+        ENABLE_WEB_AUDIO.
+
 2012-05-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: A disabled select element should not be exposed as focusable
