@@ -364,16 +364,6 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
-    inline RenderObject* anonymousContainer(RenderObject* child)
-    {
-         RenderObject* container = child;
-         while (container->parent() != this)
-             container = container->parent();
-
-         ASSERT(container->isAnonymous());
-         return container;
-    }
-
     bool hasCounterNodeMap() const { return m_bitfields.hasCounterNodeMap(); }
     void setHasCounterNodeMap(bool hasCounterNodeMap) { m_bitfields.setHasCounterNodeMap(hasCounterNodeMap); }
     bool everHadLayout() const { return m_bitfields.everHadLayout(); }
