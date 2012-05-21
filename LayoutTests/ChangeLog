@@ -1,3 +1,16 @@
+2012-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Add new test results for mac
+
+        * platform/mac/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/mac/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/mac/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/mac/fast/forms/select-empty-option-height-expected.txt: Added.
+        * platform/mac/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/mac/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium linux and windows rebaselines for sub-pixel flag change commited as r117815.
