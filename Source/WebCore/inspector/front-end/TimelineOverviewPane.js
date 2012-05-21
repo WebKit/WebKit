@@ -767,7 +767,8 @@ WebInspector.TimelineOverviewPane.WindowSelector.prototype = {
  * @constructor
  * @param {WebInspector.TimelineModel} model
  */
-WebInspector.HeapGraph = function(model) {
+WebInspector.HeapGraph = function(model)
+{
     this._canvas = document.createElement("canvas");
     this._model = model;
 
@@ -786,19 +787,29 @@ WebInspector.HeapGraph = function(model) {
 }
 
 WebInspector.HeapGraph.prototype = {
-    get element() {
+    /**
+     * @return {Node}
+     */
+    get element()
+    {
         return this._element;
     },
 
-    get visible() {
+    /**
+     * @return {boolean}
+     */
+    get visible()
+    {
         return !this.element.hasStyleClass("hidden");
     },
 
-    show: function() {
+    show: function()
+    {
         this.element.removeStyleClass("hidden");
     },
 
-    hide: function() {
+    hide: function()
+    {
         this.element.addStyleClass("hidden");
     },
 
@@ -874,10 +885,15 @@ WebInspector.HeapGraph.prototype = {
         this._minHeapSizeLabel.textContent = Number.bytesToString(minUsedHeapSize);
     },
 
-    _clear: function(ctx) {
+    _clear: function(ctx)
+    {
         ctx.fillStyle = "rgba(255,255,255,0.8)";
         ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     },
+}
+
+WebInspector.TimelineCategoryStrips = function(model)
+{
 }
 
 /**
@@ -885,7 +901,8 @@ WebInspector.HeapGraph.prototype = {
  * @extends {WebInspector.View}
  * @param {WebInspector.TimelineModel} model
  */
-WebInspector.TimelineVerticalOverview = function(model) {
+WebInspector.TimelineVerticalOverview = function(model)
+{
     WebInspector.View.call(this);
     this.element = document.createElement("canvas");
     this.element.className = "timeline-vertical-overview-bars fill";
@@ -900,22 +917,15 @@ WebInspector.TimelineVerticalOverview = function(model) {
     this._actualOuterBarWidth = this._maxInnerBarWidth + this._actualPadding;
 
     this._context = this.element.getContext("2d");
-    this._fillStyles = {};
-    this._fillStyles.loading = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
-    this._fillStyles.loading.addColorStop(0, "rgb(201, 220, 245)");
-    this._fillStyles.loading.addColorStop(1, "rgb(109, 157, 222)");
-    this._fillStyles.scripting = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
-    this._fillStyles.scripting.addColorStop(0, "rgb(251, 222, 168)");
-    this._fillStyles.scripting.addColorStop(1, "rgb(234, 182, 77)");
-    this._fillStyles.rendering = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
-    this._fillStyles.rendering.addColorStop(0, "rgb(213, 185, 236)");
-    this._fillStyles.rendering.addColorStop(1, "rgb(137, 62, 200)");
 
-    this._borderStyles = {};
-    this._borderStyles.loading = "rgb(106, 152, 213)";
-    this._borderStyles.scripting = "rgb(223, 175, 77)";
-    this._borderStyles.rendering = "rgb(130, 59, 190)";
-    this._borderStyles._frameLength = "rgb(90, 90, 90)";
+    this._fillStyles = {};
+    var categories = WebInspector.TimelinePresentationModel.categories();
+    for (var category in categories) {
+        var fillStyle = this._context.createLinearGradient(0, 0, this._maxInnerBarWidth, 0);
+        fillStyle.addColorStop(0, categories[category].fillColorStop0);
+        fillStyle.addColorStop(1, categories[category].fillColorStop1);
+        this._fillStyles[category] = fillStyle;
+    }
 }
 
 WebInspector.TimelineVerticalOverview.prototype = {
@@ -1037,7 +1047,7 @@ WebInspector.TimelineVerticalOverview.prototype = {
             this._context.fillRect(0, y, this._maxInnerBarWidth, Math.floor(height));
             this._context.restore();
 
-            this._context.strokeStyle = this._borderStyles[category];
+            this._context.strokeStyle = WebInspector.TimelinePresentationModel.categories()[category];
             this._context.strokeRect(x, y, width, Math.floor(height));
             bottomOffset -= height - 1;
         }
@@ -1046,7 +1056,7 @@ WebInspector.TimelineVerticalOverview.prototype = {
         var y0 = Math.floor(bottomOffset - nonCPUTime * scale) + 0.5;
         var y1 = Math.floor(bottomOffset) + 0.5;
 
-        this._context.strokeStyle = this._borderStyles._frameLength;
+        this._context.strokeStyle = "rgb(90, 90, 90)";
         this._context.beginPath();
         this._context.moveTo(x, y1);
         this._context.lineTo(x, y0);

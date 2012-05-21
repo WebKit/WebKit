@@ -47,9 +47,9 @@ WebInspector.TimelinePresentationModel.categories = function()
     if (WebInspector.TimelinePresentationModel._categories)
         return WebInspector.TimelinePresentationModel._categories;
     WebInspector.TimelinePresentationModel._categories = {
-        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), "rgb(47,102,236)"),
-        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), "rgb(157,231,119)"),
-        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), "rgb(164,60,255)")
+        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), "rgb(106, 152, 213)", "rgb(201, 220, 245)", "rgb(109, 157, 222)"),
+        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), "rgb(223, 175, 77)", "rgb(251, 222, 168)", "rgb(234, 182, 77)"),
+        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), "rgb(130, 59, 190)", "rgb(213, 185, 236)", "rgb(137, 62, 200)")
     };
     return WebInspector.TimelinePresentationModel._categories;
 };
@@ -57,7 +57,8 @@ WebInspector.TimelinePresentationModel.categories = function()
 /**
  * @param {Object} record
  */
-WebInspector.TimelinePresentationModel.recordStyle = function(record) {
+WebInspector.TimelinePresentationModel.recordStyle = function(record)
+{
     if (WebInspector.TimelinePresentationModel._recordStylesMap)
         return WebInspector.TimelinePresentationModel._recordStylesMap[record.type];
 
@@ -769,12 +770,19 @@ WebInspector.TimelinePresentationModel.Filter.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {string} name
+ * @param {string} title
+ * @param {string} borderColor
+ * @param {string} fillColorStop0
+ * @param {string} fillColorStop1
  */
-WebInspector.TimelineCategory = function(name, title, color)
+WebInspector.TimelineCategory = function(name, title, borderColor, fillColorStop0, fillColorStop1)
 {
     this.name = name;
     this.title = title;
-    this.color = color;
+    this.borderColor = borderColor;
+    this.fillColorStop0 = fillColorStop0;
+    this.fillColorStop1 = fillColorStop1;
     this.hidden = false;
 }
 
