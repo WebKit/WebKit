@@ -45,12 +45,8 @@ private:
     DateTimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
+    virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual double defaultValueForStepUp() const OVERRIDE;
-    virtual double minimum() const OVERRIDE;
-    virtual double maximum() const OVERRIDE;
-    virtual double defaultStep() const OVERRIDE;
-    virtual double stepScaleFactor() const OVERRIDE;
-    virtual bool scaledStepValueShouldBeInteger() const OVERRIDE;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateTimeField() const OVERRIDE;

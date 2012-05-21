@@ -28,40 +28,116 @@ namespace WebCore {
 
 class HTMLInputElement;
 
-class StepRange {
-    WTF_MAKE_NONCOPYABLE(StepRange);
-public:
-    bool hasStep;
-    double step;
-    double minimum;
-    double maximum; // maximum must be >= minimum.
+enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
-    explicit StepRange(const HTMLInputElement*);
-    double clampValue(double value);
-    double clampValue(const String& stringValue);
+class StepRange {
+public:
+    struct DoubleWithDecimalPlaces {
+        unsigned decimalPlaces;
+        double value;
+
+        DoubleWithDecimalPlaces(double value = 0, unsigned decimalPlaces = 0)
+            : decimalPlaces(decimalPlaces)
+            , value(value)
+        {
+        }
+    };
+
+    struct DoubleWithDecimalPlacesOrMissing {
+        bool hasValue;
+        DoubleWithDecimalPlaces value;
+
+        DoubleWithDecimalPlacesOrMissing(DoubleWithDecimalPlaces value, bool hasValue = true)
+            : hasValue(hasValue)
+            , value(value)
+        {
+        }
+    };
+
+    enum StepValueShouldBe {
+        StepValueShouldBeReal,
+        ParsedStepValueShouldBeInteger,
+        ScaledStepValueShouldBeInteger,
+    };
+
+    struct StepDescription {
+        int defaultStep;
+        int defaultStepBase;
+        int stepScaleFactor;
+        StepValueShouldBe stepValueShouldBe;
+
+        StepDescription(int defaultStep, int defaultStepBase, int stepScaleFactor, StepValueShouldBe stepValueShouldBe = StepValueShouldBeReal)
+            : defaultStep(defaultStep)
+            , defaultStepBase(defaultStepBase)
+            , stepScaleFactor(stepScaleFactor)
+            , stepValueShouldBe(stepValueShouldBe)
+        {
+        }
+
+        StepDescription()
+            : defaultStep(1)
+            , defaultStepBase(0)
+            , stepScaleFactor(1)
+            , stepValueShouldBe(StepValueShouldBeReal)
+        {
+            ASSERT_NOT_REACHED();
+        }
+
+        double defaultValue() const
+        {
+            return defaultStep * stepScaleFactor;
+        }
+    };
+
+    StepRange();
+    StepRange(const StepRange&);
+    StepRange(const DoubleWithDecimalPlaces& stepBase, double minimum, double maximum, const DoubleWithDecimalPlacesOrMissing& step, const StepDescription&);
+    double acceptableError() const;
+    double alignValueForStep(double currentValue, unsigned currentDecimalPlaces, double newValue) const;
+    double clampValue(double value) const;
+    bool hasStep() const { return m_hasStep; }
+    double maximum() const { return m_maximum; }
+    double minimum() const { return m_minimum; }
+    static DoubleWithDecimalPlacesOrMissing parseStep(AnyStepHandling, const StepDescription&, const String&);
+    double step() const { return m_step; }
+    double stepBase() const { return m_stepBase; }
+    unsigned stepBaseDecimalPlaces() const { return m_stepBaseDecimalPlaces; }
+    unsigned stepDecimalPlaces() const { return m_stepDecimalPlaces; }
+    int stepScaleFactor() const { return m_stepDescription.stepScaleFactor; }
+    bool stepMismatch(double) const;
 
     // Clamp the middle value according to the step
     double defaultValue()
     {
-        return clampValue((minimum + maximum) / 2);
+        return clampValue((m_minimum + m_maximum) / 2);
     }
 
     // Map value into 0-1 range
     double proportionFromValue(double value)
     {
-        if (minimum == maximum)
+        if (m_minimum == m_maximum)
             return 0;
 
-        return (value - minimum) / (maximum - minimum);
+        return (value - m_minimum) / (m_maximum - m_minimum);
     }
 
     // Map from 0-1 range to value
     double valueFromProportion(double proportion)
     {
-        return minimum + proportion * (maximum - minimum);
+        return m_minimum + proportion * (m_maximum - m_minimum);
     }
 
-    double valueFromElement(HTMLInputElement*, bool* wasClamped = 0);
+private:
+    StepRange& operator =(const StepRange&);
+
+    const double m_maximum; // maximum must be >= minimum.
+    const double m_minimum;
+    const double m_step;
+    const double m_stepBase;
+    const StepDescription m_stepDescription;
+    const unsigned m_stepBaseDecimalPlaces;
+    const unsigned m_stepDecimalPlaces;
+    const bool m_hasStep;
 };
 
 }

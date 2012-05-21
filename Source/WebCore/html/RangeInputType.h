@@ -48,16 +48,8 @@ private:
     virtual double valueAsNumber() const OVERRIDE;
     virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;
-    virtual bool rangeUnderflow(const String&) const OVERRIDE;
-    virtual bool rangeOverflow(const String&) const OVERRIDE;
-    virtual bool supportsRangeLimitation() const OVERRIDE;
-    virtual double minimum() const OVERRIDE;
-    virtual double maximum() const OVERRIDE;
+    virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
-    virtual bool stepMismatch(const String&, double) const OVERRIDE;
-    virtual double stepBase() const OVERRIDE;
-    virtual double defaultStep() const OVERRIDE;
-    virtual double stepScaleFactor() const OVERRIDE;
     virtual void handleMouseDownEvent(MouseEvent*) OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;

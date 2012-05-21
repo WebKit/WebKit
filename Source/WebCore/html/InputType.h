@@ -34,6 +34,7 @@
 #define InputType_h
 
 #include "HTMLTextFormControlElement.h"
+#include "StepRange.h"
 #include <wtf/Forward.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
@@ -150,25 +151,19 @@ public:
     virtual bool supportsRequired() const;
     virtual bool valueMissing(const String&) const;
     virtual bool patternMismatch(const String&) const;
-    virtual bool rangeUnderflow(const String&) const;
-    virtual bool rangeOverflow(const String&) const;
-    virtual bool supportsRangeLimitation() const;
+    bool rangeUnderflow(const String&) const;
+    bool rangeOverflow(const String&) const;
+    bool isInRange(const String&) const;
+    bool isOutOfRange(const String&) const;
     virtual double defaultValueForStepUp() const;
-    virtual double minimum() const;
-    virtual double maximum() const;
+    double minimum() const;
+    double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
     bool stepMismatch(const String&) const;
-    virtual bool stepMismatch(const String&, double step) const;
-    virtual double stepBase() const;
-    virtual double stepBaseWithDecimalPlaces(unsigned*) const;
     virtual bool getAllowedValueStep(double*) const;
+    virtual StepRange createStepRange(AnyStepHandling) const;
     virtual void stepUp(int, ExceptionCode&);
     virtual void stepUpFromRenderer(int);
-    virtual double defaultStep() const;
-    virtual double stepScaleFactor() const;
-    virtual bool parsedStepValueShouldBeInteger() const;
-    virtual bool scaledStepValueShouldBeInteger() const;
-    virtual double acceptableError(double) const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
     virtual bool canSetStringValue() const;
@@ -295,17 +290,11 @@ protected:
     InputType(HTMLInputElement* element) : m_element(element) { }
     HTMLInputElement* element() const { return m_element; }
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
-    // We can't make this a static const data member because VC++ doesn't like it.
-    static double defaultStepBase() { return 0.0; }
     Chrome* chrome() const;
 
 private:
-    enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
-
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
     void applyStep(double count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
-    double alignValueForStep(double value, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces);
-    bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
 
     // Raw pointer because the HTMLInputElement object owns this InputType object.
     HTMLInputElement* m_element;

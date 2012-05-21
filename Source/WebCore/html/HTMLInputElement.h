@@ -26,6 +26,7 @@
 #define HTMLInputElement_h
 
 #include "HTMLTextFormControlElement.h"
+#include "StepRange.h"
 
 namespace WebCore {
 
@@ -65,6 +66,7 @@ public:
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
+    StepRange createStepRange(AnyStepHandling) const;
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);

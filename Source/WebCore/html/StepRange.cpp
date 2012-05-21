@@ -21,7 +21,6 @@
 #include "config.h"
 #include "StepRange.h"
 
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include <wtf/MathExtras.h>
@@ -33,54 +32,147 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-StepRange::StepRange(const HTMLInputElement* element)
+StepRange::StepRange()
+    : m_maximum(100)
+    , m_minimum(0)
+    , m_step(1)
+    , m_stepBase(0)
+    , m_stepBaseDecimalPlaces(0)
+    , m_stepDecimalPlaces(0)
+    , m_hasStep(false)
 {
-    step = 1;
-    const AtomicString& precisionValue = element->fastGetAttribute(precisionAttr);
-    if (!precisionValue.isNull())
-        hasStep = !equalIgnoringCase(precisionValue, "float");
-    else
-        hasStep = element->getAllowedValueStep(&step);
-
-    maximum = element->maximum();
-    minimum = element->minimum();
+    ASSERT_NOT_REACHED();
 }
 
-double StepRange::clampValue(double value)
+StepRange::StepRange(const StepRange& stepRange)
+    : m_maximum(stepRange.m_maximum)
+    , m_minimum(stepRange.m_minimum)
+    , m_step(stepRange.m_step)
+    , m_stepBase(stepRange.m_stepBase)
+    , m_stepDescription(stepRange.m_stepDescription)
+    , m_stepBaseDecimalPlaces(stepRange.m_stepBaseDecimalPlaces)
+    , m_stepDecimalPlaces(stepRange.m_stepDecimalPlaces)
+    , m_hasStep(stepRange.m_hasStep)
 {
-    double clampedValue = max(minimum, min(value, maximum));
-    if (!hasStep)
-        return clampedValue;
-    // Rounds clampedValue to minimum + N * step.
-    clampedValue = minimum + round((clampedValue - minimum) / step) * step;
-    if (clampedValue > maximum)
-       clampedValue -= step;
-    ASSERT(clampedValue >= minimum);
-    ASSERT(clampedValue <= maximum);
-    return clampedValue;
 }
 
-double StepRange::clampValue(const String& stringValue)
+StepRange::StepRange(const DoubleWithDecimalPlaces& stepBase, double minimum, double maximum, const DoubleWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
+    : m_maximum(maximum)
+    , m_minimum(minimum)
+    , m_step(step.value.value)
+    , m_stepBase(stepBase.value)
+    , m_stepDescription(stepDescription)
+    , m_stepBaseDecimalPlaces(stepBase.decimalPlaces)
+    , m_stepDecimalPlaces(step.value.decimalPlaces)
+    , m_hasStep(step.hasValue)
 {
-    double value;
-    bool parseSuccess = parseToDoubleForNumberType(stringValue, &value);
-    if (!parseSuccess)
-        value = (minimum + maximum) / 2;
-    return clampValue(value);
+    ASSERT(isfinite(m_maximum));
+    ASSERT(isfinite(m_minimum));
+    ASSERT(isfinite(m_step));
+    ASSERT(isfinite(m_stepBase));
 }
 
-double StepRange::valueFromElement(HTMLInputElement* element, bool* wasClamped)
+double StepRange::acceptableError() const
 {
-    double oldValue;
-    bool parseSuccess = parseToDoubleForNumberType(element->value(), &oldValue);
-    if (!parseSuccess)
-        oldValue = (minimum + maximum) / 2;
-    double newValue = clampValue(oldValue);
+    return m_step / pow(2.0, FLT_MANT_DIG);
+}
 
-    if (wasClamped)
-        *wasClamped = !parseSuccess || newValue != oldValue;
+double StepRange::alignValueForStep(double currentValue, unsigned currentDecimalPlaces, double newValue) const
+{
+    if (newValue >= pow(10.0, 21.0))
+        return newValue;
+
+    if (stepMismatch(currentValue)) {
+        double scale = pow(10.0, static_cast<double>(max(m_stepDecimalPlaces, currentDecimalPlaces)));
+        newValue = round(newValue * scale) / scale;
+    } else {
+        double scale = pow(10.0, static_cast<double>(max(m_stepDecimalPlaces, m_stepBaseDecimalPlaces)));
+        newValue = round((m_stepBase + round((newValue - m_stepBase) / m_step) * m_step) * scale) / scale;
+    }
 
     return newValue;
 }
-
+double StepRange::clampValue(double value) const
+{
+    double clampedValue = max(m_minimum, min(value, m_maximum));
+    if (!m_hasStep)
+        return clampedValue;
+    // Rounds clampedValue to minimum + N * step.
+    clampedValue = m_minimum + round((clampedValue - m_minimum) / m_step) * m_step;
+    if (clampedValue > m_maximum)
+       clampedValue -= m_step;
+    ASSERT(clampedValue >= m_minimum);
+    ASSERT(clampedValue <= m_maximum);
+    return clampedValue;
 }
+
+StepRange::DoubleWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
+{
+    ASSERT(isfinite(stepDescription.defaultStep));
+    ASSERT(isfinite(stepDescription.stepScaleFactor));
+
+    if (stepString.isEmpty())
+        return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+
+    if (equalIgnoringCase(stepString, "any")) {
+        switch (anyStepHandling) {
+        case RejectAny:
+            return DoubleWithDecimalPlacesOrMissing(DoubleWithDecimalPlaces(1), false);
+        case AnyIsDefaultStep:
+            return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    DoubleWithDecimalPlacesOrMissing step(0);
+    if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.value.value, &step.value.decimalPlaces) || step.value.value <= 0.0)
+        return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+
+    switch (stepDescription.stepValueShouldBe) {
+    case StepValueShouldBeReal:
+        step.value.value *= stepDescription.stepScaleFactor;
+        break;
+    case ParsedStepValueShouldBeInteger:
+        // For date, month, and week, the parsed value should be an integer for some types.
+        step.value.value = max(round(step.value.value), 1.0);
+        step.value.value *= stepDescription.stepScaleFactor;
+        break;
+    case ScaledStepValueShouldBeInteger:
+        // For datetime, datetime-local, time, the result should be an integer.
+        step.value.value *= stepDescription.stepScaleFactor;
+        step.value.value = max(round(step.value.value), 1.0);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    ASSERT(step.value.value > 0);
+    return step;
+}
+
+bool StepRange::stepMismatch(double doubleValue) const
+{
+    if (!m_hasStep)
+        return false;
+    if (!isfinite(doubleValue))
+        return false;
+    doubleValue = fabs(doubleValue - m_stepBase);
+    if (isinf(doubleValue))
+        return false;
+    // double's fractional part size is DBL_MAN_DIG-bit. If the current value
+    // is greater than step*2^DBL_MANT_DIG, the following computation for
+    // remainder makes no sense.
+    if (doubleValue / pow(2.0, DBL_MANT_DIG) > m_step)
+        return false;
+    // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
+    // ... that number subtracted from the step base is not an integral multiple
+    // of the allowed value step, the element is suffering from a step mismatch.
+    double remainder = fabs(doubleValue - m_step * round(doubleValue / m_step));
+    // Accepts erros in lower fractional part which IEEE 754 single-precision
+    // can't represent.
+    double computedAcceptableError = acceptableError();
+    return computedAcceptableError < remainder && remainder < (m_step - computedAcceptableError);
+}
+
+} // namespace WebCore

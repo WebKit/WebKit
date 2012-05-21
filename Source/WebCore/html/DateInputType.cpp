@@ -46,6 +46,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static const double dateDefaultStep = 1.0;
+static const double dateDefaultStepBase = 0.0;
 static const double dateStepScaleFactor = 86400000.0;
 
 inline DateInputType::DateInputType(HTMLInputElement* element)
@@ -68,29 +69,15 @@ DateComponents::Type DateInputType::dateType() const
     return DateComponents::Date;
 }
 
-double DateInputType::minimum() const
+StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumDate());
-}
+    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-double DateInputType::maximum() const
-{
-    return parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumDate());
-}
-
-double DateInputType::defaultStep() const
-{
-    return dateDefaultStep;
-}
-
-double DateInputType::stepScaleFactor() const
-{
-    return dateStepScaleFactor;
-}
-
-bool DateInputType::parsedStepValueShouldBeInteger() const
-{
-    return true;
+    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), 0);
+    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumDate());
+    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumDate());
+    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
 bool DateInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const

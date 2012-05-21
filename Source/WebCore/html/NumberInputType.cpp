@@ -51,6 +51,7 @@ using namespace HTMLNames;
 using namespace std;
 
 static const double numberDefaultStep = 1.0;
+static const double numberDefaultStepBase = 0.0;
 static const double numberStepScaleFactor = 1.0;
 
 static unsigned lengthBeforeDecimalPoint(double value)
@@ -107,33 +108,18 @@ bool NumberInputType::typeMismatch() const
     return false;
 }
 
-bool NumberInputType::rangeUnderflow(const String& value) const
+StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    const double nan = numeric_limits<double>::quiet_NaN();
-    double doubleValue = parseToDouble(value, nan);
-    return isfinite(doubleValue) && doubleValue < minimum();
-}
+    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
 
-bool NumberInputType::rangeOverflow(const String& value) const
-{
-    const double nan = numeric_limits<double>::quiet_NaN();
-    double doubleValue = parseToDouble(value, nan);
-    return isfinite(doubleValue) && doubleValue > maximum();
-}
+    unsigned stepBaseDecimalPlaces;
+    double stepBaseValue = parseToDoubleWithDecimalPlaces(element()->fastGetAttribute(minAttr), numberDefaultStepBase, &stepBaseDecimalPlaces);
+    StepRange::DoubleWithDecimalPlaces stepBase(stepBaseValue, min(stepBaseDecimalPlaces, 16u));
+    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
+    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
 
-bool NumberInputType::supportsRangeLimitation() const
-{
-    return true;
-}
-
-double NumberInputType::minimum() const
-{
-    return parseToDouble(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
-}
-
-double NumberInputType::maximum() const
-{
-    return parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
+    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
 bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const
@@ -188,49 +174,6 @@ bool NumberInputType::isSteppable() const
     return true;
 }
 
-bool NumberInputType::stepMismatch(const String& value, double step) const
-{
-    double doubleValue;
-    if (!parseToDoubleForNumberType(value, &doubleValue))
-        return false;
-    doubleValue = fabs(doubleValue - stepBase());
-    if (isinf(doubleValue))
-        return false;
-    // double's fractional part size is DBL_MAN_DIG-bit. If the current value
-    // is greater than step*2^DBL_MANT_DIG, the following computation for
-    // remainder makes no sense.
-    if (doubleValue / pow(2.0, DBL_MANT_DIG) > step)
-        return false;
-    // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
-    // ... that number subtracted from the step base is not an integral multiple
-    // of the allowed value step, the element is suffering from a step mismatch.
-    double remainder = fabs(doubleValue - step * round(doubleValue / step));
-    // Accepts erros in lower fractional part which IEEE 754 single-precision
-    // can't represent.
-    double computedAcceptableError = acceptableError(step);
-    return computedAcceptableError < remainder && remainder < (step - computedAcceptableError);
-}
-
-double NumberInputType::stepBase() const
-{
-    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
-}
-
-double NumberInputType::stepBaseWithDecimalPlaces(unsigned* decimalPlaces) const
-{
-    return parseToDoubleWithDecimalPlaces(element()->fastGetAttribute(minAttr), defaultStepBase(), decimalPlaces);
-}
-
-double NumberInputType::defaultStep() const
-{
-    return numberDefaultStep;
-}
-
-double NumberInputType::stepScaleFactor() const
-{
-    return numberStepScaleFactor;
-}
-
 void NumberInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     handleKeydownEventForSpinButton(event);
@@ -266,11 +209,6 @@ String NumberInputType::serialize(double value) const
     if (!isfinite(value))
         return String();
     return serializeForNumberType(value);
-}
-
-double NumberInputType::acceptableError(double step) const
-{
-    return step / pow(2.0, FLT_MANT_DIG);
 }
 
 void NumberInputType::handleBlurEvent()

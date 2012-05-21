@@ -245,19 +245,28 @@ bool InputType::patternMismatch(const String&) const
     return false;
 }
 
-bool InputType::rangeUnderflow(const String&) const
+bool InputType::rangeUnderflow(const String& value) const
 {
-    return false;
+    if (!isSteppable())
+        return false;
+
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return false;
+
+    return doubleValue < createStepRange(RejectAny).minimum();
 }
 
-bool InputType::rangeOverflow(const String&) const
+bool InputType::rangeOverflow(const String& value) const
 {
-    return false;
-}
+    if (!isSteppable())
+        return false;
 
-bool InputType::supportsRangeLimitation() const
-{
-    return false;
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return false;
+
+    return doubleValue > createStepRange(RejectAny).maximum();
 }
 
 double InputType::defaultValueForStepUp() const
@@ -267,14 +276,12 @@ double InputType::defaultValueForStepUp() const
 
 double InputType::minimum() const
 {
-    ASSERT_NOT_REACHED();
-    return 0;
+    return createStepRange(RejectAny).minimum();
 }
 
 double InputType::maximum() const
 {
-    ASSERT_NOT_REACHED();
-    return 0;
+    return createStepRange(RejectAny).maximum();
 }
 
 bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
@@ -283,57 +290,42 @@ bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
     return false;
 }
 
+bool InputType::isInRange(const String& value) const
+{
+    if (!isSteppable())
+        return false;
+
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return true;
+
+    StepRange stepRange(createStepRange(RejectAny));
+    return doubleValue >= stepRange.minimum() && doubleValue <= stepRange.maximum();
+}
+
+bool InputType::isOutOfRange(const String& value) const
+{
+    if (!isSteppable())
+        return false;
+
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return true;
+
+    StepRange stepRange(createStepRange(RejectAny));
+    return doubleValue < stepRange.minimum() || doubleValue > stepRange.maximum();
+}
+
 bool InputType::stepMismatch(const String& value) const
 {
-    double step;
-    if (!getAllowedValueStep(&step))
+    if (!isSteppable())
         return false;
-    return stepMismatch(value, step);
-}
 
-bool InputType::stepMismatch(const String&, double) const
-{
-    // Non-supported types should be rejected by HTMLInputElement::getAllowedValueStep().
-    ASSERT_NOT_REACHED();
-    return false;
-}
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return false;
 
-double InputType::stepBase() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-double InputType::stepBaseWithDecimalPlaces(unsigned* decimalPlaces) const
-{
-    if (decimalPlaces)
-        *decimalPlaces = 0;
-    return stepBase();
-}
-
-double InputType::defaultStep() const
-{
-    return numeric_limits<double>::quiet_NaN();
-}
-
-double InputType::stepScaleFactor() const
-{
-    return numeric_limits<double>::quiet_NaN();
-}
-
-bool InputType::parsedStepValueShouldBeInteger() const
-{
-    return false;
-}
-
-bool InputType::scaledStepValueShouldBeInteger() const
-{
-    return false;
-}
-
-double InputType::acceptableError(double) const
-{
-    return 0;
+    return createStepRange(RejectAny).stepMismatch(doubleValue);
 }
 
 String InputType::typeMismatchText() const
@@ -364,21 +356,27 @@ String InputType::validationMessage() const
     if (element()->tooLong())
         return validationMessageTooLongText(numGraphemeClusters(value), element()->maxLength());
 
-    if (rangeUnderflow(value))
-        return validationMessageRangeUnderflowText(serialize(minimum()));
+    if (!isSteppable())
+        return emptyString();
 
-    if (rangeOverflow(value))
-        return validationMessageRangeOverflowText(serialize(maximum()));
+    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(doubleValue))
+        return emptyString();
 
-    if (stepMismatch(value)) {
-        String stepString;
-        double step;
-        if (getAllowedValueStep(&step))
-            stepString = serializeForNumberType(step / stepScaleFactor());
-        return validationMessageStepMismatchText(serialize(stepBase()), stepString);
+    StepRange stepRange(createStepRange(RejectAny));
+
+    if (doubleValue < stepRange.minimum())
+        return validationMessageRangeUnderflowText(serialize(stepRange.minimum()));
+
+    if (doubleValue < stepRange.maximum())
+        return validationMessageRangeOverflowText(serialize(stepRange.maximum()));
+
+    if (stepRange.stepMismatch(doubleValue)) {
+        const String stepString = stepRange.hasStep() ? serializeForNumberType(stepRange.step() / stepRange.stepScaleFactor()) : emptyString();
+        return validationMessageStepMismatchText(serialize(stepRange.stepBase()), stepString);
     }
 
-    return String();
+    return emptyString();
 }
 
 void InputType::handleClickEvent(MouseEvent*)
@@ -456,6 +454,7 @@ void InputType::destroyShadowSubtree()
 
 double InputType::parseToDouble(const String&, double defaultValue) const
 {
+    ASSERT_NOT_REACHED();
     return defaultValue;
 }
 
@@ -861,43 +860,43 @@ unsigned InputType::width() const
 
 void InputType::applyStep(double count, AnyStepHandling anyStepHandling, TextFieldEventBehavior eventBehavior, ExceptionCode& ec)
 {
-    double step;
-    unsigned stepDecimalPlaces, currentDecimalPlaces;
-    if (!getAllowedValueStepWithDecimalPlaces(anyStepHandling, &step, &stepDecimalPlaces)) {
+    StepRange stepRange(createStepRange(anyStepHandling));
+    if (!stepRange.hasStep()) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
     const double nan = numeric_limits<double>::quiet_NaN();
+    unsigned currentDecimalPlaces;
     double current = parseToDoubleWithDecimalPlaces(element()->value(), nan, &currentDecimalPlaces);
     if (!isfinite(current)) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    double newValue = current + step * count;
+    double newValue = current + stepRange.step() * count;
     if (isinf(newValue)) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    double acceptableErrorValue = acceptableError(step);
-    if (newValue - minimum() < -acceptableErrorValue) {
+    double acceptableErrorValue = stepRange.acceptableError();
+    if (newValue - stepRange.minimum() < -acceptableErrorValue) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue < minimum())
-        newValue = minimum();
+    if (newValue < stepRange.minimum())
+        newValue = stepRange.minimum();
 
     const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
     if (!equalIgnoringCase(stepString, "any"))
-        newValue = alignValueForStep(newValue, step, currentDecimalPlaces, stepDecimalPlaces);
+        newValue = stepRange.alignValueForStep(current, currentDecimalPlaces, newValue);
 
-    if (newValue - maximum() > acceptableErrorValue) {
+    if (newValue - stepRange.maximum() > acceptableErrorValue) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue > maximum())
-        newValue = maximum();
+    if (newValue > stepRange.maximum())
+        newValue = stepRange.maximum();
 
     element()->setValueAsNumber(newValue, ec, eventBehavior);
 
@@ -905,86 +904,25 @@ void InputType::applyStep(double count, AnyStepHandling anyStepHandling, TextFie
          element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
 }
 
-double InputType::alignValueForStep(double newValue, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces)
-{
-    if (newValue >= pow(10.0, 21.0))
-        return newValue;
-
-    unsigned baseDecimalPlaces;
-    double base = stepBaseWithDecimalPlaces(&baseDecimalPlaces);
-    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
-    if (stepMismatch(element()->value())) {
-        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
-        newValue = round(newValue * scale) / scale;
-    } else {
-        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
-        newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
-    }
-
-    return newValue;
-}
-
 bool InputType::getAllowedValueStep(double* step) const
 {
-    return getAllowedValueStepWithDecimalPlaces(RejectAny, step, 0);
+    StepRange stepRange(createStepRange(RejectAny));
+    *step = stepRange.step();
+    return stepRange.hasStep();
 }
 
-bool InputType::getAllowedValueStepWithDecimalPlaces(AnyStepHandling anyStepHandling, double* step, unsigned* decimalPlaces) const
+StepRange InputType::createStepRange(AnyStepHandling) const
 {
-    ASSERT(step);
-    double defaultStepValue = defaultStep();
-    double stepScaleFactorValue = stepScaleFactor();
-    if (!isfinite(defaultStepValue) || !isfinite(stepScaleFactorValue))
-        return false;
-    const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
-    if (stepString.isEmpty()) {
-        *step = defaultStepValue * stepScaleFactorValue;
-        if (decimalPlaces)
-            *decimalPlaces = 0;
-        return true;
-    }
-
-    if (equalIgnoringCase(stepString, "any")) {
-        switch (anyStepHandling) {
-        case RejectAny:
-            return false;
-        case AnyIsDefaultStep:
-            *step = defaultStepValue * stepScaleFactorValue;
-            if (decimalPlaces)
-                *decimalPlaces = 0;
-            return true;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-
-    double parsed;
-    if (!decimalPlaces) {
-        if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
-            *step = defaultStepValue * stepScaleFactorValue;
-            return true;
-        }
-    } else {
-        if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &parsed, decimalPlaces) || parsed <= 0.0) {
-            *step = defaultStepValue * stepScaleFactorValue;
-            *decimalPlaces = 0;
-            return true;
-        }
-    }
-    // For date, month, week, the parsed value should be an integer for some types.
-    if (parsedStepValueShouldBeInteger())
-        parsed = max(round(parsed), 1.0);
-    double result = parsed * stepScaleFactorValue;
-    // For datetime, datetime-local, time, the result should be an integer.
-    if (scaledStepValueShouldBeInteger())
-        result = max(round(result), 1.0);
-    ASSERT(result > 0);
-    *step = result;
-    return true;
+    ASSERT_NOT_REACHED();
+    return StepRange();
 }
 
 void InputType::stepUp(int n, ExceptionCode& ec)
 {
+    if (!isSteppable()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
     applyStep(n, RejectAny, DispatchNoEvent, ec);
 }
 
@@ -1032,14 +970,14 @@ void InputType::stepUpFromRenderer(int n)
     if (!n)
         return;
 
-    unsigned stepDecimalPlaces, baseDecimalPlaces;
-    double step, base;
+    StepRange stepRange(createStepRange(AnyIsDefaultStep));
+
     // FIXME: Not any changes after stepping, even if it is an invalid value, may be better.
     // (e.g. Stepping-up for <input type="number" value="foo" step="any" /> => "foo")
-    if (!getAllowedValueStepWithDecimalPlaces(AnyIsDefaultStep, &step, &stepDecimalPlaces))
+    if (!stepRange.hasStep())
       return;
-    base = stepBaseWithDecimalPlaces(&baseDecimalPlaces);
-    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+
+    double step = stepRange.step();
 
     int sign;
     if (step > 0)
@@ -1056,20 +994,21 @@ void InputType::stepUpFromRenderer(int n)
         ExceptionCode ec;
         current = defaultValueForStepUp();
         double nextDiff = step * n;
-        if (current < minimum() - nextDiff)
-            current = minimum() - nextDiff;
-        if (current > maximum() - nextDiff)
-            current = maximum() - nextDiff;
+        if (current < stepRange.minimum() - nextDiff)
+            current = stepRange.minimum() - nextDiff;
+        if (current > stepRange.maximum() - nextDiff)
+            current = stepRange.maximum() - nextDiff;
         element()->setValueAsNumber(current, ec, DispatchInputAndChangeEvent);
     }
-    if ((sign > 0 && current < minimum()) || (sign < 0 && current > maximum()))
-        element()->setValue(serialize(sign > 0 ? minimum() : maximum()), DispatchInputAndChangeEvent);
+    if ((sign > 0 && current < stepRange.minimum()) || (sign < 0 && current > stepRange.maximum()))
+        element()->setValue(serialize(sign > 0 ? stepRange.minimum() : stepRange.maximum()), DispatchInputAndChangeEvent);
     else {
         ExceptionCode ec;
         if (stepMismatch(element()->value())) {
             ASSERT(step);
             double newValue;
-            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+            double scale = pow(10.0, static_cast<double>(max(stepRange.stepDecimalPlaces(), stepRange.stepBaseDecimalPlaces())));
+            double base = stepRange.stepBase();
 
             if (sign < 0)
                 newValue = round((base + floor((current - base) / step) * step) * scale) / scale;
@@ -1078,10 +1017,10 @@ void InputType::stepUpFromRenderer(int n)
             else
                 newValue = current;
 
-            if (newValue < minimum())
-                newValue = minimum();
-            if (newValue > maximum())
-                newValue = maximum();
+            if (newValue < stepRange.minimum())
+                newValue = stepRange.minimum();
+            if (newValue > stepRange.maximum())
+                newValue = stepRange.maximum();
 
             element()->setValueAsNumber(newValue, ec, n == 1 || n == -1 ? DispatchInputAndChangeEvent : DispatchNoEvent);
             current = newValue;

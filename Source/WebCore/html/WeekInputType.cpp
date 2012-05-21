@@ -61,34 +61,15 @@ DateComponents::Type WeekInputType::dateType() const
     return DateComponents::Week;
 }
 
-double WeekInputType::minimum() const
+StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());
-}
+    DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-double WeekInputType::maximum() const
-{
-    return parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumWeek());
-}
-
-double WeekInputType::stepBase() const
-{
-    return parseToDouble(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
-}
-
-double WeekInputType::defaultStep() const
-{
-    return weekDefaultStep;
-}
-
-double WeekInputType::stepScaleFactor() const
-{
-    return weekStepScaleFactor;
-}
-
-bool WeekInputType::parsedStepValueShouldBeInteger() const
-{
-    return true;
+    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
+    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());
+    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumWeek());
+    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
 bool WeekInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
