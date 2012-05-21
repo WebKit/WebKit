@@ -3994,8 +3994,9 @@ void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)
  *
  * @param ewkView View to load
  * @param request Request which contain url to navigate
+ * @param navigationType navigation type
  */
-bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request)
+bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request, Ewk_Navigation_Type navigationType)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, true);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, true);
@@ -4003,7 +4004,7 @@ bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resourc
     if (!smartData->api->navigation_policy_decision)
         return true;
 
-    return smartData->api->navigation_policy_decision(smartData, request);
+    return smartData->api->navigation_policy_decision(smartData, request, navigationType);
 }
 
 Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, const char* objectName)

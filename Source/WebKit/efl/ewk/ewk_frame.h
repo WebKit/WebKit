@@ -176,6 +176,16 @@ typedef enum {
     EWK_HIT_TEST_RESULT_CONTEXT_EDITABLE = 1 << 6
 } Ewk_Hit_Test_Result_Context;
 
+/// Enum containing navigation types
+typedef enum  {
+    EWK_NAVIGATION_TYPE_LINK_CLICKED,
+    EWK_NAVIGATION_TYPE_FORM_SUBMITTED,
+    EWK_NAVIGATION_TYPE_BACK_FORWARD,
+    EWK_NAVIGATION_TYPE_RELOAD,
+    EWK_NAVIGATION_TYPE_FORM_RESUBMITTED,
+    EWK_NAVIGATION_TYPE_OTHER
+} Ewk_Navigation_Type;
+
 /// Creates a type name for _Ewk_Hit_Test.
 typedef struct _Ewk_Hit_Test Ewk_Hit_Test;
 /// Structure used to report hit test result.
