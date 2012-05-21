@@ -3747,8 +3747,6 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 
 BUGWK86683 WIN LINUX DEBUG SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 
-BUGWK86715 DEBUG : svg/custom/acid3-test-77.html = CRASH PASS
-
 BUGWK86907 WIN : http/tests/inspector/compiler-script-mapping.html = PASS TEXT
 
 BUGWK86908 WIN : http/tests/security/cross-frame-access-put.html = PASS TEXT
