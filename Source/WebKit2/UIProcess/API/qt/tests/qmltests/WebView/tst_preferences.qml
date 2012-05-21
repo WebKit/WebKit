@@ -195,6 +195,10 @@ Item {
                 compare(webView2.title, "New Title")
             }
 
+            function unquote(text) {
+                return text[0] === "'" ? text.slice(1, -1) : text
+            }
+
             function test_standardFontFamilyChanged() {
                 var url = Qt.resolvedUrl("../common/font-preferences.html?standard#font-family")
                 webView.url = url
@@ -203,7 +207,7 @@ Item {
                 titleSpy.clear()
 
                 titleSpy.wait()
-                compare(webView.title, defaultStandardFontFamily)
+                compare(unquote(webView.title), defaultStandardFontFamily)
 
                 webView.experimental.preferences.standardFontFamily = "foobar"
                 standardFontFamilySpy.wait()

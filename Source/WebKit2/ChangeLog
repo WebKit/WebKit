@@ -1,3 +1,19 @@
+2012-05-21  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt][WK2] REGRESSION, fix a failing API test in qmltests
+        https://bugs.webkit.org/show_bug.cgi?id=82700
+
+        Reviewed by Alexis Menard.
+
+        The value of a CSS font-family property is expected to have single
+        quotes when white space is present in its name, and no quotes otherwise.
+        Font family names returned by WebView.experimental.preferences never add quotes.
+
+        Since what matter to the test is only the identity of the font, an auxiliar
+        method to remove single quotes was added.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+
 2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         GCC 4.7 and C++11
