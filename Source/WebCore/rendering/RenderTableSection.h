@@ -141,6 +141,8 @@ public:
     void setCachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide, CollapsedBorderValue);
     CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);
 
+    static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

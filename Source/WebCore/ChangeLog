@@ -1,3 +1,56 @@
+2012-04-04  Abhishek Arya  <inferno@chromium.org>
+
+        Add helpers to create anonymous table parts.
+        https://bugs.webkit.org/show_bug.cgi?id=83116
+
+        Reviewed by Julien Chaffraix.
+
+        The patch introduces helpers to create anonymous table parts by
+        introducing a new static function createAnonymousWithParentRenderer.
+        The function builds a new anonymous wrapper of the same type as the class,
+        inheriting style properties from parent and sets a display based on
+        argument/default values. Also we streamline the RenderBlock functions
+        to match this naming convention.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymousBlockWithSameTypeAs):
+        (WebCore::RenderBlock::createAnonymousWithParentRendererAndDisplay):
+        (WebCore):
+        (WebCore::RenderBlock::createAnonymousColumnsWithParentRendererAndDisplay):
+        (WebCore::RenderBlock::createAnonymousColumnSpanWithParentRendererAndDisplay):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::createAnonymousBlock):
+        (WebCore::RenderBlock::createAnonymousColumnsBlock):
+        (WebCore::RenderBlock::createAnonymousColumnSpanBlock):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::addChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::createAnonymousWithParentRendererAndDisplay):
+        (WebCore):
+        * rendering/RenderTable.h:
+        (RenderTable):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::createAnonymousWithParentRendererAndDisplay):
+        (WebCore):
+        * rendering/RenderTableCell.h:
+        (RenderTableCell):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        (WebCore::RenderTableRow::createAnonymousWithParentRendererAndDisplay):
+        (WebCore):
+        * rendering/RenderTableRow.h:
+        (RenderTableRow):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::createAnonymousWithParentRendererAndDisplay):
+        (WebCore):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+
 2012-02-22  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
