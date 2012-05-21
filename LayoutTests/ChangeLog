@@ -1,3 +1,14 @@
+2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=81042
+
+        Unreviewed gardening. Move skipped tests (and add one more test) to wk2/Skipped
+        list, because it isn't mac-wk2 specific bug, but general wk2 specific bug.
+
+        * platform/mac-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-21  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, add expectations for an SVG test for hit
