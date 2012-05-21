@@ -498,10 +498,10 @@ public:
     Length bottom() const { return surround->offset.bottom(); }
 
     // Accessors for positioned object edges that take into account writing mode.
-    Length logicalLeft() const { return isHorizontalWritingMode() ? left() : top(); }
-    Length logicalRight() const { return isHorizontalWritingMode() ? right() : bottom(); }
-    Length logicalTop() const { return isHorizontalWritingMode() ? (isFlippedBlocksWritingMode() ? bottom() : top()) : (isFlippedBlocksWritingMode() ? right() : left()); }
-    Length logicalBottom() const { return isHorizontalWritingMode() ? (isFlippedBlocksWritingMode() ? top() : bottom()) : (isFlippedBlocksWritingMode() ? left() : right()); }
+    Length logicalLeft() const { return surround->offset.logicalLeft(this); }
+    Length logicalRight() const { return surround->offset.logicalRight(this); }
+    Length logicalTop() const { return surround->offset.before(this); }
+    Length logicalBottom() const { return surround->offset.after(this); }
 
     // Whether or not a positioned element requires normal flow x/y to be computed
     // to determine its position.
@@ -738,24 +738,24 @@ public:
     Length marginBottom() const { return surround->margin.bottom(); }
     Length marginLeft() const { return surround->margin.left(); }
     Length marginRight() const { return surround->margin.right(); }
-    Length marginBefore() const;
-    Length marginAfter() const;
-    Length marginStart() const;
-    Length marginEnd() const;
-    Length marginStartUsing(const RenderStyle* otherStyle) const;
-    Length marginEndUsing(const RenderStyle* otherStyle) const;
-    Length marginBeforeUsing(const RenderStyle* otherStyle) const;
-    Length marginAfterUsing(const RenderStyle* otherStyle) const;
+    Length marginBefore() const { return surround->margin.before(this); }
+    Length marginAfter() const { return surround->margin.after(this); }
+    Length marginStart() const { return surround->margin.start(this); }
+    Length marginEnd() const { return surround->margin.end(this); }
+    Length marginStartUsing(const RenderStyle* otherStyle) const { return surround->margin.start(otherStyle); }
+    Length marginEndUsing(const RenderStyle* otherStyle) const { return surround->margin.end(otherStyle); }
+    Length marginBeforeUsing(const RenderStyle* otherStyle) const { return surround->margin.before(otherStyle); }
+    Length marginAfterUsing(const RenderStyle* otherStyle) const { return surround->margin.after(otherStyle); }
 
     LengthBox paddingBox() const { return surround->padding; }
     Length paddingTop() const { return surround->padding.top(); }
     Length paddingBottom() const { return surround->padding.bottom(); }
     Length paddingLeft() const { return surround->padding.left(); }
     Length paddingRight() const { return surround->padding.right(); }
-    Length paddingBefore() const;
-    Length paddingAfter() const;
-    Length paddingStart() const;
-    Length paddingEnd() const;
+    Length paddingBefore() const { return surround->padding.before(this); }
+    Length paddingAfter() const { return surround->padding.after(this); }
+    Length paddingStart() const { return surround->padding.start(this); }
+    Length paddingEnd() const { return surround->padding.end(this); }
 
     ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
 

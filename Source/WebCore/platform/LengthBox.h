@@ -1,6 +1,7 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
     Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+    Copyright (c) 2012, Google Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,6 +25,8 @@
 #include "Length.h"
 
 namespace WebCore {
+
+class RenderStyle;
 
 struct LengthBox {
     LengthBox()
@@ -66,6 +69,14 @@ struct LengthBox {
     Length right() const { return m_right; }
     Length top() const { return m_top; }
     Length bottom() const { return m_bottom; }
+
+    Length logicalLeft(const RenderStyle*) const;
+    Length logicalRight(const RenderStyle*) const;
+
+    Length before(const RenderStyle*) const;
+    Length after(const RenderStyle*) const;
+    Length start(const RenderStyle*) const;
+    Length end(const RenderStyle*) const;
 
     bool operator==(const LengthBox& o) const
     {

@@ -3383,6 +3383,7 @@ webcore_sources += \
 	Source/WebCore/platform/KURLWTFURLImpl.h \
 	Source/WebCore/platform/Language.cpp \
 	Source/WebCore/platform/Language.h \
+	Source/WebCore/platform/LengthBox.cpp \
 	Source/WebCore/platform/LengthBox.h \
 	Source/WebCore/platform/Length.cpp \
 	Source/WebCore/platform/Length.h \

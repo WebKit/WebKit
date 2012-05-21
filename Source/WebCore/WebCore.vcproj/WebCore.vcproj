@@ -27846,6 +27846,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\LengthBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\LengthBox.h"
 				>
 			</File>

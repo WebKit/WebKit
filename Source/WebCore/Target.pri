@@ -1143,6 +1143,7 @@ SOURCES += \
     platform/KURL.cpp \
     platform/Language.cpp \
     platform/Length.cpp \
+    platform/LengthBox.cpp \
     platform/text/LineEnding.cpp \
     platform/leveldb/LevelDBDatabase.cpp \
     platform/leveldb/LevelDBTransaction.cpp \

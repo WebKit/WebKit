@@ -1113,6 +1113,7 @@ SET(WebCore_SOURCES
     platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp
+    platform/LengthBox.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
     platform/MemoryUsageSupport.cpp
