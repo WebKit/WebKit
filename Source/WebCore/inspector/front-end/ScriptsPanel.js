@@ -228,6 +228,11 @@ WebInspector.ScriptsPanel.prototype = {
         this._navigatorController.wasShown();
     },
 
+    willHide: function()
+    {
+        WebInspector.closeViewInDrawer();
+    },
+
     /**
      * @param {WebInspector.Event} event
      */

@@ -54,8 +54,12 @@ WebInspector.AdvancedSearchController.prototype = {
     handleShortcut: function(event)
     {
         if (WebInspector.KeyboardShortcut.makeKeyFromEvent(event) === this._shortcut.key) {
-            this.show();
-            event.handled = true;
+            if (!this._searchView || !this._searchView.isShowing() || this._searchView._search !== document.activeElement) {
+                WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.scripts);
+                this.show();
+            } else
+                this.close();
+            event.consume();
         }
     },
 
@@ -81,13 +85,13 @@ WebInspector.AdvancedSearchController.prototype = {
         if (this._searchView.isShowing())
             this._searchView.focus();
         else
-            WebInspector.showViewInDrawer(this._searchView);
+            WebInspector.showViewInDrawer(this._searchView._searchPanelElement, this._searchView, this.stopSearch.bind(this));
     },
 
     close: function()
     {
         this.stopSearch();
-        WebInspector.closeDrawerView();
+        WebInspector.closeViewInDrawer();
     },
 
     /**
@@ -171,19 +175,20 @@ WebInspector.SearchView = function(controller)
 
     this.element.className = "search-view";
 
-    this._searchPanelElement = this.element.createChild("div");
-    this._searchPanelElement.tabIndex = 0;
-    this._searchPanelElement.className = "search-panel";
+    this._searchPanelElement = document.createElement("span");
+    this._searchPanelElement.className = "search-drawer-header";
     this._searchPanelElement.addEventListener("keydown", this._onKeyDown.bind(this), false);
     
     this._searchResultsElement = this.element.createChild("div");
     this._searchResultsElement.className = "search-results";
     
+    this._searchLabel = this._searchPanelElement.createChild("span");
+    this._searchLabel.textContent = WebInspector.UIString("Search sources");
     this._search = this._searchPanelElement.createChild("input");
     this._search.setAttribute("type", "search");
     this._search.addStyleClass("search-config-search");
     this._search.setAttribute("results", "0");
-    this._search.setAttribute("size", 20);
+    this._search.setAttribute("size", 30);
 
     this._ignoreCaseLabel = this._searchPanelElement.createChild("label");
     this._ignoreCaseLabel.addStyleClass("search-config-label");
@@ -198,11 +203,6 @@ WebInspector.SearchView = function(controller)
     this._regexCheckbox.setAttribute("type", "checkbox");
     this._regexCheckbox.addStyleClass("search-config-checkbox");
     this._regexLabel.appendChild(document.createTextNode(WebInspector.UIString("Regular expression")));
-    
-    this._searchDoneButton = this._searchPanelElement.createChild("button");
-    this._searchDoneButton.textContent = WebInspector.UIString("Close");
-    this._searchDoneButton.addStyleClass("search-close-button");
-    this._searchDoneButton.addEventListener("click", this._closeButtonPressed.bind(this));
     
     this._searchStatusBarElement = document.createElement("div");
     this._searchStatusBarElement.className = "search-status-bar-item";
@@ -391,11 +391,6 @@ WebInspector.SearchView.prototype = {
         this._regexCheckbox.checked = searchConfig.isRegex;
     },
 
-    _closeButtonPressed: function()
-    {
-        this._controller.close();
-    },
-
     _searchStopButtonPressed: function()
     {
         this._controller.stopSearch();
@@ -501,8 +496,7 @@ WebInspector.FileBasedSearchResultsPane = function(searchConfig)
     this.element.id ="search-results-pane-file-based";
     
     this._treeOutlineElement = document.createElement("ol");
-    this._treeOutlineElement.className = "outline-disclosure";
-    this._treeOutlineElement.addStyleClass("search-results-outline-disclosure");
+    this._treeOutlineElement.className = "search-results-outline-disclosure";
     this.element.appendChild(this._treeOutlineElement);
     this._treeOutline = new TreeOutline(this._treeOutlineElement);
     

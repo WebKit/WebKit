@@ -122,23 +122,58 @@ var WebInspector = {
         }
     },
 
-    closeDrawerView: function()
-    {
-        // Once drawer is closed console should be shown if it was shown before current view replaced it in drawer. 
-        if (!this._consoleWasShown)
-            this.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
-        else
-            this._toggleConsoleButtonClicked();            
-    },
-
     /**
+     * @param {Element} statusBarElement
      * @param {WebInspector.View} view
+     * @param {function()=} onclose
      */
-    showViewInDrawer: function(view)
+    showViewInDrawer: function(statusBarElement, view, onclose)
     {
         this._toggleConsoleButton.title = WebInspector.UIString("Hide console.");
         this._toggleConsoleButton.toggled = false;
+        this._closePreviousDrawerView();
+
+        var drawerStatusBarHeader = document.createElement("div");
+        drawerStatusBarHeader.className = "drawer-header";
+        drawerStatusBarHeader.appendChild(statusBarElement);
+        drawerStatusBarHeader.onclose = onclose;
+
+        var closeButton = drawerStatusBarHeader.createChild("span");
+        closeButton.textContent = WebInspector.UIString("\u00D7");
+        closeButton.addStyleClass("drawer-header-close-button");
+        closeButton.addEventListener("click", closeButtonPressed.bind(this), false);
+
+        function closeButtonPressed(event)
+        {
+            this.closeViewInDrawer();
+        }
+
+        document.getElementById("main-status-bar").appendChild(drawerStatusBarHeader);
+        this._drawerStatusBarHeader = drawerStatusBarHeader;
         this.drawer.show(view, WebInspector.Drawer.AnimationType.Immediately);
+    },
+
+    closeViewInDrawer: function()
+    {
+        if (this._drawerStatusBarHeader) {
+            this._closePreviousDrawerView();
+
+            // Once drawer is closed console should be shown if it was shown before current view replaced it in drawer. 
+            if (!this._consoleWasShown)
+                this.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
+            else
+                this._toggleConsoleButtonClicked();
+        }
+    },
+
+    _closePreviousDrawerView: function()
+    {
+        if (this._drawerStatusBarHeader) {
+            document.getElementById("main-status-bar").removeChild(this._drawerStatusBarHeader);
+            if (this._drawerStatusBarHeader.onclose)
+                this._drawerStatusBarHeader.onclose();
+            delete this._drawerStatusBarHeader;
+        }
     },
 
     get attached()
@@ -753,7 +788,7 @@ WebInspector.postDocumentKeyDown = function(event)
     if (event.keyIdentifier === "U+001B") { // Escape key
         // If drawer is open with some view other than console then close it.
         if (!this._toggleConsoleButton.toggled && WebInspector.drawer.visible)
-            this.closeDrawerView();
+            this.closeViewInDrawer();
         else
             this._toggleConsoleButtonClicked();
     }

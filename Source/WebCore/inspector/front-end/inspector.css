@@ -2374,47 +2374,57 @@ body.platform-mac .soft-context-menu-item-mouse-over {
     right: 0;
 }
 
-.search-view .search-panel {
-    position: absolute;
-    top: 0;
-    height: 28px;
-    left: 0;
-    right: 0;
-    padding-top: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
-    background-color: #EBEBEB;
-    border-bottom: 1px solid #BBB;
-    overflow: hidden;
-    font-size: 11px;
+.search-drawer-header input[type="search"].search-config-search {
+	font-size: 11px;
+    margin-left: 4px;
+    color: #303030;
+    position: relative;
 }
 
-.search-view .search-panel input[type="search"].search-config-search {
-    margin-right: 8px;
-    font-size: 11px;
+body.platform-mac .search-drawer-header input[type="search"].search-config-search {
+    top: 1px;
+}
+
+.search-drawer-header label.search-config-label {
+    margin-left: 8px;
     color: #303030;
 }
 
-.search-view .search-panel label.search-config-label {
-    margin-right: 8px;
-    color: #303030;
-}
-
-.search-view .search-panel input[type="checkbox"].search-config-checkbox {
+.search-drawer-header input[type="checkbox"].search-config-checkbox {
     vertical-align: bottom;
 }
 
-body:not(.platform-mac) .search-view .search-panel input[type="checkbox"].search-config-checkbox {
+body:not(.platform-mac) .search-drawer-header input[type="checkbox"].search-config-checkbox {
     margin-bottom: 5px;
 }
 
-body.platform-mac .search-view .search-panel input[type="checkbox"].search-config-checkbox {
+body.platform-mac .search-drawer-header input[type="checkbox"].search-config-checkbox {
     margin-bottom: 4px;
 }
 
-.search-view .search-panel button.search-close-button {
+.drawer-header {
     font-size: 11px;
-    float: right;
+    border-right: 1px solid rgb(197, 197, 197);
+    line-height: 23px;
+    padding-left: 6px;
+}
+
+.drawer-header-close-button {
+    font-family: Arial, monospace;
+    padding: 3px 6px;
+    font-size: 14px;
+    color:rgb(80, 80, 80);
+    opacity: 0.5;
+    position: relative;
+    top: 1px;
+}
+
+.drawer-header-close-button:hover {
+    opacity: 1;
+}
+
+.drawer-header-close-button:active {
+    opacity: 0.7;
 }
 
 #drawer-status-bar .search-status-bar-item {
@@ -2463,20 +2473,43 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 .search-view .search-results {
     position: absolute;
-    top: 35px;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     overflow-y: auto;
 }
 
-#search-results-pane-file-based .search-results-outline-disclosure {
-    padding-bottom: 5px;
+#search-results-pane-file-based li {
+    list-style: none;
+}
+
+#search-results-pane-file-based ol {
+    -webkit-padding-start: 0;
+    margin-top: 0;
+}
+
+#search-results-pane-file-based ol.children {
+    display: none;
+}
+
+#search-results-pane-file-based ol.children.expanded {
+    display: block;
+}
+
+#search-results-pane-file-based li.parent::before {
+    content: url(Images/treeRightTriangleBlack.png);
+    position: relative;
+    left: -4px;
+}
+
+#search-results-pane-file-based li.parent.expanded::before {
+    content: url(Images/treeDownTriangleBlack.png);
 }
 
 #search-results-pane-file-based .search-result {
     font-size: 12px;
-    margin-top: 3px;
+    padding: 2px 0 2px 10px;
     word-wrap: normal;
     white-space: pre;
     cursor: pointer;
@@ -2486,11 +2519,6 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     background-color: rgba(121, 121, 121, 0.1);
     -webkit-border-radius: 5px;
 }
-
-#search-results-pane-file-based .search-result:first-child {
-    margin-top: 1px;
-}
-
 
 #search-results-pane-file-based .search-result .search-result-file-name {
     font-weight: bold;
@@ -2503,9 +2531,11 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 }
 
 #search-results-pane-file-based .show-more-matches {
-    margin-left: 5px;
+    padding: 4px 0;
     color: #333;
     cursor: pointer;
+    font-size: 11px;
+    margin-left: 20px;
 }
 
 #search-results-pane-file-based .show-more-matches:hover {
