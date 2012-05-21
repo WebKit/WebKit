@@ -1,3 +1,18 @@
+2012-05-20  Joe Thomas  <joethomas@motorola.com>
+
+        Unsupported commands should have queryCommandValue() = "", not false
+        https://bugs.webkit.org/show_bug.cgi?id=86964
+
+        Reviewed by Ryosuke Niwa.
+
+        queryCommandValue for unsupported commands should return empty string.
+        The specification related to this can be located at http://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#methods-to-query-and-execute-commands
+
+        * editing/execCommand/queryCommandValue-unsupported-commands-expected.txt: Added.
+        * editing/execCommand/queryCommandValue-unsupported-commands.html: Added.
+        * editing/execCommand/use-css-expected.txt:
+        * editing/execCommand/use-css.html:
+
 2012-05-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.

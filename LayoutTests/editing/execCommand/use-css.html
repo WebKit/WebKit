@@ -45,10 +45,10 @@ if (document.queryCommandState('useCSS') === false)
 else
     testFailed("queryCommandState('useCSS') should return boolean false");
 
-if (document.queryCommandValue('useCSS') === false)
-    testPassed("queryCommandValue('useCSS') returns false");
+if (document.queryCommandValue('useCSS') === "")
+    testPassed("queryCommandValue('useCSS') returns ''");
 else
-    testFailed("queryCommandValue('useCSS') should return boolean false");
+    testFailed("queryCommandValue('useCSS') should return string ''");
 
 testSingleToggle("underline", "test", "<span style=\"text-decoration: underline;\">test</span>");
 

@@ -141,7 +141,7 @@ module core {
         boolean            queryCommandIndeterm(in [Optional=DefaultIsUndefined] DOMString command);
         boolean            queryCommandState(in [Optional=DefaultIsUndefined] DOMString command);
         boolean            queryCommandSupported(in [Optional=DefaultIsUndefined] DOMString command);
-        [TreatReturnedNullStringAs=False] DOMString queryCommandValue(in [Optional=DefaultIsUndefined] DOMString command);
+        DOMString          queryCommandValue(in [Optional=DefaultIsUndefined] DOMString command);
 
         // Moved down from HTMLDocument
 
