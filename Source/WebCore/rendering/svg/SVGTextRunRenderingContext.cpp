@@ -179,15 +179,16 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
 
     pair<GlyphData, GlyphPage*> pair = font.glyphDataAndPageForCharacter(character, mirror);
     GlyphData glyphData = pair.first;
-    if (!glyphData.fontData)
-        return glyphData;
 
+    // Check if we have the missing glyph data, in which case we can just return.
     GlyphData missingGlyphData = primaryFont->missingGlyphData();
-    if (glyphData.glyph == missingGlyphData.glyph && glyphData.fontData == missingGlyphData.fontData)
+    if (glyphData.glyph == missingGlyphData.glyph && glyphData.fontData == missingGlyphData.fontData) {
+        ASSERT(glyphData.fontData);
         return glyphData;
+    }
 
     // Characters enclosed by an <altGlyph> element, may not be registered in the GlyphPage.
-    if (!glyphData.fontData->isSVGFont()) {
+    if (glyphData.fontData && !glyphData.fontData->isSVGFont()) {
         if (TextRun::RenderingContext* renderingContext = run.renderingContext()) {
             RenderObject* renderObject = static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
             RenderObject* parentRenderObject = renderObject->isText() ? renderObject->parent() : renderObject;
@@ -199,24 +200,25 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
         }
     }
 
-    if (!glyphData.fontData || !glyphData.fontData->isSVGFont())
-        return glyphData;
-
     const SimpleFontData* fontData = glyphData.fontData;
+    if (fontData) {
+        if (!fontData->isSVGFont())
+            return glyphData;
 
-    SVGFontElement* fontElement = 0;
-    SVGFontFaceElement* fontFaceElement = 0;
+        SVGFontElement* fontElement = 0;
+        SVGFontFaceElement* fontFaceElement = 0;
 
-    const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(fontData, fontFaceElement, fontElement);
-    if (!fontElement || !fontFaceElement)
-        return glyphData;
+        const SVGFontData* svgFontData = svgFontAndFontFaceElementForFontData(fontData, fontFaceElement, fontElement);
+        if (!fontElement || !fontFaceElement)
+            return glyphData;
 
-    // If we got here, we're dealing with a glyph defined in a SVG Font.
-    // The returned glyph by glyphDataAndPageForCharacter() is a glyph stored in the SVG Font glyph table.
-    // This doesn't necessarily mean the glyph is suitable for rendering/measuring in this context, its
-    // arabic-form/orientation/... may not match, we have to apply SVG Glyph selection to discover that.
-    if (svgFontData->applySVGGlyphSelection(iterator, glyphData, mirror, currentCharacter, advanceLength))
-        return glyphData;
+        // If we got here, we're dealing with a glyph defined in a SVG Font.
+        // The returned glyph by glyphDataAndPageForCharacter() is a glyph stored in the SVG Font glyph table.
+        // This doesn't necessarily mean the glyph is suitable for rendering/measuring in this context, its
+        // arabic-form/orientation/... may not match, we have to apply SVG Glyph selection to discover that.
+        if (svgFontData->applySVGGlyphSelection(iterator, glyphData, mirror, currentCharacter, advanceLength))
+            return glyphData;
+    }
 
     GlyphPage* page = pair.second;
     ASSERT(page);
@@ -240,6 +242,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
     page->setGlyphDataForCharacter(character, glyphData.glyph, fontData);
     fontList->setGlyphPageZero(originalGlyphPageZero);
     fontList->setGlyphPages(originalGlyphPages);
+    ASSERT(fallbackGlyphData.fontData);
     return fallbackGlyphData;
 }
 
