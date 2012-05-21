@@ -445,6 +445,12 @@ public:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
 
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject*) const
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 protected:
     virtual void willBeDestroyed();
 

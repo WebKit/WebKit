@@ -142,6 +142,10 @@ public:
     CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);
 
     static RenderTableSection* createAnonymousWithParentRenderer(const RenderObject*);
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
+    {
+        return createAnonymousWithParentRenderer(parent);
+    }
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

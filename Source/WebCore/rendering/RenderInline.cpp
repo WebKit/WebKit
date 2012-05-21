@@ -426,7 +426,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         madeNewBeforeBlock = true;
     }
 
-    RenderBlock* post = block->createAnonymousBlockWithSameTypeAs(pre);
+    RenderBlock* post = toRenderBlock(pre->createAnonymousBoxWithSameTypeAs(block));
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)

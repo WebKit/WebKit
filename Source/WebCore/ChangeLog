@@ -1,3 +1,37 @@
+2012-04-06  Abhishek Arya  <inferno@chromium.org>
+
+        Virtualize createAnonymousBoxWithSameTypeAs.
+        https://bugs.webkit.org/show_bug.cgi?id=83229
+
+        Reviewed by Julien Chaffraix.
+
+        This helps to use the same function to create anonymous
+        table parts and in the future extend to more classes
+        derived from RenderBox.
+
+        The current switch case situation was going to be messy as
+        we will need to mix cases that were very dependent on the
+        class, so it made sense to add a virtual function.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitAnonymousBlocksAroundChild):
+        (WebCore::RenderBlock::createAnonymousBoxWithSameTypeAs):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::createAnonymousBoxWithSameTypeAs):
+        (RenderBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::createAnonymousBoxWithSameTypeAs):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::createAnonymousBoxWithSameTypeAs):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::createAnonymousBoxWithSameTypeAs):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::createAnonymousBoxWithSameTypeAs):
+
 2012-04-04  Abhishek Arya  <inferno@chromium.org>
 
         Add helpers to create anonymous table parts.

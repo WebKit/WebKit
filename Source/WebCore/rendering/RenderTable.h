@@ -212,6 +212,10 @@ public:
     }
 
     static RenderTable* createAnonymousWithParentRenderer(const RenderObject*);
+    virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
+    {
+        return createAnonymousWithParentRenderer(parent);
+    }
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
