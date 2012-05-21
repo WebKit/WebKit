@@ -1,3 +1,31 @@
+2012-04-11  Erik Arvidsson  <arv@chromium.org>
+
+        StyleElement ownerNode is not cleared correctly
+        https://bugs.webkit.org/show_bug.cgi?id=83696
+
+        Reviewed by Antti Koivisto.
+
+        When the css text changes in such a way that we remove the sheet of a style element or a link[rel=stylesheet]
+        element we need to ensure that the ownerNode of the sheet is cleared. If we don't do this and there is a
+        wrapper for the sheet the sheet is kept alive but the ownerNode of the sheet may point to a deleted node.
+
+        Tests: fast/dom/StyleSheet/detached-sheet-owner-node-link.html
+               fast/dom/StyleSheet/detached-sheet-owner-node.html
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::removedFromDocument):
+        (WebCore::StyleElement::clearSheet):
+        (WebCore):
+        (WebCore::StyleElement::createSheet):
+        * dom/StyleElement.h:
+        (StyleElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::clearSheet):
+        (WebCore):
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement):
+
 2012-04-03  Abhishek Arya  <inferno@chromium.org>
 
         Crash in SelectorChecker::checkOneSelector.

@@ -66,6 +66,7 @@ private:
     virtual bool shouldLoadLink();
     void process();
     static void processCallback(Node*);
+    void clearSheet();
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
