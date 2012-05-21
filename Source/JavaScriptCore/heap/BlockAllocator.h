@@ -65,8 +65,8 @@ private:
 
 inline HeapBlock* BlockAllocator::allocate()
 {
-    m_isCurrentlyAllocating = true;
     MutexLocker locker(m_freeBlockLock);
+    m_isCurrentlyAllocating = true;
     if (!m_numberOfFreeBlocks) {
         ASSERT(m_freeBlocks.isEmpty());
         return 0;
