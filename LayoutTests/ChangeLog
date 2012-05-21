@@ -1,3 +1,10 @@
+2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/Skipped: Skip failing tests because of bug86452.
+        * platform/qt-5.0/svg/custom/svg-fonts-in-text-controls-expected.txt: Added.
+
 2012-05-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Temporary UISourceCode should be replaced each time another inline script is added in RawSourceCode with pending request.
