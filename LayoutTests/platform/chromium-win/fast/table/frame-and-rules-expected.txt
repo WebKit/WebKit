@@ -2209,7 +2209,7 @@ layer at (0,0) size 785x8148
               RenderText {#text} at (2,2) size 85x19
                 text run at (2,2) width 85: "Row 5, Cell 3"
 layer at (393,24) size 392x150
-  RenderBlock (positioned) {TABLE} at (393,24) size 392x150
+  RenderBlock (positioned) {TABLE} at (392,24) size 393x150
     RenderTable at (0,0) size 360x164
       RenderBlock {CAPTION} at (0,0) size 360x20
         RenderText {#text} at (55,0) size 245x19

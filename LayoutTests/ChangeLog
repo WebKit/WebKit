@@ -1,3 +1,218 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating Chromium-Windows expectations following r117815. Optimizebaselines also caused
+        a number of efl/gtk test expectations to be coalesced.
+
+        * css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt: Added.
+        * fast/compact/001-expected.txt: Added.
+        * fast/css/acid2-expected.txt: Added.
+        * fast/css/acid2-pixel-expected.txt: Added.
+        * fast/css/font-size-negative-expected.txt: Added.
+        * fast/css/line-height-negative-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * fast/flexbox/011-expected.txt: Added.
+        * fast/inline-block/002-expected.txt: Added.
+        * fast/inline/002-expected.txt: Added.
+        * fast/lists/003-expected.txt: Added.
+        * fast/lists/003-vertical-expected.txt: Added.
+        * fast/overflow/007-expected.txt: Added.
+        * fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Added.
+        * fast/repaint/transform-translate-expected.txt: Added.
+        * fast/replaced/007-expected.txt: Added.
+        * fast/table/035-expected.txt: Added.
+        * fast/table/035-vertical-expected.txt: Added.
+        * fast/table/table-display-types-strict-expected.txt: Added.
+        * fast/table/tableInsideCaption-expected.txt: Added.
+        * fast/transforms/transforms-with-zoom-expected.txt: Added.
+        * platform/chromium-mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/chromium-win-vista/css1: Added.
+        * platform/chromium-win-vista/css1/text_properties: Added.
+        * platform/chromium-win-vista/css1/text_properties/line_height-expected.txt: Added.
+        * platform/chromium-win-vista/fast/compact: Added.
+        * platform/chromium-win-vista/fast/compact/001-expected.png: Added.
+        * platform/chromium-win-vista/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-win-vista/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/chromium-win-vista/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-win-vista/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium-win-vista/fast/inline-block/002-expected.png: Added.
+        * platform/chromium-win-vista/fast/inline/002-expected.png: Added.
+        * platform/chromium-win-vista/fast/table/tableInsideCaption-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/whitespace: Added.
+        * platform/chromium-win-vista/fast/text/whitespace/normal-after-nowrap-breaking-expected.png: Added.
+        * platform/chromium-win-vista/http/tests/misc/acid2-expected.txt: Added.
+        * platform/chromium-win-vista/http/tests/misc/acid2-pixel-expected.png:
+        * platform/chromium-win-xp/fast/compact: Added.
+        * platform/chromium-win-xp/fast/compact/001-expected.png: Added.
+        * platform/chromium-win-xp/fast/dom/HTMLMeterElement: Added.
+        * platform/chromium-win-xp/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/chromium-win-xp/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-win-xp/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.png:
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win-xp/fast/inline-block/002-expected.png: Added.
+        * platform/chromium-win-xp/fast/inline/002-expected.png: Added.
+        * platform/chromium-win-xp/fast/table/tableInsideCaption-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/chromium-win-xp/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win-xp/fast/text/whitespace/normal-after-nowrap-breaking-expected.png: Added.
+        * platform/chromium-win/css1/text_properties/line_height-expected.txt:
+        * platform/chromium-win/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-win/editing/selection/extend-by-word-002-expected.png:
+        * platform/chromium-win/editing/selection/extend-by-word-002-expected.txt:
+        * platform/chromium-win/fast/block/float/avoiding-float-centered-expected.png:
+        * platform/chromium-win/fast/block/float/avoiding-float-centered-expected.txt:
+        * platform/chromium-win/fast/compact/001-expected.png:
+        * platform/chromium-win/fast/compact/001-expected.txt:
+        * platform/chromium-win/fast/css/acid2-expected.txt:
+        * platform/chromium-win/fast/css/acid2-pixel-expected.png:
+        * platform/chromium-win/fast/css/acid2-pixel-expected.txt:
+        * platform/chromium-win/fast/css/font-size-negative-expected.png:
+        * platform/chromium-win/fast/css/font-size-negative-expected.txt:
+        * platform/chromium-win/fast/css/input-search-padding-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-win/fast/css/line-height-negative-expected.png:
+        * platform/chromium-win/fast/css/line-height-negative-expected.txt:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/chromium-win/fast/flexbox/011-expected.png:
+        * platform/chromium-win/fast/flexbox/011-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.png:
+        * platform/chromium-win/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/inline-block/002-expected.png:
+        * platform/chromium-win/fast/inline-block/002-expected.txt:
+        * platform/chromium-win/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/chromium-win/fast/inline/002-expected.png:
+        * platform/chromium-win/fast/inline/002-expected.txt:
+        * platform/chromium-win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png:
+        * platform/chromium-win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/chromium-win/fast/lists/003-expected.txt:
+        * platform/chromium-win/fast/lists/003-vertical-expected.txt:
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/overflow/007-expected.png:
+        * platform/chromium-win/fast/overflow/007-expected.txt:
+        * platform/chromium-win/fast/parser/entity-comment-in-style-expected.txt:
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+        * platform/chromium-win/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-win/fast/repaint/delete-into-nested-block-expected.txt:
+        * platform/chromium-win/fast/repaint/transform-absolute-child-expected.png:
+        * platform/chromium-win/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/chromium-win/fast/repaint/transform-translate-expected.png:
+        * platform/chromium-win/fast/repaint/transform-translate-expected.txt:
+        * platform/chromium-win/fast/replaced/007-expected.txt:
+        * platform/chromium-win/fast/table/035-expected.png:
+        * platform/chromium-win/fast/table/035-expected.txt:
+        * platform/chromium-win/fast/table/035-vertical-expected.png:
+        * platform/chromium-win/fast/table/035-vertical-expected.txt:
+        * platform/chromium-win/fast/table/040-expected.txt:
+        * platform/chromium-win/fast/table/040-vertical-expected.txt:
+        * platform/chromium-win/fast/table/frame-and-rules-expected.txt:
+        * platform/chromium-win/fast/table/overflowHidden-expected.txt:
+        * platform/chromium-win/fast/table/table-display-types-strict-expected.png:
+        * platform/chromium-win/fast/table/table-display-types-strict-expected.txt:
+        * platform/chromium-win/fast/table/tableInsideCaption-expected.png:
+        * platform/chromium-win/fast/table/tableInsideCaption-expected.txt:
+        * platform/chromium-win/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/chromium-win/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/chromium-win/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-win/fast/text/atsui-spacing-features-expected.txt:
+        * platform/chromium-win/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/chromium-win/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/chromium-win/fast/transforms/transforms-with-zoom-expected.txt:
+        * platform/chromium-win/http/tests/misc/acid2-expected.txt:
+        * platform/chromium-win/http/tests/misc/acid2-pixel-expected.png:
+        * platform/chromium-win/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/svg/as-image/img-preserveAspectRatio-support-2-expected.png:
+        * platform/chromium-win/svg/as-image/img-preserveAspectRatio-support-2-expected.txt:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-clip-path-expected.png:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-clip-path-expected.txt:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/chromium/fast/inline: Removed.
+        * platform/chromium/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Removed.
+        * platform/efl/css1/text_properties/line_height-expected.txt: Removed.
+        * platform/efl/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/efl/fast/compact/001-expected.txt: Removed.
+        * platform/efl/fast/css/acid2-expected.txt: Removed.
+        * platform/efl/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/efl/fast/css/font-size-negative-expected.txt: Removed.
+        * platform/efl/fast/css/line-height-negative-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Removed.
+        * platform/efl/fast/flexbox/011-expected.txt: Removed.
+        * platform/efl/fast/inline-block/002-expected.txt: Removed.
+        * platform/efl/fast/inline/002-expected.txt: Removed.
+        * platform/efl/fast/lists/003-expected.txt: Removed.
+        * platform/efl/fast/lists/003-vertical-expected.txt: Removed.
+        * platform/efl/fast/overflow/007-expected.txt: Removed.
+        * platform/efl/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Removed.
+        * platform/efl/fast/repaint/transform-translate-expected.txt: Removed.
+        * platform/efl/fast/replaced/007-expected.txt: Removed.
+        * platform/efl/fast/table/035-expected.txt: Removed.
+        * platform/efl/fast/table/035-vertical-expected.txt: Removed.
+        * platform/efl/fast/table/table-display-types-strict-expected.txt: Removed.
+        * platform/efl/fast/table/tableInsideCaption-expected.txt: Removed.
+        * platform/efl/fast/transforms/transforms-with-zoom-expected.txt: Removed.
+        * platform/efl/http/tests/misc/acid2-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/gtk/fast/compact/001-expected.txt: Removed.
+        * platform/gtk/fast/css/acid2-expected.txt: Removed.
+        * platform/gtk/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/gtk/fast/css/font-size-negative-expected.txt: Removed.
+        * platform/gtk/fast/css/line-height-negative-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Removed.
+        * platform/gtk/fast/flexbox/011-expected.txt: Removed.
+        * platform/gtk/fast/inline-block/002-expected.txt: Removed.
+        * platform/gtk/fast/inline/002-expected.txt: Removed.
+        * platform/gtk/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Removed.
+        * platform/gtk/fast/lists/003-expected.txt: Removed.
+        * platform/gtk/fast/lists/003-vertical-expected.txt: Removed.
+        * platform/gtk/fast/overflow/007-expected.txt: Removed.
+        * platform/gtk/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Removed.
+        * platform/gtk/fast/repaint/transform-translate-expected.txt: Removed.
+        * platform/gtk/fast/replaced/007-expected.txt: Removed.
+        * platform/gtk/fast/table/035-expected.txt: Removed.
+        * platform/gtk/fast/table/035-vertical-expected.txt: Removed.
+        * platform/gtk/fast/table/table-display-types-strict-expected.txt: Removed.
+        * platform/gtk/fast/table/tableInsideCaption-expected.txt: Removed.
+        * platform/gtk/fast/transforms/transforms-with-zoom-expected.txt: Removed.
+        * platform/mac/fast/transforms/transforms-with-zoom-expected.txt: Removed.
+        * platform/qt/fast/css/font-size-negative-expected.txt: Removed.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.txt: Removed.
+
 2012-05-21  Mike West  <mkwst@chromium.org>
 
         Blocking `setTimeout` and `setInterval` evaluation with CSP should include a stack trace in the console warning.
@@ -746,7 +961,6 @@
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
-        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.png:
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
         * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
