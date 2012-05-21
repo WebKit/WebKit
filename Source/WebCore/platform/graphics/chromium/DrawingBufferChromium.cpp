@@ -132,8 +132,10 @@ void DrawingBuffer::prepareBackBuffer()
         m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     }
 
-    if (multisample())
+    if (multisample() && !m_framebufferBinding)
         bind();
+    else
+        restoreFramebufferBinding();
 }
 
 bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
