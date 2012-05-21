@@ -1,3 +1,14 @@
+2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        GCC 4.7 and C++11
+        https://bugs.webkit.org/show_bug.cgi?id=86465
+
+        Reviewed by Darin Adler.
+
+        Set emptyValueIsZero flag so RegExpKey can be used with the non-copyable RegExp values.
+
+        * runtime/RegExpKey.h:
+
 2012-05-20  Michael Saboff  <msaboff@apple.com>
 
         JSGlobalData ScratchBuffers Are Not Visited During Garbage Collection

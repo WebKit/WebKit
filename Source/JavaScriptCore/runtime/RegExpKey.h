@@ -103,6 +103,7 @@ template<> struct DefaultHash<JSC::RegExpKey> {
 };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
+    static const bool emptyValueIsZero = true;
     static void constructDeletedValue(JSC::RegExpKey& slot) { slot.flagsValue = JSC::DeletedValueFlags; }
     static bool isDeletedValue(const JSC::RegExpKey& value) { return value.flagsValue == JSC::DeletedValueFlags; }
 };
