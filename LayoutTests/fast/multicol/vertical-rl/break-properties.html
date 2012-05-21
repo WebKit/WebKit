@@ -28,12 +28,15 @@
     function testBoxPosition(id, expectedLeft, expectedTop)
     {
         var rect = document.getElementById(id).getBoundingClientRect();
-        if (rect.left === expectedLeft && rect.top === expectedTop)
+        if (Math.round(rect.left) === expectedLeft && Math.round(rect.top) === expectedTop)
             log("PASS: '" + id + "' is at (" + expectedLeft + ", " + expectedTop + ")");
         else
-            log("FAIL: '" + id + "' is at (" + rect.left + ", " + rect.top + ") instead of (" + expectedLeft + " ," + expectedTop + ")");
+            log("FAIL: '" + id + "' is at (" + Math.round(rect.left) + ", " + Math.round(rect.top) + ") instead of (" + expectedLeft + " ," + expectedTop + ")");
     }
 
-    testBoxPosition("break-before", 748, 218);
-    testBoxPosition("after-break", 748, 428);
+    var rect = document.getElementById('break-before').getBoundingClientRect();
+    var hasSubpixelSupport = Math.round(rect.top) != rect.top;
+
+    testBoxPosition("break-before", 748, hasSubpixelSupport ? 220 : 218);
+    testBoxPosition("after-break", 748, hasSubpixelSupport ? 431 : 428);
 </script>

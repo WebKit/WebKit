@@ -1,3 +1,14 @@
+2012-05-21  Emil A Eklund <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
+
+        Enable SUBPIXEL_LAYOUT feature flag on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=85555
+
+        Reviewed by Eric Seidel.
+
+        Enabling sub-pixel layout on Chromium port.
+
+        * wtf/Platform.h:
+
 2012-05-21  Andreas Kling  <kling@webkit.org>
 
         CSS: Move duplicate property elimination to parser.

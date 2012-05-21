@@ -13,6 +13,9 @@
       h1 {
           font-size: 14pt;
       }
+      #subpixel-test {
+          width: 4.5px;
+       }
       .layer {
         position: relative;
         width: 600px;
@@ -104,6 +107,9 @@
         }
         
         function run() {
+            var r = document.getElementById('subpixel-test').getBoundingClientRect();
+            var hasSubpixelSupport = r.right - r.left == 4.5;
+
             description("This test exercises the webkitConvertPointFromNodeToPage() function");
             
             debug("Test parameter passing - should not crash");
@@ -128,19 +134,35 @@
                 testFailed("null parameter test b");
             debug("Test did not crash and therefore was successful");
 
-            runTest("Test 1",  "test1",  8, 12, 13, 52);
-            runTest("Test 2",  "test2",  8, 50, 13, 90);
-            runTest("Test 3",  "test3",  8, 84, 13, 124);
-            runTest("Test 4",  "test4",  8, 118, 13, 158);
-            runTest("Test 5",  "test5",  28, 152, 33, 192);
-            runTest("Test 6",  "test6",  28, 186, 33, 226);
-            runTest("Test 7",  "test7",  8, 238, 13, 278);
-            runTest("Test 8",  "test8",  8, 272, 13, 312);
-            runTest("Test 9",  "test9",  28, 290, 33, 330);
-            runTest("Test 10", "test10", 28, 308, 33, 348);
-            runTest("Test 11", "test11", 158, 355, 174, 373);
-            runTest("Test 12", "test12", 168, 428, 184, 446);
-            runTest("Test 13", "test13", 28, 486, 33, 526);
+            if (hasSubpixelSupport) {
+                runTest("Test 1",  "test1",  8, 13, 13, 53);
+                runTest("Test 2",  "test2",  8, 51, 13, 91);
+                runTest("Test 3",  "test3",  8, 85, 13, 125);
+                runTest("Test 4",  "test4",  8, 119, 13, 159);
+                runTest("Test 5",  "test5",  28, 153, 33, 193);
+                runTest("Test 6",  "test6",  28, 187, 33, 227);
+                runTest("Test 7",  "test7",  8, 239, 13, 279);
+                runTest("Test 8",  "test8",  8, 273, 13, 313);
+                runTest("Test 9",  "test9",  28, 291, 33, 331);
+                runTest("Test 10", "test10", 28, 309, 33, 349);
+                runTest("Test 11", "test11", 158, 355, 174, 373);
+                runTest("Test 12", "test12", 168, 428, 184, 446);
+                runTest("Test 13", "test13", 28, 487, 33, 527);
+            } else {
+                runTest("Test 1",  "test1",  8, 12, 13, 52);
+                runTest("Test 2",  "test2",  8, 50, 13, 90);
+                runTest("Test 3",  "test3",  8, 84, 13, 124);
+                runTest("Test 4",  "test4",  8, 118, 13, 158);
+                runTest("Test 5",  "test5",  28, 152, 33, 192);
+                runTest("Test 6",  "test6",  28, 186, 33, 226);
+                runTest("Test 7",  "test7",  8, 238, 13, 278);
+                runTest("Test 8",  "test8",  8, 272, 13, 312);
+                runTest("Test 9",  "test9",  28, 290, 33, 330);
+                runTest("Test 10", "test10", 28, 308, 33, 348);
+                runTest("Test 11", "test11", 158, 355, 174, 373);
+                runTest("Test 12", "test12", 168, 428, 184, 446);
+                runTest("Test 13", "test13", 28, 486, 33, 526);
+            }
             
             isSuccessfullyParsed();
         }
@@ -183,5 +205,6 @@
         </div>
         <div id="description"></div>
         <div id="console"></div>
+        <div id="subpixel-test"></div>
     </body>
 </html>

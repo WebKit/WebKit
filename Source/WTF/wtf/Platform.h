@@ -821,7 +821,11 @@
 #endif
 
 #if !defined(ENABLE_SUBPIXEL_LAYOUT)
+#if PLATFORM(CHROMIUM)
+#define ENABLE_SUBPIXEL_LAYOUT 1 
+#else
 #define ENABLE_SUBPIXEL_LAYOUT 0
+#endif
 #endif
 
 #define ENABLE_DEBUG_WITH_BREAKPOINT 0

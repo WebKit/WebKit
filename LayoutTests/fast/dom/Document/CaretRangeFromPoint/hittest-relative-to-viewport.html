@@ -1,5 +1,8 @@
 <script src="../../../js/resources/js-test-pre.js"></script>
-<style> 
+<style>
+    #subpixel-test {
+        width: 4.5px;
+    }
     .test {
         width: 100px;
         font-family: "Ahem";
@@ -20,8 +23,12 @@
 
 <p id="description"></p>
 <div id="console"></div>
+<div id="subpixel-test"></div>
 
 <script>
+    var r = document.getElementById('subpixel-test').getBoundingClientRect();
+    var hasSubpixelSupport = r.right - r.left == 4.5;
+    
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
@@ -64,8 +71,8 @@
         }
 
         if (zoomOrNot == "zoom") {
-            test(1, 0, 0);
-            test(13, 0, 25);
+            test(hasSubpixelSupport ? 0 : 1, 0, 0);
+            test(hasSubpixelSupport ? 12 : 13, 0, 25);
             test(4, 50, 0);
             test(16, 50, 25);
         } else {

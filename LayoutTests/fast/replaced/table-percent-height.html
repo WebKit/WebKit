@@ -41,7 +41,7 @@ function parsePixelValue(str)
     return parseFloat(str);
 }
 
-function is75PercentOf(expression75, expression100)
+function is75PercentOf(expression75, expression100, hasSubpixelSupport)
 {
     var str75 = eval(expression75);
     var str100 = eval(expression100);
@@ -49,7 +49,10 @@ function is75PercentOf(expression75, expression100)
     var num100 = parsePixelValue(str100);
     if (num75 < 0 || num100 < 0)
         return;
-    if (num75 == Math.floor(num100 * 75 / 100))
+    var expectedValue = num100 * 75 / 100;
+    if (!hasSubpixelSupport)
+        expectedValue = Math.floor(expectedValue);
+    if (num75 == expectedValue)
         testPassed(expression75 + " is 75% of " + expression100 + ".");
     else
         testFailed(expression75 + " [" + str75 + "] is not 75% of " + expression100 + " [" + str100 + "].");
@@ -59,13 +62,15 @@ function test()
 {
     description("This test checks that replaced elements with percentage heights within table cells have the correct height.<br>Note, some of the button height tests fail on the Windows ports. See bug #34071.");
 
-    shouldBe("getWidth('canvas-75')", "'224px'");
-    shouldBe("getHeight('canvas-75')", "'112px'");
+    var hasSubpixelSupport = getWidth('canvas-75') == '225px';
+
+    shouldBe("getWidth('canvas-75')", hasSubpixelSupport ? "'225px'" : "'224px'");
+    shouldBe("getHeight('canvas-75')", hasSubpixelSupport ? "'112.5px'" : "'112px'");
     shouldBe("getWidth('canvas-100')", "'300px'");
     shouldBe("getHeight('canvas-100')", "'150px'");
 
     shouldBe("getWidth('embed-75')", "'300px'");
-    shouldBe("getHeight('embed-75')", "'112px'");
+    shouldBe("getHeight('embed-75')", hasSubpixelSupport ? "'112.5px'" : "'112px'");
     shouldBe("getWidth('embed-100')", "'300px'");
     shouldBe("getHeight('embed-100')", "'150px'");
 
@@ -80,7 +85,7 @@ function test()
     shouldBe("getHeight('img-100-nested')", "'100px'");
 
     shouldBe("getWidth('object-75')", "'300px'");
-    shouldBe("getHeight('object-75')", "'112px'");
+    shouldBe("getHeight('object-75')", hasSubpixelSupport ? "'112.5px'" : "'112px'");
     shouldBe("getWidth('object-100')", "'300px'");
     shouldBe("getHeight('object-100')", "'150px'");
 
@@ -95,12 +100,12 @@ function test()
     shouldBe("getWidth('input-checkbox-75')", "getWidth('input-checkbox-100')");
     shouldBeTrue("getHeight('input-checkbox-75') != '0px'");
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
-    is75PercentOf("getHeight('input-checkbox-75')", "getHeight('input-checkbox-100')");
+    is75PercentOf("getHeight('input-checkbox-75')", "getHeight('input-checkbox-100')", hasSubpixelSupport);
 
     shouldBe("getWidth('input-file-75')", "getWidth('input-file-100')");
     shouldBeTrue("getHeight('input-file-75') != '0px'");
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
-    is75PercentOf("getHeight('input-file-75')", "getHeight('input-file-100')");
+    is75PercentOf("getHeight('input-file-75')", "getHeight('input-file-100')", hasSubpixelSupport);
 
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
     shouldBe("getWidth('input-image-75')", "'75px'");
@@ -111,7 +116,7 @@ function test()
     shouldBe("getWidth('input-radio-75')", "getWidth('input-radio-100')");
     shouldBeTrue("getHeight('input-radio-75') != '0px'");
     // Note: This behavior doesn't match to Firefox 3.5 and Opera 10.
-    is75PercentOf("getHeight('input-radio-75')", "getHeight('input-radio-100')");
+    is75PercentOf("getHeight('input-radio-75')", "getHeight('input-radio-100')", hasSubpixelSupport);
 
     shouldBe("getWidth('input-reset-75')", "getWidth('input-reset-100')");
     shouldBeTrue("getHeight('input-reset-75') != '0px'");

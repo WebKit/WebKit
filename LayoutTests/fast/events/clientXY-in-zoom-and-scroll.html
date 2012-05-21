@@ -5,12 +5,19 @@
         height: 1000px;
         outline: 1px solid black;
     }
+    #subpixel-test {
+        width: 4.5px;
+    }
 </style>
 <div id="console"></div>
 <div id="testArea">
     <div id="pusher">This box is here to create scrollbars.</div>
+    <div id="subpixel-test"></div>
 </div>
 <script>
+    var r = document.getElementById('subpixel-test').getBoundingClientRect();
+    var hasSubpixelSupport = r.right - r.left == 4.5;
+
     var event;
 
     function sendClick()
@@ -97,8 +104,8 @@
     {
         event = e;
         debug("\nZoomed and scrolled");
-        shouldBe("event.clientX", "84");
-        shouldBe("event.clientY", "84");
+        shouldBe("event.clientX", hasSubpixelSupport ? "83" : "84");
+        shouldBe("event.clientY", hasSubpixelSupport ? "83" : "84");
         shouldBe("event.pageX", "133");
         shouldBe("event.pageY", "133");
     }

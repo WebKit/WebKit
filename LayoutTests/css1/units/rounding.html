@@ -36,8 +36,8 @@ description("This test checks that floating point rounding doesn't cause misalig
 
 var divtop = document.getElementById("top").getBoundingClientRect();
 var divbottom = document.getElementById("bottom").getBoundingClientRect();
-shouldBe('divtop.bottom', '31');
-shouldBe('divbottom.top', '31');
+shouldBe('Math.round(divtop.bottom)', '31');
+shouldBe('Math.round(divbottom.top)', '31');
 
 </script>
 

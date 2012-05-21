@@ -25,8 +25,9 @@
     
     for (zoom = 100; zoom <= 200; zoom += 1) {
         containerStyle.setProperty("zoom", zoom / 100);
-        var width = target.offsetWidth;
-        var height = target.offsetHeight;
+        var rect = target.getBoundingClientRect();
+        var width = Math.round(rect.right - rect.left);
+        var height = Math.round(rect.bottom - rect.top);
         if (width !== 1 || height !== 10) {
             failed = true;
             log("FAIL at " + zoom + "% magnification: 1 mapped to " + target.offsetWidth + " and 10 mapped to " + target.offsetHeight + ".");

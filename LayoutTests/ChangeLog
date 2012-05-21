@@ -1,3 +1,29 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org> and Emil A Eklund <eae@chromium.org>
+
+        Enable SUBPIXEL_LAYOUT feature flag on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=85555
+
+        Reviewed by Eric Seidel.
+
+        Updating tests to handle sub-pixel layout, and updating chromium-linux expecations. Updated test
+        expectations for Chromium Linux and Mac are ready, but the diff is too large for Buzgilla's tiny
+        brain (>10MB).
+
+        * css1/units/rounding.html:
+        * fast/borders/border-radius-huge-assert.html:
+        * fast/css/zoom-in-length-round-trip.html:
+        * fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html:
+        * fast/dom/Window/webkitConvertPoint.html:
+        * fast/dom/elementFromPoint-relative-to-viewport.html:
+        * fast/events/clientXY-in-zoom-and-scroll.html:
+        * fast/events/document-elementFromPoint.html:
+        * fast/events/offsetX-offsetY.html:
+        * fast/multicol/break-properties.html:
+        * fast/multicol/vertical-lr/break-properties.html:
+        * fast/multicol/vertical-rl/break-properties.html:
+        * fast/regions/region-style-rule-specificity.html:
+        * fast/replaced/table-percent-height.html:
+
 2012-05-21  Anna Cavender  <annacc@chromium.org>
 
         Only render text track cues if kind=captions or kind=subtitles.
