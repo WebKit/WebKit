@@ -116,6 +116,24 @@ function test()
             next();
         },
 
+        function heapSnapshotDominatedNodesTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
+
+            var expectedDominatedNodes = [21, 14, 7, 28, 35];
+            var actualDominatedNodes = snapshot._dominatedNodes;
+            InspectorTest.assertEquals(expectedDominatedNodes.length, actualDominatedNodes.length, "Dominated Nodes length");
+            for (var i = 0; i < expectedDominatedNodes.length; ++i)
+                InspectorTest.assertEquals(expectedDominatedNodes[i], actualDominatedNodes[i], "Dominated Nodes");
+
+            var expectedDominatedNodeIndex = [0, 3, 3, 4, 5, 5, 5];
+            var actualDominatedNodeIndex = snapshot._firstDominatedNodeIndex;
+            InspectorTest.assertEquals(expectedDominatedNodeIndex.length, actualDominatedNodeIndex.length, "Dominated Nodes Index length");
+            for (var i = 0; i < expectedDominatedNodeIndex.length; ++i)
+                InspectorTest.assertEquals(expectedDominatedNodeIndex[i], actualDominatedNodeIndex[i], "Dominated Nodes Index");
+            next();
+        },
+
         function heapSnapshotPageOwnedTest(next)
         {
             var builder = new InspectorTest.HeapSnapshotBuilder();

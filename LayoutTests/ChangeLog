@@ -1,5 +1,17 @@
 2012-05-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: switch buildDominatedNodes function to front-end calculated _dominatorsTree
+        https://bugs.webkit.org/show_bug.cgi?id=87022
+
+        The new version is using _dominatorsTree array that was build at front-end.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-expected.txt:
+        * inspector/profiler/heap-snapshot.html:
+
+2012-05-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: introduce a helper for HeapSnapshot post-processing tests.
         https://bugs.webkit.org/show_bug.cgi?id=87009
 

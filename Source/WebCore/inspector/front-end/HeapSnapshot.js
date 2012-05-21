@@ -719,12 +719,11 @@ WebInspector.HeapSnapshot.prototype = {
 
         this._markInvisibleEdges();
         this._buildRetainers();
-        if (this._dominatorOffset !== -1) // For tests where we may not have dominator field.
-            this._buildDominatedNodes()
         this._calculateFlags();
         this._calculateObjectToWindowDistance();
         var result = this._buildPostOrderIndex();
         this._dominatorsTree = this._buildDominatorTree(result.postOrderIndex2NodeIndex, result.nodeOrdinal2PostOrderIndex);
+        this._buildDominatedNodes();
     },
 
     _buildRetainers: function()
@@ -1270,16 +1269,14 @@ WebInspector.HeapSnapshot.prototype = {
 
         // Count the number of dominated nodes for each node. Skip the root (node at
         // index 0) as it is the only node that dominates itself.
-        for (var nodeIndex = this._nodeFieldCount; nodeIndex < this._nodes.length; nodeIndex += this._nodeFieldCount) {
-            var dominatorIndex = this._nodes[nodeIndex + this._dominatorOffset];
-            if (dominatorIndex % this._nodeFieldCount)
-                throw new Error("Wrong dominatorIndex " + dominatorIndex + " nodeIndex = " + nodeIndex + " nodeCount = " + this.nodeCount);
-            ++indexArray[dominatorIndex / this._nodeFieldCount];
-        }
+        var nodeFieldCount = this._nodeFieldCount;
+        var dominatorsTree = this._dominatorsTree;
+        for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal)
+            ++indexArray[dominatorsTree[nodeOrdinal] / this._nodeFieldCount];
         // Put in the first slot of each dominatedNodes slice the count of entries
         // that will be filled.
         var firstDominatedNodeIndex = 0;
-        for (var i = 0; i < this.nodeCount; ++i) {
+        for (var i = 0, l = this.nodeCount; i < l; ++i) {
             var dominatedCount = dominatedNodes[firstDominatedNodeIndex] = indexArray[i];
             indexArray[i] = firstDominatedNodeIndex;
             firstDominatedNodeIndex += dominatedCount;
@@ -1287,14 +1284,11 @@ WebInspector.HeapSnapshot.prototype = {
         indexArray[this.nodeCount] = dominatedNodes.length;
         // Fill up the dominatedNodes array with indexes of dominated nodes. Skip the root (node at
         // index 0) as it is the only node that dominates itself.
-        for (var nodeIndex = this._nodeFieldCount; nodeIndex < this._nodes.length; nodeIndex += this._nodeFieldCount) {
-            var dominatorIndex = this._nodes[nodeIndex + this._dominatorOffset];
-            if (dominatorIndex % this._nodeFieldCount)
-                throw new Error("Wrong dominatorIndex " + dominatorIndex);
-            var dominatorPos = dominatorIndex / this._nodeFieldCount;
-            var dominatedRefIndex = indexArray[dominatorPos];
+        for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal) {
+            var dominatorOrdinal = dominatorsTree[nodeOrdinal] / nodeFieldCount;
+            var dominatedRefIndex = indexArray[dominatorOrdinal];
             dominatedRefIndex += (--dominatedNodes[dominatedRefIndex]);
-            dominatedNodes[dominatedRefIndex] = nodeIndex;
+            dominatedNodes[dominatedRefIndex] = nodeOrdinal * nodeFieldCount;
         }
     },
 
