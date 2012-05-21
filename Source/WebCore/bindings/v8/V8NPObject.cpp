@@ -183,19 +183,19 @@ static void weakTemplateCallback(v8::Persistent<v8::Value> object, void* paramet
 }
 
 
-static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> key)
+static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> key, v8::Isolate* isolate)
 {
     NPObject* npObject = v8ObjectToNPObject(self);
 
     // Verify that our wrapper wasn't using a NPObject which
     // has already been deleted.
     if (!npObject || !_NPN_IsAlive(npObject))
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
 
 
     if (npObject->_class->hasProperty && npObject->_class->getProperty && npObject->_class->hasProperty(npObject, identifier)) {
         if (!_NPN_IsAlive(npObject))
-            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
 
         NPVariant result;
         VOID_TO_NPVARIANT(result);
@@ -211,11 +211,11 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
     }
 
     if (!_NPN_IsAlive(npObject))
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
 
     if (key->IsString() && npObject->_class->hasMethod && npObject->_class->hasMethod(npObject, identifier)) {
         if (!_NPN_IsAlive(npObject))
-            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
 
         PrivateIdentifier* id = static_cast<PrivateIdentifier*>(identifier);
         v8::Persistent<v8::FunctionTemplate> functionTemplate = staticTemplateMap().get(id);
@@ -240,46 +240,46 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
 v8::Handle<v8::Value> npObjectNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectGetProperty(info.Holder(), identifier, name);
+    return npObjectGetProperty(info.Holder(), identifier, name, info.GetIsolate());
 }
 
 v8::Handle<v8::Value> npObjectIndexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = _NPN_GetIntIdentifier(index);
-    return npObjectGetProperty(info.Holder(), identifier, v8::Number::New(index));
+    return npObjectGetProperty(info.Holder(), identifier, v8::Number::New(index), info.GetIsolate());
 }
 
-v8::Handle<v8::Value> npObjectGetNamedProperty(v8::Local<v8::Object> self, v8::Local<v8::String> name)
+v8::Handle<v8::Value> npObjectGetNamedProperty(v8::Local<v8::Object> self, v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectGetProperty(self, identifier, name);
+    return npObjectGetProperty(self, identifier, name, info.GetIsolate());
 }
 
-v8::Handle<v8::Value> npObjectGetIndexedProperty(v8::Local<v8::Object> self, uint32_t index)
+v8::Handle<v8::Value> npObjectGetIndexedProperty(v8::Local<v8::Object> self, uint32_t index, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = _NPN_GetIntIdentifier(index);
-    return npObjectGetProperty(self, identifier, v8::Number::New(index));
+    return npObjectGetProperty(self, identifier, v8::Number::New(index), info.GetIsolate());
 }
 
 v8::Handle<v8::Integer> npObjectQueryProperty(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectGetProperty(info.Holder(), identifier, name).IsEmpty() ? v8::Handle<v8::Integer>() : v8::Integer::New(v8::None);
+    return npObjectGetProperty(info.Holder(), identifier, name, info.GetIsolate()).IsEmpty() ? v8::Handle<v8::Integer>() : v8::Integer::New(v8::None);
 }
 
-static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> value)
+static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> value, v8::Isolate* isolate)
 {
     NPObject* npObject = v8ObjectToNPObject(self);
 
     // Verify that our wrapper wasn't using a NPObject which has already been deleted.
     if (!npObject || !_NPN_IsAlive(npObject)) {
-        V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+        V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
         return value;  // Intercepted, but an exception was thrown.
     }
 
     if (npObject->_class->hasProperty && npObject->_class->setProperty && npObject->_class->hasProperty(npObject, identifier)) {
         if (!_NPN_IsAlive(npObject))
-            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted");
+            return V8Proxy::throwError(V8Proxy::ReferenceError, "NPObject deleted", isolate);
 
         NPVariant npValue;
         VOID_TO_NPVARIANT(npValue);
@@ -296,26 +296,26 @@ static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPI
 v8::Handle<v8::Value> npObjectNamedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectSetProperty(info.Holder(), identifier, value);
+    return npObjectSetProperty(info.Holder(), identifier, value, info.GetIsolate());
 }
 
 
 v8::Handle<v8::Value> npObjectIndexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = _NPN_GetIntIdentifier(index);
-    return npObjectSetProperty(info.Holder(), identifier, value);
+    return npObjectSetProperty(info.Holder(), identifier, value, info.GetIsolate());
 }
 
-v8::Handle<v8::Value> npObjectSetNamedProperty(v8::Local<v8::Object> self, v8::Local<v8::String> name, v8::Local<v8::Value> value)
+v8::Handle<v8::Value> npObjectSetNamedProperty(v8::Local<v8::Object> self, v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectSetProperty(self, identifier, value);
+    return npObjectSetProperty(self, identifier, value, info.GetIsolate());
 }
 
-v8::Handle<v8::Value> npObjectSetIndexedProperty(v8::Local<v8::Object> self, uint32_t index, v8::Local<v8::Value> value)
+v8::Handle<v8::Value> npObjectSetIndexedProperty(v8::Local<v8::Object> self, uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = _NPN_GetIntIdentifier(index);
-    return npObjectSetProperty(self, identifier, value);
+    return npObjectSetProperty(self, identifier, value, info.GetIsolate());
 }
 
 v8::Handle<v8::Array> npObjectPropertyEnumerator(const v8::AccessorInfo& info, bool namedProperty)

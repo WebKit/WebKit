@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> npObjectNamedGetter(v8::Local<v8::String> name, con
     if (instance.IsEmpty())
         return notHandledByInterceptor();
 
-    return npObjectGetNamedProperty(instance, name);
+    return npObjectGetNamedProperty(instance, name, info);
 }
 
 template <class C>
@@ -71,7 +71,7 @@ static v8::Handle<v8::Value> npObjectNamedSetter(v8::Local<v8::String> name, v8:
     if (instance.IsEmpty())
         return notHandledByInterceptor();
 
-    return npObjectSetNamedProperty(instance, name, value);
+    return npObjectSetNamedProperty(instance, name, value, info);
 }
 
 v8::Handle<v8::Value> V8HTMLAppletElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -141,7 +141,7 @@ v8::Handle<v8::Value> npObjectIndexedGetter(uint32_t index, const v8::AccessorIn
     if (instance.IsEmpty())
         return notHandledByInterceptor();
 
-    return npObjectGetIndexedProperty(instance, index);
+    return npObjectGetIndexedProperty(instance, index, info);
 }
 
 template <class C>
@@ -157,7 +157,7 @@ v8::Handle<v8::Value> npObjectIndexedSetter(uint32_t index, v8::Local<v8::Value>
     if (instance.IsEmpty())
         return notHandledByInterceptor();
 
-    return npObjectSetIndexedProperty(instance, index, value);
+    return npObjectSetIndexedProperty(instance, index, value, info);
 }
 
 v8::Handle<v8::Value> V8HTMLAppletElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
