@@ -80,7 +80,6 @@ public:
             , stepScaleFactor(1)
             , stepValueShouldBe(StepValueShouldBeReal)
         {
-            ASSERT_NOT_REACHED();
         }
 
         double defaultValue() const
