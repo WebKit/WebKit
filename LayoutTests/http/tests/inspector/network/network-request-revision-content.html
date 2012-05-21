@@ -23,10 +23,10 @@ function test()
         resource.history[0].requestContent(step3);
     }
 
-    function step3()
+    function step3(content)
     {
         InspectorTest.addResult(resource.url);
-        InspectorTest.addResult(resource.content);
+        InspectorTest.addResult(content);
         InspectorTest.completeTest();
     }
 }

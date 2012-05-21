@@ -96,19 +96,13 @@ function test()
         function result()
         {
             InspectorTest.addResult("History length: " + styleResource.history.length);
-            for (var i = 0; i < styleResource.history.length; ++i)
-                styleResource.history[i].requestContent(dumpRevision.bind(this, i, null));
-            styleResource.requestContent(dumpRevision.bind(this, "<tip>", next));
+            for (var i = 0; i < styleResource.history.length; ++i) {
+                InspectorTest.addResult("Item " + i + ":");
+                InspectorTest.addResult(styleResource.history[i].content);
+            }
+            next();
         }
         return result;
-    }
-
-    function dumpRevision(index, next, content)
-    {
-        InspectorTest.addResult("Item " + index + ":");
-        InspectorTest.addResult(content);
-        if (next)
-            next();
     }
 }
 

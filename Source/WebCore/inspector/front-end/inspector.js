@@ -416,6 +416,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
 
+    WebInspector.CSSCompletions.requestCSSNameCompletions();
+
     this.drawer = new WebInspector.Drawer();
     this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 
@@ -444,7 +446,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (this._zoomLevel)
         this._requestZoom();
 
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
     this._createPanels();
     this._createGlobalStatusBarItems();
 

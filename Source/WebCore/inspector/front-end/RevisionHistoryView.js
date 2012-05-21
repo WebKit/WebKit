@@ -50,19 +50,22 @@ WebInspector.RevisionHistoryView = function(uiSourceCode)
         label.textContent = WebInspector.UIString("No revisions");
     } else {
         var olElement = this.element.createChild("ol");
-        var treeOutline = new TreeOutline(olElement);
+        this._treeOutline = new TreeOutline(olElement);
         revisionCount = this._resource.history.length;
-
-        var historyItem = new WebInspector.RevisionHistoryTreeElement(this._resource);
-        historyItem.selectable = false;
-        treeOutline.appendChild(historyItem);
 
         for (var i = revisionCount - 1; i >= 0; --i) {
             var revision = this._resource.history[i];
-            historyItem = new WebInspector.RevisionHistoryTreeElement(this._resource, i);
-            historyItem.selectable = false;
-            treeOutline.appendChild(historyItem);
+            var historyItem = new WebInspector.RevisionHistoryTreeElement(revision, this._resource.history[i - 1]);
+            this._treeOutline.appendChild(historyItem);
         }
+
+        var baseItem = new TreeElement("", null, false);
+        baseItem.selectable = false;
+        this._treeOutline.appendChild(baseItem);
+
+        var revertToOriginal = baseItem.listItemElement.createChild("span", "revision-history-link");
+        revertToOriginal.textContent = WebInspector.UIString("revert to original");
+        revertToOriginal.addEventListener("click", this._resource.revertToOriginal.bind(this._resource));
     }
 
     this._statusElement = document.createElement("span");
@@ -97,9 +100,15 @@ WebInspector.RevisionHistoryView.uiSourceCodeSelected = function(uiSourceCode)
 }
 
 WebInspector.RevisionHistoryView.prototype = {
-    _revisionAdded: function()
+    _revisionAdded: function(event)
     {
-        WebInspector.RevisionHistoryView.showHistory(this._uiSourceCode);
+        if (this._resource.history.length === 1) {
+            WebInspector.RevisionHistoryView.showHistory(this._uiSourceCode);
+            return;
+        }
+        var historyLength = this._resource.history.length;
+        var historyItem = new WebInspector.RevisionHistoryTreeElement(this._resource.history[historyLength - 1], this._resource.history[historyLength - 2]);
+        this._treeOutline.insertChild(historyItem, 0);
     },
 
     _onclose: function()
@@ -115,34 +124,23 @@ WebInspector.RevisionHistoryView.prototype.__proto__ = WebInspector.View.prototy
 /**
  * @constructor
  * @extends {TreeElement}
- * @param {WebInspector.Resource} resource
- * @param {number=} revisionOrdinal
+ * @param {WebInspector.ResourceRevision} revision
+ * @param {WebInspector.ResourceRevision=} baseRevision
  */
-WebInspector.RevisionHistoryTreeElement = function(resource, revisionOrdinal)
+WebInspector.RevisionHistoryTreeElement = function(revision, baseRevision)
 {
-    this._resource = resource;
-
     var titleElement = document.createElement("span");
-    if (isNaN(revisionOrdinal)) {
-        this._revision = resource;
-        this._baseRevision = resource.history[resource.history.length - 1];
+    titleElement.textContent = revision.timestamp.toLocaleTimeString();
 
-        titleElement.textContent = resource.contentTimestamp.toLocaleTimeString();
-    } else {
-        this._revision = resource.history[revisionOrdinal];
-        this._baseRevision = resource.history[revisionOrdinal - 1];
+    TreeElement.call(this, titleElement, null, true);
+    this.selectable = false;
 
-        titleElement.textContent = revisionOrdinal ? resource.history[revisionOrdinal].timestamp.toLocaleTimeString() : WebInspector.UIString("(original)");
-        function revert()
-        {
-            this._revision.revertToThis();
-        }
+    this._revision = revision;
+    this._baseRevision = baseRevision;
 
-        var revertElement = titleElement.createChild("span", "revision-history-link");
-        revertElement.textContent = WebInspector.UIString("revert to this");
-        revertElement.addEventListener("click", revert.bind(this), false);
-    }
-    TreeElement.call(this, titleElement, null, revisionOrdinal !== 0);
+    var revertElement = titleElement.createChild("span", "revision-history-link");
+    revertElement.textContent = WebInspector.UIString("revert to this");
+    revertElement.addEventListener("click", this._revision.revertToThis.bind(this._revision), false);
 }
 
 WebInspector.RevisionHistoryTreeElement.prototype = {
@@ -153,7 +151,10 @@ WebInspector.RevisionHistoryTreeElement.prototype = {
         this._wasExpandedOnce = true;
 
         this.childrenListElement.addStyleClass("source-code");
-        this._baseRevision.requestContent(step1.bind(this));
+        if (this._baseRevision)
+            this._baseRevision.requestContent(step1.bind(this));
+        else
+            this._revision.resource.requestContent(step1.bind(this));
 
         function step1(baseContent)
         {

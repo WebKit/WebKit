@@ -5,22 +5,10 @@ Running: testSetUp
 
 Running: testSetResourceContentMinor
 History length: 0
-Item <tip>:
-body {
-  margin: 10px;
-  padding: 10px;
-}
-
 
 Running: testSetResourceContentMajor
 History length: 1
 Item 0:
-body {
-  margin: 10px;
-  padding: 10px;
-}
-
-Item <tip>:
 body {
   margin: 20px;
   padding: 10px;
@@ -30,12 +18,6 @@ Running: testSetContentViaModelMinor
 History length: 1
 Item 0:
 body {
-  margin: 10px;
-  padding: 10px;
-}
-
-Item <tip>:
-body {
   margin: 20px;
   padding: 10px;
 }
@@ -44,16 +26,10 @@ Running: testSetContentViaModelMajor
 History length: 2
 Item 0:
 body {
-  margin: 10px;
-  padding: 10px;
-}
-
-Item 1:
-body {
   margin: 20px;
   padding: 10px;
 }
-Item <tip>:
+Item 1:
 body {
   margin:30px;
   padding: 10px;

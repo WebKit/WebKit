@@ -136,21 +136,24 @@ WebInspector.UISourceCode.prototype = {
 
     _revisionAdded: function(event)
     {
-        this.contentChanged(this.resource().content || "");
+        var revision = /** @type {WebInspector.ResourceRevision} */ event.data;
+        this.contentChanged(revision.content || "", this._resource.canonicalMimeType());
     },
 
     /**
      * @param {string} newContent
+     * @param {string} mimeType
      */
-    contentChanged: function(newContent)
+    contentChanged: function(newContent, mimeType)
     {
         if (this._committingWorkingCopy)
             return;
 
-        var oldContent = this._contentLoaded ? this._content : undefined;
         this._content = newContent;
+        this._mimeType = mimeType;
+        this._contentLoaded = true;
         delete this._workingCopy;
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {oldContent: oldContent, content: newContent});
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {content: newContent});
     },
 
     /**
@@ -204,7 +207,7 @@ WebInspector.UISourceCode.prototype = {
         {
             delete this._committingWorkingCopy;
             if (!error)
-                this.contentChanged(newContent);
+                this.contentChanged(newContent, this._mimeType);
             callback(error);
         }
 

@@ -145,6 +145,7 @@ WebInspector.StyleSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
+        this._isCommittingEditing = true;
         this._styleSource.commitWorkingCopy(this._didEditContent.bind(this));
     },
 
@@ -159,6 +160,7 @@ WebInspector.StyleSourceFrame.prototype = {
             WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
             return;
         }
+        delete this._isCommittingEditing;
     },
 
     _clearIncrementalUpdateTimer: function()
@@ -173,7 +175,8 @@ WebInspector.StyleSourceFrame.prototype = {
      */
     _onContentChanged: function(event)
     {
-        this.setContent(this._styleSource.resource().content, false, "text/stylesheet");
+        if (!this._isCommittingEditing)
+            this.setContent(this._styleSource.content() || "", false, "text/css");
     },
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)

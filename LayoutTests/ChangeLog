@@ -1,3 +1,14 @@
+2012-05-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: refactor revision history to not include resource itself.
+        https://bugs.webkit.org/show_bug.cgi?id=87026
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * inspector/styles/styles-history-expected.txt:
+        * inspector/styles/styles-history.html:
+
 2012-05-21  Stephen Chenney  <schenney@chromium.org>
 
         SVGAnimatedPropertyTearOff does not clear a self pointer on deletion

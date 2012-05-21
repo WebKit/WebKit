@@ -102,7 +102,7 @@ WebInspector.JavaScriptSource.prototype = {
         {
             if (!formatted) {
                 this._togglingFormatter = true;
-                this.contentChanged(content || "");
+                this.contentChanged(content || "", mimeType);
                 delete this._togglingFormatter;
                 this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
                 this.updateLiveLocations();
@@ -121,7 +121,7 @@ WebInspector.JavaScriptSource.prototype = {
             function didFormatContent(formattedContent, formatterMapping)
             {
                 this._togglingFormatter = true;
-                this.contentChanged(formattedContent);
+                this.contentChanged(formattedContent, mimeType);
                 delete this._togglingFormatter;
                 this._formatterMapping = formatterMapping;
                 this.updateLiveLocations();

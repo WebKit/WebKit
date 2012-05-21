@@ -92,7 +92,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
-        this._editingContent = true;
+        this._isCommittingEditing = true;
         this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this));
     },
 
@@ -101,9 +101,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _onContentChanged: function(event)
     {
-        if (this._editingContent)
+        if (this._isCommittingEditing)
             return;
-        var oldContent = /** @type {string} */ event.data.oldContent;
         var content = /** @type {string} */ event.data.content;
 
         if (this._uiSourceCode.togglingFormatter())
@@ -176,7 +175,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _didEditContent: function(error)
     {
-        delete this._editingContent;
+        delete this._isCommittingEditing;
 
         if (error) {
             WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);

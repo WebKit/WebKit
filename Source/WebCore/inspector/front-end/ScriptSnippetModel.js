@@ -113,7 +113,7 @@ WebInspector.ScriptSnippetModel.prototype = {
     {
         var snippet = this._snippetStorage.snippetForId(snippetJavaScriptSource.snippetId);
         snippet.content = newContent;
-        snippetJavaScriptSource.contentChanged(newContent);
+        snippetJavaScriptSource.contentChanged(newContent, "text/javascript");
     },
 
     /**
