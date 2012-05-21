@@ -1,3 +1,13 @@
+2012-05-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] PlatformKeyboardEventEfl is missing ESC key handling.
+        https://bugs.webkit.org/show_bug.cgi?id=86837
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyNameFromJSValue): Added ESC key handling.
+
 2012-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add GCancellable parameter to all methods using gio async pattern

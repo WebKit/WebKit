@@ -1,3 +1,12 @@
+2012-05-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] PlatformKeyboardEventEfl is missing ESC key handling.
+        https://bugs.webkit.org/show_bug.cgi?id=86837
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/efl/Skipped: Unskipped fast/forms/input-search-press-escape-key.html.
+
 2012-05-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: upstream build dominators tree procedure from v8.

@@ -84,6 +84,7 @@ static void createKeyMap()
     keyMap().set("ISO_Left_Tab", "U+0009");
     keyMap().set("BackSpace", "U+0008");
     keyMap().set("space", "U+0020");
+    keyMap().set("Escape", "U+001B");
     keyMap().set("Print", "PrintScreen");
     // Keypad location
     keyMap().set("KP_Left", "Left");
@@ -223,6 +224,9 @@ String singleCharacterString(const String& keyName)
         return String("\t");
     if (keyName == "Print")
         return String("");
+    if (keyName == "Escape")
+        return String("\x1b");
+
     return keyName;
 }
 

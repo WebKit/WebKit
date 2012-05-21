@@ -675,7 +675,6 @@ fast/events/drag-parent-node.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
 fast/events/option-tab.html
-fast/forms/input-search-press-escape-key.html
 
 # BUG: not scrolling correctly
 fast/events/mousedown-in-subframe-scrollbar.html

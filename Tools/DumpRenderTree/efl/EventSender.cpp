@@ -448,6 +448,8 @@ static KeyEventInfo* keyNameFromJSValue(JSStringRef character, EvasKeyModifier m
         return new KeyEventInfo("BackSpace", "BackSpace", modifiers);
     if (charCode == ' ')
         return new KeyEventInfo("space", " ", modifiers);
+    if (charCode == '\x1B')
+        return new KeyEventInfo("Escape", "Escape", modifiers);
 
     return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
 }
