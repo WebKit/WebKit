@@ -735,10 +735,9 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
 
         function didGetNodePosition(nodePosition)
         {
-            if (nodePosition === -1) {
+            if (nodePosition === -1)
                 this.collapse();
-                callback(null);
-            } else
+            else
                 this._populateChildren(nodePosition, null, didPopulateChildren.bind(this, nodePosition));
         }
 
