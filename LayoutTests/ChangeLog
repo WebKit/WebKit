@@ -1,3 +1,14 @@
+2012-05-21  Peter Kasting  <pkasting@google.com>
+
+        [chromium] More accurate test expectations.
+        http://code.google.com/p/chromium/issues/detail?id=89282
+        https://bugs.webkit.org/show_bug.cgi?id=81145
+        https://bugs.webkit.org/show_bug.cgi?id=82297
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Index key paths that yield invalid keys should not fail an add/put

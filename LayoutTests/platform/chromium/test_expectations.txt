@@ -2802,7 +2802,7 @@ BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size
 BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
-BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
+BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = PASS IMAGE
 
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
@@ -3278,10 +3278,6 @@ BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
-BUGWK81145 LION : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT
-BUGWK81145 LION : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT
-BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
-BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 
@@ -3470,10 +3466,10 @@ BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
 
-BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
-BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
-BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT PASS
-BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
+BUGWK82297 MAC : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
+BUGWK82297 MAC : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
+BUGWK82297 MAC : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT PASS
+BUGWK82297 MAC : fast/events/scrollbar-double-click.html = TEXT PASS
 
 // this test appears to consistently fail during the main run but usually passes on a retry.
 BUGWK82404 : plugins/netscape-dom-access-and-reload.html = PASS TEXT
