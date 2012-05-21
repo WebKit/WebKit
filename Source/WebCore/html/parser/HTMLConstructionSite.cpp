@@ -145,7 +145,7 @@ void HTMLConstructionSite::executeQueuedTasks()
 HTMLConstructionSite::HTMLConstructionSite(Document* document, unsigned maximumDOMTreeDepth)
     : m_document(document)
     , m_attachmentRoot(document)
-    , m_fragmentScriptingPermission(FragmentScriptingAllowed)
+    , m_fragmentScriptingPermission(AllowScriptingContent)
     , m_isParsingFragment(false)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
@@ -335,8 +335,15 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
-    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), true, m_isParsingFragment);
-    if (m_fragmentScriptingPermission == FragmentScriptingAllowed)
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#already-started
+    // http://html5.org/specs/dom-parsing.html#dom-range-createcontextualfragment
+    // For createContextualFragment, the specifications say to mark it parser-inserted and already-started and later unmark them.
+    // However, we short circuit that logic to avoid the subtree traversal to find script elements since scripts can never see
+    // those flags or effects thereof.
+    const bool parserInserted = m_fragmentScriptingPermission != AllowScriptingContentAndDoNotMarkAlreadyStarted;
+    const bool alreadyStarted = m_isParsingFragment && parserInserted;
+    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), parserInserted, alreadyStarted);
+    if (m_fragmentScriptingPermission != DisallowScriptingContent)
         element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     attachLater(currentNode(), element);
     m_openElements.push(element.release());

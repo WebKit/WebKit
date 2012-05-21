@@ -1,3 +1,20 @@
+2012-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Using createContextualFragment to insert a <script> does not cause the script to execute
+        https://bugs.webkit.org/show_bug.cgi?id=12234
+
+        Reviewed by Adam Barth.
+
+        Added regressions tests to ensure createContextualFragment doesn't execute script elements
+        immediately as they are parsed and it doesn't mark those script elements as already started.
+
+        The behavior of innerHTML is tested elsewhere and this patch does not affect its behavior.
+
+        * fast/dom/Range/create-contextual-fragment-script-not-ran-expected.txt: Added.
+        * fast/dom/Range/create-contextual-fragment-script-not-ran.html: Added.
+        * fast/dom/Range/create-contextual-fragment-script-unmark-already-started-expected.txt: Added.
+        * fast/dom/Range/create-contextual-fragment-script-unmark-already-started.html: Added.
+
 2012-05-20  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Enable datalist for input type email

@@ -48,7 +48,7 @@ namespace WebCore {
     enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
 
     PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
-    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
+    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = AllowScriptingContent);
     PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document*, const String& markup, unsigned fragmentStart, unsigned fragmentEnd, const String& baseURL, FragmentScriptingPermission);
     PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
     PassRefPtr<DocumentFragment> createFragmentFromSource(const String&, Element*, ExceptionCode&);

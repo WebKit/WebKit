@@ -33,8 +33,8 @@ class DocumentFragment : public ContainerNode {
 public:
     static PassRefPtr<DocumentFragment> create(Document*);
 
-    void parseHTML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
-    bool parseXML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
+    void parseHTML(const String&, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
+    bool parseXML(const String&, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
     
     virtual bool canContainRangeEndPoint() const { return true; }
 

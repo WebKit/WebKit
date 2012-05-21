@@ -55,7 +55,7 @@ public:
         return adoptRef(new NewXMLDocumentParser(fragment, parent, scriptingPermission));
     }
 
-    static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
+    static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = AllowScriptingContent);
 
     void pauseParsing() { m_parserPaused = true; }
     void resumeParsing();

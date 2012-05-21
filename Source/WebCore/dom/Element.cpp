@@ -777,7 +777,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
 
     // If the element is created as result of a paste or drag-n-drop operation
     // we want to remove all the script and event handlers.
-    if (scriptingPermission == FragmentScriptingNotAllowed) {
+    if (scriptingPermission == DisallowScriptingContent) {
         unsigned i = 0;
         while (i < m_attributeData->length()) {
             const QualifiedName& attributeName = m_attributeData->m_attributes[i].name();
@@ -1460,7 +1460,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
         return;
     }
 
-    if (scriptingPermission == FragmentScriptingNotAllowed && (isEventHandlerAttribute(qName) || isAttributeToRemove(qName, value)))
+    if (scriptingPermission == DisallowScriptingContent && (isEventHandlerAttribute(qName) || isAttributeToRemove(qName, value)))
         return;
 
     setAttribute(qName, value);

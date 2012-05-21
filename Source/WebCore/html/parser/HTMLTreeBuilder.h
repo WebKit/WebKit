@@ -206,8 +206,7 @@ private:
         DocumentFragment* m_fragment;
         Element* m_contextElement;
 
-        // FragmentScriptingNotAllowed causes the Parser to remove children
-        // from <script> tags (so javascript doesn't show up in pastes).
+        // DisallowScriptingContent causes the Parser to remove children from <script> tags (so javascript doesn't show up in pastes).
         FragmentScriptingPermission m_scriptingPermission;
     };
 

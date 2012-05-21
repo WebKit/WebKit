@@ -31,8 +31,9 @@ namespace WebCore {
 // FIXME: This enum is poorly named.  It is used to remove script contents when
 // generating DocumentFragments for paste in platform/*/Pasteboard.*.
 enum FragmentScriptingPermission {
-    FragmentScriptingAllowed,
-    FragmentScriptingNotAllowed,
+    DisallowScriptingContent,
+    AllowScriptingContent,
+    AllowScriptingContentAndDoNotMarkAlreadyStarted,
 };
 
 };

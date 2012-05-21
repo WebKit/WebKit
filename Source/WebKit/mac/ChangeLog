@@ -1,3 +1,15 @@
+2012-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Using createContextualFragment to insert a <script> does not cause the script to execute
+        https://bugs.webkit.org/show_bug.cgi?id=12234
+
+        Reviewed by Adam Barth.
+
+        Renamed FragmentScriptingNotAllowed to DisallowScriptingContent.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _documentFragmentWithMarkupString:baseURLString:]):
+
 2012-05-19  Andy Estes  <aestes@apple.com>
 
         Fix build errors found when disabling ENABLE_DRAG_SUPPORT

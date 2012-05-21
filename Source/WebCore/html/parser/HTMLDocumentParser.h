@@ -70,7 +70,7 @@ public:
     // Exposed for HTMLParserScheduler
     void resumeParsingAfterYield();
 
-    static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
+    static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
     
     static bool usePreHTML5ParserQuirks(Document*);
     static unsigned maximumDOMTreeDepth(Document*);
