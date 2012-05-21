@@ -175,21 +175,6 @@
     outline: 1px solid rgb(64, 115, 244);
 }
 
-.webkit-added-line.webkit-line-number {
-    background-color: rgb(170, 255, 170);
-    color: #333;
-}
-
-.webkit-removed-line.webkit-line-number {
-    background-color: rgb(255, 220, 220);
-    text-decoration: line-through;
-}
-
-.webkit-changed-line.webkit-line-number {
-    background-color: rgb(170, 170, 255);
-    color: #333;
-}
-
 .webkit-highlighted-line.webkit-line-content {
     -webkit-animation: "fadeout" 2s 0s;
 }

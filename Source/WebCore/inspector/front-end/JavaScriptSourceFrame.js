@@ -115,7 +115,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             for (var i = 0; i < breakpointLocations.length; ++i)
                 breakpointLocations[i].breakpoint.remove();
             this.setContent(content, false, this._uiSourceCode.mimeType());
-            this._updateBreakpointsAfterLiveEdit(oldContent, content, breakpointLocations);
         }
     },
 
@@ -550,38 +549,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         var rawLocation = this._uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
-    },
-
-    /**
-     * @param {string} oldSource
-     * @param {string} newSource
-     * @param {Array.<Object>} breakpointLocations
-     */
-    _updateBreakpointsAfterLiveEdit: function(oldSource, newSource, breakpointLocations)
-    {
-        // Clear and re-create breakpoints according to text diff.
-        var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
-        for (var i = 0; i < breakpointLocations.length; ++i) {
-            var lineNumber = breakpointLocations[i].uiLocation.lineNumber;
-            var newLineNumber = diff.left[lineNumber].row;
-            if (newLineNumber === undefined) {
-                for (var i = lineNumber - 1; i >= 0; --i) {
-                    if (diff.left[i].row === undefined)
-                        continue;
-                    var shiftedLineNumber = diff.left[i].row + lineNumber - i;
-                    if (shiftedLineNumber < diff.right.length) {
-                        var originalLineNumber = diff.right[shiftedLineNumber].row;
-                        if (originalLineNumber === lineNumber || originalLineNumber === undefined)
-                            newLineNumber = shiftedLineNumber;
-                    }
-                    break;
-                }
-            }
-            if (newLineNumber !== undefined) {
-                var breakpoint = breakpointLocations[i].breakpoint;
-                this._setBreakpoint(newLineNumber, breakpoint.condition(), breakpoint.enabled());
-            }
-        }
     }
 }
 

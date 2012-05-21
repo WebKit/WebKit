@@ -42,8 +42,7 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
 
     var scriptMapping = new WebInspector.DebuggerScriptMapping();
     var providers = scriptMapping.uiSourceCodeProviders();
-    if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled())
-        providers = providers.concat(new WebInspector.StylesUISourceCodeProvider());
+    providers = providers.concat(new WebInspector.StylesUISourceCodeProvider());
     this._uiSourceCodeProvider = uiSourceCodeProviderForTest || new WebInspector.CompositeUISourceCodeProvider(providers);
 
     new WebInspector.PresentationConsoleMessageHelper(this._uiSourceCodeProvider);
@@ -55,7 +54,7 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
-    var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString(WebInspector.experimentsSettings.sourceCodePanel.isEnabled() ? "Source Code Panel" : "Scripts Panel"));
+    var helpSection = WebInspector.shortcutsScreen.section(WebInspector.UIString("Sources Panel"));
     this.debugToolbar = this._createDebugToolbar(helpSection);
 
     const initialDebugSidebarWidth = 225;
@@ -200,9 +199,7 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
 WebInspector.ScriptsPanel.prototype = {
     get toolbarItemLabel()
     {
-        if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled())
-            return WebInspector.UIString("Source Code");
-        return WebInspector.UIString("Scripts");
+        return WebInspector.UIString("Sources");
     },
 
     get statusBarItems()
@@ -1065,7 +1062,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
-        if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled() && target instanceof WebInspector.UISourceCode) {
+        if (target instanceof WebInspector.UISourceCode) {
             contextMenu.appendSeparator();
             contextMenu.appendItem(WebInspector.UIString("Revision history..."), this._showLocalHistory.bind(this, /** @type {WebInspector.UISourceCode} */ target));
             contextMenu.appendSeparator();

@@ -49,8 +49,7 @@ WebInspector.ScriptsNavigator = function()
     this._snippetsView.addEventListener(WebInspector.NavigatorView.Events.FileRenamed, this._fileRenamed, this);
     this._snippetsView.addEventListener(WebInspector.SnippetsNavigatorView.Events.SnippetCreationRequested, this._snippetCreationRequested, this);
 
-    var sourcesTitle = WebInspector.experimentsSettings.sourceCodePanel.isEnabled() ? WebInspector.UIString("Sources") : WebInspector.UIString("Scripts");
-    this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, sourcesTitle, this._scriptsView);
+    this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Sources"), this._scriptsView);
     this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ContentScriptsTab, WebInspector.UIString("Content scripts"), this._contentScriptsView);
     if (WebInspector.experimentsSettings.snippetsSupport.isEnabled())
