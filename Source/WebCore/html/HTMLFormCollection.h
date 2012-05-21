@@ -27,15 +27,16 @@
 
 namespace WebCore {
 
-class HTMLFormElement;
+class FormAssociatedElement;
+class HTMLElement;
+class HTMLImageElement;
 class QualifiedName;
-
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
 class HTMLFormCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLFormCollection> create(HTMLFormElement*);
+    static PassOwnPtr<HTMLFormCollection> create(HTMLElement*);
 
     virtual ~HTMLFormCollection();
 
@@ -45,13 +46,17 @@ public:
     virtual Node* namedItem(const AtomicString& name) const;
 
 private:
-    HTMLFormCollection(HTMLFormElement*);
+    HTMLFormCollection(HTMLElement*);
 
     virtual void updateNameCache() const;
     virtual unsigned calcLength() const;
 
     Element* getNamedItem(const QualifiedName& attrName, const AtomicString& name) const;
     Element* getNamedFormItem(const QualifiedName& attrName, const String& name, int duplicateNumber) const;
+
+    const Vector<FormAssociatedElement*>& formControlElements() const;
+    const Vector<HTMLImageElement*>& formImageElements() const;
+    unsigned numberOfFormControlElements() const;
 
     mutable int currentPos;
 };
