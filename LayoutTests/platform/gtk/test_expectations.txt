@@ -1318,10 +1318,12 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 // Web view needs to be redrawn once more and completely before dumping pixel results
 // otherwise pixel results are incomplete/incorrect
+BUGWK86284 : css2.1/20110323/border-conflict-element-001d.htm = IMAGE PASS
 BUGWK86284 : css3/calc/img-size.html = IMAGE PASS
 BUGWK86284 : css3/calc/simple-composited-mask.html = IMAGE PASS
 BUGWK86284 : css3/viewport-percentage-lengths/viewport-percentage-image-size.html = IMAGE PASS
 BUGWK86284 : fast/css/tab-size.html = IMAGE
+BUGWK86284 : fast/dom/HTMLImageElement/image-with-invalid-border.html = IMAGE PASS
 BUGWK86284 : fast/images/png-suite/test.html = MISSING
 BUGWK86284 : ietestcenter/css3/flexbox/flexbox-align-end-001.htm = IMAGE PASS
 BUGWK86284 : ietestcenter/css3/flexbox/flexbox-flex-001.htm = IMAGE PASS
@@ -1331,6 +1333,7 @@ BUGWK86284 : ietestcenter/css3/flexbox/flexbox-pack-justify-001.htm = IMAGE PASS
 BUGWK86284 : ietestcenter/css3/flexbox/flexbox-pack-start-001.htm = IMAGE PASS
 BUGWK86284 : ietestcenter/css3/namespaces/scope-003.xml = IMAGE PASS
 BUGWK86284 : ietestcenter/css3/namespaces/syntax-018.xml = IMAGE PASS
+BUGWK86284 : svg/animations/animateMotion-additive-2c.svg = IMAGE PASS
 BUGWK86284 : svg/as-image/svg-as-image-with-relative-size.html = IMAGE PASS
 BUGWK86284 : svg/text/add-tspan-position-bug.html = IMAGE
 BUGWK86284 : svg/text/modify-tspan-position-bug.html = IMAGE
@@ -1357,6 +1360,7 @@ BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
 BUGWK86771 SKIP : fast/dom/gc-10.html = FAIL
 
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL
+BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

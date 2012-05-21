@@ -1,3 +1,11 @@
+2012-05-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, add expectations for an SVG test for hit
+        testing on strokes and a few more tests that fail because of repainting
+        issues that fail intermittently.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move setEditingBehavior() from layoutTestController to window.internals
