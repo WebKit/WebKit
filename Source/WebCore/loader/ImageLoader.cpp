@@ -194,15 +194,18 @@ void ImageLoader::updateFromElement()
             errorEventSender().cancelEvent(this);
 
         m_image = newImage;
-        m_hasPendingBeforeLoadEvent = newImage;
+        m_hasPendingBeforeLoadEvent = !m_element->document()->isImageDocument() && newImage;
         m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER) || m_element->document()->isImageDocument())
-                dispatchPendingBeforeLoadEvent();
-            else
-                beforeLoadEventSender().dispatchEventSoon(this);
+            if (!m_element->document()->isImageDocument()) {
+                if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+                    dispatchPendingBeforeLoadEvent();
+                else
+                    beforeLoadEventSender().dispatchEventSoon(this);
+            } else
+                updateRenderer();
 
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire. Ensure this happens after beforeload is
