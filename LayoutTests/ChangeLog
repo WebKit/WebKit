@@ -1,5 +1,13 @@
 2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening after r112112.
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/20110323/c543-txt-decor-000-expected.png: Added.
+        * platform/qt/css2.1/20110323/c543-txt-decor-000-expected.txt: Added.
+
+2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         * platform/qt-5.0-wk1/Skipped: Skip failing tests because of bug86452.

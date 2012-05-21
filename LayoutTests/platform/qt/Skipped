@@ -2388,10 +2388,6 @@ fast/notifications/notifications-without-permission.html
 # https://bugs.webkit.org/show_bug.cgi?id=76379
 fast/js/large-expressions.html
 
-# [Qt] css2.1/20110323/c543-txt-decor-000.html is failing
-# https://bugs.webkit.org/show_bug.cgi?id=82225
-css2.1/20110323/c543-txt-decor-000.html
-
 # This should only be a layer change.
 # http://webkit.org/b/82129
 fast/box-shadow/shadow-buffer-partial.html
