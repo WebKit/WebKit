@@ -63,10 +63,10 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);
 
-        if (ElementShadow* shadow = shadowFor(node)) {
+        for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot()) {
             shadow->setParentTreeScope(m_newScope);
             if (willMoveToNewDocument)
-                moveShadowToNewDocument(shadow, oldDocument, newDocument);
+                moveTreeToNewDocument(shadow, oldDocument, newDocument);
         }
     }
 }
@@ -75,15 +75,9 @@ void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, 
 {
     for (Node* node = root; node; node = node->traverseNextNode(root)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
-        if (ElementShadow* shadow = shadowFor(node))
-            moveShadowToNewDocument(shadow, oldDocument, newDocument);
+        for (ShadowRoot* shadow = node->youngestShadowRoot(); shadow; shadow = shadow->olderShadowRoot())
+            moveTreeToNewDocument(shadow, oldDocument, newDocument);
     }
-}
-
-inline void TreeScopeAdopter::moveShadowToNewDocument(ElementShadow* shadow, Document* oldDocument, Document* newDocument) const
-{
-    for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
-        moveTreeToNewDocument(root, oldDocument, newDocument);
 }
 
 #ifndef NDEBUG

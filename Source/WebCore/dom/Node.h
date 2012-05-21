@@ -223,6 +223,8 @@ public:
 
     Node* shadowAncestorNode() const;
     ShadowRoot* shadowRoot() const;
+    ShadowRoot* youngestShadowRoot() const;
+
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
     bool isInShadowTree() const;

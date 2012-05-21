@@ -28,6 +28,7 @@
 #define ElementShadow_h
 
 #include "ContentDistributor.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
@@ -52,8 +53,6 @@ public:
     ShadowRoot* oldestShadowRoot() const;
 
     void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
-
-    void setParentTreeScope(TreeScope*);
 
     void attach();
     void detach();
@@ -113,6 +112,15 @@ inline Element* ElementShadow::host() const
 {
     ASSERT(!m_shadowRoots.isEmpty());
     return youngestShadowRoot()->host();
+}
+
+inline ShadowRoot* Node::youngestShadowRoot() const
+{
+    if (!this->isElementNode())
+        return 0;
+    if (ElementShadow* shadow = toElement(this)->shadow())
+        return shadow->youngestShadowRoot();
+    return 0;
 }
 
 class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {

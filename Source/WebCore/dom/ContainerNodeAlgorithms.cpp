@@ -61,13 +61,8 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode*
             notifyNodeInsertedIntoTree(toContainerNode(child));
     }
 
-    if (!node->isElementNode())
-        return;
-
-    if (ElementShadow* shadow = toElement(node)->shadow()) {
-        for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
-            notifyNodeInsertedIntoTree(root);
-    }
+    for (ShadowRoot* root = node->youngestShadowRoot(); root; root = root->olderShadowRoot())
+        notifyNodeInsertedIntoTree(root);
 }
 
 void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode* node)

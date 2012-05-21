@@ -68,7 +68,7 @@ PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Docume
 
 static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, ShadowRoot*& decorationRoot, ShadowRoot*& decoratedRoot)
 {
-    ShadowRoot* existingRoot = input->shadow()->youngestShadowRoot();
+    ShadowRoot* existingRoot = input->youngestShadowRoot();
     ShadowRoot* newRoot = 0;
     while (existingRoot->childNodeCount() == 1 && existingRoot->firstChild()->hasTagName(shadowTag)) {
         newRoot = existingRoot;

@@ -110,12 +110,6 @@ void ElementShadow::removeAllShadowRoots()
         shadowHost->attachChildrenLazily();
 }
 
-void ElementShadow::setParentTreeScope(TreeScope* scope)
-{
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->setParentTreeScope(scope);
-}
-
 void ElementShadow::attach()
 {
     // The pool nodes are populated lazily in
