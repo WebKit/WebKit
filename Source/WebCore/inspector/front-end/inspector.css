@@ -2508,7 +2508,7 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 }
 
 #search-results-pane-file-based .search-result {
-    font-size: 12px;
+    font-size: 11px;
     padding: 2px 0 2px 10px;
     word-wrap: normal;
     white-space: pre;
@@ -2517,7 +2517,6 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 #search-results-pane-file-based .search-result:hover {
     background-color: rgba(121, 121, 121, 0.1);
-    -webkit-border-radius: 5px;
 }
 
 #search-results-pane-file-based .search-result .search-result-file-name {
@@ -2542,10 +2541,7 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     text-decoration: underline;
 }
 
-
 #search-results-pane-file-based .search-match {
-    font-family: 'dejavu sans mono', monospace;
-    font-size: 11px;
     word-wrap: normal;
     white-space: pre;
 }
@@ -2561,7 +2557,6 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 #search-results-pane-file-based .search-match:hover {
     background-color: rgba(56, 121, 217, 0.1);
-    -webkit-border-radius: 5px;
 }
 
 #search-results-pane-file-based .search-match .highlighted-match {
@@ -2575,7 +2570,6 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 #search-results-pane-file-based .search-match .search-match-content {
     color: #000;
-    white-space: pre;
 }
 
 .record-cpu-profile-status-bar-item .glyph, .record-profile-status-bar-item .glyph {

@@ -148,7 +148,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(addToWatchLabel, this._scriptsPanel.addToWatch.bind(this._scriptsPanel, selection.toString()));
             var evaluateLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate in console" : "Evaluate in Console");
             contextMenu.appendItem(evaluateLabel, WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
+            contextMenu.appendSeparator();
         }
+        contextMenu.appendApplicableItems(this._uiSourceCode);
     },
 
     afterTextChanged: function(oldRange, newRange)

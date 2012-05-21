@@ -92,8 +92,43 @@ WebInspector.ContextMenu.prototype = {
     {
         if (this._handlers[id])
             this._handlers[id].call(this);
+    },
+
+    /**
+     * @param {Object} target
+     */
+    appendApplicableItems: function(target)
+    {
+        for (var i = 0; i < WebInspector.ContextMenu._providers.length; ++i) {
+            var provider = WebInspector.ContextMenu._providers[i];
+            provider.appendApplicableItems(this, target);
+        }
     }
 }
+
+/**
+ * @interface
+ */
+WebInspector.ContextMenu.Provider = function() { 
+}
+
+WebInspector.ContextMenu.Provider.prototype = {
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    appendApplicableItems: function(contextMenu, target) { }
+}
+
+/**
+ * @param {WebInspector.ContextMenu.Provider} provider
+ */
+WebInspector.ContextMenu.registerProvider = function(provider)
+{
+    WebInspector.ContextMenu._providers.push(provider);
+}
+
+WebInspector.ContextMenu._providers = [];
 
 WebInspector.contextMenuItemSelected = function(id)
 {

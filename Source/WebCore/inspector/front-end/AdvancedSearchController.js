@@ -585,7 +585,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
             
             var searchMatchElement = new TreeElement("", null, false);
             fileTreeElement.appendChild(searchMatchElement);
-            searchMatchElement.listItemElement.className = "search-match";
+            searchMatchElement.listItemElement.className = "search-match source-code";
             searchMatchElement.listItemElement.appendChild(anchor);
         }
     },

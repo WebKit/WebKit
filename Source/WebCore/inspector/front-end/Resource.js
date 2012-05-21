@@ -301,7 +301,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @return {Date}
      */
     get contentTimestamp()
     {
@@ -514,7 +514,8 @@ WebInspector.ResourceRevision.prototype = {
     {
         function revert(content)
         {
-            this._resource.setContent(content, true);
+            if (this._resource._content !== content)
+                this._resource.setContent(content, true);
         }
         this.requestContent(revert.bind(this));
     },

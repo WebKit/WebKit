@@ -154,6 +154,14 @@ WebInspector.StyleSourceFrame.prototype = {
     {
         this._styleSource.contentChanged(this._styleSource.resource().content || "");
         this.setContent(this._styleSource.resource().content, false, "text/stylesheet");
+    },
+
+    populateTextAreaContextMenu: function(contextMenu, lineNumber)
+    {
+        WebInspector.SourceFrame.prototype.populateTextAreaContextMenu.call(this, contextMenu, lineNumber);
+        var scriptsPanel = WebInspector.panels.scripts;
+        contextMenu.appendApplicableItems(this._styleSource);
+        contextMenu.appendSeparator();
     }
 }
 

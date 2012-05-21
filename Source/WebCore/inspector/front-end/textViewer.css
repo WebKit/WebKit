@@ -175,17 +175,17 @@
     outline: 1px solid rgb(64, 115, 244);
 }
 
-.diff-container .webkit-added-line.webkit-line-number {
+.webkit-added-line.webkit-line-number {
     background-color: rgb(170, 255, 170);
     color: #333;
 }
 
-.diff-container .webkit-removed-line.webkit-line-number {
+.webkit-removed-line.webkit-line-number {
     background-color: rgb(255, 220, 220);
     text-decoration: line-through;
 }
 
-.diff-container .webkit-changed-line.webkit-line-number {
+.webkit-changed-line.webkit-line-number {
     background-color: rgb(170, 170, 255);
     color: #333;
 }

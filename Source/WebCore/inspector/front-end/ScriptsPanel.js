@@ -27,6 +27,7 @@
 /**
  * @constructor
  * @implements {WebInspector.TabbedEditorContainerDelegate}
+ * @implements {WebInspector.ContextMenu.Provider}
  * @extends {WebInspector.Panel}
  * @param {WebInspector.CompositeUISourceCodeProvider=} uiSourceCodeProviderForTest
  */
@@ -186,6 +187,7 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
         WebInspector.debuggerModel.enableDebugger();
 
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._uiSourceCodeProvider));
+    WebInspector.ContextMenu.registerProvider(this);
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -230,6 +232,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     willHide: function()
     {
+        WebInspector.Panel.prototype.willHide.call(this);
         WebInspector.closeViewInDrawer();
     },
 
@@ -578,6 +581,7 @@ WebInspector.ScriptsPanel.prototype = {
     _editorSelected: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        WebInspector.RevisionHistoryView.uiSourceCodeSelected(uiSourceCode);
         this._showFile(uiSourceCode);
         this._navigatorController.hideNavigatorOverlay();
     },
@@ -1045,6 +1049,27 @@ WebInspector.ScriptsPanel.prototype = {
     registerUISourceCodeProvider: function(uiSourceCodeProvider)
     {
         this._uiSourceCodeProvider._registerUISourceCodeProvider(uiSourceCodeProvider);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _showLocalHistory: function(uiSourceCode)
+    {
+        WebInspector.RevisionHistoryView.showHistory(uiSourceCode);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    appendApplicableItems: function(contextMenu, target)
+    {
+        if (WebInspector.experimentsSettings.sourceCodePanel.isEnabled() && target instanceof WebInspector.UISourceCode) {
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Revision history..."), this._showLocalHistory.bind(this, /** @type {WebInspector.UISourceCode} */ target));
+            contextMenu.appendSeparator();
+        }
     }
 }
 
