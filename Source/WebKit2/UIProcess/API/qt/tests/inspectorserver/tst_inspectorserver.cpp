@@ -30,8 +30,8 @@
 #include <private/qwebpreferences_p.h>
 
 #define INSPECTOR_SERVER_PORT "23654"
-static const QUrl s_inspectorServerHttpBaseUrl("http://localhost:"INSPECTOR_SERVER_PORT);
-static const QUrl s_inspectorServerWebSocketBaseUrl("ws://localhost:"INSPECTOR_SERVER_PORT);
+static const QUrl s_inspectorServerHttpBaseUrl("http://localhost:" INSPECTOR_SERVER_PORT);
+static const QUrl s_inspectorServerWebSocketBaseUrl("ws://localhost:" INSPECTOR_SERVER_PORT);
 
 class tst_InspectorServer : public QObject {
     Q_OBJECT

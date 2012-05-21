@@ -75,10 +75,10 @@ String SQLiteFileSystem::getFileNameForNewDatabase(const String& dbDir, const St
     String fileName;
     do {
         ++seq;
-        fileName = pathByAppendingComponent(dbDir, String::format("%016"PRIx64".db", seq));
+        fileName = pathByAppendingComponent(dbDir, String::format("%016" PRIx64 ".db", seq));
     } while (fileExists(fileName));
 
-    return String::format("%016"PRIx64".db", seq);
+    return String::format("%016" PRIx64 ".db", seq);
 }
 
 String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)

@@ -1,5 +1,16 @@
 2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        GCC 4.7 and C++11
+        https://bugs.webkit.org/show_bug.cgi?id=86465
+
+        Reviewed by Darin Adler.
+
+        Avoid triggering C++11 string literals.
+
+        * UIProcess/API/qt/tests/inspectorserver/tst_inspectorserver.cpp:
+
+2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         Disambiguate WTF::bind and std::bind from C++11
         https://bugs.webkit.org/show_bug.cgi?id=86465
 

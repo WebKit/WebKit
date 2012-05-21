@@ -34,7 +34,7 @@ using namespace JSC;
 ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition);
 
 JSNodeFilterCondition::JSNodeFilterCondition(JSGlobalData&, NodeFilter* owner, JSValue filter)
-    : m_filter(filter.isObject() ? PassWeak<JSObject>(jsCast<JSObject*>(filter), &m_weakOwner, owner) : 0)
+    : m_filter(filter.isObject() ? PassWeak<JSObject>(jsCast<JSObject*>(filter), &m_weakOwner, owner) : nullptr)
 {
 }
 
