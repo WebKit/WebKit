@@ -107,9 +107,6 @@ double StepRange::clampValue(double value) const
 
 StepRange::DoubleWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
 {
-    ASSERT(isfinite(stepDescription.defaultStep));
-    ASSERT(isfinite(stepDescription.stepScaleFactor));
-
     if (stepString.isEmpty())
         return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
 
