@@ -1,3 +1,11 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating expectations after r117815.
+
+        * platform/chromium-linux-x86/fast/regions: Added.
+        * platform/chromium-linux-x86/fast/regions/region-overflow-auto-overflow-hidden-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/regions/region-overflow-auto-overflow-visible-expected.txt: Added.
+
 2012-05-21  Oliver Hunt  <oliver@apple.com>
 
         Add new test results for mac
