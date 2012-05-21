@@ -1,3 +1,15 @@
+2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Update EFL baselines after r117412 and r117477
+        https://bugs.webkit.org/show_bug.cgi?id=86968
+
+        Unreviewed EFL gardening. Update results after r117412 and r117477.
+
+        * platform/efl/fast/multicol/shadow-breaking-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug10296-1-expected.txt:
+        * platform/efl/test_expectations.txt:
+
 2012-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Using createContextualFragment to insert a <script> does not cause the script to execute
