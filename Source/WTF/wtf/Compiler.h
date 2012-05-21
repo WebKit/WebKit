@@ -32,6 +32,9 @@
 /* COMPILER_SUPPORTS() - whether the compiler being used to build the project supports the given feature. */
 #define COMPILER_SUPPORTS(WTF_COMPILER_FEATURE) (defined WTF_COMPILER_SUPPORTS_##WTF_COMPILER_FEATURE  && WTF_COMPILER_SUPPORTS_##WTF_COMPILER_FEATURE)
 
+/* COMPILER_QUIRK() - whether the compiler being used to build the project requires a given quirk. */
+#define COMPILER_QUIRK(WTF_COMPILER_QUIRK) (defined WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK  && WTF_COMPILER_QUIRK_##WTF_COMPILER_QUIRK)
+
 /* ==== COMPILER() - the compiler being used to build the project ==== */
 
 /* COMPILER(CLANG) - Clang  */
@@ -95,15 +98,22 @@
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
-
-/* Specific compiler features */
-#if !COMPILER(CLANG) && GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1 
-#endif
-
 #else
 /* Define this for !GCC compilers, just so we can write things like GCC_VERSION_AT_LEAST(4, 1, 0). */
 #define GCC_VERSION_AT_LEAST(major, minor, patch) 0
+#endif
+
+/* Specific compiler features */
+#if COMPILER(GCC) && !COMPILER(CLANG)
+#if GCC_VERSION_AT_LEAST(4, 7, 0) && __cplusplus >= 201103L
+#define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
+#define WTF_COMPILER_QUIRK_GCC11_GLOBAL_ISINF_ISNAN 1
+
+#elif GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1 
+#define WTF_COMPILER_QUIRK_GCC11_GLOBAL_ISINF_ISNAN 1
+#endif
+
 #endif
 
 /* COMPILER(MINGW) - MinGW GCC */

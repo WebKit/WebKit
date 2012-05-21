@@ -1,3 +1,17 @@
+2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Colliding isinf/isnan between C99 and C++11 with GCC >=4.6
+        https://bugs.webkit.org/show_bug.cgi?id=59249
+
+        Reviewed by Darin Adler.
+
+        Workaround the isinf and isnan conflict in GCC C++11.
+
+        * wtf/Compiler.h:
+        * wtf/MathExtras.h:
+        (std::wtf_isinf):
+        (std::wtf_isnan):
+
 2012-05-21  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r117501): IconDatabase asserts on startup in synchronousIconForPageURL().
