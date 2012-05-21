@@ -11,7 +11,7 @@ PASS document.getElementById("text").list is document.getElementById("dl1")
 PASS document.getElementById("search").list is document.getElementById("dl1")
 PASS document.getElementById("url").list is document.getElementById("dl1")
 PASS document.getElementById("telephone").list is document.getElementById("dl1")
-FAIL document.getElementById("email").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("email").list is document.getElementById("dl1")
 PASS document.getElementById("datetime").list is document.getElementById("dl1")
 FAIL document.getElementById("date").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("month").list is document.getElementById("dl1")
