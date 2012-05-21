@@ -618,7 +618,6 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 
-#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown") || WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
             WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
             unsigned button = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, buttonKey.get()))));
@@ -671,7 +670,6 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             m_eventSenderProxy->leapForward(time);
             return 0;
         }
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
         if (WKStringIsEqualToUTF8CString(subMessageName, "AddTouchPoint")) {

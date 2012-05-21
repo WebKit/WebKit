@@ -1,3 +1,13 @@
+2012-05-21  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [WK2] Remove a useless #if on Tools/WebKitTestRunner/TestController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87047
+
+        Reviewed by Alexis Menard.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+
 2012-05-21  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up the TestExpectations constructor
