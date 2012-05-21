@@ -1285,9 +1285,10 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     configureTextTrackDisplay();
 }
 
-void HTMLMediaElement::textTrackKindChanged(TextTrack*)
+void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
 {
-    // FIXME(62885): Implement.
+    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->mode() == TextTrack::SHOWING)
+        track->setMode(TextTrack::HIDDEN, ASSERT_NO_EXCEPTION);
 }
 
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 

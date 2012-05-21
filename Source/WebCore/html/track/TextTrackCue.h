@@ -102,6 +102,7 @@ public:
     void setIsActive(bool);
 
     PassRefPtr<HTMLDivElement> getDisplayTree();
+    void removeDisplayTree();
 
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;

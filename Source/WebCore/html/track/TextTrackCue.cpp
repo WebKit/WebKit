@@ -608,6 +608,12 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     return m_displayTree;
 }
 
+void TextTrackCue::removeDisplayTree()
+{
+    if (m_displayTree->parentNode())
+        m_displayTree->remove(ASSERT_NO_EXCEPTION);
+}
+
 std::pair<double, double> TextTrackCue::getPositionCoordinates()
 {
     std::pair<double, double> coordinates;

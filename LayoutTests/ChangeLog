@@ -1,3 +1,14 @@
+2012-05-21  Anna Cavender  <annacc@chromium.org>
+
+        Only render text track cues if kind=captions or kind=subtitles.
+        https://bugs.webkit.org/show_bug.cgi?id=83321
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-kind-expected.txt:
+        * media/track/track-kind.html:
+
+
 2012-05-21  Peter Kasting  <pkasting@google.com>
 
         [chromium] More accurate test expectations.

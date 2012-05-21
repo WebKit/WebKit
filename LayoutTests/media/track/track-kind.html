@@ -4,11 +4,13 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
         <script>
 
             var trackElement;
             function setKind(value)
             {
+                consoleWrite("<b>++ '" + value + "'</b>");
                 consoleWrite("<b> set via DOM</b>");
                 run("trackElement.removeAttribute('kind')");
                 run("trackElement.kind = '" + value + "'");
@@ -21,17 +23,13 @@
                 testExpected("trackElement.kind", value);
                 testExpected("trackElement.track.kind", value);
                 testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem ipsum dolor sit amet, ");
                 consoleWrite("");
 
             }
 
-            function start()
+            function testKind()
             {
-                findMediaElement();
-                consoleWrite("");
-
-                trackElement = document.getElementById('track_1');
-
                 consoleWrite("<b>++ Test default attribute value</b>");
                 testExpected("trackElement.getAttribute('kind')", null);
                 testExpected("trackElement.kind", "subtitles");
@@ -55,30 +53,35 @@
                 consoleWrite("");
 
                 consoleWrite("<b>*** Set to known values</b>");
-                consoleWrite("<b>++ 'subtitles'</b>");
                 setKind("subtitles");
 
-                consoleWrite("<b>++ 'captions'</b>");
                 setKind("captions");
 
-                consoleWrite("<b>++ 'descriptions'</b>");
                 setKind("descriptions");
 
-                consoleWrite("<b>++ 'chapters'</b>");
                 setKind("chapters");
 
-                consoleWrite("<b>++ 'metadata'</b>");
                 setKind("metadata");
 
                 endTest();
             }
+            
+            function loaded()
+            {
+                findMediaElement();
+                trackElement = document.getElementById('track_1');
+
+                waitForEventsAndCall([[video, 'canplaythrough'], [trackElement, 'load']], testKind);
+
+                video.src = findMediaFile('video', '../content/counting');
+            }
 
         </script>
     </head>
-    <body onload="start()">
-        <p>Tests that the 'addtrack' event is fired when a TextTrack is created.</p>
+    <body onload="loaded()">
+        <p>Tests that the 'kind' attribute is set properly and that cues are only visible when 'kind' is set to 'captions' or 'subtitles'.</p>
         <video>
-            <track id=track_1>
+            <track id=track_1 src="captions-webvtt/metadata.vtt" default>
         </video>
     </body>
 </html>

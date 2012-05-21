@@ -1284,6 +1284,9 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         TextTrackCue* cue = activeCues[i].data();
 
         ASSERT(cue->isActive());
+        if (cue->track()->kind() != TextTrack::captionsKeyword() && cue->track()->kind() != TextTrack::subtitlesKeyword())
+            continue;
+
         if (!cue->track() || cue->track()->mode() != TextTrack::SHOWING)
             continue;
 
