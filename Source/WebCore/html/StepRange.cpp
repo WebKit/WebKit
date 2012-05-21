@@ -41,7 +41,6 @@ StepRange::StepRange()
     , m_stepDecimalPlaces(0)
     , m_hasStep(false)
 {
-    ASSERT_NOT_REACHED();
 }
 
 StepRange::StepRange(const StepRange& stepRange)
