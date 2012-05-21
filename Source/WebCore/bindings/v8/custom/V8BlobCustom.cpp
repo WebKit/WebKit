@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "Blob constructor associated document is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "Blob constructor associated document is unavailable", args.GetIsolate());
 
     if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         v8::TryCatch tryCatchEndings;
         bool containsEndings = dictionary.get("endings", endings);
         if (tryCatchEndings.HasCaught())
-            return throwError(tryCatchEndings.Exception());
+            return throwError(tryCatchEndings.Exception(), args.GetIsolate());
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
@@ -101,7 +101,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         v8::TryCatch tryCatchType;
         dictionary.get("type", type);
         if (tryCatchType.HasCaught())
-            return throwError(tryCatchType.Exception());
+            return throwError(tryCatchType.Exception(), args.GetIsolate());
     }
 
     ASSERT(endings == "transparent" || endings == "native");

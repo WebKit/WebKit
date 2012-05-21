@@ -51,11 +51,11 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "AudioContext constructor associated frame is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "AudioContext constructor associated frame is unavailable", args.GetIsolate());
 
     Document* document = frame->document();
     if (!document)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "AudioContext constructor associated document is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "AudioContext constructor associated document is unavailable", args.GetIsolate());
 
     RefPtr<AudioContext> audioContext;
     
@@ -64,9 +64,9 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
         ExceptionCode ec = 0;
         audioContext = AudioContext::create(document, ec);
         if (ec)
-            return throwError(ec);
+            return throwError(ec, args.GetIsolate());
         if (!audioContext.get())
-            return V8Proxy::throwError(V8Proxy::SyntaxError, "audio resources unavailable for AudioContext construction");
+            return V8Proxy::throwError(V8Proxy::SyntaxError, "audio resources unavailable for AudioContext construction", args.GetIsolate());
     } else {
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
@@ -77,24 +77,24 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
 
         int32_t numberOfChannels = toInt32(args[0], ok);
         if (!ok || numberOfChannels <= 0 || numberOfChannels > 10)
-            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid number of channels");
+            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid number of channels", args.GetIsolate());
 
         int32_t numberOfFrames = toInt32(args[1], ok);
         if (!ok || numberOfFrames <= 0)
-            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid number of frames");
+            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid number of frames", args.GetIsolate());
 
         float sampleRate = toFloat(args[2]);
         if (sampleRate <= 0)
-            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid sample rate");
+            return V8Proxy::throwError(V8Proxy::SyntaxError, "Invalid sample rate", args.GetIsolate());
 
         ExceptionCode ec = 0;
         audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
         if (ec)
-            return throwError(ec);
+            return throwError(ec, args.GetIsolate());
     }
 
     if (!audioContext.get())
-        return V8Proxy::throwError(V8Proxy::SyntaxError, "Error creating AudioContext");
+        return V8Proxy::throwError(V8Proxy::SyntaxError, "Error creating AudioContext", args.GetIsolate());
     
     // Transform the holder into a wrapper object for the audio context.
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, audioContext.get());

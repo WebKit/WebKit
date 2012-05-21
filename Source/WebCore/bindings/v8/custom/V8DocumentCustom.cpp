@@ -76,7 +76,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 
     RefPtr<XPathNSResolver> resolver = V8DOMWrapper::getXPathNSResolver(args[2]);
     if (!resolver && !args[2]->IsNull() && !args[2]->IsUndefined())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     int type = toInt32(args[3]);
     RefPtr<XPathResult> inResult;
@@ -86,10 +86,10 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     v8::TryCatch exceptionCatcher;
     RefPtr<XPathResult> result = document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec);
     if (exceptionCatcher.HasCaught())
-        return throwError(exceptionCatcher.Exception());
+        return throwError(exceptionCatcher.Exception(), args.GetIsolate());
 
     if (ec)
-        return throwError(ec);
+        return throwError(ec, args.GetIsolate());
 
     return toV8(result.release(), args.GetIsolate());
 }
