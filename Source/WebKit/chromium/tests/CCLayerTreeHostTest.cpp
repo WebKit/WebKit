@@ -49,8 +49,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/Platform.h>
+#include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -80,6 +82,7 @@ public:
     virtual void layout() { }
     virtual void didRecreateContext(bool succeded) { }
     virtual void didCommitAndDrawFrame() { }
+    virtual void scheduleComposite() { }
 
     // Implementation of CCLayerAnimationDelegate
     virtual void notifyAnimationStarted(double time) { }
@@ -284,6 +287,7 @@ public:
 
     virtual void scheduleComposite() OVERRIDE
     {
+        m_testHooks->scheduleComposite();
     }
 
 private:
@@ -368,9 +372,18 @@ protected:
         : m_beginning(false)
         , m_endWhenBeginReturns(false)
         , m_timedOut(false)
-        , m_finished(false) { }
+        , m_finished(false)
+        , m_scheduled(false) { }
 
     void doBeginTest();
+
+    virtual void scheduleComposite()
+    {
+        if (m_scheduled || m_finished)
+            return;
+        m_scheduled = true;
+        callOnMainThread(&CCLayerTreeHostTest::dispatchComposite, this);
+    }
 
     static void onEndTest(void* self)
     {
@@ -488,6 +501,14 @@ protected:
             test->m_layerTreeHost->setVisible(false);
     }
 
+    static void dispatchComposite(void* self)
+    {
+        CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+        test->m_scheduled = false;
+        if (test->m_layerTreeHost && !test->m_finished)
+            test->m_layerTreeHost->composite();
+    }
+
     class TimeoutTask : public WebThread::Task {
     public:
         explicit TimeoutTask(CCLayerTreeHostTest* test)
@@ -576,6 +597,7 @@ private:
     bool m_endWhenBeginReturns;
     bool m_timedOut;
     bool m_finished;
+    bool m_scheduled;
 
     OwnPtr<WebThread> m_webThread;
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
@@ -1215,7 +1237,10 @@ public:
 
     virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
     {
-        const CCFloatAnimationCurve* curve = m_layerTreeHost->rootLayer()->layerAnimationController()->getActiveAnimation(0, CCActiveAnimation::Opacity)->curve()->toFloatAnimationCurve();
+        const CCActiveAnimation* animation = m_layerTreeHost->rootLayer()->layerAnimationController()->getActiveAnimation(0, CCActiveAnimation::Opacity);
+        if (!animation)
+            return;
+        const CCFloatAnimationCurve* curve = animation->curve()->toFloatAnimationCurve();
         float startOpacity = curve->getValue(0);
         float endOpacity = curve->getValue(curve->duration());
         float linearlyInterpolatedOpacity = 0.25 * endOpacity + 0.75 * startOpacity;
@@ -2643,5 +2668,56 @@ TEST_F(CCLayerTreeHostTestFractionalScroll, runMultiThread)
 {
     runTestThreaded();
 }
+
+class CCLayerTreeHostTestFinishAllRendering : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestFinishAllRendering()
+        : m_once(false)
+        , m_mutex()
+        , m_drawCount(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setNeedsRedraw();
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        if (m_once)
+            return;
+        m_once = true;
+        m_layerTreeHost->setNeedsRedraw();
+        m_layerTreeHost->acquireLayerTextures();
+        {
+            Locker<Mutex> lock(m_mutex);
+            m_drawCount = 0;
+        }
+        m_layerTreeHost->finishAllRendering();
+        {
+            Locker<Mutex> lock(m_mutex);
+            EXPECT_EQ(0, m_drawCount);
+        }
+        endTest();
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        Locker<Mutex> lock(m_mutex);
+        ++m_drawCount;
+    }
+
+    virtual void afterTest()
+    {
+    }
+private:
+
+    bool m_once;
+    Mutex m_mutex;
+    int m_drawCount;
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestFinishAllRendering)
 
 } // namespace

@@ -81,7 +81,6 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_mainThreadProxy(CCScopedThreadProxy::create(CCProxy::mainThread()))
     , m_beginFrameCompletionEventOnImplThread(0)
     , m_readbackRequestOnImplThread(0)
-    , m_finishAllRenderingCompletionEventOnImplThread(0)
     , m_commitCompletionEventOnImplThread(0)
     , m_textureAcquisitionCompletionEventOnImplThread(0)
     , m_nextFrameIsNewlyCommittedFrameOnImplThread(false)
@@ -431,10 +430,8 @@ void CCThreadProxy::finishAllRenderingOnImplThread(CCCompletionEvent* completion
 {
     TRACE_EVENT("CCThreadProxy::finishAllRenderingOnImplThread", this, 0);
     ASSERT(isImplThread());
-    ASSERT(!m_finishAllRenderingCompletionEventOnImplThread);
-    m_finishAllRenderingCompletionEventOnImplThread = completion;
-
-    m_schedulerOnImplThread->setNeedsForcedRedraw();
+    m_layerTreeHostImpl->finishAllRendering();
+    completion->signal();
 }
 
 void CCThreadProxy::forceBeginFrameOnImplThread(CCCompletionEvent* completion)
@@ -664,13 +661,6 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
 
     if (drawFrame)
         result.didSwap = m_layerTreeHostImpl->swapBuffers();
-
-    // Process any finish request
-    if (m_finishAllRenderingCompletionEventOnImplThread) {
-        m_layerTreeHostImpl->finishAllRendering();
-        m_finishAllRenderingCompletionEventOnImplThread->signal();
-        m_finishAllRenderingCompletionEventOnImplThread = 0;
-    }
 
     // Tell the main thread that the the newly-commited frame was drawn.
     if (m_nextFrameIsNewlyCommittedFrameOnImplThread) {
