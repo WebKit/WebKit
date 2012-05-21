@@ -1,3 +1,16 @@
+2012-05-21  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r117501): IconDatabase asserts on startup in synchronousIconForPageURL().
+        <http://webkit.org/b/86935>
+        <rdar://problem/11480012>
+
+        Reviewed by Anders Carlsson.
+
+        Added a swap() to HashCountedSet.
+
+        * wtf/HashCountedSet.h:
+        (HashCountedSet::swap):
+
 2012-05-16  Geoffrey Garen  <ggaren@apple.com>
 
         This is not a joke: 3.7X speedup from removing a call to sleep
