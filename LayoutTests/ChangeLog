@@ -1,3 +1,15 @@
+2012-05-21  Luke Macpherson  <macpherson@chromium.org>
+
+        Add additional test cases for CSS variables.
+        https://bugs.webkit.org/show_bug.cgi?id=86987
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/variables/border-width-expected.html: Added.
+        * fast/css/variables/border-width.html: Added.
+        * fast/css/variables/transform-test-expected.html: Added.
+        * fast/css/variables/transform-test.html: Added.
+
 2012-05-21  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] REGRESSION: Assertion failure on svg/custom/acid3-test-77.html
