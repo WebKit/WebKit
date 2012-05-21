@@ -579,7 +579,7 @@ WONTFIX SKIP : plugins/private-browsing-mode.html = FAIL
 WONTFIX SKIP : plugins/private-browsing-mode-2.html = TEXT
 WONTFIX SKIP : storage/domstorage/localstorage/private-browsing-affects-storage.html = FAIL
 WONTFIX SKIP : storage/domstorage/sessionstorage/private-browsing-affects-storage.html = FAIL
-WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
+WONTFIX SKIP : storage/websql/private-browsing-noread-nowrite.html = PASS
 
 // We don't let anyone set status in the browser.
 WONTFIX SKIP : plugins/set-status.html = TEXT
@@ -1092,7 +1092,7 @@ BUGCR33211 WIN DEBUG : http/tests/loading/deleted-host-in-resource-load-delegate
 BUGCR33211 LINUX MAC : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT
 
 // HTML5 DB layout tests
-BUGCR27697 SKIP : storage/hash-change-with-xhr.html = PASS
+BUGCR27697 SKIP : storage/websql/hash-change-with-xhr.html = PASS
 
 // Implementation of Date/time input types are incomplete and
 // ENABLE_INPUT_TYPE_* flags are not enabled.
@@ -1865,7 +1865,7 @@ BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch
 // Due to the differences in handling text encodings in KURL and googleurl.
 BUGWK20559 : http/tests/navigation/anchor-frames-gbk.html = TEXT
 
-BUGWK36666 : storage/open-database-over-quota.html = TEXT
+BUGWK36666 : storage/websql/open-database-over-quota.html = TEXT
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
@@ -2111,7 +2111,7 @@ BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL PASS
 // Failing after http://trac.webkit.org/changeset/65665/
 
 // new or failing since WebKit rev. 65740:65800
-BUGCR53073 SKIP DEBUG : storage/change-version.html = PASS CRASH
+BUGCR53073 SKIP DEBUG : storage/websql/change-version.html = PASS CRASH
 
 // r66144 added tests to test user scripts on special documents, and Linux can't
 // pass them because they rely on QuickTime being installed. We wontfix these
@@ -3504,9 +3504,9 @@ BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
 BUGWK82669 LINUX WIN LEOPARD : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
-BUGWK82717 SNOWLEOPARD : storage/quota-tracking.html = PASS TIMEOUT
-BUGWK82717 SNOWLEOPARD : storage/executesql-accepts-only-one-statement.html = PASS TIMEOUT
-BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
+BUGWK82717 SNOWLEOPARD : storage/websql/quota-tracking.html = PASS TIMEOUT
+BUGWK82717 SNOWLEOPARD : storage/websql/executesql-accepts-only-one-statement.html = PASS TIMEOUT
+BUGWK82717 SNOWLEOPARD : storage/websql/database-lock-after-reload.html = PASS TIMEOUT
 
 // These tests depends on Worker behavior that is broken in DRT
 BUGWK82776 SKIP : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
@@ -3668,8 +3668,8 @@ BUGWK83076 SNOWLEOPARD RELEASE : http/tests/loading/307-after-303-after-post.htm
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text-custom-font-load-crash.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : storage/read-and-write-transactions-dont-run-together.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : storage/read-transactions-running-concurrently.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : storage/websql/read-and-write-transactions-dont-run-together.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : storage/websql/read-transactions-running-concurrently.html = TIMEOUT PASS
 
 // broken in/after r115646
 BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT

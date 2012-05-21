@@ -1,3 +1,186 @@
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
+        Move WebSQL tests in LayoutTests/storage to websql directory
+        https://bugs.webkit.org/show_bug.cgi?id=86138
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/workers/storage/resources/database-worker-controller.js:
+        (runTest):
+        * platform/chromium-mac/storage/websql/statement-error-callback-expected.txt: Renamed from LayoutTests/platform/chromium-mac/storage/statement-error-callback-expected.txt.
+        * platform/chromium-mac/storage/websql/transaction-callback-exception-crash-expected.txt: Renamed from LayoutTests/platform/chromium-mac/storage/transaction-callback-exception-crash-expected.txt.
+        * platform/chromium-mac/storage/websql/transaction-error-callback-expected.txt: Renamed from LayoutTests/platform/chromium-mac/storage/transaction-error-callback-expected.txt.
+        * platform/chromium-win/storage/websql/statement-error-callback-expected.txt: Renamed from LayoutTests/platform/chromium-win/storage/statement-error-callback-expected.txt.
+        * platform/chromium-win/storage/websql/transaction-callback-exception-crash-expected.txt: Renamed from LayoutTests/platform/chromium-win/storage/transaction-callback-exception-crash-expected.txt.
+        * platform/chromium-win/storage/websql/transaction-error-callback-expected.txt: Renamed from LayoutTests/platform/chromium-win/storage/transaction-error-callback-expected.txt.
+        * platform/chromium/storage/websql/quota-tracking-expected.txt: Renamed from LayoutTests/platform/chromium/storage/quota-tracking-expected.txt.
+        * platform/chromium/storage/websql/sql-error-codes-expected.txt: Renamed from LayoutTests/platform/chromium/storage/sql-error-codes-expected.txt.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * storage/websql/change-version-expected.txt: Renamed from LayoutTests/storage/change-version-expected.txt.
+        * storage/websql/change-version-handle-reuse-expected.txt: Renamed from LayoutTests/storage/change-version-handle-reuse-expected.txt.
+        * storage/websql/change-version-handle-reuse.html: Renamed from LayoutTests/storage/change-version-handle-reuse.html.
+        * storage/websql/change-version-handle-reuse.js: Renamed from LayoutTests/storage/change-version-handle-reuse.js.
+        (finishTest):
+        (runTest.catch):
+        (runTest):
+        (runTest2.catch):
+        (runTest2):
+        * storage/websql/change-version-no-crash-on-preflight-failure-expected.txt: Renamed from LayoutTests/storage/change-version-no-crash-on-preflight-failure-expected.txt.
+        * storage/websql/change-version-no-crash-on-preflight-failure.html: Renamed from LayoutTests/storage/change-version-no-crash-on-preflight-failure.html.
+        * storage/websql/change-version.html: Renamed from LayoutTests/storage/change-version.html.
+        * storage/websql/close-during-stress-test-expected.txt: Renamed from LayoutTests/storage/close-during-stress-test-expected.txt.
+        * storage/websql/close-during-stress-test.html: Renamed from LayoutTests/storage/close-during-stress-test.html.
+        * storage/websql/database-lock-after-reload-expected.txt: Renamed from LayoutTests/storage/database-lock-after-reload-expected.txt.
+        * storage/websql/database-lock-after-reload.html: Renamed from LayoutTests/storage/database-lock-after-reload.html.
+        * storage/websql/empty-statement-expected.txt: Renamed from LayoutTests/storage/empty-statement-expected.txt.
+        * storage/websql/empty-statement.html: Renamed from LayoutTests/storage/empty-statement.html.
+        * storage/websql/execute-sql-args-expected.txt: Renamed from LayoutTests/storage/execute-sql-args-expected.txt.
+        * storage/websql/execute-sql-args.html: Renamed from LayoutTests/storage/execute-sql-args.html.
+        * storage/websql/execute-sql-args.js: Renamed from LayoutTests/storage/execute-sql-args.js.
+        (throwOnToStringObject.toString):
+        (var):
+        (tryExecuteSql):
+        (runTransactionTest):
+        (runTransactionTests):
+        (runTest):
+        * storage/websql/executesql-accepts-only-one-statement-expected.txt: Renamed from LayoutTests/storage/executesql-accepts-only-one-statement-expected.txt.
+        * storage/websql/executesql-accepts-only-one-statement.html: Renamed from LayoutTests/storage/executesql-accepts-only-one-statement.html.
+        * storage/websql/hash-change-with-xhr-expected.txt: Renamed from LayoutTests/storage/hash-change-with-xhr-expected.txt.
+        * storage/websql/hash-change-with-xhr.html: Renamed from LayoutTests/storage/hash-change-with-xhr.html.
+        * storage/websql/hash-change-with-xhr.js: Renamed from LayoutTests/storage/hash-change-with-xhr.js.
+        (stopIntervals):
+        (stopTest):
+        (updateDatabase):
+        (checkForSuccess):
+        (errorHandler):
+        (sendXhr):
+        (invokeBack):
+        (runTest):
+        (runTestsInner):
+        * storage/websql/multiple-databases-garbage-collection-expected.txt: Renamed from LayoutTests/storage/multiple-databases-garbage-collection-expected.txt.
+        * storage/websql/multiple-databases-garbage-collection.html: Renamed from LayoutTests/storage/multiple-databases-garbage-collection.html.
+        * storage/websql/multiple-databases-garbage-collection.js: Renamed from LayoutTests/storage/multiple-databases-garbage-collection.js.
+        (GC):
+        (checkCompletion):
+        (runTest):
+        * storage/websql/multiple-transactions-expected.txt: Renamed from LayoutTests/storage/multiple-transactions-expected.txt.
+        * storage/websql/multiple-transactions-on-different-handles-expected.txt: Renamed from LayoutTests/storage/multiple-transactions-on-different-handles-expected.txt.
+        * storage/websql/multiple-transactions-on-different-handles.html: Renamed from LayoutTests/storage/multiple-transactions-on-different-handles.html.
+        * storage/websql/multiple-transactions-on-different-handles.js: Renamed from LayoutTests/storage/multiple-transactions-on-different-handles.js.
+        (checkCompletion):
+        (openTestDatabase):
+        (statementSuccessCallback):
+        (statementErrorCallback):
+        (runTransaction):
+        (runTest):
+        * storage/websql/multiple-transactions.html: Renamed from LayoutTests/storage/multiple-transactions.html.
+        * storage/websql/multiple-transactions.js: Renamed from LayoutTests/storage/multiple-transactions.js.
+        (checkCompletion):
+        (runTest.db):
+        (runTest):
+        * storage/websql/null-callbacks-expected.txt: Renamed from LayoutTests/storage/null-callbacks-expected.txt.
+        * storage/websql/null-callbacks.html: Renamed from LayoutTests/storage/null-callbacks.html.
+        * storage/websql/open-database-creation-callback-expected.txt: Renamed from LayoutTests/storage/open-database-creation-callback-expected.txt.
+        * storage/websql/open-database-creation-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/open-database-creation-callback-isolated-world-expected.txt.
+        * storage/websql/open-database-creation-callback-isolated-world.html: Renamed from LayoutTests/storage/open-database-creation-callback-isolated-world.html.
+        * storage/websql/open-database-creation-callback.html: Renamed from LayoutTests/storage/open-database-creation-callback.html.
+        * storage/websql/open-database-empty-version-expected.txt: Renamed from LayoutTests/storage/open-database-empty-version-expected.txt.
+        * storage/websql/open-database-empty-version.html: Renamed from LayoutTests/storage/open-database-empty-version.html.
+        * storage/websql/open-database-over-quota-expected.txt: Renamed from LayoutTests/storage/open-database-over-quota-expected.txt.
+        * storage/websql/open-database-over-quota.html: Renamed from LayoutTests/storage/open-database-over-quota.html.
+        * storage/websql/open-database-set-empty-version-expected.txt: Renamed from LayoutTests/storage/open-database-set-empty-version-expected.txt.
+        * storage/websql/open-database-set-empty-version.html: Renamed from LayoutTests/storage/open-database-set-empty-version.html.
+        * storage/websql/open-database-while-transaction-in-progress-expected.txt: Renamed from LayoutTests/storage/open-database-while-transaction-in-progress-expected.txt.
+        * storage/websql/open-database-while-transaction-in-progress.html: Renamed from LayoutTests/storage/open-database-while-transaction-in-progress.html.
+        * storage/websql/open-database-while-transaction-in-progress.js: Renamed from LayoutTests/storage/open-database-while-transaction-in-progress.js.
+        (openTestDatabase):
+        (runTest.db1.transaction):
+        (runTest):
+        * storage/websql/private-browsing-noread-nowrite-expected.txt: Renamed from LayoutTests/storage/private-browsing-noread-nowrite-expected.txt.
+        * storage/websql/private-browsing-noread-nowrite.html: Renamed from LayoutTests/storage/private-browsing-noread-nowrite.html.
+        * storage/websql/quota-tracking-expected.txt: Renamed from LayoutTests/storage/quota-tracking-expected.txt.
+        * storage/websql/quota-tracking.html: Renamed from LayoutTests/storage/quota-tracking.html.
+        * storage/websql/read-and-write-transactions-dont-run-together-expected.txt: Renamed from LayoutTests/storage/read-and-write-transactions-dont-run-together-expected.txt.
+        * storage/websql/read-and-write-transactions-dont-run-together.html: Renamed from LayoutTests/storage/read-and-write-transactions-dont-run-together.html.
+        * storage/websql/read-and-write-transactions-dont-run-together.js: Renamed from LayoutTests/storage/read-and-write-transactions-dont-run-together.js.
+        (terminateTest):
+        (openTestDatabase):
+        (runTransaction):
+        (runTest):
+        * storage/websql/read-transactions-running-concurrently-expected.txt: Renamed from LayoutTests/storage/read-transactions-running-concurrently-expected.txt.
+        * storage/websql/read-transactions-running-concurrently.html: Renamed from LayoutTests/storage/read-transactions-running-concurrently.html.
+        * storage/websql/resources/database-common.js: Renamed from LayoutTests/storage/resources/database-common.js.
+        (openDatabaseWithSuffix):
+        (log):
+        (setLocationHash):
+        (setupAndRunTest):
+        * storage/websql/resources/database-lock-after-reload-2.html: Renamed from LayoutTests/storage/resources/database-lock-after-reload-2.html.
+        * storage/websql/resources/stress-frame.html: Renamed from LayoutTests/storage/resources/stress-frame.html.
+        * storage/websql/sql-data-types-expected.txt: Renamed from LayoutTests/storage/sql-data-types-expected.txt.
+        * storage/websql/sql-data-types.html: Renamed from LayoutTests/storage/sql-data-types.html.
+        * storage/websql/sql-data-types.js: Renamed from LayoutTests/storage/sql-data-types.js.
+        (writeMessageToLog):
+        (notifyDone):
+        (shouldBeSameTypeAndValue):
+        (testDBValues):
+        (fetchDBValuesStmt):
+        (insertTestValuesStmt):
+        (createTestDBStmt):
+        (runTest):
+        * storage/websql/sql-error-codes-expected.txt: Renamed from LayoutTests/storage/sql-error-codes-expected.txt.
+        * storage/websql/sql-error-codes.html: Renamed from LayoutTests/storage/sql-error-codes.html.
+        * storage/websql/sql-error-codes.js: Renamed from LayoutTests/storage/sql-error-codes.js.
+        (finishTest):
+        (transactionErrorCallback):
+        (transactionSuccessCallback):
+        (testTransaction):
+        (testTransactionThrowsException):
+        (testTransactionFailureBecauseOfStatementFailure):
+        (testInvalidStatement):
+        (testIncorrectNumberOfBindParameters):
+        (testBindParameterOfWrongType.badString.toString):
+        (testBindParameterOfWrongType):
+        (testQuotaExceeded):
+        (testVersionMismatch.db.transaction):
+        (testVersionMismatch):
+        (runTest):
+        * storage/websql/statement-error-callback-expected.txt: Renamed from LayoutTests/storage/statement-error-callback-expected.txt.
+        * storage/websql/statement-error-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/statement-error-callback-isolated-world-expected.txt.
+        * storage/websql/statement-error-callback-isolated-world.html: Renamed from LayoutTests/storage/statement-error-callback-isolated-world.html.
+        * storage/websql/statement-error-callback.html: Renamed from LayoutTests/storage/statement-error-callback.html.
+        * storage/websql/statement-success-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/statement-success-callback-isolated-world-expected.txt.
+        * storage/websql/statement-success-callback-isolated-world.html: Renamed from LayoutTests/storage/statement-success-callback-isolated-world.html.
+        * storage/websql/success-callback-expected.txt: Renamed from LayoutTests/storage/success-callback-expected.txt.
+        * storage/websql/success-callback.html: Renamed from LayoutTests/storage/success-callback.html.
+        * storage/websql/test-authorizer-expected.txt: Renamed from LayoutTests/storage/test-authorizer-expected.txt.
+        * storage/websql/test-authorizer.html: Renamed from LayoutTests/storage/test-authorizer.html.
+        * storage/websql/test-authorizer.js: Renamed from LayoutTests/storage/test-authorizer.js.
+        (terminateTest):
+        (logAndTerminateTest):
+        (cleanup):
+        (statementSuccessCallback):
+        (statementErrorCallback):
+        (executeStatement):
+        (createTableCallback):
+        (createStatementsCallback):
+        (otherStatementsCallback):
+        (dropStatementsCallback):
+        (testReadWriteMode):
+        (testReadOnlyMode.db):
+        (testReadOnlyMode):
+        (runTest):
+        * storage/websql/transaction-callback-exception-crash-expected.txt: Renamed from LayoutTests/storage/transaction-callback-exception-crash-expected.txt.
+        * storage/websql/transaction-callback-exception-crash.html: Renamed from LayoutTests/storage/transaction-callback-exception-crash.html.
+        * storage/websql/transaction-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/transaction-callback-isolated-world-expected.txt.
+        * storage/websql/transaction-callback-isolated-world.html: Renamed from LayoutTests/storage/transaction-callback-isolated-world.html.
+        * storage/websql/transaction-error-callback-expected.txt: Renamed from LayoutTests/storage/transaction-error-callback-expected.txt.
+        * storage/websql/transaction-error-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/transaction-error-callback-isolated-world-expected.txt.
+        * storage/websql/transaction-error-callback-isolated-world.html: Renamed from LayoutTests/storage/transaction-error-callback-isolated-world.html.
+        * storage/websql/transaction-error-callback.html: Renamed from LayoutTests/storage/transaction-error-callback.html.
+        * storage/websql/transaction-success-callback-isolated-world-expected.txt: Renamed from LayoutTests/storage/transaction-success-callback-isolated-world-expected.txt.
+        * storage/websql/transaction-success-callback-isolated-world.html: Renamed from LayoutTests/storage/transaction-success-callback-isolated-world.html.
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org> and Emil A Eklund <eae@chromium.org>
 
         Enable SUBPIXEL_LAYOUT feature flag on Chromium

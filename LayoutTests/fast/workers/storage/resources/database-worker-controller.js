@@ -33,7 +33,7 @@ function runTest(testFile)
         layoutTestController.waitUntilDone();
     }
     document.getElementById("console").innerText = "";
-    databaseWorker.postMessage("importScripts:../../../storage/" + testFile);
+    databaseWorker.postMessage("importScripts:../../../storage/websql/" + testFile);
     databaseWorker.postMessage("runTest");
 }
 
