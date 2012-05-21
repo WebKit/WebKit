@@ -202,9 +202,9 @@ ScriptExecutionContext* getScriptExecutionContext()
     return 0;
 }
 
-void throwTypeMismatchException()
+void throwTypeMismatchException(v8::Isolate* isolate)
 {
-    V8Proxy::throwError(V8Proxy::GeneralError, "TYPE_MISMATCH_ERR: DOM Exception 17");
+    V8Proxy::throwError(V8Proxy::GeneralError, "TYPE_MISMATCH_ERR: DOM Exception 17", isolate);
 }
 
 } // namespace WebCore

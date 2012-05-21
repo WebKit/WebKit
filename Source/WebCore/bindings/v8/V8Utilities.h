@@ -60,7 +60,7 @@ namespace WebCore {
 
     ScriptExecutionContext* getScriptExecutionContext();
 
-    void throwTypeMismatchException();
+    void throwTypeMismatchException(v8::Isolate*);
 
     enum CallbackAllowedValueFlag {
         CallbackAllowUndefined = 1,
@@ -90,7 +90,7 @@ namespace WebCore {
 
     // 'FunctionOnly' is assumed for the created callback.
     template <typename V8CallbackType>
-    PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, bool& succeeded, CallbackAllowedValueFlags acceptedValues = 0)
+    PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, bool& succeeded, v8::Isolate* isolate, CallbackAllowedValueFlags acceptedValues = 0)
     {
         succeeded = true;
 
@@ -102,7 +102,7 @@ namespace WebCore {
 
         if (!value->IsFunction()) {
             succeeded = false;
-            throwTypeMismatchException();
+            throwTypeMismatchException(isolate);
             return 0;
         }
 
