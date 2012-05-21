@@ -55,6 +55,9 @@ WebInspector.UISourceCode = function(url, resource, contentProvider, sourceMappi
      * @type {Array.<WebInspector.PresentationConsoleMessage>}
      */
     this._consoleMessages = [];
+    
+    if (this.resource())
+        this.resource().addEventListener(WebInspector.Resource.Events.RevisionAdded, this._revisionAdded, this);
 }
 
 WebInspector.UISourceCode.Events = {
@@ -131,13 +134,20 @@ WebInspector.UISourceCode.prototype = {
             this._contentProvider.requestContent(this.fireContentAvailable.bind(this));
     },
 
+    _revisionAdded: function(event)
+    {
+        this.contentChanged(this.resource().content || "");
+    },
+
     /**
      * @param {string} newContent
      */
     contentChanged: function(newContent)
     {
-        console.assert(this._contentLoaded);
-        var oldContent = this._content;
+        if (this._committingWorkingCopy)
+            return;
+
+        var oldContent = this._contentLoaded ? this._content : undefined;
         this._content = newContent;
         delete this._workingCopy;
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {oldContent: oldContent, content: newContent});
@@ -157,7 +167,9 @@ WebInspector.UISourceCode.prototype = {
     workingCopy: function()
     {
         console.assert(this._contentLoaded);
-        return this._workingCopy;
+        if (this.isDirty())
+            return this._workingCopy;
+        return this._content;
     },
 
     /**
@@ -171,7 +183,47 @@ WebInspector.UISourceCode.prototype = {
             delete this._workingCopy;
         else
             this._workingCopy = newWorkingCopy;
+        this.workingCopyChanged();
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: newWorkingCopy});
+    },
+
+    workingCopyChanged: function()
+    {  
+        // Overridden.
+    },
+
+    /**
+     * @param {function(?string)} callback
+     */
+    commitWorkingCopy: function(callback)
+    {
+        /**
+         * @param {?string} error
+         */
+        function innerCallback(error)
+        {
+            delete this._committingWorkingCopy;
+            if (!error)
+                this.contentChanged(newContent);
+            callback(error);
+        }
+
+        if (!this.isDirty()) {
+            callback(null);
+            return;
+        }
+
+        var newContent = this._workingCopy;
+        this._committingWorkingCopy = true;
+        this.workingCopyCommitted(innerCallback.bind(this));
+    },
+
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
+    {  
+        // Overridden.
     },
 
     /**

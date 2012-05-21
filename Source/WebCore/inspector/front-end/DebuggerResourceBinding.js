@@ -64,7 +64,6 @@ WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, ne
         if (resource)
             resource.addRevision(newSource);
 
-        uiSourceCode.contentChanged(newSource);
         callback(null);
     }
     WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));

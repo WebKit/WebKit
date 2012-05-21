@@ -177,7 +177,10 @@ WebInspector.JavaScriptSource.prototype = {
         return this._isEditable && WebInspector.debuggerModel.canSetScriptSource();
     },
 
-    commitWorkingCopy: function(callback)
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
     {  
         WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), callback);
     }

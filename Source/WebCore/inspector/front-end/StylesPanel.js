@@ -98,6 +98,23 @@ WebInspector.StyleSource = function(resource)
 }
 
 WebInspector.StyleSource.prototype = {
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
+    {  
+        this._resource.setContent(this.workingCopy(), true, callback);
+    },
+
+    workingCopyChanged: function()
+    {  
+        function commitIncrementalEdit()
+        {
+            this._resource.setContent(this.workingCopy(), false, function() {});
+        }
+        const updateTimeout = 200;
+        this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
+    }
 }
 
 WebInspector.StyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;
@@ -111,7 +128,7 @@ WebInspector.StyleSourceFrame = function(styleSource)
 {
     this._styleSource = styleSource;
     WebInspector.SourceFrame.call(this, this._styleSource);
-    this._styleSource.resource().addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
+    this._styleSource.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
 }
 
 WebInspector.StyleSourceFrame.prototype = {
@@ -128,19 +145,20 @@ WebInspector.StyleSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
-        this._styleSource.resource().setContent(text, true, function() {});
+        this._styleSource.commitWorkingCopy(this._didEditContent.bind(this));
     },
 
     afterTextChanged: function(oldRange, newRange)
     {
-        function commitIncrementalEdit()
-        {
-            var text = this._textModel.text;
-            this._styleSource.setWorkingCopy(text);
-            this._styleSource.resource().setContent(text, false, function() {});
+        this._styleSource.setWorkingCopy(this.textModel.text);
+    },
+
+    _didEditContent: function(error)
+    {
+        if (error) {
+            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
+            return;
         }
-        const updateTimeout = 200;
-        this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
     },
 
     _clearIncrementalUpdateTimer: function()
@@ -150,9 +168,11 @@ WebInspector.StyleSourceFrame.prototype = {
         delete this._incrementalUpdateTimer;
     },
 
-    _contentChanged: function(event)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onContentChanged: function(event)
     {
-        this._styleSource.contentChanged(this._styleSource.resource().content || "");
         this.setContent(this._styleSource.resource().content, false, "text/stylesheet");
     },
 

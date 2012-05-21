@@ -316,10 +316,13 @@ WebInspector.SnippetJavaScriptSource.prototype = {
         return true;
     },
 
-    commitWorkingCopy: function(callback)
-    {
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
+    {  
         this._scriptSnippetModel.setScriptSnippetContent(this, this.workingCopy());
-        callback();
+        callback(null);
     },
 
     /**
