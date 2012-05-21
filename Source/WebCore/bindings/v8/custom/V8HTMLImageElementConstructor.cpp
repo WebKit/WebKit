@@ -58,11 +58,11 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "Image constructor associated frame is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "Image constructor associated frame is unavailable", args.GetIsolate());
 
     Document* document = frame->document();
     if (!document)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "Image constructor associated document is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "Image constructor associated document is unavailable", args.GetIsolate());
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLImageElement instance
     // may end up being the only node in the map and get garbage-ccollected prematurely.

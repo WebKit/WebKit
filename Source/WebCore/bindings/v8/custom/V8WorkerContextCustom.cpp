@@ -107,7 +107,7 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
     workerContext->importScripts(urls, ec);
 
     if (ec)
-        return throwError(ec);
+        return throwError(ec, args.GetIsolate());
 
     return v8::Undefined();
 }

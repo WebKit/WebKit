@@ -44,7 +44,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
     INC_STATS("DOM.SQLResultSetRowList.item()");
 
     if (args.Length() == 0) {
-        V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.");
+        V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.", args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
 
     unsigned long index = args[0]->IntegerValue();
     if (index >= rowList->length()) {
-        V8Proxy::throwError(V8Proxy::RangeError, "Item index is out of range.");
+        V8Proxy::throwError(V8Proxy::RangeError, "Item index is out of range.", args.GetIsolate());
         return v8::Undefined();
     }
 

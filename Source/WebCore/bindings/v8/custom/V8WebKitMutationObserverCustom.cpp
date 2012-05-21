@@ -65,11 +65,11 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
 
     v8::Local<v8::Value> arg = args[0];
     if (!arg->IsObject())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "WebKitMutationObserver constructor's associated frame unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "WebKitMutationObserver constructor's associated frame unavailable", args.GetIsolate());
 
     RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
     RefPtr<WebKitMutationObserver> observer = WebKitMutationObserver::create(callback.release());
@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
     EXCEPTION_BLOCK(Node*, target, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     if (!args[1]->IsObject())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     Dictionary optionsObject(args[1]);
     unsigned options = 0;
