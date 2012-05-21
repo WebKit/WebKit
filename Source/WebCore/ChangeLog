@@ -1,3 +1,71 @@
+2012-04-03  Yuta Kitamura  <yutak@chromium.org>
+
+        Crash in WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=82873
+
+        Reviewed by David Levin.
+
+        WorkerThreadableWebSocketChannel::Bridge should properly handle the cases where inter-thread
+        callback is not called due to the termination of the worker run loop. Specifically, the bridge
+        should not send its "this" pointer to the main thread, because the bridge object may be freed
+        in the worker thread before the main thread starts to process.
+
+        Test: http/tests/websocket/tests/hybi/workers/worker-reload.html
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::peer):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel):
+        Renamed from setUseHixie76Protocol, as this funtion now also sets m_peer.
+        Sets m_syncMethodDone to true, because this function is called in the end of
+        synchronous wait of Bridge::initialize().
+        (WebCore::ThreadableWebSocketChannelClientWrapper::clearPeer):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::useHixie76Protocol):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        Add WorkerThreadableWebSocketChannel::Peer which is initialized after the creation of
+        WebSocketChannel in the main thread.
+        (ThreadableWebSocketChannelClientWrapper):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+        Don't do synchronous wait in the constructor, as a member function may be called
+        during the wait before the constructor finishes. The meat of the constructor has
+        moved to initialize() function.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::~Bridge):
+        (WorkerContextDidInitializeTask):
+        (WebCore::WorkerContextDidInitializeTask::create):
+        (WebCore::WorkerContextDidInitializeTask::~WorkerContextDidInitializeTask):
+        (WebCore::WorkerContextDidInitializeTask::WorkerContextDidInitializeTask):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::initialize):
+        Don't pass "this" object to the main thread. Receive the pointer to the peer object
+        via ThreadableWebSocketChannelClientWrapper which is ThreadSafeRefCounted<>.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        m_peer may be NULL, and we should not do anything in that case.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::suspend):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::resume):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (WorkerThreadableWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::refThreadableWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::derefThreadableWebSocketChannel):
+        (Bridge):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (SharedWorkerProxy):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerContext):
+        * workers/WorkerLoaderProxy.h:
+        (WorkerLoaderProxy::postTaskForModeToWorkerContext):
+        Return bool to indicate whether postTask was successful or not. This is necessary
+        to avoid memory leaks of Peer object in Bridge::initialize() function.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        (WorkerMessagingProxy):
+
 2012-04-09  Abhishek Arya  <inferno@chromium.org>
 
         Incorrect placement of new child to table when before child parent is not |this|.
