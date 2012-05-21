@@ -24,7 +24,7 @@ PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in request is true
 PASS [Worker] request.transaction is null
 PASS [Worker] 'readyState' in request is true
-PASS [Worker] request.readyState is 'pending'
+PASS [Worker] request.readyState is "pending"
 PASS [Worker] 'onsuccess' in request is true
 PASS [Worker] request.onsuccess is null
 PASS [Worker] 'onerror' in request is true
@@ -40,7 +40,7 @@ PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in event.target is true
 PASS [Worker] event.target.transaction is null
 PASS [Worker] 'readyState' in request is true
-PASS [Worker] event.target.readyState is 'done'
+PASS [Worker] event.target.readyState is "done"
 PASS [Worker] 'onsuccess' in event.target is true
 PASS [Worker] 'onerror' in event.target is true
 PASS successfullyParsed is true
