@@ -1,5 +1,33 @@
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Index key paths that yield invalid keys should not fail an add/put
+        https://bugs.webkit.org/show_bug.cgi?id=86122
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/resources/index-basics.js: Add checks that index key paths
+        that evaluate to invalid keys do not fail puts/adds, just don't add index entries.
+        (addData3):
+        (addData4):
+        (cursor1Continue3):
+        (cursor1Continue4):
+        (cursor2Continue3):
+        (cursor2Continue4):
+        (last):
+        (index1Count):
+        (index2Count):
+        * storage/indexeddb/resources/objectstore-basics.js: Remove precondition checks
+        that would previously raise an exception if invalid keys were specified.
+        (addAgainFailure):
+        (testPreConditions.request.onsuccess):
+        (testPreConditions):
+
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
         LayoutTests: fast/js/resources/js-test-pre.js - shouldBeEqualToString fails on "
         https://bugs.webkit.org/show_bug.cgi?id=86931
 

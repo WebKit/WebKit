@@ -85,8 +85,17 @@ function addData2(evt)
 function addData3(evt)
 {
     event = evt;
-    // Add data which doesn't have a key in the zIndex.
+    debug("Add data which doesn't have a key in the z index.");
     request = evalAndLog("event.target.source.add({x: 'value3', y: '456'}, 'key3')");
+    request.onsuccess = addData4;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function addData4(evt)
+{
+    event = evt;
+    debug("Add data which has invalid key for y index, no key for the z index.");
+    request = evalAndLog("event.target.source.add({x: 'value4', y: null}, 'key4')");
     request.onsuccess = getData;
     request.onerror = unexpectedErrorCallback;
 }
@@ -204,6 +213,18 @@ function cursor1Continue3(evt)
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
+    self.request.onsuccess = cursor1Continue4;
+}
+
+function cursor1Continue4(evt)
+{
+    event = evt;
+    shouldBeNonNull("event.target.result");
+    shouldBeEqualToString("event.target.result.key", "value4");
+    shouldBeEqualToString("event.target.result.primaryKey", "key4");
+
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
     self.request.onsuccess = openObjectCursor;
 }
 
@@ -254,6 +275,19 @@ function cursor2Continue3(evt)
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
+    self.request.onsuccess = cursor2Continue4;
+}
+
+function cursor2Continue4(evt)
+{
+    event = evt;
+    shouldBeNonNull("event.target.result");
+    shouldBeEqualToString("event.target.result.key", "value4");
+    shouldBeEqualToString("event.target.result.value.x", "value4");
+    shouldBe("event.target.result.value.y", "null");
+
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
     self.request.onsuccess = last;
 }
 
@@ -261,6 +295,36 @@ function last(evt)
 {
     event = evt;
     shouldBeNull("event.target.result");
+
+    evalAndLog("request = indexObject.count()");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = index1Count;
+}
+
+function index1Count(evt)
+{
+    event = evt;
+    shouldBe("event.target.result", "4");
+
+    evalAndLog("request = indexObject2.count()");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = index2Count;
+}
+
+function index2Count(evt)
+{
+    event = evt;
+    shouldBe("event.target.result", "3");
+
+    evalAndLog("request = indexObject3.count()");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = index3Count;
+}
+
+function index3Count(evt)
+{
+    event = evt;
+    shouldBe("event.target.result", "2");
 
     debug("Passing an invalid key into indexObject.get({}).");
     evalAndExpectException("indexObject.get({})", "IDBDatabaseException.DATA_ERR");

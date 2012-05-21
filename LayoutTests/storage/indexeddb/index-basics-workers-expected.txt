@@ -49,7 +49,10 @@ PASS [Worker] typeof indexObject.count is "function"
 [Worker] event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
 [Worker] store.createIndex('indexWhileAddIsInFlight', 'x')
 [Worker] store.createIndex('indexWithWeirdKeyPath', 'foobar')
+[Worker] Add data which doesn't have a key in the z index.
 [Worker] event.target.source.add({x: 'value3', y: '456'}, 'key3')
+[Worker] Add data which has invalid key for y index, no key for the z index.
+[Worker] event.target.source.add({x: 'value4', y: null}, 'key4')
 [Worker] indexObject.getKey('value')
 PASS [Worker] event.target.result is "key"
 [Worker] indexObject2.getKey('zzz')
@@ -79,6 +82,10 @@ PASS [Worker] event.target.result is non-null.
 PASS [Worker] event.target.result.key is "value3"
 PASS [Worker] event.target.result.primaryKey is "key3"
 [Worker] event.target.result.continue()
+PASS [Worker] event.target.result is non-null.
+PASS [Worker] event.target.result.key is "value4"
+PASS [Worker] event.target.result.primaryKey is "key4"
+[Worker] event.target.result.continue()
 PASS [Worker] event.target.result is null
 [Worker] indexObject.openCursor()
 PASS [Worker] event.target.source is indexObject
@@ -97,7 +104,18 @@ PASS [Worker] event.target.result.key is "value3"
 PASS [Worker] event.target.result.value.x is "value3"
 PASS [Worker] event.target.result.value.y is "456"
 [Worker] event.target.result.continue()
+PASS [Worker] event.target.result is non-null.
+PASS [Worker] event.target.result.key is "value4"
+PASS [Worker] event.target.result.value.x is "value4"
+PASS [Worker] event.target.result.value.y is null
+[Worker] event.target.result.continue()
 PASS [Worker] event.target.result is null
+[Worker] request = indexObject.count()
+PASS [Worker] event.target.result is 4
+[Worker] request = indexObject2.count()
+PASS [Worker] event.target.result is 3
+[Worker] request = indexObject3.count()
+PASS [Worker] event.target.result is 2
 [Worker] Passing an invalid key into indexObject.get({}).
 [Worker] Expecting exception from indexObject.get({})
 PASS [Worker] Exception was thrown.

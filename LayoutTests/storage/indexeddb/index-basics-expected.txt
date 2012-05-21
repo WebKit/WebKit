@@ -48,7 +48,10 @@ store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
 event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
 store.createIndex('indexWhileAddIsInFlight', 'x')
 store.createIndex('indexWithWeirdKeyPath', 'foobar')
+Add data which doesn't have a key in the z index.
 event.target.source.add({x: 'value3', y: '456'}, 'key3')
+Add data which has invalid key for y index, no key for the z index.
+event.target.source.add({x: 'value4', y: null}, 'key4')
 indexObject.getKey('value')
 PASS event.target.result is "key"
 indexObject2.getKey('zzz')
@@ -78,6 +81,10 @@ PASS event.target.result is non-null.
 PASS event.target.result.key is "value3"
 PASS event.target.result.primaryKey is "key3"
 event.target.result.continue()
+PASS event.target.result is non-null.
+PASS event.target.result.key is "value4"
+PASS event.target.result.primaryKey is "key4"
+event.target.result.continue()
 PASS event.target.result is null
 indexObject.openCursor()
 PASS event.target.source is indexObject
@@ -96,7 +103,18 @@ PASS event.target.result.key is "value3"
 PASS event.target.result.value.x is "value3"
 PASS event.target.result.value.y is "456"
 event.target.result.continue()
+PASS event.target.result is non-null.
+PASS event.target.result.key is "value4"
+PASS event.target.result.value.x is "value4"
+PASS event.target.result.value.y is null
+event.target.result.continue()
 PASS event.target.result is null
+request = indexObject.count()
+PASS event.target.result is 4
+request = indexObject2.count()
+PASS event.target.result is 3
+request = indexObject3.count()
+PASS event.target.result is 2
 Passing an invalid key into indexObject.get({}).
 Expecting exception from indexObject.get({})
 PASS Exception was thrown.

@@ -190,7 +190,8 @@ function addAgainFailure(evt)
     transaction.onabort = unexpectedErrorCallback;
     store = evalAndLog("store = transaction.objectStore('storeName')");
 
-    evalAndExpectException("store.add({x: null}, 'validkey')", "IDBDatabaseException.DATA_ERR");
+    debug("Ensure invalid key pointed at by index keyPath is ignored");
+    evalAndLog("store.add({x: null}, 'validkey')");
 
     transaction = evalAndLog("db.transaction(['storeName'], 'readwrite')");
     transaction.onabort = unexpectedErrorCallback;
@@ -286,9 +287,6 @@ function testPreConditions()
         debug("The key parameter was provided but does not contain a valid key.");
         evalAndExpectException("storeWithOutOfLineKeys.put({}, null)", "IDBDatabaseException.DATA_ERR");
 
-        debug("If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.");
-        evalAndExpectException("storeWithIndex.put({indexKey: null}, 'key')", "IDBDatabaseException.DATA_ERR");
-
         debug("");
         debug("IDBObjectStore.add()");
         debug("The object store uses in-line keys and the key parameter was provided.");
@@ -305,9 +303,6 @@ function testPreConditions()
 
         debug("The key parameter was provided but does not contain a valid key.");
         evalAndExpectException("storeWithOutOfLineKeys.add({}, null)", "IDBDatabaseException.DATA_ERR");
-
-        debug("If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.");
-        evalAndExpectException("storeWithIndex.add({indexKey: null}, 'key')", "IDBDatabaseException.DATA_ERR");
 
         finishJSTest();
     };

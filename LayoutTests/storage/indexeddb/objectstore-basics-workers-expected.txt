@@ -105,9 +105,8 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
-[Worker] Expecting exception from store.add({x: null}, 'validkey')
-PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+[Worker] Ensure invalid key pointed at by index keyPath is ignored
+[Worker] store.add({x: null}, 'validkey')
 [Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] store.get('key')
@@ -169,10 +168,6 @@ PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
-[Worker] If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
-[Worker] Expecting exception from storeWithIndex.put({indexKey: null}, 'key')
-PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] 
 [Worker] IDBObjectStore.add()
 [Worker] The object store uses in-line keys and the key parameter was provided.
@@ -193,10 +188,6 @@ PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({}, null)
-PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
-[Worker] If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
-[Worker] Expecting exception from storeWithIndex.add({indexKey: null}, 'key')
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true

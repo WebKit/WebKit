@@ -104,9 +104,8 @@ PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 db.transaction(['storeName'], 'readwrite')
 store = transaction.objectStore('storeName')
-Expecting exception from store.add({x: null}, 'validkey')
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+Ensure invalid key pointed at by index keyPath is ignored
+store.add({x: null}, 'validkey')
 db.transaction(['storeName'], 'readwrite')
 store = transaction.objectStore('storeName')
 store.get('key')
@@ -168,10 +167,6 @@ The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
-Expecting exception from storeWithIndex.put({indexKey: null}, 'key')
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
 
 IDBObjectStore.add()
 The object store uses in-line keys and the key parameter was provided.
@@ -192,10 +187,6 @@ PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.add({}, null)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
-If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
-Expecting exception from storeWithIndex.add({indexKey: null}, 'key')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true

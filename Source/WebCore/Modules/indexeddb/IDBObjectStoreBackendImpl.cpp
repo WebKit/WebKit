@@ -205,14 +205,6 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
             ec = IDBDatabaseException::DATA_ERR;
             return;
         }
-        for (IndexMap::iterator it = m_indexes.begin(); it != m_indexes.end(); ++it) {
-            const RefPtr<IDBIndexBackendImpl>& index = it->second;
-            RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
-            if (indexKey && !indexKey->isValid()) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-        }
     } else {
         ASSERT(key);
         const bool hasKeyPath = !objectStore->m_keyPath.isNull();
@@ -293,8 +285,10 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         const RefPtr<IDBIndexBackendImpl>& index = it->second;
 
         RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
-        if (!indexKey) {
-            indexKeys.append(indexKey.release());
+        if (!indexKey || !indexKey->isValid()) {
+            // Null/invalid keys not added to index; null entry keeps iterator/vector indexes consistent.
+            indexKey.clear();
+            indexKeys.append(indexKey);
             continue;
         }
         ASSERT(indexKey->isValid());
