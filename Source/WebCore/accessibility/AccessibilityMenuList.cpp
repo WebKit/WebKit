@@ -82,6 +82,14 @@ bool AccessibilityMenuList::isCollapsed() const
     return !static_cast<RenderMenuList*>(m_renderer)->popupIsVisible();
 }
 
+bool AccessibilityMenuList::canSetFocusAttribute() const
+{
+    if (!node())
+        return false;
+
+    return static_cast<Element*>(node())->isEnabledFormControl();
+}
+
 void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
 {
     RefPtr<Document> document = m_renderer->document();

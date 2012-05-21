@@ -1,3 +1,20 @@
+2012-05-21  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: A disabled select element should not be exposed as focusable
+        https://bugs.webkit.org/show_bug.cgi?id=86949
+
+        Reviewed by Chris Fleizach.
+
+        * LayoutTests/accessibility/disabled-controls-not-focusable-expected.txt: Added.
+        * LayoutTests/accessibility/disabled-controls-not-focusable.html: Added.
+        * Source/WebCore/accessibility/AccessibilityListBox.h:
+        (AccessibilityListBox):
+        * Source/WebCore/accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::canSetFocusAttribute):
+        (WebCore):
+        * Source/WebCore/accessibility/AccessibilityMenuList.h:
+        (AccessibilityMenuList):
+
 2012-05-20  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Define navigator.vendor for BlackBerry.
