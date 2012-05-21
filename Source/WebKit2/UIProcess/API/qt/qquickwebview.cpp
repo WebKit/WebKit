@@ -1708,6 +1708,7 @@ void QQuickWebView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
 
+    forceActiveFocus();
     // If a MouseButtonDblClick was received then we got a MouseButtonPress before
     // handleMousePressEvent will take care of double clicks.
     d->pageView->eventHandler()->handleMousePressEvent(event);
