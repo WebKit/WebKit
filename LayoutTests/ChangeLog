@@ -1,3 +1,10 @@
+2012-05-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Fix expectation of
+        svg/hittest/svg-shapes-non-scale-stroke.html after r117713.
+
 2012-05-20  Takashi Sakamoto  <tasak@google.com>
 
         Needs style recalculation by changing applyAuthorStyles dynamically
