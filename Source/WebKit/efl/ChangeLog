@@ -1,3 +1,18 @@
+2012-05-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Clients should be able to set page cache capacity.
+        https://bugs.webkit.org/show_bug.cgi?id=86960
+
+        Reviewed by Csaba Osztrogonác.
+
+        Exported memory page cache capacity getter and setter functions.
+        Those will be used both by clients and DRT Layout Test Controller.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_page_cache_capacity_get):
+        (ewk_settings_page_cache_capacity_set):
+        * ewk/ewk_settings.h:
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move setEditingBehavior() from layoutTestController to window.internals

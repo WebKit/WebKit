@@ -296,6 +296,29 @@ EAPI void             ewk_settings_object_cache_enable_set(Eina_Bool set);
 EAPI void             ewk_settings_object_cache_capacity_set(unsigned min_dead_bytes, unsigned max_dead_bytes, unsigned total_bytes);
 
 /**
+ * Returns the maximum number of pages in the memory page cache.
+ *
+ * By default, maximum number of pages is 3.
+ *
+ * @return  The maximum number of pages in the memory page cache.
+ *
+ * @sa ewk_settings_page_cache_capacity_set
+ */
+EAPI unsigned         ewk_settings_page_cache_capacity_get(void);
+
+/**
+ * Defines the capacity for the memory page cache.
+ *
+ * The page cache is responsible for holding visited web pages in memory. So it improves user experience when navigating forth or back
+ * to pages in the forward/back history as the cached pages do not require to be loaded from server.
+ *
+ * By default, @p pages is 3.
+ *
+ * @param pages The maximum number of pages to keep in the memory page cache.
+ */
+EAPI void             ewk_settings_page_cache_capacity_set(unsigned pages);
+
+/**
  * Clears all memory caches.
  *
  * This function clears all memory caches, which include the object cache (for resources such as

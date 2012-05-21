@@ -248,6 +248,16 @@ void ewk_settings_object_cache_enable_set(Eina_Bool enable)
     WebCore::memoryCache()->setDisabled(!enable);
 }
 
+unsigned ewk_settings_page_cache_capacity_get()
+{
+    return WebCore::pageCache()->capacity();
+}
+
+void ewk_settings_page_cache_capacity_set(unsigned pages)
+{
+    WebCore::pageCache()->setCapacity(pages);
+}
+
 void ewk_settings_memory_cache_clear()
 {
     // Turn the cache on and off. Disabling the object cache will remove all
