@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x268
+  RenderBlock {HTML} at (0,0) size 800x268
+    RenderBody {BODY} at (8,21) size 784x231
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 529x37
+          text run at (0,0) width 529: "Letter spacing lost for emphasized text"
+      RenderBlock {P} at (0,58) size 784x37
+        RenderText {#text} at (0,0) size 281x18
+          text run at (0,0) width 281: "This example demonstrates that text inside a "
+        RenderInline {CODE} at (0,0) size 8x15
+          RenderText {#text} at (281,2) size 8x15
+            text run at (281,2) width 8: "b"
+        RenderText {#text} at (289,0) size 8x18
+          text run at (289,0) width 8: ", "
+        RenderInline {CODE} at (0,0) size 8x15
+          RenderText {#text} at (297,2) size 8x15
+            text run at (297,2) width 8: "i"
+        RenderText {#text} at (305,0) size 8x18
+          text run at (305,0) width 8: ", "
+        RenderInline {CODE} at (0,0) size 48x15
+          RenderText {#text} at (313,2) size 48x15
+            text run at (313,2) width 48: "strong"
+        RenderText {#text} at (361,0) size 21x18
+          text run at (361,0) width 21: " or "
+        RenderInline {CODE} at (0,0) size 16x15
+          RenderText {#text} at (382,2) size 16x15
+            text run at (382,2) width 16: "em"
+        RenderText {#text} at (398,0) size 110x18
+          text run at (398,0) width 110: " element loses its "
+        RenderInline {CODE} at (0,0) size 112x15
+          RenderText {#text} at (508,2) size 112x15
+            text run at (508,2) width 112: "letter-spacing"
+        RenderText {#text} at (620,0) size 781x36
+          text run at (620,0) width 161: " CSS attribute that should"
+          text run at (0,18) width 296: "be inherited. This was discovered in Safari 1.0."
+      RenderBlock {DIV} at (0,110) size 784x121
+        RenderBlock {P} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 122x18
+            text run at (0,0) width 122: "Text inside "
+          RenderInline {B} at (0,0) size 46x18
+            RenderText {#text} at (122,0) size 46x18
+              text run at (122,0) width 46: "bold"
+          RenderText {#text} at (168,0) size 93x18
+            text run at (168,0) width 93: " element."
+        RenderBlock {P} at (0,34) size 784x18
+          RenderText {#text} at (0,0) size 122x18
+            text run at (0,0) width 122: "Text inside "
+          RenderInline {STRONG} at (0,0) size 67x18
+            RenderText {#text} at (122,0) size 67x18
+              text run at (122,0) width 67: "strong"
+          RenderText {#text} at (189,0) size 93x18
+            text run at (189,0) width 93: " element."
+        RenderBlock {P} at (0,68) size 784x18
+          RenderText {#text} at (0,0) size 122x18
+            text run at (0,0) width 122: "Text inside "
+          RenderInline {I} at (0,0) size 55x18
+            RenderText {#text} at (122,0) size 55x18
+              text run at (122,0) width 55: "italic"
+          RenderText {#text} at (177,0) size 93x18
+            text run at (177,0) width 93: " element."
+        RenderBlock {P} at (0,102) size 784x18
+          RenderText {#text} at (0,0) size 122x18
+            text run at (0,0) width 122: "Text inside "
+          RenderInline {EM} at (0,0) size 91x18
+            RenderText {#text} at (122,0) size 91x18
+              text run at (122,0) width 91: "emphasis"
+          RenderText {#text} at (213,0) size 93x18
+            text run at (213,0) width 93: " element."

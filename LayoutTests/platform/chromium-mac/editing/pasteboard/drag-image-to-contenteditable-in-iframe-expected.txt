@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 744x36
+          text run at (0,0) width 744: "This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an"
+          text run at (0,18) width 155: "image, without crashing."
+      RenderBlock (anonymous) at (0,52) size 784x158
+        RenderImage {IMG} at (0,51) size 76x103
+        RenderText {#text} at (76,140) size 4x18
+          text run at (76,140) width 4: " "
+        RenderPartObject {IFRAME} at (80,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134
+                RenderBlock {DIV} at (0,0) size 272x130 [border: (1px solid #000000)]
+                  RenderImage {IMG} at (1,84) size 20x20
+                  RenderImage {IMG} at (21,1) size 76x103
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {UL} at (0,226) size 784x0

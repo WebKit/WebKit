@@ -1,3 +1,8 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed Chromium expectation update following sub-pixel r117815. This covers all updates
+        in chromium and chromium-mac directories. Seperate patches coming for Linux and Windows.
+
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Store key paths in IDBKeyPath type instead of String

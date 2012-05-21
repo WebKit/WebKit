@@ -18,7 +18,7 @@ layer at (0,0) size 800x412
                 text run at (1,19) width 24: "OK"
       RenderBlock {P} at (0,110) size 784x6 [border: (3px solid #800080)]
       RenderBlock {P} at (0,132) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (325,154) size 133x72 [border: (3px solid #008000)]
+      RenderTable {TABLE} at (325,154) size 134x72 [border: (3px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 133x24 [border: (3px solid #FFA500)]
           RenderText {#text} at (55,3) size 23x18
             text run at (55,3) width 23: "cap"
