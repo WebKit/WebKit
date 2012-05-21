@@ -494,7 +494,7 @@ public:
     bool allowInlineEventHandlers() const;
     bool allowInlineScript() const;
     bool allowInlineStyle() const;
-    bool allowEval() const;
+    bool allowEval(PassRefPtr<ScriptCallStack>) const;
 
     bool allowScriptFromSource(const KURL&) const;
     bool allowObjectFromSource(const KURL&) const;
@@ -518,12 +518,12 @@ private:
     PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
 
     CSPDirective* operativeDirective(CSPDirective*) const;
-    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL()) const;
+    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL(), PassRefPtr<ScriptCallStack> = 0) const;
     void logUnrecognizedDirective(const String& name) const;
     bool checkEval(CSPDirective*) const;
 
     bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage) const;
-    bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage) const;
+    bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage, PassRefPtr<ScriptCallStack>) const;
     bool checkSourceAndReportViolation(CSPDirective*, const KURL&, const String& type) const;
 
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
@@ -575,10 +575,10 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ScriptExecutionContext* sc
     return policy.release();
 }
 
-void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL) const
+void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, PassRefPtr<ScriptCallStack> callStack) const
 {
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
-    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, String(), 0, callStack);
 
     if (m_reportURIs.isEmpty())
         return;
@@ -646,11 +646,11 @@ bool CSPDirectiveList::checkInlineAndReportViolation(CSPDirective* directive, co
     return denyIfEnforcingPolicy();
 }
 
-bool CSPDirectiveList::checkEvalAndReportViolation(CSPDirective* directive, const String& consoleMessage) const
+bool CSPDirectiveList::checkEvalAndReportViolation(CSPDirective* directive, const String& consoleMessage, PassRefPtr<ScriptCallStack> callStack) const
 {
     if (checkEval(directive))
         return true;
-    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n");
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n", KURL(), callStack);
     return denyIfEnforcingPolicy();
 }
 
@@ -687,10 +687,10 @@ bool CSPDirectiveList::allowInlineStyle() const
     return checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage);
 }
 
-bool CSPDirectiveList::allowEval() const
+bool CSPDirectiveList::allowEval(PassRefPtr<ScriptCallStack> callStack) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because it violates the following Content Security Policy directive: "));
-    return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
+    return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, callStack);
 }
 
 bool CSPDirectiveList::allowScriptFromSource(const KURL& url) const
@@ -933,8 +933,18 @@ bool isAllowedByAll(const CSPDirectiveListVector& policies)
     return true;
 }
 
+template<bool (CSPDirectiveList::*allowed)(PassRefPtr<ScriptCallStack>) const>
+bool isAllowedByAllWithCallStack(const CSPDirectiveListVector& policies, PassRefPtr<ScriptCallStack> callStack)
+{
+    for (size_t i = 0; i < policies.size(); ++i) {
+        if (!(policies[i].get()->*allowed)(callStack))
+            return false;
+    }
+    return true;
+}
+
 template<bool (CSPDirectiveList::*allowFromURL)(const KURL&) const>
-bool isAllowedByAll(const CSPDirectiveListVector& policies, const KURL& url)
+bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const KURL& url)
 {
     for (size_t i = 0; i < policies.size(); ++i) {
         if (!(policies[i].get()->*allowFromURL)(url))
@@ -965,49 +975,49 @@ bool ContentSecurityPolicy::allowInlineStyle() const
     return isAllowedByAll<&CSPDirectiveList::allowInlineStyle>(m_policies);
 }
 
-bool ContentSecurityPolicy::allowEval() const
+bool ContentSecurityPolicy::allowEval(PassRefPtr<ScriptCallStack> callStack) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowEval>(m_policies);
+    return isAllowedByAllWithCallStack<&CSPDirectiveList::allowEval>(m_policies, callStack);
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowScriptFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowScriptFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowObjectFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowObjectFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowChildFrameFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowChildFrameFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowImageFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowImageFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowStyleFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowStyleFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowFontFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowFontFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowMediaFromSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowMediaFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowConnectToSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowConnectToSource>(m_policies, url);
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowConnectToSource>(m_policies, url);
 }
 
 }

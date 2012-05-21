@@ -1,3 +1,15 @@
+2012-05-21  Mike West  <mkwst@chromium.org>
+
+        Blocking `setTimeout` and `setInterval` evaluation with CSP should include a stack trace in the console warning.
+        https://bugs.webkit.org/show_bug.cgi?id=86943
+
+        Reviewed by Adam Barth.
+
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval-expected.txt: Added.
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval.html: Added.
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout-expected.txt: Added.
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout.html: Added.
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating expectations after r117815.

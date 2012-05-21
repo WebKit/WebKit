@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CSPDirectiveList;
+class ScriptCallStack;
 class ScriptExecutionContext;
 class KURL;
 
@@ -65,7 +66,7 @@ public:
     bool allowInlineEventHandlers() const;
     bool allowInlineScript() const;
     bool allowInlineStyle() const;
-    bool allowEval() const;
+    bool allowEval(PassRefPtr<ScriptCallStack>) const;
 
     bool allowScriptFromSource(const KURL&) const;
     bool allowObjectFromSource(const KURL&) const;

@@ -48,6 +48,8 @@
 #include "Page.h"
 #include "PlatformScreen.h"
 #include "ScheduledAction.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptSourceCode.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -129,7 +131,8 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
 
         id = DOMTimer::install(scriptContext, action.release(), timeout, singleShot);
     } else {
-        if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval())
+        RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
+        if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval(callStack.release()))
             return v8::Integer::New(0);
         id = DOMTimer::install(scriptContext, adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), functionString)), timeout, singleShot);
     }
