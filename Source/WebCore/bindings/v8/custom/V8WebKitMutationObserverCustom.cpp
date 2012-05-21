@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
         return args.Holder();
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     v8::Local<v8::Value> arg = args[0];
     if (!arg->IsObject())
@@ -83,7 +83,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
 {
     INC_STATS("DOM.WebKitMutationObserver.observe");
     if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     WebKitMutationObserver* imp = V8WebKitMutationObserver::toNative(args.Holder());
     EXCEPTION_BLOCK(Node*, target, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 

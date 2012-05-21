@@ -90,7 +90,7 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
     }
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     SVGLength& imp = wrapper->propertyReference();
     ExceptionCode ec = 0;

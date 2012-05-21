@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
     DirectoryEntry* imp = V8DirectoryEntry::toNative(args.Holder());
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, path, args[0]);
     if (args.Length() <= 1) {
@@ -95,7 +95,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
     DirectoryEntry* imp = V8DirectoryEntry::toNative(args.Holder());
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, path, args[0]);
     if (args.Length() <= 1) {

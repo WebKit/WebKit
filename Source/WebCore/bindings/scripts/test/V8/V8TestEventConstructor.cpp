@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
         return args.Holder();
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     TestEventConstructorInit eventInit;

@@ -217,7 +217,7 @@ enum ObjectType {
 static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, ObjectType objectType)
 {
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -269,7 +269,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     INC_STATS("DOM.WebGLRenderingContext.getAttachedShaders()");
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -303,7 +303,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
     INC_STATS("DOM.WebGLRenderingContext.getExtensionCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, name, args[0]);
     WebGLExtension* extension = imp->getExtension(name);
     return toV8Object(extension, args.Holder(), args.GetIsolate());
@@ -314,7 +314,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
     INC_STATS("DOM.WebGLRenderingContext.getFramebufferAttachmentParameter()");
 
     if (args.Length() != 3)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -334,7 +334,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
     INC_STATS("DOM.WebGLRenderingContext.getParameter()");
 
     if (args.Length() != 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -352,7 +352,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     INC_STATS("DOM.WebGLRenderingContext.getProgramParameter()");
 
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -381,7 +381,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     INC_STATS("DOM.WebGLRenderingContext.getShaderParameter()");
 
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -424,7 +424,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     INC_STATS("DOM.WebGLRenderingContext.getUniform()");
 
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
@@ -495,7 +495,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     // * glVertexAttrib4fv(GLint index, Float32Array data);
 
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     bool ok = false;
     int index = -1;
@@ -577,7 +577,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     // * glUniform4iv(GLUniformLocation location, Int32Array data);
 
     if (args.Length() != 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLUniformLocation::HasInstance(args[0])) {
@@ -691,7 +691,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     //
     // FIXME: need to change to accept Float32Array as well.
     if (args.Length() != 3)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
 

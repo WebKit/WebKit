@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         if (args.Length() < 3)
-            return V8Proxy::throwNotEnoughArgumentsError();
+            return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
         bool ok = false;
 

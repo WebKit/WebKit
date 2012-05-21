@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.getInt8");
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -85,7 +85,7 @@ v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.getUint8");
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -102,7 +102,7 @@ v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.setInt8");
     if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -118,7 +118,7 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DataView.setUint8");
     if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;

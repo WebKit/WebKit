@@ -124,7 +124,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
 {
     INC_STATS("DOM.TestInterface.supplementalMethod2");
     if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestInterface* imp = V8TestInterface::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
@@ -213,7 +213,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));

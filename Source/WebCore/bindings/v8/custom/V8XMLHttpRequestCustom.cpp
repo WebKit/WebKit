@@ -121,7 +121,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
     // open(method, url, async, user, passwd)
 
     if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError();
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
 
     XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
 

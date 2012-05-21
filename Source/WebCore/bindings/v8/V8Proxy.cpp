@@ -636,9 +636,9 @@ v8::Handle<v8::Value> V8Proxy::throwTypeError(const char* message)
     return throwError(TypeError, (message ? message : "Type error"));
 }
 
-v8::Handle<v8::Value> V8Proxy::throwNotEnoughArgumentsError()
+v8::Handle<v8::Value> V8Proxy::throwNotEnoughArgumentsError(v8::Isolate* isolate)
 {
-    return throwError(TypeError, "Not enough arguments");
+    return throwError(TypeError, "Not enough arguments", isolate);
 }
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
