@@ -1,3 +1,26 @@
+2012-05-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: introduce a helper for HeapSnapshot post-processing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=87009
+
+        the sample:
+        var builder = new InspectorTest.HeapSnapshotBuilder();
+        var debuggerNode = new InspectorTest.HeapNode("Debugger");
+        builder.rootNode.linkNode(debuggerNode, InspectorTest.HeapEdge.Type.element);
+
+        var windowNode = new InspectorTest.HeapNode("Window");
+        builder.rootNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.shortcut);
+
+        debuggerNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.property, "windowProperty");
+        return builder.generateSnapshot();
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest):
+        (initialize_HeapSnapshotTest.):
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled.
