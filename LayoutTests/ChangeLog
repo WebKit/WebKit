@@ -1,3 +1,13 @@
+2012-05-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        inspector/styles/css-live-edit.html times out.
+        https://bugs.webkit.org/show_bug.cgi?id=82409
+
+        Not reviewed: test fix.
+
+        * inspector/styles/css-live-edit.html:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip a now passing test.

@@ -3,19 +3,19 @@
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script src="../../http/tests/inspector/live-edit-test.js"></script>
-<script src="../../http/tests/inspector/resources-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
 <link rel="stylesheet" href="resources/get-set-stylesheet-text.css">
 <div id=foo></div>
 <script>
 
 function test()
 {
-    WebInspector.showPanel("resources");
+    WebInspector.showPanel("scripts");
 
     InspectorTest.runTestSuite([
         function testLiveEdit(next)
         {
-            InspectorTest.showResource("get-set-stylesheet-text.css", didShowResource);
+            InspectorTest.showScriptSource("get-set-stylesheet-text.css", didShowResource);
 
             function didShowResource(sourceFrame)
             {

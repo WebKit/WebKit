@@ -3478,8 +3478,6 @@ BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
 // this test appears to consistently fail during the main run but usually passes on a retry.
 BUGWK82404 : plugins/netscape-dom-access-and-reload.html = PASS TEXT
 
-BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
-
 BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004b.htm = PASS IMAGE
 BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004d.htm = PASS IMAGE
 
