@@ -57,7 +57,7 @@ public:
 
     // Implement the IDBObjectStore IDL
     String name() const;
-    String keyPath() const;
+    PassRefPtr<IDBAny> keyPath() const;
     PassRefPtr<DOMStringList> indexNames() const;
     IDBTransaction* transaction() const;
     bool autoIncrement() const;
@@ -79,6 +79,8 @@ public:
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(const String&, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
+
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);
     void deleteIndex(const String& name, ExceptionCode&);
 

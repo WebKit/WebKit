@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>& values,  const String& keyPath, Vector<RefPtr<IDBKey>, 0>& keys)
+void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>& values, const IDBKeyPath& keyPath, Vector<RefPtr<IDBKey>, 0>& keys)
 {
     PlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath(values, keyPath, keys);
 }
 
-PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const IDBKeyPath& keyPath)
 {
     return PlatformSupport::injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }

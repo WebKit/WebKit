@@ -49,6 +49,13 @@ PassRefPtr<IDBAny> IDBAny::createNull()
     return idbAny.release();
 }
 
+PassRefPtr<IDBAny> IDBAny::createString(const String& value)
+{
+    RefPtr<IDBAny> idbAny = adoptRef(new IDBAny());
+    idbAny->set(value);
+    return idbAny.release();
+}
+
 IDBAny::IDBAny()
     : m_type(UndefinedType)
 {
@@ -116,6 +123,12 @@ PassRefPtr<SerializedScriptValue> IDBAny::serializedScriptValue()
 {
     ASSERT(m_type == SerializedScriptValueType);
     return m_serializedScriptValue;
+}
+
+const String& IDBAny::string()
+{
+    ASSERT(m_type == StringType);
+    return m_string;
 }
 
 void IDBAny::setNull()
@@ -192,6 +205,13 @@ void IDBAny::set(PassRefPtr<SerializedScriptValue> value)
     ASSERT(m_type == UndefinedType);
     m_type = SerializedScriptValueType;
     m_serializedScriptValue = value;
+}
+
+void IDBAny::set(const String& value)
+{
+    ASSERT(m_type == UndefinedType);
+    m_type = StringType;
+    m_string = value;
 }
 
 } // namespace WebCore

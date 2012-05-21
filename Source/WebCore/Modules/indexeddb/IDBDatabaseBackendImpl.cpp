@@ -137,7 +137,7 @@ PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
     return objectStoreNames.release();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
 
@@ -376,7 +376,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
 {
     Vector<int64_t> ids;
     Vector<String> names;
-    Vector<String> keyPaths;
+    Vector<IDBKeyPath> keyPaths;
     Vector<bool> autoIncrementFlags;
     m_backingStore->getObjectStores(m_id, ids, names, keyPaths, autoIncrementFlags);
 

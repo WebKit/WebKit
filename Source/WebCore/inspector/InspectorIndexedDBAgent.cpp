@@ -46,6 +46,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
@@ -225,6 +226,25 @@ static PassRefPtr<IDBIndexBackendInterface> indexForObjectStore(IDBObjectStoreBa
     return idbIndex;
 }
 
+static String keyPathToString(const IDBKeyPath& keyPath)
+{
+    // FIXME: Replace with handlers for null/string/array types.
+    // https://bugs.webkit.org/show_bug.cgi?id=84303
+    switch (keyPath.type()) {
+    case IDBKeyPath::NullType:
+        return "(none)";
+        break;
+    case IDBKeyPath::StringType:
+        return keyPath.string();
+        break;
+    case IDBKeyPath::ArrayType:
+        return "[...]";
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 class DatabaseLoaderCallback : public ExecutableWithDatabase {
 public:
     static PassRefPtr<DatabaseLoaderCallback> create(InspectorIndexedDBAgent::FrontendProvider* frontendProvider, int requestId)
@@ -260,7 +280,7 @@ public:
 
                 RefPtr<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()
                     .setName(idbIndex->name())
-                    .setKeyPath(idbIndex->keyPath())
+                    .setKeyPath(keyPathToString(idbIndex->keyPath()))
                     .setUnique(idbIndex->unique())
                     .setMultiEntry(idbIndex->multiEntry());
                 indexes->addItem(objectStoreIndex);
@@ -268,7 +288,7 @@ public:
 
             RefPtr<ObjectStore> objectStore = ObjectStore::create()
                 .setName(idbObjectStore->name())
-                .setKeyPath(idbObjectStore->keyPath())
+                .setKeyPath(keyPathToString(idbObjectStore->keyPath()))
                 .setIndexes(indexes);
             objectStores->addItem(objectStore);
         }

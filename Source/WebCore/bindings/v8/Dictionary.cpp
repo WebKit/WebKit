@@ -424,6 +424,23 @@ bool Dictionary::get(const String& key, Dictionary& value) const
     return true;
 }
 
+bool Dictionary::get(const String& key, Vector<String>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    if (!v8Value->IsArray())
+        return false;
+
+    v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
+    for (size_t i = 0; i < v8Array->Length(); ++i) {
+        v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Uint32::New(i));
+        value.append(v8ValueToWebCoreString(indexedValue));
+    }
+
+    return true;
+}
 
 bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& hashMap) const
 {

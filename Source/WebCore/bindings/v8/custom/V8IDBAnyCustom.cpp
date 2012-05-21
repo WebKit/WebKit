@@ -32,6 +32,7 @@
 #include "V8IDBAny.h"
 
 #include "SerializedScriptValue.h"
+#include "V8Binding.h"
 #include "V8DOMStringList.h"
 #include "V8IDBCursor.h"
 #include "V8IDBCursorWithValue.h"
@@ -74,6 +75,8 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
         return toV8(impl->idbTransaction(), isolate);
     case IDBAny::SerializedScriptValueType:
         return impl->serializedScriptValue()->deserialize(0, isolate);
+    case IDBAny::StringType:
+        return v8String(impl->string());
     }
 
     ASSERT_NOT_REACHED();

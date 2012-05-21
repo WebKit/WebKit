@@ -37,101 +37,79 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBKeyPath WebIDBKeyPath::create(const WebVector<WebString>&)
-{
-    // FIXME: Array-type key paths not yet supported. http://webkit.org/b/84207
-    WEBKIT_ASSERT_NOT_REACHED();
-    return createNull();
-}
-
-WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
-{
-    if (keyPath.isNull())
-        return createNull();
-
-    WTF::Vector<WTF::String> idbElements;
-    IDBKeyPathParseError idbError;
-    IDBParseKeyPath(keyPath, idbElements, idbError);
-    return WebIDBKeyPath(idbElements, static_cast<int>(idbError));
-}
-
-WebIDBKeyPath WebIDBKeyPath::createNull()
-{
-    return WebIDBKeyPath(WebString());
-}
-
-WebIDBKeyPath::WebIDBKeyPath(const WebIDBKeyPath& keyPath)
-{
-    assign(keyPath);
-}
-
-WebIDBKeyPath::WebIDBKeyPath(const WTF::Vector<WTF::String>& elements, int parseError)
-    : m_private(new WTF::Vector<WTF::String>(elements))
-    , m_parseError(parseError)
-{
-}
-
-bool WebIDBKeyPath::isValid() const
-{
-    return m_parseError == IDBKeyPathParseErrorNone;
-}
-
-WebIDBKeyPath::Type WebIDBKeyPath::type() const
-{
-    return m_private.get() ? StringType : NullType;
-}
-
-WebString WebIDBKeyPath::string() const
-{
-    if (!m_private.get())
-        return WebString();
-
-    // FIXME: Store the complete string instead of rebuilding it.
-    // http://webkit.org/b/84207
-    WTF::String string("");
-    WTF::Vector<WTF::String>& array = *m_private.get();
-    for (size_t i = 0; i < array.size(); ++i) {
-        if (i)
-            string.append(".");
-        string.append(array[i]);
-    }
-    return WebString(string);
-}
-
-WebIDBKeyPath::WebIDBKeyPath(const WebString& keyPath)
-    : m_parseError(IDBKeyPathParseErrorNone)
-{
-    if (!keyPath.isNull()) {
-        m_private.reset(new WTF::Vector<WTF::String>());
-        IDBKeyPathParseError idbParseError;
-        IDBParseKeyPath(keyPath, *m_private.get(), idbParseError);
-        m_parseError = idbParseError;
-    }
-}
-
-int WebIDBKeyPath::parseError() const
-{
-    return m_parseError;
-}
-
-void WebIDBKeyPath::assign(const WebIDBKeyPath& keyPath)
-{
-    m_parseError = keyPath.m_parseError;
-    if (keyPath.m_private.get())
-        m_private.reset(new WTF::Vector<WTF::String>(keyPath));
-    else
-        m_private.reset(0);
-}
-
-void WebIDBKeyPath::reset()
+WebIDBKeyPath::~WebIDBKeyPath()
 {
     m_private.reset(0);
 }
 
-WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&() const
+WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
+{
+    return WebIDBKeyPath(IDBKeyPath(keyPath));
+}
+
+WebIDBKeyPath WebIDBKeyPath::create(const WebVector<WebString>& keyPath)
+{
+    Vector<String> strings;
+    for (size_t i = 0; i < keyPath.size(); ++i)
+        strings.append(keyPath[i]);
+    return WebIDBKeyPath(IDBKeyPath(strings));
+}
+
+WebIDBKeyPath WebIDBKeyPath::createNull()
+{
+    return WebIDBKeyPath(IDBKeyPath());
+}
+
+bool WebIDBKeyPath::isValid() const
 {
     ASSERT(m_private.get());
-    return *m_private.get();
+    return m_private->isValid();
+}
+
+WebIDBKeyPath::Type WebIDBKeyPath::type() const
+{
+    ASSERT(m_private.get());
+    return Type(m_private->type());
+}
+
+
+WebVector<WebString> WebIDBKeyPath::array() const
+{
+    ASSERT(m_private.get());
+    ASSERT(m_private->type() == IDBKeyPath::ArrayType);
+    return m_private->array();
+}
+
+WebString WebIDBKeyPath::string() const
+{
+    ASSERT(m_private.get());
+    ASSERT(m_private->type() == IDBKeyPath::StringType);
+    return m_private->string();
+}
+
+WebIDBKeyPath::WebIDBKeyPath(const WebIDBKeyPath& keyPath)
+    : m_private(new IDBKeyPath(keyPath))
+{
+    ASSERT(m_private.get());
+}
+
+WebIDBKeyPath::WebIDBKeyPath(const WebCore::IDBKeyPath& value)
+    : m_private(new IDBKeyPath(value))
+{
+    ASSERT(m_private.get());
+}
+
+WebIDBKeyPath& WebIDBKeyPath::operator=(const WebCore::IDBKeyPath& value)
+{
+    ASSERT(m_private.get());
+    m_private.reset(new IDBKeyPath(value));
+    return *this;
+}
+
+WebIDBKeyPath::operator const WebCore::IDBKeyPath&() const
+{
+    ASSERT(m_private.get());
+    return *(m_private.get());
 }
 
 } // namespace WebKit

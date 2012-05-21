@@ -30,7 +30,6 @@
 #include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBKeyPath.h"
-#include "WebIDBTransaction.h"
 #include "platform/WebCommon.h"
 #include "platform/WebString.h"
 
@@ -51,12 +50,8 @@ public:
     }
     virtual WebIDBKeyPath keyPath() const
     {
-        return WebIDBKeyPath(keyPathString());
-    }
-    virtual WebString keyPathString() const
-    {
         WEBKIT_ASSERT_NOT_REACHED();
-        return WebString();
+        return WebIDBKeyPath::createNull();
     }
     virtual WebDOMStringList indexNames() const
     {
@@ -81,13 +76,6 @@ public:
     virtual void deleteFunction(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // FIXME: Remove WebString keyPath overload once callers are updated.
-    // http://webkit.org/b/84207
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-    {
-        return createIndex(name, WebIDBKeyPath(keyPath), unique, multiEntry, transaction, ec);
-    }
     virtual WebIDBIndex* createIndex(const WebString&, const WebIDBKeyPath&, bool, bool, const WebIDBTransaction&, WebExceptionCode&)
     {
         WEBKIT_ASSERT_NOT_REACHED();

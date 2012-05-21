@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMStringList.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
 
@@ -178,6 +179,61 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
         }
     }
 }
+
+IDBKeyPath::IDBKeyPath(const String& string)
+    : m_type(StringType)
+    , m_string(string)
+{
+    ASSERT(!m_string.isNull());
+}
+
+IDBKeyPath::IDBKeyPath(const Vector<String>& array)
+    : m_type(ArrayType)
+    , m_array(array)
+{
+#ifndef NDEBUG
+    for (size_t i = 0; i < m_array.size(); ++i)
+        ASSERT(!m_array[i].isNull());
+#endif
+}
+
+bool IDBKeyPath::isValid() const
+{
+    switch (m_type) {
+    case NullType:
+        return false;
+
+    case StringType:
+        return IDBIsValidKeyPath(m_string);
+
+    case ArrayType:
+        for (size_t i = 0; i < m_array.size(); ++i) {
+            if (!IDBIsValidKeyPath(m_array[i]))
+                return false;
+        }
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+IDBKeyPath::operator PassRefPtr<IDBAny>() const
+{
+    switch (m_type) {
+    case NullType:
+        return IDBAny::createNull();
+    case StringType:
+        return IDBAny::createString(m_string);
+    case ArrayType:
+        RefPtr<DOMStringList> keyPaths = DOMStringList::create();
+        for (Vector<String>::const_iterator it = m_array.begin(); it != m_array.end(); ++it)
+        keyPaths->append(*it);
+        return IDBAny::create(static_cast<PassRefPtr<DOMStringList> >(keyPaths));
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 
 } // namespace WebCore
 

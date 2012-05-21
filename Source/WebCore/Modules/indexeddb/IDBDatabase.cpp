@@ -92,9 +92,14 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
         return 0;
     }
 
-    String keyPath;
-    bool keyPathExists = options.getWithUndefinedOrNullCheck("keyPath", keyPath);
-    if (keyPathExists && !IDBIsValidKeyPath(keyPath)) {
+    IDBKeyPath keyPath;
+    if (!options.isUndefinedOrNull()) {
+        String keyPathString;
+        if (options.getWithUndefinedOrNullCheck("keyPath", keyPathString))
+            keyPath = IDBKeyPath(keyPathString);
+    }
+
+    if (!keyPath.isNull() && !keyPath.isValid()) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }

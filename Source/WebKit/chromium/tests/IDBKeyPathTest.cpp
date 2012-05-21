@@ -37,6 +37,10 @@ namespace {
 
 void checkKeyPath(const String& keyPath, const Vector<String>& expected, int parserError)
 {
+    IDBKeyPath idbKeyPath(keyPath);
+    ASSERT_EQ(idbKeyPath.type(), IDBKeyPath::StringType);
+    ASSERT_EQ(idbKeyPath.isValid(), (parserError == IDBKeyPathParseErrorNone));
+
     IDBKeyPathParseError error;
     Vector<String> keyPathElements;
     IDBParseKeyPath(keyPath, keyPathElements, error);

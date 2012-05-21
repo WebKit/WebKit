@@ -41,10 +41,8 @@ namespace {
 
 PassRefPtr<IDBKey> checkKeyFromValueAndKeyPathInternal(SerializedScriptValue* value, const String& keyPath)
 {
-    Vector<String> idbKeyPath;
-    IDBKeyPathParseError parseError;
-    IDBParseKeyPath(keyPath, idbKeyPath, parseError);
-    EXPECT_EQ(IDBKeyPathParseErrorNone, parseError);
+    IDBKeyPath idbKeyPath(keyPath);
+    EXPECT_TRUE(idbKeyPath.isValid());
     return createIDBKeyFromSerializedValueAndKeyPath(value, idbKeyPath);
 }
 
@@ -56,10 +54,8 @@ void checkKeyPathNullValue(SerializedScriptValue* value, const String& keyPath)
 
 PassRefPtr<SerializedScriptValue> injectKey(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
-    Vector<String> idbKeyPath;
-    IDBKeyPathParseError parseError;
-    IDBParseKeyPath(keyPath, idbKeyPath, parseError);
-    EXPECT_EQ(IDBKeyPathParseErrorNone, parseError);
+    IDBKeyPath idbKeyPath(keyPath);
+    EXPECT_TRUE(idbKeyPath.isValid());
     return injectIDBKeyIntoSerializedValue(key, value, idbKeyPath);
 }
 

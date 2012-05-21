@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>&, const String&, Vector<RefPtr<IDBKey>, 0>&)
+void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>&, const IDBKeyPath&, Vector<RefPtr<IDBKey>, 0>&)
 {
     // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
 }
 
-PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const String&)
+PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const IDBKeyPath&)
 {
     // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
     return PassRefPtr<SerializedScriptValue>();

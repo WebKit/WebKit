@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBKey;
+class IDBKeyPath;
 class LevelDBSlice;
 
 namespace IDBLevelDBCoding {
@@ -63,6 +64,8 @@ Vector<char> encodeIDBKey(const IDBKey&);
 const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& foundKey);
 const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result);
 int compareEncodedIDBKeys(const Vector<char>&, const Vector<char>&);
+Vector<char> encodeIDBKeyPath(const IDBKeyPath&);
+IDBKeyPath decodeIDBKeyPath(const char*, const char*);
 
 int compare(const LevelDBSlice&, const LevelDBSlice&, bool indexKeys = false);
 

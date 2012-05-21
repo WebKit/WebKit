@@ -32,6 +32,7 @@
 #include <wtf/Assertions.h>
 #include "FileSystem.h"
 #include "IDBFactoryBackendImpl.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
 #include "LevelDBComparator.h"
@@ -94,6 +95,14 @@ template <typename DBOrTransaction>
 static bool putString(DBOrTransaction* db, const Vector<char> key, const String& value)
 {
     if (!db->put(key, encodeString(value)))
+        return false;
+    return true;
+}
+
+template <typename DBOrTransaction>
+static bool putIDBKeyPath(DBOrTransaction* db, const Vector<char> key, const IDBKeyPath& value)
+{
+    if (!db->put(key, encodeIDBKeyPath(value)))
         return false;
     return true;
 }
@@ -327,7 +336,7 @@ static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vec
     return true;
 }
 
-void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags)
+void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags)
 {
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
     const Vector<char> stopKey = ObjectStoreMetaDataKey::encodeMaxKey(databaseId);
@@ -363,8 +372,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
-        String keyPath = decodeString(it->value().begin(), it->value().end());
-        bool hasKeyPath = true;
+        IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
         it->next();
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kAutoIncrement)) {
@@ -393,17 +401,23 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
 
         it->next(); // [optional] has key path (is not null)
         if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath)) {
-            hasKeyPath = decodeBool(it->value().begin(), it->value().end());
-            if (!hasKeyPath && !keyPath.isEmpty()) {
+            bool hasKeyPath = decodeBool(it->value().begin(), it->value().end());
+            // This check accounts for two layers of legacy coding:
+            // (1) Initially, hasKeyPath was added to distinguish null vs. string.
+            // (2) Later, null vs. string vs. array was stored in the keyPath itself.
+            // So this check is only relevant for string-type keyPaths.
+            if (!hasKeyPath && (keyPath.type() == IDBKeyPath::StringType && !keyPath.string().isEmpty())) {
                 LOG_ERROR("Internal Indexed DB error.");
                 return;
             }
+            if (!hasKeyPath)
+                keyPath = IDBKeyPath();
             it->next();
         }
 
         foundIds.append(objectStoreId);
         foundNames.append(objectStoreName);
-        foundKeyPaths.append(hasKeyPath ? keyPath : String());
+        foundKeyPaths.append(keyPath);
         foundAutoIncrementFlags.append(autoIncrement);
     }
 }
@@ -424,7 +438,7 @@ static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t data
     return objectStoreId;
 }
 
-bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String& name, const String& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
+bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
 {
     ASSERT(m_currentTransaction);
     int64_t objectStoreId = getNewObjectStoreId(m_currentTransaction.get(), databaseId);
@@ -446,7 +460,7 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
         return false;
     }
 
-    ok = putString(m_currentTransaction.get(), keyPathKey, keyPath);
+    ok = putIDBKeyPath(m_currentTransaction.get(), keyPathKey, keyPath);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -717,7 +731,7 @@ static bool checkIndexAndMetaDataKey(const LevelDBIterator* it, const Vector<cha
 }
 
 
-void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundUniqueFlags, Vector<bool>& foundMultiEntryFlags)
+void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundUniqueFlags, Vector<bool>& foundMultiEntryFlags)
 {
     const Vector<char> startKey = IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0);
     const Vector<char> stopKey = IndexMetaDataKey::encode(databaseId, objectStoreId + 1, 0, 0);
@@ -760,7 +774,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
-        String keyPath = decodeString(it->value().begin(), it->value().end());
+        IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
         it->next(); // [optional] multiEntry flag
         bool indexMultiEntry = false;
@@ -793,7 +807,7 @@ static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId
     return indexId;
 }
 
-bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStoreId, const String& name, const String& keyPath, bool isUnique, bool isMultiEntry, int64_t& indexId)
+bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& indexId)
 {
     ASSERT(m_currentTransaction);
     indexId = getNewIndexId(m_currentTransaction.get(), databaseId, objectStoreId);
@@ -817,7 +831,7 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
         return false;
     }
 
-    ok = putString(m_currentTransaction.get(), keyPathKey, keyPath);
+    ok = putIDBKeyPath(m_currentTransaction.get(), keyPathKey, keyPath);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;

@@ -53,10 +53,7 @@ public:
     virtual WebString version() const;
     virtual WebDOMStringList objectStoreNames() const;
 
-    // FIXME: Remove WebString keyPath overload once callers are updated.
-    // http://webkit.org/b/84207
-    virtual WebIDBObjectStore* createObjectStore(const WebString&, const WebString&, bool, const WebIDBTransaction&, WebExceptionCode&);
-    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebIDBKeyPath& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec) { return createObjectStore(name, keyPath.string(), autoIncrement, transaction, ec); }
+    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebIDBKeyPath&, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
     virtual void setVersion(const WebString& version, WebIDBCallbacks*, WebExceptionCode&);
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode&);

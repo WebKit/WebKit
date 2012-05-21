@@ -9,40 +9,33 @@ indexedDB.open(name)
 db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
-globalKeyPath = 'null'
-db.createObjectStore('name', {keyPath: globalKeyPath})
+store = db.createObjectStore('name')
+PASS store.keyPath is null
 Deleted all object stores.
-globalKeyPath = 'undefined'
-db.createObjectStore('name', {keyPath: globalKeyPath})
+store = db.createObjectStore('name', {keyPath: null})
+PASS store.keyPath is null
+index = store.createIndex('name', null)
+PASS index.keyPath is 'null'
 Deleted all object stores.
-globalKeyPath = ''
-db.createObjectStore('name', {keyPath: globalKeyPath})
+store = db.createObjectStore('name', {keyPath: undefined})
+PASS store.keyPath is null
+index = store.createIndex('name', undefined)
+PASS index.keyPath is 'undefined'
 Deleted all object stores.
-globalKeyPath = 'foo'
-db.createObjectStore('name', {keyPath: globalKeyPath})
+store = db.createObjectStore('name', {keyPath: ''})
+PASS store.keyPath is ''
+index = store.createIndex('name', '')
+PASS index.keyPath is ''
 Deleted all object stores.
-globalKeyPath = 'foo.bar.baz'
-db.createObjectStore('name', {keyPath: globalKeyPath})
+store = db.createObjectStore('name', {keyPath: 'foo'})
+PASS store.keyPath is 'foo'
+index = store.createIndex('name', 'foo')
+PASS index.keyPath is 'foo'
 Deleted all object stores.
-globalKeyPath = 'null'
-store = db.createObjectStore('storeName')
-store.createIndex('name', globalKeyPath)
-Deleted all object stores.
-globalKeyPath = 'undefined'
-store = db.createObjectStore('storeName')
-store.createIndex('name', globalKeyPath)
-Deleted all object stores.
-globalKeyPath = ''
-store = db.createObjectStore('storeName')
-store.createIndex('name', globalKeyPath)
-Deleted all object stores.
-globalKeyPath = 'foo'
-store = db.createObjectStore('storeName')
-store.createIndex('name', globalKeyPath)
-Deleted all object stores.
-globalKeyPath = 'foo.bar.baz'
-store = db.createObjectStore('storeName')
-store.createIndex('name', globalKeyPath)
+store = db.createObjectStore('name', {keyPath: 'foo.bar.baz'})
+PASS store.keyPath is 'foo.bar.baz'
+index = store.createIndex('name', 'foo.bar.baz')
+PASS index.keyPath is 'foo.bar.baz'
 Deleted all object stores.
 Deleted all object stores.
 globalKeyPath = '[]'

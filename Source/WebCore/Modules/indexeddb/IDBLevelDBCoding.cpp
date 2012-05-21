@@ -30,6 +30,7 @@
 #if USE(LEVELDB)
 
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
 #include "LevelDBSlice.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -141,6 +142,9 @@ static const unsigned char kIDBKeyDateTypeByte = 2;
 static const unsigned char kIDBKeyNumberTypeByte = 3;
 static const unsigned char kIDBKeyArrayTypeByte = 4;
 static const unsigned char kIDBKeyMinKeyTypeByte = 5;
+
+static const unsigned char kIDBKeyPathTypeCodedByte1 = 0;
+static const unsigned char kIDBKeyPathTypeCodedByte2 = 0;
 
 static const unsigned char kObjectStoreDataIndexId = 1;
 static const unsigned char kExistsEntryIndexId = 2;
@@ -624,6 +628,74 @@ int compareEncodedIDBKeys(const Vector<char>& keyA, const Vector<char>& keyB)
     const char* limitB = q + keyB.size();
 
     return compareEncodedIDBKeys(p, limitA, q, limitB);
+}
+
+Vector<char> encodeIDBKeyPath(const IDBKeyPath& keyPath)
+{
+    // May be typed, or may be a raw string. An invalid leading
+    // byte is used to identify typed coding. New records are
+    // always written as typed.
+    Vector<char> ret;
+    ret.append(kIDBKeyPathTypeCodedByte1);
+    ret.append(kIDBKeyPathTypeCodedByte2);
+    ret.append(static_cast<char>(keyPath.type()));
+    switch (keyPath.type()) {
+    case IDBKeyPath::NullType:
+        break;
+    case IDBKeyPath::StringType:
+        ret.append(encodeStringWithLength(keyPath.string()));
+        break;
+    case IDBKeyPath::ArrayType: {
+        const Vector<String>& array = keyPath.array();
+        size_t count = array.size();
+        ret.append(encodeVarInt(count));
+        for (size_t i = 0; i < count; ++i)
+            ret.append(encodeStringWithLength(array[i]));
+        break;
+    }
+    }
+    return ret;
+}
+
+IDBKeyPath decodeIDBKeyPath(const char* p, const char* limit)
+{
+    // May be typed, or may be a raw string. An invalid leading
+    // byte sequence is used to identify typed coding. New records are
+    // always written as typed.
+    if (p == limit || (limit - p >= 2 && (*p != kIDBKeyPathTypeCodedByte1 || *(p + 1) != kIDBKeyPathTypeCodedByte2)))
+        return IDBKeyPath(decodeString(p, limit));
+    p += 2;
+
+    ASSERT(p != limit);
+    IDBKeyPath::Type type = static_cast<IDBKeyPath::Type>(*p++);
+    switch (type) {
+    case IDBKeyPath::NullType:
+        ASSERT(p == limit);
+        return IDBKeyPath();
+    case IDBKeyPath::StringType: {
+        String string;
+        p = decodeStringWithLength(p, limit, string);
+        ASSERT(p == limit);
+        return IDBKeyPath(string);
+    }
+    case IDBKeyPath::ArrayType: {
+        Vector<String> array;
+        int64_t count;
+        p = decodeVarInt(p, limit, count);
+        ASSERT(p);
+        ASSERT(count >= 0);
+        while (count--) {
+            String string;
+            p = decodeStringWithLength(p, limit, string);
+            ASSERT(p);
+            array.append(string);
+        }
+        ASSERT(p == limit);
+        return IDBKeyPath(array);
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return IDBKeyPath();
 }
 
 namespace {

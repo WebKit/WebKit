@@ -1,3 +1,75 @@
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Store key paths in IDBKeyPath type instead of String
+        https://bugs.webkit.org/show_bug.cgi?id=85298
+
+        Reviewed by Tony Chang, Kentaro Hara and James Robinson.
+
+        No functional changes, just finish migration from String to IDBKeyPath
+        for storing key paths, for eventual array support http://webkit.org/b/84207
+
+        * public/WebIDBDatabase.h: Remove temporary overload.
+        (WebKit):
+        (WebKit::WebIDBDatabase::objectStoreNames):
+        * public/WebIDBIndex.h: Remove temporary method.
+        (WebKit::WebIDBIndex::keyPath):
+        * public/WebIDBKeyPath.h: Remove obsolete methods, wrap WebCore::IDBKeyPath
+        (WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        * public/WebIDBObjectStore.h: Remove temporary method and overload.
+        (WebKit::WebIDBObjectStore::keyPath):
+        * public/platform/WebKitPlatformSupport.h: Remove temporary overloads.
+        (WebKit):
+        * src/AssertMatchingEnums.cpp: WebIDBKeyPath vs. IDBKeyPath enums.
+        * src/IDBDatabaseBackendProxy.cpp: Switch from String to IDBKeyPath.
+        (WebKit::IDBDatabaseBackendProxy::createObjectStore):
+        * src/IDBDatabaseBackendProxy.h: Switch from String to IDBKeyPath.
+        (IDBDatabaseBackendProxy):
+        * src/IDBIndexBackendProxy.cpp: Switch from String to IDBKeyPath.
+        (WebKit::IDBIndexBackendProxy::keyPath):
+        * src/IDBIndexBackendProxy.h: Switch from String to IDBKeyPath.
+        (IDBIndexBackendProxy):
+        * src/IDBObjectStoreBackendProxy.cpp: Switch from String to IDBKeyPath.
+        (WebKit::IDBObjectStoreBackendProxy::keyPath):
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        * src/IDBObjectStoreBackendProxy.h: Switch from String to IDBKeyPath.
+        (IDBObjectStoreBackendProxy):
+        * src/PlatformSupport.cpp: Switch from String to IDBKeyPath.
+        (WebCore::PlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebCore::PlatformSupport::injectIDBKeyIntoSerializedValue):
+        * src/WebIDBDatabaseImpl.cpp: Switch from String to IDBKeyPath.
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        * src/WebIDBDatabaseImpl.h: Remove temporary overload.
+        (WebIDBDatabaseImpl):
+        * src/WebIDBIndexImpl.cpp: Remove temporary method.
+        * src/WebIDBIndexImpl.h: Remove temporary method.
+        (WebIDBIndexImpl):
+        * src/WebIDBKeyPath.cpp: Remove most logic; just a wrapper for WebCore::IDBKeyPath.
+        (WebKit::WebIDBKeyPath::~WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::create):
+        (WebKit::WebIDBKeyPath::createNull):
+        (WebKit::WebIDBKeyPath::isValid):
+        (WebKit::WebIDBKeyPath::type):
+        (WebKit):
+        (WebKit::WebIDBKeyPath::array):
+        (WebKit::WebIDBKeyPath::string):
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::operator=):
+        (WebKit::WebIDBKeyPath::operator const WebCore::IDBKeyPath&):
+        * src/WebIDBObjectStoreImpl.cpp: Remove temporary method and overload.
+        (WebKit::WebIDBObjectStoreImpl::keyPath):
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        * src/WebIDBObjectStoreImpl.h: Remove temporary method and overload.
+        (WebIDBObjectStoreImpl):
+        * tests/IDBBindingUtilitiesTest.cpp: Use IDBKeyPath.
+        (WebCore::checkKeyFromValueAndKeyPathInternal):
+        (WebCore::injectKey):
+        * tests/IDBLevelDBCodingTest.cpp: Added EncodeIDBKeyPath and DecodeIDBKeyPath tests.
+        (IDBLevelDBCoding::TEST):
+        (IDBLevelDBCoding):
+        * tests/IDBKeyPathTest.cpp:
+        (WebCore::checkKeyPath): Test IDBKeyPath validity.
+
 2012-05-18  Michael Nordman  <michaeln@google.com>
 
         [chromium] DomStorage events handling needs TLC (2)

@@ -28,10 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "IDBAny.h"
+#include "PlatformString.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,8 +41,43 @@ enum IDBKeyPathParseError {
     IDBKeyPathParseErrorDot,
 };
 
-bool IDBIsValidKeyPath(const String&);
 void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
+
+class IDBKeyPath {
+public:
+    IDBKeyPath() : m_type(NullType) { }
+    IDBKeyPath(const String&);
+    IDBKeyPath(const Vector<String>& array);
+
+    enum Type {
+        NullType = 0,
+        StringType,
+        ArrayType
+    };
+
+    Type type() const { return m_type; }
+
+    const Vector<String>& array() const
+    {
+        ASSERT(m_type == ArrayType);
+        return m_array;
+    }
+
+    const String& string() const
+    {
+        ASSERT(m_type == StringType);
+        return m_string;
+    }
+
+    bool isNull() const { return m_type == NullType; }
+    bool isValid() const;
+    operator PassRefPtr<IDBAny>() const;
+
+private:
+    Type m_type;
+    String m_string;
+    Vector<String> m_array;
+};
 
 } // namespace WebCore
 

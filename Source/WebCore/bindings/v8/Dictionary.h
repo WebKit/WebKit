@@ -33,11 +33,11 @@
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class DOMStringList;
 class DOMWindow;
 class IDBKeyRange;
 class MediaKeyError;
@@ -85,6 +85,7 @@ public:
 #endif
     bool get(const String&, HashSet<AtomicString>&) const;
     bool get(const String&, Dictionary&) const;
+    bool get(const String&, Vector<String>&) const;
     bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;

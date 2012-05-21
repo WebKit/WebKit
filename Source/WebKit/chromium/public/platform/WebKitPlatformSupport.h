@@ -31,7 +31,6 @@
 #ifndef WebKitPlatformSupport_h
 #define WebKitPlatformSupport_h
 
-#include "../WebIDBKeyPath.h" // FIXME: Remove with: http://webkit.org/b/84207
 #include "WebCommon.h"
 #include "WebGraphicsContext3D.h"
 #include "WebLocalizedString.h"
@@ -53,6 +52,7 @@ class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
 class WebCookieJar;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
+class WebIDBKeyPath; // FIXME: Does this belong in platform?
 class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSandboxSupport;
@@ -106,13 +106,7 @@ public:
     // Indexed Database ----------------------------------------------------
 
     virtual WebIDBFactory* idbFactory() { return 0; }
-    // FIXME: Remove WebString keyPath overload once callers are updated.
-    // http://webkit.org/b/84207
-    virtual void createIDBKeysFromSerializedValuesAndKeyPath(const WebVector<WebSerializedScriptValue>& values,  const WebString& keyPath, WebVector<WebIDBKey>& keys) { createIDBKeysFromSerializedValuesAndKeyPath(values, WebIDBKeyPath(keyPath), keys); }
     virtual void createIDBKeysFromSerializedValuesAndKeyPath(const WebVector<WebSerializedScriptValue>& values,  const WebIDBKeyPath& keyPath, WebVector<WebIDBKey>& keys) { }
-    // FIXME: Remove WebString keyPath overload once callers are updated.
-    // http://webkit.org/b/84207
-    virtual WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebString& keyPath) { return injectIDBKeyIntoSerializedValue(key, value, WebIDBKeyPath(keyPath)); }
     virtual WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebIDBKeyPath& keyPath) { return WebSerializedScriptValue(); }
 
 

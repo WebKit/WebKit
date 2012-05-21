@@ -60,7 +60,7 @@ String IDBObjectStore::name() const
     return m_backend->name();
 }
 
-String IDBObjectStore::keyPath() const
+PassRefPtr<IDBAny> IDBObjectStore::keyPath() const
 {
     IDB_TRACE("IDBObjectStore::keyPath");
     return m_backend->keyPath();
@@ -211,8 +211,13 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
+    return createIndex(name, IDBKeyPath(keyPath), options, ec);
+}
+
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
+{
     IDB_TRACE("IDBObjectStore::createIndex");
-    if (!IDBIsValidKeyPath(keyPath)) {
+    if (!keyPath.isValid()) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }

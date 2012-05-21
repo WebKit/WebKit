@@ -1,5 +1,15 @@
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Store key paths in IDBKeyPath type instead of String
+        https://bugs.webkit.org/show_bug.cgi?id=85298
+
+        Reviewed by Tony Chang, Kentaro Hara and James Robinson.
+
+        * storage/indexeddb/keypath-basics-expected.txt:
+        * storage/indexeddb/resources/keypath-basics.js:
+
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
         Move WebSQL tests in LayoutTests/storage to websql directory
         https://bugs.webkit.org/show_bug.cgi?id=86138
 

@@ -30,6 +30,7 @@
 #if USE(LEVELDB)
 
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
 #include "LevelDBSlice.h"
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
@@ -416,6 +417,133 @@ TEST(IDBLevelDBCodingTest, EncodeDecodeIDBKey)
     EXPECT_TRUE(decodedKey->isEqual(expectedKey.get()));
     EXPECT_EQ(v.data() + v.size(), p);
     EXPECT_EQ(0, decodeIDBKey(v.data(), v.data() + v.size() - 1, decodedKey));
+}
+
+TEST(IDBLevelDBCodingTest, EncodeIDBKeyPath)
+{
+    const unsigned char kIDBKeyPathTypeCodedByte1 = 0;
+    const unsigned char kIDBKeyPathTypeCodedByte2 = 0;
+    {
+        IDBKeyPath keyPath;
+        EXPECT_EQ(keyPath.type(), IDBKeyPath::NullType);
+        Vector<char> v = encodeIDBKeyPath(keyPath);
+        EXPECT_EQ(v.size(), 3U);
+        EXPECT_EQ(v[0], kIDBKeyPathTypeCodedByte1);
+        EXPECT_EQ(v[1], kIDBKeyPathTypeCodedByte2);
+        EXPECT_EQ(v[2], IDBKeyPath::NullType);
+    }
+
+    {
+        Vector<String> testCases;
+        testCases.append("");
+        testCases.append("foo");
+        testCases.append("foo.bar");
+
+        for (size_t i = 0; i < testCases.size(); ++i) {
+            IDBKeyPath keyPath = IDBKeyPath(testCases[i]);
+            Vector<char> v = encodeIDBKeyPath(keyPath);
+            EXPECT_EQ(v.size(), encodeStringWithLength(testCases[i]).size() + 3);
+            const char* p = v.data();
+            const char* limit = v.data() + v.size();
+            EXPECT_EQ(*p++, kIDBKeyPathTypeCodedByte1);
+            EXPECT_EQ(*p++, kIDBKeyPathTypeCodedByte2);
+            EXPECT_EQ(*p++, IDBKeyPath::StringType);
+            String string;
+            p = decodeStringWithLength(p, limit, string);
+            EXPECT_EQ(string, testCases[i]);
+            EXPECT_EQ(p, limit);
+        }
+    }
+
+    {
+        Vector<String> testCase;
+        testCase.append("");
+        testCase.append("foo");
+        testCase.append("foo.bar");
+
+        IDBKeyPath keyPath(testCase);
+        EXPECT_EQ(keyPath.type(), IDBKeyPath::ArrayType);
+        Vector<char> v = encodeIDBKeyPath(keyPath);
+        const char* p = v.data();
+        const char* limit = v.data() + v.size();
+        EXPECT_EQ(*p++, kIDBKeyPathTypeCodedByte1);
+        EXPECT_EQ(*p++, kIDBKeyPathTypeCodedByte2);
+        EXPECT_EQ(*p++, IDBKeyPath::ArrayType);
+        int64_t count;
+        p = decodeVarInt(p, limit, count);
+        EXPECT_EQ(count, static_cast<int64_t>(testCase.size()));
+        for (size_t i = 0; i < static_cast<size_t>(count); ++i) {
+            String string;
+            p = decodeStringWithLength(p, limit, string);
+            EXPECT_EQ(string, testCase[i]);
+        }
+        EXPECT_EQ(p, limit);
+    }
+}
+
+TEST(IDBLevelDBCodingTest, DecodeIDBKeyPath)
+{
+    const unsigned char kIDBKeyPathTypeCodedByte1 = 0;
+    const unsigned char kIDBKeyPathTypeCodedByte2 = 0;
+    {
+        // Legacy encoding of string key paths.
+        Vector<String> testCases;
+        testCases.append("");
+        testCases.append("foo");
+        testCases.append("foo.bar");
+
+        for (size_t i = 0; i < testCases.size(); ++i) {
+            Vector<char> v = encodeString(testCases[i]);
+            IDBKeyPath keyPath = decodeIDBKeyPath(v.data(), v.data() + v.size());
+            EXPECT_EQ(keyPath.type(), IDBKeyPath::StringType);
+            EXPECT_EQ(testCases[i], keyPath.string());
+        }
+    }
+    {
+        Vector<char> v;
+        v.append(kIDBKeyPathTypeCodedByte1);
+        v.append(kIDBKeyPathTypeCodedByte2);
+        v.append(IDBKeyPath::NullType);
+        IDBKeyPath keyPath = decodeIDBKeyPath(v.data(), v.data() + v.size());
+        EXPECT_EQ(keyPath.type(), IDBKeyPath::NullType);
+        EXPECT_TRUE(keyPath.isNull());
+    }
+    {
+        Vector<String> testCases;
+        testCases.append("");
+        testCases.append("foo");
+        testCases.append("foo.bar");
+
+        for (size_t i = 0; i < testCases.size(); ++i) {
+            Vector<char> v;
+            v.append(kIDBKeyPathTypeCodedByte1);
+            v.append(kIDBKeyPathTypeCodedByte2);
+            v.append(IDBKeyPath::StringType);
+            v.append(encodeStringWithLength(testCases[i]));
+            IDBKeyPath keyPath = decodeIDBKeyPath(v.data(), v.data() + v.size());
+            EXPECT_EQ(keyPath.type(), IDBKeyPath::StringType);
+            EXPECT_EQ(testCases[i], keyPath.string());
+        }
+    }
+    {
+        Vector<String> testCase;
+        testCase.append("");
+        testCase.append("foo");
+        testCase.append("foo.bar");
+
+        Vector<char> v;
+        v.append(kIDBKeyPathTypeCodedByte1);
+        v.append(kIDBKeyPathTypeCodedByte2);
+        v.append(IDBKeyPath::ArrayType);
+        v.append(encodeVarInt(testCase.size()));
+        for (size_t i = 0; i < testCase.size(); ++i)
+            v.append(encodeStringWithLength(testCase[i]));
+        IDBKeyPath keyPath = decodeIDBKeyPath(v.data(), v.data() + v.size());
+        EXPECT_EQ(keyPath.type(), IDBKeyPath::ArrayType);
+        EXPECT_EQ(keyPath.array().size(), testCase.size());
+        for (size_t i = 0; i < testCase.size(); ++i)
+            EXPECT_EQ(keyPath.array()[i], testCase[i]);
+    }
 }
 
 TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)

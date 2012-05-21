@@ -78,6 +78,7 @@ class GraphicsContext;
 class Image;
 class IDBFactoryBackendInterface;
 class IDBKey;
+class IDBKeyPath;
 class IntRect;
 class KURL;
 class SerializedScriptValue;
@@ -178,9 +179,9 @@ public:
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
     // Extracts keyPath from values and returns the corresponding keys.
-    static void createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys);
+    static void createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const IDBKeyPath&, Vector<RefPtr<IDBKey> >& keys);
     // Injects key via keyPath into value. Returns true on success.
-    static PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const String& keyPath);
+    static PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const IDBKeyPath&);
 
     // JavaScript ---------------------------------------------------------
     static void notifyJSOutOfMemory(Frame*);

@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCallbacks.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBTransactionBackendProxy.h"
 #include "WebIDBCallbacksImpl.h"
@@ -60,9 +61,9 @@ String IDBIndexBackendProxy::name()
     return m_webIDBIndex->name();
 }
 
-String IDBIndexBackendProxy::keyPath()
+IDBKeyPath IDBIndexBackendProxy::keyPath()
 {
-    return m_webIDBIndex->keyPath().string();
+    return m_webIDBIndex->keyPath();
 }
 
 bool IDBIndexBackendProxy::unique()

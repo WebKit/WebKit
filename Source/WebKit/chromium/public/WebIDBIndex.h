@@ -49,14 +49,8 @@ public:
     }
     virtual WebIDBKeyPath keyPath() const
     {
-        return WebIDBKeyPath(keyPathString());
-    }
-    // FIXME: Remove method once callers are updated.
-    // http://webkit.org/b/84207
-    virtual WebString keyPathString() const
-    {
         WEBKIT_ASSERT_NOT_REACHED();
-        return WebString();
+        return WebIDBKeyPath::createNull();
     }
     virtual bool unique() const
     {

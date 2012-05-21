@@ -27,28 +27,23 @@ function testValidKeyPaths()
 {
     deleteAllObjectStores(db);
 
-    testKeyPaths = [null, undefined, ''];
-    testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        evalAndLog("db.createObjectStore('name', {keyPath: globalKeyPath})");
-        deleteAllObjectStores(db);
-    });
+    evalAndLog("store = db.createObjectStore('name')");
+    shouldBeNull("store.keyPath");
+    deleteAllObjectStores(db);
 
-    testKeyPaths = ['foo', 'foo.bar.baz'];
-    testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        evalAndLog("db.createObjectStore('name', {keyPath: globalKeyPath})");
-        deleteAllObjectStores(db);
-    });
+    testKeyPaths = [
+        { keyPath: "null", storeExpected: "null", indexExpected: "'null'" },
+        { keyPath: "undefined", storeExpected: "null", indexExpected: "'undefined'" },
+        { keyPath: "''", storeExpected: "''", indexExpected: "''" },
+        { keyPath: "'foo'", storeExpected: "'foo'", indexExpected: "'foo'" },
+        { keyPath: "'foo.bar.baz'", storeExpected: "'foo.bar.baz'", indexExpected: "'foo.bar.baz'" }
+    ];
 
-    testKeyPaths = [null, undefined, '', 'foo', 'foo.bar.baz'];
-    testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        store = evalAndLog("store = db.createObjectStore('storeName')");
-        evalAndLog("store.createIndex('name', globalKeyPath)");
+    testKeyPaths.forEach(function (testCase) {
+        evalAndLog("store = db.createObjectStore('name', {keyPath: " + testCase.keyPath + "})");
+        shouldBe("store.keyPath", testCase.storeExpected);
+        evalAndLog("index = store.createIndex('name', " + testCase.keyPath + ")");
+        shouldBe("index.keyPath", testCase.indexExpected);
         deleteAllObjectStores(db);
     });
 

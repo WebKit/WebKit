@@ -31,6 +31,7 @@
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBIndexBackendInterface.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "WebIDBIndexImpl.h"
@@ -58,13 +59,6 @@ WebString WebIDBObjectStoreImpl::name() const
 }
 
 WebIDBKeyPath WebIDBObjectStoreImpl::keyPath() const
-{
-    return WebIDBKeyPath(m_objectStore->keyPath());
-}
-
-// FIXME: Remove this method once callers are updated.
-// http://webkit.org/b/84207
-WebString WebIDBObjectStoreImpl::keyPathString() const
 {
     return m_objectStore->keyPath();
 }
@@ -104,7 +98,7 @@ void WebIDBObjectStoreImpl::clear(WebIDBCallbacks* callbacks, const WebIDBTransa
     m_objectStore->clear(IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebIDBKeyPath& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, multiEntry, transaction.getIDBTransactionBackendInterface(), ec);
     if (!index)

@@ -28,6 +28,7 @@
 
 #include "IDBCursor.h"
 #include "IDBIndexBackendInterface.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBRequest.h"
 #include "PlatformString.h"
@@ -50,7 +51,7 @@ public:
     // Implement the IDL
     String name() const { return m_backend->name(); }
     IDBObjectStore* objectStore() const { return m_objectStore.get(); }
-    String keyPath() const { return m_backend->keyPath(); }
+    PassRefPtr<IDBAny> keyPath() const { return m_backend->keyPath(); }
     bool unique() const { return m_backend->unique(); }
     bool multiEntry() const { return m_backend->multiEntry(); }
 
