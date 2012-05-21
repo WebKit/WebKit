@@ -1,3 +1,18 @@
+2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT support for layoutTestController.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=86653
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support for setSerializeHTTPLoads in DumpRenderTreeSupportGtk
+        to allow testing resource load order.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setSerializeHTTPLoads):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-05-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117628.

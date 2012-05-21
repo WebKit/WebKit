@@ -450,6 +450,7 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(false);
     DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(webView, true);
     DumpRenderTreeSupportGtk::setDefersLoading(webView, false);
+    DumpRenderTreeSupportGtk::setSerializeHTTPLoads(false);
 
     if (axController)
         axController->resetToConsistentState();

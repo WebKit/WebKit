@@ -56,6 +56,7 @@
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "ResourceLoadScheduler.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -884,4 +885,9 @@ void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 void DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme)
 {
     SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, String::fromUTF8(urlScheme));
+}
+
+void DumpRenderTreeSupportGtk::setSerializeHTTPLoads(bool enabled)
+{
+    resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
 }

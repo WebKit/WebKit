@@ -1,3 +1,17 @@
+2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT support for layoutTestController.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=86653
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip test cases which rely on LayoutTestController's setSerializeHTTPLoads
+        implementation.
+
+        * platform/gtk/fast/loader/file-protocol-fragment-expected.txt: Removed. The current
+        result matches the base expectation, so removed the platform-specific results.
+        * platform/gtk/test_expectations.txt:
+
 2012-05-21  Brady Eidson  <beidson@apple.com>
 
         Checking in correct test results for https://bugs.webkit.org/show_bug.cgi?id=86119

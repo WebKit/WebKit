@@ -127,6 +127,7 @@ public:
 
     static void deliverAllMutationsIfNecessary();
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme);
+    static void setSerializeHTTPLoads(bool enabled);
 
 private:
     static bool s_drtRun;

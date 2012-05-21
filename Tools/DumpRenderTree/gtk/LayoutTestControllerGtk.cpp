@@ -966,9 +966,9 @@ void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int devic
     DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight);
 }
 
-void LayoutTestController::setSerializeHTTPLoads(bool)
+void LayoutTestController::setSerializeHTTPLoads(bool serialize)
 {
-    // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.
+    DumpRenderTreeSupportGtk::setSerializeHTTPLoads(serialize);
 }
 
 void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)

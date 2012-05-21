@@ -1053,11 +1053,7 @@ BUGWK50740 : editing/spelling/spellcheck-queue.html = FAIL
 BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = FAIL
 BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = FAIL
 
-// These require DRT setSerializeHTTPLoads implementation to be reliable.
-BUGWK50758 : http/tests/local/link-stylesheet-load-order.html = FAIL
-BUGWK50758 : http/tests/local/link-stylesheet-load-order-preload.html = FAIL
-BUGWK50758 : fast/preloader/document-write.html = FAIL
-BUGWK50758 : fast/preloader/document-write-2.html = FAIL
+BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = FAIL
 
 // Passing just a username or just a password to
 // layoutTestController.queueLoad() does not work
