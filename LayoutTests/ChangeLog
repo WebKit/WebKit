@@ -1,3 +1,385 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed test expectation updates following r117815.
+
+        * platform/chromium-linux-x86/svg/zoom: Added.
+        * platform/chromium-linux-x86/svg/zoom/page: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-mac-leopard/media/controls-strict-expected.png:
+        * platform/chromium-mac-leopard/media/controls-styling-expected.png:
+        * platform/chromium-mac-leopard/media/controls-without-preload-expected.png:
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac-leopard/media/video-display-toggle-expected.png:
+        * platform/chromium-mac-leopard/media/video-no-audio-expected.png:
+        * platform/chromium-mac-leopard/media/video-playing-and-pause-expected.png:
+        * platform/chromium-mac-leopard/media/video-volume-slider-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/bug45331-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/bug45331-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/junk-data-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/junk-data-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/custom/missing-xlink-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/missing-xlink-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/path-bad-data-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/custom/rootmost-svg-xy-attrs-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/use-font-face-crash-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/use-font-face-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/chromium-mac-leopard/svg/hixie/error/012-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug10269-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug106816-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug11384s-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug126742-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug139524-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug159108-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug17130-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug17130-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug19061-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug19061-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug3309-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug3309-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug33137-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug46480-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug46480-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug52505-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug52506-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug5538-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug6304-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug7112-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug7112-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug8032-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug8381-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug9271-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug9271-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/core/margins-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_position-table-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-cell-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-column-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-row-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/other/test3-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/other/test6-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/other/wa_table_tr_align-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug10140-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug10216-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug1128-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug21518-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug25707-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug3166-13-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug3166-14-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug3166-16-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug3166-17-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug3166-18-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug61042-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug61042-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/core/standards1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/chromium-mac/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/controls-styling-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/media-controls-clone-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-playing-and-pause-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/svg/custom/bug45331-expected.png:
+        * platform/chromium-mac/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/custom/junk-data-expected.png:
+        * platform/chromium-mac/svg/custom/missing-xlink-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-expected.png:
+        * platform/chromium-mac/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-mac/svg/custom/rootmost-svg-xy-attrs-expected.png:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/chromium-mac/svg/custom/use-font-face-crash-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/chromium-mac/svg/hixie/error/012-expected.png:
+        * platform/chromium-mac/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-mac/svg/wicd/test-rightsizing-a-expected.png:
+        * platform/chromium-mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-mac/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-mac/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10269-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug11384s-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug17130-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug17130-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug19061-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug19061-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug3309-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug3309-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug5538-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug6304-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7112-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7112-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug8032-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug8381-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug9271-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug9271-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/margins-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_position-table-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-cell-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-column-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-row-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/test3-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/test6-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/wa_table_tr_align-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug10140-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug10216-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1128-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug21518-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug25707-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3166-13-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3166-14-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3166-16-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3166-17-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug3166-18-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug61042-1-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug61042-2-expected.png:
+        * platform/chromium-win-vista/svg/custom/bug45331-expected.txt: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-hixie-mixed-008-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/custom/bug45331-expected.txt: Added.
+        * platform/chromium-win-xp/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-win/svg/custom/bug45331-expected.png:
+        * platform/chromium-win/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-win/svg/custom/junk-data-expected.png:
+        * platform/chromium-win/svg/custom/missing-xlink-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-expected.png:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-win/svg/custom/rootmost-svg-xy-attrs-expected.png:
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/chromium-win/svg/hixie/error/012-expected.png:
+        * platform/chromium-win/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-win/svg/wicd/test-rightsizing-a-expected.png:
+        * platform/chromium-win/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-win/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/chromium-win/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-win/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium/svg/as-image: Added.
+        * platform/chromium/svg/as-image/svg-non-integer-scaled-image-expected.txt: Added.
+        * platform/chromium/svg/custom/fractional-rects-expected.txt: Added.
+        * platform/chromium/svg/custom/js-update-container-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-background-images-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug1055-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug106816-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug126742-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug131020-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug139524-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug159108-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug17130-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug17130-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug19061-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug19061-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug3309-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug3309-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug33137-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug46480-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug46480-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug5538-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug7112-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug7112-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug8032-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/marvin/backgr_index-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1128-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug21518-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug22122-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-background-images-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Removed.
+        * platform/gtk/svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug1055-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug106816-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug126742-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug131020-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug139524-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug159108-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug17130-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug17130-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug19061-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug19061-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3309-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3309-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug33137-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug46480-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug46480-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug5538-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug7112-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug7112-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug8032-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/backgr_index-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug1128-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug21518-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug22122-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt: Removed.
+        * platform/mac-snowleopard/svg/zoom/page/zoom-svg-float-border-padding-expected.png: Removed.
+        * platform/mac-snowleopard/svg/zoom/text: Removed.
+        * platform/mac-snowleopard/svg/zoom/text/zoom-svg-float-border-padding-expected.png: Removed.
+        * platform/mac/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * platform/mac/svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Removed.
+        * svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Added.
+        * svg/zoom/page/zoom-mask-with-percentages-expected.txt: Added.
+        * svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+        * svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Added.
+        * tables/mozilla/bugs/bug1055-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug106816-expected.txt: Added.
+        * tables/mozilla/bugs/bug126742-expected.txt: Added.
+        * tables/mozilla/bugs/bug131020-expected.txt: Added.
+        * tables/mozilla/bugs/bug139524-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug159108-expected.txt: Added.
+        * tables/mozilla/bugs/bug17130-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug17130-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug19061-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug19061-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug3309-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug3309-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug33137-expected.txt: Added.
+        * tables/mozilla/bugs/bug46480-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug46480-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug5538-expected.txt: Added.
+        * tables/mozilla/bugs/bug7112-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug7112-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug8032-1-expected.txt: Added.
+        * tables/mozilla/marvin/backgr_index-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug1128-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug21518-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug22122-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug3166-18-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug61042-1-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug61042-2-expected.txt: Added.
+
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed gardening. Updating Skipped file names following bulk move in r117816.
