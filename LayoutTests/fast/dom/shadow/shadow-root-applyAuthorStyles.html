@@ -25,8 +25,24 @@ input[type="file"] {
 <div id="no-apply-author-style"></div>
 <div id="with-inline-style-declaration"></div>
 <div id="try-to-override-important"></div>
+<div id="change-apply-author-style-from-true-to-false"></div>
+<div id="change-apply-author-style-from-false-to-true"></div>
 
 <script>
+function shouldBe(a, b)
+{
+   if (a != b) {
+      throw "failure:" + a + ": should be " + b;
+   }
+}
+
+function shouldNotBe(a, b)
+{
+   if (a == b) {
+      throw "failure:" + a + ": should not be " + b;
+   }
+}
+
 function assertTrue(id, actual) {
    if (!actual) {
        throw "failure:" + id +  ": assertTrue failed";
@@ -83,10 +99,53 @@ function renderApplyAuthorStyleWithOverridingImportantPropertyCase() {
     shadowRoot.innerHTML = '<input type="file" />';
 }
 
+function testChangingApplyAuthorStyleFromTrueToFalse() {
+    var div = document.createElement('div');
+    document.getElementById('change-apply-author-style-from-true-to-false').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
+    shadowRoot.applyAuthorStyles = true;
+    assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<div><span id="test1"></span></div>';
+    div.offsetLeft;
+    var target = shadowRoot.getElementById('test1');
+    shouldBe(window.getComputedStyle(target).getPropertyValue('font-size'), "24px");
+    shouldBe(window.getComputedStyle(target).getPropertyValue('text-decoration'), "underline");
+
+    shadowRoot.applyAuthorStyles = false;
+    assertFalse('applyAuthorStyles should be false', shadowRoot.applyAuthorStyles);
+    div.offsetLeft;
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('font-size'), "24px");
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('text-decoration'), "underline");
+}
+
+function testChangingApplyAuthorStyleFromFalseToTrue() {
+    var div = document.createElement('div');
+    document.getElementById('change-apply-author-style-from-false-to-true').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.applyAuthorStyles = false;
+    assertFalse('applyAuthorStyles should be false', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<div><span id="test2"></span></div>';
+    div.offsetLeft;
+    var target = shadowRoot.getElementById('test2');
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('font-size'), "24px");
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('text-decoration'), "underline");
+
+    shadowRoot.applyAuthorStyles = true;
+    assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
+    div.offsetLeft;
+    shouldBe(window.getComputedStyle(target).getPropertyValue('font-size'), "24px");
+    shouldBe(window.getComputedStyle(target).getPropertyValue('text-decoration'), "underline");
+}
+
 renderApplyAuthorStyleCase();
 renderNoApplyAuthorStyleCase();
 renderApplyAuthorStyleWithInlineStyleDeclarationCase();
 renderApplyAuthorStyleWithOverridingImportantPropertyCase();
+testChangingApplyAuthorStyleFromTrueToFalse();
+testChangingApplyAuthorStyleFromFalseToTrue();
 </script>
 </body>
 </html>

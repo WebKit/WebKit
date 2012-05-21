@@ -188,7 +188,11 @@ bool ShadowRoot::applyAuthorStyles() const
 
 void ShadowRoot::setApplyAuthorStyles(bool value)
 {
-    m_applyAuthorStyles = value;
+    if (m_applyAuthorStyles != value) {
+        m_applyAuthorStyles = value;
+        if (attached() && owner())
+            owner()->setNeedsRedistributing();
+    }
 }
 
 void ShadowRoot::attach()
