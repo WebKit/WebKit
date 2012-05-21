@@ -320,21 +320,34 @@ class ChromiumPort(Port):
         'win_layout_rel',
     ])
 
+    def _expectations_file_contents(self, filetype, filepath):
+        if self._filesystem.exists(filepath):
+            _log.debug(
+                "reading %s test_expectations overrides from file '%s'" %
+                (filetype, filepath))
+            return (self._filesystem.read_text_file(filepath) or '')
+        else:
+            _log.warning(
+                "%s test_expectations overrides file '%s' does not exist" %
+                (filetype, filepath))
+            return ''
+
     def test_expectations_overrides(self):
+        combined_overrides = ''
+        combined_overrides += self._expectations_file_contents(
+            'skia', self.path_from_chromium_base(
+                'skia', 'skia_test_expectations.txt'))
         # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy
         # builder string instead of just using None.
         builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
-        base_overrides = super(ChromiumPort, self).test_expectations_overrides()
-        if builder_name != 'DUMMY_BUILDER_NAME' and not '(deps)' in builder_name and not builder_name in self.try_builder_names:
-            return base_overrides
+        if builder_name == 'DUMMY_BUILDER_NAME' or '(deps)' in builder_name or builder_name in self.try_builder_names:
+            combined_overrides += self._expectations_file_contents(
+                'chromium', self.path_from_chromium_base(
+                    'webkit', 'tools', 'layout_tests', 'test_expectations.txt'))
 
-        try:
-            overrides_path = self.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt')
-        except AssertionError, e:
-            return base_overrides
-        if not self._filesystem.exists(overrides_path):
-            return base_overrides
-        return self._filesystem.read_text_file(overrides_path) + (base_overrides or '')
+        base_overrides = super(ChromiumPort, self).test_expectations_overrides()
+        combined_overrides += (base_overrides or '')
+        return combined_overrides
 
     def repository_paths(self):
         repos = super(ChromiumPort, self).repository_paths()

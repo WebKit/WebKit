@@ -293,8 +293,11 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         chromium_overrides_path = port.path_from_chromium_base(
             'webkit', 'tools', 'layout_tests', 'test_expectations.txt')
         CHROMIUM_OVERRIDES = 'contents of %s\n' % chromium_overrides_path
-
         filesystem.write_text_file(chromium_overrides_path, CHROMIUM_OVERRIDES)
+        skia_overrides_path = port.path_from_chromium_base(
+            'skia', 'skia_test_expectations.txt')
+        SKIA_OVERRIDES = 'contents of %s\n' % skia_overrides_path
+        filesystem.write_text_file(skia_overrides_path, SKIA_OVERRIDES)
 
         additional_expectations_path = port.path_from_chromium_base(
             'additional_expectations.txt')
@@ -304,26 +307,28 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         port._options.builder_name = 'DUMMY_BUILDER_NAME'
         port._options.additional_expectations = []
         self.assertEquals(port.test_expectations_overrides(),
-                          CHROMIUM_OVERRIDES)
+                          SKIA_OVERRIDES + CHROMIUM_OVERRIDES)
         port._options.additional_expectations = [additional_expectations_path]
         self.assertEquals(port.test_expectations_overrides(),
-                          CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
+                          SKIA_OVERRIDES + CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
         port._options.builder_name = 'builder (deps)'
         port._options.additional_expectations = []
         self.assertEquals(port.test_expectations_overrides(),
-                          CHROMIUM_OVERRIDES)
+                          SKIA_OVERRIDES + CHROMIUM_OVERRIDES)
         port._options.additional_expectations = [additional_expectations_path]
         self.assertEquals(port.test_expectations_overrides(),
-                          CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
+                          SKIA_OVERRIDES + CHROMIUM_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
+        # A builder which does NOT observe the Chromium test_expectations,
+        # but still observes the Skia test_expectations...
         port._options.builder_name = 'builder'
         port._options.additional_expectations = []
         self.assertEquals(port.test_expectations_overrides(),
-                          None)
+                          SKIA_OVERRIDES)
         port._options.additional_expectations = [additional_expectations_path]
         self.assertEquals(port.test_expectations_overrides(),
-                          ADDITIONAL_EXPECTATIONS)
+                          SKIA_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
