@@ -946,7 +946,7 @@ bool Editor::insertLineBreak()
         return true;
 
     VisiblePosition caret = m_frame->selection()->selection().visibleStart();
-    bool alignToEdge = isEndOfDocument(caret);
+    bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
     TypingCommand::insertLineBreak(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
@@ -966,7 +966,7 @@ bool Editor::insertParagraphSeparator()
         return true;
 
     VisiblePosition caret = m_frame->selection()->selection().visibleStart();
-    bool alignToEdge = isEndOfDocument(caret);
+    bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
     TypingCommand::insertParagraphSeparator(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);

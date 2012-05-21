@@ -830,7 +830,7 @@ void ReplaceSelectionCommand::doApply()
         visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
-                if (!isEndOfDocument(visibleStart))
+                if (!isEndOfEditableOrNonEditableContent(visibleStart))
                     setEndingSelection(visibleStart.next());
             } else
                 insertParagraphSeparator();

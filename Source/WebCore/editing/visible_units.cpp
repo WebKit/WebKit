@@ -1369,12 +1369,12 @@ bool inSameDocument(const VisiblePosition &a, const VisiblePosition &b)
 
 bool isStartOfDocument(const VisiblePosition &p)
 {
-    return p.isNotNull() && p.previous().isNull();
+    return p.isNotNull() && p.previous(CanCrossEditingBoundary).isNull();
 }
 
 bool isEndOfDocument(const VisiblePosition &p)
 {
-    return p.isNotNull() && p.next().isNull();
+    return p.isNotNull() && p.next(CanCrossEditingBoundary).isNull();
 }
 
 // ---------
@@ -1395,6 +1395,11 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
         return VisiblePosition();
 
     return lastPositionInNode(highestRoot);
+}
+
+bool isEndOfEditableOrNonEditableContent(const VisiblePosition &p)
+{
+    return p.isNotNull() && p.next().isNull();
 }
 
 VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction)

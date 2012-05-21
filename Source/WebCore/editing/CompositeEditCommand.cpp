@@ -929,8 +929,8 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
             // We can bail as we have a full block to work with.
             ASSERT(upstreamStart.deprecatedNode()->isDescendantOf(enclosingBlock(upstreamEnd.deprecatedNode())));
             return 0;
-        } else if (isEndOfDocument(visibleEnd)) {
-            // At the end of the document. We can bail here as well.
+        } else if (isEndOfEditableOrNonEditableContent(visibleEnd)) {
+            // At the end of the editable region. We can bail here as well.
             return 0;
         }
     }

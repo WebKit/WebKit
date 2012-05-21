@@ -293,11 +293,11 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             VisiblePosition start = VisiblePosition(m_start, m_affinity);
             VisiblePosition originalEnd(m_end, m_affinity);
             EWordSide side = RightWordIfOnBoundary;
-            if (isEndOfDocument(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
+            if (isEndOfEditableOrNonEditableContent(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
                 side = LeftWordIfOnBoundary;
             m_start = startOfWord(start, side).deepEquivalent();
             side = RightWordIfOnBoundary;
-            if (isEndOfDocument(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
+            if (isEndOfEditableOrNonEditableContent(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
                 side = LeftWordIfOnBoundary;
                 
             VisiblePosition wordEnd(endOfWord(originalEnd, side));
@@ -349,7 +349,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             break;
         case ParagraphGranularity: {
             VisiblePosition pos(m_start, m_affinity);
-            if (isStartOfLine(pos) && isEndOfDocument(pos))
+            if (isStartOfLine(pos) && isEndOfEditableOrNonEditableContent(pos))
                 pos = pos.previous();
             m_start = startOfParagraph(pos).deepEquivalent();
             VisiblePosition visibleParagraphEnd = endOfParagraph(VisiblePosition(m_end, m_affinity));

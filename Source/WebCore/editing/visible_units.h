@@ -94,6 +94,7 @@ bool isEndOfDocument(const VisiblePosition &);
 // editable content
 VisiblePosition startOfEditableContent(const VisiblePosition&);
 VisiblePosition endOfEditableContent(const VisiblePosition&);
+bool isEndOfEditableOrNonEditableContent(const VisiblePosition&);
 
 } // namespace WebCore
 
