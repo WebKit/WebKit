@@ -1,27 +1,27 @@
-layer at (0,0) size 785x1383
+layer at (0,0) size 785x1384
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1383
-  RenderBlock {HTML} at (0,0) size 785x1383
-    RenderBody {BODY} at (8,8) size 769x1359 [bgcolor=#FFDEAD]
+layer at (0,0) size 785x1384
+  RenderBlock {HTML} at (0,0) size 785x1384
+    RenderBody {BODY} at (8,8) size 769x1360 [bgcolor=#FFDEAD]
       RenderBlock (anonymous) at (0,0) size 769x20
         RenderText {#text} at (0,0) size 572x19
           text run at (0,0) width 572: "If there is missing vertical space between tables and/or tables and other content, it is bug 6997. "
         RenderBR {BR} at (572,15) size 0x0
-      RenderBlock {H1} at (0,41) size 769x74
+      RenderBlock {H1} at (0,41) size 769x75
         RenderInline {FONT} at (0,0) size 475x73 [color=#FF0000]
           RenderText {#text} at (0,0) size 295x36
             text run at (0,0) width 295: "Acceptance Test Case"
           RenderBR {BR} at (295,29) size 0x0
           RenderText {#text} at (0,37) size 475x36
             text run at (0,37) width 475: "Web Browser: Web View (HTML)"
-      RenderBlock {P} at (0,136) size 769x27
+      RenderBlock {P} at (0,136) size 769x28
         RenderInline {FONT} at (0,0) size 215x27 [color=#FF0000]
           RenderInline {B} at (0,0) size 215x26
             RenderText {#text} at (0,0) size 215x26
               text run at (0,0) width 215: "Table: <TR> ALIGN"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,179) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,189) size 769x80
+      RenderBlock {HR} at (0,179) size 769x3 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,189) size 769x81
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "This acceptance test case tests the optional "
         RenderInline {B} at (0,0) size 40x19
@@ -60,12 +60,12 @@ layer at (0,0) size 785x1383
             text run at (69,60) width 39: "LEFT"
         RenderText {#text} at (108,60) size 4x19
           text run at (108,60) width 4: "."
-      RenderBlock {P} at (0,285) size 769x20
+      RenderBlock {P} at (0,285) size 769x21
         RenderInline {B} at (0,0) size 118x19
           RenderText {#text} at (0,0) size 118x19
             text run at (0,0) width 118: "Test Instructions:"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {OL} at (0,321) size 769x226
+      RenderBlock {OL} at (0,321) size 769x227
         RenderListItem {LI} at (40,0) size 729x20
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 473x19
@@ -129,8 +129,8 @@ layer at (0,0) size 785x1383
           RenderListMarker at (-21,0) size 16x19: "6"
           RenderText {#text} at (0,0) size 125x19
             text run at (0,0) width 125: "Verify reload works."
-      RenderBlock {HR} at (0,563) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,581) size 769x65
+      RenderBlock {HR} at (0,563) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,581) size 769x66
         RenderTable {TABLE} at (0,0) size 769x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x63
             RenderTableRow {TR} at (0,2) size 767x59
@@ -149,7 +149,7 @@ layer at (0,0) size 785x1383
                       text run at (705,14) width 35: "(using"
                       text run at (353,31) width 57: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,662) size 769x76
+      RenderBlock {P} at (0,662) size 769x77
         RenderTable {TABLE} at (0,0) size 346x76 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 346x20
             RenderText {#text} at (70,0) size 206x19
@@ -175,8 +175,8 @@ layer at (0,0) size 785x1383
               RenderTableCell {TD} at (230,28) size 112x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 66x19
                   text run at (2,2) width 66: "row data 3"
-      RenderBlock {HR} at (0,754) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,772) size 769x65
+      RenderBlock {HR} at (0,754) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,772) size 769x66
         RenderTable {TABLE} at (0,0) size 769x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x63
             RenderTableRow {TR} at (0,2) size 767x59
@@ -195,7 +195,7 @@ layer at (0,0) size 785x1383
                       text run at (688,14) width 62: "(using <TR"
                       text run at (275,31) width 213: "ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,853) size 769x158
+      RenderBlock {P} at (0,853) size 769x159
         RenderTable {TABLE} at (0,0) size 346x158 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 346x20
             RenderText {#text} at (71,0) size 204x19
@@ -243,7 +243,7 @@ layer at (0,0) size 785x1383
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1027) size 769x158
+      RenderBlock {P} at (0,1027) size 769x159
         RenderTable {TABLE} at (0,0) size 346x158 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 346x20
             RenderText {#text} at (59,0) size 228x19
@@ -291,7 +291,7 @@ layer at (0,0) size 785x1383
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1201) size 769x76
+      RenderBlock {P} at (0,1201) size 769x77
         RenderTable {TABLE} at (0,0) size 346x76 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 346x20
             RenderText {#text} at (66,0) size 214x19
@@ -317,9 +317,9 @@ layer at (0,0) size 785x1383
               RenderTableCell {TD} at (230,28) size 112x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (44,2) size 66x19
                   text run at (44,2) width 66: "row data 3"
-      RenderBlock {P} at (0,1293) size 769x0
-      RenderBlock {HR} at (0,1293) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1303) size 769x20
+      RenderBlock {P} at (0,1293) size 769x1
+      RenderBlock {HR} at (0,1293) size 769x3 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,1303) size 769x21
         RenderImage {IMG} at (0,2) size 13x13
         RenderText {#text} at (13,0) size 120x19
           text run at (13,0) width 120: " Created 9/9/96 by "
@@ -327,6 +327,6 @@ layer at (0,0) size 785x1383
           RenderText {#text} at (133,0) size 77x19
             text run at (133,0) width 77: "Ronald Greti"
         RenderBR {BR} at (210,15) size 0x0
-      RenderBlock {P} at (0,1339) size 769x20
+      RenderBlock {P} at (0,1339) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {P} at (0,1375) size 769x0
+      RenderBlock {P} at (0,1375) size 769x1

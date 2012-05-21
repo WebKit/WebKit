@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,28) size 770x180 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (4,4) size 762x116 [bgcolor=#FFFF00]
                 RenderBlock {DIV} at (190,0) size 382x40 [bgcolor=#FFFFFF]
-                  RenderBlock {P} at (0,0) size 382x40
+                  RenderBlock {P} at (0,0) size 381x40
                     RenderText {#text} at (0,0) size 371x39
                       text run at (0,0) width 371: "This paragraph should be centered within its yellow containing"
                       text run at (0,20) width 345: "block and its width should be half of the containing block."

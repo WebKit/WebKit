@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 598x581
           RenderTableRow {TR} at (0,0) size 598x234
             RenderTableCell {TD} at (0,0) size 152x20 [bgcolor=#CCCC9C] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (0,0) size 84x19
+              RenderText {#text} at (0,0) size 84x20
                 text run at (0,0) width 84: "xxxxxxxxxxxx"
               RenderBR {BR} at (84,15) size 0x0
             RenderTableCell {TD} at (152,0) size 3x38 [bgcolor=#D3D3D3] [r=0 c=1 rs=1 cs=1]

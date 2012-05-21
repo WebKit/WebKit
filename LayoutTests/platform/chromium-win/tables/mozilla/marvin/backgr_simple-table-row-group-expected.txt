@@ -1,22 +1,22 @@
-layer at (0,0) size 785x1369
+layer at (0,0) size 785x1370
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1369
-  RenderBlock {HTML} at (0,0) size 785x1369
-    RenderBody {BODY} at (8,17) size 769x1344 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1370
+  RenderBlock {HTML} at (0,0) size 785x1371
+    RenderBody {BODY} at (8,17) size 769x1346 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x23
+      RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 276x23
           text run at (0,0) width 276: "Part A: Background Area"
-      RenderBlock {H3} at (0,86) size 769x17
+      RenderBlock {H3} at (0,86) size 769x18
         RenderText {#text} at (0,0) size 279x17
           text run at (0,0) width 279: "Background on 'table-row-group'"
-      RenderBlock {P} at (0,118) size 769x16
+      RenderBlock {P} at (0,118) size 769x17
         RenderText {#text} at (0,0) size 424x16
           text run at (0,0) width 384: "The styled row group spans the second and third "
           text run at (384,0) width 40: "rows."
-      RenderBlock {P} at (0,147) size 769x48
+      RenderBlock {P} at (0,147) size 769x49
         RenderText {#text} at (0,0) size 768x48
           text run at (0,0) width 392: "The table row group background should be visible "
           text run at (392,0) width 376: "within the border edge of each cell originating"
@@ -24,7 +24,7 @@ layer at (0,0) size 785x1369
           text run at (144,16) width 488: "All stripes should line up as if the cells were cutouts in a "
           text run at (632,16) width 112: "stencil placed"
           text run at (0,32) width 240: "over the row group background."
-      RenderBlock {P} at (0,208) size 769x48
+      RenderBlock {P} at (0,208) size 769x49
         RenderText {#text} at (0,0) size 768x48
           text run at (0,0) width 360: "A red band should align with the left border "
           text run at (360,0) width 400: "edge of the first cells in each of the row group's"
@@ -32,7 +32,7 @@ layer at (0,0) size 785x1369
           text run at (128,16) width 512: "stripe should align a few pixels above the bottom border of the "
           text run at (640,16) width 128: "cells in the row"
           text run at (0,32) width 136: "group's last row."
-      RenderBlock {DL} at (0,269) size 769x96
+      RenderBlock {DL} at (0,269) size 769x97
         RenderBlock {DT} at (0,0) size 769x16
           RenderText {#text} at (0,0) size 32x16
             text run at (0,0) width 32: "next"
@@ -57,7 +57,7 @@ layer at (0,0) size 785x1369
             RenderText {#text} at (0,0) size 136x16
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,378) size 618x481 [color=#FFFFFF] [border: (1px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,378) size 618x482 [color=#FFFFFF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 618x23
           RenderText {#text} at (161,0) size 296x22
             text run at (161,0) width 296: "With 'border-collapse: separate'"
@@ -116,7 +116,7 @@ layer at (0,0) size 785x1369
             RenderTableCell {TD} at (496,150) size 113x27 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderTable {TABLE} at (0,859) size 578x433 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,859) size 578x434 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 578x23
           RenderText {#text} at (143,0) size 292x22
             text run at (143,0) width 292: "With 'border-collapse: collapse'"
@@ -175,10 +175,10 @@ layer at (0,0) size 785x1369
             RenderTableCell {TD} at (465,135) size 112x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderBlock {DIV} at (0,1292) size 769x35
+      RenderBlock {DIV} at (0,1292) size 769x36
         RenderInline {A} at (0,0) size 88x16 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1327) size 769x17
+      RenderBlock {ADDRESS} at (0,1327) size 769x18
         RenderText {#text} at (0,0) size 704x17
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

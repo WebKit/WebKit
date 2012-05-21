@@ -1,8 +1,8 @@
-layer at (0,0) size 880x1257
+layer at (0,0) size 880x1258
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1257
-  RenderBlock {HTML} at (0,0) size 785x1257
-    RenderBody {BODY} at (8,8) size 769x1241 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x1258
+  RenderBlock {HTML} at (0,0) size 785x1258
+    RenderBody {BODY} at (8,8) size 769x1242 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "The style declarations which apply to the text below are:"
@@ -29,12 +29,12 @@ layer at (0,0) size 785x1257
           text run at (397,0) width 87: "A capital idea."
       RenderBlock {HR} at (0,251) size 769x2 [border: (1px inset #000000)]
       RenderBlock {HR} at (0,261) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {H4} at (0,284) size 769x20
+      RenderBlock {H4} at (0,284) size 769x21
         RenderInline {A} at (0,0) size 213x19
           RenderText {#text} at (0,0) size 213x19
             text run at (0,0) width 213: "5.3.5    'background-attachment'"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,325) size 769x100
+      RenderBlock {P} at (0,325) size 769x101
         RenderInline {EM} at (0,0) size 42x19
           RenderText {#text} at (0,0) size 42x19
             text run at (0,0) width 42: "Value:"
@@ -65,11 +65,11 @@ layer at (0,0) size 785x1257
         RenderText {#text} at (123,80) size 31x19
           text run at (123,80) width 31: " N/A"
         RenderBR {BR} at (154,95) size 0x0
-      RenderBlock {P} at (0,441) size 769x40
+      RenderBlock {P} at (0,441) size 769x41
         RenderText {#text} at (0,0) size 766x39
           text run at (0,0) width 766: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or if it"
           text run at (0,20) width 177: "scrolls along with the content."
-      RenderBlock {PRE} at (0,497) size 769x80
+      RenderBlock {PRE} at (0,497) size 769x81
         RenderText {#text} at (0,0) size 296x80
           text run at (0,0) width 72: "  BODY { "
           text run at (72,0) width 0: " "
@@ -81,14 +81,14 @@ layer at (0,0) size 785x1257
           text run at (264,48) width 0: " "
           text run at (0,64) width 24: "  }"
           text run at (24,64) width 0: " "
-      RenderBlock {P} at (0,593) size 769x40
+      RenderBlock {P} at (0,593) size 769x41
         RenderInline {EM} at (0,0) size 72x19
           RenderText {#text} at (0,0) size 72x19
             text run at (0,0) width 72: "CSS1 core:"
         RenderText {#text} at (72,0) size 761x39
           text run at (72,0) width 689: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least on the HTML"
           text run at (0,20) width 728: "and BODY elements, since there is no way for an author to provide an image only for those browsers that support 'fixed'."
-      RenderTable {TABLE} at (0,649) size 769x592 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,649) size 769x593 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x590
           RenderTableRow {TR} at (0,0) size 767x28
             RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -99,7 +99,7 @@ layer at (0,0) size 785x1257
             RenderTableCell {TD} at (0,295) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 755x562 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 755x563 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x100
                 RenderText {#text} at (0,0) size 742x99
                   text run at (0,0) width 731: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background) which does"
@@ -117,12 +117,12 @@ layer at (0,0) size 785x1257
                   text run at (397,0) width 87: "A capital idea."
               RenderBlock {HR} at (4,156) size 747x2 [border: (1px inset #000000)]
               RenderBlock {HR} at (4,166) size 747x2 [border: (1px inset #000000)]
-              RenderBlock {H4} at (4,189) size 747x20
+              RenderBlock {H4} at (4,189) size 747x21
                 RenderInline {A} at (0,0) size 213x19
                   RenderText {#text} at (0,0) size 213x19
                     text run at (0,0) width 213: "5.3.5    'background-attachment'"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,230) size 747x100
+              RenderBlock {P} at (4,230) size 747x101
                 RenderInline {EM} at (0,0) size 42x19
                   RenderText {#text} at (0,0) size 42x19
                     text run at (0,0) width 42: "Value:"
@@ -153,11 +153,11 @@ layer at (0,0) size 785x1257
                 RenderText {#text} at (123,80) size 31x19
                   text run at (123,80) width 31: " N/A"
                 RenderBR {BR} at (154,95) size 0x0
-              RenderBlock {P} at (4,346) size 747x40
+              RenderBlock {P} at (4,346) size 747x41
                 RenderText {#text} at (0,0) size 744x39
                   text run at (0,0) width 744: "If a background image is specified, the value of 'background-attachment' determines if it is fixed with regard to the canvas or"
                   text run at (0,20) width 199: "if it scrolls along with the content."
-              RenderBlock {PRE} at (4,402) size 747x80
+              RenderBlock {PRE} at (4,402) size 747x81
                 RenderText {#text} at (0,0) size 296x80
                   text run at (0,0) width 72: "  BODY { "
                   text run at (72,0) width 0: " "
@@ -169,7 +169,7 @@ layer at (0,0) size 785x1257
                   text run at (264,48) width 0: " "
                   text run at (0,64) width 24: "  }"
                   text run at (24,64) width 0: " "
-              RenderBlock {P} at (4,498) size 747x60
+              RenderBlock {P} at (4,498) size 747x61
                 RenderInline {EM} at (0,0) size 72x19
                   RenderText {#text} at (0,0) size 72x19
                     text run at (0,0) width 72: "CSS1 core:"

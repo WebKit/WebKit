@@ -177,7 +177,7 @@ layer at (10,1916) size 605x107 clip at (13,1919) size 602x102
     RenderBlock {DIV} at (4,4) size 600x20 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 261x19
         text run at (0,0) width 261: "Test with border-collapse:collapse no color"
-layer at (12,2070) size 304x84 clip at (13,2071) size 302x67 scrollWidth 601
+layer at (12,2070) size 304x83 clip at (13,2071) size 302x66 scrollWidth 601
   RenderTableCell {TD} at (2,34) size 304x19 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x20 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x20 [bgcolor=#008000]

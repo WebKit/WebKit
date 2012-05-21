@@ -11,7 +11,7 @@ layer at (0,0) size 800x104
                 RenderTableSection {TBODY} at (1,1) size 298x82
                   RenderTableRow {TR} at (0,0) size 298x82
                     RenderTableCell {TD} at (0,0) size 298x82 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 294x79
+                      RenderText {#text} at (1,1) size 294x80
                         text run at (1,1) width 287: "Presidential candidates George W. Bush and Al"
                         text run at (1,21) width 294: "Gore are expected to show a kinder, gentler side"
                         text run at (1,41) width 265: "Wednesday in the second of three nationally"

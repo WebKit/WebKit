@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 506x505
   RenderBlock {DIV} at (0,0) size 506x505 [border: (3px solid #000000)]
-    RenderBlock (anonymous) at (3,3) size 158x360
+    RenderBlock (anonymous) at (3,3) size 159x360
       RenderText {#text} at (0,4) size 158x351
         text run at (0,4) width 158: "Lorem ipsum dolor sit amet,"
         text run at (0,28) width 158: "consectetur adipiscing elit."
@@ -22,7 +22,7 @@ layer at (8,8) size 506x505
         text run at (0,292) width 158: "tempor quam. Pellentesque"
         text run at (0,316) width 158: "gravida gravida eros venenatis"
         text run at (0,340) width 41: "suscipit."
-    RenderBlock (anonymous) at (3,806) size 158x675
+    RenderBlock (anonymous) at (3,806) size 159x675
       RenderText {#text} at (0,4) size 158x666
         text run at (0,4) width 158: "Nunc et odio ut velit posuere"
         text run at (0,28) width 158: "viverra. Integer eu mi quis velit"
@@ -52,25 +52,25 @@ layer at (8,8) size 506x505
         text run at (0,607) width 158: "eu ipsum sit amet ligula mattis"
         text run at (0,631) width 158: "porttitor sit amet id felis. Integer"
         text run at (0,655) width 155: "volutpat aliquam odio et feugiat."
-layer at (11,510) size 158x304 backgroundClip at (11,510) size 158x90 clip at (13,512) size 139x88 outlineClip at (0,0) size 800x600 scrollHeight 456
-  RenderBlock {DIV} at (3,502) size 158x304 [border: (2px solid #000000)]
-    RenderText {#text} at (2,6) size 139x447
-      text run at (2,6) width 139: "Aenean diam enim, suscipit"
-      text run at (2,30) width 139: "id pellentesque vel, hendrerit"
-      text run at (2,54) width 139: "et metus. Suspendisse felis"
-      text run at (2,78) width 139: "erat, hendrerit a congue in,"
-      text run at (2,102) width 139: "euismod ac erat. Donec"
-      text run at (2,126) width 139: "pulvinar venenatis tortor, a"
-      text run at (2,150) width 139: "lobortis erat scelerisque et."
-      text run at (2,174) width 139: "Class aptent taciti sociosqu"
-      text run at (2,198) width 139: "ad litora torquent per"
-      text run at (2,222) width 139: "conubia nostra, per inceptos"
-      text run at (2,246) width 139: "himenaeos. Aliquam in orci"
-      text run at (2,270) width 139: "id felis mollis porta ac et"
-      text run at (2,294) width 139: "orci. Donec viverra, eros ac"
-      text run at (2,318) width 139: "mattis dapibus, quam ante"
-      text run at (2,342) width 139: "porta lectus, accumsan"
-      text run at (2,366) width 139: "pellentesque nibh metus non"
-      text run at (2,390) width 139: "felis. Vivamus sed eros quis"
-      text run at (2,414) width 139: "magna scelerisque ultrices ac"
+layer at (11,510) size 159x304 backgroundClip at (11,510) size 159x90 clip at (13,512) size 140x88 outlineClip at (0,0) size 800x600 scrollHeight 456
+  RenderBlock {DIV} at (3,502) size 160x304 [border: (2px solid #000000)]
+    RenderText {#text} at (2,6) size 140x447
+      text run at (2,6) width 140: "Aenean diam enim, suscipit"
+      text run at (2,30) width 140: "id pellentesque vel, hendrerit"
+      text run at (2,54) width 140: "et metus. Suspendisse felis"
+      text run at (2,78) width 140: "erat, hendrerit a congue in,"
+      text run at (2,102) width 140: "euismod ac erat. Donec"
+      text run at (2,126) width 140: "pulvinar venenatis tortor, a"
+      text run at (2,150) width 140: "lobortis erat scelerisque et."
+      text run at (2,174) width 140: "Class aptent taciti sociosqu"
+      text run at (2,198) width 140: "ad litora torquent per"
+      text run at (2,222) width 140: "conubia nostra, per inceptos"
+      text run at (2,246) width 140: "himenaeos. Aliquam in orci"
+      text run at (2,270) width 140: "id felis mollis porta ac et"
+      text run at (2,294) width 140: "orci. Donec viverra, eros ac"
+      text run at (2,318) width 140: "mattis dapibus, quam ante"
+      text run at (2,342) width 140: "porta lectus, accumsan"
+      text run at (2,366) width 140: "pellentesque nibh metus non"
+      text run at (2,390) width 140: "felis. Vivamus sed eros quis"
+      text run at (2,414) width 140: "magna scelerisque ultrices ac"
       text run at (2,438) width 46: "eget velit."

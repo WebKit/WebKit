@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 431x19
           text run at (0,0) width 431: "The table displayed is two rows by three columns with center alignment."
         RenderBR {BR} at (431,15) size 0x0
-      RenderTable {TABLE} at (290,20) size 203x50
+      RenderTable {TABLE} at (290,20) size 204x50
         RenderTableSection {TBODY} at (0,0) size 203x50
           RenderTableRow {TR} at (0,2) size 203x22
             RenderTableCell {TD} at (2,2) size 66x22 [r=0 c=0 rs=1 cs=1]

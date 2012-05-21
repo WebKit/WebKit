@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x569
-  RenderBlock {HTML} at (0,0) size 800x569
-    RenderBody {BODY} at (8,21) size 784x532
+layer at (0,0) size 800x570
+  RenderBlock {HTML} at (0,0) size 800x570
+    RenderBody {BODY} at (8,21) size 784x533
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 425x36
           text run at (0,0) width 425: "Bidirectional Text Test 2 - CSS"
-      RenderBlock {P} at (0,58) size 784x20
+      RenderBlock {P} at (0,58) size 784x21
         RenderText {#text} at (0,0) size 126x19
           text run at (0,0) width 126: "This test is based on "
         RenderInline {A} at (0,0) size 115x19 [color=#0000EE]
@@ -24,7 +24,7 @@ layer at (0,0) size 800x569
             text run at (374,0) width 110: "Unicode Standard"
         RenderText {#text} at (484,0) size 4x19
           text run at (484,0) width 4: "."
-      RenderBlock {P} at (0,94) size 784x20
+      RenderBlock {P} at (0,94) size 784x21
         RenderText {#text} at (0,0) size 66x19
           text run at (0,0) width 66: "See also a "
         RenderInline {A} at (0,0) size 218x19 [color=#0000EE]
@@ -37,10 +37,10 @@ layer at (0,0) size 800x569
             text run at (325,0) width 416: "test for the same concepts using Unicode directional formatting codes"
         RenderText {#text} at (741,0) size 4x19
           text run at (741,0) width 4: "."
-      RenderBlock {P} at (0,130) size 784x20
+      RenderBlock {P} at (0,130) size 784x21
         RenderText {#text} at (0,0) size 267x19
           text run at (0,0) width 267: "In each box, all the lines should be the same."
-      RenderBlock (anonymous) at (0,166) size 784x248
+      RenderBlock (anonymous) at (0,166) size 784x249
         RenderBlock {DIV} at (3,3) size 96x188 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 88x20
             RenderText {#text} at (0,0) size 88x19
@@ -566,8 +566,8 @@ layer at (0,0) size 800x569
               text run at (112,0) width 35: " GHI "
               text run at (147,0) width 21 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,422) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,440) size 784x20
+      RenderBlock {HR} at (0,422) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,440) size 784x21
         RenderText {#text} at (0,0) size 57x19
           text run at (0,0) width 57: "(Back to "
         RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
@@ -580,7 +580,7 @@ layer at (0,0) size 800x569
             text run at (214,0) width 77: "David Baron"
         RenderText {#text} at (291,0) size 5x19
           text run at (291,0) width 5: ")"
-      RenderBlock {P} at (0,476) size 784x20
+      RenderBlock {P} at (0,476) size 784x21
         RenderInline {A} at (0,0) size 30x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 30x19
             text run at (0,0) width 30: "LDB"
@@ -591,6 +591,6 @@ layer at (0,0) size 800x569
             text run at (38,0) width 125: "dbaron@dbaron.org"
         RenderText {#text} at (163,0) size 84x19
           text run at (163,0) width 84: ", 2001-06-05"
-      RenderBlock {P} at (0,512) size 784x20
+      RenderBlock {P} at (0,512) size 784x21
         RenderText {#text} at (0,0) size 289x19
           text run at (0,0) width 289: "Modified and used with the author\x{2019}s permission."

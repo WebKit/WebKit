@@ -33,7 +33,7 @@ layer at (266,239) size 58x20 scrollHeight 21
     RenderBlock (anonymous) at (8,0) size 42x21
       RenderText {#text} at (0,1) size 42x19
         text run at (0,1) width 42: "00:00"
-layer at (97,235) size 9x29
-  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (97,235) size 9x30
+  RenderBlock (relative positioned) {DIV} at (0,-7) size 9x30
 layer at (325,233) size 34x32
   RenderButton {INPUT} at (0,0) size 34x32

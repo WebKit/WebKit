@@ -1,21 +1,21 @@
-layer at (0,0) size 785x1819
+layer at (0,0) size 785x1834
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1819
-  RenderBlock {HTML} at (0,0) size 785x1819 [border: (1px solid #000000)]
-    RenderBody {BODY} at (9,9) size 767x1801 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (0,0) size 785x1834
+  RenderBlock {HTML} at (0,0) size 785x1835 [border: (1px solid #000000)]
+    RenderBody {BODY} at (9,9) size 767x1817 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderBlock {H1} at (1,1) size 765x39 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 289x36
           text run at (1,1) width 289: "Caption Margin Test"
-      RenderBlock {DIV} at (1,61) size 102x22 [border: (1px solid #008000)]
+      RenderBlock {DIV} at (1,61) size 102x23 [border: (1px solid #008000)]
         RenderText {#text} at (1,1) size 39x19
           text run at (1,1) width 39: "100px"
-      RenderBlock {DIV} at (1,83) size 52x22 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (1,83) size 52x23 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 31x19
           text run at (1,1) width 31: "50px"
-      RenderBlock {H2} at (1,124) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,125) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 80x26
           text run at (1,1) width 80: "Control"
-      RenderTable {TABLE} at (1,172) size 164x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,174) size 164x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 164x22 [border: (1px solid #000000)]
           RenderText {#text} at (72,1) size 20x19
             text run at (72,1) width 20: "TA"
@@ -27,7 +27,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,224) size 320x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,226) size 320x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 320x22 [border: (1px solid #000000)]
           RenderText {#text} at (150,1) size 20x19
             text run at (150,1) width 20: "TB"
@@ -39,10 +39,10 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,295) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,298) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 285x26
           text run at (1,1) width 285: "Test 1 - \"margin-left: 50px\""
-      RenderTable {TABLE} at (1,343) size 164x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,347) size 164x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (50,0) size 114x22 [border: (1px solid #000000)]
           RenderText {#text} at (47,1) size 20x19
             text run at (47,1) width 20: "TA"
@@ -54,7 +54,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,395) size 320x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,399) size 320x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (50,0) size 270x22 [border: (1px solid #000000)]
           RenderText {#text} at (125,1) size 20x19
             text run at (125,1) width 20: "TB"
@@ -66,10 +66,10 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,466) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,471) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 303x26
           text run at (1,1) width 303: "Test 2 - \"margin-right: 50px\""
-      RenderTable {TABLE} at (1,514) size 164x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,519) size 164x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 114x22 [border: (1px solid #000000)]
           RenderText {#text} at (47,1) size 20x19
             text run at (47,1) width 20: "TA"
@@ -81,7 +81,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,566) size 320x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,571) size 320x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 270x22 [border: (1px solid #000000)]
           RenderText {#text} at (125,1) size 20x19
             text run at (125,1) width 20: "TB"
@@ -93,10 +93,10 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,637) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,643) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 244x26
           text run at (1,1) width 244: "Test 3 - \"margin: 50px\""
-      RenderTable {TABLE} at (1,685) size 164x152 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,692) size 164x153 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (50,50) size 64x22 [border: (1px solid #000000)]
           RenderText {#text} at (22,1) size 20x19
             text run at (22,1) width 20: "TA"
@@ -108,7 +108,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,837) size 320x152 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,844) size 320x153 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (50,50) size 220x22 [border: (1px solid #000000)]
           RenderText {#text} at (100,1) size 20x19
             text run at (100,1) width 20: "TB"
@@ -120,7 +120,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderTable {TABLE} at (1,989) size 476x152 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,996) size 476x153 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (50,50) size 376x22 [border: (1px solid #000000)]
           RenderText {#text} at (178,1) size 20x19
             text run at (178,1) width 20: "TC"
@@ -132,13 +132,13 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (238,2) size 234x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 230x19
                 text run at (2,2) width 230: "Table Cell 2 Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,1160) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,1168) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 273x26
           text run at (1,1) width 273: "Test 4 - \"margin-left: 5%\""
-      RenderTable {TABLE} at (1,1208) size 164x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1217) size 164x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (8,0) size 156x22 [border: (1px solid #000000)]
-          RenderText {#text} at (68,1) size 20x19
-            text run at (68,1) width 20: "TA"
+          RenderText {#text} at (67,1) size 21x19
+            text run at (67,1) width 21: "TA"
         RenderTableSection {TBODY} at (1,23) size 162x28 [border: (1px solid #000000)]
           RenderTableRow {TR} at (0,2) size 162x24 [border: (1px solid #000000)]
             RenderTableCell {TD} at (2,2) size 78x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -147,7 +147,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,1260) size 320x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1269) size 320x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (16,0) size 304x22 [border: (1px solid #000000)]
           RenderText {#text} at (142,1) size 20x19
             text run at (142,1) width 20: "TB"
@@ -159,13 +159,13 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,1331) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,1341) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 291x26
           text run at (1,1) width 291: "Test 5 - \"margin-right: 5%\""
-      RenderTable {TABLE} at (1,1379) size 164x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1390) size 164x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 156x22 [border: (1px solid #000000)]
-          RenderText {#text} at (68,1) size 20x19
-            text run at (68,1) width 20: "TA"
+          RenderText {#text} at (67,1) size 21x19
+            text run at (67,1) width 21: "TA"
         RenderTableSection {TBODY} at (1,23) size 162x28 [border: (1px solid #000000)]
           RenderTableRow {TR} at (0,2) size 162x24 [border: (1px solid #000000)]
             RenderTableCell {TD} at (2,2) size 78x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
@@ -174,7 +174,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,1431) size 320x52 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1442) size 320x53 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 304x22 [border: (1px solid #000000)]
           RenderText {#text} at (142,1) size 20x19
             text run at (142,1) width 20: "TB"
@@ -186,14 +186,14 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderBlock {H2} at (1,1502) size 765x29 [border: (1px solid #000000)]
+      RenderBlock {H2} at (1,1514) size 765x30 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 232x26
           text run at (1,1) width 232: "Test 6 - \"margin: 5%\""
-      RenderTable {TABLE} at (1,1550) size 164x68 [border: (1px solid #000000)]
-        RenderBlock {CAPTION} at (8,8) size 148x22 [border: (1px solid #000000)]
-          RenderText {#text} at (64,1) size 20x19
-            text run at (64,1) width 20: "TA"
-        RenderTableSection {TBODY} at (1,39) size 162x28 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1563) size 164x69 [border: (1px solid #000000)]
+        RenderBlock {CAPTION} at (8,8) size 148x23 [border: (1px solid #000000)]
+          RenderText {#text} at (63,1) size 21x19
+            text run at (63,1) width 21: "TA"
+        RenderTableSection {TBODY} at (1,39) size 162x29 [border: (1px solid #000000)]
           RenderTableRow {TR} at (0,2) size 162x24 [border: (1px solid #000000)]
             RenderTableCell {TD} at (2,2) size 78x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
@@ -201,7 +201,7 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (82,2) size 78x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "Table Cell 2"
-      RenderTable {TABLE} at (1,1618) size 320x84 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1631) size 320x85 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (16,16) size 288x22 [border: (1px solid #000000)]
           RenderText {#text} at (134,1) size 20x19
             text run at (134,1) width 20: "TB"
@@ -213,11 +213,11 @@ layer at (0,0) size 785x1819
             RenderTableCell {TD} at (160,2) size 156x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 152x19
                 text run at (2,2) width 152: "Table Cell 2 Table Cell 2"
-      RenderTable {TABLE} at (1,1702) size 476x98 [border: (1px solid #000000)]
-        RenderBlock {CAPTION} at (23,23) size 430x22 [border: (1px solid #000000)]
-          RenderText {#text} at (205,1) size 20x19
-            text run at (205,1) width 20: "TB"
-        RenderTableSection {TBODY} at (1,69) size 474x28 [border: (1px solid #000000)]
+      RenderTable {TABLE} at (1,1715) size 476x101 [border: (1px solid #000000)]
+        RenderBlock {CAPTION} at (23,23) size 430x23 [border: (1px solid #000000)]
+          RenderText {#text} at (204,1) size 20x19
+            text run at (204,1) width 20: "TB"
+        RenderTableSection {TBODY} at (1,70) size 474x29 [border: (1px solid #000000)]
           RenderTableRow {TR} at (0,2) size 474x24 [border: (1px solid #000000)]
             RenderTableCell {TD} at (2,2) size 234x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 230x19

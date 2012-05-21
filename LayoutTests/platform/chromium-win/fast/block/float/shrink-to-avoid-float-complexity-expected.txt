@@ -1,39 +1,39 @@
-layer at (0,0) size 785x2101
+layer at (0,0) size 785x2107
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2101
-  RenderBlock {HTML} at (0,0) size 785x2101
-    RenderBody {BODY} at (8,19) size 769x2066
+layer at (0,0) size 785x2107
+  RenderBlock {HTML} at (0,0) size 785x2108
+    RenderBody {BODY} at (8,19) size 769x2073
       RenderBlock {H2} at (0,0) size 769x27
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 1 (1 float)"
-      RenderBlock {HR} at (48,294) size 673x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,344) size 769x27
+      RenderBlock {HR} at (48,294) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,344) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 2 (1 float)"
-      RenderBlock {HR} at (48,638) size 673x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,688) size 769x27
+      RenderBlock {HR} at (48,639) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,689) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 3 (1 float)"
-      RenderBlock {HR} at (48,982) size 673x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,1032) size 769x27
+      RenderBlock {HR} at (48,984) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,1034) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 4 (2 floats)"
-      RenderBlock {HR} at (48,1326) size 673x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,1376) size 769x27
+      RenderBlock {HR} at (48,1329) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,1379) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 5 (2 floats)"
-      RenderBlock {HR} at (48,1670) size 673x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,1720) size 769x27
+      RenderBlock {HR} at (48,1674) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,1724) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 6 (2 floats)"
-layer at (8,65) size 769x200
-  RenderBlock {DIV} at (0,46) size 769x200 [bgcolor=#C0C0C0]
+layer at (8,67) size 769x200
+  RenderBlock {DIV} at (0,46) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x59
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 124: "floated left and it has"
         text run at (36,76) width 63: "no margin."
-layer at (208,65) size 469x180
+layer at (208,67) size 469x180
   RenderBlock {DIV} at (200,0) size 469x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"
@@ -73,14 +73,14 @@ layer at (208,65) size 469x180
     RenderBR {BR} at (132,140) size 0x19
     RenderText {#text} at (0,160) size 310x19
       text run at (0,160) width 310: "\x{2013} has a 100px left margin and a 100px right margin;"
-layer at (8,409) size 769x200
-  RenderBlock {DIV} at (0,390) size 769x200 [bgcolor=#C0C0C0]
+layer at (8,412) size 769x200
+  RenderBlock {DIV} at (0,391) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x59
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 124: "floated left and it has"
         text run at (36,76) width 63: "no margin."
-layer at (208,409) size 569x180
+layer at (208,412) size 569x180
   RenderBlock {DIV} at (200,0) size 569x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"
@@ -122,15 +122,15 @@ layer at (208,409) size 569x180
     RenderBR {BR} at (52,140) size 0x19
     RenderText {#text} at (0,160) size 156x19
       text run at (0,160) width 156: "\x{2013} has a 200px left margin;"
-layer at (8,753) size 769x200
-  RenderBlock {DIV} at (0,734) size 769x200 [bgcolor=#C0C0C0]
+layer at (8,757) size 769x200
+  RenderBlock {DIV} at (0,736) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x79
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 111: "a floated left and it"
         text run at (36,76) width 121: "has a right margin of"
         text run at (36,96) width 43: "100px."
-layer at (308,753) size 369x180
+layer at (308,757) size 369x180
   RenderBlock {DIV} at (300,0) size 369x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"
@@ -172,8 +172,8 @@ layer at (308,753) size 369x180
     RenderBR {BR} at (235,140) size 0x19
     RenderText {#text} at (0,160) size 294x19
       text run at (0,160) width 294: "\x{2013} has a 0px left margin and a 100px right margin;"
-layer at (8,1097) size 769x200
-  RenderBlock {DIV} at (0,1078) size 769x200 [bgcolor=#C0C0C0]
+layer at (8,1102) size 769x200
+  RenderBlock {DIV} at (0,1081) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x59
         text run at (36,36) width 125: "This yellow square is"
@@ -184,7 +184,7 @@ layer at (8,1097) size 769x200
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 119: "a floated right and it"
         text run at (36,76) width 87: "has no margin."
-layer at (208,1097) size 369x180
+layer at (208,1102) size 369x180
   RenderBlock {DIV} at (200,0) size 369x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"
@@ -226,8 +226,8 @@ layer at (208,1097) size 369x180
     RenderBR {BR} at (235,140) size 0x19
     RenderText {#text} at (0,160) size 310x19
       text run at (0,160) width 310: "\x{2013} has a 100px left margin and a 100px right margin;"
-layer at (8,1441) size 769x200
-  RenderBlock {DIV} at (0,1422) size 769x200 [bgcolor=#C0C0C0]
+layer at (8,1447) size 769x200
+  RenderBlock {DIV} at (0,1426) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x59
         text run at (36,36) width 125: "This yellow square is"
@@ -238,7 +238,7 @@ layer at (8,1441) size 769x200
         text run at (36,36) width 125: "This yellow square is"
         text run at (36,56) width 119: "a floated right and it"
         text run at (36,76) width 87: "has no margin."
-layer at (208,1441) size 369x180
+layer at (208,1447) size 369x180
   RenderBlock {DIV} at (200,0) size 369x180 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"
@@ -280,8 +280,8 @@ layer at (208,1441) size 369x180
     RenderBR {BR} at (235,140) size 0x19
     RenderText {#text} at (0,160) size 164x19
       text run at (0,160) width 164: "\x{2013} has a 200px right margin;"
-layer at (8,1785) size 769x300
-  RenderBlock {DIV} at (0,1766) size 769x300 [bgcolor=#C0C0C0]
+layer at (8,1791) size 769x300
+  RenderBlock {DIV} at (0,1771) size 769x301 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
       RenderText {#text} at (36,36) size 125x79
         text run at (36,36) width 125: "This yellow square is"
@@ -294,7 +294,7 @@ layer at (8,1785) size 769x300
         text run at (36,56) width 108: "floated right and it"
         text run at (36,76) width 113: "has a left margin of"
         text run at (36,96) width 43: "100px."
-layer at (308,1785) size 169x300
+layer at (308,1791) size 169x300
   RenderBlock {DIV} at (300,0) size 169x300 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 131x19
       text run at (0,0) width 131: "This orange rectangle:"

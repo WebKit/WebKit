@@ -1,12 +1,12 @@
 layer at (0,0) size 785x640
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x175
-  RenderBlock {HTML} at (0,0) size 785x175
-    RenderBody {BODY} at (8,21) size 769x138
+layer at (0,0) size 785x176
+  RenderBlock {HTML} at (0,0) size 785x176
+    RenderBody {BODY} at (8,21) size 769x139
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 761x36
           text run at (0,0) width 761: "Testing the values of 'pointer-events' on HTML content"
-      RenderBlock {P} at (0,58) size 769x80
+      RenderBlock {P} at (0,58) size 769x81
         RenderText {#text} at (0,0) size 734x79
           text run at (0,0) width 543: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
           text run at (543,0) width 187: "the elements in the first column,"

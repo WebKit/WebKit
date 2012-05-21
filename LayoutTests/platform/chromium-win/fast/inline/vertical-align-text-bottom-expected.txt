@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x301
-  RenderBlock {HTML} at (0,0) size 800x301
-    RenderBody {BODY} at (8,8) size 784x285
-      RenderBlock {DIV} at (0,0) size 784x36 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,0) size 30x17 [bgcolor=#FF0000]
-          RenderText {#text} at (0,17) size 30x17
-            text run at (0,17) width 30: "small"
-        RenderText {#text} at (30,16) size 4x19
-          text run at (30,16) width 4: " "
-        RenderInline {SPAN} at (0,0) size 51x34 [bgcolor=#FF0000]
-          RenderText {#text} at (34,0) size 51x34
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,8) size 784x284
+      RenderBlock {DIV} at (0,0) size 784x35 [bgcolor=#CCCCCC]
+        RenderInline {SPAN} at (0,0) size 30x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,16) size 30x18
+            text run at (0,16) width 30: "small"
+        RenderText {#text} at (30,15) size 4x19
+          text run at (30,15) width 4: " "
+        RenderInline {SPAN} at (0,0) size 51x35 [bgcolor=#FF0000]
+          RenderText {#text} at (34,0) size 51x35
             text run at (34,0) width 51: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,40) size 784x141 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,0) size 30x17 [bgcolor=#FF0000]
-          RenderText {#text} at (0,41) size 30x17
+      RenderBlock {DIV} at (0,39) size 784x141 [bgcolor=#CCCCCC]
+        RenderInline {SPAN} at (0,0) size 30x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,41) size 30x18
             text run at (0,41) width 30: "small"
         RenderText {#text} at (30,81) size 4x19
           text run at (30,81) width 4: " "
@@ -23,13 +23,13 @@ layer at (0,0) size 800x301
           RenderText {#text} at (34,33) size 51x34
             text run at (34,33) width 51: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,185) size 784x100 [bgcolor=#CCCCCC]
-        RenderInline {SPAN} at (0,0) size 30x17 [bgcolor=#FF0000]
-          RenderText {#text} at (0,17) size 30x17
-            text run at (0,17) width 30: "small"
-        RenderText {#text} at (30,16) size 4x19
-          text run at (30,16) width 4: " "
-        RenderInline {SPAN} at (0,0) size 51x34 [bgcolor=#FF0000]
-          RenderText {#text} at (34,0) size 51x34
+      RenderBlock {DIV} at (0,184) size 784x100 [bgcolor=#CCCCCC]
+        RenderInline {SPAN} at (0,0) size 30x18 [bgcolor=#FF0000]
+          RenderText {#text} at (0,16) size 30x18
+            text run at (0,16) width 30: "small"
+        RenderText {#text} at (30,15) size 4x19
+          text run at (30,15) width 4: " "
+        RenderInline {SPAN} at (0,0) size 51x35 [bgcolor=#FF0000]
+          RenderText {#text} at (34,0) size 51x35
             text run at (34,0) width 51: "BIG"
         RenderText {#text} at (0,0) size 0x0

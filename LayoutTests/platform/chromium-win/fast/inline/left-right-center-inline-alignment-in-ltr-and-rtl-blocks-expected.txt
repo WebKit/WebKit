@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x0
       RenderBlock {DIV} at (0,0) size 784x0
 layer at (279,562) size 243x28
-  RenderBlock (positioned) {FONT} at (279,562) size 243x28
+  RenderBlock (positioned) {FONT} at (278,562) size 244x28
     RenderText {#text} at (0,0) size 243x27
       text run at (0,0) width 243: "RTL-Center-Aligned"
 layer at (0,466) size 100x84
@@ -29,8 +29,8 @@ layer at (596,422) size 196x28
   RenderBlock (positioned) {FONT} at (596,422) size 196x28
     RenderText {#text} at (0,0) size 196x27
       text run at (0,0) width 196: "RTL-No-Aligned"
-layer at (278,372) size 243x28
-  RenderBlock (positioned) {FONT} at (278,372) size 243x28
+layer at (279,372) size 243x28
+  RenderBlock (positioned) {FONT} at (278,372) size 244x28
     RenderText {#text} at (0,0) size 243x27
       text run at (0,0) width 243: "LTR-Center-Aligned"
 layer at (8,322) size 214x28

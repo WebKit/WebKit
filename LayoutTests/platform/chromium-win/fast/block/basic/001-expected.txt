@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x192 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x195 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (2,2) size 780x20
           RenderInline {I} at (0,0) size 234x19
             RenderText {#text} at (0,0) size 96x19
@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
             RenderInline {FONT} at (0,0) size 138x19 [color=#FF0000]
               RenderText {#text} at (96,0) size 138x19
                 text run at (96,0) width 138: "More red on this line:"
-        RenderBlock (anonymous) at (2,40) size 780x71 [color=#FF0000]
+        RenderBlock (anonymous) at (2,40) size 780x73 [color=#FF0000]
           RenderBlock {H3} at (0,0) size 780x23
             RenderText {#text} at (0,0) size 213x22
               text run at (0,0) width 213: "Suddenly a block appears!"
-          RenderBlock {H2} at (0,42) size 780x29
+          RenderBlock {H2} at (0,42) size 780x30
             RenderText {#text} at (0,0) size 192x28
               text run at (0,0) width 192: "And another block!"
-        RenderBlock (anonymous) at (2,130) size 780x60
+        RenderBlock (anonymous) at (2,132) size 780x61
           RenderInline {I} at (0,0) size 297x39
             RenderInline {FONT} at (0,0) size 100x39 [color=#FF0000]
               RenderText {#text} at (0,0) size 100x19

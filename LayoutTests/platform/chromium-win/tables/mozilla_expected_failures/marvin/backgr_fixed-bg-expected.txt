@@ -1,18 +1,18 @@
-layer at (0,0) size 1544x1713
+layer at (0,0) size 1544x1714
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1713
-  RenderBlock {HTML} at (0,0) size 785x1713
-    RenderBody {BODY} at (8,17) size 769x1683 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1714
+  RenderBlock {HTML} at (0,0) size 785x1715
+    RenderBody {BODY} at (8,17) size 769x1685 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x23
+      RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 252x23
           text run at (0,0) width 252: "Part E: Special Tests"
-      RenderBlock {H3} at (0,86) size 769x17
+      RenderBlock {H3} at (0,86) size 769x18
         RenderText {#text} at (0,0) size 153x17
           text run at (0,0) width 153: "Fixed Backgrounds"
-      RenderBlock {UL} at (0,118) size 769x64
+      RenderBlock {UL} at (0,118) size 769x65
         RenderListItem {LI} at (40,0) size 729x48
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 704x48
@@ -23,7 +23,7 @@ layer at (0,0) size 785x1713
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 664x16
             text run at (0,0) width 664: "Cells A and P should have a rainbow background that seems attached to the viewport."
-      RenderBlock {DL} at (0,195) size 769x64
+      RenderBlock {DL} at (0,195) size 769x65
         RenderBlock {DT} at (0,0) size 769x16
           RenderText {#text} at (0,0) size 64x16
             text run at (0,0) width 64: "previous"
@@ -40,7 +40,7 @@ layer at (0,0) size 785x1713
             RenderText {#text} at (0,0) size 136x16
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,272) size 618x481 [color=#000000] [bgcolor=#FFFFFF] [border: (1px dotted #000000)]
+      RenderTable {TABLE} at (0,272) size 618x482 [color=#000000] [bgcolor=#FFFFFF] [border: (1px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 618x23 [color=#FFFFFF]
           RenderText {#text} at (161,0) size 296x22
             text run at (161,0) width 296: "With 'border-collapse: separate'"
@@ -97,7 +97,7 @@ layer at (0,0) size 785x1713
             RenderTableCell {TD} at (496,150) size 113x27 [border: (1px dotted #000000)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderTable {TABLE} at (0,753) size 578x433 [color=#000000] [bgcolor=#FFFFFF] [border: (6px dotted #000000)]
+      RenderTable {TABLE} at (0,753) size 578x434 [color=#000000] [bgcolor=#FFFFFF] [border: (6px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 578x23 [color=#FFFFFF]
           RenderText {#text} at (143,0) size 292x22
             text run at (143,0) width 292: "With 'border-collapse: collapse'"
@@ -154,14 +154,14 @@ layer at (0,0) size 785x1713
             RenderTableCell {TD} at (465,135) size 112x26 [border: (1px dotted #000000)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderBlock {DIV} at (0,1186) size 769x35
+      RenderBlock {DIV} at (0,1186) size 769x36
         RenderInline {A} at (0,0) size 88x16 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1221) size 769x17
+      RenderBlock {ADDRESS} at (0,1221) size 769x18
         RenderText {#text} at (0,0) size 704x17
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
-      RenderBlock {PRE} at (0,1251) size 769x432
+      RenderBlock {PRE} at (0,1251) size 769x433
         RenderText {#text} at (0,0) size 1536x432
           text run at (0,0) width 1536: "................................................................................................................................................................................................"
           text run at (1536,0) width 0: " "

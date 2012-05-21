@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 79x19
           text run at (0,0) width 79: "Instructions"
-      RenderBlock {P} at (0,41) size 784x20
+      RenderBlock {P} at (0,41) size 784x21
         RenderText {#text} at (0,0) size 164x19
           text run at (0,0) width 164: "Click the following buttons."
-      RenderBlock {OL} at (0,77) size 784x186
+      RenderBlock {OL} at (0,77) size 784x187
         RenderListItem {LI} at (40,0) size 744x20
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 184x19

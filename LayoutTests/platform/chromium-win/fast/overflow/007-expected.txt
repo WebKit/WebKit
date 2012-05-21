@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x388
   RenderBlock {HTML} at (0,0) size 800x388
     RenderBody {BODY} at (32,32) size 736x324 [bgcolor=#CCCCCC]
-layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 332
+layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 333
   RenderBlock {DIV} at (111,0) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
     RenderBlock {P} at (17,17) size 465x80
       RenderText {#text} at (0,0) size 210x19
@@ -48,7 +48,7 @@ layer at (0,0) size 38x36
   RenderBlock (positioned) {P} at (0,0) size 38x36 [bgcolor=#FF0000]
     RenderText {#text} at (8,8) size 22x19
       text run at (8,8) width 22: "hi 1"
-layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 368
+layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 369
   RenderBlock (relative positioned) {DIV} at (111,178) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
     RenderBlock {P} at (17,17) size 465x40
       RenderText {#text} at (0,0) size 465x39

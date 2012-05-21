@@ -1,15 +1,15 @@
-layer at (0,0) size 827x1796
+layer at (0,0) size 827x1797
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1796
-  RenderBlock {HTML} at (0,0) size 785x1796
-    RenderBody {BODY} at (8,17) size 769x1766 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1797
+  RenderBlock {HTML} at (0,0) size 785x1798
+    RenderBody {BODY} at (8,17) size 769x1768 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x23
+      RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 60x23
           text run at (0,0) width 60: "Notes"
-      RenderBlock {P} at (0,86) size 769x80
+      RenderBlock {P} at (0,86) size 769x81
         RenderText {#text} at (0,0) size 728x32
           text run at (0,0) width 728: "This test suite is not endorsed or approved by the W3C or anyone besides fantasai. It tests"
           text run at (0,16) width 208: "conformance to fantasai's "
@@ -21,15 +21,15 @@ layer at (0,0) size 785x1796
           text run at (0,32) width 704: "specification. The intent is to demonstrate the proposal's effects under various styling"
           text run at (0,48) width 720: "conditions and to clarify any ambiguity in the proposal in preparation for a better-worded"
           text run at (0,64) width 640: "errata suggestion. It's not particularly well-designed, but it is comprehensive."
-      RenderBlock {P} at (0,179) size 769x48
+      RenderBlock {P} at (0,179) size 769x49
         RenderText {#text} at (0,0) size 720x48
           text run at (0,0) width 712: "This test suite (this page and all pages linked from the table of contents below) and its"
           text run at (0,16) width 720: "background images (listed below) are in the public domain by assertion of their author. No"
           text run at (0,32) width 128: "rights reserved."
-      RenderBlock {P} at (0,240) size 769x16
+      RenderBlock {P} at (0,240) size 769x17
         RenderText {#text} at (0,0) size 392x16
           text run at (0,0) width 392: "The images used as backgrounds are the following:"
-      RenderBlock {UL} at (0,269) size 769x749
+      RenderBlock {UL} at (0,269) size 769x750
         RenderListItem {LI} at (40,0) size 729x34
           RenderListMarker at (-16,18) size 6x16: bullet
           RenderImage {IMG} at (0,0) size 80x30
@@ -42,20 +42,20 @@ layer at (0,0) size 785x1796
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderImage {IMG} at (0,16) size 779x611
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1031) size 769x16
+      RenderBlock {P} at (0,1031) size 769x17
         RenderText {#text} at (0,0) size 336x16
           text run at (0,0) width 336: "They are in GIF format, with transparency."
-      RenderBlock {P} at (0,1060) size 769x32
+      RenderBlock {P} at (0,1060) size 769x33
         RenderText {#text} at (0,0) size 760x32
           text run at (0,0) width 760: "Each color band in the rainbow backgrounds is 20 pixels wide. Each stripe within the color band"
           text run at (0,16) width 152: "is two pixels wide."
-      RenderBlock {P} at (0,1105) size 769x16
+      RenderBlock {P} at (0,1105) size 769x17
         RenderText {#text} at (0,0) size 728x16
           text run at (0,0) width 728: "The aqua and purple band is 10 pixels wide. Each stripe within the band is two pixels wide."
-      RenderBlock {P} at (0,1134) size 769x16
+      RenderBlock {P} at (0,1134) size 769x17
         RenderText {#text} at (0,0) size 744x16
           text run at (0,0) width 744: "Many image background rules in this test suite are backed up with a 'black' background color."
-      RenderBlock {P} at (0,1163) size 769x64
+      RenderBlock {P} at (0,1163) size 769x65
         RenderText {#text} at (0,0) size 232x16
           text run at (0,0) width 232: "This test suite assumes that "
         RenderInline {STRONG} at (0,0) size 720x32
@@ -75,10 +75,10 @@ layer at (0,0) size 785x1796
             text run at (0,48) width 56: "<tfoot>"
         RenderText {#text} at (56,48) size 8x16
           text run at (56,48) width 8: "."
-      RenderBlock {H2} at (0,1243) size 769x23
+      RenderBlock {H2} at (0,1243) size 769x24
         RenderText {#text} at (0,0) size 204x23
           text run at (0,0) width 204: "Table of Contents"
-      RenderBlock {OL} at (0,1282) size 769x484
+      RenderBlock {OL} at (0,1282) size 769x485
         RenderListItem {LI} at (40,0) size 729x112
           RenderBlock (anonymous) at (0,0) size 729x16
             RenderListMarker at (-28,0) size 24x16: "A"

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderFieldSet {FIELDSET} at (2,0) size 780x370 [border: (2px groove #C0C0C0)]
-        RenderBlock {DIV} at (14,7) size 752x351
+      RenderFieldSet {FIELDSET} at (2,0) size 780x371 [border: (2px groove #C0C0C0)]
+        RenderBlock {DIV} at (14,7) size 752x352
           RenderInline {DIV} at (0,0) size 121x19
             RenderInline {DIV} at (0,0) size 121x19
               RenderText {#text} at (0,0) size 0x0

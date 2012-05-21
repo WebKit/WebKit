@@ -5,7 +5,7 @@ layer at (0,0) size 892x585
     RenderBody {BODY} at (8,8) size 876x569
 layer at (8,8) size 430x569
   RenderBlock {DIV} at (0,0) size 430x569 [border: (5px solid #0000FF)]
-    RenderBlock (anonymous) at (5,5) size 420x271
+    RenderBlock (anonymous) at (5,5) size 420x272
       RenderText {#text} at (0,0) size 19x104
         text run at (0,0) width 104: "This is some text."
       RenderBR {BR} at (4,104) size 0x0
@@ -69,7 +69,7 @@ layer at (8,8) size 430x569
       RenderText {#text} at (400,0) size 19x104
         text run at (400,0) width 104: "This is some text."
       RenderBR {BR} at (404,104) size 0x0
-    RenderBlock {DIV} at (425,5) size 80x271
+    RenderBlock {DIV} at (425,5) size 80x272
       RenderText {#text} at (0,0) size 19x247
         text run at (0,0) width 247: "This text should be in the second column."
       RenderBR {BR} at (4,247) size 0x0
@@ -84,7 +84,7 @@ layer at (8,8) size 430x569
       RenderBR {BR} at (64,247) size 0x0
 layer at (454,8) size 430x569
   RenderBlock {DIV} at (446,0) size 430x569 [border: (5px solid #0000FF)]
-    RenderBlock (anonymous) at (5,5) size 80x271
+    RenderBlock (anonymous) at (5,5) size 80x272
       RenderText {#text} at (0,0) size 19x226
         text run at (0,0) width 226: "This text should be in the first column."
       RenderBR {BR} at (4,226) size 0x0
@@ -97,7 +97,7 @@ layer at (454,8) size 430x569
       RenderText {#text} at (60,0) size 19x226
         text run at (60,0) width 226: "This text should be in the first column."
       RenderBR {BR} at (64,226) size 0x0
-    RenderBlock {DIV} at (425,5) size 420x271
+    RenderBlock {DIV} at (425,5) size 420x272
       RenderText {#text} at (0,0) size 19x104
         text run at (0,0) width 104: "This is some text."
       RenderBR {BR} at (4,104) size 0x0

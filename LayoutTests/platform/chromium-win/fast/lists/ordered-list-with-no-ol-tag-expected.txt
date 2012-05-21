@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x581
-  RenderBlock {HTML} at (0,0) size 800x581
-    RenderBody {BODY} at (8,19) size 784x554
+layer at (0,0) size 800x583
+  RenderBlock {HTML} at (0,0) size 800x583
+    RenderBody {BODY} at (8,19) size 784x556
       RenderBlock {H2} at (0,0) size 784x27
         RenderText {#text} at (0,0) size 304x26
           text run at (0,0) width 304: "A regular two level nested list"
-      RenderBlock {P} at (0,46) size 784x20
+      RenderBlock {P} at (0,46) size 784x21
         RenderText {#text} at (0,0) size 519x19
           text run at (0,0) width 519: "The outer list is numbered using decimal numerals, the inner lists with lower case letters"
-      RenderBlock {DIV} at (24,82) size 760x472 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (24,82) size 760x473 [border: (1px solid #000000)]
         RenderListItem {DIV} at (33,1) size 726x22 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "1"
           RenderText {#text} at (33,1) size 39x19

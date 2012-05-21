@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+        <head>
+                <style>
+                body {
+                        font-family: monospace;
+                        font-size: 1em;
+                }
+                p {
+                        margin: 0;
+                        line-height: 1em;
+                }
+                .container {
+                        background-color: lightgray;
+                        width: 15em;
+                        height: 5em;
+                }
+                .light {
+                        background-color: lightgreen;
+                }
+                .lime {
+                        background-color: lime;
+                }
+                .green {
+                        background-color: green;
+                }
+                </style>
+        </head>
+        <body>
+                <h1>Testing CSS selectors specificity/position is respected when using @region styling</h1>
+
+                Selector specificity in @region rule
+                <div class='container' id='r1'>
+                        <p class='light'>Plain paragraph</p>
+                        <p class='lime'>Styled with class</p>
+                        <p class='green'>Styled with ID</p>
+                </div>
+                Selector position in @region rule
+                <div class='container' id='r2'>
+                        <p class='light'>Plain paragraph</p>
+                        <p class='lime'>Styled with class</p>
+                        <p class='green'>Styled with ID</p>
+                </div>
+                More specific selector in flowed content
+                <div class='container' id='r3'>
+                        <p class='lime'>Class in content</p>
+                        <p class='lime'>ID in content</p>
+                        <p class='lime'>ID in content</p>
+                </div>
+                Style attribute in flowed content
+                <div class='container' id='r4'>
+                        <p class='lime'>Element style in region</p>
+                        <p class='lime'>ID style in region</p>
+                        <p class='lime'>Class in region</p>
+                </div>
+        </body>
+</html>

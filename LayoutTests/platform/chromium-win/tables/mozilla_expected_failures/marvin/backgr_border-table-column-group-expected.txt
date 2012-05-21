@@ -1,27 +1,27 @@
-layer at (0,0) size 785x1332
+layer at (0,0) size 785x1333
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1332
-  RenderBlock {HTML} at (0,0) size 785x1332
-    RenderBody {BODY} at (8,17) size 769x1307 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1333
+  RenderBlock {HTML} at (0,0) size 785x1334
+    RenderBody {BODY} at (8,17) size 769x1309 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x23
+      RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 372x23
           text run at (0,0) width 372: "Part D: Background with Borders"
-      RenderBlock {H3} at (0,86) size 769x17
+      RenderBlock {H3} at (0,86) size 769x18
         RenderText {#text} at (0,0) size 306x17
           text run at (0,0) width 306: "Background on 'table-column-group'"
-      RenderBlock {P} at (0,118) size 769x48
+      RenderBlock {P} at (0,118) size 769x49
         RenderText {#text} at (0,0) size 752x48
           text run at (0,0) width 752: "Three aqua stripes should run along the bottom of the last cell in the first three columns and"
           text run at (0,16) width 744: "up along the right edge of the cells in the third column. The stripes should align to be just"
           text run at (0,32) width 328: "inside the padding edge in cells M and G."
-      RenderBlock {P} at (0,179) size 769x32
+      RenderBlock {P} at (0,179) size 769x33
         RenderText {#text} at (0,0) size 736x32
           text run at (0,0) width 736: "Three aqua stripes should also run just inside the top padding edge of the first cell in the"
           text run at (0,16) width 560: "last column and down the left border edge of each cell in that column."
-      RenderBlock {DL} at (0,224) size 769x96
+      RenderBlock {DL} at (0,224) size 769x97
         RenderBlock {DT} at (0,0) size 769x16
           RenderText {#text} at (0,0) size 32x16
             text run at (0,0) width 32: "next"
@@ -46,7 +46,7 @@ layer at (0,0) size 785x1332
             RenderText {#text} at (0,0) size 136x16
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,333) size 622x485 [color=#FFFFFF] [border: (3px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,333) size 622x486 [color=#FFFFFF] [border: (3px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 622x23
           RenderText {#text} at (163,0) size 296x22
             text run at (163,0) width 296: "With 'border-collapse: separate'"
@@ -105,7 +105,7 @@ layer at (0,0) size 785x1332
             RenderTableCell {TD} at (496,150) size 113x27 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderTable {TABLE} at (0,818) size 591x437 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,818) size 591x438 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 591x23
           RenderText {#text} at (149,0) size 293x22
             text run at (149,0) width 293: "With 'border-collapse: collapse'"
@@ -161,10 +161,10 @@ layer at (0,0) size 785x1332
             RenderTableCell {TD} at (471,135) size 117x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (6,2) size 44x22
                 text run at (6,2) width 44: "TD L"
-      RenderBlock {DIV} at (0,1255) size 769x35
+      RenderBlock {DIV} at (0,1255) size 769x36
         RenderInline {A} at (0,0) size 88x16 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1290) size 769x17
+      RenderBlock {ADDRESS} at (0,1290) size 769x18
         RenderText {#text} at (0,0) size 704x17
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

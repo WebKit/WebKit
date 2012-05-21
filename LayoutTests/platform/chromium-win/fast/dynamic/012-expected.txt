@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x27
         RenderText {#text} at (0,0) size 218x26
           text run at (0,0) width 218: "Block Collapse Demo"
-      RenderBlock {P} at (0,46) size 784x20
+      RenderBlock {P} at (0,46) size 784x21
         RenderText {#text} at (0,0) size 654x19
           text run at (0,0) width 289: "This table below has three hierarchical sections. "
           text run at (289,0) width 365: "Collapsing a section should cause those below it to move up."
-      RenderBlock {P} at (0,82) size 784x20
+      RenderBlock {P} at (0,82) size 784x21
         RenderText {#text} at (0,0) size 736x19
           text run at (0,0) width 736: "This works on the latest Windows IE and Mozilla Firefox (Win and Mac) but not on Safari 1.2.3 (v125.9) {or 2.0 (146)}."
-      RenderBlock {P} at (0,118) size 784x20
+      RenderBlock {P} at (0,118) size 784x21
         RenderText {#text} at (0,0) size 716x19
           text run at (0,0) width 554: "Note that the second section is collapsed when the page opens and expanding it works fine. "
           text run at (554,0) width 162: "Just the collapse is broken."
-      RenderBlock {DIV} at (0,154) size 784x157
+      RenderBlock {DIV} at (0,154) size 784x158
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock {DIV} at (0,10) size 784x21
           RenderImage {IMG} at (0,0) size 16x16

@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 90x36
           text run at (0,0) width 90: "Blocks"
-      RenderBlock {DIV} at (0,58) size 784x20
+      RenderBlock {DIV} at (0,58) size 784x21
         RenderInline (generated) at (0,0) size 33x19
           RenderText at (0,0) size 33x19
             text run at (0,0) width 33: "Test: "
         RenderText {#text} at (33,0) size 44x19
           text run at (33,0) width 44: "content"
-      RenderBlock {DIV} at (0,78) size 784x20
+      RenderBlock {DIV} at (0,78) size 784x21
         RenderBlock (generated) at (0,0) size 29x20
           RenderText at (0,0) size 29x19
             text run at (0,0) width 29: "Test:"
         RenderText {#text} at (29,0) size 44x19
           text run at (29,0) width 44: "content"
-      RenderBlock {DIV} at (0,98) size 784x20
+      RenderBlock {DIV} at (0,98) size 784x21
         RenderTable at (0,0) size 29x20
           RenderTableSection (anonymous) at (0,0) size 29x20
             RenderTableRow (anonymous) at (0,0) size 29x20
@@ -27,10 +27,10 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 29: "Test:"
         RenderText {#text} at (29,0) size 44x19
           text run at (29,0) width 44: "content"
-      RenderBlock {H1} at (0,139) size 784x37
+      RenderBlock {H1} at (0,139) size 784x38
         RenderText {#text} at (0,0) size 91x36
           text run at (0,0) width 91: "Inlines"
-      RenderBlock (anonymous) at (0,197) size 784x60
+      RenderBlock (anonymous) at (0,198) size 784x61
         RenderInline {SPAN} at (0,0) size 77x19
           RenderInline (generated) at (0,0) size 33x19
             RenderText at (0,0) size 33x19

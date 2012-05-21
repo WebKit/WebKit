@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x188
-  RenderBlock {HTML} at (0,0) size 800x188
-    RenderBody {BODY} at (8,16) size 784x156
+  RenderBlock {HTML} at (0,0) size 800x189
+    RenderBody {BODY} at (8,16) size 784x157
       RenderBlock {P} at (0,0) size 784x20 [color=#000080]
         RenderText {#text} at (0,0) size 247x19
           text run at (0,0) width 247: "The word \"fail\" should not appear below."
-      RenderBlock {DIV} at (16,36) size 240x120 [color=#FFFFFF] [bgcolor=#FFFFFF]
-        RenderBlock (floating) {P} at (0,0) size 39x20 [color=#000080]
+      RenderBlock {DIV} at (16,36) size 240x121 [color=#FFFFFF] [bgcolor=#FFFFFF]
+        RenderBlock (floating) {P} at (0,0) size 40x21 [color=#000080]
           RenderText {#text} at (0,0) size 39x19
             text run at (0,0) width 39: "TEST:"
-        RenderBlock (floating) {P} at (1,20) size 239x20 [color=#00FFFF] [bgcolor=#008080]
+        RenderBlock (floating) {P} at (0,20) size 240x21 [color=#00FFFF] [bgcolor=#008080]
           RenderText {#text} at (100,0) size 39x19
             text run at (100,0) width 39: "PASS"
         RenderText {#text} at (39,0) size 227x119

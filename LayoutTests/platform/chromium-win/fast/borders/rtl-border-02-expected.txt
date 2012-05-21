@@ -1,8 +1,8 @@
-layer at (0,0) size 785x686
+layer at (0,0) size 785x688
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x686
-  RenderBlock {HTML} at (0,0) size 785x686
-    RenderBody {BODY} at (8,16) size 769x662
+layer at (0,0) size 785x688
+  RenderBlock {HTML} at (0,0) size 785x689
+    RenderBody {BODY} at (8,16) size 769x665
       RenderBlock {P} at (0,0) size 769x40
         RenderText {#text} at (0,0) size 742x39
           text run at (0,0) width 720: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on the left, "
@@ -11,7 +11,7 @@ layer at (0,0) size 785x686
       RenderBlock {H1} at (0,56) size 769x20
         RenderText {#text} at (0,0) size 88x19
           text run at (0,0) width 88: "Left-to-Right"
-      RenderBlock {DIV} at (0,86) size 769x252 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,86) size 769x253 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (0,6) size 119x19
             text run at (0,6) width 119: "Lorem ipsum dolor "
@@ -35,10 +35,10 @@ layer at (0,0) size 785x686
           RenderText {#text} at (578,102) size 701x51
             text run at (578,102) width 123: "sit amet, consectetur"
             text run at (0,134) width 409: "adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore"
-      RenderBlock {H1} at (0,348) size 769x20
+      RenderBlock {H1} at (0,349) size 769x21
         RenderText {#text} at (0,0) size 88x19
           text run at (0,0) width 88: "Right-to-Left"
-      RenderBlock {DIV} at (0,378) size 769x284 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,380) size 769x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (638,6) size 119x19
             text run at (638,6) width 119 RTL override: "Lorem ipsum dolor "

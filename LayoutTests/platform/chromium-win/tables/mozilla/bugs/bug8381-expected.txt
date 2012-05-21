@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#3333FF]
       RenderBlock {CENTER} at (0,0) size 784x72
-        RenderTable {TABLE} at (186,0) size 411x72 [bgcolor=#FFFFFF] [border: (2px outset #808080)]
+        RenderTable {TABLE} at (186,0) size 412x72 [bgcolor=#FFFFFF] [border: (2px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 411x22
             RenderInline {B} at (0,0) size 131x19
               RenderInline {FONT} at (0,0) size 131x21 [color=#C0C0C0]

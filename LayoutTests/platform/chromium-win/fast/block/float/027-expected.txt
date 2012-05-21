@@ -30,17 +30,17 @@ layer at (0,0) size 785x1432
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 769x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (200,0) size 386x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (200,0) size 387x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,1216) size 769x200
         RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FF0000]
-        RenderImage {IMG} at (200,0) size 384x50 [bgcolor=#008000]
+        RenderImage {IMG} at (200,0) size 385x50 [bgcolor=#008000]
 layer at (208,208) size 569x59 clip at (210,210) size 550x40
   RenderBlock {DIV} at (200,0) size 569x59 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 513x39
       text run at (2,2) width 513: "This is an overflow:scroll region. It should sit on the same line as the float and wrap as"
       text run at (2,22) width 262: "needed to fit within the remaining line width."
-layer at (208,816) size 388x79 clip at (210,818) size 369x60
-  RenderBlock {DIV} at (200,0) size 388x79 [border: (2px solid #0000FF)]
+layer at (208,816) size 389x79 clip at (210,818) size 370x60
+  RenderBlock {DIV} at (200,0) size 389x79 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 368x59
       text run at (2,2) width 366: "This is an overflow:scroll region. It should sit on the same line"
       text run at (2,22) width 368: "as the float and wrap as needed to fit within the remaining line"

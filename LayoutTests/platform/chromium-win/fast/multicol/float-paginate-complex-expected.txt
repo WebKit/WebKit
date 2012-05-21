@@ -1,11 +1,11 @@
-layer at (0,0) size 1164x1680
+layer at (0,0) size 1166x1680
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1680
   RenderBlock {HTML} at (0,0) size 785x1680
     RenderBody {BODY} at (8,8) size 769x1664
 layer at (8,8) size 769x404
   RenderBlock {DIV} at (0,0) size 769x404 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 374x280
+    RenderBlock (anonymous) at (2,2) size 375x280
       RenderText {#text} at (0,0) size 104x19
         text run at (0,0) width 104: "This is some text."
       RenderBR {BR} at (104,15) size 0x0
@@ -48,7 +48,7 @@ layer at (8,8) size 769x404
       RenderText {#text} at (0,260) size 104x19
         text run at (0,260) width 104: "This is some text."
       RenderBR {BR} at (104,275) size 0x0
-    RenderBlock {P} at (2,298) size 374x624
+    RenderBlock {P} at (2,298) size 375x624
       RenderBlock (floating) {SPAN} at (0,104) size 78x150
         RenderText {#text} at (0,2) size 78x145
           text run at (0,2) width 78: "T"
@@ -132,7 +132,7 @@ layer at (8,8) size 769x404
       RenderBR {BR} at (104,619) size 0x0
 layer at (8,428) size 769x404
   RenderBlock {DIV} at (0,420) size 769x404 [border: (2px solid #000000)]
-    RenderBlock (anonymous) at (2,2) size 374x280
+    RenderBlock (anonymous) at (2,2) size 375x280
       RenderText {#text} at (0,0) size 104x19
         text run at (0,0) width 104: "This is some text."
       RenderBR {BR} at (104,15) size 0x0
@@ -175,9 +175,9 @@ layer at (8,428) size 769x404
       RenderText {#text} at (0,260) size 104x19
         text run at (0,260) width 104: "This is some text."
       RenderBR {BR} at (104,275) size 0x0
-    RenderBlock {P} at (2,298) size 374x624
+    RenderBlock {P} at (2,298) size 375x624
       RenderImage {IMG} at (0,104) size 100x100 [bgcolor=#008000]
-      RenderImage {IMG} at (274,104) size 100x200 [bgcolor=#008000]
+      RenderImage {IMG} at (274,104) size 101x200 [bgcolor=#008000]
       RenderText {#text} at (100,104) size 100x19
         text run at (100,104) width 100: "This is some text"
       RenderBR {BR} at (200,119) size 0x0
@@ -284,12 +284,12 @@ layer at (8,848) size 769x404
       text run at (2,422) width 172: "float and wrapping behavior."
 layer at (8,1268) size 769x404
   RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
-    RenderImage {IMG} at (2,2) size 374x380 [bgcolor=#0000FF]
+    RenderImage {IMG} at (2,2) size 375x380 [bgcolor=#0000FF]
     RenderInline {SPAN} at (0,0) size 367x251
       RenderImage {IMG} at (2,402) size 100x20 [bgcolor=#008000]
       RenderText {#text} at (102,402) size 208x27
         text run at (102,402) width 208: "Longer text designed "
-      RenderImage {IMG} at (276,430) size 100x20 [bgcolor=#008000]
+      RenderImage {IMG} at (276,430) size 101x20 [bgcolor=#008000]
       RenderText {#text} at (310,402) size 367x251
         text run at (310,402) width 59: "to test"
         text run at (2,430) width 180: "float and wrapping"

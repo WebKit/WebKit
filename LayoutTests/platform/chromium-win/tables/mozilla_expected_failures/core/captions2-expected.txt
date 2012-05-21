@@ -13,7 +13,7 @@ layer at (0,0) size 785x1136
         RenderBlock {CAPTION} at (10,2) size 78x27 [border: (3px solid #800080)]
           RenderText {#text} at (6,4) size 45x19
             text run at (6,4) width 45: "caption"
-          RenderBlock {INPUT} at (56,6) size 13x13
+          RenderBlock {INPUT} at (55,6) size 14x13
         RenderTableSection {TBODY} at (10,39) size 68x50
           RenderTableRow {TR} at (0,2) size 68x22
             RenderTableCell {TD} at (2,2) size 31x22 [r=0 c=0 rs=1 cs=1]
@@ -36,7 +36,7 @@ layer at (0,0) size 785x1136
         RenderBlock {CAPTION} at (10,2) size 78x47 [border: (3px solid #800080)]
           RenderText {#text} at (6,4) size 45x19
             text run at (6,4) width 45: "caption"
-          RenderBlock {INPUT} at (56,6) size 13x13
+          RenderBlock {INPUT} at (55,6) size 14x13
           RenderText {#text} at (17,24) size 44x19
             text run at (17,24) width 44: "foo foo"
         RenderTableSection {TBODY} at (10,59) size 68x50
@@ -61,7 +61,7 @@ layer at (0,0) size 785x1136
         RenderBlock {CAPTION} at (10,2) size 130x47 [border: (3px solid #800080)]
           RenderText {#text} at (32,4) size 45x19
             text run at (32,4) width 45: "caption"
-          RenderBlock {INPUT} at (82,6) size 13x13
+          RenderBlock {INPUT} at (81,6) size 14x13
           RenderText {#text} at (3,24) size 134x19
             text run at (3,24) width 134: "very_large_very_large"
         RenderTableSection {TBODY} at (10,59) size 120x50
@@ -108,7 +108,7 @@ layer at (0,0) size 785x1136
         RenderBlock {CAPTION} at (10,2) size 122x27 [border: (3px solid #800080)]
           RenderText {#text} at (28,4) size 45x19
             text run at (28,4) width 45: "caption"
-          RenderBlock {INPUT} at (78,6) size 13x13
+          RenderBlock {INPUT} at (77,6) size 14x13
         RenderTableSection {TBODY} at (10,39) size 112x50
           RenderTableRow {TR} at (0,2) size 112x22
             RenderTableCell {TD} at (2,2) size 31x22 [r=0 c=0 rs=1 cs=1]

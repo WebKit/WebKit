@@ -1,8 +1,8 @@
 layer at (0,0) size 785x2464
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x2464
-  RenderBlock {HTML} at (0,0) size 785x2464
-    RenderBody {BODY} at (8,8) size 769x2440 [bgcolor=#FFDEAD]
+  RenderBlock {HTML} at (0,0) size 785x2465
+    RenderBody {BODY} at (8,8) size 769x2441 [bgcolor=#FFDEAD]
       RenderBlock {H1} at (0,0) size 769x74
         RenderInline {FONT} at (0,0) size 475x73 [color=#FF0000]
           RenderText {#text} at (0,0) size 295x36
@@ -10,14 +10,14 @@ layer at (0,0) size 785x2464
           RenderBR {BR} at (295,29) size 0x0
           RenderText {#text} at (0,37) size 475x36
             text run at (0,37) width 475: "Web Browser: Web View (HTML)"
-      RenderBlock {P} at (0,95) size 769x27
+      RenderBlock {P} at (0,95) size 769x28
         RenderInline {FONT} at (0,0) size 353x27 [color=#FF0000]
           RenderInline {B} at (0,0) size 353x26
             RenderText {#text} at (0,0) size 353x26
               text run at (0,0) width 353: "Table: <TH> & <TD> ROWSPAN"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,138) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,148) size 769x60
+      RenderBlock {HR} at (0,138) size 769x3 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,148) size 769x61
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "This acceptance test case tests the optional "
         RenderInline {B} at (0,0) size 40x19
@@ -43,12 +43,12 @@ layer at (0,0) size 785x2464
         RenderText {#text} at (549,20) size 749x39
           text run at (549,20) width 200: " attribute is set to an integer value"
           text run at (0,40) width 366: "equal the number of rows the table header or data cell spans."
-      RenderBlock {P} at (0,224) size 769x20
+      RenderBlock {P} at (0,224) size 769x21
         RenderInline {B} at (0,0) size 118x19
           RenderText {#text} at (0,0) size 118x19
             text run at (0,0) width 118: "Test Instructions:"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {OL} at (0,260) size 769x262
+      RenderBlock {OL} at (0,260) size 769x263
         RenderListItem {LI} at (40,0) size 729x20
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 473x19
@@ -122,8 +122,8 @@ layer at (0,0) size 785x2464
           RenderListMarker at (-21,0) size 16x19: "6"
           RenderText {#text} at (0,0) size 125x19
             text run at (0,0) width 125: "Verify reload works."
-      RenderBlock {HR} at (0,538) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,556) size 769x65
+      RenderBlock {HR} at (0,538) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,556) size 769x66
         RenderTable {TABLE} at (0,0) size 653x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 651x63
             RenderTableRow {TR} at (0,2) size 651x59
@@ -142,7 +142,7 @@ layer at (0,0) size 785x2464
                       text run at (415,14) width 214: "(using <TH ROWSPAN=integer value>"
                       text run at (11,31) width 22: "tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,637) size 769x128
+      RenderBlock {P} at (0,637) size 769x129
         RenderBlock (anonymous) at (0,0) size 769x20
           RenderBR {BR} at (0,0) size 0x19
         RenderTable {TABLE} at (0,20) size 692x108 [bgcolor=#FFD700] [border: (1px outset #808080)]
@@ -169,10 +169,10 @@ layer at (0,0) size 785x2464
                       text run at (11,51) width 601: "header cell occupy the same vertical space as the integer number of cells specified in rows "
                       text run at (612,51) width 58: "above or"
                       text run at (11,71) width 637: "below it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
-      RenderBlock {P} at (0,781) size 769x40
+      RenderBlock {P} at (0,781) size 769x41
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {UL} at (0,837) size 769x284
+      RenderBlock {UL} at (0,837) size 769x285
         RenderTable {TABLE} at (40,0) size 473x284 [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 473x20
             RenderText {#text} at (103,0) size 39x19
@@ -481,9 +481,9 @@ layer at (0,0) size 785x2464
               RenderTableCell {TD} at (430,236) size 39x24 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=9 c=9 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 30x19
                   text run at (2,2) width 30: "col 9"
-      RenderBlock {P} at (0,1137) size 769x0
-      RenderBlock {HR} at (0,1137) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,1155) size 769x48
+      RenderBlock {P} at (0,1137) size 769x1
+      RenderBlock {HR} at (0,1137) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,1155) size 769x49
         RenderTable {TABLE} at (0,0) size 653x48 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 651x46
             RenderTableRow {TR} at (0,2) size 651x42
@@ -501,7 +501,7 @@ layer at (0,0) size 785x2464
                     RenderText {#text} at (398,14) size 238x16
                       text run at (398,14) width 238: "(using <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1219) size 769x128
+      RenderBlock {P} at (0,1219) size 769x129
         RenderBlock (anonymous) at (0,0) size 769x20
           RenderBR {BR} at (0,0) size 0x19
         RenderTable {TABLE} at (0,20) size 692x108 [bgcolor=#FFD700] [border: (1px outset #808080)]
@@ -528,10 +528,10 @@ layer at (0,0) size 785x2464
                       text run at (11,51) width 551: "cell occupy the same vertical space as the integer number of cells specified in rows "
                       text run at (562,51) width 100: "above or below"
                       text run at (11,71) width 595: "it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
-      RenderBlock {P} at (0,1363) size 769x40
+      RenderBlock {P} at (0,1363) size 769x41
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {UL} at (0,1419) size 769x284
+      RenderBlock {UL} at (0,1419) size 769x285
         RenderTable {TABLE} at (40,0) size 473x284 [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 473x20
             RenderText {#text} at (112,0) size 38x19
@@ -870,9 +870,9 @@ layer at (0,0) size 785x2464
               RenderTableCell {TD} at (433,236) size 36x24 [bgcolor=#ADD8E6] [border: (1px inset #808080)] [r=9 c=10 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 30x19
                   text run at (2,2) width 30: "col 9"
-      RenderBlock {P} at (0,1719) size 769x0
-      RenderBlock {HR} at (0,1719) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,1737) size 769x65
+      RenderBlock {P} at (0,1719) size 769x1
+      RenderBlock {HR} at (0,1719) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,1737) size 769x66
         RenderTable {TABLE} at (0,0) size 653x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 651x63
             RenderTableRow {TR} at (0,2) size 651x59
@@ -891,10 +891,10 @@ layer at (0,0) size 785x2464
                       text run at (513,14) width 62: "(using <TH"
                       text run at (11,31) width 353: "ROWSPAN=integer value> <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1818) size 769x40
+      RenderBlock {P} at (0,1818) size 769x41
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,20) size 0x19
-      RenderBlock {UL} at (0,1874) size 769x484
+      RenderBlock {UL} at (0,1874) size 769x485
         RenderTable {TABLE} at (40,0) size 473x484 [border: (1px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 473x20
             RenderText {#text} at (34,0) size 86x19
@@ -1315,9 +1315,9 @@ layer at (0,0) size 785x2464
                 RenderText {#text} at (2,2) size 18x39
                   text run at (2,2) width 18: "col"
                   text run at (2,22) width 8: "9"
-      RenderBlock {P} at (0,2374) size 769x0
-      RenderBlock {HR} at (0,2374) size 769x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,2384) size 769x20
+      RenderBlock {P} at (0,2374) size 769x1
+      RenderBlock {HR} at (0,2374) size 769x3 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,2384) size 769x21
         RenderImage {IMG} at (0,2) size 13x13
         RenderText {#text} at (13,0) size 128x19
           text run at (13,0) width 128: " Created 9/19/96 by "
@@ -1325,5 +1325,5 @@ layer at (0,0) size 785x2464
           RenderText {#text} at (141,0) size 77x19
             text run at (141,0) width 77: "Ronald Greti"
         RenderBR {BR} at (218,15) size 0x0
-      RenderBlock {P} at (0,2420) size 769x20
+      RenderBlock {P} at (0,2420) size 769x21
         RenderBR {BR} at (0,0) size 0x19

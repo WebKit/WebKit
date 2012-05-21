@@ -1,13 +1,13 @@
 layer at (0,0) size 785x1029
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1029
-  RenderBlock {HTML} at (0,0) size 785x1029
-    RenderBody {BODY} at (8,21) size 769x1000
+  RenderBlock {HTML} at (0,0) size 785x1030
+    RenderBody {BODY} at (8,21) size 769x1001
       RenderBlock {H4} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 279x19
           text run at (0,0) width 279: "Safari Fixed / Overflow Hidden Scroll Bug"
-      RenderBlock {PRE} at (0,41) size 769x0
-      RenderBlock {PRE} at (0,41) size 769x528
+      RenderBlock {PRE} at (0,41) size 769x1
+      RenderBlock {PRE} at (0,41) size 769x529
         RenderText {#text} at (0,0) size 264x528
           text run at (0,0) width 72: "#fixed1 {"
           text run at (72,0) width 0: " "
@@ -74,16 +74,16 @@ layer at (0,0) size 785x1029
           text run at (0,496) width 64: "\x{9}"
           text run at (64,496) width 0: " "
           text run at (0,512) width 0: " "
-      RenderBlock {P} at (0,585) size 769x20
+      RenderBlock {P} at (0,585) size 769x21
         RenderText {#text} at (0,0) size 377x19
           text run at (0,0) width 377: "When you scroll this page the following objects will be clipped:"
-      RenderBlock {P} at (0,621) size 769x20
+      RenderBlock {P} at (0,621) size 769x21
         RenderText {#text} at (0,0) size 707x19
           text run at (0,0) width 707: "- (relative objects and overflowHidden objects) inside (overflowHidden objects) inside (fixed objects) will be clipped;"
-      RenderBlock {P} at (0,657) size 769x20
+      RenderBlock {P} at (0,657) size 769x21
         RenderText {#text} at (0,0) size 739x19
           text run at (0,0) width 739: "- (relative objects and overflowHidden objects and absolute objects) inside (fixed/overflowHidden objects) will be clipped;"
-      RenderBlock {P} at (0,693) size 769x40
+      RenderBlock {P} at (0,693) size 769x41
         RenderText {#text} at (0,0) size 742x39
           text run at (0,0) width 742: "Nice effect, but not what we want. Tested in Safari Version 2.0.4 (419.3), and WebKit Nightly Build Mon Nov 20 5:18:23"
           text run at (0,20) width 74: "GMT 2006."

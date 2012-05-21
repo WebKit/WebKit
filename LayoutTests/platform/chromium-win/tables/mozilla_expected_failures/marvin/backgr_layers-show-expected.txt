@@ -1,24 +1,24 @@
-layer at (0,0) size 785x1784
+layer at (0,0) size 785x1785
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1784
-  RenderBlock {HTML} at (0,0) size 785x1784
-    RenderBody {BODY} at (8,17) size 769x1759 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1785
+  RenderBlock {HTML} at (0,0) size 785x1786
+    RenderBody {BODY} at (8,17) size 769x1761 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x23
+      RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 300x23
           text run at (0,0) width 300: "Part C: Background Layers"
-      RenderBlock {H3} at (0,86) size 769x17
+      RenderBlock {H3} at (0,86) size 769x18
         RenderText {#text} at (0,0) size 153x17
           text run at (0,0) width 153: "empty-cells: show"
-      RenderBlock {P} at (0,118) size 769x16
+      RenderBlock {P} at (0,118) size 769x17
         RenderText {#text} at (0,0) size 336x16
           text run at (0,0) width 336: "Both tables should have a blue background."
-      RenderBlock {P} at (0,147) size 769x16
+      RenderBlock {P} at (0,147) size 769x17
         RenderText {#text} at (0,0) size 496x16
           text run at (0,0) width 496: "In table cell C (third cell in the first row), which is empty:"
-      RenderBlock {UL} at (0,176) size 769x129
+      RenderBlock {UL} at (0,176) size 769x130
         RenderListItem {LI} at (40,0) size 729x32
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 728x32
@@ -47,10 +47,10 @@ layer at (0,0) size 785x1784
               text run at (416,0) width 32: "over"
           RenderText {#text} at (448,1) size 120x16
             text run at (448,1) width 120: " the side sets."
-      RenderBlock {P} at (0,318) size 769x16
+      RenderBlock {P} at (0,318) size 769x17
         RenderText {#text} at (0,0) size 376x16
           text run at (0,0) width 376: "In table cell A, (first cell in the first row):"
-      RenderBlock {UL} at (0,347) size 769x80
+      RenderBlock {UL} at (0,347) size 769x81
         RenderListItem {LI} at (40,0) size 729x32
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 712x32
@@ -65,10 +65,10 @@ layer at (0,0) size 785x1784
           RenderText {#text} at (0,0) size 720x32
             text run at (0,0) width 720: "The second set should turn down at the left edge, going over the third set to form another"
             text run at (0,16) width 376: "set that runs just inside the left border edge."
-      RenderBlock {P} at (0,440) size 769x16
+      RenderBlock {P} at (0,440) size 769x17
         RenderText {#text} at (0,0) size 368x16
           text run at (0,0) width 368: "In table cell D, (last cell in the first row):"
-      RenderBlock {UL} at (0,469) size 769x64
+      RenderBlock {UL} at (0,469) size 769x65
         RenderListItem {LI} at (40,0) size 729x32
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 688x32
@@ -79,10 +79,10 @@ layer at (0,0) size 785x1784
           RenderText {#text} at (0,0) size 720x32
             text run at (0,0) width 720: "The first set should turn down at the right edge, going under the second horizontal set to"
             text run at (0,16) width 392: "run vertically just inside the right border edge."
-      RenderBlock {P} at (0,546) size 769x16
+      RenderBlock {P} at (0,546) size 769x17
         RenderText {#text} at (0,0) size 384x16
           text run at (0,0) width 384: "In table cell G, (third cell in the second row):"
-      RenderBlock {UL} at (0,575) size 769x96
+      RenderBlock {UL} at (0,575) size 769x97
         RenderListItem {LI} at (40,0) size 729x32
           RenderListMarker at (-16,0) size 6x16: bullet
           RenderText {#text} at (0,0) size 696x32
@@ -98,7 +98,7 @@ layer at (0,0) size 785x1784
           RenderText {#text} at (0,0) size 696x32
             text run at (0,0) width 696: "Another set of vertical stripes should run down just inside the right border edge, also"
             text run at (0,16) width 288: "going under both horizontal stripes."
-      RenderBlock {DL} at (0,684) size 769x96
+      RenderBlock {DL} at (0,684) size 769x97
         RenderBlock {DT} at (0,0) size 769x16
           RenderText {#text} at (0,0) size 32x16
             text run at (0,0) width 32: "next"
@@ -123,7 +123,7 @@ layer at (0,0) size 785x1784
             RenderText {#text} at (0,0) size 136x16
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,793) size 618x481 [color=#FFFFFF] [bgcolor=#0000FF] [border: (1px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,793) size 618x482 [color=#FFFFFF] [bgcolor=#0000FF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 618x23
           RenderText {#text} at (161,0) size 296x22
             text run at (161,0) width 296: "With 'border-collapse: separate'"
@@ -180,7 +180,7 @@ layer at (0,0) size 785x1784
             RenderTableCell {TD} at (496,150) size 113x27 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderTable {TABLE} at (0,1274) size 578x433 [color=#FFFFFF] [bgcolor=#0000FF] [border: (6px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,1274) size 578x434 [color=#FFFFFF] [bgcolor=#0000FF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 578x23
           RenderText {#text} at (143,0) size 292x22
             text run at (143,0) width 292: "With 'border-collapse: collapse'"
@@ -237,10 +237,10 @@ layer at (0,0) size 785x1784
             RenderTableCell {TD} at (465,135) size 112x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x22
                 text run at (2,2) width 44: "TD L"
-      RenderBlock {DIV} at (0,1707) size 769x35
+      RenderBlock {DIV} at (0,1707) size 769x36
         RenderInline {A} at (0,0) size 88x16 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1742) size 769x17
+      RenderBlock {ADDRESS} at (0,1742) size 769x18
         RenderText {#text} at (0,0) size 704x17
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

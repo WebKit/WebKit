@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 523x19
           text run at (0,0) width 523: "TBODY is not correctly positioned when TFOOT is present but THEAD is not:"
-      RenderTable {TABLE} at (0,41) size 63x58 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,41) size 63x59 [border: (1px outset #808080)]
         RenderTableSection {TFOOT} at (1,29) size 61x28
           RenderTableRow {TR} at (0,2) size 61x24
             RenderTableCell {TD} at (2,2) size 57x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 57x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "TBODY"
-      RenderBlock (anonymous) at (0,99) size 784x20
+      RenderBlock (anonymous) at (0,99) size 784x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,119) size 65x86 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,119) size 65x87 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 63x28
           RenderTableRow {TR} at (0,2) size 63x24
             RenderTableCell {TH} at (2,2) size 59x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 59x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "TBODY"
-      RenderBlock {P} at (0,221) size 784x264
+      RenderBlock {P} at (0,221) size 784x265
         RenderBlock (anonymous) at (0,0) size 784x20
           RenderText {#text} at (0,0) size 148x19
             text run at (0,0) width 148: "Same as above but with "

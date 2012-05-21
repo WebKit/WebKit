@@ -4,10 +4,10 @@
 Initial
 
 (GraphicsLayer
-  (bounds 785.00 622.00)
+  (bounds 785.00 626.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 622.00)
+      (bounds 785.00 626.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -50,10 +50,10 @@ Initial
 After step 1
 
 (GraphicsLayer
-  (bounds 785.00 1345.00)
+  (bounds 785.00 1350.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 1345.00)
+      (bounds 785.00 1350.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -95,10 +95,10 @@ After step 1
 After step 2
 
 (GraphicsLayer
-  (bounds 785.00 2052.00)
+  (bounds 785.00 2058.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 2052.00)
+      (bounds 785.00 2058.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)

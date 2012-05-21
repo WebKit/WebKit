@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                     RenderTableSection {TBODY} at (2,2) size 626x212
                       RenderTableRow {TR} at (0,15) size 626x182
                         RenderTableCell {TD} at (15,15) size 596x182 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                          RenderTable {TABLE} at (249,1) size 97x180 [bgcolor=#CCCCCC]
+                          RenderTable {TABLE} at (249,1) size 98x180 [bgcolor=#CCCCCC]
                             RenderTableSection {TBODY} at (0,0) size 97x180
                               RenderTableRow {TR} at (0,0) size 97x180
                                 RenderTableCell {TD} at (0,0) size 97x180 [r=0 c=0 rs=1 cs=1]

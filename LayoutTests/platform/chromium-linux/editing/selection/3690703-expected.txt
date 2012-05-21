@@ -83,13 +83,13 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 4x19
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (183,0) size 368x52 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (3,2) size 363x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderTextControl {INPUT} at (2,2) size 364x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderBR {BR} at (367,18) size 1x0
-                  RenderButton {INPUT} at (73,28) size 102x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+                  RenderButton {INPUT} at (72,28) size 103x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
                     RenderBlock (anonymous) at (8,3) size 86x16
                       RenderText at (0,0) size 86x16
                         text run at (0,0) width 86: "Google Search"
-                  RenderButton {INPUT} at (179,28) size 117x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+                  RenderButton {INPUT} at (178,28) size 118x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
                     RenderBlock (anonymous) at (8,3) size 101x16
                       RenderText at (0,0) size 101x16
                         text run at (0,0) width 101: "I'm Feeling Lucky"
