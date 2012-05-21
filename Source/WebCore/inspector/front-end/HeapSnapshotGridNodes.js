@@ -728,9 +728,17 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
      */
     revealNodeBySnapshotObjectId: function(snapshotObjectId)
     {
+        function didExpand()
+        {
+            this._provider.nodePosition(snapshotObjectId, didGetNodePosition.bind(this));
+        }
+
         function didGetNodePosition(nodePosition)
         {
-            if (nodePosition !== -1)
+            if (nodePosition === -1) {
+                this.collapse();
+                callback(null);
+            } else
                 this._populateChildren(nodePosition, null, didPopulateChildren.bind(this, nodePosition));
         }
 
@@ -749,8 +757,7 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
             }
         }
 
-        this.expand();
-        this._provider.nodePosition(snapshotObjectId, didGetNodePosition.bind(this));
+        this.expandWithoutPopulate(didExpand.bind(this));
     },
 
     createCell: function(columnIdentifier)

@@ -558,9 +558,11 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile || profile.isTemporary)
             return;
 
-        this.closeVisibleView();
-
         var view = profile.view();
+        if (view === this.visibleView)
+            return;
+
+        this.closeVisibleView();
 
         view.show(this.profileViews);
 

@@ -86,9 +86,18 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
      */
     highlightNode: function(node)
     {
+        var prevNode = this._highlightedNode;
         this._clearCurrentHighlight();
         this._highlightedNode = node;
         this._highlightedNode.element.addStyleClass("highlighted-row");
+        // If highlighted node hasn't changed reinsert it to make the highlight animation restart.
+        if (node === prevNode) {
+            var element = node.element;
+            var parent = element.parentElement;
+            var nextSibling = element.nextSibling;
+            parent.removeChild(element);
+            parent.insertBefore(element, nextSibling);
+        }
     },
 
     nodeWasDetached: function(node)
@@ -278,8 +287,21 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
      */
     highlightNode: function(node)
     {
-        node.element.scrollIntoViewIfNeeded(true);
-        this._nodeToHighlightAfterScroll = node;
+        if (this._isScrolledIntoView(node.element))
+            WebInspector.HeapSnapshotSortableDataGrid.prototype.highlightNode.call(this, node);
+        else {
+            node.element.scrollIntoViewIfNeeded(true);
+            this._nodeToHighlightAfterScroll = node;
+        }
+    },
+
+    _isScrolledIntoView: function(element)
+    {
+        var viewportTop = this.scrollContainer.scrollTop;
+        var viewportBottom = viewportTop + this.scrollContainer.clientHeight;
+        var elemTop = element.offsetTop
+        var elemBottom = elemTop + element.offsetHeight;
+        return elemBottom <= viewportBottom && elemTop >= viewportTop;
     },
 
     _addPaddingRows: function(top, bottom)
