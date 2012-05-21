@@ -92,6 +92,32 @@
              "transfer":[channel.port1]});
         navigator.webkitStartActivity(portIntent);
         debug("* sent intent with port");
+
+        // Ports, if present, must be put in |transfer|.
+        var badchannel = new MessageChannel();
+        badchannel.port2.onMessage = function() {
+            debug("* got message");
+        }
+        badPortIntentObj = 
+            {"action":"action1",
+             "type":"text/plain+badport",
+             "data":badchannel.port1};
+        shouldThrow("new WebKitIntent(badPortIntentObj)", "'Error: DATA_CLONE_ERR: DOM Exception 25'");
+
+        suggestionsIntent =
+            {"action":"action1",
+             "type":"text/plain+suggestions",
+             "data":"message",
+             "suggestions":["www.example.com/", "http://ww2.example.com"]};
+        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+
+        suggestionsIntent.suggestions = [15];
+        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+
+        suggestionsIntent.suggestions = ["http://www.example.com/"];
+        navigator.webkitStartActivity(new WebKitIntent(suggestionsIntent));
+        debug("* sent intent with suggestions");
+
     }
     </script>
   </head>

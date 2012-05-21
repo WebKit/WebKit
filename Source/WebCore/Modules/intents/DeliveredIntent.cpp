@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "SerializedScriptValue.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ PassRefPtr<DeliveredIntent> DeliveredIntent::create(Frame* frame, PassOwnPtr<Del
 DeliveredIntent::DeliveredIntent(Frame* frame, PassOwnPtr<DeliveredIntentClient> client, const String& action, const String& type,
                                  PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortArray> ports,
                                  const HashMap<String, String>& extras)
-    : Intent(action, type, data, PassOwnPtr<MessagePortChannelArray>(), extras, KURL())
+    : Intent(action, type, data, PassOwnPtr<MessagePortChannelArray>(), extras, KURL(), Vector<KURL>())
     , FrameDestructionObserver(frame)
     , m_client(client)
     , m_ports(ports)

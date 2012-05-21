@@ -127,6 +127,18 @@ WebURL WebIntent::service() const
 #endif
 }
 
+WebVector<WebURL> WebIntent::suggestions() const
+{
+#if ENABLE(WEB_INTENTS)
+    WebVector<WebURL> suggestions(m_private->suggestions().size());
+    for (size_t i = 0; i < m_private->suggestions().size(); ++i)
+        suggestions[i] = m_private->suggestions().at(i);
+    return suggestions;
+#else
+    return WebVector<WebURL>();
+#endif
+}
+
 WebMessagePortChannelArray* WebIntent::messagePortChannelsRelease() const
 {
     // Note: see PlatformMessagePortChannel::postMessageToRemote.

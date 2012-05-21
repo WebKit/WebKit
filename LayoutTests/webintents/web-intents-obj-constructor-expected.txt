@@ -5,6 +5,8 @@ Received Web Intent: action=action1 type=text/plain+extras
 Extras[a] = b
 Received Web Intent: action=action1 type=text/plain+port
 Have 1 ports
+Received Web Intent: action=action1 type=text/plain+suggestions
+Have suggestion http://www.example.com/
 PASS successfullyParsed is true
 
 TEST COMPLETE
@@ -43,4 +45,8 @@ PASS new WebKitIntent({'action':'a','type':'b','extras':['a','b']}) did not thro
 * sent explicit intent
 * sent intent with extras
 * sent intent with port
+PASS new WebKitIntent(badPortIntentObj) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
+PASS new WebKitIntent(suggestionsIntent) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(suggestionsIntent) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+* sent intent with suggestions
 

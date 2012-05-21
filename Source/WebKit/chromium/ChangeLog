@@ -1,3 +1,16 @@
+2012-05-21  Greg Billock  <gbillock@google.com>
+
+        Add suggestions field to web intents API.
+        https://bugs.webkit.org/show_bug.cgi?id=86791
+
+        Reviewed by Adam Barth.
+
+        * public/WebIntent.h:
+        (WebIntent):
+        * src/WebIntent.cpp:
+        (WebKit::WebIntent::suggestions):
+        (WebKit):
+
 2012-05-20  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Remove WebCore::revealFolderInOS() which is no longer used anywhere

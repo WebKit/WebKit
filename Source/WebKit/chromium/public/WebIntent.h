@@ -66,6 +66,7 @@ public:
     WEBKIT_EXPORT WebString type() const;
     WEBKIT_EXPORT WebString data() const;
     WEBKIT_EXPORT WebURL service() const;
+    WEBKIT_EXPORT WebVector<WebURL> suggestions() const;
 
     // Retrieve a list of the names of extra metadata associated with the
     // intent.

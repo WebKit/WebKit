@@ -34,6 +34,7 @@
 #include "ExceptionCode.h"
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -50,10 +51,11 @@ PassRefPtr<Intent> Intent::create(const String& action, const String& type, Pass
 
     OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(&ports, ec);
 
-    WTF::HashMap<String, String> extras;
-    KURL serviceUrl;
+    HashMap<String, String> extras;
+    KURL serviceURL;
+    Vector<KURL> suggestions;
 
-    return adoptRef(new Intent(action, type, data, channels.release(), extras, serviceUrl));
+    return adoptRef(new Intent(action, type, data, channels.release(), extras, serviceURL, suggestions));
 }
 
 PassRefPtr<Intent> Intent::create(ScriptState* scriptState, const Dictionary& options, ExceptionCode& ec)
@@ -96,22 +98,36 @@ PassRefPtr<Intent> Intent::create(ScriptState* scriptState, const Dictionary& op
         }
     }
 
-    WTF::HashMap<String, String> extras;
+    HashMap<String, String> extras;
     Dictionary extrasDictionary;
     if (options.get("extras", extrasDictionary))
         extrasDictionary.getOwnPropertiesAsStringHashMap(extras);
 
-    return adoptRef(new Intent(action, type, serializedData.release(), channels.release(), extras, serviceUrl));
+    HashSet<AtomicString> suggestionsStrings;
+    Vector<KURL> suggestions;
+    if (options.get("suggestions", suggestionsStrings)) {
+        for (HashSet<AtomicString>::iterator iter = suggestionsStrings.begin(); iter != suggestionsStrings.end(); ++iter) {
+            KURL suggestedURL = KURL(KURL(), *iter);
+            if (!suggestedURL.isValid()) {
+                ec = SYNTAX_ERR;
+                return 0;
+            }
+            suggestions.append(suggestedURL);
+        }
+    }
+
+    return adoptRef(new Intent(action, type, serializedData.release(), channels.release(), extras, serviceUrl, suggestions));
 }
 
 Intent::Intent(const String& action, const String& type,
                PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports,
-               const WTF::HashMap<String, String>& extras, const KURL& service)
+               const HashMap<String, String>& extras, const KURL& service, const Vector<KURL>& suggestions)
     : m_action(action)
     , m_type(type)
     , m_ports(ports)
     , m_service(service)
     , m_extras(extras)
+    , m_suggestions(suggestions)
 {
     if (data)
         m_data = data;

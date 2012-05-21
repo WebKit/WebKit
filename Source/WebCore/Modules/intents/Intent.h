@@ -40,6 +40,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -61,12 +62,13 @@ public:
 
     MessagePortChannelArray* messagePorts() const { return m_ports.get(); }
     const KURL& service() const { return m_service; }
-    const WTF::HashMap<String, String>& extras() const { return m_extras; }
+    const HashMap<String, String>& extras() const { return m_extras; }
+    const Vector<KURL>& suggestions() const { return m_suggestions; }
 
 protected:
     Intent(const String& action, const String& type,
            PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports,
-           const WTF::HashMap<String, String>& extras, const KURL& service);
+           const HashMap<String, String>& extras, const KURL& service, const Vector<KURL>& suggestions);
 
 private:
     String m_action;
@@ -74,7 +76,8 @@ private:
     RefPtr<SerializedScriptValue> m_data;
     OwnPtr<MessagePortChannelArray> m_ports;
     KURL m_service;
-    WTF::HashMap<String, String> m_extras;
+    HashMap<String, String> m_extras;
+    Vector<KURL> m_suggestions;
 };
 
 } // namespace WebCore
