@@ -1,3 +1,21 @@
+2012-04-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] ASSERT in SocketStreamHandleSoup.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=83123
+
+        Reviewed by Martin Robinson.
+
+        Do not try to reuse a GOwnPtr as calling outPtr() causes an
+        assertion if the pointer is already valid. Also do not try to
+        close the IOStream if it was not created.
+
+        This patch fixes
+        http/tests/websocket/tests/hybi/workers/worker-reload.html but I
+        am leaving it skipped until webkit.org/b/83124 is fixed.
+
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::connectedCallback):
+
 2012-04-03  Yuta Kitamura  <yutak@chromium.org>
 
         Crash in WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel
