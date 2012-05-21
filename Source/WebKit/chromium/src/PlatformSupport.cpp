@@ -319,11 +319,6 @@ bool PlatformSupport::getFileSize(const String& path, long long& result)
     return WebKit::Platform::current()->fileUtilities()->getFileSize(path, result);
 }
 
-void PlatformSupport::revealFolderInOS(const String& path)
-{
-    WebKit::Platform::current()->fileUtilities()->revealFolderInOS(path);
-}
-
 bool PlatformSupport::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;

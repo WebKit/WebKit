@@ -48,7 +48,6 @@ public:
 #else
     typedef int FileHandle;
 #endif
-    virtual void revealFolderInOS(const WebString& path) { }
     virtual bool fileExists(const WebString& path) { return false; }
     virtual bool deleteFile(const WebString& path) { return false; }
     virtual bool deleteEmptyDirectory(const WebString& path) { return false; }

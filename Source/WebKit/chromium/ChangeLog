@@ -1,3 +1,14 @@
+2012-05-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: Remove WebCore::revealFolderInOS() which is no longer used anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=86993
+
+        Reviewed by Adam Barth.
+
+        * public/WebFileUtilities.h:
+        (WebFileUtilities):
+        * src/PlatformSupport.cpp:
+
 2012-05-21  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Implement WebViewImpl::textInputInfo() for Android

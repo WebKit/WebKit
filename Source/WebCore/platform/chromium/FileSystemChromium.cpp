@@ -57,11 +57,6 @@ bool getFileModificationTime(const String& path, time_t& result)
     return PlatformSupport::getFileModificationTime(path, result);
 }
 
-void revealFolderInOS(const String& path)
-{
-    PlatformSupport::revealFolderInOS(path);
-}
-
 String directoryName(const String& path)
 {
     return PlatformSupport::directoryName(path);

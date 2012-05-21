@@ -122,7 +122,6 @@ public:
     static bool cookiesEnabled(const Document*);
 
     // File ---------------------------------------------------------------
-    static void revealFolderInOS(const String&);
     static bool fileExists(const String&);
     static bool deleteFile(const String&);
     static bool deleteEmptyDirectory(const String&);
