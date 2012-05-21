@@ -1,3 +1,13 @@
+2012-05-21  Stephen Chenney  <schenney@chromium.org>
+
+        SVGAnimatedPropertyTearOff does not clear a self pointer on deletion
+        https://bugs.webkit.org/show_bug.cgi?id=86119
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/custom/bug86119.html: Added.
+        * svg/custom/bug86119-expected.txt: Added.
+
 2012-05-21  Luke Macpherson  <macpherson@chromium.org>
 
         Add additional test cases for CSS variables.
