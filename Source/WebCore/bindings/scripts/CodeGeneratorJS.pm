@@ -2945,7 +2945,7 @@ sub JSValueToNative
 
     if ($type eq "SerializedScriptValue" or $type eq "any") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
-        return "SerializedScriptValue::create(exec, $value)";
+        return "SerializedScriptValue::create(exec, $value, 0, 0)";
     }
 
     if ($type eq "IDBKey") {
@@ -3063,6 +3063,11 @@ sub NativeToJSValue
         return "$value ? $value->deserialize(exec, castedThis->globalObject(), 0) : jsNull()";
     } elsif ($type eq "unsigned long[]") {
         AddToImplIncludes("<wrt/Vector.h>", $conditional);
+    } elsif ($type eq "MessagePortArray") {
+        AddToImplIncludes("MessagePort.h", $conditional);
+        AddToImplIncludes("JSMessagePort.h", $conditional);
+        AddToImplIncludes("<runtime/JSArray.h>", $conditional);
+        return "jsArray(exec, $globalObject, *$value)";
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);

@@ -2509,12 +2509,14 @@ ENDIF ()
 
 IF (ENABLE_WEB_INTENTS)
     LIST(APPEND WebCore_IDL_FILES
+        Modules/intents/DeliveredIntent.idl
         Modules/intents/DOMWindowIntents.idl
         Modules/intents/Intent.idl
         Modules/intents/IntentResultCallback.idl
         Modules/intents/NavigatorIntents.idl
     )
     LIST(APPEND WebCore_SOURCES
+       Modules/intents/DeliveredIntent.cpp
        Modules/intents/DOMWindowIntents.cpp
        Modules/intents/Intent.cpp
        Modules/intents/IntentRequest.cpp
