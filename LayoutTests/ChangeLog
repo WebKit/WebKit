@@ -1,3 +1,14 @@
+2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Update EFL baselines after r116069
+        https://bugs.webkit.org/show_bug.cgi?id=86963
+
+        Unreviewed gardening, update results after r116069.
+
+        * platform/efl/fast/block/float/016-expected.png:
+        * platform/efl/fast/css/border-solid-single-edge-antialias-expected.png: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] PlatformKeyboardEventEfl is missing ESC key handling.
