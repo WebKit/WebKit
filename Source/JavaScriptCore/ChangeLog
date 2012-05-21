@@ -1,3 +1,9 @@
+2012-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files.
+
 2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         GCC 4.7 and C++11
