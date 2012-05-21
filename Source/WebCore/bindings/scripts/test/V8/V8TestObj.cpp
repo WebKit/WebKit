@@ -727,7 +727,7 @@ static void withScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::L
         return;
     imp->setWithScriptStateAttribute(state, v);
     if (state.hadException())
-        throwError(state.exception());
+        throwError(state.exception(), info.GetIsolate());
     return;
 }
 
@@ -767,7 +767,7 @@ static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetter(v8::Local<
         return v8::Handle<v8::Value>();
     }
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), info.GetIsolate());
     return toV8(v.release(), info.GetIsolate());
 }
 
@@ -784,7 +784,7 @@ static void withScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name,
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
-        throwError(state.exception());
+        throwError(state.exception(), info.GetIsolate());
     return;
 }
 
@@ -845,7 +845,7 @@ static void withScriptExecutionContextAndScriptStateAttributeAttrSetter(v8::Loca
         return;
     imp->setWithScriptExecutionContextAndScriptStateAttribute(state, scriptContext, WTF::getPtr(v));
     if (state.hadException())
-        throwError(state.exception());
+        throwError(state.exception(), info.GetIsolate());
     return;
 }
 
@@ -866,7 +866,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRa
         return v8::Handle<v8::Value>();
     }
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), info.GetIsolate());
     return toV8(v.release(), info.GetIsolate());
 }
 
@@ -886,7 +886,7 @@ static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(v8
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
-        throwError(state.exception());
+        throwError(state.exception(), info.GetIsolate());
     return;
 }
 
@@ -916,7 +916,7 @@ static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSette
         return;
     imp->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(state, scriptContext, WTF::getPtr(v));
     if (state.hadException())
-        throwError(state.exception());
+        throwError(state.exception(), info.GetIsolate());
     return;
 }
 
@@ -1410,7 +1410,7 @@ static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& ar
     EmptyScriptState state;
     imp->withScriptStateVoid(&state);
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1421,7 +1421,7 @@ static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& arg
     EmptyScriptState state;
     RefPtr<TestObj> result = imp->withScriptStateObj(&state);
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
 }
 
@@ -1436,7 +1436,7 @@ static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Argu
     if (UNLIKELY(ec))
         goto fail;
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return v8::Handle<v8::Value>();
     }
     fail:
@@ -1455,7 +1455,7 @@ static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Argum
     if (UNLIKELY(ec))
         goto fail;
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
@@ -1484,7 +1484,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateCallback(co
         return v8::Undefined();
     imp->withScriptExecutionContextAndScriptState(&state, scriptContext);
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1502,7 +1502,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptio
     if (UNLIKELY(ec))
         goto fail;
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
@@ -1520,7 +1520,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesC
         return v8::Undefined();
     RefPtr<TestObj> result = imp->withScriptExecutionContextAndScriptStateWithSpaces(&state, scriptContext);
     if (state.hadException())
-        return throwError(state.exception());
+        return throwError(state.exception(), args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
 }
 
@@ -1624,7 +1624,7 @@ static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& 
         return V8Proxy::throwNotEnoughArgumentsError();
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0 || !args[0]->IsFunction())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
     RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->methodWithCallbackArg(callback);
     return v8::Handle<v8::Value>();
@@ -1638,7 +1638,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     if (args.Length() <= 1 || !args[1]->IsFunction())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
     RefPtr<TestCallback> callback = V8TestCallback::create(args[1], getScriptExecutionContext());
     imp->methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
     return v8::Handle<v8::Value>();
@@ -1651,7 +1651,7 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
     RefPtr<TestCallback> callback;
     if (args.Length() > 0 && !args[0]->IsNull() && !args[0]->IsUndefined()) {
         if (!args[0]->IsFunction())
-            return throwError(TYPE_MISMATCH_ERR);
+            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
         callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     }
     imp->methodWithCallbackAndOptionalArg(callback);
@@ -1750,7 +1750,7 @@ static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args
         return V8Proxy::throwNotEnoughArgumentsError();
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0 || !args[0]->IsFunction())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
     RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
     imp->overloadedMethod(callback);
     return v8::Handle<v8::Value>();
@@ -2241,7 +2241,7 @@ v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError();
     if (args.Length() <= 0 || !args[0]->IsFunction())
-        return throwError(TYPE_MISMATCH_ERR);
+        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
     RefPtr<TestCallback> testCallback = V8TestCallback::create(args[0], getScriptExecutionContext());
 
     RefPtr<TestObj> impl = TestObj::create(testCallback);

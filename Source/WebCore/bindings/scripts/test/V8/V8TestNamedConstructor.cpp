@@ -55,7 +55,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "TestNamedConstructor constructor associated frame is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "TestNamedConstructor constructor associated frame is unavailable", args.GetIsolate());
 
     Document* document = frame->document();
 
@@ -80,7 +80,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
     return args.Holder();
   fail:
-    return throwError(ec);
+    return throwError(ec, args.GetIsolate());
 }
 
 v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate()

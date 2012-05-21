@@ -894,7 +894,7 @@ END
 
         if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContentDecls, "    if (state.hadException())\n");
-            push(@implContentDecls, "        return throwError(state.exception());\n");
+            push(@implContentDecls, "        return throwError(state.exception(), info.GetIsolate());\n");
         }
 
         $result = "v";
@@ -1185,7 +1185,7 @@ END
 
     if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
         push(@implContentDecls, "    if (state.hadException())\n");
-        push(@implContentDecls, "        throwError(state.exception());\n");
+        push(@implContentDecls, "        throwError(state.exception(), info.GetIsolate());\n");
     }
 
     if ($svgNativeType) {
@@ -1590,12 +1590,12 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName;\n";
                 $parameterCheckString .= "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n";
                 $parameterCheckString .= "        if (!args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "            return throwError(TYPE_MISMATCH_ERR);\n";
+                $parameterCheckString .= "            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
                 $parameterCheckString .= "    }\n";
             } else {
                 $parameterCheckString .= "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "        return throwError(TYPE_MISMATCH_ERR);\n";
+                $parameterCheckString .= "        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
             }
         } elsif ($parameter->type eq "SerializedScriptValue") {
@@ -1739,7 +1739,7 @@ END
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor's associated context is not available");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor's associated context is not available", args.GetIsolate());
 END
     }
 
@@ -1779,7 +1779,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return throwError(ec);\n");
+        push(@implContent, "    return throwError(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
@@ -1895,7 +1895,7 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor associated frame is unavailable");
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor associated frame is unavailable", args.GetIsolate());
 
     Document* document = frame->document();
 
@@ -1954,7 +1954,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return throwError(ec);\n");
+        push(@implContent, "    return throwError(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
@@ -3334,7 +3334,7 @@ sub GenerateFunctionCallString()
 
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
         $result .= $indent . "if (state.hadException())\n";
-        $result .= $indent . "    return throwError(state.exception());\n"
+        $result .= $indent . "    return throwError(state.exception(), args.GetIsolate());\n"
     }
 
     if ($isSVGTearOffType) {
