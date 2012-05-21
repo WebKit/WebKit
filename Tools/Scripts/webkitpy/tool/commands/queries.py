@@ -456,13 +456,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
         port = self._tool.port_factory.get(port_name, options)
         expectations_path = port.path_to_test_expectations_file()
         if not expectations_path in self._expectation_models:
-            lint_mode = False
-            self._expectation_models[expectations_path] = TestExpectations(port, tests,
-                port.test_expectations(),
-                port.test_configuration(),
-                lint_mode,
-                port.test_expectations_overrides(),
-                port.skipped_layout_tests(tests)).model()
+            self._expectation_models[expectations_path] = TestExpectations(port, tests).model()
         return self._expectation_models[expectations_path]
 
 

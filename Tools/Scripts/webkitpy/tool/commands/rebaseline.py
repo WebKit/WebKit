@@ -121,8 +121,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def _update_expectations_file(self, builder_name, test_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
-        expectationsString = port.test_expectations()
-        expectations = TestExpectations(port, None, expectationsString, port.test_configuration())
+        expectations = TestExpectations(port)
 
         for test_configuration in port.all_test_configurations():
             if test_configuration.version == port.test_configuration().version:
@@ -239,7 +238,7 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         return port_name.startswith('chromium-')
 
     def _expectations(self, port):
-        return TestExpectations(port, None, port.test_expectations(), port.test_configuration())
+        return TestExpectations(port)
 
     def _update_expectations_file(self, port_name):
         if not self._is_supported_port(port_name):

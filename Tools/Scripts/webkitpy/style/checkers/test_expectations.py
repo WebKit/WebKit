@@ -79,13 +79,21 @@ class TestExpectationsChecker(object):
     def check_test_expectations(self, expectations_str, tests=None, overrides=None):
         err = None
         expectations = None
+        # FIXME: We need to rework how we lint strings so that we can do it independently of what a
+        # port's existing expectations are. Linting should probably just call the parser directly.
+        # For now we override the port hooks. This will also need to be reworked when expectations
+        # can cascade arbitrarily, rather than just have expectations and overrides.
+        orig_expectations = self._port_obj.test_expectations
+        orig_overrides = self._port_obj.test_expectations_overrides
         try:
-            expectations = test_expectations.TestExpectations(
-                port=self._port_obj, expectations=expectations_str, tests=tests,
-                test_config=self._port_obj.test_configuration(),
-                is_lint_mode=True, overrides=overrides)
+            self._port_obj.test_expectations = lambda: expectations_str
+            self._port_obj.test_expectations_overrides = lambda: overrides
+            expectations = test_expectations.TestExpectations(self._port_obj, tests, True)
         except test_expectations.ParseError, error:
             err = error
+        finally:
+            self._port_obj.text_expectations = orig_expectations
+            self._port_obj.text_expectations_overrides = orig_overrides
 
         if err:
             level = 5

@@ -1,3 +1,56 @@
+2012-05-21  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up the TestExpectations constructor
+        https://bugs.webkit.org/show_bug.cgi?id=86926
+
+        Reviewed by Ojan Vafai.
+
+        The TestExpectations constructor was attempting to pretend
+        it didn't need to get stuff from the Port, and as a result we
+        had a complicated constructor with a bunch of arguments, and
+        calling it was too complicated (although it made testing a
+        little easier and simplified the style checker).
+
+        This patch has the constructor pull all the data it needs from
+        the port directly, and allows us to delete a bunch of code.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.parse_expectations):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_update_summary_with_result):
+        (ResultSummaryTest.get_result_summary):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (parse_exp):
+        (SkippedTests.check):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (lint):
+        (run):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (LintTest.test_all_configurations.FakePort.__init__):
+        (LintTest.test_all_configurations.FakePort.test_expectations):
+        (LintTest.test_all_configurations.FakePort.skipped_layout_tests):
+        (LintTest.test_all_configurations.FakePort):
+        (LintTest.test_all_configurations.FakePort.all_test_configurations):
+        (LintTest.test_all_configurations.FakePort.configuration_specifier_macros):
+        (LintTest.test_all_configurations.FakePort.path_from_webkit_base):
+        (LintTest.test_all_configurations.FakePort.get_option):
+        (LintTest.test_all_configurations.FakeFactory.__init__):
+        (LintTest.test_all_configurations.FakeFactory.all_port_names):
+        (LintTest.test_all_configurations):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_result_summary):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.check_test_expectations):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations._model):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file):
+        (RebaselineExpectations._expectations):
+
 2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT support for layoutTestController.setSerializeHTTPLoads

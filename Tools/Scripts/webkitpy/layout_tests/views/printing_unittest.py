@@ -126,10 +126,9 @@ class  Testprinter(unittest.TestCase):
         return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
     def get_result_summary(self, test_names, expectations_str):
-        expectations = test_expectations.TestExpectations(
-            self._port, test_names, expectations_str,
-            self._port.test_configuration(),
-            is_lint_mode=False)
+        port.test_expectations = lambda: expectations_str
+        port.test_expectations_overrides = lambda: None
+        expectations = test_expectations.TestExpectations(self._port, test_names)
 
         rs = result_summary.ResultSummary(expectations, test_names)
         return test_names, rs, expectations

@@ -119,13 +119,9 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False):
-        test_config = self._port.test_configuration()
-        self._exp = TestExpectations(self._port,
-             tests=self.get_basic_tests(),
-             expectations=expectations,
-             test_config=test_config,
-             is_lint_mode=is_lint_mode,
-             overrides=overrides)
+        self._port.test_expectations = lambda: expectations
+        self._port.test_expectations_overrides = lambda: overrides
+        self._exp = TestExpectations(self._port, self.get_basic_tests(), is_lint_mode)
 
     def assert_exp(self, test, result):
         self.assertEquals(self._exp.get_expectations(self.get_test(test)),
@@ -265,9 +261,10 @@ class SkippedTests(Base):
     def check(self, expectations, overrides, skips, lint=False):
         port = MockHost().port_factory.get('qt')
         port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
-        exp = TestExpectations(port, tests=['failures/expected/text.html'],
-                               expectations=expectations, overrides=overrides, is_lint_mode=lint,
-                               test_config=port.test_configuration(), skipped_tests=set(skips))
+        port.test_expectations = lambda: expectations
+        port.test_expectations_overrides = lambda: overrides
+        port.skipped_layout_tests = lambda tests: set(skips)
+        exp = TestExpectations(port, ['failures/expected/text.html'], lint)
 
         # Check that the expectation is for BUG_DUMMY SKIP : ... = PASS
         self.assertEquals(exp.get_modifiers('failures/expected/text.html'),
@@ -410,14 +407,10 @@ class RemoveConfigurationsTest(Base):
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        expectations = TestExpectations(test_port,
-             tests=self.get_basic_tests(),
-             expectations="""BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.test_expectations = lambda: """BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
 BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
-""",
-             test_config=test_config,
-             is_lint_mode=False,
-             overrides=None)
+"""
+        expectations = TestExpectations(test_port, self.get_basic_tests())
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
 
@@ -432,14 +425,10 @@ BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        expectations = TestExpectations(test_port,
-             tests=None,
-             expectations="""BUGX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.test_expectations = lambda: """BUGX WIN RELEASE : failures/expected/foo.html = TEXT
 BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-""",
-             test_config=test_config,
-             is_lint_mode=False,
-             overrides=None)
+"""
+        expectations = TestExpectations(test_port)
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-vista', None).test_configuration())

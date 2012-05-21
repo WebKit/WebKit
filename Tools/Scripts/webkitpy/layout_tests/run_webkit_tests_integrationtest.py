@@ -192,11 +192,13 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
     def test_all_configurations(self):
 
         class FakePort(object):
-            def __init__(self, name, path):
+            def __init__(self, host, name, path):
+                self.host = host
                 self.name = name
                 self.path = path
 
             def test_expectations(self):
+                self.host.ports_parsed.append(self.name)
                 return ''
 
             def path_to_test_expectations_file(self):
@@ -208,14 +210,27 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
             def test_expectations_overrides(self):
                 return None
 
+            def skipped_layout_tests(self, tests):
+                return set([])
+
+            def all_test_configurations(self):
+                return []
+
+            def configuration_specifier_macros(self):
+                return []
+
+            def path_from_webkit_base(self):
+                return ''
+
+            def get_option(self, name, val):
+                return val
+
         class FakeFactory(object):
             def __init__(self, host, ports):
                 self.host = host
                 self.ports = {}
                 for port in ports:
                     self.ports[port.name] = port
-                    port.host = host
-                    port.factory = self
 
             def get(self, port_name, *args, **kwargs):
                 return self.ports[port_name]
@@ -223,21 +238,17 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
             def all_port_names(self):
                 return sorted(self.ports.keys())
 
-        class FakeExpectationsParser(object):
-            def __init__(self, port, *args, **kwargs):
-                port.host.ports_parsed.append(port.name)
-
         host = MockHost()
         host.ports_parsed = []
-        host.port_factory = FakeFactory(host, (FakePort('a', 'path-to-a'),
-                                               FakePort('b', 'path-to-b'),
-                                               FakePort('b-win', 'path-to-b')))
+        host.port_factory = FakeFactory(host, (FakePort(host, 'a', 'path-to-a'),
+                                               FakePort(host, 'b', 'path-to-b'),
+                                               FakePort(host, 'b-win', 'path-to-b')))
 
-        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None), FakeExpectationsParser), 0)
+        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None)), 0)
         self.assertEquals(host.ports_parsed, ['a', 'b'])
 
         host.ports_parsed = []
-        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a'), FakeExpectationsParser), 0)
+        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a')), 0)
         self.assertEquals(host.ports_parsed, ['a'])
 
     def test_lint_test_files(self):
