@@ -68,7 +68,7 @@ var description, debug, successfullyParsed, errorMessage;
         styleElement.textContent = css;
         (document.head || document.documentElement).appendChild(styleElement);
     }
-    
+
     if (!isWorker())
         insertStyleSheet();
 
@@ -258,7 +258,9 @@ function shouldBeZero(_a) { shouldBe(_a, "0"); }
 
 function shouldBeEqualToString(a, b)
 {
-  var unevaledString = '"' + b.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
+  if (typeof a !== "string" || typeof b !== "string")
+    debug("WARN: shouldBeEqualToString() expects string arguments");
+  var unevaledString = JSON.stringify(b);
   shouldBe(a, unevaledString);
 }
 

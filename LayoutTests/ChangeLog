@@ -1,3 +1,22 @@
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
+        LayoutTests: fast/js/resources/js-test-pre.js - shouldBeEqualToString fails on "
+        https://bugs.webkit.org/show_bug.cgi?id=86931
+
+        Implementations of shouldBeEqualToString() function were not correctly escaping
+        double quote ('"') characters. Switch to using JSON.stringify() which does
+        correct escaping, and updated one test that couldn't previously use the function.
+
+        Reviewed by Ojan Vafai.
+
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeEqualToString):
+        * fast/js/resources/standalone-pre.js:
+        (shouldBeEqualToString):
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/resources/cursor-advance.js:
+        (runTest):
+
 2012-05-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT support for layoutTestController.setSerializeHTTPLoads

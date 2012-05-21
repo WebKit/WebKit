@@ -137,7 +137,7 @@ function simplifyCursor(cursor)
 function runTest(cursor, expectedValue)
 {
     expected = JSON.stringify(expectedValue);
-    shouldBe("expected", "'" + JSON.stringify(simplifyCursor(cursor)) + "'");
+    shouldBeEqualToString("expected", JSON.stringify(simplifyCursor(cursor)));
 }
 
 function testAll()

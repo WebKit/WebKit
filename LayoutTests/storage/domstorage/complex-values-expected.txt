@@ -82,25 +82,25 @@ PASS storage.getItem('foo9') is "2"
 
 storage.foo10 = k
 PASS typeof storage['foo10'] is "string"
-PASS storage['foo10'] is "ÿ찡\0hello"
+PASS storage['foo10'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo10 is "string"
-PASS storage.foo10 is "ÿ찡\0hello"
+PASS storage.foo10 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo10') is "string"
-PASS storage.getItem('foo10') is "ÿ찡\0hello"
+PASS storage.getItem('foo10') is "ÿ찡\u0000hello"
 storage['foo11'] = k
 PASS typeof storage['foo11'] is "string"
-PASS storage['foo11'] is "ÿ찡\0hello"
+PASS storage['foo11'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo11 is "string"
-PASS storage.foo11 is "ÿ찡\0hello"
+PASS storage.foo11 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo11') is "string"
-PASS storage.getItem('foo11') is "ÿ찡\0hello"
+PASS storage.getItem('foo11') is "ÿ찡\u0000hello"
 storage.setItem('foo12', k)
 PASS typeof storage['foo12'] is "string"
-PASS storage['foo12'] is "ÿ찡\0hello"
+PASS storage['foo12'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo12 is "string"
-PASS storage.foo12 is "ÿ찡\0hello"
+PASS storage.foo12 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo12') is "string"
-PASS storage.getItem('foo12') is "ÿ찡\0hello"
+PASS storage.getItem('foo12') is "ÿ찡\u0000hello"
 
 
 Testing localStorage
@@ -182,25 +182,25 @@ PASS storage.getItem('foo9') is "2"
 
 storage.foo10 = k
 PASS typeof storage['foo10'] is "string"
-PASS storage['foo10'] is "ÿ찡\0hello"
+PASS storage['foo10'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo10 is "string"
-PASS storage.foo10 is "ÿ찡\0hello"
+PASS storage.foo10 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo10') is "string"
-PASS storage.getItem('foo10') is "ÿ찡\0hello"
+PASS storage.getItem('foo10') is "ÿ찡\u0000hello"
 storage['foo11'] = k
 PASS typeof storage['foo11'] is "string"
-PASS storage['foo11'] is "ÿ찡\0hello"
+PASS storage['foo11'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo11 is "string"
-PASS storage.foo11 is "ÿ찡\0hello"
+PASS storage.foo11 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo11') is "string"
-PASS storage.getItem('foo11') is "ÿ찡\0hello"
+PASS storage.getItem('foo11') is "ÿ찡\u0000hello"
 storage.setItem('foo12', k)
 PASS typeof storage['foo12'] is "string"
-PASS storage['foo12'] is "ÿ찡\0hello"
+PASS storage['foo12'] is "ÿ찡\u0000hello"
 PASS typeof storage.foo12 is "string"
-PASS storage.foo12 is "ÿ찡\0hello"
+PASS storage.foo12 is "ÿ찡\u0000hello"
 PASS typeof storage.getItem('foo12') is "string"
-PASS storage.getItem('foo12') is "ÿ찡\0hello"
+PASS storage.getItem('foo12') is "ÿ찡\u0000hello"
 PASS successfullyParsed is true
 
 TEST COMPLETE
