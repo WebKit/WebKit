@@ -117,14 +117,14 @@ function test()
             var script1 = InspectorTest.createScriptMock("index.html", 0, 10, false, "<script source 1>");
             var script2 = InspectorTest.createScriptMock("index.html", 0, 45, false, "<script source 2>");
             var request = createPendingRequestMock("document", "<resource content>");
+            InspectorTest.addResult("Adding first script for pending request.");
             var rawSourceCode = createRawSourceCode(script1, request);
 
             InspectorTest.assertTrue(!rawSourceCode.uiSourceCode());
 
-            waitForUISourceCodeChangedEvent(rawSourceCode, uiSourceCodeChanged);
-            finishRequest(request);
-
-            function uiSourceCodeChanged(event)
+            waitForUISourceCodeChangedEvent(rawSourceCode, uiSourceCodeAdded);
+            rawSourceCode.rawLocationToUILocation(createRawLocation(0, 10));
+            function uiSourceCodeAdded(event)
             {
                 InspectorTest.assertTrue(!event.data.oldUISourceCode);
                 InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
@@ -132,16 +132,55 @@ function test()
                 InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
                 InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
                 uiSourceCode.requestContent(didRequestContent);
+
+                function didRequestContent(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.addResult("Mime type: " + mimeType);
+                    InspectorTest.addResult("Script source: " + content);
+
+                    waitForUISourceCodeChangedEvent(rawSourceCode, uiSourceCodeChangedAfterScriptAdded);
+                    InspectorTest.addResult("Adding second script for pending request.");
+                    rawSourceCode.addScript(script2);
+                  }
             }
 
-            function didRequestContent(content, contentEncoded, mimeType)
+            function uiSourceCodeChangedAfterScriptAdded(event)
             {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
+                InspectorTest.assertTrue(event.data.oldUISourceCode);
+                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
+                var uiSourceCode = rawSourceCode.uiSourceCode();
+                InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
+                InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
+                uiSourceCode.requestContent(didRequestContent);
 
-                rawSourceCode.addScript(script2);
-                next();
-            }
+                function didRequestContent(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.addResult("Mime type: " + mimeType);
+                    InspectorTest.addResult("Script source: " + content);
+
+                    waitForUISourceCodeChangedEvent(rawSourceCode, uiSourceCodeChangedAfterRequestFinished);
+                    InspectorTest.addResult("Finishing request.");
+                    finishRequest(request);
+                }
+              }
+
+            function uiSourceCodeChangedAfterRequestFinished(event)
+            {
+                InspectorTest.assertTrue(event.data.oldUISourceCode);
+                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
+                var uiSourceCode = rawSourceCode.uiSourceCode();
+                InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
+                InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
+                uiSourceCode.requestContent(didRequestContent);
+
+                function didRequestContent(content, contentEncoded, mimeType)
+                {
+                    InspectorTest.addResult("Mime type: " + mimeType);
+                    InspectorTest.addResult("Script source: " + content);
+
+                    next();
+                }
+              }
         },
 
         function testHTMLWithFinishedResource(next)

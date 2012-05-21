@@ -8,6 +8,17 @@ Mime type: undefined
 Script source: <script source>
 
 Running: testHTMLWithPendingResource
+Adding first script for pending request.
+UISourceCode: index.html
+UISourceCode is content script: false
+Mime type: text/html
+Script source:   <script><script source 1></script>
+Adding second script for pending request.
+UISourceCode: index.html
+UISourceCode is content script: false
+Mime type: text/html
+Script source:   <script><script source 1></script> <script><script source 2></script>
+Finishing request.
 UISourceCode: index.html
 UISourceCode is content script: false
 Mime type: text/html

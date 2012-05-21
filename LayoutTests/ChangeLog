@@ -1,3 +1,13 @@
+2012-05-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Temporary UISourceCode should be replaced each time another inline script is added in RawSourceCode with pending request.
+        https://bugs.webkit.org/show_bug.cgi?id=87003
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/raw-source-code-expected.txt:
+        * inspector/debugger/raw-source-code.html:
+
 2012-05-21  Pavel Feldman  <pfeldman@chromium.org>
 
         inspector/styles/css-live-edit.html times out.
