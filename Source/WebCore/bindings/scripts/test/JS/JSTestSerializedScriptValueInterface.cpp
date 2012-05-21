@@ -254,6 +254,7 @@ void JSTestSerializedScriptValueInterface::put(JSCell* cell, ExecState* exec, Pr
 
 void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* thisObject, JSValue value)
 {
+    UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(thisObject);
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
     impl->setValue(SerializedScriptValue::create(exec, value));
@@ -262,6 +263,7 @@ void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* thi
 
 void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObject* thisObject, JSValue value)
 {
+    UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(thisObject);
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
     impl->setCachedValue(SerializedScriptValue::create(exec, value));

@@ -298,6 +298,7 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, JSValue value)
 {
+    UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     TestSupplemental::setSupplementalStr2(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
@@ -308,6 +309,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
+    UNUSED_PARAM(exec);
     jsCast<JSTestInterface*>(thisObject)->setSupplementalStr3(exec, value);
 }
 
@@ -316,6 +318,7 @@ void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, J
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, JSValue value)
 {
+    UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
     TestSupplemental::setSupplementalNode(impl, toNode(value));
