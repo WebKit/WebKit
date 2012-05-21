@@ -413,7 +413,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     if (index > maxSelectItems - 1)
         index = maxSelectItems - 1;
     int diff = index - length();
-    HTMLElement* before = 0;
+    RefPtr<HTMLElement> before = 0;
     // Out of array bounds? First insert empty dummies.
     if (diff > 0) {
         setLength(index, ec);
@@ -424,7 +424,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     }
     // Finally add the new element.
     if (!ec) {
-        add(option, before, ec);
+        add(option, before.get(), ec);
         if (diff >= 0 && option->selected())
             optionSelectionStateChanged(option, true);
     }
