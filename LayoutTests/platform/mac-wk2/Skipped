@@ -242,9 +242,9 @@ http/tests/inspector/appcache
 
 # flaky storage tests
 # https://bugs.webkit.org/show_bug.cgi?id=82679
-storage/statement-success-callback-isolated-world.html
-storage/transaction-callback-isolated-world.html
-storage/transaction-error-callback-isolated-world.html
+storage/websql/statement-success-callback-isolated-world.html
+storage/websql/transaction-callback-isolated-world.html
+storage/websql/transaction-error-callback-isolated-world.html
 
 ### END OF (1) Classified failures with bug reports
 ########################################
@@ -274,7 +274,7 @@ fast/regions/css-regions-disabled.html
 http/tests/inspector/extensions-ignore-cache.html
 http/tests/security/credentials-in-referer.html
 http/tests/workers/terminate-during-sync-operation.html
-storage/hash-change-with-xhr.html
+storage/websql/hash-change-with-xhr.html
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
 
 # All additional tests that failed on the Lion WebKit2 Debug bot in r111739
@@ -282,8 +282,8 @@ fast/forms/validation-message-in-relative-body.html
 http/tests/cookies/simple-cookies-expired.html
 http/tests/inspector/inspect-element.html
 inspector/elements/edit-dom-actions.html
-storage/open-database-creation-callback-isolated-world.html
-storage/statement-error-callback-isolated-world.html
+storage/websql/open-database-creation-callback-isolated-world.html
+storage/websql/statement-error-callback-isolated-world.html
 
 # All tests that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
 http/tests/cookies/simple-cookies-max-age.html

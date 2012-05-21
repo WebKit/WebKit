@@ -465,8 +465,8 @@ platform/mac/editing/deleting/deletionUI-successful-deletion.html
 
 # WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=57570>
-storage/open-database-creation-callback.html
-storage/quota-tracking.html
+storage/websql/open-database-creation-callback.html
+storage/websql/quota-tracking.html
 
 # WebKitTestRunner needs layoutTestController.dumpResourceResponseMIMETypes
 # <https://bugs.webkit.org/show_bug.cgi?id=42543>
@@ -1228,7 +1228,7 @@ media/controls-styling.html
 platform/mac/fast/loader/non-html-load-event.html
 plugins/embed-attributes-style.html
 plugins/plugin-initiate-popup-window.html
-storage/open-database-while-transaction-in-progress.html
+storage/websql/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/dom/fuzz-path-parser.html
 svg/hixie/cascade/002.xml
@@ -1319,7 +1319,7 @@ fast/workers/storage/multiple-databases-garbage-collection.html
 fast/workers/storage/open-database-creation-callback-sync.html
 fast/workers/storage/open-database-inputs-sync.html
 fast/workers/storage/sql-exception-codes-sync.html
-storage/multiple-databases-garbage-collection.html
+storage/websql/multiple-databases-garbage-collection.html
 
 # Unknown failures after enabling inspector tests
 inspector/timeline/timeline-paint.html

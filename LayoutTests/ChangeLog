@@ -1,3 +1,14 @@
+2012-05-21  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed gardening. Updating Skipped file names following bulk move in r117816.
+
+        * platform/mac-lion/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating Chromium-Windows expectations following r117815. Optimizebaselines also caused

@@ -109,7 +109,7 @@ http/tests/media/video-referer.html
 
 # Fails intermittently on Leopard and Tiger.
 # https://bugs.webkit.org/show_bug.cgi?id=29154
-storage/database-lock-after-reload.html
+storage/websql/database-lock-after-reload.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html

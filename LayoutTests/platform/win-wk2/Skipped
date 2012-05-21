@@ -47,7 +47,7 @@ plugins/private-browsing-mode.html
 
 # WebKitTestRunner needs an implementation of layoutTestController.clearAllDatabases
 # <https://bugs.webkit.org/show_bug.cgi?id=42540>
-storage/database-lock-after-reload.html
+storage/websql/database-lock-after-reload.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>

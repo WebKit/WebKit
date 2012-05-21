@@ -5343,7 +5343,7 @@ fast/css/min-width-with-spanned-cell.html
 fast/multicol/span/generated-child-split-flow-crash.html
 fast/text/glyph-reordering.html
 fast/text/international/spaces-combined-in-vertical-text.html
-storage/quota-tracking.html
+storage/websql/quota-tracking.html
 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
 svg/zoom/page/zoom-svg-through-object-with-auto-size.html
