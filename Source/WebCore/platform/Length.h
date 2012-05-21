@@ -228,7 +228,7 @@ public:
             return *this;
 
         // FIXME http://webkit.org/b/86160 - Blending doesn't work with calculated expressions
-        if (type() == Calculated)
+        if (from.type() == Calculated || type() == Calculated)
             return *this;
         
         LengthType resultType = type();
