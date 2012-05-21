@@ -2039,33 +2039,6 @@ static JSValueRef authenticateSessionCallback(JSContextRef context, JSObjectRef,
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setEditingBehaviorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    // The editing behavior string.
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
-    JSRetainPtr<JSStringRef> editingBehavior(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(editingBehavior.get());
-    char* behaviorBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(editingBehavior.get(), behaviorBuffer, maxLength);
-
-    if (strcmp(behaviorBuffer, "mac") && strcmp(behaviorBuffer, "win") && strcmp(behaviorBuffer, "unix")) {
-        JSRetainPtr<JSStringRef> invalidArgument(JSStringCreateWithUTF8CString("Passed invalid editing behavior. Must be 'mac', 'win', or 'unix'."));
-        *exception = JSValueMakeString(context, invalidArgument.get());
-        return JSValueMakeUndefined(context);
-    }
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setEditingBehavior(behaviorBuffer);
-
-    delete [] behaviorBuffer;
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     bool serialize = true;
@@ -2385,7 +2358,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setDeferMainResourceDataLoad", setDeferMainResourceDataLoadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDefersLoading", setDefersLoadingCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setDomainRelaxationForbiddenForURLScheme", setDomainRelaxationForbiddenForURLSchemeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setEditingBehavior", setEditingBehaviorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setFrameFlatteningEnabled", setFrameFlatteningEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setGeolocationPermission", setGeolocationPermissionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setHandlesAuthenticationChallenges", setHandlesAuthenticationChallengesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -97,7 +97,6 @@ public:
     static void dumpConfigurationForViewport(Evas_Object* ewkView, int deviceDPI, const WebCore::IntSize& deviceSize, const WebCore::IntSize& availableSize);
 
     static void deliverAllMutationsIfNecessary();
-    static void setEditingBehavior(Evas_Object* ewkView, const char* editingBehavior);
     static String markerTextForListItem(JSContextRef, JSValueRef nodeObject);
     static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);
     static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);

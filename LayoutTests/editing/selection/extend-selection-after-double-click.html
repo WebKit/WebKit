@@ -25,7 +25,7 @@
 
     function runTests()
     {
-        if (!window.eventSender || !window.layoutTestController)
+        if (!window.eventSender || !window.layoutTestController || !window.internals)
             return;
 
         layoutTestController.dumpAsText();
@@ -36,7 +36,7 @@
 
     function runTest(behavior, expectedText)
     {
-        layoutTestController.setEditingBehavior(behavior);
+        window.internals.settings.setEditingBehavior(behavior);
         doubleClickWord();
         getSelection().modify("extend", "backward", "character");
         getSelection().modify("extend", "backward", "character");

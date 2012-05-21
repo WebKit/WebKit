@@ -1407,25 +1407,6 @@ void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStrin
 {
 }
 
-void LayoutTestController::setEditingBehavior(const char* editingBehavior)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-
-    string behaviorString(editingBehavior);
-    if (behaviorString == "mac")
-        preferences->setEditingBehavior(WebKitEditingMacBehavior);
-    else if (behaviorString == "win")
-        preferences->setEditingBehavior(WebKitEditingWinBehavior);
-    else if (behaviorString == "unix")
-        preferences->setEditingBehavior(WebKitEditingUnixBehavior);
-}
-
 void LayoutTestController::abortModal()
 {
 }

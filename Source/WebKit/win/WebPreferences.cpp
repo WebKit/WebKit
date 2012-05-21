@@ -1214,18 +1214,16 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setEditableLinkBehavior(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebPreferences::editingBehavior(
-    /* [out, retval] */ WebKitEditingBehavior* editingBehavior)
+HRESULT WebPreferences::unused5()
 {
-    *editingBehavior = (WebKitEditingBehavior) integerValueForKey(CFSTR(WebKitEditingBehaviorPreferenceKey));
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE WebPreferences::setEditingBehavior(
-    /* [in] */ WebKitEditingBehavior behavior)
+HRESULT WebPreferences::unused6()
 {
-    setIntegerValue(CFSTR(WebKitEditingBehaviorPreferenceKey), behavior);
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebPreferences::hyperlinkAuditingEnabled(

@@ -71,7 +71,6 @@ WebView *kit(WebCore::Page*);
 
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
 WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior);
-WebCore::EditingBehaviorType core(WebKitEditingBehavior);
 
 WebView *getWebView(WebFrame *webFrame);
 

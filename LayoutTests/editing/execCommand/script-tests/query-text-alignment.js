@@ -82,8 +82,8 @@ queryTextAlignment(selectFirstPosition, '<div align="right">hello</div>', 'right
 
 function runRangeTests(editingBehavior)
 {
-    if (window.layoutTestController)
-        layoutTestController.setEditingBehavior(editingBehavior);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(editingBehavior);
     debug('Tests for ' + editingBehavior);
 
     queryTextAlignment(selectMiddleOfHelloWorld, '<p>hello</p><p>world</p>', '');

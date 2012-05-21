@@ -654,26 +654,12 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
     return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
 }
 
-void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& editingBehavior)
+void DumpRenderTreeSupportQt::setWindowsBehaviorAsEditingBehavior(QWebPage* page)
 {
-    WebCore::EditingBehaviorType coreEditingBehavior;
-
-    if (editingBehavior == QLatin1String("win"))
-        coreEditingBehavior = EditingWindowsBehavior;
-    else if (editingBehavior == QLatin1String("mac"))
-        coreEditingBehavior = EditingMacBehavior;
-    else if (editingBehavior == QLatin1String("unix"))
-        coreEditingBehavior = EditingUnixBehavior;
-    else {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     Page* corePage = QWebPagePrivate::core(page);
     if (!corePage)
         return;
-
-    corePage->settings()->setEditingBehaviorType(coreEditingBehavior);
+    corePage->settings()->setEditingBehaviorType(EditingWindowsBehavior);
 }
 
 void DumpRenderTreeSupportQt::clearAllApplicationCaches()

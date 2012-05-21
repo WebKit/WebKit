@@ -1446,7 +1446,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
-    settings->setEditingBehaviorType(core([preferences editingBehavior]));
     settings->setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);

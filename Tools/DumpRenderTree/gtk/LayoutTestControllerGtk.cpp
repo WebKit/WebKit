@@ -955,19 +955,6 @@ void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStrin
 {
 }
 
-void LayoutTestController::setEditingBehavior(const char* editingBehavior)
-{
-    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-
-    if (!strcmp(editingBehavior, "win"))
-        g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_WINDOWS, NULL);
-    else if (!strcmp(editingBehavior, "mac"))
-        g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_MAC, NULL);
-    else if (!strcmp(editingBehavior, "unix"))
-        g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_UNIX, NULL);
-}
-
 void LayoutTestController::abortModal()
 {
 }

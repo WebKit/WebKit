@@ -11,8 +11,8 @@ function runTestsOn(platform) {
     var sel = window.getSelection();
     var e = document.getElementById("test");
     
-    if(window.layoutTestController)
-        layoutTestController.setEditingBehavior(platform);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(platform);
 
     sel.setPosition(e, 0);
     sel.modify("extend", "forward", "character");

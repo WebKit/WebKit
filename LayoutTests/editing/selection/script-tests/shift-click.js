@@ -44,7 +44,7 @@ function assertSelectionOrder(direction)
 
 function runShiftClickTest(editingBehavior)
 {
-    layoutTestController.setEditingBehavior(editingBehavior);
+    window.internals.settings.setEditingBehavior(editingBehavior);
 
     // Double-click select to get around eventSender bug where it won't select
     // text just using single-click.
@@ -83,7 +83,7 @@ function runShiftClickTest(editingBehavior)
     assertSelectionOrder('backward');
 }
 
-if (window.eventSender) {
+if (window.eventSender && window.internals) {
     runShiftClickTest("mac");
     runShiftClickTest("win");
 }

@@ -307,7 +307,10 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     if (WebCore::Page* page = DumpRenderTreeSupport::corePage(m_page)) {
         page->setTabKeyCyclesThroughElements(true);
+
+        // FIXME: Remove this once BlackBerry uses resetInternalsObject: https://bugs.webkit.org/show_bug.cgi?id=86899.
         page->settings()->setEditingBehaviorType(WebCore::EditingUnixBehavior);
+
         page->settings()->setDOMPasteAllowed(true);
         page->settings()->setValidationMessageTimerMagnification(-1);
         page->settings()->setInteractiveFormValidationEnabled(true);

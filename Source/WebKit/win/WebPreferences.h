@@ -244,11 +244,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setEditableLinkBehavior( 
         /* [in] */ WebKitEditableLinkBehavior behavior);
 
-    virtual HRESULT STDMETHODCALLTYPE editingBehavior(
-        /* [retval][out] */ WebKitEditingBehavior* behavior);
-
-    virtual HRESULT STDMETHODCALLTYPE setEditingBehavior(
-        /* [in] */ WebKitEditingBehavior behavior);
+    virtual HRESULT STDMETHODCALLTYPE unused5();
+    virtual HRESULT STDMETHODCALLTYPE unused6();
 
     virtual HRESULT STDMETHODCALLTYPE cookieStorageAcceptPolicy( 
         /* [retval][out] */ WebKitCookieStorageAcceptPolicy *acceptPolicy);

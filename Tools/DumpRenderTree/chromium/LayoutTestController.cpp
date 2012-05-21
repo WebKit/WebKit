@@ -191,7 +191,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setDatabaseQuota", &LayoutTestController::setDatabaseQuota);
     bindMethod("setDeferMainResourceDataLoad", &LayoutTestController::setDeferMainResourceDataLoad);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &LayoutTestController::setDomainRelaxationForbiddenForURLScheme);
-    bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
     bindMethod("setAudioData", &LayoutTestController::setAudioData);
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
@@ -1875,22 +1874,6 @@ void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, C
         // Chromium defaults to InjectInSubsequentDocuments, but for compatibility
         // with the other ports' DRTs, we use UserStyleInjectInExistingDocuments.
         WebView::UserStyleInjectInExistingDocuments);
-}
-
-void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, CppVariant* results)
-{
-    string key = arguments[0].toString();
-    if (key == "mac") {
-        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorMac;
-        m_shell->applyPreferences();
-    } else if (key == "win") {
-        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorWin;
-        m_shell->applyPreferences();
-    } else if (key == "unix") {
-        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorUnix;
-        m_shell->applyPreferences();
-    } else
-        logErrorToConsole("Passed invalid editing behavior. Should be 'mac', 'win', or 'unix'.");
 }
 
 void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)

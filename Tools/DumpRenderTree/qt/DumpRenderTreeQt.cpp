@@ -555,8 +555,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 
     DumpRenderTreeSupportQt::resetOriginAccessWhiteLists();
 
-    // Qt defaults to Windows editing behavior.
-    DumpRenderTreeSupportQt::setEditingBehavior(m_page, "win");
+    DumpRenderTreeSupportQt::setWindowsBehaviorAsEditingBehavior(m_page);
 
     QLocale::setDefault(QLocale::c());
 

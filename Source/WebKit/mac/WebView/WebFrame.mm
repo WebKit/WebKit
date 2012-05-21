@@ -198,20 +198,6 @@ EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
     return EditableLinkDefaultBehavior;
 }
 
-WebCore::EditingBehaviorType core(WebKitEditingBehavior behavior)
-{
-    switch (behavior) {
-        case WebKitEditingMacBehavior:
-            return WebCore::EditingMacBehavior;
-        case WebKitEditingWinBehavior:
-            return WebCore::EditingWindowsBehavior;
-        case WebKitEditingUnixBehavior:
-            return WebCore::EditingUnixBehavior;
-    }
-    ASSERT_NOT_REACHED();
-    return WebCore::EditingMacBehavior;
-}
-
 TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior behavior)
 {
     switch (behavior) {

@@ -13,8 +13,8 @@ The selection should collapse to the left if you pressed the left arrow key and 
 <pre id="console"></pre>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.setEditingBehavior('mac');
+if (window.internals) {
+    window.internals.settings.setEditingBehavior('mac');
 
     function selectTarget(target) {
         eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth * 2 / 5, target.offsetTop + 5);

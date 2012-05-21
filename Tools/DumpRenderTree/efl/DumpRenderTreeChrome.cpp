@@ -192,21 +192,6 @@ Evas_Object* DumpRenderTreeChrome::mainView() const
     return m_mainView;
 }
 
-static inline const char* defaultEditingBehavior()
-{
-    return
-#if OS(DARWIN)
-    "mac";
-#elif OS(WINDOWS)
-    "win";
-#elif OS(UNIX)
-    "unix";
-#else
-    // Fallback
-    "mac";
-#endif
-}
-
 void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 {
     ewk_settings_icon_database_clear();
@@ -269,7 +254,6 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setDefersLoading(mainView(), false);
-    DumpRenderTreeSupportEfl::setEditingBehavior(mainView(), defaultEditingBehavior());
     DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
     DumpRenderTreeSupportEfl::setSerializeHTTPLoads(false);

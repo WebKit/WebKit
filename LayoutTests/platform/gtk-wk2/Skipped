@@ -269,11 +269,6 @@ http/tests/misc/bubble-drag-events.html
 # eventSender.scheduleAsynchronousClick support
 fast/events/popup-blocking-click-in-iframe.html
 
-# Implement layoutTestController.setEditingBehavior
-editing/selection/click-in-margins-inside-editable-div.html
-editing/selection/click-in-padding-with-multiple-line-boxes.html
-editing/selection/shift-click.html
-
 # Implement accessibility support for WebKit2
 accessibility
 platform/gtk/accessibility
@@ -372,13 +367,18 @@ fast/ruby/rubyDOM-remove-rt1.html
 fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
+editing/deleting/delete-ligature-003.html
+editing/deleting/paragraph-in-preserveNewline.html
+editing/deleting/whitespace-pre-1.html
 editing/spelling/spelling-insert-html.html
 fast/css/bidi-override-in-anonymous-block.html
 fast/css/disabled-author-styles.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dynamic/window-resize-scrollbars-test.html
+fast/events/backspace-navigates-back.html
 fast/forms/mailto/formenctype-attribute-button-html.html
 fast/forms/mailto/formenctype-attribute-input-html.html
+fast/forms/selection-direction.html
 fast/frames/iframe-reparenting-plugins.html
 fast/js/navigator-language.html
 fast/replaced/object-with-embed-url-param.html

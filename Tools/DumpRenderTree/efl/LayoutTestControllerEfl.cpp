@@ -772,11 +772,6 @@ void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStrin
     notImplemented();
 }
 
-void LayoutTestController::setEditingBehavior(const char* editingBehavior)
-{
-    DumpRenderTreeSupportEfl::setEditingBehavior(browser->mainView(), editingBehavior);
-}
-
 void LayoutTestController::abortModal()
 {
     notImplemented();

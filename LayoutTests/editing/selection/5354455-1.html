@@ -10,7 +10,7 @@
 <script>
 function test(platform, result) {
     window.getSelection().removeAllRanges();
-    layoutTestController.setEditingBehavior(platform);
+    window.internals.settings.setEditingBehavior(platform);
     
     paragraph = document.getElementById("text");
     x = paragraph.offsetParent.offsetLeft + paragraph.offsetLeft + paragraph.offsetWidth + 10;
@@ -27,7 +27,7 @@ function test(platform, result) {
     document.getElementById(result).innerHTML = window.getSelection().type;
 }
 
-if (window.eventSender && window.layoutTestController) {
+if (window.eventSender && window.layoutTestController && window.internals) {
     layoutTestController.dumpAsText();
 
     test('mac', 'resultmac');

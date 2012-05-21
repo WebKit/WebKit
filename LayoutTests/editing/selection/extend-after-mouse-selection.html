@@ -15,8 +15,8 @@
 
 function editingTest(editingBehavior) {
 
-    if (window.layoutTestController)
-        layoutTestController.setEditingBehavior(editingBehavior);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(editingBehavior);
 
     var startTarget = document.getElementById('start');
     var endTarget = document.getElementById('end');

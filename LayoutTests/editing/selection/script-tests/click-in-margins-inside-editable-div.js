@@ -68,8 +68,8 @@ function runInteractiveTests()
 // The rules for clicking above or below the text are different on Windows and Mac.
 function editingTest(editingBehavior)
 {
-    if (window.layoutTestController)
-        layoutTestController.setEditingBehavior(editingBehavior);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(editingBehavior);
 
     var expectMacStyleSelection = editingBehavior == "mac";
 

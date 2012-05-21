@@ -14,8 +14,8 @@
         }
         function runTestOn(platform) {
             var testarea = document.getElementById("test");
-            if(window.layoutTestController)
-                layoutTestController.setEditingBehavior(platform);
+            if (window.internals)
+                window.internals.settings.setEditingBehavior(platform);
 
             testarea.focus();
             moveSelectionForwardByCharacterCommand();

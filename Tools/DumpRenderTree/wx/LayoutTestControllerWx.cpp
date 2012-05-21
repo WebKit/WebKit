@@ -536,11 +536,6 @@ void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStrin
 {
 }
 
-void LayoutTestController::setEditingBehavior(const char* editingBehavior)
-{
-    // FIXME: Implement
-}
-
 void LayoutTestController::abortModal()
 {
 }

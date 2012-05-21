@@ -135,7 +135,6 @@
 #define WebKitEditableLinkBehaviorPreferenceKey @"WebKitEditableLinkBehavior"
 #define WebKitCacheModelPreferenceKey @"WebKitCacheModelPreferenceKey"
 #define WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey @"WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey"
-#define WebKitEditingBehaviorPreferenceKey @"WebKitEditingBehavior"
 #define WebKitUsePreHTML5ParserQuirksKey @"WebKitUsePreHTML5ParserQuirks"
 #define WebKitBackspaceKeyNavigationEnabledKey @"WebKitBackspaceKeyNavigationEnabled"
 #define WebKitIncrementalRenderingSuppressionTimeoutInSecondsKey @"WebKitIncrementalRenderingSuppressionTimeoutInSeconds"

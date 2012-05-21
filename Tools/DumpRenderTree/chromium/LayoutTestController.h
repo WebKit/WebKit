@@ -257,7 +257,6 @@ public:
 
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
-    void setEditingBehavior(const CppArgumentList&, CppVariant*);
 
     // Deals with Web Audio WAV file data.
     void setAudioData(const CppArgumentList&, CppVariant*);

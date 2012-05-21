@@ -12,13 +12,13 @@
 <div contenteditable>hello wo<span id="target">r</span>ld WebKit</div>
 <script>
 
-if (window.layoutTestController) {
+if (window.layoutTestController && window.internals) {
     layoutTestController.dumpAsText();
 
     if (!window.eventSender)
         document.writeln('FAIL - this test requires eventSender');
     else {
-        layoutTestController.setEditingBehavior('mac');
+        window.internals.settings.setEditingBehavior('mac');
 
         var test = document.getElementById('target');
         eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);

@@ -43,12 +43,6 @@ typedef enum {
     WebTextDirectionSubmenuAlwaysIncluded
 } WebTextDirectionSubmenuInclusionBehavior;
 
-typedef enum {
-    WebKitEditingMacBehavior,
-    WebKitEditingWinBehavior,
-    WebKitEditingUnixBehavior
-} WebKitEditingBehavior;
-
 extern NSString *WebPreferencesChangedNotification;
 extern NSString *WebPreferencesRemovedNotification;
 extern NSString *WebPreferencesChangedInternalNotification;
@@ -147,9 +141,6 @@ extern NSString *WebPreferencesChangedInternalNotification;
 
 - (WebKitEditableLinkBehavior)editableLinkBehavior;
 - (void)setEditableLinkBehavior:(WebKitEditableLinkBehavior)behavior;
-
-- (WebKitEditingBehavior)editingBehavior;
-- (void)setEditingBehavior:(WebKitEditingBehavior)behavior;
 
 - (WebTextDirectionSubmenuInclusionBehavior)textDirectionSubmenuInclusionBehavior;
 - (void)setTextDirectionSubmenuInclusionBehavior:(WebTextDirectionSubmenuInclusionBehavior)behavior;

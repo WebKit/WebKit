@@ -26,6 +26,7 @@
 #ifndef InternalSettings_h
 #define InternalSettings_h
 
+#include "EditingBehaviorTypes.h"
 #include "FrameDestructionObserver.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -74,6 +75,7 @@ public:
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
+    void setEditingBehavior(const String&, ExceptionCode&);
 
     void restoreTo(Settings*);
 
@@ -90,6 +92,7 @@ private:
 #if ENABLE(SHADOW_DOM)
     bool m_originalShadowDOMEnabled;
 #endif
+    EditingBehaviorType m_originalEditingBehavior;
 };
 
 } // namespace WebCore

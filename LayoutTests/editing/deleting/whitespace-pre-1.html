@@ -10,8 +10,8 @@ function runTestsOn(platform) {
     var e = document.getElementById("test");
     var s = window.getSelection();
 
-    if(window.layoutTestController)
-        layoutTestController.setEditingBehavior(platform);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(platform);
 
     s.setPosition(e, 0);
     s.modify("extend", "forward", "lineBoundary");

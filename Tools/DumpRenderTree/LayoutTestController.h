@@ -124,7 +124,6 @@ public:
     void setFrameFlatteningEnabled(bool enable);
     void setSpatialNavigationEnabled(bool enable);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
-    void setEditingBehavior(const char* editingBehavior);
     void startSpeechInput(JSContextRef inputElement);
     void setPageVisibility(const char*);
     void resetPageVisibility();

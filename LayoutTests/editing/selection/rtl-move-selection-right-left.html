@@ -68,15 +68,15 @@ function runTests()
 {
     testSelectionChange(setSelection, "move", "right", 0, -3, "Move selection right");
     testSelectionChange(setSelection, "move", "left", 3, 0, "Move selection left");
-    if (window.layoutTestController) {
+    if (window.layoutTestController && window.internals) {
         layoutTestController.dumpAsText();
-        layoutTestController.setEditingBehavior("mac");
+        window.internals.settings.setEditingBehavior("mac");
         testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Mac)");
         testSelectionChange(dragSelection, "extend", "left", 0, 0, "Extend dragged selection left (Mac)");
-        layoutTestController.setEditingBehavior("win");
+        window.internals.settings.setEditingBehavior("win");
         testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Win)");
         testSelectionChange(dragSelection, "extend", "left", 1, 0, "Extend dragged selection left (Win)");
-        layoutTestController.setEditingBehavior("unix");
+        window.internals.settings.setEditingBehavior("unix");
         testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Unix)");
         testSelectionChange(dragSelection, "extend", "left", 1, 0, "Extend dragged selection left (Unix)");
     }

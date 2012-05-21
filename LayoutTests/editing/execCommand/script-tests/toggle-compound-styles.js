@@ -22,8 +22,8 @@ for (var i = 0; i < platforms.length; i++) {
     platform = platforms[i];
     debug('Platform: ' + platform);
 
-    if (window.layoutTestController)
-        layoutTestController.setEditingBehavior(platform);
+    if (window.internals)
+        window.internals.settings.setEditingBehavior(platform);
 
     if (platform == 'win' || platform == 'unix')
         platform = 'nonmac';

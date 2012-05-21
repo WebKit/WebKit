@@ -126,7 +126,6 @@ _WKNSURLProtocolClassForRequest
 -[WebPreferences(WebPrivate) setLoadsSiteIconsIgnoringImageLoadingPreference:]
 -[WebPreferences(WebPrivate) setFrameFlatteningEnabled:]
 -[WebPreferences(WebPrivate) setSpatialNavigationEnabled:]
--[WebPreferences(WebPrivate) setEditingBehavior:]
 -[WebPreferences setUserStyleSheetEnabled:]
 -[WebPreferences setUsesPageCache:]
 -[WebPreferences(WebPrivate) setAcceleratedCompositingEnabled:]
@@ -386,8 +385,6 @@ __ZN3WTF12AtomicStringC2EP8NSString
 -[WebPreferences(WebPrivate) shrinksStandaloneImagesToFit]
 -[WebPreferences(WebPrivate) editableLinkBehavior]
 __Z4core26WebKitEditableLinkBehavior
--[WebPreferences(WebPrivate) editingBehavior]
-__Z4core21WebKitEditingBehavior
 -[WebPreferences(WebPrivate) textDirectionSubmenuInclusionBehavior]
 __Z4core40WebTextDirectionSubmenuInclusionBehavior
 -[WebPreferences(WebPrivate) isDOMPasteAllowed]

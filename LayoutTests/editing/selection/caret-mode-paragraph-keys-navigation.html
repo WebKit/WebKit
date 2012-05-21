@@ -10,10 +10,10 @@
 <script>
 description("This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.");
 
-if (window.layoutTestController) {
+if (window.layoutTestController && window.internals) {
   layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
   layoutTestController.dumpAsText();
-  layoutTestController.setEditingBehavior('mac');
+  window.internals.settings.setEditingBehavior('mac');
 
   var target = document.getElementById("target");
   target.focus();

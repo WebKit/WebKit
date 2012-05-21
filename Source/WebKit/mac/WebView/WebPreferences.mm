@@ -346,7 +346,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
-        [NSNumber numberWithInt:WebKitEditingMacBehavior], WebKitEditingBehaviorPreferenceKey,
 #ifndef BUILDING_ON_LEOPARD
         [NSNumber numberWithInt:WebTextDirectionSubmenuAutomaticallyIncluded],
 #else
@@ -1472,16 +1471,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setHyperlinkAuditingEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitHyperlinkAuditingEnabledPreferenceKey];
-}
-
-- (WebKitEditingBehavior)editingBehavior
-{
-    return static_cast<WebKitEditingBehavior>([self _integerValueForKey:WebKitEditingBehaviorPreferenceKey]);
-}
-
-- (void)setEditingBehavior:(WebKitEditingBehavior)behavior
-{
-    [self _setIntegerValue:behavior forKey:WebKitEditingBehaviorPreferenceKey];
 }
 
 - (BOOL)usePreHTML5ParserQuirks

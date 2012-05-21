@@ -13,7 +13,7 @@ function log(str)
 
 function runTest(platform, expectedText)
 {
-    layoutTestController.setEditingBehavior(platform);
+    window.internals.settings.setEditingBehavior(platform);
     
     var target = document.getElementById('select');
     var startX = target.offsetLeft + target.offsetWidth;
@@ -41,7 +41,7 @@ function runTest(platform, expectedText)
         log("Success");
 }
 
-if (window.layoutTestController) {
+if (window.layoutTestController && window.internals) {
     layoutTestController.dumpAsText()
     runTest('mac', 'should be s');
     runTest('win', 'hould be ');
