@@ -1,3 +1,13 @@
+2012-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add GCancellable parameter to all methods using gio async pattern
+        https://bugs.webkit.org/show_bug.cgi?id=86843
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_load_uri):
+
 2012-05-20  Daniel Bates  <dbates@webkit.org>
 
         svn-apply cannot apply patches to files that contain space

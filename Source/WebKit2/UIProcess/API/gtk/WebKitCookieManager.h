@@ -74,6 +74,7 @@ webkit_cookie_manager_set_accept_policy               (WebKitCookieManager     *
 
 WEBKIT_API void
 webkit_cookie_manager_get_accept_policy               (WebKitCookieManager     *cookie_manager,
+                                                       GCancellable            *cancellable,
                                                        GAsyncReadyCallback      callback,
                                                        gpointer                 user_data);
 
@@ -84,6 +85,7 @@ webkit_cookie_manager_get_accept_policy_finish        (WebKitCookieManager     *
 
 WEBKIT_API void
 webkit_cookie_manager_get_domains_with_cookies        (WebKitCookieManager     *cookie_manager,
+                                                       GCancellable            *cancellable,
                                                        GAsyncReadyCallback      callback,
                                                        gpointer                 user_data);
 

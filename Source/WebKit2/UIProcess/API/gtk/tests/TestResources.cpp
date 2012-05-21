@@ -150,7 +150,7 @@ public:
     void checkResourceData(WebKitWebResource* resource)
     {
         m_resourceDataSize = 0;
-        webkit_web_resource_get_data(resource, resourceGetDataCallback, this);
+        webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
         g_main_loop_run(m_mainLoop);
 
         const char* uri = webkit_web_resource_get_uri(resource);

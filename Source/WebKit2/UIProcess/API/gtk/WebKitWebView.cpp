@@ -1618,10 +1618,21 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     return zoomTextOnly ? WKPageGetTextZoomFactor(wkPage) : WKPageGetPageZoomFactor(wkPage);
 }
 
+struct ValidateEditingCommandAsyncData {
+    bool isEnabled;
+    GRefPtr<GCancellable> cancellable;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ValidateEditingCommandAsyncData)
+
 static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context)
 {
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    g_simple_async_result_set_op_res_gboolean(result.get(), isEnabled);
+    ValidateEditingCommandAsyncData* data = static_cast<ValidateEditingCommandAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
+    GError* error = 0;
+    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
+        g_simple_async_result_take_error(result.get(), error);
+    else
+        data->isEnabled = isEnabled;
     g_simple_async_result_complete(result.get());
 }
 
@@ -1629,6 +1640,7 @@ static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t stat
  * webkit_web_view_can_execute_editing_command:
  * @web_view: a #WebKitWebView
  * @command: the command to check
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
  * @user_data: (closure): the data to pass to callback function
  *
@@ -1637,13 +1649,17 @@ static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t stat
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_view_can_execute_editing_command_finish() to get the result of the operation.
  */
-void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const char* command, GAsyncReadyCallback callback, gpointer userData)
+void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const char* command, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(command);
 
     GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
                                                            reinterpret_cast<gpointer>(webkit_web_view_can_execute_editing_command));
+    ValidateEditingCommandAsyncData* data = createValidateEditingCommandAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyValidateEditingCommandAsyncData));
+
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKRetainPtr<WKStringRef> wkCommand(AdoptWK, WKStringCreateWithUTF8CString(command));
     WKPageValidateCommand(toAPI(page), wkCommand.get(), result, didValidateCommand);
@@ -1669,7 +1685,9 @@ gboolean webkit_web_view_can_execute_editing_command_finish(WebKitWebView* webVi
 
     if (g_simple_async_result_propagate_error(simple, error))
         return FALSE;
-    return g_simple_async_result_get_op_res_gboolean(simple);
+
+    ValidateEditingCommandAsyncData* data = static_cast<ValidateEditingCommandAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple));
+    return data->isEnabled;
 }
 
 /**
@@ -1730,15 +1748,29 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     return webView->priv->javascriptGlobalContext;
 }
 
+struct RunJavaScriptAsyncData {
+    ~RunJavaScriptAsyncData()
+    {
+        if (scriptResult)
+            webkit_javascript_result_unref(scriptResult);
+    }
+
+    WebKitJavascriptResult* scriptResult;
+    GRefPtr<GCancellable> cancellable;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(RunJavaScriptAsyncData)
+
 static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSerializedScriptValue, WKErrorRef, void* context)
 {
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    if (wkSerializedScriptValue) {
+    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
+    GError* error = 0;
+    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
+        g_simple_async_result_take_error(result.get(), error);
+    else if (wkSerializedScriptValue) {
         GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
-        WebKitJavascriptResult* scriptResult = webkitJavascriptResultCreate(webView.get(), wkSerializedScriptValue);
-        g_simple_async_result_set_op_res_gpointer(result.get(), scriptResult, reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
+        data->scriptResult = webkitJavascriptResultCreate(webView.get(), wkSerializedScriptValue);
     } else {
-        GError* error = 0;
         g_set_error_literal(&error, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, _("An exception was raised in JavaScript"));
         g_simple_async_result_take_error(result.get(), error);
     }
@@ -1749,6 +1781,7 @@ static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSeri
  * webkit_web_view_run_javascript:
  * @web_view: a #WebKitWebView
  * @script: the script to run
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
  * @user_data: (closure): the data to pass to callback function
  *
@@ -1757,7 +1790,7 @@ static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSeri
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_view_run_javascript_finish() to get the result of the operation.
  */
-void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script, GAsyncReadyCallback callback, gpointer userData)
+void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
@@ -1766,6 +1799,9 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     WKRetainPtr<WKStringRef> wkScript = adoptWK(WKStringCreateWithUTF8CString(script));
     GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
                                                            reinterpret_cast<gpointer>(webkit_web_view_run_javascript));
+    RunJavaScriptAsyncData* data = createRunJavaScriptAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyRunJavaScriptAsyncData));
     WKPageRunJavaScriptInMainFrame(wkPage, wkScript.get(), result, webkitWebViewRunJavaScriptCallback);
 }
 
@@ -1844,8 +1880,8 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* web
     if (g_simple_async_result_propagate_error(simpleResult, error))
         return 0;
 
-    WebKitJavascriptResult* scriptResult = static_cast<WebKitJavascriptResult*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    return scriptResult ? webkit_javascript_result_ref(scriptResult) : 0;
+    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
+    return data->scriptResult ? webkit_javascript_result_ref(data->scriptResult) : 0;
 }
 
 /**

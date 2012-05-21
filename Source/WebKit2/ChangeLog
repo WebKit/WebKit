@@ -1,3 +1,50 @@
+2012-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add GCancellable parameter to all methods using gio async pattern
+        https://bugs.webkit.org/show_bug.cgi?id=86843
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a private macro WEBKIT_DEFINE_ASYNC_DATA_STRUCT() to make it
+        easier to define temporary structs used in async operations.
+
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (GetAcceptPolicyAsyncData):
+        (webkitCookieManagerGetAcceptPolicyCallback):
+        (webkit_cookie_manager_get_accept_policy):
+        (webkit_cookie_manager_get_accept_policy_finish):
+        (GetDomainsWithCookiesAsyncData):
+        (webkitCookieManagerGetDomainsWithCookiesCallback):
+        (webkit_cookie_manager_get_domains_with_cookies):
+        (webkit_cookie_manager_get_domains_with_cookies_finish):
+        * UIProcess/API/gtk/WebKitCookieManager.h:
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_get_plugins):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (ResourceGetDataAsyncData):
+        (resourceDataCallback):
+        (webkit_web_resource_get_data):
+        (webkit_web_resource_get_data_finish):
+        * UIProcess/API/gtk/WebKitWebResource.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (ValidateEditingCommandAsyncData):
+        (didValidateCommand):
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_can_execute_editing_command_finish):
+        (RunJavaScriptAsyncData::~RunJavaScriptAsyncData):
+        (RunJavaScriptAsyncData):
+        (webkitWebViewRunJavaScriptCallback):
+        (webkit_web_view_run_javascript):
+        (webkit_web_view_run_javascript_finish):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/TestCookieManager.cpp:
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        * UIProcess/API/gtk/tests/TestWebViewEditor.cpp:
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::runJavaScriptAndWaitUntilFinished):
+
 2012-05-19  Andy Estes  <aestes@apple.com>
 
         Use USE_APPKIT and USE_SECURITY_FRAMEWORK in a few more places

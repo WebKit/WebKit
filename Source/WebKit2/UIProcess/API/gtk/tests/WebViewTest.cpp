@@ -268,7 +268,7 @@ WebKitJavascriptResult* WebViewTest::runJavaScriptAndWaitUntilFinished(const cha
         webkit_javascript_result_unref(m_javascriptResult);
     m_javascriptResult = 0;
     m_javascriptError = error;
-    webkit_web_view_run_javascript(m_webView, javascript, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptReadyCallback), this);
+    webkit_web_view_run_javascript(m_webView, javascript, 0, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptReadyCallback), this);
     g_main_loop_run(m_mainLoop);
 
     return m_javascriptResult;

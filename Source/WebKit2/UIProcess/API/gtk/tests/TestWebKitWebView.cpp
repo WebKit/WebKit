@@ -675,7 +675,7 @@ public:
     void requestFullScreenAndWaitUntilEnteredFullScreen()
     {
         m_event = None;
-        webkit_web_view_run_javascript(m_webView, "document.documentElement.webkitRequestFullScreen();", 0, 0);
+        webkit_web_view_run_javascript(m_webView, "document.documentElement.webkitRequestFullScreen();", 0, 0, 0);
         g_main_loop_run(m_mainLoop);
     }
 

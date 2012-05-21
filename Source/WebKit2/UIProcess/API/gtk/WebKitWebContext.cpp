@@ -256,19 +256,7 @@ void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* conte
 struct GetPluginsAsyncData {
     Vector<PluginModuleInfo> plugins;
 };
-
-static GetPluginsAsyncData* getPluginsAsyncDataCreate()
-{
-    GetPluginsAsyncData* data = g_slice_new(GetPluginsAsyncData);
-    new (data) GetPluginsAsyncData();
-    return data;
-}
-
-static void getPluginsAsyncDataDestroy(GetPluginsAsyncData* data)
-{
-    data->~GetPluginsAsyncData();
-    g_slice_free(GetPluginsAsyncData, data);
-}
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetPluginsAsyncData)
 
 static void webkitWebContextGetPluginThread(GSimpleAsyncResult* result, GObject* object, GCancellable*)
 {
@@ -294,8 +282,8 @@ void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* can
 
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(context), callback, userData,
                                                                              reinterpret_cast<gpointer>(webkit_web_context_get_plugins)));
-    g_simple_async_result_set_op_res_gpointer(result.get(), getPluginsAsyncDataCreate(),
-                                              reinterpret_cast<GDestroyNotify>(getPluginsAsyncDataDestroy));
+    g_simple_async_result_set_op_res_gpointer(result.get(), createGetPluginsAsyncData(),
+                                              reinterpret_cast<GDestroyNotify>(destroyGetPluginsAsyncData));
     g_simple_async_result_run_in_thread(result.get(), webkitWebContextGetPluginThread, G_PRIORITY_DEFAULT, cancellable);
 }
 

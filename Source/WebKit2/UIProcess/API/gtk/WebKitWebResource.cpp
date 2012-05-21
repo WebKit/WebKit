@@ -301,16 +301,28 @@ WebKitURIResponse* webkit_web_resource_get_response(WebKitWebResource* resource)
     return resource->priv->response.get();
 }
 
-static void resourceDataCallback(WKDataRef data, WKErrorRef, void* context)
+struct ResourceGetDataAsyncData {
+    WKDataRef wkData;
+    GRefPtr<GCancellable> cancellable;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResourceGetDataAsyncData)
+
+static void resourceDataCallback(WKDataRef wkData, WKErrorRef, void* context)
 {
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    g_simple_async_result_set_op_res_gpointer(result.get(), const_cast<OpaqueWKData*>(data), 0);
+    ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
+    GError* error = 0;
+    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
+        g_simple_async_result_take_error(result.get(), error);
+    else
+        data->wkData = wkData;
     g_simple_async_result_complete(result.get());
 }
 
 /**
  * webkit_web_resource_get_data:
  * @resource: a #WebKitWebResource
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
  * @user_data: (closure): the data to pass to callback function
  *
@@ -319,12 +331,15 @@ static void resourceDataCallback(WKDataRef data, WKErrorRef, void* context)
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_resource_get_data_finish() to get the result of the operation.
  */
-void webkit_web_resource_get_data(WebKitWebResource* resource, GAsyncReadyCallback callback, gpointer userData)
+void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_WEB_RESOURCE(resource));
 
     GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(resource), callback, userData,
                                                            reinterpret_cast<gpointer>(webkit_web_resource_get_data));
+    ResourceGetDataAsyncData* data = createResourceGetDataAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyResourceGetDataAsyncData));
     if (resource->priv->isMainResource)
         WKFrameGetMainResourceData(resource->priv->wkFrame.get(), resourceDataCallback, result);
     else {
@@ -356,8 +371,8 @@ guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncR
     if (g_simple_async_result_propagate_error(simple, error))
         return 0;
 
-    WKDataRef wkData = static_cast<WKDataRef>(g_simple_async_result_get_op_res_gpointer(simple));
+    ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple));
     if (length)
-        *length = WKDataGetSize(wkData);
-    return static_cast<guchar*>(g_memdup(WKDataGetBytes(wkData), WKDataGetSize(wkData)));
+        *length = WKDataGetSize(data->wkData);
+    return static_cast<guchar*>(g_memdup(WKDataGetBytes(data->wkData), WKDataGetSize(data->wkData)));
 }

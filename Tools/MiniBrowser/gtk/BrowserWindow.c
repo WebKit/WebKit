@@ -508,5 +508,5 @@ void browser_window_load_uri(BrowserWindow *window, const char *uri)
         return;
     }
 
-    webkit_web_view_run_javascript(window->webView, strstr(uri, "javascript:"), NULL, NULL);
+    webkit_web_view_run_javascript(window->webView, strstr(uri, "javascript:"), NULL, NULL, NULL);
 }

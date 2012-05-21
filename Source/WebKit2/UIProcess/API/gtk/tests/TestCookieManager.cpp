@@ -74,7 +74,7 @@ public:
     WebKitCookieAcceptPolicy getAcceptPolicy()
     {
         m_acceptPolicy = WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY;
-        webkit_cookie_manager_get_accept_policy(m_cookieManager, getAcceptPolicyReadyCallback, this);
+        webkit_cookie_manager_get_accept_policy(m_cookieManager, 0, getAcceptPolicyReadyCallback, this);
         g_main_loop_run(m_mainLoop);
 
         return m_acceptPolicy;
@@ -100,7 +100,7 @@ public:
     {
         g_strfreev(m_domains);
         m_domains = 0;
-        webkit_cookie_manager_get_domains_with_cookies(m_cookieManager, getDomainsReadyCallback, this);
+        webkit_cookie_manager_get_domains_with_cookies(m_cookieManager, 0, getDomainsReadyCallback, this);
         g_main_loop_run(m_mainLoop);
 
         return m_domains;

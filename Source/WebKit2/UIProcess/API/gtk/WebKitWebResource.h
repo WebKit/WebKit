@@ -63,6 +63,7 @@ webkit_web_resource_get_response    (WebKitWebResource  *resource);
 
 WEBKIT_API void
 webkit_web_resource_get_data        (WebKitWebResource  *resource,
+                                     GCancellable       *cancellable,
                                      GAsyncReadyCallback callback,
                                      gpointer            user_data);
 

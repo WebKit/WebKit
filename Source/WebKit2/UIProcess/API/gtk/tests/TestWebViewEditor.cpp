@@ -47,7 +47,7 @@ public:
     bool canExecuteEditingCommand(const char* command)
     {
         m_canExecuteEditingCommand = false;
-        webkit_web_view_can_execute_editing_command(m_webView, command, reinterpret_cast<GAsyncReadyCallback>(canExecuteEditingCommandReadyCallback), this);
+        webkit_web_view_can_execute_editing_command(m_webView, command, 0, reinterpret_cast<GAsyncReadyCallback>(canExecuteEditingCommandReadyCallback), this);
         g_main_loop_run(m_mainLoop);
         return m_canExecuteEditingCommand;
     }

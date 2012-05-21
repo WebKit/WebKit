@@ -263,6 +263,7 @@ webkit_web_view_get_zoom_level                     (WebKitWebView             *w
 WEBKIT_API void
 webkit_web_view_can_execute_editing_command        (WebKitWebView             *web_view,
                                                     const gchar               *command,
+                                                    GCancellable              *cancellable,
                                                     GAsyncReadyCallback        callback,
                                                     gpointer                   user_data);
 
@@ -284,6 +285,7 @@ webkit_web_view_get_javascript_global_context      (WebKitWebView             *w
 WEBKIT_API void
 webkit_web_view_run_javascript                     (WebKitWebView             *web_view,
                                                     const gchar               *script,
+                                                    GCancellable              *cancellable,
                                                     GAsyncReadyCallback        callback,
                                                     gpointer                   user_data);
 WEBKIT_API WebKitJavascriptResult *
