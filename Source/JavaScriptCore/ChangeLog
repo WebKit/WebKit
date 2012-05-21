@@ -1,3 +1,89 @@
+2012-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecode dumps should contain data about the state of get_by_id caches
+        https://bugs.webkit.org/show_bug.cgi?id=85246
+
+        Reviewed by Gavin Barraclough.
+        
+        Merge r115694 from dfgopt.
+        
+        Changed the DFG bytecode parser (and the code that calls it) to be able
+        to call codeBlock->dump() on the code blocks being parsed.
+        
+        Changed bytecode dumping to be able to print the state of get_by_id
+        caches inline with the bytecode.
+        
+        Removed the old StructureStubInfo dumping code, which no longer worked
+        right, and was incapable of telling us information about chain and list
+        accesses.
+        
+        This change does not add dumping for put_by_id caches. We can add that
+        at a later time.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::dumpStructure):
+        (JSC):
+        (JSC::dumpChain):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::printGlobalResolveInfo):
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::visitStructures):
+        (JSC::ProgramCodeBlock::jitCompileImpl):
+        (JSC::EvalCodeBlock::jitCompileImpl):
+        (JSC::FunctionCodeBlock::jitCompileImpl):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::jitCompile):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::parse):
+        * dfg/DFGByteCodeParser.h:
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::jitCompile):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::jitCompile):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::jitCompileForCall):
+        (JSC::FunctionExecutable::jitCompileForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (EvalExecutable):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::jitCompileFor):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+
 2012-05-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

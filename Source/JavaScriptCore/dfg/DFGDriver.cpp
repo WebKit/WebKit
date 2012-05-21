@@ -43,7 +43,7 @@
 namespace JSC { namespace DFG {
 
 enum CompileMode { CompileFunction, CompileOther };
-inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -55,8 +55,8 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     dataLog("DFG compiling code block %p(%p), number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->instructionCount());
 #endif
     
-    Graph dfg(globalData, codeBlock);
-    if (!parse(dfg))
+    Graph dfg(exec->globalData(), codeBlock);
+    if (!parse(exec, dfg))
         return false;
     
     if (compileMode == CompileFunction)
@@ -110,14 +110,14 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     return result;
 }
 
-bool tryCompile(JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode)
+bool tryCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode)
 {
-    return compile(CompileOther, globalData, codeBlock, jitCode, 0);
+    return compile(CompileOther, exec, codeBlock, jitCode, 0);
 }
 
-bool tryCompileFunction(JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
-    return compile(CompileFunction, globalData, codeBlock, jitCode, &jitCodeWithArityCheck);
+    return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck);
 }
 
 } } // namespace JSC::DFG

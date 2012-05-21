@@ -43,6 +43,7 @@
 #include "JSStaticScopeObject.h"
 #include "JSValue.h"
 #include "LowLevelInterpreter.h"
+#include "MethodCallLinkStatus.h"
 #include "RepatchBuffer.h"
 #include "UStringConcatenate.h"
 #include <stdio.h>
@@ -150,7 +151,7 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
     return "";
 }
 
-void CodeBlock::printUnaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op) const
+void CodeBlock::printUnaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
@@ -158,7 +159,7 @@ void CodeBlock::printUnaryOp(ExecState* exec, int location, Vector<Instruction>:
     dataLog("[%4d] %s\t\t %s, %s\n", location, op, registerName(exec, r0).data(), registerName(exec, r1).data());
 }
 
-void CodeBlock::printBinaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op) const
+void CodeBlock::printBinaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
@@ -166,23 +167,210 @@ void CodeBlock::printBinaryOp(ExecState* exec, int location, Vector<Instruction>
     dataLog("[%4d] %s\t\t %s, %s, %s\n", location, op, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
 }
 
-void CodeBlock::printConditionalJump(ExecState* exec, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator& it, int location, const char* op) const
+void CodeBlock::printConditionalJump(ExecState* exec, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator& it, int location, const char* op)
 {
     int r0 = (++it)->u.operand;
     int offset = (++it)->u.operand;
     dataLog("[%4d] %s\t\t %s, %d(->%d)\n", location, op, registerName(exec, r0).data(), offset, location + offset);
 }
 
-void CodeBlock::printGetByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op) const
+void CodeBlock::printGetByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it)
 {
+    const char* op;
+    switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
+    case op_get_by_id:
+        op = "get_by_id";
+        break;
+    case op_get_by_id_self:
+        op = "get_by_id_self";
+        break;
+    case op_get_by_id_proto:
+        op = "get_by_id_proto";
+        break;
+    case op_get_by_id_chain:
+        op = "get_by_id_chain";
+        break;
+    case op_get_by_id_getter_self:
+        op = "get_by_id_getter_self";
+        break;
+    case op_get_by_id_getter_proto:
+        op = "get_by_id_getter_proto";
+        break;
+    case op_get_by_id_getter_chain:
+        op = "get_by_id_getter_chain";
+        break;
+    case op_get_by_id_custom_self:
+        op = "get_by_id_custom_self";
+        break;
+    case op_get_by_id_custom_proto:
+        op = "get_by_id_custom_proto";
+        break;
+    case op_get_by_id_custom_chain:
+        op = "get_by_id_custom_chain";
+        break;
+    case op_get_by_id_generic:
+        op = "get_by_id_generic";
+        break;
+    case op_get_array_length:
+        op = "array_length";
+        break;
+    case op_get_string_length:
+        op = "string_length";
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        op = 0;
+    }
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
-    dataLog("[%4d] %s\t %s, %s, %s\n", location, op, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
+    dataLog("[%4d] %s\t %s, %s, %s", location, op, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
     it += 5;
 }
 
-void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op) const
+static void dumpStructure(const char* name, ExecState* exec, Structure* structure, Identifier& ident)
+{
+    if (!structure)
+        return;
+    
+    dataLog("%s = %p", name, structure);
+    
+    size_t offset = structure->get(exec->globalData(), ident);
+    if (offset != notFound)
+        dataLog(" (offset = %lu)", static_cast<unsigned long>(offset));
+}
+
+static void dumpChain(ExecState* exec, StructureChain* chain, Identifier& ident)
+{
+    dataLog("chain = %p: [", chain);
+    bool first = true;
+    for (WriteBarrier<Structure>* currentStructure = chain->head();
+         *currentStructure;
+         ++currentStructure) {
+        if (first)
+            first = false;
+        else
+            dataLog(", ");
+        dumpStructure("struct", exec, currentStructure->get(), ident);
+    }
+    dataLog("]");
+}
+
+void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
+{
+    Instruction* instruction = instructions().begin() + location;
+
+    if (exec->interpreter()->getOpcodeID(instruction[0].u.opcode) == op_method_check)
+        instruction++;
+    
+    Identifier& ident = identifier(instruction[3].u.operand);
+    
+#if ENABLE(LLINT)
+    Structure* structure = instruction[4].u.structure.get();
+    dataLog(" llint(");
+    dumpStructure("struct", exec, structure, ident);
+    dataLog(")");
+#endif
+
+#if ENABLE(JIT)
+    if (numberOfStructureStubInfos()) {
+        dataLog(" jit(");
+        StructureStubInfo& stubInfo = getStubInfo(location);
+        if (!stubInfo.seen)
+            dataLog("not seen");
+        else {
+            Structure* baseStructure = 0;
+            Structure* prototypeStructure = 0;
+            StructureChain* chain = 0;
+            PolymorphicAccessStructureList* structureList = 0;
+            int listSize = 0;
+            
+            switch (stubInfo.accessType) {
+            case access_get_by_id_self:
+                dataLog("self");
+                baseStructure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
+                break;
+            case access_get_by_id_proto:
+                dataLog("proto");
+                baseStructure = stubInfo.u.getByIdProto.baseObjectStructure.get();
+                prototypeStructure = stubInfo.u.getByIdProto.prototypeStructure.get();
+                break;
+            case access_get_by_id_chain:
+                dataLog("chain");
+                baseStructure = stubInfo.u.getByIdChain.baseObjectStructure.get();
+                chain = stubInfo.u.getByIdChain.chain.get();
+                break;
+            case access_get_by_id_self_list:
+                dataLog("self_list");
+                structureList = stubInfo.u.getByIdSelfList.structureList;
+                listSize = stubInfo.u.getByIdSelfList.listSize;
+                break;
+            case access_get_by_id_proto_list:
+                dataLog("proto_list");
+                structureList = stubInfo.u.getByIdProtoList.structureList;
+                listSize = stubInfo.u.getByIdProtoList.listSize;
+                break;
+            case access_unset:
+                dataLog("unset");
+                break;
+            case access_get_by_id_generic:
+                dataLog("generic");
+                break;
+            case access_get_array_length:
+                dataLog("array_length");
+                break;
+            case access_get_string_length:
+                dataLog("string_length");
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+            
+            if (baseStructure) {
+                dataLog(", ");
+                dumpStructure("struct", exec, baseStructure, ident);
+            }
+            
+            if (prototypeStructure) {
+                dataLog(", ");
+                dumpStructure("prototypeStruct", exec, baseStructure, ident);
+            }
+            
+            if (chain) {
+                dataLog(", ");
+                dumpChain(exec, chain, ident);
+            }
+            
+            if (structureList) {
+                dataLog(", list = %p: [", structureList);
+                for (int i = 0; i < listSize; ++i) {
+                    if (i)
+                        dataLog(", ");
+                    dataLog("(");
+                    dumpStructure("base", exec, structureList->list[i].base.get(), ident);
+                    if (structureList->list[i].isChain) {
+                        if (structureList->list[i].u.chain.get()) {
+                            dataLog(", ");
+                            dumpChain(exec, structureList->list[i].u.chain.get(), ident);
+                        }
+                    } else {
+                        if (structureList->list[i].u.proto.get()) {
+                            dataLog(", ");
+                            dumpStructure("proto", exec, structureList->list[i].u.proto.get(), ident);
+                        }
+                    }
+                    dataLog(")");
+                }
+                dataLog("]");
+            }
+        }
+        dataLog(")");
+    }
+#endif
+}
+
+void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
 {
     int func = (++it)->u.operand;
     int argCount = (++it)->u.operand;
@@ -191,7 +379,7 @@ void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::
     it += 2;
 }
 
-void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op) const
+void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
@@ -204,26 +392,6 @@ void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction
 static bool isGlobalResolve(OpcodeID opcodeID)
 {
     return opcodeID == op_resolve_global || opcodeID == op_resolve_global_dynamic;
-}
-
-static bool isPropertyAccess(OpcodeID opcodeID)
-{
-    switch (opcodeID) {
-        case op_get_by_id_self:
-        case op_get_by_id_proto:
-        case op_get_by_id_chain:
-        case op_put_by_id_transition:
-        case op_put_by_id_replace:
-        case op_get_by_id:
-        case op_put_by_id:
-        case op_get_by_id_generic:
-        case op_put_by_id_generic:
-        case op_get_array_length:
-        case op_get_string_length:
-            return true;
-        default:
-            return false;
-    }
 }
 
 static unsigned instructionOffsetForNth(ExecState* exec, const RefCountedArray<Instruction>& instructions, int nth, bool (*predicate)(OpcodeID))
@@ -246,60 +414,15 @@ static void printGlobalResolveInfo(const GlobalResolveInfo& resolveInfo, unsigne
 {
     dataLog("  [%4d] %s: %s\n", instructionOffset, "resolve_global", pointerToSourceString(resolveInfo.structure).utf8().data());
 }
-
-static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned instructionOffset)
-{
-    switch (stubInfo.accessType) {
-    case access_get_by_id_self:
-        dataLog("  [%4d] %s: %s\n", instructionOffset, "get_by_id_self", pointerToSourceString(stubInfo.u.getByIdSelf.baseObjectStructure).utf8().data());
-        return;
-    case access_get_by_id_proto:
-        dataLog("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(stubInfo.u.getByIdProto.baseObjectStructure).utf8().data(), pointerToSourceString(stubInfo.u.getByIdProto.prototypeStructure).utf8().data());
-        return;
-    case access_get_by_id_chain:
-        dataLog("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(stubInfo.u.getByIdChain.baseObjectStructure).utf8().data(), pointerToSourceString(stubInfo.u.getByIdChain.chain).utf8().data());
-        return;
-    case access_get_by_id_self_list:
-        dataLog("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_self_list", pointerToSourceString(stubInfo.u.getByIdSelfList.structureList).utf8().data(), stubInfo.u.getByIdSelfList.listSize);
-        return;
-    case access_get_by_id_proto_list:
-        dataLog("  [%4d] %s: %s (%d)\n", instructionOffset, "op_get_by_id_proto_list", pointerToSourceString(stubInfo.u.getByIdProtoList.structureList).utf8().data(), stubInfo.u.getByIdProtoList.listSize);
-        return;
-    case access_put_by_id_transition_normal:
-    case access_put_by_id_transition_direct:
-        dataLog("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_transition", pointerToSourceString(stubInfo.u.putByIdTransition.previousStructure).utf8().data(), pointerToSourceString(stubInfo.u.putByIdTransition.structure).utf8().data(), pointerToSourceString(stubInfo.u.putByIdTransition.chain).utf8().data());
-        return;
-    case access_put_by_id_replace:
-        dataLog("  [%4d] %s: %s\n", instructionOffset, "put_by_id_replace", pointerToSourceString(stubInfo.u.putByIdReplace.baseObjectStructure).utf8().data());
-        return;
-    case access_unset:
-        dataLog("  [%4d] %s\n", instructionOffset, "unset");
-        return;
-    case access_get_by_id_generic:
-        dataLog("  [%4d] %s\n", instructionOffset, "op_get_by_id_generic");
-        return;
-    case access_put_by_id_generic:
-        dataLog("  [%4d] %s\n", instructionOffset, "op_put_by_id_generic");
-        return;
-    case access_get_array_length:
-        dataLog("  [%4d] %s\n", instructionOffset, "op_get_array_length");
-        return;
-    case access_get_string_length:
-        dataLog("  [%4d] %s\n", instructionOffset, "op_get_string_length");
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
 #endif
 
-void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand) const
+void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand)
 {
     unsigned instructionOffset = vPC - instructions().begin();
     dataLog("  [%4d] %s: %s\n", instructionOffset, name, pointerToSourceString(vPC[operand].u.structure).utf8().data());
 }
 
-void CodeBlock::printStructures(const Instruction* vPC) const
+void CodeBlock::printStructures(const Instruction* vPC)
 {
     Interpreter* interpreter = m_globalData->interpreter;
     unsigned instructionOffset = vPC - instructions().begin();
@@ -345,7 +468,7 @@ void CodeBlock::printStructures(const Instruction* vPC) const
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_call) || vPC[0].u.opcode == interpreter->getOpcode(op_call_eval) || vPC[0].u.opcode == interpreter->getOpcode(op_construct));
 }
 
-void CodeBlock::dump(ExecState* exec) const
+void CodeBlock::dump(ExecState* exec)
 {
     size_t instructionCount = 0;
 
@@ -399,13 +522,6 @@ void CodeBlock::dump(ExecState* exec) const
              printGlobalResolveInfo(m_globalResolveInfos[i], instructionOffsetForNth(exec, instructions(), i + 1, isGlobalResolve));
              ++i;
         } while (i < m_globalResolveInfos.size());
-    }
-    if (!m_structureStubInfos.isEmpty()) {
-        size_t i = 0;
-        do {
-            printStructureStubInfo(m_structureStubInfos[i], instructionOffsetForNth(exec, instructions(), i + 1, isPropertyAccess));
-             ++i;
-        } while (i < m_structureStubInfos.size());
     }
 #endif
 #if ENABLE(CLASSIC_INTERPRETER)
@@ -489,7 +605,7 @@ void CodeBlock::dump(ExecState* exec) const
     dataLog("\n");
 }
 
-void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator& it) const
+void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator& it)
 {
     int location = it - begin;
     switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
@@ -813,56 +929,22 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             it++;
             break;
         }
-        case op_get_by_id: {
-            printGetByIdOp(exec, location, it, "get_by_id");
-            break;
-        }
-        case op_get_by_id_self: {
-            printGetByIdOp(exec, location, it, "get_by_id_self");
-            break;
-        }
-        case op_get_by_id_proto: {
-            printGetByIdOp(exec, location, it, "get_by_id_proto");
-            break;
-        }
-        case op_get_by_id_chain: {
-            printGetByIdOp(exec, location, it, "get_by_id_chain");
-            break;
-        }
-        case op_get_by_id_getter_self: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_self");
-            break;
-        }
-        case op_get_by_id_getter_proto: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_proto");
-            break;
-        }
-        case op_get_by_id_getter_chain: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_chain");
-            break;
-        }
-        case op_get_by_id_custom_self: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_self");
-            break;
-        }
-        case op_get_by_id_custom_proto: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_proto");
-            break;
-        }
-        case op_get_by_id_custom_chain: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_chain");
-            break;
-        }
-        case op_get_by_id_generic: {
-            printGetByIdOp(exec, location, it, "get_by_id_generic");
-            break;
-        }
-        case op_get_array_length: {
-            printGetByIdOp(exec, location, it, "get_array_length");
-            break;
-        }
+        case op_get_by_id:
+        case op_get_by_id_self:
+        case op_get_by_id_proto:
+        case op_get_by_id_chain:
+        case op_get_by_id_getter_self:
+        case op_get_by_id_getter_proto:
+        case op_get_by_id_getter_chain:
+        case op_get_by_id_custom_self:
+        case op_get_by_id_custom_proto:
+        case op_get_by_id_custom_chain:
+        case op_get_by_id_generic:
+        case op_get_array_length:
         case op_get_string_length: {
-            printGetByIdOp(exec, location, it, "get_string_length");
+            printGetByIdOp(exec, location, it);
+            printGetByIdCacheStatus(exec, location);
+            dataLog("\n");
             break;
         }
         case op_get_arguments_length: {
@@ -903,7 +985,37 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_method_check: {
-            dataLog("[%4d] method_check\n", location);
+            dataLog("[%4d] method_check", location);
+            if (numberOfMethodCallLinkInfos()) {
+                MethodCallLinkInfo& methodCall = getMethodCallLinkInfo(location);
+                dataLog(" jit(");
+                if (!methodCall.seen)
+                    dataLog("not seen");
+                else {
+                    // Use the fact that MethodCallLinkStatus already does smart things
+                    // for decoding seen method calls.
+                    MethodCallLinkStatus status = MethodCallLinkStatus::computeFor(this, location);
+                    if (!status)
+                        dataLog("not set");
+                    else {
+                        dataLog("function = %p (executable = ", status.function());
+                        JSCell* functionAsCell = getJSFunction(status.function());
+                        if (functionAsCell)
+                            dataLog("%p", jsCast<JSFunction*>(functionAsCell)->executable());
+                        else
+                            dataLog("N/A");
+                        dataLog("), struct = %p", status.structure());
+                        if (status.needsPrototypeCheck())
+                            dataLog(", prototype = %p, struct = %p", status.prototype(), status.prototypeStructure());
+                    }
+                }
+                dataLog(")");
+            }
+            dataLog("\n");
+            ++it;
+            printGetByIdOp(exec, location, it);
+            printGetByIdCacheStatus(exec, location);
+            dataLog("\n");
             break;
         }
         case op_del_by_id: {
@@ -1545,7 +1657,7 @@ void CodeBlock::addParameter()
 #endif
 }
 
-void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
+void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
@@ -2363,25 +2475,25 @@ void FunctionCodeBlock::jettison()
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-bool ProgramCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool ProgramCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
-    return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(globalData);
+    return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
-bool EvalCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool EvalCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
-    return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(globalData);
+    return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
-bool FunctionCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
-    return static_cast<FunctionExecutable*>(ownerExecutable())->jitCompileFor(globalData, m_isConstructor ? CodeForConstruct : CodeForCall);
+    return static_cast<FunctionExecutable*>(ownerExecutable())->jitCompileFor(exec, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 #endif
 

@@ -45,8 +45,9 @@ namespace JSC { namespace DFG {
 // This class is used to compile the dataflow graph from a CodeBlock.
 class ByteCodeParser {
 public:
-    ByteCodeParser(Graph& graph)
-        : m_globalData(&graph.m_globalData)
+    ByteCodeParser(ExecState* exec, Graph& graph)
+        : m_exec(exec)
+        , m_globalData(&graph.m_globalData)
         , m_codeBlock(graph.m_codeBlock)
         , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
@@ -842,6 +843,7 @@ private:
     
     void buildOperandMapsIfNecessary();
     
+    ExecState* m_exec;
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
@@ -2730,6 +2732,7 @@ void ByteCodeParser::parseCodeBlock()
             codeBlock->needsFullScopeChain()?"true":"false",
             codeBlock->ownerExecutable()->needsActivation()?"true":"false",
             codeBlock->ownerExecutable()->isStrictMode()?"true":"false");
+    codeBlock->baselineVersion()->dump(m_exec);
 #endif
     
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
@@ -2841,13 +2844,14 @@ bool ByteCodeParser::parse()
     return true;
 }
 
-bool parse(Graph& graph)
+bool parse(ExecState* exec, Graph& graph)
 {
 #if DFG_DEBUG_LOCAL_DISBALE
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(graph);
     return false;
 #else
-    return ByteCodeParser(graph).parse();
+    return ByteCodeParser(exec, graph).parse();
 #endif
 }
 

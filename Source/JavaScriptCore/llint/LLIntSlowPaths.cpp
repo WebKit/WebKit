@@ -263,7 +263,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return false;
     }
         
-    CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec->globalData());
+    CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec);
     switch (result) {
     case CodeBlock::AlreadyCompiled:
 #if ENABLE(JIT_VERBOSE_OSR)

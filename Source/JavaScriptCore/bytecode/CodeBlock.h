@@ -132,9 +132,9 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        void dump(ExecState*) const;
-        void printStructures(const Instruction*) const;
-        void printStructure(const char* name, const Instruction*, int operand) const;
+        void dump(ExecState*);
+        void printStructures(const Instruction*);
+        void printStructure(const char* name, const Instruction*, int operand);
 
         bool isStrictMode() const { return m_isStrictMode; }
 
@@ -365,18 +365,18 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual void jettison() = 0;
         enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
-        JITCompilationResult jitCompile(JSGlobalData& globalData)
+        JITCompilationResult jitCompile(ExecState* exec)
         {
             if (getJITType() != JITCode::InterpreterThunk) {
                 ASSERT(getJITType() == JITCode::BaselineJIT);
                 return AlreadyCompiled;
             }
 #if ENABLE(JIT)
-            if (jitCompileImpl(globalData))
+            if (jitCompileImpl(exec))
                 return CompiledSuccessfully;
             return CouldNotCompile;
 #else
-            UNUSED_PARAM(globalData);
+            UNUSED_PARAM(exec);
             return CouldNotCompile;
 #endif
         }
@@ -1075,7 +1075,7 @@ namespace JSC {
 
     protected:
 #if ENABLE(JIT)
-        virtual bool jitCompileImpl(JSGlobalData&) = 0;
+        virtual bool jitCompileImpl(ExecState*) = 0;
 #endif
         virtual void visitWeakReferences(SlotVisitor&);
         virtual void finalizeUnconditionally();
@@ -1089,16 +1089,17 @@ namespace JSC {
         void tallyFrequentExitSites() { }
 #endif
         
-        void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
+        void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&);
 
         CString registerName(ExecState*, int r) const;
-        void printUnaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-        void printBinaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-        void printConditionalJump(ExecState*, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator&, int location, const char* op) const;
-        void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-        void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
-        void visitStructures(SlotVisitor&, Instruction* vPC) const;
+        void printUnaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        void printBinaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        void printConditionalJump(ExecState*, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator&, int location, const char* op);
+        void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&);
+        void printGetByIdCacheStatus(ExecState*, int location);
+        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        void visitStructures(SlotVisitor&, Instruction* vPC);
         
 #if ENABLE(DFG_JIT)
         bool shouldImmediatelyAssumeLivenessDuringScan()
@@ -1322,7 +1323,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual bool jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif
@@ -1357,7 +1358,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual bool jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif
@@ -1395,7 +1396,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual bool jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif

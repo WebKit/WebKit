@@ -36,32 +36,32 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool prepareForExecution(JSGlobalData& globalData, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType)
+inline bool prepareForExecution(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
-        LLInt::getEntrypoint(globalData, codeBlock.get(), jitCode);
+        LLInt::getEntrypoint(exec->globalData(), codeBlock.get(), jitCode);
         codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
         return true;
     }
 #endif // ENABLE(LLINT)
-    return jitCompileIfAppropriate(globalData, codeBlock, jitCode, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, codeBlock, jitCode, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
-inline bool prepareFunctionForExecution(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, CodeSpecializationKind kind)
+inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, CodeSpecializationKind kind)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
-        LLInt::getFunctionEntrypoint(globalData, kind, jitCode, jitCodeWithArityCheck);
+        LLInt::getFunctionEntrypoint(exec->globalData(), kind, jitCode, jitCodeWithArityCheck);
         codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
         return true;
     }
 #else
     UNUSED_PARAM(kind);
 #endif // ENABLE(LLINT)
-    return jitCompileFunctionIfAppropriate(globalData, codeBlock, jitCode, jitCodeWithArityCheck, symbolTable, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, codeBlock, jitCode, jitCodeWithArityCheck, symbolTable, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
 } // namespace JSC

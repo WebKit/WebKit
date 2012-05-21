@@ -38,8 +38,10 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, JITCompilationEffort effort)
+inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, JITCompilationEffort effort)
 {
+    JSGlobalData& globalData = exec->globalData();
+    
     if (jitType == codeBlock->getJITType())
         return true;
     
@@ -52,7 +54,7 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
-        dfgCompiled = DFG::tryCompile(globalData, codeBlock.get(), jitCode);
+        dfgCompiled = DFG::tryCompile(exec, codeBlock.get(), jitCode);
     if (dfgCompiled) {
         if (codeBlock->alternative())
             codeBlock->alternative()->unlinkIncomingCalls();
@@ -73,8 +75,10 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, JITCompilationEffort effort)
+inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, JITCompilationEffort effort)
 {
+    JSGlobalData& globalData = exec->globalData();
+    
     if (jitType == codeBlock->getJITType())
         return true;
     
@@ -88,7 +92,7 @@ inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<Fun
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
-        dfgCompiled = DFG::tryCompileFunction(globalData, codeBlock.get(), jitCode, jitCodeWithArityCheck);
+        dfgCompiled = DFG::tryCompileFunction(exec, codeBlock.get(), jitCode, jitCodeWithArityCheck);
     if (dfgCompiled) {
         if (codeBlock->alternative())
             codeBlock->alternative()->unlinkIncomingCalls();

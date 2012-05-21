@@ -60,7 +60,7 @@ void compileOSRExit(ExecState* exec)
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         static_cast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())
             ->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct)
-            ->jitCompile(*globalData);
+            ->jitCompile(exec);
     }
     
     SpeculationRecovery* recovery = 0;

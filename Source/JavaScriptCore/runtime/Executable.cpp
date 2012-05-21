@@ -181,9 +181,9 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scop
 }
 
 #if ENABLE(JIT)
-bool EvalExecutable::jitCompile(JSGlobalData& globalData)
+bool EvalExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(globalData, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 
@@ -244,7 +244,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(*globalData, m_evalCodeBlock, m_jitCodeForCall, jitType))
+    if (!prepareForExecution(exec, m_evalCodeBlock, m_jitCodeForCall, jitType))
         return 0;
 #endif
 
@@ -330,9 +330,9 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* s
 }
 
 #if ENABLE(JIT)
-bool ProgramExecutable::jitCompile(JSGlobalData& globalData)
+bool ProgramExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(globalData, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 
@@ -376,7 +376,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(*globalData, m_programCodeBlock, m_jitCodeForCall, jitType))
+    if (!prepareForExecution(exec, m_programCodeBlock, m_jitCodeForCall, jitType))
         return 0;
 #endif
 
@@ -479,14 +479,14 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
 }
 
 #if ENABLE(JIT)
-bool FunctionExecutable::jitCompileForCall(JSGlobalData& globalData)
+bool FunctionExecutable::jitCompileForCall(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(globalData, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 
-bool FunctionExecutable::jitCompileForConstruct(JSGlobalData& globalData)
+bool FunctionExecutable::jitCompileForConstruct(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(globalData, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 
@@ -551,7 +551,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec->globalData(), m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType, CodeForCall))
+    if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType, CodeForCall))
         return 0;
 #endif
 
@@ -593,7 +593,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec->globalData(), m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType, CodeForConstruct))
+    if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType, CodeForConstruct))
         return 0;
 #endif
 
