@@ -38,6 +38,7 @@ namespace WebCore {
 class Frame;
 class KURL;
 class Page;
+class PageGroup;
 class SecurityOrigin;
 class Storage;
 
@@ -50,23 +51,22 @@ public:
     virtual unsigned length(Frame* sourceFrame) const;
     virtual String key(unsigned index, Frame* sourceFrame) const;
     virtual String getItem(const String& key, Frame* sourceFrame) const;
-    virtual String setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
-    virtual String removeItem(const String& key, Frame* sourceFrame);
-    virtual bool clear(Frame* sourceFrame);
+    virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
+    virtual void removeItem(const String& key, Frame* sourceFrame);
+    virtual void clear(Frame* sourceFrame);
     virtual bool contains(const String& key, Frame* sourceFrame) const;
 
     virtual bool disabledByPrivateBrowsingInFrame(const Frame*) const { return false; }
 
     static void dispatchLocalStorageEvent(
-            const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+            PageGroup*, const String& key, const String& oldValue, const String& newValue,
             SecurityOrigin*, const KURL& pageURL, WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);
     static void dispatchSessionStorageEvent(
-            const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+            PageGroup*, const String& key, const String& oldValue, const String& newValue,
             SecurityOrigin*, const KURL& pageURL, const WebKit::WebStorageNamespace&,
             WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);
 
 private:
-    void storageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Frame* sourceFrame);
     bool canAccessStorage(Frame*) const;
 
     static bool isEventSource(Storage*, WebKit::WebStorageArea* sourceAreaInstance);

@@ -204,7 +204,7 @@ const float WebView::minPageScaleFactor = 0.25;
 const float WebView::maxPageScaleFactor = 4.0;
 
 
-// The group name identifies a namespace of pages.  Page group is used on OSX
+// The group name identifies a namespace of pages. Page group is used on PLATFORM(MAC)
 // for some programs that use HTML views to display things that don't seem like
 // web pages to the user (so shouldn't have visited link coloring).  We only use
 // one page group.
@@ -1277,6 +1277,11 @@ WebViewImpl* WebViewImpl::fromPage(Page* page)
 
     ChromeClientImpl* chromeClient = static_cast<ChromeClientImpl*>(page->chrome()->client());
     return static_cast<WebViewImpl*>(chromeClient->webView());
+}
+
+PageGroup* WebViewImpl::defaultPageGroup()
+{
+    return PageGroup::pageGroup(pageGroupName);
 }
 
 // WebWidget ------------------------------------------------------------------
