@@ -1869,7 +1869,7 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     # used on Chromium build.
     determineArchitecture();
     if ($architecture ne "x86_64" && !isARM()) {
-        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . $ENV{'CXXFLAGS'};
+        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
     }
 
     # Prefix the command with jhbuild run.
@@ -2093,7 +2093,7 @@ sub generateBuildSystemFromCMakeProject
     # between 32-bit and 64-bit architectures.
     determineArchitecture();
     if ($architecture ne "x86_64" && !isARM()) {
-        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . $ENV{'CXXFLAGS'};
+        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
     }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
