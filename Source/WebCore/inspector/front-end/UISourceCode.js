@@ -306,6 +306,16 @@ WebInspector.UISourceCode.prototype = {
     {
         this._consoleMessages = [];
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
+    },
+
+    /**
+     * @param {boolean} formatted
+     * @param {function()=} callback
+     */
+    setFormatted: function(formatted, callback)
+    {
+        if (callback)
+            callback();
     }
 }
 
