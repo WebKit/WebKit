@@ -57,6 +57,10 @@
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 
+#if ENABLE(DFG_JIT)
+#include "ConservativeRoots.h"
+#endif
+
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
 #endif
@@ -449,6 +453,19 @@ void releaseExecutableMemory(JSGlobalData& globalData)
 {
     globalData.releaseExecutableMemory();
 }
+
+#if ENABLE(DFG_JIT)
+void JSGlobalData::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+{
+    for (size_t i = 0; i < scratchBuffers.size(); i++) {
+        ScratchBuffer* scratchBuffer = scratchBuffers[i];
+        if (scratchBuffer->activeLength()) {
+            void* bufferStart = scratchBuffer->dataBuffer();
+            conservativeRoots.add(bufferStart, static_cast<void*>(static_cast<char*>(bufferStart) + scratchBuffer->activeLength()));
+        }
+    }
+}
+#endif
 
 #if ENABLE(REGEXP_TRACING)
 void JSGlobalData::addRegExpToTrace(RegExp* regExp)

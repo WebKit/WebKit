@@ -451,6 +451,15 @@ void Heap::markRoots(bool fullGC)
         GCPHASE(GatherRegisterFileRoots);
         registerFile().gatherConservativeRoots(registerFileRoots, m_dfgCodeBlocks);
     }
+
+#if ENABLE(DFG_JIT)
+    ConservativeRoots scratchBufferRoots(&m_objectSpace.blocks(), &m_storageSpace);
+    {
+        GCPHASE(GatherScratchBufferRoots);
+        m_globalData->gatherConservativeRoots(scratchBufferRoots);
+    }
+#endif
+
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;
     if (!fullGC) {
@@ -497,6 +506,13 @@ void Heap::markRoots(bool fullGC)
             visitor.append(registerFileRoots);
             visitor.donateAndDrain();
         }
+#if ENABLE(DFG_JIT)
+        {
+            GCPHASE(VisitScratchBufferRoots);
+            visitor.append(scratchBufferRoots);
+            visitor.donateAndDrain();
+        }
+#endif
         {
             GCPHASE(VisitProtectedObjects);
             markProtectedObjects(heapRootVisitor);

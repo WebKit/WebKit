@@ -123,7 +123,28 @@ namespace JSC {
         size_t m_storageOffset;
         size_t m_lengthOffset;
     };
-    
+
+#if ENABLE(DFG_JIT)
+    class ConservativeRoots;
+
+    struct ScratchBuffer {
+        ScratchBuffer()
+            : m_activeLength(0)
+        {
+        }
+
+        static size_t allocationSize(size_t bufferSize) { return sizeof(size_t) + bufferSize; }
+        void setActiveLength(size_t activeLength) { m_activeLength = activeLength; }
+        size_t activeLength() const { return m_activeLength; };
+        size_t* activeLengthPtr() { return &m_activeLength; };
+        void* dataBuffer() { return m_buffer; }
+        void visitEncodedJSValues(SlotVisitor&);
+
+        size_t m_activeLength;
+        void* m_buffer[0];
+    };
+#endif
+
     class JSGlobalData : public RefCounted<JSGlobalData> {
     public:
         // WebCore has a one-to-one mapping of threads to JSGlobalDatas;
@@ -278,10 +299,10 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         uint32_t osrExitIndex;
         void* osrExitJumpDestination;
-        Vector<void*> scratchBuffers;
+        Vector<ScratchBuffer*> scratchBuffers;
         size_t sizeOfLastScratchBuffer;
         
-        void* scratchBufferForSize(size_t size)
+        ScratchBuffer* scratchBufferForSize(size_t size)
         {
             if (!size)
                 return 0;
@@ -292,12 +313,16 @@ namespace JSC {
                 // total memory usage is somewhere around
                 // max(scratch buffer size) * 4.
                 sizeOfLastScratchBuffer = size * 2;
-                
-                scratchBuffers.append(fastMalloc(sizeOfLastScratchBuffer));
+
+                scratchBuffers.append(static_cast<ScratchBuffer*>(fastMalloc(ScratchBuffer::allocationSize(sizeOfLastScratchBuffer))));
             }
-            
-            return scratchBuffers.last();
+
+            ScratchBuffer* result = scratchBuffers.last();
+            result->setActiveLength(0);
+            return result;
         }
+
+        void gatherConservativeRoots(ConservativeRoots&);
 #endif
 
         HashMap<OpaqueJSClass*, OwnPtr<OpaqueJSClassContextData> > opaqueJSClassData;

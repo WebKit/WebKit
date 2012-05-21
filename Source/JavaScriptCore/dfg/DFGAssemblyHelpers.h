@@ -170,14 +170,21 @@ public:
     // Add a debug call. This call has no effect on JIT code execution state.
     void debugCall(V_DFGDebugOperation_EP function, void* argument)
     {
-        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_globalData->scratchBufferForSize(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters)));
-        
+        size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
+        ScratchBuffer* scratchBuffer = m_globalData->scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+
         for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
             storePtr(GPRInfo::toRegister(i), buffer + i);
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
             move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
         }
+
+        // Tell GC mark phase how much of the scratch buffer is active during call.
+        move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
+        storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
+
 #if CPU(X86_64) || CPU(ARM_THUMB2)
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -191,6 +198,10 @@ public:
 #endif
         move(TrustedImmPtr(reinterpret_cast<void*>(function)), scratch);
         call(scratch);
+
+        move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
+        storePtr(TrustedImmPtr(0), GPRInfo::regT0);
+
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
             move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));

@@ -979,20 +979,20 @@ EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
 }
 
-EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* start, size_t size)
+EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* scratch, size_t size)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
-    return JSValue::encode(jsString(exec, static_cast<Register*>(start), size));
+
+    return JSValue::encode(jsString(exec, static_cast<Register*>(static_cast<ScratchBuffer*>(scratch)->dataBuffer()), size));
 }
 
-EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, void* start, size_t size)
+EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, void* scratch, size_t size)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
-    return JSValue::encode(constructArray(exec, static_cast<JSValue*>(start), size));
+
+    return JSValue::encode(constructArray(exec, static_cast<JSValue*>(static_cast<ScratchBuffer*>(scratch)->dataBuffer()), size));
 }
 
 EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)

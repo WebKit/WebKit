@@ -2954,8 +2954,10 @@ void SpeculativeJIT::compile(Node& node)
         // probably has the best balance of performance and sensibility in the sense
         // that it does not increase the complexity of the DFG JIT just to make StrCat
         // fast and pretty.
-        
-        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * node.numChildren()));
+
+        size_t scratchSize = sizeof(EncodedJSValue) * node.numChildren();
+        ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
         
         for (unsigned operandIdx = 0; operandIdx < node.numChildren(); ++operandIdx) {
             JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node.firstChild() + operandIdx]);
@@ -2968,11 +2970,26 @@ void SpeculativeJIT::compile(Node& node)
         }
         
         flushRegisters();
-        
+
+        if (scratchSize) {
+            GPRTemporary scratch(this);
+
+            // Tell GC mark phase how much of the scratch buffer is active during call.
+            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+            m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
+        }
+
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         
-        callOperation(op == StrCat ? operationStrCat : operationNewArray, resultTag.gpr(), resultPayload.gpr(), buffer, node.numChildren());
+        callOperation(op == StrCat ? operationStrCat : operationNewArray, resultTag.gpr(), resultPayload.gpr(), static_cast<void *>(scratchBuffer), node.numChildren());
+
+        if (scratchSize) {
+            GPRTemporary scratch(this);
+
+            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+            m_jit.storePtr(TrustedImmPtr(0), scratch.gpr());
+        }
 
         // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
         cellResult(resultPayload.gpr(), m_compileIndex, UseChildrenCalledExplicitly);

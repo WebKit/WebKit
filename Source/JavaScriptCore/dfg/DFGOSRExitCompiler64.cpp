@@ -210,7 +210,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     dataLog(" ");
 #endif
     
-    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * std::max(haveUInt32s ? 2u : 0u, numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
+    ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * std::max(haveUInt32s ? 2u : 0u, numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters)));
+    EncodedJSValue* scratchDataBuffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
 
     // From here on, the code assumes that it is profitable to maximize the distance
     // between when something is computed and when it is stored.
@@ -245,8 +246,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 if (addressGPR == recovery.gpr())
                     addressGPR = GPRInfo::regT1;
                 
-                m_jit.storePtr(addressGPR, scratchBuffer);
-                m_jit.move(AssemblyHelpers::TrustedImmPtr(scratchBuffer + 1), addressGPR);
+                m_jit.storePtr(addressGPR, scratchDataBuffer);
+                m_jit.move(AssemblyHelpers::TrustedImmPtr(scratchDataBuffer + 1), addressGPR);
                 m_jit.storeDouble(FPRInfo::fpRegT0, addressGPR);
                 
                 AssemblyHelpers::Jump positive = m_jit.branch32(AssemblyHelpers::GreaterThanOrEqual, recovery.gpr(), AssemblyHelpers::TrustedImm32(0));
@@ -264,7 +265,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 done.link(&m_jit);
                 
                 m_jit.loadDouble(addressGPR, FPRInfo::fpRegT0);
-                m_jit.loadPtr(scratchBuffer, addressGPR);
+                m_jit.loadPtr(scratchDataBuffer, addressGPR);
                 break;
             }
                 
@@ -289,7 +290,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         case UnboxedInt32InGPR:
         case UInt32InGPR:
             if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
-                m_jit.storePtr(recovery.gpr(), scratchBuffer + currentPoisonIndex);
+                m_jit.storePtr(recovery.gpr(), scratchDataBuffer + currentPoisonIndex);
                 m_poisonScratchIndices[exit.variableForIndex(index)] = currentPoisonIndex;
                 currentPoisonIndex++;
             } else
@@ -323,7 +324,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 continue;
             GPRReg gpr = GPRInfo::toRegister(FPRInfo::toIndex(recovery.fpr()));
             if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
-                m_jit.storePtr(gpr, scratchBuffer + currentPoisonIndex);
+                m_jit.storePtr(gpr, scratchDataBuffer + currentPoisonIndex);
                 m_poisonScratchIndices[exit.variableForIndex(index)] = currentPoisonIndex;
                 currentPoisonIndex++;
             } else
@@ -422,20 +423,20 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 switch (recovery.technique()) {
                 case DisplacedInRegisterFile:
                     m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                     
                 case Int32DisplacedInRegisterFile: {
                     m_jit.load32(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
                     m_jit.orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                 }
                     
                 case DoubleDisplacedInRegisterFile: {
                     m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
                     m_jit.subPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                 }
                     
@@ -451,7 +452,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 case DisplacedInRegisterFile:
                 case Int32DisplacedInRegisterFile:
                 case DoubleDisplacedInRegisterFile:
-                    m_jit.loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
+                    m_jit.loadPtr(scratchDataBuffer + scratchIndex++, GPRInfo::regT0);
                     m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)exit.operandForIndex(index)));
                     break;
                     
@@ -477,7 +478,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             case UnboxedInt32InGPR:
             case UInt32InGPR:
             case InFPR:
-                m_jit.loadPtr(scratchBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
+                m_jit.loadPtr(scratchDataBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
                 m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));
                 break;
                 
