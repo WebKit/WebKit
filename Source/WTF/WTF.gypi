@@ -8,6 +8,7 @@
             'wtf/AlwaysInline.h',
             'wtf/Assertions.h',
             'wtf/Atomics.h',
+            'wtf/BitArray.h',
             'wtf/BitVector.h',
             'wtf/Bitmap.h',
             'wtf/BlockStack.h',

@@ -22,6 +22,7 @@ HEADERS += \
     Atomics.h \
     AVLTree.h \
     Bitmap.h \
+    BitArray.h \
     BitVector.h \
     BloomFilter.h \
     BoundsCheckedPointer.h \

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F0321BB156AA8D1006EBAF6 /* BitArray.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
 		A8A4737F151A825B004123FF /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47254151A825A004123FF /* Alignment.h */; };
 		A8A47380151A825B004123FF /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47255151A825A004123FF /* AlwaysInline.h */; };
@@ -240,6 +241,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4F0321BB156AA8D1006EBAF6 /* BitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitArray.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D247B6F14689C4700E78B76 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
@@ -546,6 +548,7 @@
 				A8A4725D151A825A004123FF /* Atomics.h */,
 				A8A4725E151A825A004123FF /* AVLTree.h */,
 				A8A4725F151A825A004123FF /* Bitmap.h */,
+				4F0321BB156AA8D1006EBAF6 /* BitArray.h */,
 				A8A47260151A825A004123FF /* BitVector.cpp */,
 				A8A47261151A825A004123FF /* BitVector.h */,
 				A8A47264151A825A004123FF /* BlockStack.h */,
@@ -860,6 +863,7 @@
 				A8A47388151A825B004123FF /* Atomics.h in Headers */,
 				A8A47389151A825B004123FF /* AVLTree.h in Headers */,
 				A8A4738A151A825B004123FF /* Bitmap.h in Headers */,
+				4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */,
 				A8A4738C151A825B004123FF /* BitVector.h in Headers */,
 				A8A4738E151A825B004123FF /* BlockStack.h in Headers */,
 				A8A4738F151A825B004123FF /* BloomFilter.h in Headers */,

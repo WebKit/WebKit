@@ -89,6 +89,7 @@
 #include "WebKitCSSShaderValue.h"
 #endif
 #include <limits.h>
+#include <wtf/BitArray.h>
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
@@ -977,7 +978,7 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
         deleteFontFaceOnlyValues();
     if (!m_parsedProperties.isEmpty()) {
         ok = true;
-        declaration->addParsedProperties(m_parsedProperties.data(), m_parsedProperties.size());
+        declaration->addParsedProperties(m_parsedProperties);
         clearProperties();
     }
 
@@ -1073,7 +1074,7 @@ bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& st
         deleteFontFaceOnlyValues();
     if (!m_parsedProperties.isEmpty()) {
         ok = true;
-        declaration->addParsedProperties(m_parsedProperties.data(), m_parsedProperties.size());
+        declaration->addParsedProperties(m_parsedProperties);
         clearProperties();
     }
 
@@ -1107,6 +1108,42 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     cssyyparse(this);
 
     return m_mediaQuery.release();
+}
+
+Vector<CSSProperty> CSSParser::filteredProperties() const
+{
+    BitArray<numCSSProperties> seenProperties;
+    BitArray<numCSSProperties> seenImportantProperties;
+
+    Vector<CSSProperty> results;
+    results.reserveInitialCapacity(m_parsedProperties.size());
+
+    for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
+        const CSSProperty& property = m_parsedProperties[i];
+        const unsigned propertyIDIndex = property.id() - firstCSSProperty;
+
+        // Ignore non-important properties if we already have an important property with the same ID.
+        if (!property.isImportant() && seenImportantProperties.get(propertyIDIndex))
+            continue;
+
+        // If we already had this property, this new one takes precedence, so wipe out the old one.
+        if (seenProperties.get(propertyIDIndex)) {
+            for (unsigned i = 0; i < results.size(); ++i) {
+                if (results[i].id() == property.id()) {
+                    results.remove(i);
+                    break;
+                }
+            }
+        }
+
+        if (property.isImportant())
+            seenImportantProperties.set(propertyIDIndex);
+        seenProperties.set(propertyIDIndex);
+
+        results.append(property);
+    }
+
+    return results;
 }
 
 void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
@@ -9041,7 +9078,7 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
         rule->parserAdoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
+        rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -9077,7 +9114,7 @@ StyleRuleBase* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create();
-    rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
+    rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
     clearProperties();
     StyleRuleFontFace* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -9150,7 +9187,7 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
-        rule->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
+        rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9228,7 +9265,7 @@ StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 
     RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
     keyframe->setKeyText(keyString);
-    keyframe->setProperties(StylePropertySet::create(m_parsedProperties.data(), m_parsedProperties.size(), m_context.mode));
+    keyframe->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
 
     clearProperties();
 

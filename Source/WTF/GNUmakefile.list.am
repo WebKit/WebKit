@@ -12,6 +12,7 @@ wtf_sources += \
     Source/WTF/wtf/Assertions.cpp \
     Source/WTF/wtf/Assertions.h \
     Source/WTF/wtf/Atomics.h \
+    Source/WTF/wtf/BitArray.h \
     Source/WTF/wtf/BitVector.cpp \
     Source/WTF/wtf/BitVector.h \
     Source/WTF/wtf/Bitmap.h \

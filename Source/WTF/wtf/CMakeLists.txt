@@ -5,6 +5,7 @@ SET(WTF_HEADERS
     AlwaysInline.h
     Assertions.h
     Atomics.h
+    BitArray.h
     BitVector.h
     Bitmap.h
     BoundsCheckedPointer.h

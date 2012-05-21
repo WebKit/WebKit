@@ -605,6 +605,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\BitArray.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\BitVector.cpp"
 			>
 		</File>

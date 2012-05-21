@@ -282,6 +282,8 @@ public:
 
     void clearProperties();
 
+    Vector<CSSProperty> filteredProperties() const;
+
     CSSParserContext m_context;
 
     bool m_important;

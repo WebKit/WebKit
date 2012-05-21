@@ -1,3 +1,25 @@
+2012-05-21  Andreas Kling  <kling@webkit.org>
+
+        CSS: Move duplicate property elimination to parser.
+        <http://webkit.org/b/86948>
+
+        Reviewed by Antti Koivisto.
+
+        Add WTF::BitArray, a simple, malloc free, fixed-size bit array class.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitArray.h: Added.
+        (WTF):
+        (BitArray):
+        (WTF::BitArray::BitArray):
+        (WTF::BitArray::set):
+        (WTF::BitArray::get):
+        * wtf/CMakeLists.txt:
+
 2012-05-21  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Colliding isinf/isnan between C99 and C++11 with GCC >=4.6

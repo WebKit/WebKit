@@ -56,36 +56,12 @@ StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
 {
 }
 
-StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
+StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties, CSSParserMode cssParserMode)
     : m_properties(properties)
-    , m_cssParserMode(CSSStrictMode)
+    , m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
 {
     m_properties.shrinkToFit();
-}
-
-StylePropertySet::StylePropertySet(const CSSProperty* properties, int numProperties, CSSParserMode cssParserMode)
-    : m_cssParserMode(cssParserMode)
-    , m_ownsCSSOMWrapper(false)
-{
-    // FIXME: This logic belongs in CSSParser.
-
-    m_properties.reserveInitialCapacity(numProperties);
-    HashMap<int, bool> candidates;
-    for (int i = 0; i < numProperties; ++i) {
-        const CSSProperty& property = properties[i];
-        bool important = property.isImportant();
-
-        HashMap<int, bool>::iterator it = candidates.find(property.id());
-        if (it != candidates.end()) {
-            if (!important && it->second)
-                continue;
-            removeProperty(property.id());
-        }
-
-        m_properties.append(property);
-        candidates.set(property.id(), important);
-    }
 }
 
 StylePropertySet::StylePropertySet(const StylePropertySet& o)
@@ -592,10 +568,10 @@ void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleShe
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 
-void StylePropertySet::addParsedProperties(const CSSProperty* properties, int numProperties)
+void StylePropertySet::addParsedProperties(const Vector<CSSProperty>& properties)
 {
-    m_properties.reserveCapacity(numProperties);
-    for (int i = 0; i < numProperties; ++i)
+    m_properties.reserveCapacity(m_properties.size() + properties.size());
+    for (unsigned i = 0; i < properties.size(); ++i)
         addParsedProperty(properties[i]);
 }
 

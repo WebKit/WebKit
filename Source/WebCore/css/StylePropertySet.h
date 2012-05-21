@@ -47,13 +47,9 @@ public:
     {
         return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, int numProperties, CSSParserMode cssParserMode)
+    static PassRefPtr<StylePropertySet> create(const Vector<CSSProperty>& properties, CSSParserMode cssParserMode = CSSStrictMode)
     {
-        return adoptRef(new StylePropertySet(properties, numProperties, cssParserMode));
-    }
-    static PassRefPtr<StylePropertySet> create(const Vector<CSSProperty>& properties)
-    {
-        return adoptRef(new StylePropertySet(properties));
+        return adoptRef(new StylePropertySet(properties, cssParserMode));
     }
 
     unsigned propertyCount() const { return m_properties.size(); }
@@ -80,7 +76,7 @@ public:
 
     void parseDeclaration(const String& styleDeclaration, StyleSheetInternal* contextStyleSheet);
 
-    void addParsedProperties(const CSSProperty*, int numProperties);
+    void addParsedProperties(const Vector<CSSProperty>&);
     void addParsedProperty(const CSSProperty&);
 
     PassRefPtr<StylePropertySet> copyBlockProperties() const;
@@ -121,9 +117,8 @@ public:
     
 private:
     StylePropertySet(CSSParserMode);
-    StylePropertySet(const Vector<CSSProperty>&);
+    StylePropertySet(const Vector<CSSProperty>&, CSSParserMode);
     StylePropertySet(const StylePropertySet&);
-    StylePropertySet(const CSSProperty*, int numProperties, CSSParserMode);
 
     void setNeedsStyleRecalc();
 
