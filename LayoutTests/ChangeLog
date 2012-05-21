@@ -1,3 +1,20 @@
+2012-05-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: upstream build dominators tree procedure from v8.
+        https://bugs.webkit.org/show_bug.cgi?id=86640
+
+        The idea is to reduce transfer size and move all the post-processing steps to the front-end.
+        The JS implementation is ~1.5 times slower.
+
+        Reviewed by Yury Semikhatsky.
+
+        Covered by existing tests and performance tests.
+
+        * inspector/profiler/heap-snapshot-expected.txt:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockRaw):
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-21  Mike Lawther  <mikelawther@chromium.org>
 
         Crash in -webkit-calc

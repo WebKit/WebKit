@@ -95,6 +95,27 @@ function test()
             next();
         },
 
+        function heapSnapshotPostOrderIndexTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
+            var postOrderIndex = snapshot._buildPostOrderIndex().postOrderIndex2NodeIndex;
+            var expected = [28,35,21,14,7,0];
+            for (var i = 0; i < expected.length; ++i)
+                InspectorTest.assertEquals(expected[i], postOrderIndex[i], "Post ordered indexes");
+            next();
+        },
+
+        function heapSnapshotDominatorsTreeTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
+            var result = snapshot._buildPostOrderIndex();
+            var dominatorsTree = snapshot._buildDominatorTree(result.postOrderIndex2NodeIndex, result.nodeOrdinal2PostOrderIndex);
+            var expected = [0, 0, 0, 0, 14, 21];
+            for (var i = 0; i < expected.length; ++i)
+                InspectorTest.assertEquals(expected[i], dominatorsTree[i], "Dominators Tree");
+            next();
+        },
+
         function heapSnapshotRetainersTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

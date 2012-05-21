@@ -13,6 +13,10 @@ Running: heapSnapshotNodeAndEdgeTest
 
 Running: heapSnapshotSimpleTest
 
+Running: heapSnapshotPostOrderIndexTest
+
+Running: heapSnapshotDominatorsTreeTest
+
 Running: heapSnapshotRetainersTest
 
 Running: heapSnapshotAggregatesTest

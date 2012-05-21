@@ -28,7 +28,10 @@ function test()
             InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateObjectToWindowDistance");
             InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
             InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markPageOwnedNodes");
             InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildPostOrderIndex");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatorTree");
 
             timer.finish(backendTimerCookie);
             transferTimerCookie = timer.start("transfer-snapshot");

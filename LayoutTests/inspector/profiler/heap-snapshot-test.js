@@ -69,17 +69,27 @@ InspectorTest.createHeapSnapshotMockRaw = function()
             node_count: 6,
             edge_count: 7},
         nodes: [
-            0, 0, 1, 0, 20,  0,  0,
-            1, 1, 2, 2,  2,  0,  6,
-            1, 2, 3, 3,  8,  0, 12,
-            1, 3, 4, 4, 10,  0, 18,
-            1, 4, 5, 5,  5, 14, 21,
-            1, 5, 6, 6,  6, 21, 21],
+            0, 0, 1, 0, 20,  0,  0, // root (0)
+            1, 1, 2, 2,  2,  0,  6, // A (7)
+            1, 2, 3, 3,  8,  0, 12, // B (14)
+            1, 3, 4, 4, 10,  0, 18, // C (21)
+            1, 4, 5, 5,  5, 14, 21, // D (28)
+            1, 5, 6, 6,  6, 21, 21],// E (35)
         edges: [
-            1,  6,  7, 1,  7, 14,
-            0,  1, 14, 1,  8, 21,
-            1,  9, 21, 1, 10, 28,
-            1, 11, 35],
+            // root node edges
+            1,  6,  7, // property 'a' to node 'A'
+            1,  7, 14, // property 'b' to node 'B'
+
+            // A node edges
+            0,  1, 14, // element 1 to node 'B'
+            1,  8, 21, // property 'ac' to node 'C'
+
+            // B node edges
+            1,  9, 21, // property 'bc' to node 'C'
+            1, 10, 28, // property 'bd' to node 'D'
+
+            // C node edges
+            1, 11, 35], // property 'ce' to node 'E'
         strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"]
     };
 };

@@ -1,3 +1,17 @@
+2012-05-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: upstream build dominators tree procedure from v8.
+        https://bugs.webkit.org/show_bug.cgi?id=86640
+
+        The idea is to reduce transfer size and move all the post-processing steps to the front-end.
+        The JS implementation is ~1.5 times slower.
+
+        Reviewed by Yury Semikhatsky.
+
+        Covered by existing tests and performance tests.
+
+        * inspector/heap-snapshot.html:
+
 2012-05-18  Kentaro Hara  <haraken@chromium.org>
 
         [perf-test] Remove Bindings/dom-attributes.html
