@@ -66,7 +66,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
 
     if (parent->isShadowRoot() && toShadowRoot(parent)->isYoungest()) {
         m_phase = AttachingShadowChild;
-        m_parentNodeForRenderingAndStyle = parent->shadowHost();
+        m_parentNodeForRenderingAndStyle = toShadowRoot(parent)->host();
         return;
     }
 

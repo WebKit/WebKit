@@ -142,9 +142,9 @@ RenderObject* SVGShadowText::createRenderer(RenderArena* arena, RenderStyle*)
 
 void SVGShadowText::willRecalcTextStyle(StyleChange change)
 {
-    if (change != NoChange && parentNode()->shadowHost()) {
+    if (change != NoChange && parentNode()->isShadowRoot()) {
         if (renderer())
-            renderer()->setStyle(parentNode()->shadowHost()->renderer()->style());
+            renderer()->setStyle(toShadowRoot(parentNode())->host()->renderer()->style());
     }
 }
 

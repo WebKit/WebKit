@@ -58,6 +58,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "SVGTextRunRenderingContext.h"
+#include "ShadowRoot.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
 
@@ -5773,7 +5774,7 @@ bool RenderBlock::hasLineIfEmpty() const
     if (node()->isRootEditableElement())
         return true;
     
-    if (node()->isShadowRoot() && (node()->shadowHost()->hasTagName(inputTag)))
+    if (node()->isShadowRoot() && toShadowRoot(node())->host()->hasTagName(inputTag))
         return true;
     
     return false;

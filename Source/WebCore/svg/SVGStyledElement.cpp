@@ -42,6 +42,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "SVGUseElement.h"
+#include "ShadowRoot.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -90,7 +91,7 @@ String SVGStyledElement::title() const
 
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
     if (isInShadowTree()) {
-        Element* shadowHostElement = treeScope()->rootNode()->shadowHost();
+        Element* shadowHostElement = toShadowRoot(treeScope()->rootNode())->host();
         // At this time, SVG nodes are not allowed in non-<use> shadow trees, so any shadow root we do
         // have should be a use. The assert and following test is here to catch future shadow DOM changes
         // that do enable SVG in a shadow tree.

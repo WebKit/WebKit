@@ -27,6 +27,7 @@
 #ifndef ShadowRoot_h
 #define ShadowRoot_h
 
+#include "ContainerNode.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -68,7 +69,8 @@ public:
     virtual bool applyAuthorStyles() const OVERRIDE;
     void setApplyAuthorStyles(bool);
 
-    Element* host() const { return shadowHost(); }
+    Element* host() const;
+    void setHost(Element*);
     ElementShadow* owner() const;
 
     String innerHTML() const;
@@ -103,6 +105,16 @@ private:
     bool m_applyAuthorStyles : 1;
     InsertionPoint* m_insertionPointAssignedTo;
 };
+
+inline Element* ShadowRoot::host() const
+{
+    return toElement(parentOrHostNode());
+}
+
+inline void ShadowRoot::setHost(Element* host)
+{
+    setParentOrHostNode(host);
+}
 
 inline InsertionPoint* ShadowRoot::assignedTo() const
 {

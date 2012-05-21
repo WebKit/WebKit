@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ShadowRoot.h"
 #include "TreeScopeAdopter.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -221,7 +222,7 @@ Node* TreeScope::focusedNode()
     TreeScope* treeScope = node->treeScope();
 
     while (treeScope != this && treeScope != document) {
-        node = treeScope->rootNode()->shadowHost();
+        node = toShadowRoot(treeScope->rootNode())->host();
         treeScope = node->treeScope();
     }
     if (this != treeScope)

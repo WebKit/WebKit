@@ -497,17 +497,6 @@ void Node::clearRareData()
     clearFlag(HasRareDataFlag);
 }
 
-Element* Node::shadowHost() const
-{
-    return toElement(isShadowRoot() ? parent() : 0);
-}
-
-void Node::setShadowHost(Element* host)
-{
-    ASSERT(!parentNode() && isShadowRoot());
-    setParent(host);
-}
-
 Node* Node::toNode()
 {
     return this;
@@ -1552,7 +1541,7 @@ Element* Node::parentOrHostElement() const
         return 0;
 
     if (parent->isShadowRoot())
-        return parent->shadowHost();
+        return toShadowRoot(parent)->host();
 
     if (!parent->isElementNode())
         return 0;

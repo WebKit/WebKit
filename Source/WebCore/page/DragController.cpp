@@ -63,6 +63,7 @@
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StylePropertySet.h"
 #include "Text.h"
 #include "TextEvent.h"
@@ -276,7 +277,7 @@ static HTMLInputElement* asFileInput(Node* node)
 
     // If this is a button inside of the a file input, move up to the file input.
     if (inputElement && inputElement->isTextButton() && inputElement->treeScope()->rootNode()->isShadowRoot())
-        inputElement = inputElement->treeScope()->rootNode()->shadowHost()->toInputElement();
+        inputElement = toShadowRoot(inputElement->treeScope()->rootNode())->host()->toInputElement();
 
     return inputElement && inputElement->isFileUpload() ? inputElement : 0;
 }

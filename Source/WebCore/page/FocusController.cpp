@@ -110,7 +110,7 @@ Element* FocusScope::owner() const
 {
     Node* root = rootNode();
     if (root->isShadowRoot())
-        return root->shadowHost();
+        return toShadowRoot(root)->host();
     if (Frame* frame = root->document()->frame())
         return frame->ownerElement();
     return 0;

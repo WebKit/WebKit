@@ -48,6 +48,8 @@ public:
 
     virtual ~SVGElementInstance();
 
+    void setParentOrHostNode(SVGElementInstance* instance) { setParent(instance); }
+
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -143,6 +145,8 @@ public:
 
 private:
     friend class SVGUseElement;
+    using TreeShared<SVGElementInstance>::parent;
+    using TreeShared<SVGElementInstance>::setParent;
 
     SVGElementInstance(SVGUseElement*, SVGUseElement*, PassRefPtr<SVGElement> originalElement);
 

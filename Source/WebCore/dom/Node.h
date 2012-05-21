@@ -229,15 +229,13 @@ public:
     // Node's parent, shadow tree host.
     ContainerNode* parentOrHostNode() const;
     Element* parentOrHostElement() const;
+    void setParentOrHostNode(ContainerNode*);
     Node* highestAncestor() const;
 
     // Use when it's guaranteed to that shadowHost is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
     // Returns the parent node, but 0 if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
-
-    Element* shadowHost() const;
-    void setShadowHost(Element*);
 
     bool selfOrAncestorHasDirAutoAttribute() const { return getFlag(SelfOrAncestorHasDirAutoFlag); }
     void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setFlag(flag, SelfOrAncestorHasDirAutoFlag); }
@@ -776,6 +774,7 @@ private:
     // This method is made private to ensure a compiler error on call sites that
     // don't follow this rule.
     using TreeShared<ContainerNode>::parent;
+    using TreeShared<ContainerNode>::setParent;
 
     void trackForDebugging();
 
@@ -831,6 +830,11 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 inline ContainerNode* Node::parentNode() const
 {
     return getFlag(IsShadowRootFlag) ? 0 : parent();
+}
+
+inline void Node::setParentOrHostNode(ContainerNode* parent)
+{
+    setParent(parent);
 }
 
 inline ContainerNode* Node::parentOrHostNode() const

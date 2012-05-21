@@ -186,6 +186,7 @@ void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
     ASSERT(!newChild->parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild->nextSibling());
     ASSERT(!newChild->previousSibling());
+    ASSERT(!newChild->isShadowRoot());
 
     forbidEventDispatch();
     Node* prev = nextChild->previousSibling();
@@ -199,7 +200,7 @@ void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
         ASSERT(m_firstChild == nextChild);
         m_firstChild = newChild;
     }
-    newChild->setParent(this);
+    newChild->setParentOrHostNode(this);
     newChild->setPreviousSibling(prev);
     newChild->setNextSibling(nextChild);
     allowEventDispatch();
@@ -428,7 +429,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
 
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);
-    oldChild->setParent(0);
+    oldChild->setParentOrHostNode(0);
 
     document()->adoptIfNeeded(oldChild);
 
@@ -481,7 +482,7 @@ void ContainerNode::removeChildren()
         // this discrepancy between removeChild() and its optimized version removeChildren().
         n->setPreviousSibling(0);
         n->setNextSibling(0);
-        n->setParent(0);
+        n->setParentOrHostNode(0);
         document()->adoptIfNeeded(n.get());
 
         m_firstChild = next;

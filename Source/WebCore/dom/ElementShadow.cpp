@@ -53,7 +53,7 @@ static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, Excep
     if (!shadowRoot)
         return true;
 
-    if (shadowRoot->shadowHost()) {
+    if (shadowRoot->host()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
@@ -74,7 +74,7 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
     if (!validateShadowRoot(shadowHost->document(), shadowRoot.get(), ec))
         return;
 
-    shadowRoot->setShadowHost(shadowHost);
+    shadowRoot->setHost(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
     if (shadowHost->attached()) {
@@ -99,7 +99,7 @@ void ElementShadow::removeAllShadowRoots()
         if (oldRoot->attached())
             oldRoot->detach();
 
-        oldRoot->setShadowHost(0);
+        oldRoot->setHost(0);
         oldRoot->setPrev(0);
         oldRoot->setNext(0);
         shadowHost->document()->adoptIfNeeded(oldRoot.get());

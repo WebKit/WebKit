@@ -40,7 +40,7 @@ class FrameView;
 class Node;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
-class PlatformWheelEvent;
+class ShadowRoot;
 class TreeScope;
 
 enum EventDispatchBehavior {
@@ -75,7 +75,8 @@ public:
 private:
     EventDispatcher(Node*);
 
-    EventDispatchBehavior determineDispatchBehavior(Event*, Node* shadowRoot);
+    EventDispatchBehavior determineDispatchBehavior(Event*, ShadowRoot*);
+
     void ensureEventAncestors(Event*);
     const EventContext* topEventContext();
 
