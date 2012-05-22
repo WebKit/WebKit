@@ -49,7 +49,6 @@ namespace WebKit {
 
 class WebApplicationCacheHost; // FIXME: Does this belong in platform?
 class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
-class WebCookieJar;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
 class WebIDBKeyPath; // FIXME: Does this belong in platform?
@@ -68,9 +67,6 @@ public:
 
     // May return null on some platforms.
     virtual WebThemeEngine* themeEngine() { return 0; }
-
-    // May return null.
-    virtual WebCookieJar* cookieJar() { return 0; }
 
     // DOM Storage --------------------------------------------------
 

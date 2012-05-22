@@ -1,3 +1,32 @@
+2012-05-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move cookieJar to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=86755
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::cookieJar):
+        * chromium/public/WebCookie.h: Added.
+        (WebKit):
+        (WebKit::WebCookie::WebCookie):
+        (WebCookie):
+        * chromium/public/WebCookieJar.h: Added.
+        (WebKit):
+        (WebCookieJar):
+        (WebKit::WebCookieJar::setCookie):
+        (WebKit::WebCookieJar::cookies):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue):
+        (WebKit::WebCookieJar::rawCookies):
+        (WebKit::WebCookieJar::deleteCookie):
+        (WebKit::WebCookieJar::cookiesEnabled):
+        (WebKit::WebCookieJar::~WebCookieJar):
+
 2012-05-22  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Remove old staging enum value WebURLRequest::TargetType::TargetIsPrerender

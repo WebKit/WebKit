@@ -43,6 +43,7 @@ namespace WebKit {
 class WebAudioBus;
 class WebBlobRegistry;
 class WebClipboard;
+class WebCookieJar;
 class WebFileSystem;
 class WebFileUtilities;
 class WebMediaStreamCenter;
@@ -63,6 +64,9 @@ public:
     WEBKIT_EXPORT static void initialize(Platform*);
     WEBKIT_EXPORT static void shutdown();
     WEBKIT_EXPORT static Platform* current();
+
+    // May return null.
+    virtual WebCookieJar* cookieJar() { return 0; }
 
     // Must return non-null.
     virtual WebClipboard* clipboard() { return 0; }

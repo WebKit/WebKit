@@ -50,8 +50,6 @@
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
 #include "platform/WebAudioBus.h"
-#include "platform/WebCookie.h"
-#include "platform/WebCookieJar.h"
 #include "platform/WebData.h"
 #include "platform/WebDragData.h"
 #include "platform/WebImage.h"
@@ -95,6 +93,8 @@
 #include "Worker.h"
 #include "WorkerContextProxy.h"
 #include <public/WebClipboard.h>
+#include <public/WebCookie.h>
+#include <public/WebCookieJar.h>
 #include <public/WebMimeRegistry.h>
 #include <public/WebWorkerRunLoop.h>
 #include <wtf/Assertions.h>
@@ -135,7 +135,7 @@ static WebCookieJar* getCookieJar(const Document* document)
         return 0;
     WebCookieJar* cookieJar = frameImpl->client()->cookieJar(frameImpl);
     if (!cookieJar)
-        cookieJar = webKitPlatformSupport()->cookieJar();
+        cookieJar = WebKit::Platform::current()->cookieJar();
     return cookieJar;
 }
 

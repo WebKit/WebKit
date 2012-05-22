@@ -302,8 +302,6 @@
                 'public/platform/WebCommon.h',
                 'public/platform/WebContentLayer.h',
                 'public/platform/WebContentLayerClient.h',
-                'public/platform/WebCookie.h',
-                'public/platform/WebCookieJar.h',
                 'public/platform/WebData.h',
                 'public/platform/WebExternalTextureLayer.h',
                 'public/platform/WebFloatPoint.h',

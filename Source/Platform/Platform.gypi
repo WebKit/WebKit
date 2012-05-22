@@ -43,6 +43,8 @@
             'chromium/public/WebCommon.h',
             'chromium/public/WebContentLayer.h',
             'chromium/public/WebContentLayerClient.h',
+            'chromium/public/WebCookie.h',
+            'chromium/public/WebCookieJar.h',
             'chromium/public/WebData.h',
             'chromium/public/WebDragData.h',
             'chromium/public/WebExternalTextureLayer.h',
