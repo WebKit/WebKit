@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
-#include <wtf/BitVector.h>
+#include <wtf/BitArray.h>
 #include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG
@@ -591,9 +591,8 @@ String StylePropertySet::asText() const
     const CSSProperty* repeatXProp = 0;
     const CSSProperty* repeatYProp = 0;
 
-    // FIXME: Stack-allocate the buffer for these BitVectors.
-    BitVector shorthandPropertyUsed;
-    BitVector shorthandPropertyAppeared;
+    BitArray<numCSSProperties> shorthandPropertyUsed;
+    BitArray<numCSSProperties> shorthandPropertyAppeared;
 
     unsigned size = m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
@@ -639,7 +638,7 @@ String StylePropertySet::asText() const
             if (!shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty)) {
                 value = borderPropertyValue(ReturnNullOnUncommonValues);
                 if (value.isNull())
-                    shorthandPropertyAppeared.ensureSizeAndSet(CSSPropertyBorder - firstCSSProperty, numCSSProperties);
+                    shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
                 else
                     shorthandPropertyID = CSSPropertyBorder;
             } else if (shorthandPropertyUsed.get(CSSPropertyBorder - firstCSSProperty))
@@ -736,12 +735,12 @@ String StylePropertySet::asText() const
                 continue;
             if (!shorthandPropertyAppeared.get(shortPropertyIndex) && value.isNull())
                 value = getPropertyValue(shorthandPropertyID);
-            shorthandPropertyAppeared.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
+            shorthandPropertyAppeared.set(shortPropertyIndex);
         }
 
         if (!value.isNull()) {
             propertyID = shorthandPropertyID;
-            shorthandPropertyUsed.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
+            shorthandPropertyUsed.set(shortPropertyIndex);
         } else
             value = prop.value()->cssText();
 
