@@ -1480,7 +1480,7 @@ BUGCR10384 SLOW MAC : fast/dom/Window/new-window-opener.html = TEXT PASS
 BUGCR10399 MAC : fast/encoding/char-decoding-mac.html = FAIL
 BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
-BUGCR23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
+BUGCR23496 LION SNOWLEOPARD : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
 BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE+TEXT
 BUGCR23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE+TEXT
 
@@ -1532,7 +1532,7 @@ BUGCR23473 MAC : fast/repaint/containing-block-position-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/content-into-overflow.html = IMAGE
 BUGCR23473 LION SNOWLEOPARD : fast/repaint/control-clip.html = IMAGE
 BUGCR23473 MAC : fast/repaint/create-layer-repaint.html = IMAGE
-BUGCR23473 MAC : fast/repaint/delete-into-nested-block.html = IMAGE
+BUGCR23473 LION SNOWLEOPARD : fast/repaint/delete-into-nested-block.html = IMAGE
 BUGCR23473 MAC : fast/repaint/dynamic-table-vertical-alignment-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/erase-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/fixed-child-move-after-scroll.html = IMAGE
@@ -1591,7 +1591,7 @@ BUGCR23473 MAC : fast/repaint/transform-layout-repaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
-BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
+BUGCR23473 LION SNOWLEOPARD : fast/repaint/transform-translate.html = IMAGE
 
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
@@ -2224,7 +2224,6 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 BUGCR65877 LINUX WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
 BUGCR65877 : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 WIN : fast/writing-mode/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE

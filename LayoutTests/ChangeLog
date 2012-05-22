@@ -1,3 +1,517 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed. Yet more updated test expectations following r117815.
+
+        * css2.1/t090501-c414-flt-03-b-g-expected.txt: Added.
+        * fast/borders/bidi-012-expected.txt: Added.
+        * fast/css/css2-system-fonts-expected.txt: Added.
+        * fast/lists/ordered-list-with-no-ol-tag-expected.txt: Added.
+        * fast/multicol/column-break-with-balancing-expected.txt: Added.
+        * fast/multicol/float-multicol-expected.txt: Added.
+        * fast/multicol/layers-in-multicol-expected.txt: Added.
+        * fast/multicol/overflow-across-columns-percent-height-expected.txt: Added.
+        * fast/multicol/scrolling-overflow-expected.txt: Added.
+        * fast/multicol/span/anonymous-before-child-parent-crash-expected.png: Added.
+        * fast/multicol/span/anonymous-before-child-parent-crash-expected.txt: Added.
+        * fast/multicol/span/anonymous-split-block-crash-expected.txt: Added.
+        * fast/multicol/span/anonymous-style-inheritance-expected.txt: Added.
+        * fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        * fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Added.
+        * fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Added.
+        * fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Added.
+        * fast/multicol/span/span-as-immediate-columns-child-expected.txt: Added.
+        * fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Added.
+        * fast/multicol/span/span-as-nested-columns-child-expected.txt: Added.
+        * fast/multicol/span/span-margin-collapsing-expected.txt: Added.
+        * fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Added.
+        * fast/multicol/vertical-lr/float-multicol-expected.txt: Added.
+        * fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Added.
+        * fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-1-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-10-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-2-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-3-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-4-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-5-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-6-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-7-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-8-expected.txt: Added.
+        * fast/repaint/line-flow-with-floats-9-expected.txt: Added.
+        * fast/ruby/ruby-inline-table-expected.txt: Added.
+        * fast/selectors/032-expected.txt: Added.
+        * fast/selectors/unqualified-hover-quirks-expected.txt: Added.
+        * fast/table/009-expected.txt: Added.
+        * fast/table/014-expected.txt: Added.
+        * fast/table/041-expected.txt: Added.
+        * fast/table/nested-percent-height-table-expected.txt: Added.
+        * fast/table/percent-heights-expected.txt: Added.
+        * fast/text/basic/012-expected.txt: Added.
+        * fast/text/basic/generic-family-reset-expected.txt: Added.
+        * fast/text/line-breaks-expected.txt: Added.
+        * fast/transforms/bounding-rect-zoom-expected.txt: Added.
+        * fast/writing-mode/fieldsets-expected.txt: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-tall-block-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/column-break-with-balancing-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-break-with-balancing-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-rules-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/column-rules-stacking-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/float-paginate-complex-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/max-height-columns-block-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/overflow-across-columns-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/overflow-across-columns-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/overflow-unsplittable-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/scrolling-overflow-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/table-vertical-align-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/chromium-mac-leopard/fast/overflow/overflow_hidden-expected.png:
+        * platform/chromium-mac-leopard/fast/overflow/overflow_hidden-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/parser/xhtml-alternate-entities-expected.png:
+        * platform/chromium-mac-leopard/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/chromium-mac-leopard/fast/reflections/opacity-reflection-transform-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/bottom-overflow-out-of-first-region-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/overflow-size-change-in-variable-width-regions-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/overflow-size-change-with-stacking-context-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png:
+        * platform/chromium-mac-leopard/fast/regions/top-overflow-out-of-second-region-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/ruby/ruby-inline-table-expected.png:
+        * platform/chromium-mac-leopard/fast/selectors/032-expected.png:
+        * platform/chromium-mac-leopard/fast/selectors/166-expected.png:
+        * platform/chromium-mac-leopard/fast/selectors/unqualified-hover-quirks-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac-leopard/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac-leopard/fast/table/009-expected.png:
+        * platform/chromium-mac-leopard/fast/table/014-expected.png:
+        * platform/chromium-mac-leopard/fast/table/041-expected.png:
+        * platform/chromium-mac-leopard/fast/table/absolute-table-at-bottom-expected.png:
+        * platform/chromium-mac-leopard/fast/table/border-collapsing/004-expected.png:
+        * platform/chromium-mac-leopard/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-1-expected.png:
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-2-expected.png:
+        * platform/chromium-mac-leopard/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/table/nested-percent-height-table-expected.png:
+        * platform/chromium-mac-leopard/fast/table/percent-heights-expected.png:
+        * platform/chromium-mac-leopard/fast/text/basic/012-expected.png:
+        * platform/chromium-mac-leopard/fast/text/basic/013-expected.png:
+        * platform/chromium-mac-leopard/fast/text/basic/generic-family-reset-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-mac-leopard/fast/text/line-breaks-expected.png:
+        * platform/chromium-mac-leopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-leopard/fast/text/whitespace/024-expected.png:
+        * platform/chromium-mac-leopard/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/chromium-mac-leopard/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/chromium-mac-leopard/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-mac-leopard/fast/writing-mode/broken-ideographic-font-expected.png:
+        * platform/chromium-mac-leopard/fast/writing-mode/broken-ideographic-font-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac-leopard/fast/xsl/xslt-extra-content-at-end-expected.png:
+        * platform/chromium-mac-leopard/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/chromium-mac-leopard/http/tests/misc/iframe404-expected.png:
+        * platform/chromium-mac-leopard/http/tests/misc/iframe404-expected.txt: Added.
+        * platform/chromium-mac-leopard/ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box-expected.png:
+        * platform/chromium-mac-leopard/ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box-expected.txt: Added.
+        * platform/chromium-mac-leopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-mac-leopard/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-mac-leopard/svg/text/small-fonts-in-html5-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-images-expected.txt: Added.
+        * platform/chromium-mac/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/css1/font_properties/font-expected.txt: Added.
+        * platform/chromium-mac/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-mac/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/chromium-mac/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-mac/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/chromium-mac/fast/multicol/column-break-with-balancing-expected.png:
+        * platform/chromium-mac/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-mac/fast/multicol/column-rules-expected.png:
+        * platform/chromium-mac/fast/multicol/column-rules-stacking-expected.png:
+        * platform/chromium-mac/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/chromium-mac/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/float-paginate-complex-expected.png:
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/max-height-columns-block-expected.png:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/overflow-across-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/chromium-mac/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-mac/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-mac/fast/multicol/scrolling-overflow-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/chromium-mac/fast/multicol/table-vertical-align-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/column-break-with-balancing-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/column-break-with-balancing-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow_hidden-expected.png:
+        * platform/chromium-mac/fast/parser/xhtml-alternate-entities-expected.png:
+        * platform/chromium-mac/fast/reflections/opacity-reflection-transform-expected.png:
+        * platform/chromium-mac/fast/regions/bottom-overflow-out-of-first-region-expected.png:
+        * platform/chromium-mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png:
+        * platform/chromium-mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.png:
+        * platform/chromium-mac/fast/regions/overflow-size-change-with-stacking-context-expected.png:
+        * platform/chromium-mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png:
+        * platform/chromium-mac/fast/regions/top-overflow-out-of-second-region-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac/fast/ruby/ruby-inline-table-expected.png:
+        * platform/chromium-mac/fast/selectors/032-expected.png:
+        * platform/chromium-mac/fast/selectors/166-expected.png:
+        * platform/chromium-mac/fast/selectors/unqualified-hover-quirks-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac/fast/table/009-expected.png:
+        * platform/chromium-mac/fast/table/014-expected.png:
+        * platform/chromium-mac/fast/table/041-expected.png:
+        * platform/chromium-mac/fast/table/absolute-table-at-bottom-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/004-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-1-expected.png:
+        * platform/chromium-mac/fast/table/mozilla-bug10296-vertical-align-2-expected.png:
+        * platform/chromium-mac/fast/table/nested-percent-height-table-expected.png:
+        * platform/chromium-mac/fast/table/percent-heights-expected.png:
+        * platform/chromium-mac/fast/text/basic/012-expected.png:
+        * platform/chromium-mac/fast/text/basic/013-expected.png:
+        * platform/chromium-mac/fast/text/basic/generic-family-reset-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-mac/fast/text/line-breaks-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/fast/text/whitespace/024-expected.png:
+        * platform/chromium-mac/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac/fast/xsl/xslt-extra-content-at-end-expected.png:
+        * platform/chromium-mac/http/tests/misc/iframe404-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-win-vista/compositing/reflections: Removed.
+        * platform/chromium-win-vista/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-vista/css1/font_properties: Added.
+        * platform/chromium-win-vista/css1/font_properties/font-expected.txt: Added.
+        * platform/chromium-win-vista/css1/text_properties/vertical_align-expected.png: Added.
+        * platform/chromium-win-vista/fast/images: Removed.
+        * platform/chromium-win-vista/fast/multicol: Added.
+        * platform/chromium-win-vista/fast/multicol/vertical-rl: Added.
+        * platform/chromium-win-vista/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-win-vista/fast/ruby: Removed.
+        * platform/chromium-win-vista/fast/text/basic: Removed.
+        * platform/chromium-win-vista/fast/writing-mode/broken-ideographic-font-expected.txt: Added.
+        * platform/chromium-win-vista/http/tests/misc/iframe404-expected.png: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-win-xp/compositing/reflections: Removed.
+        * platform/chromium-win-xp/compositing/shadows: Removed.
+        * platform/chromium-win-xp/fast/css/css2-system-fonts-expected.txt:
+        * platform/chromium-win-xp/fast/images: Removed.
+        * platform/chromium-win-xp/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win-xp/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-win-xp/fast/text/line-breaks-expected.png:
+        * platform/chromium-win-xp/fast/text/line-breaks-expected.txt:
+        * platform/chromium-win-xp/fast/writing-mode/broken-ideographic-font-expected.txt: Added.
+        * platform/chromium-win/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-win/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/css1/font_properties/font-expected.txt:
+        * platform/chromium-win/css1/text_properties/vertical_align-expected.png:
+        * platform/chromium-win/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/chromium-win/fast/borders/bidi-012-expected.txt:
+        * platform/chromium-win/fast/css/continuationCrash-expected.txt:
+        * platform/chromium-win/fast/css/css2-system-fonts-expected.txt:
+        * platform/chromium-win/fast/css/hsla-color-expected.png:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-win/fast/css/preserve-user-specified-zoom-level-on-reload-expected.png:
+        * platform/chromium-win/fast/css/rgb-float-expected.png:
+        * platform/chromium-win/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/chromium-win/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/chromium-win/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/chromium-win/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/chromium-win/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-win/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-win/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-win/fast/images/imagemap-focus-ring-zoom-expected.png:
+        * platform/chromium-win/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/chromium-win/fast/multicol/column-break-with-balancing-expected.png:
+        * platform/chromium-win/fast/multicol/column-break-with-balancing-expected.txt:
+        * platform/chromium-win/fast/multicol/column-count-with-rules-expected.png:
+        * platform/chromium-win/fast/multicol/column-rules-expected.png:
+        * platform/chromium-win/fast/multicol/column-rules-stacking-expected.png:
+        * platform/chromium-win/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/float-paginate-complex-expected.png:
+        * platform/chromium-win/fast/multicol/layers-in-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/max-height-columns-block-expected.png:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/overflow-across-columns-expected.png:
+        * platform/chromium-win/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/chromium-win/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/chromium-win/fast/multicol/positive-leading-expected.png:
+        * platform/chromium-win/fast/multicol/scrolling-overflow-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/chromium-win/fast/multicol/table-vertical-align-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/column-break-with-balancing-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/column-break-with-balancing-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-win/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/chromium-win/fast/overflow/overflow_hidden-expected.png:
+        * platform/chromium-win/fast/parser/xhtml-alternate-entities-expected.png:
+        * platform/chromium-win/fast/reflections/opacity-reflection-transform-expected.png:
+        * platform/chromium-win/fast/regions/bottom-overflow-out-of-first-region-expected.png:
+        * platform/chromium-win/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png:
+        * platform/chromium-win/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-win/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/chromium-win/fast/regions/overflow-size-change-in-variable-width-regions-expected.png:
+        * platform/chromium-win/fast/regions/overflow-size-change-with-stacking-context-expected.png:
+        * platform/chromium-win/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png:
+        * platform/chromium-win/fast/regions/top-overflow-out-of-second-region-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.png:
+        * platform/chromium-win/fast/selectors/032-expected.png:
+        * platform/chromium-win/fast/selectors/166-expected.png:
+        * platform/chromium-win/fast/selectors/unqualified-hover-quirks-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-win/fast/table/009-expected.png:
+        * platform/chromium-win/fast/table/014-expected.png:
+        * platform/chromium-win/fast/table/041-expected.png:
+        * platform/chromium-win/fast/table/absolute-table-at-bottom-expected.png:
+        * platform/chromium-win/fast/table/border-collapsing/004-expected.png:
+        * platform/chromium-win/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-1-expected.png:
+        * platform/chromium-win/fast/table/mozilla-bug10296-vertical-align-2-expected.png:
+        * platform/chromium-win/fast/table/nested-percent-height-table-expected.png:
+        * platform/chromium-win/fast/table/percent-heights-expected.png:
+        * platform/chromium-win/fast/text/basic/012-expected.png:
+        * platform/chromium-win/fast/text/basic/013-expected.png:
+        * platform/chromium-win/fast/text/basic/generic-family-reset-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-win/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-win/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/chromium-win/fast/text/line-breaks-expected.png:
+        * platform/chromium-win/fast/text/line-breaks-expected.txt:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-win/fast/text/whitespace/024-expected.png:
+        * platform/chromium-win/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/chromium-win/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.txt: Added.
+        * platform/chromium-win/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-win/fast/xsl/xslt-extra-content-at-end-expected.png:
+        * platform/chromium-win/http/tests/misc/iframe404-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/chromium-win/svg/text/small-fonts-in-html5-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/css1/font_properties/font-expected.txt: Removed.
+        * platform/efl/css2.1/t090501-c414-flt-03-b-g-expected.txt: Removed.
+        * platform/efl/fast/borders/bidi-012-expected.txt: Removed.
+        * platform/efl/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/efl/fast/lists/ordered-list-with-no-ol-tag-expected.txt: Removed.
+        * platform/efl/fast/multicol/column-break-with-balancing-expected.txt: Removed.
+        * platform/efl/fast/multicol/float-multicol-expected.txt: Removed.
+        * platform/efl/fast/multicol/layers-in-multicol-expected.txt: Removed.
+        * platform/efl/fast/multicol/overflow-across-columns-percent-height-expected.txt: Removed.
+        * platform/efl/fast/multicol/scrolling-overflow-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/anonymous-before-child-parent-crash-expected.png: Removed.
+        * platform/efl/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/anonymous-split-block-crash-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/anonymous-style-inheritance-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-margin-collapsing-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-lr/float-multicol-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-rl/float-multicol-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-1-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-10-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-2-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-3-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-4-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-5-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-6-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-7-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-8-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-9-expected.txt: Removed.
+        * platform/efl/fast/ruby/ruby-inline-table-expected.txt: Removed.
+        * platform/efl/fast/selectors/032-expected.txt: Removed.
+        * platform/efl/fast/selectors/unqualified-hover-quirks-expected.txt: Removed.
+        * platform/efl/fast/table/009-expected.txt: Removed.
+        * platform/efl/fast/table/014-expected.txt: Removed.
+        * platform/efl/fast/table/041-expected.txt: Removed.
+        * platform/efl/fast/table/nested-percent-height-table-expected.txt: Removed.
+        * platform/efl/fast/table/percent-heights-expected.txt: Removed.
+        * platform/efl/fast/text/basic/012-expected.txt: Removed.
+        * platform/efl/fast/text/basic/generic-family-reset-expected.txt: Removed.
+        * platform/efl/fast/text/line-breaks-expected.txt: Removed.
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.txt: Removed.
+        * platform/efl/fast/writing-mode/fieldsets-expected.txt: Removed.
+        * platform/gtk/css2.1/t090501-c414-flt-03-b-g-expected.txt: Removed.
+        * platform/gtk/fast/borders/bidi-012-expected.txt: Removed.
+        * platform/gtk/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/gtk/fast/lists/ordered-list-with-no-ol-tag-expected.txt: Removed.
+        * platform/gtk/fast/multicol/column-break-with-balancing-expected.txt: Removed.
+        * platform/gtk/fast/multicol/float-multicol-expected.txt: Removed.
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt: Removed.
+        * platform/gtk/fast/multicol/overflow-across-columns-percent-height-expected.txt: Removed.
+        * platform/gtk/fast/multicol/scrolling-overflow-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/anonymous-before-child-parent-crash-expected.png: Removed.
+        * platform/gtk/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/anonymous-split-block-crash-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/anonymous-style-inheritance-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-margin-collapsing-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-lr/column-break-with-balancing-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-rl/float-multicol-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-1-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-10-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-2-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-3-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-4-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-5-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-6-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-7-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-8-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-9-expected.txt: Removed.
+        * platform/gtk/fast/ruby/ruby-inline-table-expected.txt: Removed.
+        * platform/gtk/fast/selectors/032-expected.txt: Removed.
+        * platform/gtk/fast/selectors/unqualified-hover-quirks-expected.txt: Removed.
+        * platform/gtk/fast/table/009-expected.txt: Removed.
+        * platform/gtk/fast/table/014-expected.txt: Removed.
+        * platform/gtk/fast/table/041-expected.txt: Removed.
+        * platform/gtk/fast/table/nested-percent-height-table-expected.txt: Removed.
+        * platform/gtk/fast/table/percent-heights-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/012-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/generic-family-reset-expected.txt: Removed.
+        * platform/gtk/fast/text/line-breaks-expected.txt: Removed.
+        * platform/gtk/fast/transforms/bounding-rect-zoom-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/fieldsets-expected.txt: Removed.
+        * platform/mac-snowleopard/css1/font_properties/font-expected.txt: Removed.
+        * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.txt: Removed.
+
 2012-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         Add support for private names

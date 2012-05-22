@@ -8,8 +8,8 @@ layer at (0,0) size 785x600
           text run at (0,0) width 747: "The column on the right has explicit spaces. Line breaks should be roughly the same if Thai line breaks are working well. The"
           text run at (0,20) width 734: "original source of this text was ICU, and the test program said \"by it's very nature, Thai word breaking is not exact\", so the"
           text run at (0,40) width 742: "columns don't match exactly. In a future version we might decide to tweak the right column to match our expected behavior."
-layer at (235,84) size 1x25360
-  RenderBlock (positioned) {DIV} at (235,84) size 1x25360
+layer at (236,84) size 1x25360
+  RenderBlock (positioned) {DIV} at (235,84) size 2x25360
     RenderText {#text} at (0,0) size 83x25359
       text run at (0,0) width 21: "\x{E1A}\x{E17}"
       text run at (0,20) width 49: "\x{E17}\x{E35}\x{E48}\x{E51}\x{E1E}\x{E32}\x{E22}\x{E38}"
