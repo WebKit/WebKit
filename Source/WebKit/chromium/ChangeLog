@@ -1,3 +1,17 @@
+2012-05-22  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Speed up CCLayerTreeHostTestTickAnimationWhileBackgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=86871
+
+        Reviewed by James Robinson.
+
+        Use a shorter time interval for background animation ticking so that
+        unit tests can run faster.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostImpl::lowFrequencyAnimationInterval):
+        (MockLayerTreeHostImpl):
+
 2012-05-21  Alexandre Elias  <aelias@google.com>
 
         [chromium] Simplify RTL root layer adjustment

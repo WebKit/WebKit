@@ -43,11 +43,11 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
+#include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
 namespace {
-const double lowFrequencyAnimationInterval = 1;
 
 void didVisibilityChange(WebCore::CCLayerTreeHostImpl* id, bool visible)
 {
@@ -78,6 +78,11 @@ public:
 
     virtual void onTimerTick() OVERRIDE
     {
+        // FIXME: We require that animate be called on the impl thread. This
+        // avoids asserts in single threaded mode. Ideally background ticking
+        // would be handled by the proxy/scheduler and this could be removed.
+        DebugScopedSetImplThread impl;
+
         m_layerTreeHostImpl->animate(monotonicallyIncreasingTime(), currentTime());
     }
 
@@ -119,7 +124,6 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_maxPageScale(0)
     , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
-    , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval, CCProxy::currentThread())))
     , m_fpsCounter(CCFrameRateCounter::create())
     , m_debugRectHistory(CCDebugRectHistory::create())
 {
@@ -370,6 +374,15 @@ void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double mo
     needsAnimateLayers = subtreeNeedsAnimateLayers;
 }
 
+void CCLayerTreeHostImpl::setBackgroundTickingEnabled(bool enabled)
+{
+    // Lazily create the timeSource adapter so that we can vary the interval for testing.
+    if (!m_timeSourceClientAdapter)
+        m_timeSourceClientAdapter = CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval(), CCProxy::currentThread()));
+
+    m_timeSourceClientAdapter->setActive(enabled);
+}
+
 IntSize CCLayerTreeHostImpl::contentSize() const
 {
     // TODO(aelias): Hardcoding the first child here is weird. Think of
@@ -514,6 +527,8 @@ void CCLayerTreeHostImpl::setRootLayer(PassOwnPtr<CCLayerImpl> layer)
 
 void CCLayerTreeHostImpl::setVisible(bool visible)
 {
+    ASSERT(CCProxy::isImplThread());
+
     if (m_visible == visible)
         return;
     m_visible = visible;
@@ -524,8 +539,7 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
 
     m_layerRenderer->setVisible(visible);
 
-    const bool shouldTickInBackground = !visible && m_needsAnimateLayers;
-    m_timeSourceClientAdapter->setActive(shouldTickInBackground);
+    setBackgroundTickingEnabled(!m_visible && m_needsAnimateLayers);
 }
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploader)
@@ -863,8 +877,12 @@ void CCLayerTreeHostImpl::animateLayers(double monotonicTime, double wallClockTi
     if (didAnimate)
         m_client->setNeedsRedrawOnImplThread();
 
-    const bool shouldTickInBackground = m_needsAnimateLayers && !m_visible;
-    m_timeSourceClientAdapter->setActive(shouldTickInBackground);
+    setBackgroundTickingEnabled(!m_visible && m_needsAnimateLayers);
+}
+
+double CCLayerTreeHostImpl::lowFrequencyAnimationInterval() const
+{
+    return 1;
 }
 
 void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)

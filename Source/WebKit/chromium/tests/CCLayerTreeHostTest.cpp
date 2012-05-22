@@ -135,6 +135,11 @@ protected:
         m_testHooks->animateLayers(this, monotonicTime);
     }
 
+    virtual double lowFrequencyAnimationInterval() const
+    {
+        return 1.0 / 60;
+    }
+
 private:
     MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
         : CCLayerTreeHostImpl(settings, client)

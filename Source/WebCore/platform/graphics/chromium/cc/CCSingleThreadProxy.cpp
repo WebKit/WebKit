@@ -273,15 +273,19 @@ bool CCSingleThreadProxy::commitRequested() const
 
 void CCSingleThreadProxy::setVisible(bool visible)
 {
+    DebugScopedSetImplThread impl;
     m_layerTreeHostImpl->setVisible(visible);
 
     if (!visible) {
-        DebugScopedSetImplThread impl;
+
         m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
         return;
     }
 
-    setNeedsCommit();
+    {
+        DebugScopedSetMainThread main;
+        setNeedsCommit();
+    }
 }
 
 void CCSingleThreadProxy::didAddAnimation()

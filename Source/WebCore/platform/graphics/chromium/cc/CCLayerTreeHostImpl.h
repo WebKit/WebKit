@@ -177,6 +177,9 @@ protected:
     // Virtual for testing.
     virtual void animateLayers(double monotonicTime, double wallClockTime);
 
+    // Virtual for testing. Measured in seconds.
+    virtual double lowFrequencyAnimationInterval() const;
+
     CCLayerTreeHostImplClient* m_client;
     int m_sourceFrameNumber;
     int m_frameNumber;
@@ -197,6 +200,7 @@ private:
     // if this helper function is called.
     bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
+    void setBackgroundTickingEnabled(bool);
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
