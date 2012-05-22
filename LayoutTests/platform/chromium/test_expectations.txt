@@ -3676,8 +3676,6 @@ BUGDPRANKE : http/tests/security/sandboxed-iframe-modify-self.html = TEXT
 BUGDPRANKE MAC LINUX : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 
-BUGWK85868 MAC : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
-
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
