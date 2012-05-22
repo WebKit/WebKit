@@ -38,7 +38,7 @@ namespace {
 TEST(FilterOperationsTest, getOutsetsBlur)
 {
     FilterOperations ops;
-    ops.operations().append(BlurFilterOperation::create(Length(20.0, Fixed), FilterOperation::BLUR));
+    ops.operations().append(BlurFilterOperation::create(Length(20.0, WebCore::Fixed), FilterOperation::BLUR));
     EXPECT_TRUE(ops.hasOutsets());
     int top, right, bottom, left;
     top = right = bottom = left = 0;
