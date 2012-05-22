@@ -777,9 +777,11 @@ WebInspector.ScriptsPanel.prototype = {
         if (active) {
             this._toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
             WebInspector.inspectorView.element.removeStyleClass("breakpoints-deactivated");
+            this.sidebarPanes.jsBreakpoints.listElement.removeStyleClass("breakpoints-list-deactivated");
         } else {
             this._toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
             WebInspector.inspectorView.element.addStyleClass("breakpoints-deactivated");
+            this.sidebarPanes.jsBreakpoints.listElement.addStyleClass("breakpoints-list-deactivated");
         }
     },
 

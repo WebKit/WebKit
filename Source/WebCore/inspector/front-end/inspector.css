@@ -2139,6 +2139,11 @@ ol.breakpoint-list {
     margin: 0;
 }
 
+.breakpoints-list-deactivated {
+    background-color: rgb(245, 245, 245);
+    opacity: 0.3;
+}
+
 .breakpoint-list li {
     white-space: nowrap;
     text-overflow: ellipsis;
