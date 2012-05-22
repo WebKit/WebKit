@@ -1423,11 +1423,11 @@ public:
         root->setMaxScrollPosition(IntSize(100, 100));
         root->scrollBy(m_scrollAmount);
 
-        if (impl->frameNumber() == 1) {
+        if (!impl->sourceFrameNumber()) {
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
             postSetNeedsCommitToMainThread();
-        } else if (impl->frameNumber() == 2) {
+        } else if (impl->sourceFrameNumber() == 1) {
             EXPECT_EQ(root->scrollPosition(), m_secondScroll);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
             endTest();
@@ -1490,21 +1490,25 @@ public:
         root->setScrollable(true);
         root->setMaxScrollPosition(IntSize(100, 100));
 
-        if (impl->frameNumber() == 1) {
+        if (!impl->sourceFrameNumber() && impl->frameNumber() == 1) {
+            // First draw after first commit.
             EXPECT_EQ(root->scrollDelta(), IntSize());
             root->scrollBy(m_scrollAmount);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
 
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
             postSetNeedsRedrawToMainThread();
-        } else if (impl->frameNumber() == 2) {
+        } else if (!impl->sourceFrameNumber() && impl->frameNumber() == 2) {
+            // Second draw after first commit.
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
             root->scrollBy(m_scrollAmount);
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount + m_scrollAmount);
 
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
             postSetNeedsCommitToMainThread();
-        } else if (impl->frameNumber() == 3) {
+        } else if (impl->sourceFrameNumber() == 1) {
+            // Third or later draw after second commit.
+            EXPECT_GE(impl->frameNumber(), 3);
             EXPECT_EQ(root->scrollDelta(), IntSize());
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
             endTest();
@@ -1612,9 +1616,8 @@ public:
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
     {
         impl->processScrollDeltas();
-        // We get one commit before the first draw, and the animation doesn't happen until the second draw,
-        // so results available on the third commit.
-        if (impl->frameNumber() == 2) {
+        // We get one commit before the first draw, and the animation doesn't happen until the second draw.
+        if (impl->sourceFrameNumber() == 1) {
             EXPECT_EQ(1.25, impl->pageScale());
             endTest();
         } else
@@ -2650,15 +2653,15 @@ public:
         root->setMaxScrollPosition(IntSize(100, 100));
 
         // Check that a fractional scroll delta is correctly accumulated over multiple commits.
-        if (impl->frameNumber() == 1) {
+        if (!impl->sourceFrameNumber()) {
             EXPECT_EQ(root->scrollPosition(), IntPoint(0, 0));
             EXPECT_EQ(root->scrollDelta(), FloatSize(0, 0));
             postSetNeedsCommitToMainThread();
-        } else if (impl->frameNumber() == 2) {
+        } else if (impl->sourceFrameNumber() == 1) {
             EXPECT_EQ(root->scrollPosition(), flooredIntPoint(m_scrollAmount));
             EXPECT_EQ(root->scrollDelta(), FloatSize(fmod(m_scrollAmount.width(), 1), 0));
             postSetNeedsCommitToMainThread();
-        } else if (impl->frameNumber() == 3) {
+        } else if (impl->sourceFrameNumber() == 2) {
             EXPECT_EQ(root->scrollPosition(), flooredIntPoint(m_scrollAmount + m_scrollAmount));
             EXPECT_EQ(root->scrollDelta(), FloatSize(fmod(2 * m_scrollAmount.width(), 1), 0));
             endTest();

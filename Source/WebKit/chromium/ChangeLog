@@ -1,3 +1,27 @@
+2012-05-22  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Fix tests being flaky when multiple draws occur in between commits
+        https://bugs.webkit.org/show_bug.cgi?id=83935
+
+        Tests that are verifying events in a commit/draw lock-step pattern, should use
+        sourceFrameNumber() not frameNumber() on the impl side.
+        Otherwise they will fail if the same frame is drawn more than once in
+        between commits (which is perfectly legal and could happen for example
+        because we draw without a new commit because we are still in BEGIN_FRAME
+        or updating resources).
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestScrollSimple::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestStartPageScaleAnimation::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommit::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommit::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestFractionalScroll::drawLayersOnCCThread):
+
 2012-05-22  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Move asserts in CCLayerTreeHostTest::dispatch*
