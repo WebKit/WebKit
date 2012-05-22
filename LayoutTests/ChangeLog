@@ -1,5 +1,14 @@
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
+        Remove platform specific ref-test expectations for chromium as ref-tests appears not to support platform specific results.
+
+        * platform/chromium/fast/regions/floats-basic-in-variable-width-regions-expected.html: Removed.
+        * platform/chromium/fast/regions/overflow-in-uniform-regions-expected.html: Removed.
+        * platform/chromium/fast/regions/render-region-renderer-expected.html: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium svg rebaselines and test expectation updates post r117815.
 
         * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:

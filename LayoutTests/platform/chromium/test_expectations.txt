@@ -3763,3 +3763,8 @@ BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-1.html = PASS TIME
 BUGWK87075 : svg/animations/animate-path-nested-transforms.html = PASS TIMEOUT
 BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-2.html = PASS TIMEOUT
 BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-3.html = PASS TIMEOUT
+
+// Ref-tests can't have platform specific results.
+BUG_EAE SKIP : fast/regions/floats-basic-in-variable-width-regions.html = FAIL
+BUG_EAE SKIP : fast/regions/overflow-in-uniform-regions.html = FAIL
+BUG_EAE SKIP : fast/regions/render-region-renderer.html = FAIL
