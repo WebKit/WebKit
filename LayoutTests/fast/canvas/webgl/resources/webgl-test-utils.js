@@ -453,14 +453,19 @@ var loadTexture = function(gl, url, callback) {
  */
 var create3DContext = function(opt_canvas, opt_attributes) {
   opt_canvas = opt_canvas || document.createElement("canvas");
+  if (typeof opt_canvas == 'string') {
+    opt_canvas = document.getElementById(opt_canvas);
+  }
   var context = null;
-  try {
-    context = opt_canvas.getContext("webgl", opt_attributes);
-  } catch(e) {}
-  if (!context) {
+  var names = ["webgl", "experimental-webgl"];
+  for (var i = 0; i < names.length; ++i) {
     try {
-      context = opt_canvas.getContext("experimental-webgl", opt_attributes);
-    } catch(e) {}
+      context = opt_canvas.getContext(names[i], opt_attributes);
+    } catch (e) {
+    }
+    if (context) {
+      break;
+    }
   }
   if (!context) {
     testFailed("Unable to fetch WebGL rendering context for Canvas");

@@ -1,3 +1,63 @@
+2012-05-22  Kenneth Russell  <kbr@google.com>
+
+        Must set/reset pixel unpack alignment to 1 during texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=86877
+
+        Reviewed by James Robinson.
+
+        Incorporated several tests from WebGL conformance suite at Khronos
+        as layout tests, verifying upload to all packed pixel formats.
+
+        There were difficulties incorporating the video-related variants
+        of these tests; Bug 87042 has been filed to track their addition.
+
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-canvas.js: Added.
+        (generateTest.init):
+        (generateTest.runOneIteration):
+        (generateTest.runTest):
+        (generateTest):
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-image-data.js: Added.
+        (generateTest.init):
+        (generateTest.runOneIteration):
+        (generateTest.runTest):
+        (generateTest):
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-image.js: Added.
+        (generateTest.init):
+        (generateTest.runOneIteration):
+        (generateTest.runTestOnImage):
+        (generateTest.runTest.newImage.onload):
+        (generateTest.runTest):
+        (generateTest.runTest2.newImage.onload):
+        (generateTest.runTest2):
+        (generateTest.runTest3):
+        (generateTest):
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551-expected.txt: Copied from LayoutTests/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-expected.txt.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-expected.txt:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba4444-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba4444.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba5551-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba5551.html: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed table rebaselines for chromium.

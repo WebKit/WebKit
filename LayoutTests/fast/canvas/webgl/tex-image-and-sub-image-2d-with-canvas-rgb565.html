@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script src="resources/tex-image-and-sub-image-2d-with-canvas.js"></script>
+<script>
+function testPrologue(gl) {
+    return true;
+}
+</script>
+</head>
+<body onload='generateTest("RGB", "UNSIGNED_SHORT_5_6_5", testPrologue)()'>
+<canvas id="example" width="32px" height="32px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

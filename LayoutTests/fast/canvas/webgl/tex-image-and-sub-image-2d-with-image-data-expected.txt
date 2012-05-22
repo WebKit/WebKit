@@ -1,5 +1,5 @@
  
-Verify texImage2D and texSubImage2D code paths taking ImageData
+Verify texImage2D and texSubImage2D code paths taking ImageData (RGBA/UNSIGNED_BYTE)
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -43,6 +43,7 @@ Checking bottom pixel
 PASS shouldBe 255,0,0,255
 Checking top pixel
 PASS shouldBe 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors
 PASS successfullyParsed is true
 
 TEST COMPLETE

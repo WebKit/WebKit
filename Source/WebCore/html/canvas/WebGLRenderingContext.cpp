@@ -3735,8 +3735,12 @@ void WebGLRenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image");
         return;
     }
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(),
                       format, type, data.data(), ec);
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
 void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
@@ -3776,8 +3780,12 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image data");
         return;
     }
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(),
                       format, type, data.data(), ec);
+    if (m_unpackAlignment != 1)
+        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
 void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,

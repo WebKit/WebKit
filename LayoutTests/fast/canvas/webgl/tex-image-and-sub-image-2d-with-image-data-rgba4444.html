@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script src="resources/tex-image-and-sub-image-2d-with-image-data.js"></script>
+<script>
+function testPrologue(gl) {
+    return true;
+}
+</script>
+</head>
+<body onload='generateTest("RGBA", "UNSIGNED_SHORT_4_4_4_4", testPrologue)()'>
+<canvas id="texcanvas" width="1px" height="2px"></canvas>
+<canvas id="example" width="1px" height="2px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>
