@@ -1,3 +1,9 @@
+2012-05-21  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Rebaseline for r117865.
+
+        * platform/chromium-linux/fast/runin/runin-between-list-marker-and-before-content-expected.png: Added.
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Chromium linux rebaselines post sub-pixel switch.
