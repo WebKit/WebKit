@@ -110,6 +110,7 @@ ENDIF ()
 
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsEfl.css
+    ${WEBCORE_DIR}/css/mediaControlsEflFullscreen.css
 )
 
 IF (WTF_USE_CAIRO)

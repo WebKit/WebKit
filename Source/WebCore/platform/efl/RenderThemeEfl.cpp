@@ -1060,6 +1060,13 @@ String RenderThemeEfl::extraMediaControlsStyleSheet()
     return String(mediaControlsEflUserAgentStyleSheet, sizeof(mediaControlsEflUserAgentStyleSheet));
 }
 
+#if ENABLE(FULLSCREEN_API)
+String RenderThemeEfl::extraFullScreenStyleSheet()
+{
+    return String(mediaControlsEflFullscreenUserAgentStyleSheet, sizeof(mediaControlsEflFullscreenUserAgentStyleSheet));
+}
+#endif
+
 String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
 {
     return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);

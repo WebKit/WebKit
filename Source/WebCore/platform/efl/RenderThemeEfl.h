@@ -173,6 +173,9 @@ public:
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
+#if ENABLE(FULLSCREEN_API)
+    virtual String extraFullScreenStyleSheet();
+#endif
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
 
