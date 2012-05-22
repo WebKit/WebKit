@@ -1,5 +1,143 @@
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
+        Chromium linux and mac rebaselines.
+
+        * css2.1/20110323/absolute-replaced-height-004-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-linux-x86/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-image-tiled-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/20110323/absolute-replaced-height-004-expected.txt: Removed.
+        * platform/chromium-linux/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-linux/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-linux/fast/repaint/reflection-repaint-test-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/transform-layout-repaint-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-background-image-tiled-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-mac-leopard/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-image-tiled-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug215629-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug91057-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-mac/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug106816-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug139524-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug159108-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug215629-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46480-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46480-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug91057-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+        * platform/chromium-win-vista/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt: Added.
+        * platform/chromium-win-vista/css3/selectors3/html/css3-modsel-32-expected.txt: Added.
+        * platform/chromium-win-vista/editing/inserting: Added.
+        * platform/chromium-win-vista/editing/inserting/4959067-expected.txt: Added.
+        * platform/chromium-win-vista/fast/dom/Document/CaretRangeFromPoint: Removed.
+        * platform/chromium-win-vista/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Removed.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin: Removed.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Removed.
+        * platform/chromium-win-xp/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt: Added.
+        * platform/chromium-win-xp/editing/inserting: Added.
+        * platform/chromium-win-xp/editing/inserting/4959067-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom: Added.
+        * platform/chromium-win-xp/svg/zoom/page: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug59354-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/absolute-replaced-height-004-expected.txt:
+        * platform/chromium-win/css2.1/t0803-c5505-imrgn-00-a-ag-expected.txt:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-32-expected.txt:
+        * platform/chromium-win/editing/inserting/4959067-expected.txt:
+        * platform/chromium-win/fast/dom/Document: Removed.
+        * platform/chromium-win/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/chromium-win/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug106816-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug139524-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug159108-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug215629-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug43854-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46480-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46480-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug83786-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_table_align_center-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug91057-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+        * platform/chromium-win/transforms/2d/zoom-menulist-expected.txt:
+        * platform/chromium-win/transforms/svg-vs-css-expected.png:
+        * platform/chromium/fast/dom/Document: Added.
+        * platform/chromium/fast/dom/Document/CaretRangeFromPoint: Added.
+        * platform/chromium/fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport-expected.txt: Added.
+        * platform/chromium/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/chromium/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/efl/css2.1/20110323/absolute-replaced-height-004-expected.txt: Removed.
+        * platform/efl/css3/selectors3/html/css3-modsel-32-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug215629-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug43854-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug83786-expected.txt: Removed.
+        * platform/efl/tables/mozilla/marvin/x_table_align_center-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug89315-expected.txt: Removed.
+        * platform/efl/transforms/svg-vs-css-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/absolute-replaced-height-004-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug215629-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug43854-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug83786-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/x_table_align_center-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug89315-expected.txt: Removed.
+        * platform/gtk/transforms/svg-vs-css-expected.txt: Removed.
+        * platform/mac/tables/mozilla/bugs/bug83786-expected.txt: Removed.
+        * tables/mozilla/bugs/bug215629-expected.txt: Added.
+        * tables/mozilla/bugs/bug43854-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug83786-expected.txt: Added.
+        * tables/mozilla/marvin/x_table_align_center-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug89315-expected.txt: Added.
+        * transforms/svg-vs-css-expected.txt: Added.
+
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed rebaseline of fast/loader/recursive-before-unload-crash.html
 
         * platform/chromium/fast/loader/recursive-before-unload-crash-expected.txt: Added.
