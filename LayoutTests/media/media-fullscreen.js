@@ -27,6 +27,14 @@ function clickEnterFullscreenButton()
     eventSender.mouseUp();
 }
 
+function fullscreenchange()
+{
+    if (document.webkitIsFullScreen)
+        beginfullscreen();
+    else
+        endfullscreen();
+}
+
 function beginfullscreen()
 {
     testExpected("mediaElement.webkitDisplayingFullscreen", true);
@@ -114,5 +122,6 @@ function addEventListeners(elem)
 
     waitForEvent('webkitbeginfullscreen', beginfullscreen);
     waitForEvent('webkitendfullscreen', endfullscreen);
+    waitForEvent('webkitfullscreenchange', fullscreenchange);
 }
 

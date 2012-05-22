@@ -72,7 +72,6 @@ mathml/presentation/style.xhtml
 media/controls-styling.html
 media/controls-without-preload.html
 media/media-document-audio-repaint.html
-media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 media/video-canvas-alpha.html
 media/video-display-aspect-ratio.html
