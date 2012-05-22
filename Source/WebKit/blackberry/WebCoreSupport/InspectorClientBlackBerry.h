@@ -36,28 +36,22 @@ class InspectorClientBlackBerry : public InspectorClient {
 public:
     InspectorClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     virtual void inspectorDestroyed();
-    virtual Page* createPage();
-    virtual String localizedStringsURL();
-    virtual String hiddenPanels();
-    virtual void showWindow();
-    virtual void closeWindow();
-    virtual void attachWindow();
-    virtual void detachWindow();
-    virtual void setAttachedWindowHeight(unsigned);
+
     virtual void highlight();
     virtual void hideHighlight();
-    virtual void inspectedURLChanged(const String&);
-    virtual void populateSetting(const String& key, String* value);
-    virtual void storeSetting(const String& key, const String& value);
-    virtual void inspectorWindowObjectCleared();
+
     virtual void openInspectorFrontend(InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
+
     virtual bool sendMessageToFrontend(const String&);
+
     virtual void clearBrowserCache();
     virtual bool canClearBrowserCache() { return true; }
     virtual void clearBrowserCookies();
     virtual bool canClearBrowserCookies() { return true; }
+
+    virtual void updateInspectorStateCookie(const String&);
 
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;

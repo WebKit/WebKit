@@ -40,49 +40,6 @@ void InspectorClientBlackBerry::inspectorDestroyed()
     delete this;
 }
 
-Page* InspectorClientBlackBerry::createPage()
-{
-    notImplemented();
-    return 0;
-}
-
-String InspectorClientBlackBerry::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String InspectorClientBlackBerry::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
-void InspectorClientBlackBerry::showWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientBlackBerry::closeWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientBlackBerry::attachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientBlackBerry::detachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientBlackBerry::setAttachedWindowHeight(unsigned)
-{
-    notImplemented();
-}
-
 void InspectorClientBlackBerry::highlight()
 {
     hideHighlight();
@@ -96,27 +53,6 @@ void InspectorClientBlackBerry::hideHighlight()
 
     // FIXME: Potentially slow hack, but invalidating everything should work since the actual highlight is drawn by BackingStorePrivate::renderContents().
     m_webPagePrivate->mainFrame()->document()->documentElement()->renderer()->repaint(true);
-}
-
-void InspectorClientBlackBerry::inspectedURLChanged(const String&)
-{
-    notImplemented();
-}
-
-void InspectorClientBlackBerry::populateSetting(const String& key, String* value)
-{
-    if (m_inspectorSettingsMap->contains(key))
-        *value = m_inspectorSettingsMap->get(key);
-}
-
-void InspectorClientBlackBerry::storeSetting(const String& key, const String& value)
-{
-    m_inspectorSettingsMap->set(key, value);
-}
-
-void InspectorClientBlackBerry::inspectorWindowObjectCleared()
-{
-    notImplemented();
 }
 
 void InspectorClientBlackBerry::openInspectorFrontend(InspectorController*)
@@ -150,5 +86,10 @@ void InspectorClientBlackBerry::clearBrowserCookies()
 {
     m_webPagePrivate->m_client->clearCookies();
 }
+
+void InspectorClientBlackBerry::updateInspectorStateCookie(const String& cookie)
+{
+    notImplemented();
+};
 
 } // namespace WebCore
