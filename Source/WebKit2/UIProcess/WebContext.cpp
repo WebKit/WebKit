@@ -653,11 +653,11 @@ void WebContext::getPluginPath(const String& mimeType, const String& urlString, 
 
     String newMimeType = mimeType.lower();
 
+    blocked = false;
     PluginModuleInfo plugin = pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
     if (!plugin.path)
         return;
 
-    blocked = false;
     if (pluginInfoStore().shouldBlockPlugin(plugin)) {
         blocked = true;
         return;
