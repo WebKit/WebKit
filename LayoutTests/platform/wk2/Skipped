@@ -1108,6 +1108,10 @@ editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-marker-description.html
 
+# WTR needs an implementation of setAutomaticLinkDetectionEnabled.
+# https://bugs.webkit.org/show_bug.cgi?id=87162
+editing/inserting/typing-space-to-trigger-smart-link.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

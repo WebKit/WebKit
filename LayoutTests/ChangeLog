@@ -1,3 +1,12 @@
+2012-05-22  Jessie Berlin  <jberlin@apple.com>
+
+        WTR needs an implementation of setAutomaticLinkDetectionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=87162
+
+        Add editing/inserting/typing-space-to-trigger-smart-link.html to the WK2 Skipped list.
+
+        * platform/wk2/Skipped:
+
 2012-05-22  Adam Barth  <abarth@webkit.org>
 
         echo-inspan.pl is missing a semicolon on line 14, freaks out Apache on multiple regression tests
