@@ -65,9 +65,17 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 
 ContextMenuItem* ContextMenu::itemWithAction(unsigned action)
 {
-    for (size_t i = 0; i < m_items.size(); ++i) {
-        if (m_items[i].action() == static_cast<ContextMenuAction>(action))
-            return &m_items[i];
+    Vector<Vector<ContextMenuItem>*> menuItemStack;
+    menuItemStack.append(&m_items);
+    while (!menuItemStack.isEmpty()) {
+        Vector<ContextMenuItem>& items = *(menuItemStack.last());
+        menuItemStack.removeLast();
+        for (size_t i = 0; i < items.size(); ++i) {
+            if (items[i].action() == static_cast<ContextMenuAction>(action))
+                return &items[i];
+            if (items[i].type() == SubmenuType)
+                menuItemStack.append(const_cast<Vector<ContextMenuItem>*>(items[i].platformSubMenu()));
+        }
     }
     return 0;
 }
@@ -83,7 +91,7 @@ void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 
 PlatformMenuDescription ContextMenu::platformDescription() const
 {
-    return 0;
+    return &m_items;
 }
 
 PlatformMenuDescription ContextMenu::releasePlatformDescription()

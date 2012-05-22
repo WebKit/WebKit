@@ -44,6 +44,7 @@ struct WebMenuItemInfo {
         CheckableOption,
         Group,
         Separator,
+        SubMenu
     };
 
     WebMenuItemInfo() 
@@ -61,6 +62,7 @@ struct WebMenuItemInfo {
     Type type;
     unsigned action;
     WebTextDirection textDirection;
+    WebVector<WebMenuItemInfo> subMenuItems;
     bool hasTextDirectionOverride;
     bool enabled;
     bool checked;

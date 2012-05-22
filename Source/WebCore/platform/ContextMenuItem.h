@@ -223,6 +223,7 @@ namespace WebCore {
         ContextMenuItemType type;
         ContextMenuAction action;
         String title;
+        Vector<ContextMenuItem> subMenuItems;
         bool checked;
         bool enabled;
     };

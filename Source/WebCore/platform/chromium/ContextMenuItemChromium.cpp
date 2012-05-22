@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ContextMenuItem.h"
 
+#include "ContextMenu.h"
+
 namespace WebCore {
 
 // This is a stub implementation of WebKit's ContextMenu class that does
@@ -49,6 +51,8 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     m_platformDescription.type = type;
     m_platformDescription.action = action;
     m_platformDescription.title = title;
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
 ContextMenuItem::~ContextMenuItem()
@@ -87,7 +91,7 @@ bool ContextMenuItem::enabled() const
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    return PlatformMenuDescription();
+    return &m_platformDescription.subMenuItems;
 }
 
 void ContextMenuItem::setType(ContextMenuItemType type)
@@ -105,8 +109,14 @@ void ContextMenuItem::setTitle(const String& title)
     m_platformDescription.title = title;
 }
 
-void ContextMenuItem::setSubMenu(ContextMenu* subMenu)
+void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
+    m_platformDescription.subMenuItems = *menu->platformDescription();
+}
+
+void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>& items)
+{
+    m_platformDescription.subMenuItems = items;
 }
 
 void ContextMenuItem::setChecked(bool checked)

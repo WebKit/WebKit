@@ -1,3 +1,17 @@
+2012-05-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Implement the ContextMenuItem SubMenu type
+        https://bugs.webkit.org/show_bug.cgi?id=86625
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebMenuItemInfo.h:
+        (WebMenuItemInfo): Add the SubMenu type and a vector of subMenuItems.
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::populateSubMenuItems): A recursive implementation that populates submenu items as well as other item types.
+        (WebKit):
+        (WebKit::ContextMenuClientImpl::populateCustomMenuItems): Consider submenus when populating WebMenuItemInfos.
+
 2012-05-22  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Speed up CCLayerTreeHostTestTickAnimationWhileBackgrounded

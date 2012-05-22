@@ -347,12 +347,12 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
     return 0;
 }
 
-void ContextMenuClientImpl::populateCustomMenuItems(WebCore::ContextMenu* defaultMenu, WebContextMenuData* data)
+static void populateSubMenuItems(PlatformMenuDescription inputMenu, WebVector<WebMenuItemInfo>& subMenuItems)
 {
-    Vector<WebMenuItemInfo> customItems;
-    for (size_t i = 0; i < defaultMenu->itemCount(); ++i) {
-        ContextMenuItem* inputItem = defaultMenu->itemAtIndex(i, defaultMenu->platformDescription());
-        if (inputItem->action() < ContextMenuItemBaseCustomTag || inputItem->action() >  ContextMenuItemLastCustomTag)
+    Vector<WebMenuItemInfo> subItems;
+    for (size_t i = 0; i < inputMenu->size(); ++i) {
+        const ContextMenuItem* inputItem = &inputMenu->at(i);
+        if (inputItem->action() < ContextMenuItemBaseCustomTag || inputItem->action() > ContextMenuItemLastCustomTag)
             continue;
 
         WebMenuItemInfo outputItem;
@@ -371,16 +371,22 @@ void ContextMenuClientImpl::populateCustomMenuItems(WebCore::ContextMenu* defaul
             outputItem.type = WebMenuItemInfo::Separator;
             break;
         case SubmenuType:
-            outputItem.type = WebMenuItemInfo::Group;
+            outputItem.type = WebMenuItemInfo::SubMenu;
+            populateSubMenuItems(inputItem->platformSubMenu(), outputItem.subMenuItems);
             break;
         }
-        customItems.append(outputItem);
+        subItems.append(outputItem);
     }
 
-    WebVector<WebMenuItemInfo> outputItems(customItems.size());
-    for (size_t i = 0; i < customItems.size(); ++i)
-        outputItems[i] = customItems[i];
-    data->customItems.swap(outputItems);
+    WebVector<WebMenuItemInfo> outputItems(subItems.size());
+    for (size_t i = 0; i < subItems.size(); ++i)
+        outputItems[i] = subItems[i];
+    subMenuItems.swap(outputItems);
+}
+
+void ContextMenuClientImpl::populateCustomMenuItems(WebCore::ContextMenu* defaultMenu, WebContextMenuData* data)
+{
+    populateSubMenuItems(defaultMenu->platformDescription(), data->customItems);
 }
 
 } // namespace WebKit
