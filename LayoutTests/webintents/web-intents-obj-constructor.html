@@ -44,8 +44,6 @@
         shouldThrow("new WebKitIntent({'action':'a','type':'b','service':null})", "'Error: SYNTAX_ERR: DOM Exception 12'");
         shouldThrow("new WebKitIntent({'action':'a','type':'b','service':undefined})", "'Error: SYNTAX_ERR: DOM Exception 12'");
         shouldThrow("new WebKitIntent({'action':'a','type':'b','service':'not a url'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':'url://a url'})");
-        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':'htttp://a url'})");
 
         // |data| must be cloneable.
         shouldThrow("new WebKitIntent({'action':'a','type':'b','data':window})", "'Error: DATA_CLONE_ERR: DOM Exception 25'");

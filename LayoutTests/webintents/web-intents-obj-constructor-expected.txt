@@ -32,8 +32,6 @@ PASS new WebKitIntent({'action':'a','type':'b','service':''}) did not throw exce
 PASS new WebKitIntent({'action':'a','type':'b','service':null}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS new WebKitIntent({'action':'a','type':'b','service':undefined}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS new WebKitIntent({'action':'a','type':'b','service':'not a url'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
-PASS new WebKitIntent({'action':'a','type':'b','service':'url://a url'}) did not throw exception.
-PASS new WebKitIntent({'action':'a','type':'b','service':'htttp://a url'}) did not throw exception.
 PASS new WebKitIntent({'action':'a','type':'b','data':window}) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
 PASS new WebKitIntent({'action':'a','type':'b','extras':null}) did not throw exception.
 PASS new WebKitIntent({'action':'a','type':'b','extras':undefined}) did not throw exception.

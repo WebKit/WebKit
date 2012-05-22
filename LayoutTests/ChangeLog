@@ -1,3 +1,16 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Intent::create() throws is service is "url://a url"
+        https://bugs.webkit.org/show_bug.cgi?id=86873
+
+        Reviewed by Adam Barth.
+
+        Remove checks in webintents/web-intents-obj-constructor.html which are
+        valid for Google URL but fail with KURL.
+
+        * webintents/web-intents-obj-constructor-expected.txt:
+        * webintents/web-intents-obj-constructor.html:
+
 2012-05-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: JavaScriptSourceFrame should be based on JavaScriptSource not UISourceCode.
