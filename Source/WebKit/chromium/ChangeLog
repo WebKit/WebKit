@@ -1,3 +1,9 @@
+2012-05-22  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-05-22  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         [Chromium] Use overloaded printBegin() webkit API to support auto fit to page functionality.
