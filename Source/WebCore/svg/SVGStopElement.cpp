@@ -106,6 +106,11 @@ RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGGradientStop(this);
 }
 
+bool SVGStopElement::rendererIsNeeded(const NodeRenderingContext&)
+{
+    return true;
+}
+
 Color SVGStopElement::stopColorIncludingOpacity() const
 {
     ASSERT(renderer());
