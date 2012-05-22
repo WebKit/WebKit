@@ -145,6 +145,9 @@ WebInspector.StyleSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
+        if (!this._styleSource.isDirty())
+            return;
+
         this._isCommittingEditing = true;
         this._styleSource.commitWorkingCopy(this._didEditContent.bind(this));
     },

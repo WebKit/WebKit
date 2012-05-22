@@ -211,11 +211,6 @@ WebInspector.UISourceCode.prototype = {
             callback(error);
         }
 
-        if (!this.isDirty()) {
-            callback(null);
-            return;
-        }
-
         var newContent = this._workingCopy;
         this._committingWorkingCopy = true;
         this.workingCopyCommitted(innerCallback.bind(this));
