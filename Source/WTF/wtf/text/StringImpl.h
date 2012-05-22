@@ -157,11 +157,11 @@ private:
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
     StringImpl(const UChar* characters, unsigned length)
-    : m_refCount(s_refCountIncrement)
-    , m_length(length)
-    , m_data16(characters)
-    , m_buffer(0)
-    , m_hashAndFlags(BufferOwned)
+        : m_refCount(s_refCountIncrement)
+        , m_length(length)
+        , m_data16(characters)
+        , m_buffer(0)
+        , m_hashAndFlags(BufferOwned)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -193,6 +193,26 @@ private:
         ASSERT(m_data16);
         ASSERT(m_length);
         ASSERT(m_substringBuffer->bufferOwnership() != BufferSubstring);
+    }
+
+    enum CreateEmptyUnique_T { CreateEmptyUnique };
+    StringImpl(CreateEmptyUnique_T)
+        : m_refCount(s_refCountIncrement)
+        , m_length(0)
+        , m_data16(reinterpret_cast<const UChar*>(1))
+        , m_buffer(0)
+    {
+        ASSERT(m_data16);
+        // Set the hash early, so that all empty unique StringImpls have a hash,
+        // and don't use the normal hashing algorithm - the unique nature of these
+        // keys means that we don't need them to match any other string (in fact,
+        // that's exactly the oposite of what we want!), and teh normal hash would
+        // lead to lots of conflicts.
+        unsigned hash = reinterpret_cast<uintptr_t>(this);
+        hash <<= s_flagCount;
+        if (!hash)
+            hash = 1 << s_flagCount;
+        m_hashAndFlags = hash | BufferInternal;
     }
 
 public:
@@ -255,6 +275,11 @@ public:
             return adoptRef(new (NotNull, resultImpl) StringImpl(length, Force8BitConstructor));
 
         return adoptRef(new (NotNull, resultImpl) StringImpl(length));
+    }
+
+    static PassRefPtr<StringImpl> createEmptyUnique()
+    {
+        return adoptRef(new StringImpl(CreateEmptyUnique));
     }
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
@@ -323,6 +348,11 @@ public:
             m_hashAndFlags |= s_hashFlagIsIdentifier;
         else
             m_hashAndFlags &= ~s_hashFlagIsIdentifier;
+    }
+
+    bool isEmptyUnique() const
+    {
+        return !length() && !isStatic();
     }
 
     bool hasTerminatingNullCharacter() const { return m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter; }

@@ -129,54 +129,56 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
-        // optional optimization to bypass getProperty in cases when we only need to know if the property exists
-        if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
-            if (!propertyNameRef)
-                propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-            APICallbackShim callbackShim(exec);
-            if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
-                slot.setCustom(thisObject, callbackGetter);
-                return true;
-            }
-        } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
-            if (!propertyNameRef)
-                propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-            JSValueRef exception = 0;
-            JSValueRef value;
-            {
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
+            // optional optimization to bypass getProperty in cases when we only need to know if the property exists
+            if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
+                if (!propertyNameRef)
+                    propertyNameRef = OpaqueJSString::create(name);
                 APICallbackShim callbackShim(exec);
-                value = getProperty(ctx, thisRef, propertyNameRef.get(), &exception);
-            }
-            if (exception) {
-                throwError(exec, toJS(exec, exception));
-                slot.setValue(jsUndefined());
-                return true;
-            }
-            if (value) {
-                slot.setValue(toJS(exec, value));
-                return true;
-            }
-        }
-        
-        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (staticValues->contains(propertyName.impl())) {
-                JSValue value = thisObject->getStaticValue(exec, propertyName);
+                if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
+                    slot.setCustom(thisObject, callbackGetter);
+                    return true;
+                }
+            } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
+                if (!propertyNameRef)
+                    propertyNameRef = OpaqueJSString::create(name);
+                JSValueRef exception = 0;
+                JSValueRef value;
+                {
+                    APICallbackShim callbackShim(exec);
+                    value = getProperty(ctx, thisRef, propertyNameRef.get(), &exception);
+                }
+                if (exception) {
+                    throwError(exec, toJS(exec, exception));
+                    slot.setValue(jsUndefined());
+                    return true;
+                }
                 if (value) {
-                    slot.setValue(value);
+                    slot.setValue(toJS(exec, value));
+                    return true;
+                }
+            }
+            
+            if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+                if (staticValues->contains(name)) {
+                    JSValue value = thisObject->getStaticValue(exec, propertyName);
+                    if (value) {
+                        slot.setValue(value);
+                        return true;
+                    }
+                }
+            }
+            
+            if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+                if (staticFunctions->contains(name)) {
+                    slot.setCustom(thisObject, staticFunctionGetter);
                     return true;
                 }
             }
         }
-        
-        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (staticFunctions->contains(propertyName.impl())) {
-                slot.setCustom(thisObject, staticFunctionGetter);
-                return true;
-            }
-        }
     }
-    
+
     return Parent::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
@@ -233,53 +235,55 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(exec, value);
     
-    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
-        if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
-            if (!propertyNameRef)
-                propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-            JSValueRef exception = 0;
-            bool result;
-            {
-                APICallbackShim callbackShim(exec);
-                result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
-            }
-            if (exception)
-                throwError(exec, toJS(exec, exception));
-            if (result || exception)
-                return;
-        }
-        
-        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
-                if (entry->attributes & kJSPropertyAttributeReadOnly)
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
+            if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
+                if (!propertyNameRef)
+                    propertyNameRef = OpaqueJSString::create(name);
+                JSValueRef exception = 0;
+                bool result;
+                {
+                    APICallbackShim callbackShim(exec);
+                    result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
+                }
+                if (exception)
+                    throwError(exec, toJS(exec, exception));
+                if (result || exception)
                     return;
-                if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
-                    if (!propertyNameRef)
-                        propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-                    JSValueRef exception = 0;
-                    bool result;
-                    {
-                        APICallbackShim callbackShim(exec);
-                        result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
-                    }
-                    if (exception)
-                        throwError(exec, toJS(exec, exception));
-                    if (result || exception)
+            }
+            
+            if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+                if (StaticValueEntry* entry = staticValues->get(name)) {
+                    if (entry->attributes & kJSPropertyAttributeReadOnly)
                         return;
+                    if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
+                        if (!propertyNameRef)
+                            propertyNameRef = OpaqueJSString::create(name);
+                        JSValueRef exception = 0;
+                        bool result;
+                        {
+                            APICallbackShim callbackShim(exec);
+                            result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
+                        }
+                        if (exception)
+                            throwError(exec, toJS(exec, exception));
+                        if (result || exception)
+                            return;
+                    }
+                }
+            }
+            
+            if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+                if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
+                    if (entry->attributes & kJSPropertyAttributeReadOnly)
+                        return;
+                    thisObject->JSCallbackObject<Parent>::putDirect(exec->globalData(), propertyName, value); // put as override property
+                    return;
                 }
             }
         }
-        
-        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
-                if (entry->attributes & kJSPropertyAttributeReadOnly)
-                    return;
-                thisObject->JSCallbackObject<Parent>::putDirect(exec->globalData(), propertyName, value); // put as override property
-                return;
-            }
-        }
     }
-    
+
     return Parent::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -291,39 +295,41 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, Pro
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
-        if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {
-            if (!propertyNameRef)
-                propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-            JSValueRef exception = 0;
-            bool result;
-            {
-                APICallbackShim callbackShim(exec);
-                result = deleteProperty(ctx, thisRef, propertyNameRef.get(), &exception);
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
+            if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {
+                if (!propertyNameRef)
+                    propertyNameRef = OpaqueJSString::create(name);
+                JSValueRef exception = 0;
+                bool result;
+                {
+                    APICallbackShim callbackShim(exec);
+                    result = deleteProperty(ctx, thisRef, propertyNameRef.get(), &exception);
+                }
+                if (exception)
+                    throwError(exec, toJS(exec, exception));
+                if (result || exception)
+                    return true;
             }
-            if (exception)
-                throwError(exec, toJS(exec, exception));
-            if (result || exception)
-                return true;
-        }
-        
-        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
-            if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
-                if (entry->attributes & kJSPropertyAttributeDontDelete)
-                    return false;
-                return true;
+            
+            if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+                if (StaticValueEntry* entry = staticValues->get(name)) {
+                    if (entry->attributes & kJSPropertyAttributeDontDelete)
+                        return false;
+                    return true;
+                }
             }
-        }
-        
-        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
-                if (entry->attributes & kJSPropertyAttributeDontDelete)
-                    return false;
-                return true;
+            
+            if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+                if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
+                    if (entry->attributes & kJSPropertyAttributeDontDelete)
+                        return false;
+                    return true;
+                }
             }
         }
     }
-    
+
     return Parent::deleteProperty(thisObject, exec, propertyName);
 }
 
@@ -509,25 +515,30 @@ JSValue JSCallbackObject<Parent>::getStaticValue(ExecState* exec, PropertyName p
     JSObjectRef thisRef = toRef(this);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec))
-            if (StaticValueEntry* entry = staticValues->get(propertyName.impl()))
-                if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
-                    if (!propertyNameRef)
-                        propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-                    JSValueRef exception = 0;
-                    JSValueRef value;
-                    {
-                        APICallbackShim callbackShim(exec);
-                        value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
+            if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+                if (StaticValueEntry* entry = staticValues->get(name)) {
+                    if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
+                        if (!propertyNameRef)
+                            propertyNameRef = OpaqueJSString::create(name);
+                        JSValueRef exception = 0;
+                        JSValueRef value;
+                        {
+                            APICallbackShim callbackShim(exec);
+                            value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
+                        }
+                        if (exception) {
+                            throwError(exec, toJS(exec, exception));
+                            return jsUndefined();
+                        }
+                        if (value)
+                            return toJS(exec, value);
                     }
-                    if (exception) {
-                        throwError(exec, toJS(exec, exception));
-                        return jsUndefined();
-                    }
-                    if (value)
-                        return toJS(exec, value);
                 }
+            }
+        }
+    }
 
     return JSValue();
 }
@@ -542,19 +553,21 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
     if (Parent::getOwnPropertySlot(thisObj, exec, propertyName, slot2))
         return slot2.getValue(exec, propertyName);
     
-    for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
-        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
-            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
-                if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                    
-                    JSObject* o = JSCallbackFunction::create(exec, thisObj->globalObject(), callAsFunction, propertyName.ustring());
-                    thisObj->putDirect(exec->globalData(), propertyName, o, entry->attributes);
-                    return o;
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
+            if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+                if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
+                    if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
+                        
+                        JSObject* o = JSCallbackFunction::create(exec, thisObj->globalObject(), callAsFunction, name);
+                        thisObj->putDirect(exec->globalData(), propertyName, o, entry->attributes);
+                        return o;
+                    }
                 }
             }
         }
     }
-    
+
     return throwError(exec, createReferenceError(exec, "Static function property defined with NULL callAsFunction callback."));
 }
 
@@ -566,24 +579,27 @@ JSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, JSValue slotPa
     JSObjectRef thisRef = toRef(thisObj);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
-            if (!propertyNameRef)
-                propertyNameRef = OpaqueJSString::create(propertyName.ustring());
-            JSValueRef exception = 0;
-            JSValueRef value;
-            {
-                APICallbackShim callbackShim(exec);
-                value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
+    if (StringImpl* name = propertyName.publicName()) {
+        for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
+            if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
+                if (!propertyNameRef)
+                    propertyNameRef = OpaqueJSString::create(name);
+                JSValueRef exception = 0;
+                JSValueRef value;
+                {
+                    APICallbackShim callbackShim(exec);
+                    value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), &exception);
+                }
+                if (exception) {
+                    throwError(exec, toJS(exec, exception));
+                    return jsUndefined();
+                }
+                if (value)
+                    return toJS(exec, value);
             }
-            if (exception) {
-                throwError(exec, toJS(exec, exception));
-                return jsUndefined();
-            }
-            if (value)
-                return toJS(exec, value);
         }
-            
+    }
+
     return throwError(exec, createReferenceError(exec, "hasProperty callback returned true for a property that doesn't exist."));
 }
 

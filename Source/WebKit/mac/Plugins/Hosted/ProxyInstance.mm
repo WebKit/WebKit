@@ -54,14 +54,14 @@ private:
     virtual Field* fieldNamed(PropertyName, Instance*) const;
 };
 
-MethodList ProxyClass::methodsNamed(PropertyName identifier, Instance* instance) const
+MethodList ProxyClass::methodsNamed(PropertyName propertyName, Instance* instance) const
 {
-    return static_cast<ProxyInstance*>(instance)->methodsNamed(identifier);
+    return static_cast<ProxyInstance*>(instance)->methodsNamed(propertyName);
 }
 
-Field* ProxyClass::fieldNamed(PropertyName identifier, Instance* instance) const
+Field* ProxyClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
-    return static_cast<ProxyInstance*>(instance)->fieldNamed(identifier);
+    return static_cast<ProxyInstance*>(instance)->fieldNamed(propertyName);
 }
 
 static ProxyClass* proxyClass()
@@ -216,7 +216,7 @@ const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMet
 JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.impl(), methodList);
+    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
 }
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
@@ -346,13 +346,17 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     }
 }
 
-MethodList ProxyInstance::methodsNamed(PropertyName identifier)
+MethodList ProxyInstance::methodsNamed(PropertyName propertyName)
 {
+    UString name(propertyName.publicName());
+    if (name.isNull())
+        return MethodList();
+
     if (!m_instanceProxy)
         return MethodList();
     
     // If we already have an entry in the map, use it.
-    MethodMap::iterator existingMapEntry = m_methods.find(identifier.impl());
+    MethodMap::iterator existingMapEntry = m_methods.find(name.impl());
     if (existingMapEntry != m_methods.end()) {
         MethodList methodList;
         if (existingMapEntry->second)
@@ -360,7 +364,7 @@ MethodList ProxyInstance::methodsNamed(PropertyName identifier)
         return methodList;
     }
     
-    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ustring().ascii().data()));
+    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
@@ -376,7 +380,7 @@ MethodList ProxyInstance::methodsNamed(PropertyName identifier)
         return MethodList();
 
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    MethodMap::AddResult mapAddResult = m_methods.add(identifier.impl(), 0);
+    MethodMap::AddResult mapAddResult = m_methods.add(name.impl(), 0);
     if (mapAddResult.isNewEntry && reply->m_result)
         mapAddResult.iterator->second = new ProxyMethod(methodName);
 
@@ -386,22 +390,26 @@ MethodList ProxyInstance::methodsNamed(PropertyName identifier)
     return methodList;
 }
 
-Field* ProxyInstance::fieldNamed(PropertyName identifier)
+Field* ProxyInstance::fieldNamed(PropertyName propertyName)
 {
+    UString name(propertyName.publicName());
+    if (name.isNull())
+        return 0;
+
     if (!m_instanceProxy)
         return 0;
     
     // If we already have an entry in the map, use it.
-    FieldMap::iterator existingMapEntry = m_fields.find(identifier.impl());
+    FieldMap::iterator existingMapEntry = m_fields.find(name.impl());
     if (existingMapEntry != m_fields.end())
         return existingMapEntry->second;
     
-    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ustring().ascii().data()));
+    uint64_t identifier = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
                                  m_instanceProxy->pluginID(), requestID,
-                                 m_objectID, propertyName) != KERN_SUCCESS)
+                                 m_objectID, identifier) != KERN_SUCCESS)
         return 0;
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -412,9 +420,9 @@ Field* ProxyInstance::fieldNamed(PropertyName identifier)
         return 0;
     
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
-    FieldMap::AddResult mapAddResult = m_fields.add(identifier.impl(), 0);
+    FieldMap::AddResult mapAddResult = m_fields.add(name.impl(), 0);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->second = new ProxyField(propertyName);
+        mapAddResult.iterator->second = new ProxyField(identifier);
     return mapAddResult.iterator->second;
 }
 

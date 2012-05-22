@@ -1,3 +1,20 @@
+2012-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for private names
+        https://bugs.webkit.org/show_bug.cgi?id=86509
+
+        Reviewed by Oliver Hunt.
+
+        The spec isn't final, but we can start adding support to allow property maps
+        to contain keys that aren't identifiers.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (StringImpl):
+        (WTF::StringImpl::createEmptyUnique):
+        (WTF::StringImpl::isEmptyUnique):
+            - Allow empty string impls to be allocated, which can be used as unique keys.
+
 2012-05-21  Emil A Eklund <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
 
         Enable SUBPIXEL_LAYOUT feature flag on Chromium

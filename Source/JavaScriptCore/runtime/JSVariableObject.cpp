@@ -45,7 +45,7 @@ void JSVariableObject::destroy(JSCell* cell)
 bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSVariableObject* thisObject = jsCast<JSVariableObject*>(cell);
-    if (thisObject->symbolTable().contains(propertyName.impl()))
+    if (thisObject->symbolTable().contains(propertyName.publicName()))
         return false;
 
     return JSObject::deleteProperty(thisObject, exec, propertyName);
@@ -65,7 +65,7 @@ void JSVariableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Pr
 
 bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
 {
-    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
     if (!entry.isNull()) {
         descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes() | DontDelete);
         return true;

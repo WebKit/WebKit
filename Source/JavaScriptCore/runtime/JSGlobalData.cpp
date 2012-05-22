@@ -86,6 +86,7 @@ extern const HashTable numberConstructorTable;
 extern const HashTable numberPrototypeTable;
 JS_EXPORTDATA extern const HashTable objectConstructorTable;
 extern const HashTable objectPrototypeTable;
+extern const HashTable privateNamePrototypeTable;
 extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable regExpPrototypeTable;
@@ -135,6 +136,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , numberPrototypeTable(fastNew<HashTable>(JSC::numberPrototypeTable))
     , objectConstructorTable(fastNew<HashTable>(JSC::objectConstructorTable))
     , objectPrototypeTable(fastNew<HashTable>(JSC::objectPrototypeTable))
+    , privateNamePrototypeTable(fastNew<HashTable>(JSC::privateNamePrototypeTable))
     , regExpTable(fastNew<HashTable>(JSC::regExpTable))
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
     , regExpPrototypeTable(fastNew<HashTable>(JSC::regExpPrototypeTable))
@@ -241,6 +243,7 @@ JSGlobalData::~JSGlobalData()
     numberPrototypeTable->deleteTable();
     objectConstructorTable->deleteTable();
     objectPrototypeTable->deleteTable();
+    privateNamePrototypeTable->deleteTable();
     regExpTable->deleteTable();
     regExpConstructorTable->deleteTable();
     regExpPrototypeTable->deleteTable();
@@ -260,6 +263,7 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(numberPrototypeTable));
     fastDelete(const_cast<HashTable*>(objectConstructorTable));
     fastDelete(const_cast<HashTable*>(objectPrototypeTable));
+    fastDelete(const_cast<HashTable*>(privateNamePrototypeTable));
     fastDelete(const_cast<HashTable*>(regExpTable));
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
     fastDelete(const_cast<HashTable*>(regExpPrototypeTable));

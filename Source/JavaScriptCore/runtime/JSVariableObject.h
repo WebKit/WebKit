@@ -102,7 +102,7 @@ namespace JSC {
 
     inline bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
     {
-        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
         if (!entry.isNull()) {
             slot.setValue(registerAt(entry.getIndex()).get());
             return true;
@@ -112,7 +112,7 @@ namespace JSC {
 
     inline bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertySlot& slot, bool& slotIsWriteable)
     {
-        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
         if (!entry.isNull()) {
             slot.setValue(registerAt(entry.getIndex()).get());
             slotIsWriteable = !entry.isReadOnly();
@@ -126,7 +126,7 @@ namespace JSC {
         JSGlobalData& globalData = exec->globalData();
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
         if (entry.isNull())
             return false;
         if (entry.isReadOnly()) {
@@ -142,7 +142,7 @@ namespace JSC {
     {
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-        SymbolTable::iterator iter = symbolTable().find(propertyName.impl());
+        SymbolTable::iterator iter = symbolTable().find(propertyName.publicName());
         if (iter == symbolTable().end())
             return false;
         SymbolTableEntry& entry = iter->second;

@@ -92,7 +92,7 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
 {
-    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
     if (entry.isNull())
         return false;
     if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
@@ -107,7 +107,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
     JSGlobalData& globalData = exec->globalData();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
-    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+    SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
     if (entry.isNull())
         return false;
     if (entry.isReadOnly()) {
@@ -141,7 +141,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
-    SymbolTable::iterator iter = symbolTable().find(propertyName.impl());
+    SymbolTable::iterator iter = symbolTable().find(propertyName.publicName());
     if (iter == symbolTable().end())
         return false;
     SymbolTableEntry& entry = iter->second;

@@ -373,7 +373,7 @@ enum ParameterDefaultPolicy {
 
     inline String propertyNameToString(JSC::PropertyName propertyName)
     {
-        return propertyName.impl();
+        return propertyName.publicName();
     }
 
     inline AtomicString ustringToAtomicString(const JSC::UString& u)
@@ -383,7 +383,7 @@ enum ParameterDefaultPolicy {
 
     inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
     {
-        return AtomicString(propertyName.impl());
+        return AtomicString(propertyName.publicName());
     }
 
     inline Vector<unsigned long> jsUnsignedLongArrayToVector(JSC::ExecState* exec, JSC::JSValue value)

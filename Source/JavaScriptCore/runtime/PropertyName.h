@@ -27,6 +27,7 @@
 #define PropertyName_h
 
 #include "Identifier.h"
+#include "PrivateName.h"
 
 namespace JSC {
 
@@ -80,15 +81,33 @@ public:
     PropertyName(const Identifier& propertyName)
         : m_impl(propertyName.impl())
     {
+        ASSERT(!m_impl || m_impl->isIdentifier());
     }
 
-    StringImpl* impl() const { return m_impl; }
-    UString ustring() const { return m_impl; }
+    PropertyName(const PrivateName& propertyName)
+        : m_impl(propertyName.uid())
+    {
+        ASSERT(m_impl && m_impl->isEmptyUnique());
+    }
+
+    StringImpl* uid() const
+    {
+        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
+        return m_impl;
+    }
+
+    StringImpl* publicName() const
+    {
+        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
+        return m_impl->isIdentifier() ? m_impl : 0;
+    }
 
     static const uint32_t NotAnIndex = UINT_MAX;
+
     uint32_t asIndex()
     {
-        return toUInt32FromStringImpl(m_impl);
+        ASSERT(!m_impl || (m_impl->isIdentifier() == !m_impl->isEmptyUnique()));
+        return m_impl ? toUInt32FromStringImpl(m_impl) : NotAnIndex;
     }
 
 private:
@@ -97,32 +116,32 @@ private:
 
 inline bool operator==(PropertyName a, const Identifier& b)
 {
-    return a.impl() == b.impl();
+    return a.uid() == b.impl();
 }
 
 inline bool operator==(const Identifier& a, PropertyName b)
 {
-    return a.impl() == b.impl();
+    return a.impl() == b.uid();
 }
 
 inline bool operator==(PropertyName a, PropertyName b)
 {
-    return a.impl() == b.impl();
+    return a.uid() == b.uid();
 }
 
 inline bool operator!=(PropertyName a, const Identifier& b)
 {
-    return a.impl() != b.impl();
+    return a.uid() != b.impl();
 }
 
 inline bool operator!=(const Identifier& a, PropertyName b)
 {
-    return a.impl() != b.impl();
+    return a.impl() != b.uid();
 }
 
 inline bool operator!=(PropertyName a, PropertyName b)
 {
-    return a.impl() != b.impl();
+    return a.uid() != b.uid();
 }
 
 }

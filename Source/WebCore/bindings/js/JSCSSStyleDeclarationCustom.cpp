@@ -181,7 +181,9 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
     CSSPropertyInfo propertyInfo = {CSSPropertyInvalid, false};
     bool hadPixelOrPosPrefix = false;
 
-    StringImpl* propertyNameString = propertyName.impl();
+    StringImpl* propertyNameString = propertyName.publicName();
+    if (!propertyNameString)
+        return propertyInfo;
     unsigned length = propertyNameString->length();
     if (!length)
         return propertyInfo;

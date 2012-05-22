@@ -50,6 +50,7 @@
 #include "LiteralParser.h"
 #include "JSStaticScopeObject.h"
 #include "JSString.h"
+#include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "Parser.h"
@@ -2795,6 +2796,8 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         uint32_t i;
         if (propName.getUInt32(i))
             callFrame->uncheckedR(dst) = jsBoolean(baseObj->hasProperty(callFrame, i));
+        else if (isName(propName))
+            callFrame->uncheckedR(dst) = jsBoolean(baseObj->hasProperty(callFrame, jsCast<NameInstance*>(propName.asCell())->privateName()));
         else {
             Identifier property(callFrame, propName.toString(callFrame)->value(callFrame));
             CHECK_FOR_EXCEPTION();
@@ -3775,7 +3778,9 @@ skip_id_custom_self:
                 result = asString(baseValue)->getIndex(callFrame, i);
             else
                 result = baseValue.get(callFrame, i);
-        } else {
+        } else if (isName(subscript))
+            result = baseValue.get(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName());
+        else {
             Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             result = baseValue.get(callFrame, property);
         }
@@ -3813,6 +3818,9 @@ skip_id_custom_self:
                     jsArray->JSArray::putByIndex(jsArray, callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
             } else
                 baseValue.putByIndex(callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
+        } else if (isName(subscript)) {
+            PutPropertySlot slot(codeBlock->isStrictMode());
+            baseValue.put(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName(), callFrame->r(value).jsValue(), slot);
         } else {
             Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             if (!globalData->exception) { // Don't put to an object if toString threw an exception.
@@ -3844,6 +3852,8 @@ skip_id_custom_self:
         uint32_t i;
         if (subscript.getUInt32(i))
             result = baseObj->methodTable()->deletePropertyByIndex(baseObj, callFrame, i);
+        else if (isName(subscript))
+            result = baseObj->methodTable()->deleteProperty(baseObj, callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName());
         else {
             CHECK_FOR_EXCEPTION();
             Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));

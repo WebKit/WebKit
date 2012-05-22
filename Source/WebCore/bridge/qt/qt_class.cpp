@@ -70,7 +70,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
 
-    const UString& ustring = identifier.ustring();
+    UString ustring(identifier.publicName());
     const QByteArray name = QString(reinterpret_cast<const QChar*>(ustring.characters()), ustring.length()).toAscii();
 
     // First see if we have a cache hit
@@ -133,7 +133,7 @@ Field* QtClass::fieldNamed(PropertyName identifier, Instance* instance) const
     QtInstance* qtinst = static_cast<QtInstance*>(instance);
 
     QObject* obj = qtinst->getObject();
-    const UString& ustring = identifier.ustring();
+    UString ustring(identifier.publicName());
     const QString name(reinterpret_cast<const QChar*>(ustring.characters()), ustring.length());
     const QByteArray ascii = name.toAscii();
 

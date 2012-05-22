@@ -30,6 +30,7 @@
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
+#include "NameInstance.h"
 
 namespace JSC {
 
@@ -108,6 +109,9 @@ inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
     uint32_t i;
     if (propName.getUInt32(i))
         return baseObj->hasProperty(exec, i);
+
+    if (isName(propName))
+        return baseObj->hasProperty(exec, jsCast<NameInstance*>(propName.asCell())->privateName());
 
     Identifier property(exec, propName.toString(exec)->value(exec));
     if (exec->globalData().exception)

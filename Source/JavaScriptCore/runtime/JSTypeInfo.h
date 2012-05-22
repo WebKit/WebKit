@@ -67,6 +67,7 @@ namespace JSC {
         bool isObject() const { return type() >= ObjectType; }
         bool isFinalObject() const { return type() == FinalObjectType; }
         bool isNumberObject() const { return type() == NumberObjectType; }
+        bool isName() const { return type() == NameInstanceType; }
 
         bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
         bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }

@@ -20,6 +20,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
 	DerivedSources/JavaScriptCore/JSONObject.lut.h \
 	DerivedSources/JavaScriptCore/MathObject.lut.h \
+    DerivedSources/JavaScriptCore/NamePrototype.lut.h \
 	DerivedSources/JavaScriptCore/NumberConstructor.lut.h \
 	DerivedSources/JavaScriptCore/NumberPrototype.lut.h \
 	DerivedSources/JavaScriptCore/ObjectConstructor.lut.h \
@@ -507,6 +508,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/MathObject.cpp \
 	Source/JavaScriptCore/runtime/MathObject.h \
 	Source/JavaScriptCore/runtime/MemoryStatistics.h \
+	Source/JavaScriptCore/runtime/NameConstructor.cpp \
+	Source/JavaScriptCore/runtime/NameConstructor.h \
+	Source/JavaScriptCore/runtime/NameInstance.cpp \
+	Source/JavaScriptCore/runtime/NameInstance.h \
+	Source/JavaScriptCore/runtime/NamePrototype.cpp \
+	Source/JavaScriptCore/runtime/NamePrototype.h \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.cpp \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.h \
 	Source/JavaScriptCore/runtime/NativeErrorPrototype.cpp \

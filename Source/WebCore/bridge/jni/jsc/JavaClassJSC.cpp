@@ -114,18 +114,18 @@ JavaClass::~JavaClass()
     m_methods.clear();
 }
 
-MethodList JavaClass::methodsNamed(PropertyName identifier, Instance*) const
+MethodList JavaClass::methodsNamed(PropertyName propertyName, Instance*) const
 {
-    MethodList* methodList = m_methods.get(identifier.ustring().impl());
+    MethodList* methodList = m_methods.get(propertyName.publicName());
 
     if (methodList)
         return *methodList;
     return MethodList();
 }
 
-Field* JavaClass::fieldNamed(PropertyName identifier, Instance*) const
+Field* JavaClass::fieldNamed(PropertyName propertyName, Instance*) const
 {
-    return m_fields.get(identifier.ustring().impl());
+    return m_fields.get(propertyName.publicName());
 }
 
 bool JavaClass::isNumberClass() const

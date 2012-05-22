@@ -275,7 +275,7 @@ size_t Structure::suggestedNewPropertyStorageSize()
  
 void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, PropertyName propertyName)
 {
-    StringImpl* rep = propertyName.impl();
+    StringImpl* rep = propertyName.uid();
 
     materializePropertyMapIfNecessary(globalData);
 
@@ -292,7 +292,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
 
-    if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.impl(), attributes)) {
+    if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.uid(), attributes)) {
         JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious.get();
         if (specificValueInPrevious && specificValueInPrevious != specificValue)
             return 0;
@@ -313,7 +313,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
     // In this case we clear the value of specificFunction which will result
     // in us adding a non-specific transition, and any subsequent lookup in
     // Structure::addPropertyTransitionToExistingStructure will just use that.
-    if (specificValue && structure->m_transitionTable.contains(propertyName.impl(), attributes))
+    if (specificValue && structure->m_transitionTable.contains(propertyName.uid(), attributes))
         specificValue = 0;
 
     ASSERT(!structure->isDictionary());
@@ -336,7 +336,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
 
     transition->m_cachedPrototypeChain.setMayBeNull(globalData, transition, structure->m_cachedPrototypeChain.get());
     transition->m_previous.set(globalData, transition, structure);
-    transition->m_nameInPrevious = propertyName.impl();
+    transition->m_nameInPrevious = propertyName.uid();
     transition->m_attributesInPrevious = attributes;
     transition->m_specificValueInPrevious.setMayBeNull(globalData, transition, specificValue);
 
@@ -425,7 +425,7 @@ Structure* Structure::attributeChangeTransition(JSGlobalData& globalData, Struct
     }
 
     ASSERT(structure->m_propertyTable);
-    PropertyMapEntry* entry = structure->m_propertyTable->find(propertyName.impl()).first;
+    PropertyMapEntry* entry = structure->m_propertyTable->find(propertyName.uid()).first;
     ASSERT(entry);
     entry->attributes = attributes;
 
@@ -650,7 +650,7 @@ size_t Structure::get(JSGlobalData& globalData, PropertyName propertyName, unsig
     if (!m_propertyTable)
         return WTF::notFound;
 
-    PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName.uid()).first;
     if (!entry)
         return WTF::notFound;
 
@@ -665,7 +665,7 @@ bool Structure::despecifyFunction(JSGlobalData& globalData, PropertyName propert
     if (!m_propertyTable)
         return false;
 
-    PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName.uid()).first;
     if (!entry)
         return false;
 
@@ -693,7 +693,7 @@ size_t Structure::putSpecificValue(JSGlobalData& globalData, PropertyName proper
     if (attributes & DontEnum)
         m_hasNonEnumerableProperties = true;
 
-    StringImpl* rep = propertyName.impl();
+    StringImpl* rep = propertyName.uid();
 
     if (!m_propertyTable)
         createPropertyMap();
@@ -715,7 +715,7 @@ size_t Structure::remove(PropertyName propertyName)
 {
     checkConsistency();
 
-    StringImpl* rep = propertyName.impl();
+    StringImpl* rep = propertyName.uid();
 
     if (!m_propertyTable)
         return notFound;
@@ -753,7 +753,7 @@ void Structure::getPropertyNamesFromStructure(JSGlobalData& globalData, Property
     PropertyTable::iterator end = m_propertyTable->end();
     for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
         ASSERT(m_hasNonEnumerableProperties || !(iter->attributes & DontEnum));
-        if (!(iter->attributes & DontEnum) || (mode == IncludeDontEnumProperties)) {
+        if (iter->key->isIdentifier() && (!(iter->attributes & DontEnum) || mode == IncludeDontEnumProperties)) {
             if (knownUnique)
                 propertyNames.addKnownUnique(iter->key);
             else

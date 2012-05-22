@@ -1530,7 +1530,7 @@ JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, Pr
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
-        d->m_connect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.ustring(), true, d->m_instance, d->m_index, d->m_signature));
+        d->m_connect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.publicName(), true, d->m_instance, d->m_index, d->m_signature));
     return d->m_connect.get();
 }
 
@@ -1540,7 +1540,7 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
-        d->m_disconnect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.ustring(), false, d->m_instance, d->m_index, d->m_signature));
+        d->m_disconnect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.publicName(), false, d->m_instance, d->m_index, d->m_signature));
     return d->m_disconnect.get();
 }
 

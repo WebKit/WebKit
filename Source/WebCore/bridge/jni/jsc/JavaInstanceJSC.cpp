@@ -153,7 +153,7 @@ const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMetho
 JSValue JavaInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return JavaRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.ustring(), methodList);
+    return JavaRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
 }
 
 JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

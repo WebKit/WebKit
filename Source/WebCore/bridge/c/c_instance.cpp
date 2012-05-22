@@ -149,7 +149,7 @@ const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_i
 JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.impl(), methodList);
+    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
 }
 
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

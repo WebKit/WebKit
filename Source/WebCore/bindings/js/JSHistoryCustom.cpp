@@ -40,17 +40,17 @@ namespace WebCore {
 
 static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsHistoryPrototypeFunctionBack);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionBack);
 }
 
 static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsHistoryPrototypeFunctionForward);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionForward);
 }
 
 static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsHistoryPrototypeFunctionGo);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsHistoryPrototypeFunctionGo);
 }
 
 bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)

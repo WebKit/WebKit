@@ -16,6 +16,7 @@ LUT_FILES += \
     runtime/JSGlobalObject.cpp \
     runtime/JSONObject.cpp \
     runtime/MathObject.cpp \
+    runtime/NamePrototype.cpp \
     runtime/NumberConstructor.cpp \
     runtime/NumberPrototype.cpp \
     runtime/ObjectConstructor.cpp \

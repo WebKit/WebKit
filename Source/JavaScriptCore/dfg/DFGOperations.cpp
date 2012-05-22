@@ -36,6 +36,7 @@
 #include "JSActivation.h"
 #include "JSGlobalData.h"
 #include "JSStaticScopeObject.h"
+#include "NameInstance.h"
 #include "Operations.h"
 
 #if ENABLE(DFG_JIT)
@@ -200,6 +201,11 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
         }
     }
 
+    if (isName(property)) {
+        PutPropertySlot slot(strict);
+        baseValue.put(exec, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
+        return;
+    }
 
     // Don't put to an object if toString throws an exception.
     Identifier ident(exec, property.toString(exec)->value(exec));
@@ -307,6 +313,9 @@ EncodedJSValue DFG_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
+    if (isName(property))
+        return JSValue::encode(baseValue.get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
+
     Identifier ident(exec, property.toString(exec)->value(exec));
     return JSValue::encode(baseValue.get(exec, ident));
 }
@@ -329,6 +338,9 @@ EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
             return JSValue::encode(result);
     }
+
+    if (isName(property))
+        return JSValue::encode(JSValue(base).get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
 
     Identifier ident(exec, property.toString(exec)->value(exec));
     return JSValue::encode(JSValue(base).get(exec, ident));

@@ -1,3 +1,21 @@
+2012-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for private names
+        https://bugs.webkit.org/show_bug.cgi?id=86509
+
+        Reviewed by Oliver Hunt.
+
+        The spec isn't final, but we can start adding support to allow property maps
+        to contain keys that aren't identifiers.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyClass::methodsNamed):
+        (WebKit::ProxyClass::fieldNamed):
+        (WebKit::ProxyInstance::getMethod):
+        (WebKit::ProxyInstance::methodsNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+            - Removed PropertyName::impl(), call publicName() to get the string associated with a name.
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move setEditingBehavior() from layoutTestController to window.internals

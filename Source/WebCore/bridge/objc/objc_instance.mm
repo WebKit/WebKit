@@ -218,7 +218,7 @@ const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMetho
 JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.ustring(), methodList);
+    return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), methodList);
 }
 
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
@@ -401,8 +401,12 @@ JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec)
     return const_cast<JSValue&>(result);
 }
 
-bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName property, JSValue aValue)
+bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName propertyName, JSValue aValue)
 {
+    UString name(propertyName.publicName());
+    if (name.isNull())
+        return false;
+
     id targetObject = getObject();
     if (![targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
         return false;
@@ -418,7 +422,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName proper
         ObjcValue objcValue = convertValueToObjcValue(exec, aValue, ObjcObjectType);
 
         @try {
-            [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:property.ustring().ascii().data() encoding:NSASCIIStringEncoding]];
+            [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.
         }
@@ -429,8 +433,12 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName proper
     return true;
 }
 
-JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName property) const
+JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName propertyName) const
 {
+    UString name(propertyName.publicName());
+    if (name.isNull())
+        return jsUndefined();
+
     JSValue result = jsUndefined();
     
     id targetObject = getObject();
@@ -444,7 +452,7 @@ JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName pro
         setGlobalException(nil);
     
         @try {
-            id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ustring().ascii().data() encoding:NSASCIIStringEncoding]];
+            id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, m_rootObject.get());
         } @catch(NSException* localException) {
             // Do nothing.  Class did not override valueForUndefinedKey:.

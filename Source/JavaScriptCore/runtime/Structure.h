@@ -317,7 +317,7 @@ namespace JSC {
         if (!m_propertyTable)
             return notFound;
 
-        PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+        PropertyMapEntry* entry = m_propertyTable->find(propertyName.uid()).first;
         return entry ? entry->offset : notFound;
     }
 

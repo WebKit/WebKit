@@ -389,6 +389,7 @@
 		86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 86704B8312DBA33700A9FE7B /* YarrPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */; };
 		86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */; };
+		868916B0155F286300CB2B9A /* PrivateName.h in Headers */ = {isa = PBXBuildFile; fileRef = 868916A9155F285400CB2B9A /* PrivateName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869D04AF1193B54D00803475 /* CachedTranscendentalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
@@ -422,6 +423,12 @@
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
+		86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2F91560F036008E9222 /* NameConstructor.cpp */; };
+		86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FA1560F036008E9222 /* NameConstructor.h */; };
+		86EBF3011560F06A008E9222 /* NameInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2FB1560F036008E9222 /* NameInstance.cpp */; };
+		86EBF3021560F06A008E9222 /* NameInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FC1560F036008E9222 /* NameInstance.h */; };
+		86EBF3031560F06A008E9222 /* NamePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2FD1560F036008E9222 /* NamePrototype.cpp */; };
+		86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FE1560F036008E9222 /* NamePrototype.h */; };
 		86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */; };
 		86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */; };
 		86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */; };
@@ -1056,6 +1063,7 @@
 		86704B8312DBA33700A9FE7B /* YarrPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrPattern.h; path = yarr/YarrPattern.h; sourceTree = "<group>"; };
 		86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT32_64.cpp; path = dfg/DFGSpeculativeJIT32_64.cpp; sourceTree = "<group>"; };
 		86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSpeculativeJIT64.cpp; path = dfg/DFGSpeculativeJIT64.cpp; sourceTree = "<group>"; };
+		868916A9155F285400CB2B9A /* PrivateName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateName.h; sourceTree = "<group>"; };
 		869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTranscendentalFunction.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A054461556451B00445157 /* LowLevelInterpreter.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; name = LowLevelInterpreter.asm; path = llint/LowLevelInterpreter.asm; sourceTree = "<group>"; };
@@ -1095,6 +1103,12 @@
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
+		86EBF2F91560F036008E9222 /* NameConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameConstructor.cpp; sourceTree = "<group>"; };
+		86EBF2FA1560F036008E9222 /* NameConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameConstructor.h; sourceTree = "<group>"; };
+		86EBF2FB1560F036008E9222 /* NameInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameInstance.cpp; sourceTree = "<group>"; };
+		86EBF2FC1560F036008E9222 /* NameInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameInstance.h; sourceTree = "<group>"; };
+		86EBF2FD1560F036008E9222 /* NamePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamePrototype.cpp; sourceTree = "<group>"; };
+		86EBF2FE1560F036008E9222 /* NamePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamePrototype.h; sourceTree = "<group>"; };
 		86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGByteCodeParser.cpp; path = dfg/DFGByteCodeParser.cpp; sourceTree = "<group>"; };
 		86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeParser.h; path = dfg/DFGByteCodeParser.h; sourceTree = "<group>"; };
 		86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGenerationInfo.h; path = dfg/DFGGenerationInfo.h; sourceTree = "<group>"; };
@@ -1810,9 +1824,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */,
-				0F21C27A14BE727300ADC64B /* ExecutionHarness.h */,
-				0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -1833,8 +1844,10 @@
 				BCA62DFE0E2826230004F30D /* CallData.cpp */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
+				0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */,
 				65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */,
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
+				0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
 				BCA62DFF0E2826310004F30D /* ConstructData.cpp */,
@@ -1860,6 +1873,7 @@
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				86CA032D1038E8440028A609 /* Executable.cpp */,
 				86CAFEE21035DDE60028A609 /* Executable.h */,
+				0F21C27A14BE727300ADC64B /* ExecutionHarness.h */,
 				BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */,
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
@@ -1931,6 +1945,12 @@
 				F692A86B0255597D01FF60F7 /* MathObject.h */,
 				90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */,
 				90213E3C123A40C200D422F3 /* MemoryStatistics.h */,
+				86EBF2F91560F036008E9222 /* NameConstructor.cpp */,
+				86EBF2FA1560F036008E9222 /* NameConstructor.h */,
+				86EBF2FB1560F036008E9222 /* NameInstance.cpp */,
+				86EBF2FC1560F036008E9222 /* NameInstance.h */,
+				86EBF2FD1560F036008E9222 /* NamePrototype.cpp */,
+				86EBF2FE1560F036008E9222 /* NamePrototype.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
 				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
 				BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */,
@@ -1950,6 +1970,7 @@
 				F692A8780255597D01FF60F7 /* Operations.h */,
 				0FE228EA1436AB2300196C48 /* Options.cpp */,
 				0FE228EB1436AB2300196C48 /* Options.h */,
+				868916A9155F285400CB2B9A /* PrivateName.h */,
 				A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */,
 				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
@@ -2608,6 +2629,10 @@
 				14150133154BB13F005D8C98 /* WeakSetInlines.h in Headers */,
 				14816E1C154CC56C00B8054C /* BlockAllocator.h in Headers */,
 				86158AB3155C8B4000B45C9C /* PropertyName.h in Headers */,
+				868916B0155F286300CB2B9A /* PrivateName.h in Headers */,
+				86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */,
+				86EBF3021560F06A008E9222 /* NameInstance.h in Headers */,
+				86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */,
 				0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */,
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
@@ -3174,6 +3199,9 @@
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				14816E1B154CC56C00B8054C /* BlockAllocator.cpp in Sources */,
+				86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */,
+				86EBF3011560F06A008E9222 /* NameInstance.cpp in Sources */,
+				86EBF3031560F06A008E9222 /* NamePrototype.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
 				0F3B3A271544C995003ED0FF /* DFGCFGSimplificationPhase.cpp in Sources */,
 				0F3B3A2B15475000003ED0FF /* DFGValidate.cpp in Sources */,

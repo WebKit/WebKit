@@ -192,6 +192,12 @@ SET(JavaScriptCore_SOURCES
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MathObject.cpp
+    runtime/NameConstructor.cpp
+    runtime/NameConstructor.h
+    runtime/NameInstance.cpp
+    runtime/NameInstance.h
+    runtime/NamePrototype.cpp
+    runtime/NamePrototype.h
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
     runtime/NumberConstructor.cpp
@@ -243,6 +249,7 @@ SET(JavaScriptCore_LUT_FILES
     runtime/JSGlobalObject.cpp
     runtime/JSONObject.cpp
     runtime/MathObject.cpp
+    runtime/NamePrototype.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp

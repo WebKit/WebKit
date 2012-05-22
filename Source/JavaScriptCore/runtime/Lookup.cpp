@@ -76,7 +76,10 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         if (thisObj->staticFunctionsReified())
             return false;
     
-        JSFunction* function = JSFunction::create(exec, thisObj->globalObject(), entry->functionLength(), propertyName.ustring(), entry->function(), entry->intrinsic());
+        StringImpl* name = propertyName.publicName();
+        ASSERT(name);
+        
+        JSFunction* function = JSFunction::create(exec, thisObj->globalObject(), entry->functionLength(), name, entry->function(), entry->intrinsic());
         thisObj->putDirect(exec->globalData(), propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(exec->globalData(), propertyName);
     }

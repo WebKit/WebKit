@@ -73,9 +73,9 @@ CClass* CClass::classForIsA(NPClass* isa)
     return aClass;
 }
 
-MethodList CClass::methodsNamed(PropertyName identifier, Instance* instance) const
+MethodList CClass::methodsNamed(PropertyName propertyName, Instance* instance) const
 {
-    UString name(identifier.impl());
+    UString name(propertyName.publicName());
     
     MethodList methodList;
 
@@ -100,9 +100,9 @@ MethodList CClass::methodsNamed(PropertyName identifier, Instance* instance) con
     return methodList;
 }
 
-Field* CClass::fieldNamed(PropertyName identifier, Instance* instance) const
+Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
-    UString name(identifier.impl());
+    UString name(propertyName.publicName());
     
     Field* aField = _fields.get(name.impl());
     if (aField)

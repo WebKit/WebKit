@@ -958,6 +958,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\NameConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\NameConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\NameInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\NameInstance.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\NamePrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\NamePrototype.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\NativeErrorConstructor.cpp"
 				>
 			</File>
@@ -2055,6 +2079,10 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\MathObject.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\NamePrototype.lut.h"
 				>
 			</File>
 			<File

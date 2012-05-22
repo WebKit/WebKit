@@ -1,3 +1,18 @@
+2012-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Add support for private names
+        https://bugs.webkit.org/show_bug.cgi?id=86509
+
+        Reviewed by Oliver Hunt.
+
+        The spec isn't final, but we can start adding support to allow property maps
+        to contain keys that aren't identifiers.
+
+        * fast/js/names-expected.txt: Added.
+        * fast/js/names.html: Added.
+        * fast/js/script-tests/names.js: Added.
+            - Added test cases.
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Fix bug in paintNinePieceImage exposed by subpixel change

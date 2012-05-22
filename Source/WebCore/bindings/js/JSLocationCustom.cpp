@@ -32,17 +32,17 @@ namespace WebCore {
 
 static JSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsLocationPrototypeFunctionReplace);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionReplace);
 }
 
 static JSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsLocationPrototypeFunctionReload);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsLocationPrototypeFunctionReload);
 }
 
 static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsLocationPrototypeFunctionAssign);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionAssign);
 }
 
 bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)

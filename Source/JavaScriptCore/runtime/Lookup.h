@@ -199,17 +199,21 @@ namespace JSC {
         }
 
     private:
-        ALWAYS_INLINE const HashEntry* entry(PropertyName identifier) const
+        ALWAYS_INLINE const HashEntry* entry(PropertyName propertyName) const
         {
+            StringImpl* impl = propertyName.publicName();
+            if (!impl)
+                return 0;
+        
             ASSERT(table);
 
-            const HashEntry* entry = &table[identifier.impl()->existingHash() & compactHashSizeMask];
+            const HashEntry* entry = &table[impl->existingHash() & compactHashSizeMask];
 
             if (!entry->key())
                 return 0;
 
             do {
-                if (entry->key() == identifier.impl())
+                if (entry->key() == impl)
                     return entry;
                 entry = entry->next();
             } while (entry);

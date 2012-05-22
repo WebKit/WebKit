@@ -90,6 +90,7 @@ namespace JSC  {
         static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().numberPrototypeTable; }
         static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->globalData().objectConstructorTable; }
         static const HashTable* objectPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().objectPrototypeTable; }
+        static const HashTable* privateNamePrototypeTable(CallFrame* callFrame) { return callFrame->globalData().privateNamePrototypeTable; }
         static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
         static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
         static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().regExpPrototypeTable; }

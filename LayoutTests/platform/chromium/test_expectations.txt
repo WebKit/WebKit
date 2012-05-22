@@ -1436,6 +1436,9 @@ BUGWK80335 : fast/js/mozilla/strict/15.4.4.13.html = TEXT
 // V8 should implement the length property of constructors
 BUGWK78657 : fast/js/constructor-length.html = FAIL
 
+// This is JSC-only, preliminary implementation of a ES6 feature - doesn't exist in V8 (yet)
+BUGWK86509 SKIP WONTFIX : fast/js/names.html = FAIL
+
 // Linux pixeltest failure: The text suggests that the radios should not
 // overlap, but it's very close and quite different from the Windows version
 BUGCR10350 LINUX : fast/replaced/width100percent-radio.html = FAIL

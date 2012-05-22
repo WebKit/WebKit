@@ -130,6 +130,7 @@ namespace JSC {
         WriteBarrier<Structure> m_namedFunctionStructure;
         size_t m_functionNameOffset;
         WriteBarrier<Structure> m_numberObjectStructure;
+        WriteBarrier<Structure> m_privateNameStructure;
         WriteBarrier<Structure> m_regExpMatchesArrayStructure;
         WriteBarrier<Structure> m_regExpStructure;
         WriteBarrier<Structure> m_stringObjectStructure;
@@ -263,6 +264,7 @@ namespace JSC {
         Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(); }
         size_t functionNameOffset() const { return m_functionNameOffset; }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
+        Structure* privateNameStructure() const { return m_privateNameStructure.get(); }
         Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
@@ -376,7 +378,7 @@ namespace JSC {
 
     inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)
     {
-        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
+        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
         return !entry.isNull();
     }
 

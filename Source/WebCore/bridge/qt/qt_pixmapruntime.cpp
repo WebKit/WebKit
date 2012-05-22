@@ -242,7 +242,7 @@ Class* QtPixmapInstance::getClass() const
 JSValue QtPixmapInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return RuntimeMethod::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName.ustring(), methodList);
+    return RuntimeMethod::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName.publicName(), methodList);
 }
 
 JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
@@ -259,22 +259,24 @@ JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMe
 MethodList QtPixmapClass::methodsNamed(PropertyName identifier, Instance*) const
 {
     MethodList methods;
-    if (identifier.ustring() == QtPixmapToDataUrlMethod::name())
+    UString ustring(identifier.publicName());
+    if (ustring == QtPixmapToDataUrlMethod::name())
         methods.append(&qt_pixmap_metaData.toDataUrlMethod);
-    else if (identifier.ustring() == QtPixmapToImageDataMethod::name())
+    else if (ustring == QtPixmapToImageDataMethod::name())
         methods.append(&qt_pixmap_metaData.toImageDataMethod);
-    else if (identifier.ustring() == QtPixmapAssignToElementMethod::name())
+    else if (ustring == QtPixmapAssignToElementMethod::name())
         methods.append(&qt_pixmap_metaData.assignToElementMethod);
-    else if (identifier.ustring() == QtPixmapToStringMethod::name())
+    else if (ustring == QtPixmapToStringMethod::name())
         methods.append(&qt_pixmap_metaData.toStringMethod);
     return methods;
 }
 
 Field* QtPixmapClass::fieldNamed(PropertyName identifier, Instance*) const
 {
-    if (identifier.ustring() == QtPixmapWidthField::name())
+    UString ustring(identifier.publicName());
+    if (ustring == QtPixmapWidthField::name())
         return &qt_pixmap_metaData.widthField;
-    if (identifier.ustring() == QtPixmapHeightField::name())
+    if (ustring == QtPixmapHeightField::name())
         return &qt_pixmap_metaData.heightField;
     return 0;
 }

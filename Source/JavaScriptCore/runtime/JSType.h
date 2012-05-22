@@ -45,6 +45,7 @@ enum JSType {
     ObjectType,
     FinalObjectType,
     JSFunctionType,
+    NameInstanceType,
     NumberObjectType,
     ErrorInstanceType,
     GlobalThisType,
