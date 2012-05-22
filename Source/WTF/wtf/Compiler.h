@@ -45,6 +45,8 @@
 #define __has_extension __has_feature /* Compatibility with older versions of clang */
 #endif
 
+#define CLANG_PRAGMA(PRAGMA) _Pragma(PRAGMA)
+
 /* Specific compiler features */
 #define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES __has_feature(cxx_variadic_templates)
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES __has_feature(cxx_rvalue_references)
@@ -52,9 +54,14 @@
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR __has_feature(cxx_nullptr)
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_extension(c_static_assert)
+#define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL __has_extension(cxx_override_control)
 
 #define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_extension(has_trivial_destructor)
 
+#endif
+
+#ifndef CLANG_PRAGMA
+#define CLANG_PRAGMA(PRAGMA)
 #endif
 
 /* COMPILER(MSVC) - Microsoft Visual C++ */
@@ -71,6 +78,11 @@
 /* Specific compiler features */
 #if !COMPILER(CLANG) && _MSC_VER >= 1600
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
+#endif
+
+#if !COMPILER(CLANG)
+#define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
+#define WTF_COMPILER_QUIRK_FINAL_IS_CALLED_SEALED 1
 #endif
 
 #endif
@@ -106,7 +118,10 @@
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
 #if GCC_VERSION_AT_LEAST(4, 7, 0) && __cplusplus >= 201103L
+#define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
+#define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS 1
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
+#define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
 #define WTF_COMPILER_QUIRK_GCC11_GLOBAL_ISINF_ISNAN 1
 
 #elif GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -220,35 +235,19 @@
 #define WARN_UNUSED_RETURN
 #endif
 
-/* OVERRIDE */
+/* OVERRIDE and FINAL */
 
-#ifndef OVERRIDE
-#if COMPILER(CLANG)
-#if __has_extension(cxx_override_control)
+#if COMPILER_SUPPORTS(CXX_OVERRIDE_CONTROL)
 #define OVERRIDE override
-#endif
-#elif COMPILER(MSVC)
-#define OVERRIDE override
-#endif
-#endif
 
-#ifndef OVERRIDE
-#define OVERRIDE
-#endif
-
-/* FINAL */
-
-#ifndef FINAL
-#if COMPILER(CLANG)
-#if __has_extension(cxx_override_control)
+#if COMPILER_QUIRK(FINAL_IS_CALLED_SEALED)
+#define FINAL sealed
+#else
 #define FINAL final
 #endif
-#elif COMPILER(MSVC)
-#define FINAL sealed
-#endif
-#endif
 
-#ifndef FINAL
+#else
+#define OVERRIDE
 #define FINAL
 #endif
 
