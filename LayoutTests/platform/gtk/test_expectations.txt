@@ -67,6 +67,7 @@ BUGSTWKGTK : fast/history/multiple-classes-visited.html = PASS TEXT
 BUGSTWKGTK : fast/history/nested-visited-test.html = PASS TEXT
 BUGSTWKGTK : fast/history/self-is-visited.html = PASS TEXT
 BUGSTWKGTK : fast/history/sibling-visited-test.html = PASS TEXT
+BUGSTWKGTK : fast/html/pending-stylesheet-crash.html = PASS TEXT
 BUGSTWKGTK : fast/inline/continuation-outlines-with-layers-2.html = PASS TEXT
 BUGSTWKGTK : fast/loader/stateobjects/state-url-sets-links-visited.html = PASS TEXT
 BUGSTWKGTK : fast/mutation/end-of-task-delivery.html = PASS TEXT
