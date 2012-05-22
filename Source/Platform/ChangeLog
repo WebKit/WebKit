@@ -1,3 +1,12 @@
+2012-05-22  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Remove old staging enum value WebURLRequest::TargetType::TargetIsPrerender
+        https://bugs.webkit.org/show_bug.cgi?id=85021
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebURLRequest.h:
+
 2012-05-21  James Robinson  <jamesr@chromium.org>
 
         [chromium] Port chromium compositor to use WebFilterOperation(s)

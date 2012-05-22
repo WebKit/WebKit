@@ -73,9 +73,6 @@ public:
         TargetIsXHR = 13,
         TargetIsTextTrack = 14,
         TargetIsUnspecified = 15,
-        // FIXME: This old enum value is only being left in while prerendering is staging into chromium. After http://codereview.chromium.org/10244007/
-        // lands, this should be removed.
-        TargetIsPrerender = TargetIsUnspecified,
     };
 
     class ExtraData {
