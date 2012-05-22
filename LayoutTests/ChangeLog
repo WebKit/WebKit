@@ -1,3 +1,15 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Fix bug in paintNinePieceImage exposed by subpixel change
+        https://bugs.webkit.org/show_bug.cgi?id=87060
+
+        Reviewed by Levi Weintraub.
+
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-outset-expected.png: Removed.
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png:
+        * platform/chromium-win/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-win/fast/borders/inline-mask-overlay-image-outset-expected.png:
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. More rebaselines following r117815.
