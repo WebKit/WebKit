@@ -1,3 +1,13 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Remaining duplicated test in Skipped and test_expectations.txt after r117932
+        https://bugs.webkit.org/show_bug.cgi?id=87103
+
+        Unreviewed EFL gardening. Remove from Skipped file a test that is
+        already in test_expectations.txt to make the style script happy.
+
+        * platform/efl/Skipped:
+
 2012-05-22  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add missing test baselines

@@ -236,9 +236,6 @@ media/video-volume-slider.html
 # EFL's LayoutTestController does not implement authenticateSession
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
-# EFL's LayoutTestController does not implement abortModal
-fast/events/show-modal-dialog-onblur-onfocus.html
-
 # viewport meta tag tests that fail on the bot for yet unknown reasons
 fast/viewport/viewport-125.html
 
