@@ -1,3 +1,11 @@
+2012-05-22  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] platform/chromium/.../visibility-simple-*-layer.html fails intermittently on Windows bots.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-22  Vitaly Buka  <vitalybuka@chromium.org>
 
         LayoutTest for iframe printing.
