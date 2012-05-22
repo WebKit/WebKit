@@ -443,56 +443,12 @@ WebInspector.CSSStyleDeclaration.prototype = {
 
     /**
      * @param {string} name
-     * @return {string}
-     */
-    getPropertyShorthand: function(name)
-    {
-        var property = this._livePropertyMap[name];
-        return property ? property.shorthand : "";
-    },
-
-    /**
-     * @param {string} name
      * @return {boolean}
      */
     isPropertyImplicit: function(name)
     {
         var property = this._livePropertyMap[name];
         return property ? property.implicit : "";
-    },
-
-    /**
-     * @return {string}
-     */
-    styleTextWithShorthands: function()
-    {
-        var cssText = "";
-        var foundProperties = {};
-        for (var i = 0; i < this.length; ++i) {
-            var individualProperty = this[i];
-            var shorthandProperty = this.getPropertyShorthand(individualProperty);
-            var propertyName = (shorthandProperty || individualProperty);
-
-            if (propertyName in foundProperties)
-                continue;
-
-            if (shorthandProperty) {
-                var value = this.getShorthandValue(shorthandProperty);
-                var priority = this.getShorthandPriority(shorthandProperty);
-            } else {
-                var value = this.getPropertyValue(individualProperty);
-                var priority = this.getPropertyPriority(individualProperty);
-            }
-
-            foundProperties[propertyName] = true;
-
-            cssText += propertyName + ": " + value;
-            if (priority)
-                cssText += " !" + priority;
-            cssText += "; ";
-        }
-
-        return cssText;
     },
 
     /**
