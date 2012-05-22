@@ -731,6 +731,12 @@ protected:
 #endif
 };
 
+#if !HAVE(ACCESSIBILITY)
+inline void AccessibilityObject::updateBackingStore() { }
+inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
+inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children() { return m_children; }
+#endif
+
 } // namespace WebCore
 
 #endif // AccessibilityObject_h

@@ -1304,6 +1304,11 @@
             '<(chromium_src_dir)/build/linux/system.gyp:gtk',
           ],
         }],
+        ['OS=="android"', {
+          'sources/': [
+            ['exclude', 'accessibility/'],
+          ],
+        }],
         ['OS=="mac"', {
           'dependencies': [
             'webkit_system_interface',

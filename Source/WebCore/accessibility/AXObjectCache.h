@@ -96,13 +96,20 @@ public:
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleAriaExpandedChange(RenderObject*);
     void handleScrollbarUpdate(ScrollView*);
-    
+
+#if HAVE(ACCESSIBILITY)
     static void enableAccessibility() { gAccessibilityEnabled = true; }
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     static void setEnhancedUserInterfaceAccessibility(bool flag) { gAccessibilityEnhancedUserInterfaceEnabled = flag; }
     
     static bool accessibilityEnabled() { return gAccessibilityEnabled; }
     static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
+#else
+    static void enableAccessibility() { }
+    static void setEnhancedUserInterfaceAccessibility(bool flag) { }
+    static bool accessibilityEnabled() { return false; }
+    static bool accessibilityEnhancedUserInterfaceEnabled() { return false; }
+#endif
 
     void removeAXID(AccessibilityObject*);
     bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
@@ -193,24 +200,41 @@ private:
 bool nodeHasRole(Node*, const String& role);
 
 #if !HAVE(ACCESSIBILITY)
-inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
-inline void AXObjectCache::handleAriaRoleChanged(RenderObject*) { }
-inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
+inline AXObjectCache::AXObjectCache(const Document*) : m_document(0), m_notificationPostTimer(this, 0) { }
+inline AXObjectCache::~AXObjectCache() { }
+inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return 0; }
+inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
+inline AccessibilityObject* AXObjectCache::get(Widget*) { return 0; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return 0; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return 0; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return 0; }
+inline AccessibilityObject* AXObjectCache::rootObject() { return 0; }
+inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return 0; }
+inline Element* AXObjectCache::rootAXEditableElement(Node*) { return 0; }
+inline bool nodeHasRole(Node*, const String&) { return false; }
+inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return 0; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(RenderObject*) { }
-inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
-inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement, PostType) { }
-inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType) { }
-inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
-inline void AXObjectCache::nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned, const String&) { }
-inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::childrenChanged(RenderObject*) { }
+inline void AXObjectCache::contentChanged(RenderObject*) { }
+inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
-inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
-inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
-inline void AXObjectCache::contentChanged(RenderObject*) { }
+inline void AXObjectCache::handleActiveDescendantChanged(RenderObject*) { }
 inline void AXObjectCache::handleAriaExpandedChange(RenderObject*) { }
+inline void AXObjectCache::handleAriaRoleChanged(RenderObject*) { }
+inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
+inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
+inline void AXObjectCache::nodeTextChangeNotification(RenderObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType) { }
+inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool postToElement, PostType) { }
+inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
+inline void AXObjectCache::remove(AXID) { }
+inline void AXObjectCache::remove(RenderObject*) { }
+inline void AXObjectCache::remove(Widget*) { }
+inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 #endif
 
 }

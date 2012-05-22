@@ -27,6 +27,9 @@
  */
 
 #include "config.h"
+
+#if HAVE(ACCESSIBILITY)
+
 #include "AXObjectCache.h"
 
 #include "AccessibilityARIAGrid.h"
@@ -444,14 +447,12 @@ void AXObjectCache::removeAXID(AccessibilityObject* object)
     m_idsInUse.remove(objID);
 }
 
-#if HAVE(ACCESSIBILITY)
 void AXObjectCache::contentChanged(RenderObject* renderer)
 {
     AccessibilityObject* object = getOrCreate(renderer);
     if (object)
         object->contentChanged(); 
 }
-#endif
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
@@ -491,7 +492,6 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
     m_notificationsToPost.clear();
 }
     
-#if HAVE(ACCESSIBILITY)
 void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, bool postToElement, PostType postType)
 {
     // Notifications for text input objects are sent to that object.
@@ -567,9 +567,6 @@ void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent l
     AccessibilityObject* obj = getOrCreate(contentRenderer);
     frameLoadingEventPlatformNotification(obj, loadingEvent);
 }
-#endif
-
-#if HAVE(ACCESSIBILITY)
 
 void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
 {
@@ -608,7 +605,6 @@ void AXObjectCache::handleAriaRoleChanged(RenderObject* renderer)
     if (obj && obj->isAccessibilityRenderObject())
         static_cast<AccessibilityRenderObject*>(obj)->updateAccessibilityRole();
 }
-#endif
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)
 {
@@ -695,3 +691,5 @@ bool AXObjectCache::nodeIsTextControl(const Node* node)
 }
 
 } // namespace WebCore
+
+#endif // HAVE(ACCESSIBILITY)

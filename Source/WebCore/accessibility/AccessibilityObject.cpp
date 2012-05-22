@@ -87,7 +87,7 @@ void AccessibilityObject::detach()
 {
 #if HAVE(ACCESSIBILITY)
     setWrapper(0);
-#endif    
+#endif
 }
 
 bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)
@@ -1024,6 +1024,7 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
     return obj->document()->axObjectCache()->getOrCreate(obj);
 }
 
+#if HAVE(ACCESSIBILITY)
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull() || !node())
@@ -1050,6 +1051,7 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
 
     return lineCount;
 }
+#endif
 
 // NOTE: Consider providing this utility method as AX API
 PlainTextRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange& positionRange) const
@@ -1091,13 +1093,15 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 {
     return lineForPosition(visiblePositionForIndex(index, false));
 }
-    
+
+#if HAVE(ACCESSIBILITY)
 void AccessibilityObject::updateBackingStore()
 {
     // Updating the layout may delete this object.
     if (Document* document = this->document())
         document->updateLayoutIgnorePendingStylesheets();
 }
+#endif
 
 Document* AccessibilityObject::document() const
 {
@@ -1128,13 +1132,15 @@ FrameView* AccessibilityObject::documentFrameView() const
     return object->documentFrameView();
 }
 
+#if HAVE(ACCESSIBILITY)
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children()
 {
     updateChildrenIfNecessary();
-    
+
     return m_children;
 }
-    
+#endif
+
 void AccessibilityObject::updateChildrenIfNecessary()
 {
     if (!hasChildren())
