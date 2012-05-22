@@ -1,3 +1,9 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed cleanup of chromium test_expectations file.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Yet more rebaselining from r117815.
