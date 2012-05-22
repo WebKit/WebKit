@@ -530,7 +530,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get retainedSize()
     {
-        return this._nodes[this.nodeIndex + this._snapshot._nodeRetainedSizeOffset];
+        return this._snapshot._retainedSizes[this.nodeIndex / this._snapshot._nodeFieldCount];
     },
 
     get retainers()
@@ -679,7 +679,6 @@ WebInspector.HeapSnapshot.prototype = {
         this._nodeNameOffset = meta.node_fields.indexOf("name");
         this._nodeIdOffset = meta.node_fields.indexOf("id");
         this._nodeSelfSizeOffset = meta.node_fields.indexOf("self_size");
-        this._nodeRetainedSizeOffset = meta.node_fields.indexOf("retained_size");
         this._firstEdgeIndexOffset = meta.node_fields.indexOf("edges_index");
         this._nodeFieldCount = meta.node_fields.length;
 
@@ -722,6 +721,7 @@ WebInspector.HeapSnapshot.prototype = {
         this._calculateObjectToWindowDistance();
         var result = this._buildPostOrderIndex();
         this._dominatorsTree = this._buildDominatorTree(result.postOrderIndex2NodeIndex, result.nodeOrdinal2PostOrderIndex);
+        this._calculateRetainedSizes();
         this._buildDominatedNodes();
     },
 
@@ -1253,6 +1253,32 @@ WebInspector.HeapSnapshot.prototype = {
             dominatorsTree[nodeOrdinal] = postOrderIndex2NodeIndex[dominators[postOrderIndex]];
         }
         return dominatorsTree;
+    },
+
+    _calculateRetainedSizes: function()
+    {
+        // As for the dominators tree we only know parent nodes, not
+        // children, to sum up total sizes we "bubble" node's self size
+        // adding it to all of its parents.
+        var nodes = this._nodes;
+        var nodeSelfSizeOffset = this._nodeSelfSizeOffset;
+        var nodeFieldCount = this._nodeFieldCount;
+        var dominatorsTree = this._dominatorsTree;
+        var retainedSizes = new Uint32Array(this.nodeCount);
+        var rootNodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+
+        for (var nodeOrdinal = 0, nodeSelfSizeIndex = nodeSelfSizeOffset, l = this.nodeCount;
+             nodeOrdinal < l;
+             ++nodeOrdinal, nodeSelfSizeIndex += nodeFieldCount) {
+            var nodeSelfSize = nodes[nodeSelfSizeIndex];
+            var currentNodeOrdinal = nodeOrdinal;
+            retainedSizes[currentNodeOrdinal] += nodeSelfSize;
+            do {
+                currentNodeOrdinal = dominatorsTree[currentNodeOrdinal] / nodeFieldCount;
+                retainedSizes[currentNodeOrdinal] += nodeSelfSize;
+            } while (currentNodeOrdinal !== rootNodeOrdinal);
+        }
+        this._retainedSizes = retainedSizes;
     },
 
     _buildDominatedNodes: function()

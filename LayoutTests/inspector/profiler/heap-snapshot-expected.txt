@@ -17,6 +17,8 @@ Running: heapSnapshotPostOrderIndexTest
 
 Running: heapSnapshotDominatorsTreeTest
 
+Running: heapSnapshotRetainedSizeTest
+
 Running: heapSnapshotDominatedNodesTest
 
 Running: heapSnapshotPageOwnedTest
