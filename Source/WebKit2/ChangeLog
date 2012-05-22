@@ -1,3 +1,18 @@
+2012-05-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Tap-to-zoom overshoot animation
+        https://bugs.webkit.org/show_bug.cgi?id=87108
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Defines a simple animation curve that combines a large
+        ease-out (overshoot) with a small ease-in (correction).
+        Uses that curve for zooming animation.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::physicalOvershoot):
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+
 2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Make the resizing code more straight forward
