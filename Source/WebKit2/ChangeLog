@@ -1,5 +1,18 @@
 2012-05-22  Anders Carlsson  <andersca@apple.com>
 
+        Functions dispatched by dispatchAfterEnsuringUpdatedScrollPosition can be called after drawing area has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=87173
+        <rdar://problem/11474087>
+
+        Reviewed by Beth Dakin.
+
+        Don't try to call forceRepaint if the drawing area has already been destroyed.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+
+2012-05-22  Anders Carlsson  <andersca@apple.com>
+
         Crash when a plug-in view outlives its containing WebPage
         https://bugs.webkit.org/show_bug.cgi?id=87163
         <rdar://problem/10849258>
