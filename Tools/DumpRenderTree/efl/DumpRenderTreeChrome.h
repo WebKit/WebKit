@@ -113,6 +113,8 @@ private:
     static void onResourceLoadFailed(void*, Evas_Object*, void*);
 
     static void onNewResourceRequest(void*, Evas_Object*, void*);
+
+    static void onFrameIntentNew(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h

@@ -1,3 +1,20 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DRT needs to print information about received Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=86864
+
+        Reviewed by Adam Barth.
+
+        * ewk/ewk_intent.cpp:
+        (ewk_intent_suggestions_get): Add function to retrieve suggested
+        service URLs for an intent.
+        (ewk_intent_extra_names_get): Add function to retrieve names of
+        extra metadata for an intent.
+        (ewk_intent_new): Correctly initialize Ewk_Intent members to avoid
+        crashes.
+        (ewk_intent_free): Unref shared strings.
+        * ewk/ewk_intent.h:
+
 2012-05-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add support to enable/disable DOM paste 

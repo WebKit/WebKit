@@ -25,6 +25,7 @@
 #include "SerializedScriptValue.h"
 #include "ewk_intent_private.h"
 #include "ewk_private.h"
+#include <KURL.h>
 #include <eina_safety_checks.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -109,6 +110,21 @@ const char* ewk_intent_service_get(const Ewk_Intent* intent)
 #endif
 }
 
+Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
+{
+#if ENABLE(WEB_INTENTS)
+    EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
+
+    Eina_List* listOfSuggestions = 0;
+    Vector<WebCore::KURL>::const_iterator it;
+    for (it = core->suggestions().begin(); it != core->suggestions().end(); ++it)
+        listOfSuggestions = eina_list_append(listOfSuggestions, strdup(it->string().utf8().data()));
+    return listOfSuggestions;
+#else
+    return 0;
+#endif
+}
+
 char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
 {
 #if ENABLE(WEB_INTENTS)
@@ -117,6 +133,20 @@ char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
     if (val == core->extras().end())
         return 0;
     return strdup(val->second.utf8().data());
+#else
+    return 0;
+#endif
+}
+
+Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
+{
+#if ENABLE(WEB_INTENTS)
+    EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
+    Eina_List* listOfNames = 0;
+    WTF::HashMap<String, String>::const_iterator::Keys it = core->extras().begin().keys();
+    for (; it != core->extras().end().keys(); ++it)
+        listOfNames = eina_list_append(listOfNames, strdup(it->utf8().data()));
+    return listOfNames;
 #else
     return 0;
 #endif
@@ -135,6 +165,7 @@ Ewk_Intent* ewk_intent_new(WebCore::Intent* core)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(core, 0);
     Ewk_Intent* intent = new Ewk_Intent;
+    memset(intent, 0, sizeof(Ewk_Intent));
     intent->core = core;
 
     return intent;
@@ -151,6 +182,10 @@ void ewk_intent_free(Ewk_Intent* intent)
 {
     EINA_SAFETY_ON_NULL_RETURN(intent);
 
+    eina_stringshare_del(intent->action);
+    eina_stringshare_del(intent->type);
+    eina_stringshare_del(intent->data);
+    eina_stringshare_del(intent->service);
     delete intent;
 }
 #endif

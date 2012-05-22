@@ -1,3 +1,21 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DRT needs to print information about received Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=86864
+
+        Reviewed by Adam Barth.
+
+        Catch "intent,new" signal in EFL's DumpRenderTree and dump information
+        about the intent. This output is expected by several webintents test
+        cases.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameIntentNew):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-05-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add support to enable/disable DOM paste 

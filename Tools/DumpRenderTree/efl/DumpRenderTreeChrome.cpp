@@ -112,6 +112,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(view);
     evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);
+    evas_object_smart_callback_add(mainFrame, "intent,new", onFrameIntentNew, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
@@ -517,6 +518,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     Evas_Object* frame = static_cast<Evas_Object*>(eventInfo);
 
     evas_object_smart_callback_add(frame, "icon,changed", onFrameIconChanged, 0);
+    evas_object_smart_callback_add(frame, "intent,new", onFrameIntentNew, 0);
     evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);
@@ -649,4 +651,40 @@ void DumpRenderTreeChrome::onNewResourceRequest(void*, Evas_Object*, void* event
 
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
         m_dumpAssignedUrls.add(request->identifier, pathSuitableForTestResult(request->url));
+}
+
+void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Intent_Request* request = static_cast<Ewk_Intent_Request*>(eventInfo);
+    Ewk_Intent* intent = ewk_intent_request_intent_get(request);
+    if (!intent)
+        return;
+
+    printf("Received Web Intent: action=%s type=%s\n",
+           ewk_intent_action_get(intent),
+           ewk_intent_type_get(intent));
+
+    // TODO: Display number of ports once Ewk_Intent exposes this information.
+
+    const char* service = ewk_intent_service_get(intent);
+    if (service && strcmp(service, ""))
+        printf("Explicit intent service: %s\n", service);
+
+    void* data = 0;
+    Eina_List* extraNames = ewk_intent_extra_names_get(intent);
+    EINA_LIST_FREE(extraNames, data) {
+        char* name = static_cast<char*>(data);
+        char* value = ewk_intent_extra_get(intent, name);
+        if (value) {
+            printf("Extras[%s] = %s\n", name, value);
+            free(value);
+        }
+        free(name);
+    }
+
+    Eina_List* suggestions = ewk_intent_suggestions_get(intent);
+    EINA_LIST_FREE(suggestions, data) {
+        printf("Have suggestion %s\n", static_cast<char*>(data));
+        free(data);
+    }
 }

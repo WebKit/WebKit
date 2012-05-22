@@ -82,6 +82,20 @@ EAPI const char *ewk_intent_data_get(const Ewk_Intent *intent);
 EAPI const char *ewk_intent_service_get(const Ewk_Intent *intent);
 
 /**
+ * Query suggestions for this intent.
+ *
+ * This function provides a list of (absolute) suggested Service URLs of which the Client
+ * is aware and which can handle the intent.
+ *
+ * @param intent intent item to query.
+ *
+ * @return @c Eina_List with suggested service URLs on success, or @c 0 on failure,
+ *         the Eina_List and its items should be freed after use. Use free() to free the
+ *         items.
+ */
+EAPI Eina_List *ewk_intent_suggestions_get(const Ewk_Intent *intent);
+
+/**
  * Retrieves the value (if any) from the extra data dictionary this intent was constructed with.
  *
  * @param intent intent item to query.
@@ -90,6 +104,17 @@ EAPI const char *ewk_intent_service_get(const Ewk_Intent *intent);
  * @return a newly allocated string or @c NULL in case of error or if the key does not exist.
  */
 EAPI char *ewk_intent_extra_get(const Ewk_Intent *intent, const char *key);
+
+/**
+ * Retrieve a list of the names of extra metadata associated with the intent.
+ *
+ * @param intent intent item to query.
+ *
+ * @return @c Eina_List with names of extra metadata on success, or @c 0 on failure,
+ *         the Eina_List and its items should be freed after use. Use free() to free the
+ *         items.
+ */
+EAPI Eina_List *ewk_intent_extra_names_get(const Ewk_Intent *intent);
 
 #ifdef __cplusplus
 }
