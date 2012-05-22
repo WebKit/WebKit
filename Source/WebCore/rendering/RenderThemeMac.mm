@@ -47,6 +47,7 @@
 #import "StyleResolver.h"
 #import "TimeRanges.h"
 #import "ThemeMac.h"
+#import "WebCoreNSCellExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
@@ -845,7 +846,12 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
         paintInfo.context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
-    [popupButton drawWithFrame:inflatedRect inView:documentViewFor(o)];
+    NSView *view = documentViewFor(o);
+    [popupButton drawWithFrame:inflatedRect inView:view];
+#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
+    if (isFocused(o) && o->style()->outlineStyleIsAuto())
+        [popupButton _web_drawFocusRingWithFrame:inflatedRect inView:view];
+#endif
     [popupButton setControlView:nil];
 
     return false;
@@ -1324,7 +1330,9 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     updateCheckedState(popupButton, o);
     updateEnabledState(popupButton, o);
     updatePressedState(popupButton, o);
+#if BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
     updateFocusedState(popupButton, o);
+#endif
 }
 
 const IntSize* RenderThemeMac::menuListSizes() const
