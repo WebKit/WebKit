@@ -1,3 +1,74 @@
+2012-05-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace 'setDOMException(); return Undefined();' with 'return setDOMException();'
+        https://bugs.webkit.org/show_bug.cgi?id=87102
+
+        Reviewed by Adam Barth.
+
+        This patch replaces
+
+            setDOMException();
+            return v8::Undefined();
+
+        with
+
+            return setDOMException();
+
+        In addition, just in case, this patch replaces
+
+            if (...)
+                setDOMException();
+            return v8::Undefined();
+
+        with
+
+            if (...)
+                return setDOMException();
+            return v8::Undefined();
+
+        because people might insert some code just above
+        'return v8::Undefined()' in the future.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::getInt8Callback):
+        (WebCore::V8DataView::getUint8Callback):
+        (WebCore::V8DataView::setInt8Callback):
+        (WebCore::V8DataView::setUint8Callback):
+        * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp:
+        (WebCore::V8DirectoryEntrySync::getDirectoryCallback):
+        (WebCore::V8DirectoryEntrySync::getFileCallback):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::addCallback):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::valueAccessorGetter):
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::getObjectParameter):
+        (WebCore::V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getProgramParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getShaderParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getUniformCallback):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::observeCallback):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseAccessorGetter):
+
 2012-05-22  Martin Robinson  <mrobinson@igalia.com>
 
         [TextureMapper] [Cairo] Implement repaint counters

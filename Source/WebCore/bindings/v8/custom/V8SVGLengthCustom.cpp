@@ -49,10 +49,8 @@ v8::Handle<v8::Value> V8SVGLength::valueAccessorGetter(v8::Local<v8::String> nam
     ExceptionCode ec = 0;
     SVGLengthContext lengthContext(wrapper->contextElement());
     float value = imp.value(lengthContext, ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return v8::Number::New(value);
 }
 
@@ -84,10 +82,8 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
 {
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
-    if (wrapper->role() == AnimValRole) {
-        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (wrapper->role() == AnimValRole)
+        return V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());
 
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
@@ -98,9 +94,9 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
     SVGLengthContext lengthContext(wrapper->contextElement());
     imp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-    else
-        wrapper->commitChange();
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
+
+    wrapper->commitChange();
     return v8::Handle<v8::Value>();
 }
 

@@ -242,10 +242,8 @@ static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, Objec
         notImplemented();
         break;
     }
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -320,10 +318,8 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
     unsigned attachment = toInt32(args[1]);
     unsigned pname = toInt32(args[2]);
     WebGLGetInfo info = context->getFramebufferAttachmentParameter(target, attachment, pname, ec);
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -338,10 +334,8 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     unsigned pname = toInt32(args[0]);
     WebGLGetInfo info = context->getParameter(pname, ec);
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -359,10 +353,8 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? V8WebGLProgram::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     unsigned pname = toInt32(args[1]);
     WebGLGetInfo info = context->getProgramParameter(program, pname, ec);
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -386,10 +378,8 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     WebGLShader* shader = V8WebGLShader::HasInstance(args[0]) ? V8WebGLShader::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     unsigned pname = toInt32(args[1]);
     WebGLGetInfo info = context->getShaderParameter(shader, pname, ec);
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -432,10 +422,8 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     WebGLUniformLocation* location = toWebGLUniformLocation(args[1], ok);
 
     WebGLGetInfo info = context->getUniform(program, location, ec);
-    if (ec) {
-        V8Proxy::setDOMException(ec, args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (ec)
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return toV8Object(info, args.GetIsolate());
 }
 
@@ -517,7 +505,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -529,8 +517,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     float* data = jsArrayToFloatArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return v8::Handle<v8::Value>();
+        return V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
     }
     ExceptionCode ec = 0;
     switch (functionToCall) {
@@ -546,7 +533,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Undefined();
 }
 
@@ -583,7 +570,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -595,8 +582,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     int* data = jsArrayToIntArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return v8::Handle<v8::Value>();
+        return V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
     }
     ExceptionCode ec = 0;
     switch (functionToCall) {
@@ -608,7 +594,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Undefined();
 }
 
@@ -694,7 +680,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -706,8 +692,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     float* data = jsArrayToFloatArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return v8::Handle<v8::Value>();
+        return V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
     }
     ExceptionCode ec = 0;
     switch (matrixSize) {
@@ -718,7 +703,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec, args.GetIsolate()); 
+        return V8Proxy::setDOMException(ec, args.GetIsolate()); 
     return v8::Undefined();
 }
 
