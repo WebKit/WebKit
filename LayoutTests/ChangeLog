@@ -1,3 +1,13 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Style issue due to tests duplicated in Skipped in test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=87093
+
+        Unreviewed EFL gardening. Remove from Skipped file tests that are
+        already in test_expectations.txt to make the style script happy.
+
+        * platform/efl/Skipped:
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         Mark two tests as skipped while we figure out why they are failing.

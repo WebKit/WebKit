@@ -25,8 +25,6 @@ fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-dataTransferItemList-file-handling.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
-fast/events/drop-handler-should-not-stop-navigate.html
-fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
 fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
@@ -34,7 +32,6 @@ fast/events/prevent-drag-to-navigate.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
-fast/files/file-reader-directory-crash.html
 fast/files/file-reader-event-listener.html
 fast/files/null-origin-string.html
 fast/files/read-blob-async.html
@@ -182,7 +179,6 @@ editing/selection/caret-and-focus-ring.html
 editing/selection/selection-background.html
 fast/dom/Window/window-onFocus.html
 fast/events/blur-focus-window-should-blur-focus-element.html
-fast/events/show-modal-dialog-onblur-onfocus.html
 plugins/netscape-plugin-setwindow-size-2.html
 
 # EFL's LayoutTestController does not implement setAllowUniversalAccessFromFileURLs
@@ -242,7 +238,6 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
 # EFL's LayoutTestController does not implement abortModal
 fast/events/show-modal-dialog-onblur-onfocus.html
-fast/harness/show-modal-dialog.html
 
 # viewport meta tag tests that fail on the bot for yet unknown reasons
 fast/viewport/viewport-125.html
@@ -397,18 +392,12 @@ fast/images/pdf-as-image.html
 fast/images/pdf-as-tiled-background.html
 fast/replaced/pdf-as-image.html
 
-# The EFL port has no support for title directionality
-fast/dom/title-directionality.html
-
 # The EFL port has no support for detecting slow unload handlers
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # The EFL port has no global history delegate
 http/tests/globalhistory
-
-# PasteBoard::plainText() does not support file names.
-editing/pasteboard/drag-files-to-editable-element.html
 
 # Fails because of the security policy of the user agent?
 # http://webkit.org/b/79604
@@ -973,8 +962,6 @@ http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
 # ------------------------------------
 
 # ENABLE(SHADOW_DOM) is disabled.
-fast/dom/shadow/content-element-api.html
-fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/content-element-in-media-element.html
 fast/dom/shadow/content-element-in-meter-element.html
