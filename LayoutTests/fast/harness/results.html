@@ -642,7 +642,7 @@ function testList(tests, header, tableId)
 {
     tests.sort();
 
-    var html = '<h1>' + header + ':</h1><table id="' + tableId + '"';
+    var html = '<h1>' + header + ' (' + tests.length + '):</h1><table id="' + tableId + '"';
     if (!hasUnexpected(tests))
         html += ' class=expected';
     html += '>';
@@ -1214,15 +1214,19 @@ function failingTestsTable(tests, title, id)
     if (!tests.length)
         return '';
 
+    var numberofUnexpectedFailures = 0;
     var tableRowHtml = '';
-    for (var i = 0; i < tests.length; i++)
+    for (var i = 0; i < tests.length; i++){
         tableRowHtml += tableRow(tests[i]);
+        if (!tests[i].isExpected)
+            numberofUnexpectedFailures++;
+    }
 
     var header = '<div';
     if (!hasUnexpected(tests))
         header += ' class=expected';
 
-    header += '><h1>' + title + ':</h1>' +
+    header += '><h1>' + title + ' (' + numberofUnexpectedFailures + '):</h1>' +
         '<table id="' + id + '"><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">results</th>' +

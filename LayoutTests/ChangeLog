@@ -1,3 +1,15 @@
+2012-05-22  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        NRWT results.html page should show a count of the number of tests in each category
+        https://bugs.webkit.org/show_bug.cgi?id=64215
+
+        Reviewed by Ojan Vafai.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+        * platform/chromium-win/fast/harness/results-expected.txt: Removed.
+
 2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Remaining duplicated test in Skipped and test_expectations.txt after r117932

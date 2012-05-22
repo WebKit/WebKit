@@ -684,6 +684,25 @@ function runTests()
         }
     });
 
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar.html'] = mockExpectation('TEXT', 'PASS');
+    subtree['bar-1.html'] = mockExpectation('TEXT', 'CRASH');
+    subtree['bar-2.html'] = mockExpectation('PASS', 'IMAGE');
+    subtree['bar-3.html'] = mockExpectation('PASS', 'TEXT');
+    subtree['bar-4.html'] = mockExpectation('TEXT', 'TEXT');
+    subtree['bar-5.html'] = mockExpectation('TEXT', 'IMAGE+TEXT');
+    subtree['bar-missing.html'] = mockExpectation('TEXT', 'MISSING');
+    subtree['bar-missing.html'].is_missing_text = true;
+    runTest(results, function() {
+        var titles = document.getElementsByTagName('h1');
+        assertTrue(titles[0].textContent == 'Tests that crashed (1):');
+        assertTrue(titles[1].textContent == 'Tests where results did not match expected results (3):');
+        assertTrue(titles[2].textContent =='Tests that had no expected results (probably new) (1):');
+        assertTrue(titles[3].textContent =='Tests expected to fail but passed (1):');
+        logPass('PASS');
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 
