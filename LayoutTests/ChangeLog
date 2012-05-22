@@ -1,3 +1,12 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium test expectation updates.
+
+        * platform/chromium-linux-x86/fast/html: Added.
+        * platform/chromium-linux-x86/fast/html/details-writing-mode-expected.txt: Added.
+        * platform/chromium-win-xp/fast/html: Added.
+        * platform/chromium-win-xp/fast/html/details-writing-mode-expected.png: Added.
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Even more test expectations being updated post-r117815.
