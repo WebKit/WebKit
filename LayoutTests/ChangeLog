@@ -1,5 +1,25 @@
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed table rebaselines for chromium.
+
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug33137-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Added.
+        * platform/chromium-win/tables/mozilla/bugs/bug19061-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug19061-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug33137-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug61042-2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium test expectation updates.
 
         * platform/chromium-linux-x86/fast/html: Added.
