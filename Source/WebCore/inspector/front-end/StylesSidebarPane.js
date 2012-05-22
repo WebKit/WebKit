@@ -1140,16 +1140,16 @@ WebInspector.StylePropertiesSection.prototype = {
         // Create property tree elements.
         for (var i = 0; i < this.uniqueProperties.length; ++i) {
             var property = this.uniqueProperties[i];
-            var disabled = property.disabled;
-            var shorthand = !disabled ? property.shorthand : null;
-
-            if (shorthand && shorthand in handledProperties)
-                continue;
+            var shorthand = !property.disabled && !property.inactive ? property.shorthand : null;
 
             if (shorthand) {
-                property = style.getLiveProperty(shorthand);
-                if (!property)
+                if (shorthand in handledProperties)
+                    continue;
+                // We should only create synthetic shorthands if they are not present in the style source (i.e. we are dealing with a source-less style).
+                if (!style.getLiveProperty(shorthand))
                     property = new WebInspector.CSSProperty(style, style.allProperties.length, shorthand, style.getShorthandValue(shorthand), style.getShorthandPriority(shorthand), "style", true, true, "", undefined);
+                else
+                    shorthand = null;
             }
 
             // BUG71275: Never show purely style-based properties in editable rules.
@@ -1157,6 +1157,8 @@ WebInspector.StylePropertiesSection.prototype = {
                 continue;
 
             var isShorthand = !!(property.isLive && (shorthand || shorthandNames[property.name]));
+            if (isShorthand && (property.name in handledProperties))
+                continue;
             var inherited = this.isPropertyInherited(property.name);
             var overloaded = this.isPropertyOverloaded(property.name, isShorthand);
 

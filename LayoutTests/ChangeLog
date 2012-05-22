@@ -1,3 +1,14 @@
+2012-05-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Odd synthetic shorthands may appear in the style
+        https://bugs.webkit.org/show_bug.cgi?id=87081
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/elements/elements-panel-styles-expected.txt:
+        * inspector/elements/resources/elements-panel-styles.css:
+        (.foo):
+
 2012-05-22  Hayato Ito  <hayato@chromium.org>
 
         Fix crashes when a mouse points a <svg> element in shadow DOM subtree.

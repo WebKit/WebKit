@@ -10,7 +10,7 @@ border-top-left-radius: 5px;
 border-top-right-radius: 5px;
     .foo - 5px elements-panel-styles.css:14
 color: blue;
-    .foo, .foo::before - blue elements-panel-styles.css:21
+    .foo, .foo::before - blue elements-panel-styles.css:22
     /-- overloaded --/ .foo - black elements-panel-styles.css:14
 display: none;
     element.style - none 
@@ -26,7 +26,7 @@ font-style: italic;
 margin-bottom: 2px;
     .foo - 2px elements-panel-styles.css:14
 margin-left: 0px;
-    .foo - 0px elements-panel-styles.css:14
+    .foo - 1px elements-panel-styles.css:14
 margin-right: 0px;
     .foo - 0px elements-panel-styles.css:14
 margin-top: 10px;
@@ -44,21 +44,22 @@ display: none;
 font-style: italic !important;
 
 [expanded] 
-.foo  { (elements-panel-styles.css:39)
+.foo  { (elements-panel-styles.css:40)
 
 [expanded] 
-.foo, .foo::before  { (elements-panel-styles.css:21)
+.foo, .foo::before  { (elements-panel-styles.css:22)
 content: "[before Foo]";
 color: blue;
 
 [expanded] 
 .foo  { (elements-panel-styles.css:14)
 /-- overloaded --/ color: black;
+margin-left: 1px;
 margin: 10px 0 2px;
+    margin-left: 1px;
     margin-top: 10px;
     margin-right: 0px;
     margin-bottom: 2px;
-    margin-left: 0px;
 border-radius: 5px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -88,26 +89,26 @@ body  { (elements-panel-styles.css:1)
 
 ======== Pseudo ::before element ========
 [expanded] 
-.foo::before  { (elements-panel-styles.css:43)
+.foo::before  { (elements-panel-styles.css:44)
 
 [expanded] 
-.foo::before  { (elements-panel-styles.css:26)
+.foo::before  { (elements-panel-styles.css:27)
 color: red;
 
 [expanded] 
-.foo, .foo::before  { (elements-panel-styles.css:21)
+.foo, .foo::before  { (elements-panel-styles.css:22)
 content: "[before Foo]";
 /-- overloaded --/ color: blue;
 
 
 ======== Pseudo ::after element ========
 [expanded] 
-.foo::after  { (elements-panel-styles.css:34)
+.foo::after  { (elements-panel-styles.css:35)
 font-family: courier;
 content: "[after Foo 2]";
 
 [expanded] 
-.foo::after  { (elements-panel-styles.css:30)
+.foo::after  { (elements-panel-styles.css:31)
 /-- overloaded --/ content: "[after Foo]";
 color: green;
 
