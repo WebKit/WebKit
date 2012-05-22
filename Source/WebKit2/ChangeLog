@@ -1,3 +1,14 @@
+2012-05-22  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 116492
+
+    2012-05-08  Jon Lee  <jonlee@apple.com>
+
+            Unreviewed build fix.
+
+            * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h:
+            (LayerTreeHostCAWin):
+
 2012-05-21  Lucas Forschler  <lforschler@apple.com>
 
     Merge 117634
