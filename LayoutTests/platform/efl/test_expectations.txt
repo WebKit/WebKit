@@ -524,9 +524,6 @@ BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 // EFL's DRT does not print didFailProvisionalLoadWithError messages
 BUGWK85956 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 
-// There are not proper result with FULLSCREN_API enabling.
-BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
-
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
 // Font kerning issue, fails on GTK as well.
@@ -587,8 +584,10 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 // New test introduced in r116858 fails
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
 
-// Fullscreen API not enabled.
-BUGWK85870 : media/media-fullscreen-not-in-document.html = TEXT
+// Fullscreen API is enabled but not fully implemented.
+BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
+BUGWK86187 : media/media-fullscreen-not-in-document.html = TEXT
+BUGWK86187 SKIP : media/media-fullscreen-inline.html = PASS
 
 // This test is specific to QuickTime media engine.
 BUGWKEFL SKIP : media/video-does-not-loop.html = FAIL
