@@ -1,3 +1,13 @@
+2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Test expectations need updating
+        https://bugs.webkit.org/show_bug.cgi?id=87115
+
+        Unreviewed EFL gardening. Update expectations for 2 test cases which
+        are failing after r117932.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Odd synthetic shorthands may appear in the style

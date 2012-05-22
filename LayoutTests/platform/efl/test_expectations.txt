@@ -163,9 +163,9 @@ BUGWK84333 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
 BUGWK84333 : editing/pasteboard/drop-file-svg.html = TEXT
 BUGWK84333 : editing/pasteboard/file-drag-to-editable.html = TEXT
 BUGWK84333 : editing/pasteboard/file-input-files-access.html = TEXT
-BUGWK84333 : fast/events/drop-handler-should-not-stop-navigate.html = TIMEOUT
+BUGWK84333 : fast/events/drop-handler-should-not-stop-navigate.html = TEXT
 BUGWK84333 : fast/events/drop-with-file-paths.html = TEXT
-BUGWK84333 : fast/files/file-reader-directory-crash.html = TIMEOUT
+BUGWK84333 : fast/files/file-reader-directory-crash.html = TEXT
 BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 
 // LayoutTestController.pathToLocalResource needs special handling of file URLs to /tmp.
