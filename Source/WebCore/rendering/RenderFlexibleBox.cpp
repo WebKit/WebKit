@@ -642,6 +642,52 @@ void RenderFlexibleBox::layoutFlexItems(FlexOrderIterator& iterator, WTF::Vector
     }
 }
 
+LayoutUnit RenderFlexibleBox::autoMarginOffsetInMainAxis(const OrderedFlexItemList& children, LayoutUnit& availableFreeSpace)
+{
+    if (availableFreeSpace <= 0)
+        return 0;
+
+    int numberOfAutoMargins = 0;
+    bool isHorizontal = isHorizontalFlow();
+    for (size_t i = 0; i < children.size(); ++i) {
+        RenderBox* child = children[i];
+        if (child->isPositioned())
+            continue;
+        if (isHorizontal) {
+            if (child->style()->marginLeft().isAuto())
+                ++numberOfAutoMargins;
+            if (child->style()->marginRight().isAuto())
+                ++numberOfAutoMargins;
+        } else {
+            if (child->style()->marginTop().isAuto())
+                ++numberOfAutoMargins;
+            if (child->style()->marginBottom().isAuto())
+                ++numberOfAutoMargins;
+        }
+    }
+    if (!numberOfAutoMargins)
+        return 0;
+
+    LayoutUnit sizeOfAutoMargin = availableFreeSpace / numberOfAutoMargins;
+    availableFreeSpace = 0;
+    return sizeOfAutoMargin;
+}
+
+void RenderFlexibleBox::updateAutoMarginsInMainAxis(RenderBox* child, LayoutUnit autoMarginOffset)
+{
+    if (isHorizontalFlow()) {
+        if (child->style()->marginLeft().isAuto())
+            child->setMarginLeft(autoMarginOffset);
+        if (child->style()->marginRight().isAuto())
+            child->setMarginRight(autoMarginOffset);
+    } else {
+        if (child->style()->marginTop().isAuto())
+            child->setMarginTop(autoMarginOffset);
+        if (child->style()->marginBottom().isAuto())
+            child->setMarginBottom(autoMarginOffset);
+    }
+}
+
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox* child)
 {
     LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
@@ -673,9 +719,8 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
             child->layoutIfNeeded();
         }
 
-        // We set the margins because we want to make sure 'auto' has a margin
-        // of 0 and because if we're not auto sizing, we don't do a layout that
-        // computes the start/end margins.
+        // Before running the flex algorithm, 'auto' has a margin of 0.
+        // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         if (isHorizontalFlow()) {
             child->setMarginLeft(minimumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent, renderView));
             child->setMarginRight(minimumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent, renderView));
@@ -881,6 +926,8 @@ static EFlexAlign flexAlignForChild(RenderBox* child)
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList& children, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>& lineContexts)
 {
     ASSERT(childSizes.size() == children.size());
+
+    LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
     mainAxisOffset += initialPackingOffset(availableFreeSpace, style()->flexPack(), childSizes.size());
     if (style()->flexDirection() == FlowRowReverse)
@@ -901,6 +948,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         setLogicalOverrideSize(child, childPreferredSize);
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
+
+        updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
         LayoutUnit childCrossAxisMarginBoxExtent;
         if (flexAlignForChild(child) == AlignBaseline) {
