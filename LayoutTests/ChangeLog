@@ -1,1 +1,14 @@
+2012-05-22  Adam Barth  <abarth@webkit.org>
+
+        echo-inspan.pl is missing a semicolon on line 14, freaks out Apache on multiple regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=86023
+
+        Reviewed by Eric Seidel.
+
+        This typo was causing a syntax error, making us lose test coverage.
+
+        * http/tests/security/xssAuditor/open-iframe-src-expected.txt: Rebased result.
+        * http/tests/security/xssAuditor/open-script-src-expected.txt: Ditto.
+        * http/tests/security/xssAuditor/resources/echo-inspan.pl:
+
 == Rolled over to ChangeLog-2012-05-22 ==
