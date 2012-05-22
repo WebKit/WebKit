@@ -127,7 +127,7 @@ public:
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
-    UScriptCode script() const { return m_script; }
+    UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
 
     FontTraitsMask traitsMask() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
@@ -202,7 +202,7 @@ private:
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
     unsigned m_textRendering : 2; // TextRenderingMode
     unsigned m_isSpecifiedFont : 1; // True if a web page specifies a non-generic font family as the first font family.
-    UScriptCode m_script; // Used to help choose an appropriate font for generic font families.
+    unsigned m_script : 7; // Used to help choose an appropriate font for generic font families.
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const

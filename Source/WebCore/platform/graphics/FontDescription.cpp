@@ -34,7 +34,6 @@ namespace WebCore {
 
 struct SameSizeAsFontDescription {
     FontFamily familyList;
-    void* settings;
     RefPtr<FontFeatureSettings> m_featureSettings;
     float sizes[2];
     // FXIME: Make them fit into one word.
