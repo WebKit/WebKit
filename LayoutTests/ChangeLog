@@ -1,3 +1,13 @@
+2012-05-22  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unskipped a test and updated its expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=87099
+
+        Reviewed by Csaba Osztrogonác.
+
+        * css1/units/rounding-expected.txt:
+        * platform/qt/Skipped:
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaselines.
