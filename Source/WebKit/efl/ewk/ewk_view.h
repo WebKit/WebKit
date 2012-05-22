@@ -1619,6 +1619,9 @@ EAPI Eina_Bool    ewk_view_setting_scripts_can_access_clipboard_get(const Evas_O
 /**
  * Sets whether scripts are allowed to access clipboard.
  *
+ * The default value is @c EINA_FALSE. If set to @c EINA_TRUE, document.execCommand()
+ * allows cut, copy and paste commands. 
+ *
  * @param o View whose settings to change.
  * @param allow @c EINA_TRUE to allow scripts access clipboard,
  *              @c EINA_FALSE otherwise.

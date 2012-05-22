@@ -1,3 +1,16 @@
+2012-05-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Add support to enable/disable DOM paste 
+        https://bugs.webkit.org/show_bug.cgi?id=85040
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable JavascriptCanAccessClipboard setting on each test startup so
+        that test cases which rely on clipboard can be unskipped.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-05-22  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] EventSenderProxy::keyDown doesn't use the helper functions to send events

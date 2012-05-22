@@ -821,7 +821,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.shouldDisplaySubtitles = priv->pageSettings->shouldDisplaySubtitles();
     priv->settings.shouldDisplayTextDescriptions = priv->pageSettings->shouldDisplayTextDescriptions();
 #endif
-    priv->settings.scriptsCanAccessClipboard = priv->pageSettings->javaScriptCanAccessClipboard();
+    priv->settings.scriptsCanAccessClipboard = priv->pageSettings->javaScriptCanAccessClipboard() && priv->pageSettings->isDOMPasteAllowed();
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
     priv->settings.privateBrowsing = priv->pageSettings->privateBrowsingEnabled();
     priv->settings.caretBrowsing = priv->pageSettings->caretBrowsingEnabled();
@@ -2195,6 +2195,7 @@ Eina_Bool ewk_view_setting_scripts_can_access_clipboard_set(Evas_Object* ewkView
     allow = !!allow;
     if (priv->settings.scriptsCanAccessClipboard != allow) {
         priv->pageSettings->setJavaScriptCanAccessClipboard(allow);
+        priv->pageSettings->setDOMPasteAllowed(allow);
         priv->settings.scriptsCanAccessClipboard = allow;
     }
     return true;

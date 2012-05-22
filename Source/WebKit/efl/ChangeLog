@@ -1,3 +1,19 @@
+2012-05-22  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Add support to enable/disable DOM paste 
+        https://bugs.webkit.org/show_bug.cgi?id=85040
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support to enable/disable DOM paste setting so that document.execCommand()
+        allows paste command when this setting is enabled. Also, update documentation
+        for scripts_can_access_clipboard setting in ewk_view.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_scripts_can_access_clipboard_set):
+        * ewk/ewk_view.h:
+
 2012-05-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Clients should be able to set page cache capacity.

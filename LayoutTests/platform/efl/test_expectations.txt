@@ -234,7 +234,6 @@ BUGWK84338 : editing/style/apply-through-end-of-document.html = TEXT
 BUGWK84338 : editing/style/non-inheritable-styles.html = TEXT
 BUGWK84338 : editing/style/smoosh-styles-003.html = TEXT
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
-BUGWK84338 : fast/forms/plaintext-mode-1.html = TEXT
 BUGWK84338 : fast/forms/plaintext-mode-2.html = TEXT MISSING
 BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
@@ -474,12 +473,11 @@ BUGWK30724 : fast/loader/opaque-base-url.html = CRASH
 
 // EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 BUGWK84835 : editing/execCommand/4128080-2.html = TEXT
-BUGWK84835 : editing/execCommand/5939887.html = TEXT
 BUGWK84835 : editing/execCommand/copy-without-selection.html = TEXT
-BUGWK84835 : editing/execCommand/enabling-and-selection.html = TEXT
 BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
-BUGWK84835 : editing/execCommand/paste-and-match-style-event.html = TEXT
+
+BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
 
 // Needs baselines
 BUGWK84839 : editing/execCommand/4580583-1.html = MISSING
