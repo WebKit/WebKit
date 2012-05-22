@@ -644,17 +644,6 @@ sub GenerateHeaderCustomCall
     }
 }
 
-sub GenerateSetDOMException
-{
-    my $indent = shift;
-    my $getIsolate = shift;
-    my $result = "";
-
-    $result .= $indent . "if (UNLIKELY(ec))\n";
-    $result .= $indent . "    return V8Proxy::setDOMException(ec, $getIsolate);\n";
-    return $result;
-}
-
 sub IsSubType
 {
     my $dataNode = shift;
@@ -898,7 +887,8 @@ END
         } else {
             push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
-        push(@implContentDecls, GenerateSetDOMException("    ", "info.GetIsolate()"));
+        push(@implContentDecls, "    if (UNLIKELY(ec))\n");
+        push(@implContentDecls, "        return V8Proxy::setDOMException(ec, info.GetIsolate());\n");
 
         if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContentDecls, "    if (state.hadException())\n");
