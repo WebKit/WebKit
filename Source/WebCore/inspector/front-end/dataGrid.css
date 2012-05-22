@@ -158,7 +158,7 @@
 }
 
 .data-grid button {
-    line-height: 19px;
+    line-height: 18px;
 }
 
 body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-descending {
