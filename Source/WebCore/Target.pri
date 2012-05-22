@@ -72,7 +72,7 @@ SOURCES += \
     accessibility/AccessibilityTableRow.cpp \
     accessibility/AXObjectCache.cpp \
     bindings/generic/ActiveDOMCallback.cpp \
-    bindings/generic/ContextEnabledFeatures.cpp
+    bindings/generic/ContextEnabledFeatures.cpp \
     bindings/generic/RuntimeEnabledFeatures.cpp
 
 v8 {
@@ -1411,6 +1411,7 @@ HEADERS += \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
     bindings/generic/ActiveDOMCallback.h \
+    bindings/generic/ContextEnabledFeatures.h \
     bindings/generic/RuntimeEnabledFeatures.h
 
 v8 {
