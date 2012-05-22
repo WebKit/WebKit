@@ -1,5 +1,14 @@
 2012-05-22  Jessie Berlin  <jberlin@apple.com>
 
+        [Mac WK2] platform/mac-wk2/plugins/mouse-events-scaled.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=87182
+
+        Add expected (failing?) results to get the bots green.
+
+        * platform/mac-wk2/plugins/mouse-events-scaled-expected.txt:
+
+2012-05-22  Jessie Berlin  <jberlin@apple.com>
+
         WebKitTestRunner needs layoutTestController.setPrinting
         https://bugs.webkit.org/show_bug.cgi?id=42693
 
