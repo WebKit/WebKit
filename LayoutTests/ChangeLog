@@ -1,3 +1,12 @@
+2012-05-22  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=87122
+
+        Unreviewed gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [regression] dynamically created script tab is bound to the document resource.

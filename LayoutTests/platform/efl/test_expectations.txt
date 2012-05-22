@@ -67,9 +67,6 @@ BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
 BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
 BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
 
-// Test is flaky on other platforms.
-BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT
-
 // Seems to fail on mac as well
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
@@ -110,6 +107,9 @@ BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWK86509 : fast/js/names.html = CRASH
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -425,6 +425,8 @@ BUGWK75747 : fast/css/color-correction-untagged-images.html = TEXT
 BUGWK65536 : fast/css/text-rendering.html = TEXT
 
 BUGWK49142 : fast/css/style-scoped = TEXT
+
+BUGWK87099 : fast/css/zoom-in-length-round-trip.html = TEXT
 
 // ENABLE(INPUT_TYPE_*) are not enabled.
 BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
