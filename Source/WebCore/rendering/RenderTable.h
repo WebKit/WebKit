@@ -175,8 +175,10 @@ public:
                (collapseBorders() ? ZERO_LAYOUT_UNIT : (paddingStart() + paddingEnd() + static_cast<LayoutUnit>(numEffCols() + 1) * hBorderSpacing()));
     }
 
+    // Return the first column or column-group.
+    RenderTableCol* firstColumn() const;
+
     RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const;
-    RenderTableCol* nextColElement(RenderTableCol* current) const;
 
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc()

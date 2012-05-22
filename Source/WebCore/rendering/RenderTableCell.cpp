@@ -132,7 +132,7 @@ Length RenderTableCell::styleOrColLogicalWidth() const
 
             colWidthSum = Length(colWidthSum.value() + colWidth.value(), Fixed);
 
-            tableCol = table()->nextColElement(tableCol);
+            tableCol = tableCol->nextColumn();
             // If no next <col> tag found for the span we just return what we have for now.
             if (!tableCol)
                 break;

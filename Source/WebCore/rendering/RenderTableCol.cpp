@@ -116,4 +116,28 @@ RenderTable* RenderTableCol::table() const
     return table && table->isTable() ? toRenderTable(table) : 0;
 }
 
+RenderTableCol* RenderTableCol::nextColumn() const
+{
+    // If |this| is a column-group, the next column is the colgroup's first child column.
+    if (RenderObject* firstChild = this->firstChild())
+        return toRenderTableCol(firstChild);
+
+    // Otherwise it's the next column along.
+    RenderObject* next = nextSibling();
+
+    // Failing that, the child is the last column in a column-group, so the next column is the next column/column-group after its column-group.
+    if (!next && parent()->isTableCol())
+        next = parent()->nextSibling();
+
+    for (; next && !next->isTableCol(); next = next->nextSibling()) {
+        // We allow captions mixed with columns and column-groups.
+        if (next->isTableCaption())
+            continue;
+
+        return 0;
+    }
+
+    return toRenderTableCol(next);
+}
+
 }

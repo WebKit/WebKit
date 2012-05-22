@@ -43,7 +43,12 @@ public:
 
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
-    bool isTableColGroup() { return firstChild() ? true : false; }
+
+    bool isTableColumnGroupWithColumnChildren() { return firstChild(); }
+
+    // Returns the next column or column-group.
+    RenderTableCol* nextColumn() const;
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

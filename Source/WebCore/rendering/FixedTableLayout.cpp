@@ -77,20 +77,6 @@ FixedTableLayout::FixedTableLayout(RenderTable* table)
 {
 }
 
-static RenderObject* nextCol(RenderObject* child)
-{
-    // If child is a colgroup, the next col is the colgroup's first child col.
-    if (RenderObject* next = child->firstChild())
-        return next;
-    // Otherwise it's the next col along.
-    if (RenderObject* next = child->nextSibling())
-        return next;
-    // Failing that, the child is the last col in a colgroup, so the next col is the next col/colgroup after its colgroup.
-    if (child->parent()->isTableCol())
-        return child->parent()->nextSibling();
-    return 0;
-}
-
 int FixedTableLayout::calcWidthArray(int)
 {
     int usedWidth = 0;
@@ -101,13 +87,11 @@ int FixedTableLayout::calcWidthArray(int)
     m_width.fill(Length(Auto));
 
     unsigned currentEffectiveColumn = 0;
-    for (RenderObject* child = m_table->firstChild();child && child->isTableCol(); child = nextCol(child)) {
-
-        // Width specified by column-groups does not affect column width in fixed layout tables
-        RenderTableCol* col = toRenderTableCol(child);
+    for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
         col->computePreferredLogicalWidths();
 
-        if (col->isTableColGroup())
+        // Width specified by column-groups that have column child does not affect column width in fixed layout tables
+        if (col->isTableColumnGroupWithColumnChildren())
             continue;
 
         Length colStyleLogicalWidth = col->style()->logicalWidth();
