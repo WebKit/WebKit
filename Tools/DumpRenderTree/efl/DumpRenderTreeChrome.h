@@ -77,7 +77,7 @@ private:
 
     static void onStatusbarTextSet(void*, Evas_Object*, void*);
 
-    static void onTitleChanged(void*, Evas_Object*, void*);
+    static void onFrameTitleChanged(void*, Evas_Object*, void*);
 
     static void onDocumentLoadFinished(void*, Evas_Object*, void*);
 

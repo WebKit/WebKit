@@ -1,3 +1,16 @@
+2012-05-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DumpRenderTree does not print didReceiveTitle messages
+        https://bugs.webkit.org/show_bug.cgi?id=85971
+
+        Reviewed by Antonio Gomes.
+
+        Unskip http/tests/loading/redirect-with-no-location-crash.html now
+        that EFL's DumpRenderTree prints out the expected didReceiveTitle
+        messages.
+
+        * platform/efl/Skipped:
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Remove platform specific ref-test expectations for chromium as ref-tests appears not to support platform specific results.

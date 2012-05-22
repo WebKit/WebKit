@@ -97,7 +97,6 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "load,resource,failed", onResourceLoadFailed, 0);
     evas_object_smart_callback_add(view, "load,resource,finished", onResourceLoadFinished, 0);
     evas_object_smart_callback_add(view, "load,started", onLoadStarted, 0);
-    evas_object_smart_callback_add(view, "title,changed", onTitleChanged, 0);
     evas_object_smart_callback_add(view, "window,object,cleared", onWindowObjectCleared, m_gcController.get());
     evas_object_smart_callback_add(view, "statusbar,text,set", onStatusbarTextSet, 0);
     evas_object_smart_callback_add(view, "load,document,finished", onDocumentLoadFinished, 0);
@@ -120,6 +119,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(mainFrame, "redirect,cancelled", onFrameRedirectCancelled, 0);
     evas_object_smart_callback_add(mainFrame, "redirect,load,provisional", onFrameRedirectForProvisionalLoad, 0);
     evas_object_smart_callback_add(mainFrame, "redirect,requested", onFrameRedirectRequested, 0);
+    evas_object_smart_callback_add(mainFrame, "title,changed", onFrameTitleChanged, 0);
     evas_object_smart_callback_add(mainFrame, "xss,detected", onDidDetectXSS, 0);
 
     return view;
@@ -423,13 +423,17 @@ void DumpRenderTreeChrome::onFrameIconChanged(void*, Evas_Object* frame, void*)
     }
 }
 
-void DumpRenderTreeChrome::onTitleChanged(void*, Evas_Object*, void* eventInfo)
+void DumpRenderTreeChrome::onFrameTitleChanged(void*, Evas_Object* frame, void* eventInfo)
 {
-    if (!gLayoutTestController->dumpTitleChanges())
-        return;
-
     const char* titleText = static_cast<const char*>(eventInfo);
-    printf("TITLE CHANGED: %s\n", titleText);
+
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didReceiveTitle: %s\n", frameName.utf8().data(), titleText);
+    }
+
+    if (!done && gLayoutTestController->dumpTitleChanges())
+        printf("TITLE CHANGED: %s\n", titleText);
 }
 
 void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eventInfo)
@@ -519,6 +523,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     evas_object_smart_callback_add(frame, "redirect,cancelled", onFrameRedirectCancelled, 0);
     evas_object_smart_callback_add(frame, "redirect,load,provisional", onFrameRedirectForProvisionalLoad, 0);
     evas_object_smart_callback_add(frame, "redirect,requested", onFrameRedirectRequested, 0);
+    evas_object_smart_callback_add(frame, "title,changed", onFrameTitleChanged, 0);
     evas_object_smart_callback_add(frame, "xss,detected", onDidDetectXSS, 0);
 }
 

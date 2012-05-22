@@ -1,3 +1,22 @@
+2012-05-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DumpRenderTree does not print didReceiveTitle messages
+        https://bugs.webkit.org/show_bug.cgi?id=85971
+
+        Reviewed by Antonio Gomes.
+
+        Listen for the "title,changed" signal on the frames instead of the
+        view so that we get notified for other frame than the main one.
+        Print out the didReceiveTitle messages which are expected if
+        LayoutTestController's dumpFrameLoadCallbacks() returns true.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameTitleChanged):
+        (DumpRenderTreeChrome::onFrameCreated):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-05-21  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, reverting r116461.
