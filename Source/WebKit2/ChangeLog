@@ -1,5 +1,21 @@
 2012-05-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 117623
+
+    2012-05-18  Anders Carlsson  <andersca@apple.com>
+
+            PDF page does not show up when opened in the background
+            https://bugs.webkit.org/show_bug.cgi?id=86890
+            <rdar://problem/11259951>
+
+            Reviewed by Andreas Kling.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _updateAcceleratedCompositingMode:WebKit::]):
+            Just set the new render layer if we're already in accelerated compositing mode.
+
+2012-05-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 117516
 
     2012-05-17  Anders Carlsson  <andersca@apple.com>
