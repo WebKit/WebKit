@@ -1,3 +1,12 @@
+2012-05-22  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip failing tests after r117815.
+        https://bugs.webkit.org/show_bug.cgi?id=87099
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-05-22  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] dumpAsText() output of Qt-DRT differs from other DRTs

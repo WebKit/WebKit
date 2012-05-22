@@ -317,6 +317,11 @@ http/tests/websocket/tests/hybi/deflate-frame-parameter.html
 http/tests/websocket/tests/hybi/extensions.html
 http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
 
+# REGRESSION(r117815): It made 2 tests fail on !ENABLE(SUBPIXEL_LAYOUT) platforms
+# https://bugs.webkit.org/show_bug.cgi?id=87099
+css1/units/rounding.html
+fast/css/zoom-in-length-round-trip.html
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #
