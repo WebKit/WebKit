@@ -1,3 +1,29 @@
+2011-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        GC allocation trigger should be tuned to system RAM
+        https://bugs.webkit.org/show_bug.cgi?id=87039
+
+        Reviewed by Darin Adler.
+
+        This helps avoid OOM crashes on small platforms, and helps avoid "too much GC"
+        performance issues on big platforms.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap): GC balances between a fixed minimum and a proportional multiplier,
+        which are limited based on system RAM.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::createContextGroup):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::createLeaked):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Renamed HeapSize to HeapType because the exact size is
+        influenced by the heap type, but not determined by it.
+
 2012-05-21  Gavin Barraclough  <barraclough@apple.com>
 
         Disable private names by default in WebCore

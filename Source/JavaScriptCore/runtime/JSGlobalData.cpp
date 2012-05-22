@@ -118,8 +118,8 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 }
 #endif
 
-JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
-    : heap(this, heapSize)
+JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapType heapType)
+    : heap(this, heapType)
     , globalDataType(globalDataType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
@@ -290,19 +290,19 @@ JSGlobalData::~JSGlobalData()
 #endif
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type, HeapSize heapSize)
+PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type, HeapType heapType)
 {
-    return adoptRef(new JSGlobalData(APIContextGroup, type, heapSize));
+    return adoptRef(new JSGlobalData(APIContextGroup, type, heapType));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type, HeapSize heapSize)
+PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type, HeapType heapType)
 {
-    return adoptRef(new JSGlobalData(Default, type, heapSize));
+    return adoptRef(new JSGlobalData(Default, type, heapType));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type, HeapSize heapSize)
+PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type, HeapType heapType)
 {
-    return create(type, heapSize);
+    return create(type, heapType);
 }
 
 bool JSGlobalData::sharedInstanceExists()

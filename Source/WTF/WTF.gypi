@@ -153,6 +153,8 @@
             'wtf/NullPtr.cpp',
             'wtf/NumberOfCores.cpp',
             'wtf/NumberOfCores.h',
+            'wtf/RAMSize.cpp',
+            'wtf/RAMSize.h',
             'wtf/OSAllocatorPosix.cpp',
             'wtf/OSAllocatorWin.cpp',
             'wtf/OSRandomSource.cpp',

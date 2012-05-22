@@ -172,9 +172,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         JS_EXPORT_PRIVATE static JSGlobalData& sharedInstance();
 
-        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapSize = SmallHeap);
-        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapSize = SmallHeap);
-        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapType = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapType = SmallHeap);
+        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapType = SmallHeap);
         JS_EXPORT_PRIVATE ~JSGlobalData();
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
@@ -405,7 +405,7 @@ namespace JSC {
     private:
         friend class LLIntOffsetsExtractor;
         
-        JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
+        JSGlobalData(GlobalDataType, ThreadStackType, HeapType);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
 #if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))

@@ -84,6 +84,7 @@ HEADERS += \
     NotFound.h \
     NullPtr.h \
     NumberOfCores.h \
+    RAMSize.h \
     OSAllocator.h \
     OSRandomSource.h \
     OwnArrayPtr.h \
@@ -191,6 +192,7 @@ SOURCES += \
     MetaAllocator.cpp \
     NullPtr.cpp \
     NumberOfCores.cpp \
+    RAMSize.cpp \
     OSRandomSource.cpp \
     qt/MainThreadQt.cpp \
     qt/StringQt.cpp \

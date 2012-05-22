@@ -1,3 +1,27 @@
+2012-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        GC allocation trigger should be tuned to system RAM
+        https://bugs.webkit.org/show_bug.cgi?id=87039
+
+        Reviewed by Darin Adler.
+
+        Added a helper function for measuring system RAM.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AmountOfRAM.cpp: Added.
+        (WTF):
+        (WTF::computeAmountOfRAM):
+        (WTF::amountOfRAM):
+        * wtf/AmountOfRAM.h: Added.
+        (WTF):
+        * wtf/CMakeLists.txt:
+        * wtf/StdLibExtras.h:
+        (WTF):
+
 2012-05-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         GCC 4.7 and C++11 support.

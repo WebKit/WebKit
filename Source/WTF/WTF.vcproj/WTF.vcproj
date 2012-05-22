@@ -909,6 +909,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\RAMSize.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\RAMSize.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\NumberOfCores.cpp"
 			>
 		</File>

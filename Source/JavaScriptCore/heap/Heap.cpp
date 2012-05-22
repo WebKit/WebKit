@@ -35,8 +35,8 @@
 #include "Tracing.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
-
 
 using namespace std;
 using namespace JSC;
@@ -45,14 +45,8 @@ namespace JSC {
 
 namespace { 
 
-#if CPU(X86) || CPU(X86_64)
-static const size_t largeHeapSize = 16 * 1024 * 1024;
-#elif PLATFORM(IOS)
-static const size_t largeHeapSize = 8 * 1024 * 1024;
-#else
-static const size_t largeHeapSize = 512 * 1024;
-#endif
-static const size_t smallHeapSize = 512 * 1024;
+static const size_t largeHeapSize = 32 * MB; // About 1.5X the average webpage.
+static const size_t smallHeapSize = 1 * MB; // Matches the FastMalloc per-thread cache.
 
 #if ENABLE(GC_LOGGING)
 #if COMPILER(CLANG)
@@ -148,12 +142,21 @@ struct GCCounter {
 #define GCCOUNTER(name, value) do { } while (false)
 #endif
 
-static size_t heapSizeForHint(HeapSize heapSize)
+static inline size_t minHeapSize(HeapType heapType, size_t ramSize)
 {
-    if (heapSize == LargeHeap)
-        return largeHeapSize;
-    ASSERT(heapSize == SmallHeap);
+    if (heapType == LargeHeap)
+        return min(largeHeapSize, ramSize / 4);
     return smallHeapSize;
+}
+
+static inline size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
+{
+    // Try to stay under 1/2 RAM size to leave room for the DOM, rendering, networking, etc.
+    if (heapSize < ramSize / 4)
+        return 2 * heapSize;
+    if (heapSize < ramSize / 2)
+        return 1.5 * heapSize;
+    return 1.25 * heapSize;
 }
 
 static inline bool isValidSharedInstanceThreadState()
@@ -230,9 +233,10 @@ inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
 
 } // anonymous namespace
 
-Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
-    : m_heapSize(heapSize)
-    , m_minBytesPerCycle(heapSizeForHint(heapSize))
+Heap::Heap(JSGlobalData* globalData, HeapType heapType)
+    : m_heapType(heapType)
+    , m_ramSize(ramSize())
+    , m_minBytesPerCycle(minHeapSize(m_heapType, m_ramSize))
     , m_sizeAfterLastCollect(0)
     , m_bytesAllocatedLimit(m_minBytesPerCycle)
     , m_bytesAllocated(0)
@@ -722,15 +726,15 @@ void Heap::collect(SweepToggle sweepToggle)
         m_bytesAbandoned = 0;
     }
 
-    // To avoid pathological GC churn in large heaps, we set the new allocation 
-    // limit to be the current size of the heap. This heuristic 
-    // is a bit arbitrary. Using the current size of the heap after this 
-    // collection gives us a 2X multiplier, which is a 1:1 (heap size :
-    // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t newSize = size();
+    size_t currentHeapSize = size();
     if (fullGC) {
-        m_sizeAfterLastCollect = newSize;
-        m_bytesAllocatedLimit = max(newSize, m_minBytesPerCycle);
+        m_sizeAfterLastCollect = currentHeapSize;
+
+        // To avoid pathological GC churn in very small and very large heaps, we set
+        // the new allocation limit based on the current size of the heap, with a
+        // fixed minimum.
+        size_t maxHeapSize = max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
+        m_bytesAllocatedLimit = maxHeapSize - currentHeapSize;
     }
     m_bytesAllocated = 0;
     double lastGCEndTime = WTF::currentTime();

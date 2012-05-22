@@ -85,6 +85,8 @@ wtf_sources += \
     Source/WTF/wtf/NullPtr.h \
     Source/WTF/wtf/NumberOfCores.cpp \
     Source/WTF/wtf/NumberOfCores.h \
+    Source/WTF/wtf/RAMSize.cpp \
+    Source/WTF/wtf/RAMSize.h \
     Source/WTF/wtf/OSAllocator.h \
     Source/WTF/wtf/OSRandomSource.cpp \
     Source/WTF/wtf/OSRandomSource.h \

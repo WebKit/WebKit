@@ -65,8 +65,7 @@ namespace JSC {
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
 
-    // Heap size hint.
-    enum HeapSize { SmallHeap, LargeHeap };
+    enum HeapType { SmallHeap, LargeHeap };
 
     class Heap {
         WTF_MAKE_NONCOPYABLE(Heap);
@@ -90,7 +89,7 @@ namespace JSC {
         static void writeBarrier(const JSCell*, JSCell*);
         static uint8_t* addressOfCardFor(JSCell*);
 
-        Heap(JSGlobalData*, HeapSize);
+        Heap(JSGlobalData*, HeapType);
         ~Heap();
         JS_EXPORT_PRIVATE void lastChanceToFinalize();
 
@@ -197,7 +196,8 @@ namespace JSC {
         RegisterFile& registerFile();
         BlockAllocator& blockAllocator();
 
-        const HeapSize m_heapSize;
+        const HeapType m_heapType;
+        const size_t m_ramSize;
         const size_t m_minBytesPerCycle;
         size_t m_sizeAfterLastCollect;
 
