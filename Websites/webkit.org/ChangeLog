@@ -1,3 +1,12 @@
+2012-05-21  Peter Kasting  <pkasting@google.com>
+
+        Style guide change: Uses of "std::" should be explicitly qualified.
+        https://bugs.webkit.org/show_bug.cgi?id=87043
+
+        Reviewed by Ryosuke Niwa.
+
+        * coding/coding-style.html:
+
 2012-05-11  Darin Adler  <darin@apple.com>
 
        Try to make spacing of fine print items in lower left nicer looking.

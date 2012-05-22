@@ -951,21 +951,21 @@ using WTF::PlacementNewAdopt;
 </pre>
 </li>
 
-<li id="using-in-cpp">In C++ implementation files, do not use statements of the form
-"using std::foo" to import names in the standard template library.
-Use "using namespace std" instead.
+<li id="using-in-cpp">In C++ implementation files, do not use "using" declarations
+of any kind to import names in the standard template library.  Directly qualify
+the names at the point they're used instead.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
 // HTMLBaseElement.cpp
 
-using namespace std;
-
 namespace WebCore {
+
+  std::swap(a, b);
+  c = std::numeric_limits&lt;int&gt;::max()
 
 } // namespace WebCore
 </pre>
-
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
 // HTMLBaseElement.cpp
@@ -973,6 +973,20 @@ namespace WebCore {
 using std::swap;
 
 namespace WebCore {
+
+  swap(a, b);
+
+} // namespace WebCore
+</pre>
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+// HTMLBaseElement.cpp
+
+using namespace std;
+
+namespace WebCore {
+
+  swap(a, b);
 
 } // namespace WebCore
 </pre>
@@ -1013,7 +1027,7 @@ after any "include" statements.
 <pre class="code">
 // HTMLSelectElement.cpp
 
-using namespace std;
+using namespace other;
 
 namespace WebCore {
 
@@ -1026,7 +1040,7 @@ namespace WebCore {
 
 namespace WebCore {
 
-using namespace std;
+using namespace other;
 
 } // namespace WebCore
 </pre>
