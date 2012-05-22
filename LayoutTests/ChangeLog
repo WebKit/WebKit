@@ -1,3 +1,17 @@
+2012-05-22  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r105513): CSS max-width is not applied to SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=87050
+
+        Reviewed by Darin Adler.
+
+        * svg/css/max-height-expected.png: Added.
+        * svg/css/max-height-expected.txt: Added.
+        * svg/css/max-height.html: Added.
+        * svg/css/max-width-expected.png: Added.
+        * svg/css/max-width-expected.txt: Added.
+        * svg/css/max-width.html: Added.
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium test_expectations update, added bug number for a couple of skipped tests.

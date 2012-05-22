@@ -1,3 +1,19 @@
+2012-05-22  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r105513): CSS max-width is not applied to SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=87050
+
+        Reviewed by Darin Adler.
+
+        Tests: svg/css/max-height.html
+               svg/css/max-width.html
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): Changed to also call into the base
+        class implementation of this function if max-width was specified.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Changed to call into the bas class
+        implementation of this function if either height or max-height were specified.
+
 2012-05-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Pass Isolate to throwTypeError()

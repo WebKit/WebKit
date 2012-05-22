@@ -167,7 +167,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) cons
     if (!m_containerSize.isEmpty())
         return m_containerSize.width();
 
-    if (style()->logicalWidth().isSpecified())
+    if (style()->logicalWidth().isSpecified() || style()->logicalMaxWidth().isSpecified())
         return RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
 
     if (svg->widthAttributeEstablishesViewport())
@@ -187,7 +187,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
     if (!m_containerSize.isEmpty())
         return m_containerSize.height();
 
-    if (hasReplacedLogicalHeight())
+    if (style()->logicalHeight().isSpecified() || style()->logicalMaxHeight().isSpecified())
         return RenderReplaced::computeReplacedLogicalHeight();
 
     if (svg->heightAttributeEstablishesViewport()) {
