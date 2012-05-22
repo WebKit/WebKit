@@ -1,5 +1,14 @@
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed gardening. Yet more rebaselining from r117815.
+
+        * platform/chromium-mac-leopard/platform/chromium/media/video-scales-in-media-document-expected.txt: Removed.
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed gardening. Even more rebaselining from r117815.
 
         * css1/formatting_model/inline_elements-expected.txt: Added.
