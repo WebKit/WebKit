@@ -26,22 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @param {InjectedScriptHost} InjectedScriptHost
+ */
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
-function bind(thisObject, memberFunction)
-{
-    var func = memberFunction;
-    var args = Array.prototype.slice.call(arguments, 2);
-    function bound()
-    {
-        return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0)));
-    }
-    bound.toString = function() {
-        return "bound: " + func;
-    };
-    return bound;
-}
-
+/**
+ * @constructor
+ */
 var InjectedScript = function()
 {
     this._lastBoundObjectId = 1;
@@ -71,7 +63,7 @@ InjectedScript.prototype = {
 
         var result = {};
         result.type = typeof object;
-        if (this._isPrimitiveValue(object))
+        if (this.isPrimitiveValue(object))
             result.value = object;
         else
             result.description = this._toString(object);
@@ -224,7 +216,7 @@ InjectedScript.prototype = {
     {
         var descriptors = [];
         var nameProcessed = {};
-        nameProcessed.__proto__ = null;
+        nameProcessed["__proto__"] = null;
         for (var o = object; this._isDefined(o); o = o.__proto__) {
             var names = Object.getOwnPropertyNames(o);
             for (var i = 0; i < names.length; ++i) {
@@ -278,7 +270,7 @@ InjectedScript.prototype = {
             var resolvedArgs = [];
             args = eval(args);
             for (var i = 0; i < args.length; ++i) {
-                var objectId = args[i].objectId;
+                objectId = args[i].objectId;
                 if (objectId) {
                     var parsedArgId = this._parseObjectId(objectId);
                     if (!parsedArgId || parsedArgId.injectedScriptId !== injectedScriptId)
@@ -372,7 +364,7 @@ InjectedScript.prototype = {
     _callFrameForId: function(topCallFrame, callFrameId)
     {
         var parsedCallFrameId = eval("(" + callFrameId + ")");
-        var ordinal = parsedCallFrameId.ordinal;
+        var ordinal = parsedCallFrameId["ordinal"];
         var callFrame = topCallFrame;
         while (--ordinal >= 0 && callFrame)
             callFrame = callFrame.caller;
@@ -482,6 +474,12 @@ InjectedScript.prototype = {
 
 var injectedScript = new InjectedScript();
 
+/**
+ * @constructor
+ * @param {*} object
+ * @param {string=} objectGroupName
+ * @param {boolean=} forceValueType
+ */
 InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
 {
     this.type = typeof object;
@@ -508,6 +506,10 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
     this.description = injectedScript._describe(object);
 }
 
+/**
+ * @constructor
+ * @param {number} ordinal
+ */
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
     this.callFrameId = "{\"ordinal\":" + ordinal + ",\"injectedScriptId\":" + injectedScriptId + "}";
@@ -548,6 +550,9 @@ InjectedScript.CallFrameProxy.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
     function inScopeVariables(member)
@@ -568,7 +573,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
         if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
-        this[member] = bind(commandLineAPIImpl, commandLineAPIImpl[member]);
+        this[member] = commandLineAPIImpl[member].bind(commandLineAPIImpl);
     }
 
     for (var i = 0; i < 5; ++i) {
@@ -576,7 +581,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
         if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
-        this.__defineGetter__("$" + i, bind(commandLineAPIImpl, commandLineAPIImpl._inspectedObject, i));
+        this.__defineGetter__("$" + i, commandLineAPIImpl._inspectedObject.bind(commandLineAPIImpl, i));
     }
 }
 
@@ -585,6 +590,9 @@ CommandLineAPI.members_ = [
     "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
 ];
 
+/**
+ * @constructor
+ */
 function CommandLineAPIImpl()
 {
 }

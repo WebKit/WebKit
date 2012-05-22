@@ -32,3 +32,12 @@
 python Source/WebCore/inspector/generate-protocol-externs -o Source/WebCore/inspector/front-end/protocol-externs.js Source/WebCore/inspector/Inspector.json
 python Source/WebCore/inspector/compile-front-end.py
 
+echo "Compiling InjectedScriptSource.js..."
+java -jar ~/closure/compiler.jar\
+    --summary_detail_level 3\
+    --compilation_level SIMPLE_OPTIMIZATIONS\
+    --warning_level VERBOSE\
+    --language_in ECMASCRIPT5\
+    --accept_const_keyword\
+    --js Source/WebCore/inspector/InjectedScriptSource.js\
+    --externs Source/WebCore/inspector/InjectedScriptExterns.js
