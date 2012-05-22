@@ -250,7 +250,6 @@ private:
             
         case ArithMin:
         case ArithMax:
-        case ArithMul:
         case ArithMod: {
             if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
                 && node.canSpeculateInteger())
@@ -260,6 +259,14 @@ private:
             break;
         }
             
+        case ArithMul: {
+            if (m_graph.mulShouldSpeculateInteger(node))
+                break;
+            fixDoubleEdge(0);
+            fixDoubleEdge(1);
+            break;
+        }
+
         case ArithDiv: {
             if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
                 && node.canSpeculateInteger()) {

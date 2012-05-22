@@ -468,7 +468,26 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
         
-    case ArithMul:
+    case ArithMul: {
+        JSValue left = forNode(node.child1()).value();
+        JSValue right = forNode(node.child2()).value();
+        if (left && right && left.isNumber() && right.isNumber()) {
+            forNode(nodeIndex).set(JSValue(left.asNumber() * right.asNumber()));
+            m_foundConstants = true;
+            break;
+        }
+        if (m_graph.mulShouldSpeculateInteger(node)) {
+            forNode(node.child1()).filter(PredictInt32);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        forNode(node.child1()).filter(PredictNumber);
+        forNode(node.child2()).filter(PredictNumber);
+        forNode(nodeIndex).set(PredictDouble);
+        break;
+    }
+        
     case ArithDiv:
     case ArithMin:
     case ArithMax:
@@ -479,9 +498,6 @@ bool AbstractState::execute(unsigned indexInBlock)
             double a = left.asNumber();
             double b = right.asNumber();
             switch (node.op()) {
-            case ArithMul:
-                forNode(nodeIndex).set(JSValue(a * b));
-                break;
             case ArithDiv:
                 forNode(nodeIndex).set(JSValue(a / b));
                 break;

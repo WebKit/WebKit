@@ -198,6 +198,21 @@ public:
         return Node::shouldSpeculateInteger(left, right) && add.canSpeculateInteger();
     }
     
+    bool mulShouldSpeculateInteger(Node& mul)
+    {
+        ASSERT(mul.op() == ArithMul);
+        
+        Node& left = at(mul.child1());
+        Node& right = at(mul.child2());
+        
+        if (left.hasConstant())
+            return mulImmediateShouldSpeculateInteger(mul, right, left);
+        if (right.hasConstant())
+            return mulImmediateShouldSpeculateInteger(mul, left, right);
+        
+        return Node::shouldSpeculateInteger(left, right) && mul.canSpeculateInteger() && !nodeMayOverflow(mul.arithNodeFlags());
+    }
+    
     bool negateShouldSpeculateInteger(Node& negate)
     {
         ASSERT(negate.op() == ArithNegate);
@@ -480,6 +495,30 @@ private:
             return false;
         
         return nodeCanTruncateInteger(add.arithNodeFlags());
+    }
+    
+    bool mulImmediateShouldSpeculateInteger(Node& mul, Node& variable, Node& immediate)
+    {
+        ASSERT(immediate.hasConstant());
+        
+        JSValue immediateValue = immediate.valueOfJSConstant(m_codeBlock);
+        if (!immediateValue.isInt32())
+            return false;
+        
+        if (!variable.shouldSpeculateInteger())
+            return false;
+        
+        int32_t intImmediate = immediateValue.asInt32();
+        // Doubles have a 53 bit mantissa so we expect a multiplication of 2^31 (the highest
+        // magnitude possible int32 value) and any value less than 2^22 to not result in any
+        // rounding in a double multiplication - hence it will be equivalent to an integer
+        // multiplication, if we are doing int32 truncation afterwards (which is what
+        // canSpeculateInteger() implies).
+        const int32_t twoToThe22 = 1 << 22;
+        if (intImmediate <= -twoToThe22 || intImmediate >= twoToThe22)
+            return mul.canSpeculateInteger() && !nodeMayOverflow(mul.arithNodeFlags());
+
+        return mul.canSpeculateInteger();
     }
     
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.

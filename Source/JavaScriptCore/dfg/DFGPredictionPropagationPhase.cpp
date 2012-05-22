@@ -331,8 +331,29 @@ private:
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
         }
+
+        case ArithMul: {
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
             
-        case ArithMul:
+            if (left && right) {
+                if (m_graph.mulShouldSpeculateInteger(node))
+                    changed |= mergePrediction(PredictInt32);
+                else
+                    changed |= mergePrediction(PredictDouble);
+            }
+
+            // As soon as a multiply happens, we can easily end up in the part
+            // of the double domain where the point at which you do truncation
+            // can change the outcome. So, ArithMul always checks for overflow
+            // no matter what, and always forces its inputs to check as well.
+            
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
+            break;
+        }
+            
         case ArithDiv: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
@@ -753,7 +774,23 @@ private:
                 break;
             }
                 
-            case ArithMul:
+            case ArithMul: {
+                PredictedType left = m_graph[node.child1()].prediction();
+                PredictedType right = m_graph[node.child2()].prediction();
+                
+                VariableAccessData::Ballot ballot;
+                
+                if (isNumberPrediction(left) && isNumberPrediction(right)
+                    && !m_graph.mulShouldSpeculateInteger(node))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                vote(node.child2(), ballot);
+                break;
+            }
+
             case ArithMin:
             case ArithMax:
             case ArithMod:

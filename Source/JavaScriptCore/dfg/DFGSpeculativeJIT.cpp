@@ -2589,7 +2589,7 @@ void SpeculativeJIT::compileArithNegate(Node& node)
 
 void SpeculativeJIT::compileArithMul(Node& node)
 {
-    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
+    if (m_jit.graph().mulShouldSpeculateInteger(node)) {
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
         GPRTemporary result(this);
@@ -2597,15 +2597,17 @@ void SpeculativeJIT::compileArithMul(Node& node)
         GPRReg reg1 = op1.gpr();
         GPRReg reg2 = op2.gpr();
 
-        // What is unfortunate is that we cannot take advantage of nodeCanTruncateInteger()
-        // here. A multiply on integers performed in the double domain and then truncated to
-        // an integer will give a different result than a multiply performed in the integer
-        // domain and then truncated, if the integer domain result would have resulted in
-        // something bigger than what a 32-bit integer can hold. JavaScript mandates that
-        // the semantics are always as if the multiply had been performed in the double
-        // domain.
-            
-        speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
+        // We can perform truncated multiplications if we get to this point, because if the
+        // fixup phase could not prove that it would be safe, it would have turned us into
+        // a double multiplication.
+        if (nodeCanTruncateInteger(node.arithNodeFlags())) {
+            m_jit.move(reg1, result.gpr());
+            m_jit.mul32(reg2, result.gpr());
+        } else {
+            speculationCheck(
+                Overflow, JSValueRegs(), NoNode,
+                m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
+        }
             
         // Check for negative zero, if the users of this node care about such things.
         if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
