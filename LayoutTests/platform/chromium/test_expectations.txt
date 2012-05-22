@@ -3770,3 +3770,4 @@ BUG_EAE SKIP : fast/regions/render-region-renderer.html = FAIL
 // Failing since sub-pixel was turned on, eae and leviw working on it.
 BUG_EAE SKIP : fast/repaint/reflection-repaint-test.html = FAIL
 BUG_EAE SKIP : fast/repaint/transform-layout-repaint.html = FAIL
+BUGWK87137 WIN DEBUG : fast/block/margin-collapse/103.html = CRASH
