@@ -1,3 +1,21 @@
+2012-05-22  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Move asserts in CCLayerTreeHostTest::dispatch*
+        https://bugs.webkit.org/show_bug.cgi?id=87134
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsAnimate):
+        (WTF::CCLayerTreeHostTest::dispatchAddInstantAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsAnimateAndCommit):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (WTF::CCLayerTreeHostTest::dispatchAcquireLayerTextures):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsRedraw):
+        (WTF::CCLayerTreeHostTest::dispatchSetVisible):
+        (WTF::CCLayerTreeHostTest::dispatchSetInvisible):
+
 2012-05-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Expand damage from the background-blurred layer to ensure readback is only including pixels below that layer
