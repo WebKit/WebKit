@@ -30,7 +30,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-#include "SVGMarkerLayoutInfo.h"
+#include "SVGMarkerData.h"
 #include "StrokeStyleApplier.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
@@ -93,9 +93,6 @@ protected:
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
     void setIsPaintingFallback(bool isFallback) { m_fillFallback = isFallback; }
-    FloatRect calculateMarkerBoundsIfNeeded();
-    void processZeroLengthSubpaths();
-
     bool hasPath() const { return m_path.get(); }
     bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
 
@@ -126,21 +123,27 @@ private:
     Path* zeroLengthLinecapPath(const FloatPoint&);
     bool shouldStrokeZeroLengthSubpath() const;
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
+    void processZeroLengthSubpaths();
+
+    bool shouldGenerateMarkerPositions() const;
+    FloatRect markerRect(float strokeWidth) const;
+    void processMarkerPositions();
 
     void fillShape(RenderStyle*, GraphicsContext*, Path*, RenderSVGShape*);
     void strokePath(RenderStyle*, GraphicsContext*, Path*, RenderSVGResource*,
                     const Color&, int);
     void fillAndStrokePath(GraphicsContext*);
     void inflateWithStrokeAndMarkerBounds();
+    void drawMarkers(PaintInfo&);
 
 private:
     FloatRect m_fillBoundingBox;
     FloatRect m_strokeAndMarkerBoundingBox;
     FloatRect m_repaintBoundingBox;
-    SVGMarkerLayoutInfo m_markerLayoutInfo;
     AffineTransform m_localTransform;
     OwnPtr<Path> m_path;
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
+    Vector<MarkerPosition> m_markerPositions;
 
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;

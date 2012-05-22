@@ -1,3 +1,15 @@
+2012-05-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Crash in WebCore::RenderSVGContainer::paint
+        https://bugs.webkit.org/show_bug.cgi?id=86392
+
+        Reviewed by Rob Buis.
+
+        * svg/custom/bug86392-expected.txt: Added.
+        * svg/custom/bug86392.html: Added.
+        * svg/custom/marker-zero-length-linecaps-expected.svg: Added.
+        * svg/custom/marker-zero-length-linecaps.svg: Added.
+
 2012-05-22  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Gardening of failing tests and new passes

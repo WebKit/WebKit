@@ -39,7 +39,7 @@ public:
 
     void addResourcesFromRenderObject(RenderObject*, const RenderStyle*);
     void removeResourcesFromRenderObject(RenderObject*);
-    static SVGResources* cachedResourcesForRenderObject(RenderObject*);
+    static SVGResources* cachedResourcesForRenderObject(const RenderObject*);
 
     // Called from all SVG renderers destroy() methods - except for RenderSVGResourceContainer.
     static void clientDestroyed(RenderObject*);
@@ -57,7 +57,7 @@ public:
     static void resourceDestroyed(RenderSVGResourceContainer*);
 
 private:
-    HashMap<RenderObject*, SVGResources*> m_cache;
+    HashMap<const RenderObject*, SVGResources*> m_cache;
 };
 
 }
