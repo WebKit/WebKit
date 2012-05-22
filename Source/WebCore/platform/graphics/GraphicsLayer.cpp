@@ -97,6 +97,14 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
 GraphicsLayer::~GraphicsLayer()
 {
     ASSERT(!s_inPaintContents);
+    ASSERT(!m_parent); // willBeDestroyed should have been called already.
+}
+
+void GraphicsLayer::willBeDestroyed()
+{
+    if (m_replicaLayer)
+        m_replicaLayer->setReplicatedLayer(0);
+
     if (m_replicatedLayer)
         m_replicatedLayer->setReplicatedByLayer(0);
 

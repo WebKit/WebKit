@@ -1,3 +1,16 @@
+2012-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=82994
+
+        Reviewed by James Robinson.
+        
+        Fix an issue when removing elements with reflections from the document.
+
+        Test: compositing/reflections/remove-reflection.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::willBeDestroyed):
+
 2012-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issue with reflections and composited layers
