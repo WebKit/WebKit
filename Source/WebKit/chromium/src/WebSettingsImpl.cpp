@@ -581,6 +581,11 @@ void WebSettingsImpl::setThreadedAnimationEnabled(bool enabled)
     m_settings->setThreadedAnimationEnabled(enabled);
 }
 
+void WebSettingsImpl::setMediaPlaybackRequiresUserGesture(bool required)
+{
+    m_settings->setMediaPlaybackRequiresUserGesture(required);
+}
+
 void WebSettingsImpl::setViewportEnabled(bool enabled)
 {
     m_viewportEnabled = enabled;

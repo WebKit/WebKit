@@ -143,6 +143,7 @@ public:
     virtual void setPartialSwapEnabled(bool);
     virtual void setThreadedAnimationEnabled(bool);
     virtual void setViewportEnabled(bool);
+    virtual void setMediaPlaybackRequiresUserGesture(bool);
     virtual bool viewportEnabled() const { return m_viewportEnabled; }
 
     bool showFPSCounter() const { return m_showFPSCounter; }

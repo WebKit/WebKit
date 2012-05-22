@@ -147,6 +147,7 @@ public:
     virtual void setPartialSwapEnabled(bool) = 0;
     virtual void setThreadedAnimationEnabled(bool) = 0;
     virtual void setViewportEnabled(bool) = 0;
+    virtual void setMediaPlaybackRequiresUserGesture(bool) = 0;
     virtual bool viewportEnabled() const = 0;
     virtual void setDefaultTileSize(WebSize) = 0;
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
