@@ -1,3 +1,20 @@
+2012-05-22  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Move some CSS regions properties to CSSParser::isValidKeywordPropertyAndValue.
+        https://bugs.webkit.org/show_bug.cgi?id=87169
+
+        Reviewed by Tony Chang.
+
+        Move some CSS regions properties to the fast path implemented by
+        CSSParser::isValidKeywordPropertyAndValue.
+
+        No new tests : Existing tests should cover.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         Represents margins as box and simplify writing mode logic

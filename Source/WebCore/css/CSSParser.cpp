@@ -578,6 +578,18 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay || valueID == CSSValueWebkitMarquee)
             return true;
         break;
+    case CSSPropertyPageBreakAfter: // auto | always | avoid | left | right | inherit
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+        if (valueID == CSSValueAuto || valueID == CSSValueAlways || valueID == CSSValueAvoid || valueID == CSSValueLeft || valueID == CSSValueRight)
+            return true;
+        break;
+    case CSSPropertyPageBreakInside: // avoid | auto | inherit
+    case CSSPropertyWebkitColumnBreakInside:
+        if (valueID == CSSValueAuto || valueID == CSSValueAvoid)
+            return true;
+        break;
     case CSSPropertyPointerEvents:
         // none | visiblePainted | visibleFill | visibleStroke | visible |
         // painted | fill | stroke | auto | all | inherit
@@ -746,6 +758,19 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueExact || valueID == CSSValueEconomy)
             return true;
         break;
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueAlways || valueID == CSSValueAvoid || valueID == CSSValueLeft || valueID == CSSValueRight))
+            return true;
+        break;
+    case CSSPropertyWebkitRegionBreakInside:
+        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueAvoid))
+            return true;
+        break;
+    case CSSPropertyWebkitRegionOverflow:
+        if (parserContext.isCSSRegionsEnabled && (valueID == CSSValueAuto || valueID == CSSValueBreak))
+            return true;
+        break;
     case CSSPropertyWebkitRtlOrdering:
         if (valueID == CSSValueLogical || valueID == CSSValueVisual)
             return true;
@@ -840,6 +865,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyOutlineStyle:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
     case CSSPropertyPointerEvents:
     case CSSPropertyPosition:
     case CSSPropertyResize:
@@ -868,6 +896,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitColorCorrection:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitColumnRuleStyle:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexDirection:
@@ -893,6 +924,10 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
     case CSSPropertyWebkitPrintColorAdjust:
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+    case CSSPropertyWebkitRegionBreakInside:
+    case CSSPropertyWebkitRegionOverflow:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
@@ -1504,27 +1539,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
 
-    case CSSPropertyPageBreakAfter:       // auto | always | avoid | left | right | inherit
-    case CSSPropertyPageBreakBefore:
-    case CSSPropertyWebkitColumnBreakAfter:
-    case CSSPropertyWebkitColumnBreakBefore:
-    case CSSPropertyWebkitRegionBreakAfter:
-    case CSSPropertyWebkitRegionBreakBefore:
-        if (id == CSSValueAuto
-            || id == CSSValueAlways
-            || id == CSSValueAvoid
-            || id == CSSValueLeft
-            || id == CSSValueRight)
-            validPrimitive = ((propId == CSSPropertyWebkitRegionBreakAfter) || (propId == CSSPropertyWebkitRegionBreakBefore)) ? cssRegionsEnabled() : true;
-        break;
-
-    case CSSPropertyPageBreakInside:     // avoid | auto | inherit
-    case CSSPropertyWebkitColumnBreakInside:
-    case CSSPropertyWebkitRegionBreakInside:
-        if (id == CSSValueAuto || id == CSSValueAvoid)
-            validPrimitive = (propId == CSSPropertyWebkitRegionBreakInside) ? cssRegionsEnabled() : true;
-        break;
-
     case CSSPropertyContent:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
         // close-quote | no-open-quote | no-close-quote ]+ | inherit
         return parseContent(propId, important);
@@ -2101,10 +2115,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (!cssRegionsEnabled())
             return false;
         return parseRegionThread(propId, important);
-    case CSSPropertyWebkitRegionOverflow:
-        if (cssRegionsEnabled() && (id == CSSValueAuto || id == CSSValueBreak))
-            validPrimitive = true;
-        break;
     case CSSPropertyWebkitTransform:
         if (id == CSSValueNone)
             validPrimitive = true;
