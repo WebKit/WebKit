@@ -1,5 +1,11 @@
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed rebaseline of fast/loader/recursive-before-unload-crash.html
+
+        * platform/chromium/fast/loader/recursive-before-unload-crash-expected.txt: Added.
+
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
         Even more unreviewed chromium test expectation updates.
 
         * platform/chromium-linux-x86/platform/chromium/compositing/filters: Removed.
