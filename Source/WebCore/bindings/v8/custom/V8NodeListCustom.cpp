@@ -54,7 +54,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
 
     RefPtr<Node> result = list->itemWithName(key);
     if (!result)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     return toV8(result.release(), info.GetIsolate());
 }

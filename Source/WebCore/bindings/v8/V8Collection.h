@@ -74,9 +74,9 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getNamed
 template<class Collection, class ItemType> static v8::Handle<v8::Value> collectionNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     return getNamedPropertyOfCollection<Collection, ItemType>(name, info.Holder(), info.GetIsolate());
 }

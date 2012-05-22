@@ -76,9 +76,9 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedPropertyGetter(v8::Local<v8::Str
     INC_STATS("DOM.HTMLAllCollection.NamedPropertyGetter");
 
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     HTMLAllCollection* imp = V8HTMLAllCollection::toNative(info.Holder());
     return getNamedItems(imp, v8StringToAtomicWebCoreString(name), info.GetIsolate());

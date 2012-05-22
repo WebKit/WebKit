@@ -313,13 +313,6 @@ namespace WebCore {
 
     v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle& worldContext);
 
-    // Used by an interceptor callback that it hasn't found anything to
-    // intercept.
-    inline static v8::Local<v8::Object> notHandledByInterceptor()
-    {
-        return v8::Local<v8::Object>();
-    }
-
     inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())

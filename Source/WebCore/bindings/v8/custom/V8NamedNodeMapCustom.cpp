@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, cons
     NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->item(index);
     if (!result)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     return toV8(result.release(), info.GetIsolate());
 }
@@ -59,14 +59,14 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
     INC_STATS("DOM.NamedNodeMap.NamedPropertyGetter");
 
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
     if (!result)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     return toV8(result.release(), info.GetIsolate());
 }

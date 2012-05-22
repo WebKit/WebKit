@@ -342,7 +342,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
 {
     if (script.IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Local<v8::Value>();
 
     V8GCController::checkMemoryUsage();
     if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
@@ -369,11 +369,11 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
     // Handle V8 internal error situation (Out-of-memory).
     if (tryCatch.HasCaught()) {
         ASSERT(result.IsEmpty());
-        return notHandledByInterceptor();
+        return v8::Local<v8::Value>();
     }
 
     if (result.IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Local<v8::Value>();
 
     if (v8::V8::IsDead())
         handleFatalErrorInV8();
@@ -627,7 +627,7 @@ v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message, v
         return v8::ThrowException(v8::Exception::Error(v8String(message, isolate)));
     default:
         ASSERT_NOT_REACHED();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
 }
 

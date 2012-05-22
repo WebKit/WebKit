@@ -289,7 +289,7 @@ static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPI
         if (success)
             return value; // Intercept the call.
     }
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 

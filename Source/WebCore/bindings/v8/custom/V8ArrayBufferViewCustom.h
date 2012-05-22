@@ -82,7 +82,7 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
     if (!array) {
         V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
@@ -190,7 +190,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 {
     if (args.Length() < 1) {
         V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
 
     CPlusPlusArrayType* impl = JavaScriptWrapperArrayType::toNative(args.Holder());
@@ -231,7 +231,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
     }
 
     V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 }

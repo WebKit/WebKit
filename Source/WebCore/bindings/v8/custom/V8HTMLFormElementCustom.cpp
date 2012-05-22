@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::indexedPropertyGetter(uint32_t index, c
 
     RefPtr<Node> formElement = form->elements()->item(index);
     if (!formElement)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     return toV8(formElement.release(), info.GetIsolate());
 }
 
@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
         Vector<RefPtr<Node> > elements;
         imp->getNamedElements(v, elements);
         if (elements.isEmpty())
-            return notHandledByInterceptor();
+            return v8::Handle<v8::Value>();
     }
 
     // Second call may return different results from the first call,

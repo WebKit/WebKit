@@ -275,7 +275,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLProgram::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? V8WebGLProgram::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     Vector<RefPtr<WebGLShader> > shaders;
@@ -358,7 +358,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLProgram::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? V8WebGLProgram::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     unsigned pname = toInt32(args[1]);
@@ -387,7 +387,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLShader::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     WebGLShader* shader = V8WebGLShader::HasInstance(args[0]) ? V8WebGLShader::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     unsigned pname = toInt32(args[1]);
@@ -430,13 +430,13 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLProgram::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     WebGLProgram* program = V8WebGLProgram::HasInstance(args[0]) ? V8WebGLProgram::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
 
     if (args.Length() > 1 && !isUndefinedOrNull(args[1]) && !V8WebGLUniformLocation::HasInstance(args[1])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[1], ok);
@@ -506,7 +506,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     else {
         if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLUniformLocation::HasInstance(args[0])) {
             V8Proxy::throwTypeError();
-            return notHandledByInterceptor();
+            return v8::Handle<v8::Value>();
         }
         location = toWebGLUniformLocation(args[0], ok);
     }
@@ -535,7 +535,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
 
     if (args[1].IsEmpty() || !args[1]->IsArray()) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     v8::Handle<v8::Array> array =
       v8::Local<v8::Array>::Cast(args[1]);
@@ -544,7 +544,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     if (!data) {
         // FIXME: consider different / better exception type.
         V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     ExceptionCode ec = 0;
     switch (functionToCall) {
@@ -582,7 +582,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLUniformLocation::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
@@ -605,7 +605,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
 
     if (args[1].IsEmpty() || !args[1]->IsArray()) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     v8::Handle<v8::Array> array =
       v8::Local<v8::Array>::Cast(args[1]);
@@ -614,7 +614,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     if (!data) {
         // FIXME: consider different / better exception type.
         V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     ExceptionCode ec = 0;
     switch (functionToCall) {
@@ -697,7 +697,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
 
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8WebGLUniformLocation::HasInstance(args[0])) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
@@ -720,7 +720,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
 
     if (args[2].IsEmpty() || !args[2]->IsArray()) {
         V8Proxy::throwTypeError();
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     v8::Handle<v8::Array> array =
       v8::Local<v8::Array>::Cast(args[2]);
@@ -729,7 +729,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     if (!data) {
         // FIXME: consider different / better exception type.
         V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
     }
     ExceptionCode ec = 0;
     switch (matrixSize) {

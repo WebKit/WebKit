@@ -476,17 +476,17 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
 
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
     if (!window)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     Frame* frame = window->frame();
     if (!frame)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     Frame* child = frame->tree()->scopedChild(index);
     if (child)
         return toV8(child->domWindow(), info.GetIsolate());
 
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 
@@ -496,12 +496,12 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 
     DOMWindow* window = V8DOMWindow::toNative(info.Holder());
     if (!window)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     Frame* frame = window->frame();
     // window is detached from a frame.
     if (!frame)
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     // Search sub-frames.
     AtomicString propName = v8StringToAtomicWebCoreString(name);
@@ -511,7 +511,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 
     // Search IDL functions defined in the prototype
     if (!info.Holder()->GetRealNamedProperty(name).IsEmpty())
-        return notHandledByInterceptor();
+        return v8::Handle<v8::Value>();
 
     // Search named items in the document.
     Document* doc = frame->document();
@@ -527,7 +527,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
         }
     }
 
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 

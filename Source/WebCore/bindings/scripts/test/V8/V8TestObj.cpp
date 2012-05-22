@@ -1796,7 +1796,7 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsArray())))
         return overloadedMethod7Callback(args);
     V8Proxy::throwTypeError();
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 static v8::Handle<v8::Value> classMethodCallback(const v8::Arguments& args)
@@ -1854,7 +1854,7 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
         return overloadedMethod12Callback(args);
     V8Proxy::throwTypeError();
-    return notHandledByInterceptor();
+    return v8::Handle<v8::Value>();
 }
 
 #endif // ENABLE(Condition1)
