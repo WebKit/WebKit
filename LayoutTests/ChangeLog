@@ -1,3 +1,31 @@
+2012-05-22  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add missing test baselines
+        https://bugs.webkit.org/show_bug.cgi?id=87110
+
+        Unreviewed gardening.
+
+        * platform/efl/css1/font_properties/font-expected.txt: Added.
+        * platform/efl/css1/text_properties/line_height-expected.txt: Added.
+        * platform/efl/css3/selectors3/html/css3-modsel-32-expected.txt: Added.
+        * platform/efl/http/tests/misc/acid2-expected.png:
+        * platform/efl/http/tests/misc/acid2-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.png: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.png: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.png: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.png: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-hixie-rendering-model-004-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+
 2012-05-22  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
