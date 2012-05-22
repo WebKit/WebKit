@@ -1,3 +1,9 @@
+2012-05-21  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Rebaseline for r117865.
+
+        * platform/chromium-mac/fast/runin/runin-between-list-marker-and-before-content-expected.png: Added.
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Updating more Chromium test expectations following r117815.
