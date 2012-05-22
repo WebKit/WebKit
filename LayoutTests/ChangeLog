@@ -1,3 +1,13 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Chromium linux rebaselines post sub-pixel switch.
+
+        * platform/chromium-linux/fast/borders/bidi-012-expected.txt: Added.
+        * platform/chromium-linux/fast/encoding/utf-16-big-endian-expected.txt: Added.
+        * platform/chromium-linux/fast/encoding/utf-16-little-endian-expected.txt: Added.
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-2-expected.txt: Added.
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.txt: Added.
+
 2012-05-21  Anders Carlsson  <andersca@apple.com>
 
         Flash player buttons do not work when page is zoomed in
