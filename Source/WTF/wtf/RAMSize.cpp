@@ -45,7 +45,7 @@ static size_t computeRAMSize()
 {
 #if OS(DARWIN)
     int mib[2];
-    int64_t ramSize;
+    size_t ramSize;
     size_t length;
 
     mib[0] = CTL_HW;

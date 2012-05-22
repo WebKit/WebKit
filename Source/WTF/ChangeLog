@@ -1,3 +1,11 @@
+2012-05-22  Jessie Berlin  <jberlin@apple.com>
+
+        Build fix.
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize):
+        If you say you are going to return a size_t, actually return a size_t.
+
 2012-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         GC allocation trigger should be tuned to system RAM
