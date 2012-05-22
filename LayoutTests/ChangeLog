@@ -1,5 +1,28 @@
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed Gardening. More updates after r117815.
+
+        * platform/chromium-linux-x86/svg/zoom/page: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/standards1-expected.png:
+        * platform/chromium-win-vista/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core: Removed.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/standards1-expected.png: Removed.
+        * platform/chromium/svg/custom/use-css-no-effect-on-shadow-tree-expected.txt: Added.
+        * platform/chromium/svg/custom/viewBox-hit-expected.txt: Added.
+
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed. Marking svg/animations/animate-path-animation-qQ-tT-inverse.html and
         svg/animations/svgnumberoptionalnumber-animation-4.html as timing out.
 
