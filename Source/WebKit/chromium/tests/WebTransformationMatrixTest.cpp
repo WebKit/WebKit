@@ -24,9 +24,11 @@
 
 #include "config.h"
 
-#include "../../../../Platform/chromium/public/WebTransformationMatrix.h"
+#include <public/WebTransformationMatrix.h>
 
+#include "CCLayerTreeTestCommon.h"
 #include <gtest/gtest.h>
+#include <wtf/MathExtras.h>
 
 #define EXPECT_ROW1_EQ(a, b, c, d, matrix)      \
     EXPECT_FLOAT_EQ((a), (matrix).m11());       \
@@ -74,6 +76,7 @@
     EXPECT_NEAR((d), (matrix).m43(), (errorThreshold));
 
 #define ERROR_THRESHOLD 1e-14
+#define LOOSE_ERROR_THRESHOLD 1e-7
 
 using namespace WebKit;
 
@@ -926,7 +929,7 @@ TEST(WebTransformationMatrixTest, verifyIsIdentityOrTranslation)
     EXPECT_FALSE(A.isIdentityOrTranslation());
 }
 
-TEST(WebTransformationMatrixTest, isIntegerTranslation)
+TEST(WebTransformationMatrixTest, verifyIsIntegerTranslation)
 {
     WebTransformationMatrix A;
 
@@ -951,6 +954,331 @@ TEST(WebTransformationMatrixTest, isIntegerTranslation)
     for (int i = 0; i < 100000; ++i)
         A.translate(2, 3);
     EXPECT_TRUE(A.isIntegerTranslation());
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForTranslation)
+{
+    WebTransformationMatrix from;
+    from.translate3d(100, 200, 100);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.translate3d(200, 100, 300);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    to.makeIdentity();
+    to.translate3d(200, 100, 300);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_EQ(1, 0, 0, 125, to);
+    EXPECT_ROW2_EQ(0, 1, 0, 175, to);
+    EXPECT_ROW3_EQ(0, 0, 1, 150, to);
+    EXPECT_ROW4_EQ(0, 0, 0,  1,  to);
+
+    to.makeIdentity();
+    to.translate3d(200, 100, 300);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_EQ(1, 0, 0, 150, to);
+    EXPECT_ROW2_EQ(0, 1, 0, 150, to);
+    EXPECT_ROW3_EQ(0, 0, 1, 200, to);
+    EXPECT_ROW4_EQ(0, 0, 0,  1,  to);
+
+    to.makeIdentity();
+    to.translate3d(200, 100, 300);
+    to.blend(from, 1);
+    EXPECT_ROW1_EQ(1, 0, 0, 200, to);
+    EXPECT_ROW2_EQ(0, 1, 0, 100, to);
+    EXPECT_ROW3_EQ(0, 0, 1, 300, to);
+    EXPECT_ROW4_EQ(0, 0, 0,  1,  to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForScale)
+{
+    WebTransformationMatrix from;
+    from.scale3d(100, 200, 100);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.scale3d(200, 100, 300);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    to.makeIdentity();
+    to.scale3d(200, 100, 300);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_EQ(125, 0,  0,  0, to);
+    EXPECT_ROW2_EQ(0,  175, 0,  0, to);
+    EXPECT_ROW3_EQ(0,   0, 150, 0, to);
+    EXPECT_ROW4_EQ(0,   0,  0,  1, to);
+
+    to.makeIdentity();
+    to.scale3d(200, 100, 300);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_EQ(150, 0,  0,  0, to);
+    EXPECT_ROW2_EQ(0,  150, 0,  0, to);
+    EXPECT_ROW3_EQ(0,   0, 200, 0, to);
+    EXPECT_ROW4_EQ(0,   0,  0,  1, to);
+
+    to.makeIdentity();
+    to.scale3d(200, 100, 300);
+    to.blend(from, 1);
+    EXPECT_ROW1_EQ(200, 0,  0,  0, to);
+    EXPECT_ROW2_EQ(0,  100, 0,  0, to);
+    EXPECT_ROW3_EQ(0,   0, 300, 0, to);
+    EXPECT_ROW4_EQ(0,   0,  0,  1, to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForSkewX)
+{
+    WebTransformationMatrix from;
+    from.skewX(0);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.skewX(45);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    to.makeIdentity();
+    to.skewX(45);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_EQ(1, 0.5, 0, 0, to);
+    EXPECT_ROW2_EQ(0,  1,  0, 0, to);
+    EXPECT_ROW3_EQ(0,  0,  1, 0, to);
+    EXPECT_ROW4_EQ(0,  0,  0, 1, to);
+
+    to.makeIdentity();
+    to.skewX(45);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_EQ(1, 0.25, 0, 0, to);
+    EXPECT_ROW2_EQ(0,   1,  0, 0, to);
+    EXPECT_ROW3_EQ(0,   0,  1, 0, to);
+    EXPECT_ROW4_EQ(0,   0,  0, 1, to);
+
+    to.makeIdentity();
+    to.skewX(45);
+    to.blend(from, 1);
+    EXPECT_ROW1_EQ(1, 1, 0, 0, to);
+    EXPECT_ROW2_EQ(0, 1, 0, 0, to);
+    EXPECT_ROW3_EQ(0, 0, 1, 0, to);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForSkewY)
+{
+    // NOTE CAREFULLY: Decomposition of skew and rotation terms of the matrix is
+    // inherently underconstrained, and so it does not always compute the originally
+    // intended skew parameters. The current implementation uses QR decomposition, which
+    // decomposes the shear into a rotation + non-uniform scale.
+    //
+    // It is unlikely that the decomposition implementation will need to change very
+    // often, so to get any test coverage, the compromise is to verify the exact matrix
+    // that the blend() operation produces.
+    //
+    // This problem also potentially exists for skewX, but the current QR decomposition
+    // implementation just happens to decompose those test matrices intuitively.
+
+    WebTransformationMatrix from;
+    from.skewY(0);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.skewY(45);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    to.makeIdentity();
+    to.skewY(45);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_NEAR(1.0823489449280947471976333, 0.0464370719145053845178239, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0.2152925909665224513123150, 0.9541702441750861130032035, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_EQ(0, 0, 1, 0, to);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    to.makeIdentity();
+    to.skewY(45);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_NEAR(1.1152212925809066312865525, 0.0676495144007326631996335, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0.4619397844342648662419037, 0.9519009045724774464858342, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_EQ(0, 0, 1, 0, to);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    // Unfortunately, this case suffers from uncomfortably large precision error.
+    to.makeIdentity();
+    to.skewY(45);
+    to.blend(from, 1);
+    EXPECT_ROW1_NEAR(1, 0, 0, 0, to, LOOSE_ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(1, 1, 0, 0, to, LOOSE_ERROR_THRESHOLD);
+    EXPECT_ROW3_EQ(0, 0, 1, 0, to);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForRotationAboutX)
+{
+    // Even though blending uses quaternions, axis-aligned rotations should blend the same
+    // with quaternions or Euler angles. So we can test rotation blending by comparing
+    // against manually specified matrices from Euler angles.
+
+    WebTransformationMatrix from;
+    from.rotate3d(1, 0, 0, 0);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.rotate3d(1, 0, 0, 90);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    double expectedRotationAngle = 22.5 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(1, 0, 0, 90);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_NEAR(1, 0, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0, cos(expectedRotationAngle), -sin(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0, sin(expectedRotationAngle),  cos(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    expectedRotationAngle = 45.0 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(1, 0, 0, 90);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_NEAR(1, 0, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0, cos(expectedRotationAngle), -sin(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0, sin(expectedRotationAngle),  cos(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    to.makeIdentity();
+    to.rotate3d(1, 0, 0, 90);
+    to.blend(from, 1);
+    EXPECT_ROW1_NEAR(1, 0,  0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0, 0, -1, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0, 1,  0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForRotationAboutY)
+{
+    WebTransformationMatrix from;
+    from.rotate3d(0, 1, 0, 0);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.rotate3d(0, 1, 0, 90);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    double expectedRotationAngle = 22.5 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(0, 1, 0, 90);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_NEAR(cos(expectedRotationAngle),  0, sin(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0, 1, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(-sin(expectedRotationAngle), 0, cos(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    expectedRotationAngle = 45.0 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(0, 1, 0, 90);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_NEAR(cos(expectedRotationAngle),  0, sin(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0, 1, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(-sin(expectedRotationAngle), 0, cos(expectedRotationAngle), 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    to.makeIdentity();
+    to.rotate3d(0, 1, 0, 90);
+    to.blend(from, 1);
+    EXPECT_ROW1_NEAR(0,  0, 1, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0,  1, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(-1, 0, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+}
+
+TEST(WebTransformationMatrixTest, verifyBlendForRotationAboutZ)
+{
+    WebTransformationMatrix from;
+    from.rotate3d(0, 0, 1, 0);
+
+    WebTransformationMatrix to;
+
+    to.makeIdentity();
+    to.rotate3d(0, 0, 1, 90);
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    double expectedRotationAngle = 22.5 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(0, 0, 1, 90);
+    to.blend(from, 0.25);
+    EXPECT_ROW1_NEAR(cos(expectedRotationAngle), -sin(expectedRotationAngle), 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(sin(expectedRotationAngle),  cos(expectedRotationAngle), 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0, 0, 1, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    expectedRotationAngle = 45.0 * piDouble / 180.0;
+    to.makeIdentity();
+    to.rotate3d(0, 0, 1, 90);
+    to.blend(from, 0.5);
+    EXPECT_ROW1_NEAR(cos(expectedRotationAngle), -sin(expectedRotationAngle), 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(sin(expectedRotationAngle),  cos(expectedRotationAngle), 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0, 0, 1, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+
+    to.makeIdentity();
+    to.rotate3d(0, 0, 1, 90);
+    to.blend(from, 1);
+    EXPECT_ROW1_NEAR(0, -1, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(1,  0, 0, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(0,  0, 1, 0, to, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, to);
+}
+
+
+TEST(WebTransformationMatrixTest, verifyBlendForCompositeTransform)
+{
+    // Verify that the blending was done with a decomposition in correct order by blending
+    // a composite transform.
+    // Using matrix x vector notation (Ax = b, where x is column vector), the ordering should be:
+    // perspective * translation * rotation * skew * scale
+    //
+    // It is not as important (or meaningful) to check intermediate interpolations; order
+    // of operations will be tested well enough by the end cases that are easier to
+    // specify.
+    
+    WebTransformationMatrix from;
+    WebTransformationMatrix to;
+
+    WebTransformationMatrix expectedEndOfAnimation;
+    expectedEndOfAnimation.applyPerspective(1);
+    expectedEndOfAnimation.translate3d(10, 20, 30);
+    expectedEndOfAnimation.rotate3d(0, 0, 1, 25);
+    expectedEndOfAnimation.skewY(45);
+    expectedEndOfAnimation.scale3d(6, 7, 8);
+    
+    to = expectedEndOfAnimation;
+    to.blend(from, 0);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(from, to);
+
+    to = expectedEndOfAnimation;
+    to.blend(from, 1);
+
+    // Recomposing the matrix results in a normalized matrix, so to verify we need to
+    // normalize the expectedEndOfAnimation before comparing elements. Normalizing means
+    // dividing everything by expectedEndOfAnimation.m44().
+    WebTransformationMatrix normalizedExpectedEndOfAnimation = expectedEndOfAnimation;
+    WebTransformationMatrix normalizationMatrix;
+    normalizationMatrix.setM11(1 / expectedEndOfAnimation.m44());
+    normalizationMatrix.setM22(1 / expectedEndOfAnimation.m44());
+    normalizationMatrix.setM33(1 / expectedEndOfAnimation.m44());
+    normalizationMatrix.setM44(1 / expectedEndOfAnimation.m44());
+    normalizedExpectedEndOfAnimation.multiply(normalizationMatrix);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(normalizedExpectedEndOfAnimation, to);
 }
 
 } // namespace
