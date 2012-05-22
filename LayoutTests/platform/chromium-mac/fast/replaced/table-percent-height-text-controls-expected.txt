@@ -1,0 +1,29 @@
+
+
+
+
+This is a searchable index. Enter search keywords: 
+This is a searchable index. Enter search keywords: 
+
+
+This test checks that text controls with percentage heights within table cells have the correct height.Text controls are in a different test than other replaced elements because their metrics are platform-specific.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getWidth('input-password-75') is getWidth('input-password-100')
+PASS getFullHeight('input-password-75') != '0px' is true
+FAIL getFullHeight('input-password-75') [14.25px] is not 75% of getFullHeight('input-password-100') [19px].
+PASS getWidth('input-text-75') is getWidth('input-text-100')
+PASS getFullHeight('input-text-75') != '0px' is true
+FAIL getFullHeight('input-text-75') [14.25px] is not 75% of getFullHeight('input-text-100') [19px].
+PASS getWidth('isindex-75') is getWidth('isindex-100')
+PASS getFullHeight('isindex-75') != '0px' is true
+PASS getFullHeight('isindex-75') is getFullHeight('isindex-100')
+PASS getWidth('textarea-75') is getWidth('textarea-100')
+PASS getFullHeight('textarea-75') != '0px' is true
+PASS getFullHeight('textarea-75') is 75% of getFullHeight('textarea-100').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

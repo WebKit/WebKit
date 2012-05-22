@@ -1,3 +1,147 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Rebaselined chromium mac 10.5 and 10.6 tests for subpixel change in r117815.
+        Non-chromium-mac changes are due to expectations optimization.
+
+        * fast/borders/border-image-side-reduction-expected.txt: Added.
+        * fast/multicol/column-count-with-rules-expected.txt: Added.
+        * fast/multicol/column-rules-expected.txt: Added.
+        * fast/multicol/column-rules-stacking-expected.txt: Added.
+        * fast/multicol/columns-shorthand-parsing-expected.txt: Added.
+        * fast/multicol/max-height-columns-block-expected.txt: Added.
+        * fast/reflections/opacity-reflection-transform-expected.txt: Added.
+        * fast/table/008-expected.txt: Added.
+        * fast/text/international/bidi-listbox-expected.txt: Added.
+        * fast/transforms/transformed-document-element-expected.txt: Added.
+        * http/tests/misc/iframe404-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/borders/border-image-side-reduction-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-split-block-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-margin-collapsing-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-lr/float-multicol-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-rl/column-break-with-balancing-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-rl/float-multicol-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/vertical-rl/nested-columns-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/regions/floats-basic-in-variable-width-regions-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/regions/render-region-renderer-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/delete-into-nested-block-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/replaced/table-percent-height-text-controls-expected.txt: Added.
+        * platform/chromium-mac-leopard/http/tests/misc/iframe404-expected.txt: Removed.
+        * platform/chromium-mac-leopard/platform/chromium/media/video-scales-in-media-document-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-images-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-object-expected.txt: Removed.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug104898-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/table-percent-height-text-controls-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-object-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug10633-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-mac/fast/replaced/table-percent-height-text-controls-expected.txt: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/multiple-captions-display-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-object-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug10633-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug126742-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug52505-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug52506-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug104898-expected.png:
+        * platform/chromium-win-vista/fast/multicol/vertical-rl: Removed.
+        * platform/chromium-win-vista/fast/multicol/vertical-rl/nested-columns-expected.png: Removed.
+        * platform/chromium-win-vista/http/tests/misc/iframe404-expected.png: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-background-images-expected.png: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-hixie-mixed-008-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/borders/border-image-side-reduction-expected.txt: Removed.
+        * platform/efl/fast/multicol/column-count-with-rules-expected.txt: Removed.
+        * platform/efl/fast/multicol/column-rules-expected.txt: Removed.
+        * platform/efl/fast/multicol/column-rules-stacking-expected.txt: Removed.
+        * platform/efl/fast/multicol/columns-shorthand-parsing-expected.txt: Removed.
+        * platform/efl/fast/multicol/max-height-columns-block-expected.txt: Removed.
+        * platform/efl/fast/reflections/opacity-reflection-transform-expected.txt: Removed.
+        * platform/efl/fast/table/008-expected.txt: Removed.
+        * platform/efl/fast/text/international/bidi-listbox-expected.txt: Removed.
+        * platform/efl/fast/transforms/transformed-document-element-expected.txt: Removed.
+        * platform/efl/http/tests/misc/iframe404-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug10633-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug113235-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug113235-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug113424-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug13118-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug26553-expected.png: Removed.
+        * platform/efl/tables/mozilla/bugs/bug26553-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug2886-2-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug42187-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug55527-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug67915-1-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug69187-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug25707-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug46268-4-expected.txt: Removed.
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug72393-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-image-side-reduction-expected.txt: Removed.
+        * platform/gtk/fast/multicol/column-count-with-rules-expected.txt: Removed.
+        * platform/gtk/fast/multicol/column-rules-expected.txt: Removed.
+        * platform/gtk/fast/multicol/column-rules-stacking-expected.txt: Removed.
+        * platform/gtk/fast/multicol/columns-shorthand-parsing-expected.txt: Removed.
+        * platform/gtk/fast/multicol/max-height-columns-block-expected.txt: Removed.
+        * platform/gtk/fast/reflections/opacity-reflection-transform-expected.txt: Removed.
+        * platform/gtk/fast/table/008-expected.txt: Removed.
+        * platform/gtk/fast/text/international/bidi-listbox-expected.txt: Removed.
+        * platform/gtk/fast/transforms/transformed-document-element-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/iframe404-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug10633-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug113235-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug113235-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug113424-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug13118-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug26553-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug26553-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug2886-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug42187-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug55527-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug67915-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug69187-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug25707-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug46268-4-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug72393-expected.txt: Removed.
+        * platform/mac/fast/table/008-expected.txt: Removed.
+        * platform/qt/fast/table/008-expected.txt: Removed.
+        * tables/mozilla/bugs/bug10633-expected.txt: Added.
+        * tables/mozilla/bugs/bug113235-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug113235-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug113424-expected.txt: Added.
+        * tables/mozilla/bugs/bug13118-expected.txt: Added.
+        * tables/mozilla/bugs/bug26553-expected.png: Added.
+        * tables/mozilla/bugs/bug26553-expected.txt: Added.
+        * tables/mozilla/bugs/bug2886-2-expected.txt: Added.
+        * tables/mozilla/bugs/bug42187-expected.txt: Added.
+        * tables/mozilla/bugs/bug55527-expected.txt: Added.
+        * tables/mozilla/bugs/bug67915-1-expected.txt: Added.
+        * tables/mozilla/bugs/bug69187-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug25707-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug46268-4-expected.txt: Added.
+        * tables/mozilla_expected_failures/bugs/bug72393-expected.txt: Added.
+
 2012-05-21  Tony Chang  <tony@chromium.org>
 
         auto margins on flexbox should allocate space in the flex direction
