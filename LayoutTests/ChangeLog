@@ -1,3 +1,12 @@
+2012-05-22  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening; skip test added in r118001.
+
+        Skip it while the necessary mechanisms are not implemented by the
+        port.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-22  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r105513): CSS max-width is not applied to SVG element

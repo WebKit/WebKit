@@ -640,3 +640,6 @@ BUGWK86637 : editing/spelling/spellcheck-paste-disabled.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK86637 : editing/spelling/spelling-marker-description.html = TEXT
+
+// The EFL port needs to implement DOM_KEY_LOCATION_LEFT and DOM_KEY_LOCATION_RIGHT
+BUGWK86694 : fast/events/keydown-leftright-keys.html = TEXT
