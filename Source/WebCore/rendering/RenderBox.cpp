@@ -86,9 +86,9 @@ RenderBox::~RenderBox()
 {
 }
 
-LayoutUnit RenderBox::marginBefore() const
+LayoutUnit RenderBox::marginBefore(const RenderStyle* overrideStyle) const
 {
-    switch (style()->writingMode()) {
+    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
     case TopToBottomWritingMode:
         return m_marginTop;
     case BottomToTopWritingMode:
@@ -102,9 +102,9 @@ LayoutUnit RenderBox::marginBefore() const
     return m_marginTop;
 }
 
-LayoutUnit RenderBox::marginAfter() const
+LayoutUnit RenderBox::marginAfter(const RenderStyle* overrideStyle) const
 {
-    switch (style()->writingMode()) {
+    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
     case TopToBottomWritingMode:
         return m_marginBottom;
     case BottomToTopWritingMode:
@@ -118,53 +118,57 @@ LayoutUnit RenderBox::marginAfter() const
     return m_marginBottom;
 }
 
-LayoutUnit RenderBox::marginStart() const
+LayoutUnit RenderBox::marginStart(const RenderStyle* overrideStyle) const
 {
-    if (isHorizontalWritingMode())
-        return style()->isLeftToRightDirection() ? m_marginLeft : m_marginRight;
-    return style()->isLeftToRightDirection() ? m_marginTop : m_marginBottom;
+    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
+    if (styleToUse->isHorizontalWritingMode())
+        return styleToUse->isLeftToRightDirection() ? m_marginLeft : m_marginRight;
+    return styleToUse->isLeftToRightDirection() ? m_marginTop : m_marginBottom;
 }
 
-LayoutUnit RenderBox::marginEnd() const
+LayoutUnit RenderBox::marginEnd(const RenderStyle* overrideStyle) const
 {
-    if (isHorizontalWritingMode())
-        return style()->isLeftToRightDirection() ? m_marginRight : m_marginLeft;
-    return style()->isLeftToRightDirection() ? m_marginBottom : m_marginTop;
+    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
+    if (styleToUse->isHorizontalWritingMode())
+        return styleToUse->isLeftToRightDirection() ? m_marginRight : m_marginLeft;
+    return styleToUse->isLeftToRightDirection() ? m_marginBottom : m_marginTop;
 }
 
-void RenderBox::setMarginStart(LayoutUnit margin)
+void RenderBox::setMarginStart(LayoutUnit margin, const RenderStyle* overrideStyle)
 {
-    if (isHorizontalWritingMode()) {
-        if (style()->isLeftToRightDirection())
+    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
+    if (styleToUse->isHorizontalWritingMode()) {
+        if (styleToUse->isLeftToRightDirection())
             m_marginLeft = margin;
         else
             m_marginRight = margin;
     } else {
-        if (style()->isLeftToRightDirection())
+        if (styleToUse->isLeftToRightDirection())
             m_marginTop = margin;
         else
             m_marginBottom = margin;
     }
 }
 
-void RenderBox::setMarginEnd(LayoutUnit margin)
+void RenderBox::setMarginEnd(LayoutUnit margin, const RenderStyle* overrideStyle)
 {
-    if (isHorizontalWritingMode()) {
-        if (style()->isLeftToRightDirection())
+    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
+    if (styleToUse->isHorizontalWritingMode()) {
+        if (styleToUse->isLeftToRightDirection())
             m_marginRight = margin;
         else
             m_marginLeft = margin;
     } else {
-        if (style()->isLeftToRightDirection())
+        if (styleToUse->isLeftToRightDirection())
             m_marginBottom = margin;
         else
             m_marginTop = margin;
     }
 }
 
-void RenderBox::setMarginBefore(LayoutUnit margin)
+void RenderBox::setMarginBefore(LayoutUnit margin, const RenderStyle* overrideStyle)
 {
-    switch (style()->writingMode()) {
+    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
     case TopToBottomWritingMode:
         m_marginTop = margin;
         break;
@@ -180,9 +184,9 @@ void RenderBox::setMarginBefore(LayoutUnit margin)
     }
 }
 
-void RenderBox::setMarginAfter(LayoutUnit margin)
+void RenderBox::setMarginAfter(LayoutUnit margin, const RenderStyle* overrideStyle)
 {
-    switch (style()->writingMode()) {
+    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
     case TopToBottomWritingMode:
         m_marginBottom = margin;
         break;

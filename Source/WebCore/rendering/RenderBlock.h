@@ -284,14 +284,14 @@ public:
     LayoutUnit logicalTopForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
     void setLogicalLeftForChild(RenderBox* child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, LayoutUnit logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
-    LayoutUnit marginBeforeForChild(const RenderBoxModelObject* child) const;
-    LayoutUnit marginAfterForChild(const RenderBoxModelObject* child) const;
-    LayoutUnit marginStartForChild(const RenderBoxModelObject* child) const;
-    LayoutUnit marginEndForChild(const RenderBoxModelObject* child) const;
-    void setMarginStartForChild(RenderBox* child, LayoutUnit);
-    void setMarginEndForChild(RenderBox* child, LayoutUnit);
-    void setMarginBeforeForChild(RenderBox* child, LayoutUnit);
-    void setMarginAfterForChild(RenderBox* child, LayoutUnit);
+    LayoutUnit marginBeforeForChild(const RenderBoxModelObject* child) const { return child->marginBefore(style()); }
+    LayoutUnit marginAfterForChild(const RenderBoxModelObject* child) const { return child->marginAfter(style()); }
+    LayoutUnit marginStartForChild(const RenderBoxModelObject* child) const { return child->marginStart(style()); }
+    LayoutUnit marginEndForChild(const RenderBoxModelObject* child) const { return child->marginEnd(style()); }
+    void setMarginStartForChild(RenderBox* child, LayoutUnit value) { child->setMarginStart(value, style()); }
+    void setMarginEndForChild(RenderBox* child, LayoutUnit value) { child->setMarginEnd(value, style()); }
+    void setMarginBeforeForChild(RenderBox* child, LayoutUnit value) { child->setMarginBefore(value, style()); }
+    void setMarginAfterForChild(RenderBox* child, LayoutUnit value) { child->setMarginAfter(value, style()); }
     LayoutUnit collapsedMarginBeforeForChild(const RenderBox* child) const;
     LayoutUnit collapsedMarginAfterForChild(const RenderBox* child) const;
 

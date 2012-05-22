@@ -130,10 +130,10 @@ public:
     virtual LayoutUnit marginBottom() const = 0;
     virtual LayoutUnit marginLeft() const = 0;
     virtual LayoutUnit marginRight() const = 0;
-    virtual LayoutUnit marginBefore() const = 0;
-    virtual LayoutUnit marginAfter() const = 0;
-    virtual LayoutUnit marginStart() const = 0;
-    virtual LayoutUnit marginEnd() const = 0;
+    virtual LayoutUnit marginBefore(const RenderStyle* otherStyle = 0) const = 0;
+    virtual LayoutUnit marginAfter(const RenderStyle* otherStyle = 0) const = 0;
+    virtual LayoutUnit marginStart(const RenderStyle* otherStyle = 0) const = 0;
+    virtual LayoutUnit marginEnd(const RenderStyle* otherStyle = 0) const = 0;
     LayoutUnit marginHeight() const { return marginTop() + marginBottom(); }
     LayoutUnit marginWidth() const { return marginLeft() + marginRight(); }
 

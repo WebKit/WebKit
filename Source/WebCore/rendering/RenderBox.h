@@ -229,14 +229,14 @@ public:
     void setMarginBottom(LayoutUnit margin) { m_marginBottom = margin; }
     void setMarginLeft(LayoutUnit margin) { m_marginLeft = margin; }
     void setMarginRight(LayoutUnit margin) { m_marginRight = margin; }
-    virtual LayoutUnit marginBefore() const;
-    virtual LayoutUnit marginAfter() const;
-    virtual LayoutUnit marginStart() const;
-    virtual LayoutUnit marginEnd() const;
-    void setMarginStart(LayoutUnit);
-    void setMarginEnd(LayoutUnit);
-    void setMarginBefore(LayoutUnit);
-    void setMarginAfter(LayoutUnit);
+    virtual LayoutUnit marginBefore(const RenderStyle* overrideStyle = 0) const;
+    virtual LayoutUnit marginAfter(const RenderStyle* overrideStyle = 0) const;
+    virtual LayoutUnit marginStart(const RenderStyle* overrideStyle = 0) const;
+    virtual LayoutUnit marginEnd(const RenderStyle* overrideStyle = 0) const;
+    void setMarginStart(LayoutUnit, const RenderStyle* overrideStyle = 0);
+    void setMarginEnd(LayoutUnit, const RenderStyle* overrideStyle = 0);
+    void setMarginBefore(LayoutUnit, const RenderStyle* overrideStyle = 0);
+    void setMarginAfter(LayoutUnit, const RenderStyle* overrideStyle = 0);
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

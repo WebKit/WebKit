@@ -694,24 +694,24 @@ LayoutUnit RenderInline::marginBottom() const
     return computeMargin(this, style()->marginBottom());
 }
 
-LayoutUnit RenderInline::marginStart() const
+LayoutUnit RenderInline::marginStart(const RenderStyle* otherStyle) const
 {
-    return computeMargin(this, style()->marginStart());
+    return computeMargin(this, style()->marginStartUsing(otherStyle ? otherStyle : style()));
 }
 
-LayoutUnit RenderInline::marginEnd() const
+LayoutUnit RenderInline::marginEnd(const RenderStyle* otherStyle) const
 {
-    return computeMargin(this, style()->marginEnd());
+    return computeMargin(this, style()->marginEndUsing(otherStyle ? otherStyle : style()));
 }
 
-LayoutUnit RenderInline::marginBefore() const
+LayoutUnit RenderInline::marginBefore(const RenderStyle* otherStyle) const
 {
-    return computeMargin(this, style()->marginBefore());
+    return computeMargin(this, style()->marginBeforeUsing(otherStyle ? otherStyle : style()));
 }
 
-LayoutUnit RenderInline::marginAfter() const
+LayoutUnit RenderInline::marginAfter(const RenderStyle* otherStyle) const
 {
-    return computeMargin(this, style()->marginAfter());
+    return computeMargin(this, style()->marginAfterUsing(otherStyle ? otherStyle : style()));
 }
 
 const char* RenderInline::renderName() const
