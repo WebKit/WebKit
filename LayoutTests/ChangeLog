@@ -1,3 +1,10 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed. Marking svg/animations/animate-path-animation-qQ-tT-inverse.html and
+        svg/animations/svgnumberoptionalnumber-animation-4.html as timing out.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed cleanup of chromium test_expectations file.
