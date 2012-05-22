@@ -1,5 +1,24 @@
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaseline for compositing, zoom and border changes.
+
+        * platform/chromium-linux-x86/svg/zoom/page: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/filters: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-win/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-win/fast/borders/inline-mask-overlay-image-outset-expected.png:
+        * platform/chromium/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
         Rebaselined chromium mac 10.5 and 10.6 tests for subpixel change in r117815.
         Non-chromium-mac changes are due to expectations optimization.
 
