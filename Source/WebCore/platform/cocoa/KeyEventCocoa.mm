@@ -388,13 +388,13 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
         /* 0x35 */ VK_ESCAPE,
         /* 0x36 */ VK_APPS, // Right Command
         /* 0x37 */ VK_LWIN, // Left Command
-        /* 0x38 */ VK_SHIFT, // Left Shift
+        /* 0x38 */ VK_LSHIFT, // Left Shift
         /* 0x39 */ VK_CAPITAL, // Caps Lock
-        /* 0x3A */ VK_MENU, // Left Option
-        /* 0x3B */ VK_CONTROL, // Left Ctrl
-        /* 0x3C */ VK_SHIFT, // Right Shift
-        /* 0x3D */ VK_MENU, // Right Option
-        /* 0x3E */ VK_CONTROL, // Right Ctrl
+        /* 0x3A */ VK_LMENU, // Left Option
+        /* 0x3B */ VK_LCONTROL, // Left Ctrl
+        /* 0x3C */ VK_RSHIFT, // Right Shift
+        /* 0x3D */ VK_RMENU, // Right Option
+        /* 0x3E */ VK_RCONTROL, // Right Ctrl
         /* 0x3F */ 0, // fn
         /* 0x40 */ VK_F17,
         /* 0x41 */ VK_DECIMAL, // Num Pad .

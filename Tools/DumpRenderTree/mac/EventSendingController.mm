@@ -621,6 +621,30 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         const unichar ch = 0x0430;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
         keyCode = 0x3; // Shares key with "F" on Russian layout.
+    } else if ([character isEqualToString:@"leftControl"]) {
+        const unichar ch = 0xFFE3;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x3B;
+    } else if ([character isEqualToString:@"leftShift"]) {
+        const unichar ch = 0xFFE1;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x38;
+    } else if ([character isEqualToString:@"leftAlt"]) {
+        const unichar ch = 0xFFE7;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x3A;
+    } else if ([character isEqualToString:@"rightControl"]) {
+        const unichar ch = 0xFFE4;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x3E;
+    } else if ([character isEqualToString:@"rightShift"]) {
+        const unichar ch = 0xFFE2;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x3C;
+    } else if ([character isEqualToString:@"rightAlt"]) {
+        const unichar ch = 0xFFE8;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x3D;
     }
 
     // Compare the input string with the function-key names defined by the DOM spec (i.e. "F1",...,"F24").

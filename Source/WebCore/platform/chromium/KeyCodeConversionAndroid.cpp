@@ -96,8 +96,9 @@ int windowsKeyCodeForKeyEvent(unsigned int keyCode)
     case AKEYCODE_ENTER:
         return VKEY_RETURN;
     case AKEYCODE_SHIFT_LEFT:
+        return VKEY_LSHIFT;
     case AKEYCODE_SHIFT_RIGHT:
-        return VKEY_SHIFT;
+        return VKEY_RSHIFT;
     // Back will serve as escape, although we may not have access to it.
     case AKEYCODE_BACK:
         return VKEY_ESCAPE;
@@ -227,8 +228,9 @@ int windowsKeyCodeForKeyEvent(unsigned int keyCode)
     case AKEYCODE_CALL:
         return VKEY_END;
     case AKEYCODE_ALT_LEFT:
+        return VKEY_LMENU;
     case AKEYCODE_ALT_RIGHT:
-        return VKEY_MENU;
+        return VKEY_RMENU;
     case AKEYCODE_GRAVE:
         return VKEY_OEM_3;
     case AKEYCODE_APOSTROPHE:
@@ -244,8 +246,9 @@ int windowsKeyCodeForKeyEvent(unsigned int keyCode)
     case AKEYCODE_FORWARD_DEL:
         return VKEY_DELETE;
     case AKEYCODE_CTRL_LEFT:
+        return VKEY_LCONTROL;
     case AKEYCODE_CTRL_RIGHT:
-        return VKEY_CONTROL;
+        return VKEY_RCONTROL;
     case AKEYCODE_CAPS_LOCK:
         return VKEY_CAPITAL;
     case AKEYCODE_SCROLL_LOCK:

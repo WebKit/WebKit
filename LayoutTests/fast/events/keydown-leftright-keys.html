@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests keyboard events with KeyLocationCode argument.");
+
+var lastKeyboardEvent;
+var VK_SHIFT = 16;
+var VK_CONTROL = 17;
+var VK_MENU = 18;
+var KEY_LOCATION_LEFT = 1;
+var KEY_LOCATION_RIGHT = 2;
+
+function recordKeyEvent(ev) {
+    ev = ev || event;
+    ev.keyCode = (ev.which || ev.keyCode);
+    if (window.eventSender) {
+        lastKeyboardEvent = ev;
+    } else {
+        debug('Type=' + ev.type + ',' +
+              'keyCode=' + ev.keyCode + ',' +
+              'ctrlKey=' + ev.ctrlKey + ',' +
+              'shiftKey=' + ev.shiftKey + ',' +
+              'altKey=' + ev.altKey + ',' +
+              'metaKey=' + ev.metaKey + ',' +
+              'location=' + ev.keyLocation);
+    }
+}
+
+function testKeyEventWithLocation(evString, expectedKeyCode, expectedLocation) {
+    eventSender.keyDown(evString, []);
+    shouldBe("lastKeyboardEvent.type", '"keydown"');
+    shouldEvaluateTo("lastKeyboardEvent.keyCode", expectedKeyCode);
+    shouldEvaluateTo("lastKeyboardEvent.keyLocation", expectedLocation);
+}
+
+var textarea = document.createElement("textarea");
+textarea.addEventListener("keydown", recordKeyEvent, false);
+document.body.insertBefore(textarea, document.body.firstChild);
+textarea.focus();
+
+if (window.eventSender) {
+    // location=0 indicates that we send events as standard keys.
+    testKeyEventWithLocation("leftShift", VK_SHIFT, "KEY_LOCATION_LEFT");
+    testKeyEventWithLocation("leftControl", VK_CONTROL, "KEY_LOCATION_LEFT");
+    testKeyEventWithLocation("leftAlt", VK_MENU, "KEY_LOCATION_LEFT");
+
+    testKeyEventWithLocation("rightShift", VK_SHIFT, "KEY_LOCATION_RIGHT");
+    testKeyEventWithLocation("rightControl", VK_CONTROL, "KEY_LOCATION_RIGHT");
+    testKeyEventWithLocation("rightAlt", VK_MENU, "KEY_LOCATION_RIGHT");
+} else {
+    debug("This test requires DumpRenderTree.");
+}
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

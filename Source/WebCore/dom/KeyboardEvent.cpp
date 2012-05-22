@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"
 #include "Settings.h"
+#include "WindowsKeyboardCodes.h"
 
 namespace WebCore {
 
@@ -53,6 +54,44 @@ static inline const AtomicString& eventTypeForKeyboardEventType(PlatformEvent::T
     return eventNames().keydownEvent;
 }
 
+static inline int windowsVirtualKeyCodeWithoutLocation(int keycode)
+{
+    switch (keycode) {
+    case VK_LCONTROL:
+    case VK_RCONTROL:
+        return VK_CONTROL;
+    case VK_LSHIFT:
+    case VK_RSHIFT:
+        return VK_SHIFT;
+    case VK_LMENU:
+    case VK_RMENU:
+        return VK_MENU;
+    default:
+        return keycode;
+    }
+}
+
+static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeyboardEvent& key)
+{
+    if (key.isKeypad())
+        return KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
+
+    switch (key.windowsVirtualKeyCode()) {
+    case VK_LCONTROL:
+    case VK_LSHIFT:
+    case VK_LMENU:
+    case VK_LWIN:
+        return KeyboardEvent::DOM_KEY_LOCATION_LEFT;
+    case VK_RCONTROL:
+    case VK_RSHIFT:
+    case VK_RMENU:
+    case VK_RWIN:
+        return KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
+    default:
+        return KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+    }
+}
+
 KeyboardEvent::KeyboardEvent()
     : m_keyLocation(DOM_KEY_LOCATION_STANDARD)
     , m_altGraphKey(false)
@@ -64,7 +103,7 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
                           true, true, view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
     , m_keyEvent(adoptPtr(new PlatformKeyboardEvent(key)))
     , m_keyIdentifier(key.keyIdentifier())
-    , m_keyLocation(key.isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD) // FIXME: differentiate right/left, too
+    , m_keyLocation(keyLocationCode(key))
     , m_altGraphKey(false)
 {
 }
@@ -122,7 +161,8 @@ int KeyboardEvent::keyCode() const
     if (!m_keyEvent)
         return 0;
     if (type() == eventNames().keydownEvent || type() == eventNames().keyupEvent)
-        return m_keyEvent->windowsVirtualKeyCode();
+        return windowsVirtualKeyCodeWithoutLocation(m_keyEvent->windowsVirtualKeyCode());
+
     return charCode();
 }
 

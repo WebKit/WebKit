@@ -102,16 +102,19 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
     case GDK_Return:
         return VKEY_RETURN; //(0D) Return key
     case GDK_Shift_L:
+        return VKEY_LSHIFT; // (A0) Left SHIFT key
     case GDK_Shift_R:
-        return VKEY_SHIFT; // (10) SHIFT key
+        return VKEY_RSHIFT; // (A1) Right SHIFT key
     case GDK_Control_L:
+        return VKEY_LCONTROL; // (A2) Left CTRL key
     case GDK_Control_R:
-        return VKEY_CONTROL; // (11) CTRL key
+        return VKEY_RCONTROL; // (A3) Right CTRL key
     case GDK_Menu:
         return VKEY_APPS;  // (5D) Applications key (Natural keyboard)
     case GDK_Alt_L:
+        return VKEY_LMENU; // (A4) Left ALT key
     case GDK_Alt_R:
-        return VKEY_MENU; // (12) ALT key
+        return VKEY_RMENU; // (A5) Right ALT key
 
     case GDK_Pause:
         return VKEY_PAUSE; // (13) PAUSE key

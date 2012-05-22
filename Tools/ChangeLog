@@ -1,3 +1,20 @@
+2012-05-22  Takashi Sakamoto  <tasak@google.com>
+
+        Implement DOM_KEY_LOCATION_LEFT and RIGHT of KeyboardEvent's location property
+        https://bugs.webkit.org/show_bug.cgi?id=86694
+
+        Modify keyDown to create left- and right- control, shift, and alt
+        keyevent for a test to check that keyLocation property can have
+        DOM_KEY_LOCATION_LEFT for left-control, shift, and alt, and
+        DOM_KEY_LOCATION_RIGHT for right-control, shift, and alt.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::keyDown):
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT needs to print information about received Web Intents

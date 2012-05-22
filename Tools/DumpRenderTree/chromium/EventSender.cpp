@@ -557,6 +557,24 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     else if ("menu" == codeStr)
         // FIXME: Change this to webkit_support::VKEY_APPS.
         code = 0x5D;
+    else if ("leftControl" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_LCONTROL.
+        code = 0xA2;
+    else if ("rightControl" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_RCONTROL.
+        code = 0xA3;
+    else if ("leftShift" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_LSHIFT.
+        code = 0xA0;
+    else if ("rightShift" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_RSHIFT.
+        code = 0xA1;
+    else if ("leftAlt" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_LMENU.
+        code = 0xA4;
+    else if ("rightAlt" == codeStr)
+        // FIXME: Change this to webkit_support::VKEY_RMENU.
+        code = 0xA5;
     else {
         // Compare the input string with the function-key names defined by the
         // DOM spec (i.e. "F1",...,"F24"). If the input string is a function-key

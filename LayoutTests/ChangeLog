@@ -1,3 +1,13 @@
+2012-05-22  Takashi Sakamoto  <tasak@google.com>
+
+        Implement DOM_KEY_LOCATION_LEFT and RIGHT of KeyboardEvent's location property
+        https://bugs.webkit.org/show_bug.cgi?id=86694
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/events/keydown-leftright-keys-expected.txt: Added.
+        * fast/events/keydown-leftright-keys.html: Added.
+
 2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT needs to print information about received Web Intents
