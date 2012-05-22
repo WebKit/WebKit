@@ -1,3 +1,15 @@
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed. Even more test expectations being updated post-r117815.
+
+        * platform/chromium-win-vista/svg/custom/svg-fonts-with-no-element-reference-expected.png: Removed.
+        * platform/chromium-win-vista/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/custom/svg-fonts-with-no-element-reference-expected.png: Removed.
+        * platform/chromium-win-xp/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/chromium/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Removed.
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Avoid using window.internals when internals is enough after r117771
