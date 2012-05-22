@@ -1,5 +1,30 @@
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed gardening. Updating more tests post r117815.
+
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-linux/css1/formatting_model/inline_elements-expected.txt: Added.
+        * platform/chromium-linux/fast/backgrounds/background-position-parsing-expected.txt: Added.
+        * platform/chromium-linux/fast/borders/bidi-009a-expected.txt: Added.
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/chromium-linux/fast/css/bidi-override-in-anonymous-block-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/007-expected.txt: Added.
+        * platform/chromium-linux/fast/html/details-writing-mode-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/css1/formatting_model/inline_elements-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-win-xp/css1: Added.
+        * platform/chromium-win-xp/css1/formatting_model: Added.
+        * platform/chromium-win-xp/css1/formatting_model/inline_elements-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt:
+
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed Gardening. More updates after r117815.
 
         * platform/chromium-linux-x86/svg/zoom/page: Added.
