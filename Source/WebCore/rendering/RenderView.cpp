@@ -84,13 +84,13 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 void RenderView::computeLogicalHeight()
 {
-    if (!printing() && m_frameView)
+    if (!shouldUsePrintingLayout() && m_frameView)
         setLogicalHeight(viewLogicalHeight());
 }
 
 void RenderView::computeLogicalWidth()
 {
-    if (!printing() && m_frameView)
+    if (!shouldUsePrintingLayout() && m_frameView)
         setLogicalWidth(viewLogicalWidth());
 }
 
@@ -111,11 +111,11 @@ void RenderView::layout()
     if (!document()->paginated())
         setPageLogicalHeight(0);
 
-    if (printing())
+    if (shouldUsePrintingLayout())
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = logicalWidth();
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
-    bool relayoutChildren = !printing() && (!m_frameView || width() != viewWidth() || height() != viewHeight());
+    bool relayoutChildren = !shouldUsePrintingLayout() && (!m_frameView || width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
         setChildNeedsLayout(true, MarkOnlyThis);
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
@@ -629,6 +629,15 @@ bool RenderView::printing() const
     return document()->printing();
 }
 
+bool RenderView::shouldUsePrintingLayout() const
+{
+    if (!printing() || !m_frameView)
+        return false;
+    Frame* frame = m_frameView->frame();
+    // Only root frame should have special handling for printing.
+    return frame && !frame->tree()->parent();
+}
+
 size_t RenderView::getRetainedWidgets(Vector<RenderWidget*>& renderWidgets)
 {
     size_t size = m_widgets.size();
@@ -693,7 +702,7 @@ void RenderView::notifyWidgets(WidgetNotification notification)
 
 LayoutRect RenderView::viewRect() const
 {
-    if (printing())
+    if (shouldUsePrintingLayout())
         return LayoutRect(LayoutPoint(), size());
     if (m_frameView)
         return m_frameView->visibleContentRect();
@@ -733,7 +742,7 @@ IntRect RenderView::documentRect() const
 int RenderView::viewHeight() const
 {
     int height = 0;
-    if (!printing() && m_frameView) {
+    if (!shouldUsePrintingLayout() && m_frameView) {
         height = m_frameView->layoutHeight();
         height = m_frameView->useFixedLayout() ? ceilf(style()->effectiveZoom() * float(height)) : height;
     }
@@ -743,7 +752,7 @@ int RenderView::viewHeight() const
 int RenderView::viewWidth() const
 {
     int width = 0;
-    if (!printing() && m_frameView) {
+    if (!shouldUsePrintingLayout() && m_frameView) {
         width = m_frameView->layoutWidth();
         width = m_frameView->useFixedLayout() ? ceilf(style()->effectiveZoom() * float(width)) : width;
     }

@@ -1,3 +1,15 @@
+2012-05-22  Vitaly Buka  <vitalybuka@chromium.org>
+
+        LayoutTest for iframe printing.
+        https://bugs.webkit.org/show_bug.cgi?id=85118
+
+        Reviewed by Darin Adler, Eric Seidel.
+
+        * printing/iframe-print-expected.txt: Added.
+        * printing/iframe-print.html: Added.
+        * printing/resources/iframe-subframe-vertical-rl.html: Added.
+        * printing/resources/iframe-subframe.html: Added.
+
 2012-05-22  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher

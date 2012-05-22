@@ -266,6 +266,8 @@ protected:
     OwnPtr<RenderBoxSet> m_fixedPositionedElements;
 
 private:
+    bool shouldUsePrintingLayout() const;
+
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
     LayoutState* m_layoutState;
