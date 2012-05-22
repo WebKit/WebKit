@@ -732,9 +732,10 @@ protected:
 };
 
 #if !HAVE(ACCESSIBILITY)
-inline void AccessibilityObject::updateBackingStore() { }
-inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
 inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children() { return m_children; }
+inline const String& AccessibilityObject::actionVerb() const { return emptyString(); }
+inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
+inline void AccessibilityObject::updateBackingStore() { }
 #endif
 
 } // namespace WebCore

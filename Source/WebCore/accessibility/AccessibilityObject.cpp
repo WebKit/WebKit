@@ -1222,7 +1222,8 @@ void AccessibilityObject::ariaTreeItemDisclosedRows(AccessibilityChildrenVector&
             obj->ariaTreeRows(result);
     }    
 }
-    
+
+#if HAVE(ACCESSIBILITY)
 const String& AccessibilityObject::actionVerb() const
 {
     // FIXME: Need to add verbs for select elements.
@@ -1257,6 +1258,7 @@ const String& AccessibilityObject::actionVerb() const
         return noAction;
     }
 }
+#endif
 
 bool AccessibilityObject::ariaIsMultiline() const
 {
