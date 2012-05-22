@@ -55,6 +55,7 @@
 #include "WebPluginParams.h"
 #include "WebPopupMenu.h"
 #include "WebPopupType.h"
+#include "WebPrintParams.h"
 #include "WebRange.h"
 #include "platform/WebRect.h"
 #include "WebScreenInfo.h"
@@ -1853,7 +1854,7 @@ void WebViewHost::displayRepaintMask()
 void WebViewHost::printPage(WebKit::WebFrame* frame)
 {
     WebSize pageSizeInPixels = webWidget()->size();
-
-    frame->printBegin(pageSizeInPixels);
+    WebPrintParams printParams(pageSizeInPixels);
+    frame->printBegin(printParams);
     frame->printEnd();
 }

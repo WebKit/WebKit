@@ -1,1 +1,13 @@
+2012-05-22  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [Chromium] Use overloaded printBegin() webkit API to support auto fit to page functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=86684
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::numberOfPages):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::printPage):
+
 == Rolled over to ChangeLog-2012-05-22 ==

@@ -1,3 +1,24 @@
+2012-05-22  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [Chromium] Use overloaded printBegin() webkit API to support auto fit to page functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=86684
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebPlugin.h:
+        (WebPlugin):
+        * public/WebPrintParams.h:
+        (WebKit::WebPrintParams::WebPrintParams):
+        (WebPrintParams):
+        * src/WebFrameImpl.cpp:
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::printBegin):
+
 2012-05-22  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Expose setMediaPlaybackRequiresUserGesture via WebSettings
