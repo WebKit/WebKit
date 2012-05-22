@@ -117,10 +117,10 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         if (oldChild->isRenderRegion())
             toRenderRegion(oldChild)->detachRegion();
 
-        if (oldChild->inRenderFlowThread() && oldChild->isBox()) {
-            oldChild->enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(oldChild));
-            if (oldChild->canHaveRegionStyle())
-                oldChild->enclosingRenderFlowThread()->clearRenderBoxCustomStyle(toRenderBox(oldChild));
+        if (oldChild->inRenderFlowThread()) {
+            if (oldChild->isBox())
+                oldChild->enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(oldChild));
+            oldChild->enclosingRenderFlowThread()->clearRenderObjectCustomStyle(oldChild);
         }
 
         if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))

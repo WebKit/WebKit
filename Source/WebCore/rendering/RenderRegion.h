@@ -82,7 +82,7 @@ public:
     bool isFirstRegion() const;
     bool isLastRegion() const;
 
-    void clearBoxStyleInRegion(const RenderBox*);
+    void clearObjectStyleInRegion(const RenderObject*);
 
     enum RegionState {
         RegionUndefined,
@@ -98,11 +98,12 @@ public:
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
-    PassRefPtr<RenderStyle> renderBoxRegionStyle(const RenderBox*);
-    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderBox*);
-    void setRegionBoxesRegionStyle();
-    void restoreRegionBoxesOriginalStyle();
-
+    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
+    void computeChildrenStyleInRegion(const RenderObject*);
+    void setRegionObjectsRegionStyle();
+    void restoreRegionObjectsOriginalStyle();
+    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
+    void printRegionObjectsStyles();
     RenderFlowThread* m_flowThread;
 
     // If this RenderRegion is displayed as part of another named flow,
@@ -118,8 +119,18 @@ private:
     typedef HashMap<const RenderBox*, OwnPtr<RenderBoxRegionInfo> > RenderBoxRegionInfoMap;
     RenderBoxRegionInfoMap m_renderBoxRegionInfo;
 
-    typedef HashMap<const RenderBox*, RefPtr<RenderStyle> > RenderBoxRegionStyleMap;
-    RenderBoxRegionStyleMap m_renderBoxRegionStyle;
+    struct ObjectRegionStyleInfo {
+        // Used to store the original style of the object in region
+        // so that the original style is properly restored after paint.
+        // Also used to store computed style of the object in region between
+        // region paintings, so that the style in region is computed only
+        // when necessary.
+        RefPtr<RenderStyle> style;
+        // True if the computed style in region is cached.
+        bool cached;
+    };
+    typedef HashMap<const RenderObject*, ObjectRegionStyleInfo > RenderObjectRegionStyleMap;
+    RenderObjectRegionStyleMap m_renderObjectRegionStyle;
 
     bool m_isValid;
     bool m_hasCustomRegionStyle;

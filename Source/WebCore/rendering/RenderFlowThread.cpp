@@ -85,11 +85,9 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
 
 void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
 {
-    if (child->isBox()) {
+    if (child->isBox())
         removeRenderBoxRegionInfo(toRenderBox(child));
-        if (child->canHaveRegionStyle())
-            clearRenderBoxCustomStyle(toRenderBox(child));
-    }
+    clearRenderObjectCustomStyle(child);
 }
 
 void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
@@ -98,6 +96,7 @@ void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
     m_regionList.add(renderRegion);
     renderRegion->setIsValid(true);
     invalidateRegions();
+    checkRegionsWithStyling();
 }
 
 void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
@@ -106,6 +105,7 @@ void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
     m_regionRangeMap.clear();
     m_regionList.remove(renderRegion);
     invalidateRegions();
+    checkRegionsWithStyling();
 }
 
 class CurrentRenderFlowThreadMaintainer {
@@ -615,7 +615,7 @@ RenderRegion* RenderFlowThread::lastRegion() const
     return 0;
 }
 
-void RenderFlowThread::clearRenderBoxCustomStyle(const RenderBox* box,
+void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object,
     const RenderRegion* oldStartRegion, const RenderRegion* oldEndRegion,
     const RenderRegion* newStartRegion, const RenderRegion* newEndRegion)
 {
@@ -632,7 +632,7 @@ void RenderFlowThread::clearRenderBoxCustomStyle(const RenderBox* box,
             insideNewRegionRange = true;
 
         if (!(insideOldRegionRange && insideNewRegionRange))
-            region->clearBoxStyleInRegion(box);
+            region->clearObjectStyleInRegion(object);
 
         if (oldEndRegion == region)
             insideOldRegionRange = false;
@@ -652,6 +652,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
     RenderRegionRangeMap::iterator it = m_regionRangeMap.find(box);
     if (it == m_regionRangeMap.end()) {
         m_regionRangeMap.set(box, RenderRegionRange(startRegion, endRegion));
+        clearRenderObjectCustomStyle(box);
         return;
     }
 
@@ -674,7 +675,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
             break;
     }
 
-    clearRenderBoxCustomStyle(box, range.startRegion(), range.endRegion(), startRegion, endRegion);
+    clearRenderObjectCustomStyle(box, range.startRegion(), range.endRegion(), startRegion, endRegion);
     range.setRange(startRegion, endRegion);
 }
 
@@ -775,6 +776,22 @@ bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const Ren
     }
 
     return false;
+}
+
+// Check if the content is flown into at least a region with region styling rules.
+void RenderFlowThread::checkRegionsWithStyling()
+{
+    bool hasRegionsWithStyling = false;
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+        if (region->hasCustomRegionStyle()) {
+            hasRegionsWithStyling = true;
+            break;
+        }
+    }
+    m_hasRegionsWithStyling = hasRegionsWithStyling;
 }
 
 bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const

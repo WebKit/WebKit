@@ -31,6 +31,7 @@
 #include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -212,7 +213,8 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || style()->verticalAlign() != BASELINE
         || style()->textEmphasisMark() != TextEmphasisMarkNone
         || (checkFonts && (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(style()->font().fontMetrics())
-        || parentStyle->lineHeight() != style()->lineHeight()));
+        || parentStyle->lineHeight() != style()->lineHeight()))
+        || (inRenderFlowThread() && enclosingRenderFlowThread()->hasRegionsWithStyling());
 
     if (!alwaysCreateLineBoxes && checkFonts && document()->usesFirstLineRules()) {
         // Have to check the first line style as well.
