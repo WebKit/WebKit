@@ -495,7 +495,6 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     bool allowsAcceleratedCompositing();
-    bool pageHasRTLStyle() const;
     void setRootGraphicsLayer(WebCore::GraphicsLayer*);
     void scheduleCompositingLayerSync();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);

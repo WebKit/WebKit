@@ -1,3 +1,20 @@
+2012-05-21  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Simplify RTL root layer adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=85672
+
+        Reviewed by Adrienne Walker.
+
+        The compositor needs a translation to compensate for a nonzero
+        scrollOrigin to avoid painting at negative coordinates on RTL pages.
+        Previously, we were recomputing it from first principles; this change
+        directly reads it off the actual scrollOrigin.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-05-21  James Robinson  <jamesr@chromium.org>
 
         Chromium compile fix, unreviewed.

@@ -3304,22 +3304,6 @@ bool WebViewImpl::allowsAcceleratedCompositing()
     return !m_compositorCreationFailed;
 }
 
-bool WebViewImpl::pageHasRTLStyle() const
-{
-    if (!page())
-        return false;
-    Document* document = page()->mainFrame()->document();
-    if (!document)
-        return false;
-    RenderView* renderView = document->renderView();
-    if (!renderView)
-        return false;
-    RenderStyle* style = renderView->style();
-    if (!style)
-        return false;
-    return (style->direction() == RTL);
-}
-
 void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     m_rootGraphicsLayer = layer;
@@ -3614,14 +3598,10 @@ void WebViewImpl::updateLayerTreeViewport()
     IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    int layerAdjustX = 0;
-    if (pageHasRTLStyle()) {
-        // The origin of the initial containing block for RTL root layers is not
-        // at the far left side of the layer bounds. Instead, it's one viewport
-        // width (not including scrollbars) to the left of the right side of the
-        // layer.
-        layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
-    }
+    // In RTL-style pages, the origin of the initial containing block for the
+    // root layer may be positive; translate the layer to avoid negative
+    // coordinates.
+    int layerAdjustX = -view->scrollOrigin().x();
 
     // This part of the deviceScale will be used to scale the contents of
     // the NCCH's GraphicsLayer.
