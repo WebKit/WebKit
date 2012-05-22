@@ -66,7 +66,7 @@ messages -> WebPageProxy {
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangePageCount(unsigned pageCount);
     DidFailToInitializePlugin(WTF::String mimeType)
-    DidBlockInsecurePluginVersion(WTF::String mimeType)
+    DidBlockInsecurePluginVersion(WTF::String mimeType, WTF::String urlString)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
 #if USE(TILED_BACKING_STORE)
