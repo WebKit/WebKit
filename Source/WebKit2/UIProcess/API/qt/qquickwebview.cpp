@@ -834,7 +834,7 @@ void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::V
 
     // If the web app successively changes the viewport on purpose
     // it wants to be in control and we should disable animations.
-    interactionEngine->ensureContentWithinViewportBoundary(/*immediate*/ true);
+    interactionEngine->setItemRectVisible(interactionEngine->nearestValidBounds());
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()

@@ -98,22 +98,22 @@ static inline bool fuzzyCompare(qreal a, qreal b, qreal epsilon)
     return qAbs(a - b) < epsilon;
 }
 
-inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale)
+inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale) const
 {
     return itemScale / m_devicePixelRatio;
 }
 
-inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale)
+inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale) const
 {
     return cssScale * m_devicePixelRatio;
 }
 
-inline qreal QtViewportInteractionEngine::itemCoordFromCSS(qreal value)
+inline qreal QtViewportInteractionEngine::itemCoordFromCSS(qreal value) const
 {
     return value * m_devicePixelRatio;
 }
 
-inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect)
+inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect) const
 {
     QRectF itemRect;
 
@@ -152,12 +152,12 @@ QtViewportInteractionEngine::~QtViewportInteractionEngine()
 {
 }
 
-qreal QtViewportInteractionEngine::innerBoundedCSSScale(qreal cssScale)
+qreal QtViewportInteractionEngine::innerBoundedCSSScale(qreal cssScale) const
 {
     return qBound(m_minimumScale, cssScale, m_maximumScale);
 }
 
-qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
+qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale) const
 {
     if (m_allowsUserScaling) {
         // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
@@ -172,8 +172,6 @@ void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 {
     if (itemRect.isEmpty())
         return;
-
-    ViewportUpdateDeferrer guard(this);
 
     qreal itemScale = m_viewport->width() / itemRect.width();
 
@@ -192,20 +190,25 @@ static qreal physicalOvershoot(qreal t)
     return (-t * (t - 2)) * 1.25 - (t * t) * 0.25;
 }
 
-bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
+void QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
 {
-    ASSERT(m_suspended);
+    ASSERT(m_scaleAnimation->state() == QAbstractAnimation::Stopped);
+
+    ASSERT(!scrollAnimationActive());
+    if (scrollAnimationActive())
+        return;
 
     QRectF currentItemRectVisible = m_viewport->mapRectToWebContent(m_viewport->boundingRect());
     if (itemRect == currentItemRectVisible)
-        return false;
+        return;
 
     // FIXME: Investigate why that animation doesn't run when we are unfocused.
     if (!m_viewport->isVisible() || !m_viewport->hasFocus()) {
         // Apply the end result immediately when we are non-visible.
         setItemRectVisible(itemRect);
-        return true;
+        return;
     }
+
     QEasingCurve easingCurve;
     easingCurve.setCustomType(physicalOvershoot);
 
@@ -216,7 +219,6 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
     m_scaleAnimation->setEndValue(itemRect);
 
     m_scaleAnimation->start();
-    return true;
 }
 
 void QtViewportInteractionEngine::flickableMoveStarted()
@@ -254,11 +256,11 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
     switch (newState) {
     case QAbstractAnimation::Running:
         m_viewport->cancelFlick();
-        if (!m_scaleUpdateDeferrer)
-            m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+        ASSERT(!m_animationUpdateDeferrer);
+        m_animationUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
         break;
     case QAbstractAnimation::Stopped:
-        m_scaleUpdateDeferrer.clear();
+        m_animationUpdateDeferrer.clear();
         break;
     default:
         break;
@@ -427,11 +429,8 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     animateItemRectVisible(endVisibleContentRect);
 }
 
-bool QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immediate)
+QRectF QtViewportInteractionEngine::nearestValidBounds() const
 {
-    if (!immediate && (scrollAnimationActive() || scaleAnimationActive()))
-        return false;
-
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale()));
 
     const QRectF viewportRect = m_viewport->boundingRect();
@@ -444,11 +443,7 @@ bool QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immed
 
     QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
 
-    if (immediate) {
-        setItemRectVisible(endVisibleContentRect);
-        return true;
-    }
-    return !animateItemRectVisible(endVisibleContentRect);
+    return endVisibleContentRect;
 }
 
 void QtViewportInteractionEngine::reset()
@@ -485,7 +480,7 @@ void QtViewportInteractionEngine::setCSSScale(qreal scale)
     m_content->setContentsScale(itemScaleFromCSS(newScale));
 }
 
-qreal QtViewportInteractionEngine::currentCSSScale()
+qreal QtViewportInteractionEngine::currentCSSScale() const
 {
     return cssScaleFromItem(m_content->contentsScale());
 }
@@ -538,15 +533,13 @@ bool QtViewportInteractionEngine::scaleAnimationActive() const
 
 void QtViewportInteractionEngine::cancelScrollAnimation()
 {
-    ViewportUpdateDeferrer guard(this);
-
     // If the pan gesture recognizer receives a touch begin event
     // during an ongoing kinetic scroll animation of a previous
     // pan gesture, the animation is stopped and the content is
     // immediately positioned back to valid boundaries.
 
     m_viewport->cancelFlick();
-    ensureContentWithinViewportBoundary(/*immediate*/ true);
+    setItemRectVisible(nearestValidBounds());
 }
 
 void QtViewportInteractionEngine::interruptScaleAnimation()
@@ -608,9 +601,9 @@ void QtViewportInteractionEngine::pinchGestureEnded()
         return;
 
     m_pinchStartScale = -1;
-    // Clear the update deferrer now if we're in our final position and there won't be any animation to clear it later.
-    if (ensureContentWithinViewportBoundary())
-        m_scaleUpdateDeferrer.clear();
+
+    animateItemRectVisible(nearestValidBounds());
+    m_scaleUpdateDeferrer.clear(); // Clear after starting potential animation, which takes over deferring.
 }
 
 void QtViewportInteractionEngine::pinchGestureCancelled()
@@ -630,8 +623,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
     if (m_suspendCount)
         return;
 
-    ViewportUpdateDeferrer guard(this);
-    ensureContentWithinViewportBoundary(true);
+    setItemRectVisible(nearestValidBounds());
 }
 
 void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)

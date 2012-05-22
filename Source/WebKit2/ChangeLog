@@ -1,3 +1,38 @@
+2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Clean up internal viewport animation API
+        https://bugs.webkit.org/show_bug.cgi?id=87130
+
+        Reviewed by Simon Hausmann.
+
+        const'ify classes which should be const.
+
+        There is now only one method which can animate, animateItemRectVisible
+        which is used for also animating the contents back into valid bounds.
+        The valid bounds are computed using a separate method. It is now more
+        clear when an animation is used or not and asserts are added for
+        ensuring no concurrent animations as well as proper update deferring.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::cssScaleFromItem):
+        (WebKit::QtViewportInteractionEngine::itemScaleFromCSS):
+        (WebKit::QtViewportInteractionEngine::itemCoordFromCSS):
+        (WebKit::QtViewportInteractionEngine::itemRectFromCSS):
+        (WebKit::QtViewportInteractionEngine::innerBoundedCSSScale):
+        (WebKit::QtViewportInteractionEngine::outerBoundedCSSScale):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::nearestValidBounds):
+        (WebKit::QtViewportInteractionEngine::currentCSSScale):
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-05-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Mini clean ups in the interaction engine

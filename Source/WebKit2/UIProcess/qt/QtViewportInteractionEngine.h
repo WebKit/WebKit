@@ -55,15 +55,15 @@ public:
     void setCSSScaleBounds(qreal minimum, qreal maximum);
     void setCSSScale(qreal);
 
-    qreal currentCSSScale();
-
-    bool ensureContentWithinViewportBoundary(bool immediate = false);
+    qreal currentCSSScale() const;
 
     void setAllowsUserScaling(bool allow) { m_allowsUserScaling = allow; }
     void setContentToDevicePixelRatio(qreal ratio) {m_devicePixelRatio = ratio; }
 
     void setItemRectVisible(const QRectF&);
-    bool animateItemRectVisible(const QRectF&);
+    void animateItemRectVisible(const QRectF&);
+
+    QRectF nearestValidBounds() const;
 
     void pagePositionRequest(const QPoint& pos);
     void touchBegin();
@@ -120,13 +120,13 @@ private:
     QQuickWebView* const m_viewport;
     QQuickWebPage* const m_content;
 
-    qreal cssScaleFromItem(qreal);
-    qreal itemScaleFromCSS(qreal);
-    qreal itemCoordFromCSS(qreal);
-    QRectF itemRectFromCSS(const QRectF&);
+    qreal cssScaleFromItem(qreal) const;
+    qreal itemScaleFromCSS(qreal) const;
+    qreal itemCoordFromCSS(qreal) const;
+    QRectF itemRectFromCSS(const QRectF&) const;
 
-    qreal innerBoundedCSSScale(qreal);
-    qreal outerBoundedCSSScale(qreal);
+    qreal innerBoundedCSSScale(qreal) const;
+    qreal outerBoundedCSSScale(qreal) const;
 
     bool m_allowsUserScaling;
     qreal m_minimumScale;
@@ -144,6 +144,7 @@ private:
     OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
+    OwnPtr<ViewportUpdateDeferrer> m_animationUpdateDeferrer;
 
     bool m_hadUserInteraction;
 
