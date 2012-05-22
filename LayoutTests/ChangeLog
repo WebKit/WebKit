@@ -1,3 +1,29 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium svg rebaselines and test expectation updates post r117815.
+
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/chromium-win-vista/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/chromium-win-xp/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-win-xp/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/chromium-win-xp/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Rebaseline for r117865.
