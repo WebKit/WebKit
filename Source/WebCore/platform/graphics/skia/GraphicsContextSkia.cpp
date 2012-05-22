@@ -549,8 +549,8 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
             row[3] = transparentColor;
         }
 #else
-        const uint32_t lineColor = 0xFFFF0000;  // Opaque red.
-        const uint32_t antiColor = 0x60600000;  // Semitransparent red.
+        const uint32_t lineColor = 0xFF << SK_A32_SHIFT | 0xFF << SK_R32_SHIFT; // Opaque red.
+        const uint32_t antiColor = 0x60 << SK_A32_SHIFT | 0x60 << SK_R32_SHIFT; // Semitransparent red
 
         // Pattern:  X o   o X o   o X
         //             o X o   o X o
@@ -1118,4 +1118,3 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 
 }  // namespace WebCore
-
