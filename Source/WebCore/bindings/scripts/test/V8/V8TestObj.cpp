@@ -1813,8 +1813,7 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod6Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsArray())))
         return overloadedMethod7Callback(args);
-    V8Proxy::throwTypeError(0, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::throwTypeError(0, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> classMethodCallback(const v8::Arguments& args)
@@ -1871,8 +1870,7 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
         return overloadedMethod11Callback(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
         return overloadedMethod12Callback(args);
-    V8Proxy::throwTypeError(0, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::throwTypeError(0, args.GetIsolate());
 }
 
 #endif // ENABLE(Condition1)
