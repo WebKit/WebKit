@@ -780,6 +780,20 @@ PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& s
     return buffer.release();
 }
 
+bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer* buffer) const
+{
+    AffineTransform localTransform = getCTM();
+    AffineTransform bufferTransform = buffer->context()->getCTM();
+
+    if (localTransform.xScale() != bufferTransform.xScale() || localTransform.yScale() != bufferTransform.yScale())
+        return false;
+
+    if (isAcceleratedContext() != buffer->context()->isAcceleratedContext())
+        return false;
+
+    return true;
+}
+
 #if !USE(CG)
 void GraphicsContext::platformApplyDeviceScaleFactor(float)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
 #include "Length.h"
 
 namespace WebCore {
@@ -61,17 +60,28 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
     adjustedSrcRect.scale(xScale, yScale);
 
-    // Create a BitmapImage and call drawPattern on it.
-    OwnPtr<ImageBuffer> imageBuffer = destContext->createCompatibleBuffer(adjustedSize);
-    if (!imageBuffer)
-        return;
+    unsigned generatorHash = m_generator->hash();
 
-    // Fill with the generated image.
-    GraphicsContext* graphicsContext = imageBuffer->context();
-    graphicsContext->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator.get());
+    if (!m_cachedImageBuffer
+        || m_cachedGeneratorHash != generatorHash
+        || m_cachedAdjustedSize != adjustedSize
+        || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
+        // Create a BitmapImage and call drawPattern on it.
+        m_cachedImageBuffer = destContext->createCompatibleBuffer(adjustedSize);
+        if (!m_cachedImageBuffer)
+            return;
+
+        // Fill with the generated image.
+        GraphicsContext* graphicsContext = m_cachedImageBuffer->context();
+        graphicsContext->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator.get());
+
+        m_cachedGeneratorHash = generatorHash;
+        m_cachedAdjustedSize = adjustedSize;
+    }
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
+    m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
+    m_cacheTimer.restart();
 }
 
 void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)

@@ -424,6 +424,7 @@ namespace WebCore {
         // Create an image buffer compatible with this context, with suitable resolution
         // for drawing into the buffer and then into this context.
         PassOwnPtr<ImageBuffer> createCompatibleBuffer(const IntSize&) const;
+        bool isCompatibleWithBuffer(ImageBuffer*) const;
 
         // This function applies the device scale factor to the context, making the context capable of
         // acting as a base-level context for a HiDPI environment.

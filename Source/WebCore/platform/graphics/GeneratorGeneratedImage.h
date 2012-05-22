@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +29,29 @@
 #include "GeneratedImage.h"
 #include "Generator.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
+#include "Timer.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+static const int generatedImageCacheClearDelay = 1;
+
+class GeneratedImageCacheTimer;
+
 class GeneratorGeneratedImage : public GeneratedImage {
+    friend class GeneratedImageCacheTimer;
 public:
     static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Generator> generator, const IntSize& size)
     {
         return adoptRef(new GeneratorGeneratedImage(generator, size));
     }
-    virtual ~GeneratorGeneratedImage() { }
+
+    virtual ~GeneratorGeneratedImage()
+    {
+        m_cacheTimer.stop();
+    }
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
@@ -49,11 +60,49 @@ protected:
 
     GeneratorGeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)
         : m_generator(generator)
+        , m_cacheTimer(this)
     {
         m_size = size;
     }
+    
+    class GeneratedImageCacheTimer : public TimerBase {
+    public:
+        GeneratedImageCacheTimer(GeneratorGeneratedImage * parent)
+        : m_shouldRestartWhenTimerFires(false)
+        , m_parent(parent) { }
+        
+        void restart()
+        {
+            if (isActive()) {
+                m_shouldRestartWhenTimerFires = true;
+                return;
+            }
+            startOneShot(generatedImageCacheClearDelay);
+        };
+    private:
+        virtual void fired() OVERRIDE
+        {
+            if (m_shouldRestartWhenTimerFires) {
+                m_shouldRestartWhenTimerFires = false;
+                startOneShot(generatedImageCacheClearDelay);
+                return;
+            }
+            
+            if (m_parent) {
+                m_parent->m_cachedImageBuffer.clear();
+                m_parent->m_cachedAdjustedSize = IntSize();
+            }
+        };
+        bool m_shouldRestartWhenTimerFires;
+        GeneratorGeneratedImage* m_parent;
+    };
 
     RefPtr<Generator> m_generator;
+
+    OwnPtr<ImageBuffer> m_cachedImageBuffer;
+    GeneratedImageCacheTimer m_cacheTimer;
+    IntSize m_cachedAdjustedSize;
+    unsigned m_cachedGeneratorHash;
 };
 
 }
