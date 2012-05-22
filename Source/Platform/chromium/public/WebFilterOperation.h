@@ -29,89 +29,95 @@
 #include "WebCommon.h"
 
 #include "WebColor.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
+#include "WebPoint.h"
 
 namespace WebKit {
 
-struct WebFilterOperation {
+class WebFilterOperation {
+public:
     enum FilterType {
-        FilterTypeBasicColorMatrix,
-        FilterTypeBasicComponentTransfer,
+        FilterTypeGrayscale,
+        FilterTypeSepia,
+        FilterTypeSaturate,
+        FilterTypeHueRotate,
+        FilterTypeInvert,
+        FilterTypeBrightness,
+        FilterTypeContrast,
+        FilterTypeOpacity,
         FilterTypeBlur,
-        FilterTypeDropShadow
+        FilterTypeDropShadow,
     };
 
-    FilterType type;
+    FilterType type() const { return m_type; }
 
-protected:
-    WebFilterOperation(FilterType type)
-        : type(type)
-    { }
+    float amount() const
+    {
+        return m_amount;
+    }
+    WebPoint dropShadowOffset() const
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
+        return WebPoint(m_dropShadowOffset);
+    }
+    WebColor dropShadowColor() const
+    {
+        WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
+        return m_dropShadowColor;
+    }
+
+#define WEBKIT_HAS_NEW_WEBFILTEROPERATION_API 1
+    static WebFilterOperation createGrayscaleFilter(float amount) { return WebFilterOperation(FilterTypeGrayscale, amount); }
+    static WebFilterOperation createSepiaFilter(float amount) { return WebFilterOperation(FilterTypeSepia, amount); }
+    static WebFilterOperation createSaturateFilter(float amount) { return WebFilterOperation(FilterTypeSaturate, amount); }
+    static WebFilterOperation createHueRotateFilter(float amount) { return WebFilterOperation(FilterTypeHueRotate, amount); }
+    static WebFilterOperation createInvertFilter(float amount) { return WebFilterOperation(FilterTypeInvert, amount); }
+    static WebFilterOperation createBrightnessFilter(float amount) { return WebFilterOperation(FilterTypeBrightness, amount); }
+    static WebFilterOperation createContrastFilter(float amount) { return WebFilterOperation(FilterTypeContrast, amount); }
+    static WebFilterOperation createOpacityFilter(float amount) { return WebFilterOperation(FilterTypeOpacity, amount); }
+    static WebFilterOperation createBlurFilter(float amount) { return WebFilterOperation(FilterTypeBlur, amount); }
+    static WebFilterOperation createDropShadowFilter(WebPoint offset, float stdDeviation, WebColor color) { return WebFilterOperation(FilterTypeDropShadow, offset, stdDeviation, color); }
+
+    bool equals(const WebFilterOperation& other) const
+    {
+        return m_amount == other.m_amount
+            && m_dropShadowOffset == other.m_dropShadowOffset
+            && m_dropShadowColor == other.m_dropShadowColor;
+    }
+
+private:
+    FilterType m_type;
+
+    float m_amount;
+    WebPoint m_dropShadowOffset;
+    WebColor m_dropShadowColor;
+
+    WebFilterOperation(FilterType type, float amount)
+    {
+        WEBKIT_ASSERT(type != FilterTypeDropShadow);
+        m_type = type;
+        m_amount = amount;
+        m_dropShadowColor = 0;
+    }
+
+    WebFilterOperation(FilterType type, WebPoint offset, float stdDeviation, WebColor color)
+    {
+        WEBKIT_ASSERT(type == FilterTypeDropShadow);
+        m_type = type;
+        m_amount = stdDeviation;
+        m_dropShadowOffset = offset;
+        m_dropShadowColor = color;
+    }
 };
 
-struct WebBasicColorMatrixFilterOperation : public WebFilterOperation {
-    enum BasicColorMatrixFilterType {
-        BasicColorMatrixFilterTypeGrayscale = 1,
-        BasicColorMatrixFilterTypeSepia = 2,
-        BasicColorMatrixFilterTypeSaturate = 3,
-        BasicColorMatrixFilterTypeHueRotate = 4
-    };
+inline bool operator==(const WebFilterOperation& a, const WebFilterOperation& b)
+{
+    return a.equals(b);
+}
 
-    WebBasicColorMatrixFilterOperation(BasicColorMatrixFilterType type, float amount)
-        : WebFilterOperation(FilterTypeBasicColorMatrix)
-        , subtype(type)
-        , amount(amount)
-    { }
-
-    BasicColorMatrixFilterType subtype;
-    float amount;
-};
-
-struct WebBasicComponentTransferFilterOperation : public WebFilterOperation {
-    enum BasicComponentTransferFilterType {
-        BasicComponentTransferFilterTypeInvert = 5,
-        BasicComponentTransferFilterTypeBrightness = 7,
-        BasicComponentTransferFilterTypeContrast = 8
-        // Opacity is missing because this is more expensive than just setting opacity on the layer,
-        // and opacity is not allowed for background filters.
-    };
-
-    WebBasicComponentTransferFilterOperation(BasicComponentTransferFilterType type, float amount)
-        : WebFilterOperation(FilterTypeBasicComponentTransfer)
-        , subtype(type)
-        , amount(amount)
-    { }
-
-    BasicComponentTransferFilterType subtype;
-    float amount;
-};
-
-struct WebBlurFilterOperation : public WebFilterOperation {
-    explicit WebBlurFilterOperation(int pixelRadius)
-        : WebFilterOperation(FilterTypeBlur)
-        , pixelRadius(pixelRadius)
-    { }
-
-    int pixelRadius;
-};
-
-struct WebDropShadowFilterOperation : public WebFilterOperation {
-    WebDropShadowFilterOperation(int x, int y, int stdDeviation, WebColor color) 
-        : WebFilterOperation(FilterTypeDropShadow)
-        , x(x)
-        , y(y)
-        , stdDeviation(stdDeviation)
-        , color(color)
-    { }
-
-    int x;
-    int y;
-    int stdDeviation;
-    WebColor color;
-};
+inline bool operator!=(const WebFilterOperation& a, const WebFilterOperation& b)
+{
+    return !(a == b);
+}
 
 }
 

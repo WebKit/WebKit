@@ -29,7 +29,10 @@
 #include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebFilterOperation.h>
+#include <public/WebFilterOperations.h>
 
+using namespace WebKit;
 using namespace WebCore;
 
 namespace {
@@ -85,8 +88,8 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     Color arbitraryColor = Color(10, 20, 30);
     TransformationMatrix arbitraryTransform;
     arbitraryTransform.scale3d(0.1, 0.2, 0.3);
-    FilterOperations arbitraryFilters;
-    arbitraryFilters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::OPACITY));
+    WebFilterOperations arbitraryFilters;
+    arbitraryFilters.append(WebFilterOperation::createOpacityFilter(0.5));
 
     // Changing these properties affects the entire subtree of layers.
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setAnchorPoint(arbitraryFloatPoint));

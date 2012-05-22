@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "GraphicsLayer.h"
+#include "LayerChromium.h"
 #include <gtest/gtest.h>
 #include <wtf/PassOwnPtr.h>
 

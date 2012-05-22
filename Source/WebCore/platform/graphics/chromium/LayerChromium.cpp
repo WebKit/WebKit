@@ -307,7 +307,7 @@ void LayerChromium::setReplicaLayer(LayerChromium* layer)
     setNeedsCommit();
 }
 
-void LayerChromium::setFilters(const FilterOperations& filters)
+void LayerChromium::setFilters(const WebKit::WebFilterOperations& filters)
 {
     if (m_filters == filters)
         return;
@@ -317,12 +317,14 @@ void LayerChromium::setFilters(const FilterOperations& filters)
         CCLayerTreeHost::setNeedsFilterContext(true);
 }
 
-void LayerChromium::setBackgroundFilters(const FilterOperations& backgroundFilters)
+void LayerChromium::setBackgroundFilters(const WebKit::WebFilterOperations& backgroundFilters)
 {
     if (m_backgroundFilters == backgroundFilters)
         return;
     m_backgroundFilters = backgroundFilters;
     setNeedsCommit();
+    if (!backgroundFilters.isEmpty())
+        CCLayerTreeHost::setNeedsFilterContext(true);
 }
 
 void LayerChromium::setOpacity(float opacity)
@@ -472,18 +474,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawCheckerboardForMissingTiles(m_drawCheckerboardForMissingTiles);
     layer->setDrawsContent(drawsContent());
-    if (CCProxy::hasImplThread()) {
-        // Since FilterOperations contains a vector of RefPtrs, we must deep copy the filters.
-        FilterOperations filtersCopy;
-        for (unsigned i = 0; i < m_filters.size(); ++i) {
-            RefPtr<FilterOperation> clone = m_filters.at(i)->clone();
-            if (clone)
-                filtersCopy.operations().append(clone);
-        }
-        layer->setFilters(filtersCopy);
-    } else
-        layer->setFilters(filters());
-
     layer->setFilters(filters());
     layer->setBackgroundFilters(backgroundFilters());
     layer->setIsNonCompositedContent(m_isNonCompositedContent);

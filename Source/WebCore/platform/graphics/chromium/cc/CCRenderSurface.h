@@ -29,13 +29,13 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "FilterOperations.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "SkBitmap.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerQuad.h"
+#include <public/WebFilterOperations.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -83,12 +83,12 @@ public:
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
 
-    void setFilters(const FilterOperations& filters) { m_filters = filters; }
-    const FilterOperations& filters() const { return m_filters; }
-    SkBitmap applyFilters(LayerRendererChromium*, const FilterOperations&, ManagedTexture* sourceTexture);
+    void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
+    const WebKit::WebFilterOperations& filters() const { return m_filters; }
+    SkBitmap applyFilters(LayerRendererChromium*, const WebKit::WebFilterOperations&, ManagedTexture* sourceTexture);
 
-    void setBackgroundFilters(const FilterOperations& filters) { m_backgroundFilters = filters; }
-    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+    void setBackgroundFilters(const WebKit::WebFilterOperations& filters) { m_backgroundFilters = filters; }
+    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
     void setNearestAncestorThatMovesPixels(CCRenderSurface* surface) { m_nearestAncestorThatMovesPixels = surface; }
     const CCRenderSurface* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
@@ -183,8 +183,8 @@ private:
     TransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
-    FilterOperations m_filters;
-    FilterOperations m_backgroundFilters;
+    WebKit::WebFilterOperations m_filters;
+    WebKit::WebFilterOperations m_backgroundFilters;
     IntRect m_clipRect;
     Vector<CCLayerImpl*> m_layerList;
 

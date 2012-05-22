@@ -39,13 +39,16 @@
 
 namespace WebCore {
 
-class LayerTilerChromium;
+class GraphicsContext;
+class IntRect;
 class LayerTextureUpdater;
 
 class ContentLayerDelegate {
 public:
-    virtual ~ContentLayerDelegate() { }
     virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
+
+protected:
+    virtual ~ContentLayerDelegate() { }
 };
 
 // A Layer that requires a GraphicsContext to render its contents.

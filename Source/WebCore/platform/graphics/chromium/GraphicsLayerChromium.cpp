@@ -58,6 +58,8 @@
 #include "SkMatrix44.h"
 #include "SystemTime.h"
 
+#include <public/WebFilterOperation.h>
+#include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebFloatRect.h>
 #include <public/WebSize.h>
@@ -67,9 +69,7 @@
 #include <wtf/text/CString.h>
 
 using namespace std;
-
-using WebKit::WebContentLayer;
-using WebKit::WebLayer;
+using namespace WebKit;
 
 namespace WebCore {
 
@@ -296,10 +296,96 @@ void GraphicsLayerChromium::setContentsOpaque(bool opaque)
     m_layer.setOpaque(m_contentsOpaque);
 }
 
+static bool copyWebCoreFilterOperationsToWebFilterOperations(const FilterOperations& filters, WebFilterOperations& webFilters)
+{
+    for (size_t i = 0; i < filters.size(); ++i) {
+        const FilterOperation& op = *filters.at(i);
+        switch (op.getOperationType()) {
+        case FilterOperation::REFERENCE:
+            return false; // Not supported.
+        case FilterOperation::GRAYSCALE:
+        case FilterOperation::SEPIA:
+        case FilterOperation::SATURATE:
+        case FilterOperation::HUE_ROTATE: {
+            float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
+            switch (op.getOperationType()) {
+            case FilterOperation::GRAYSCALE:
+                webFilters.append(WebFilterOperation::createGrayscaleFilter(amount));
+                break;
+            case FilterOperation::SEPIA:
+                webFilters.append(WebFilterOperation::createSepiaFilter(amount));
+                break;
+            case FilterOperation::SATURATE:
+                webFilters.append(WebFilterOperation::createSaturateFilter(amount));
+                break;
+            case FilterOperation::HUE_ROTATE:
+                webFilters.append(WebFilterOperation::createHueRotateFilter(amount));
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        }
+        case FilterOperation::INVERT:
+        case FilterOperation::OPACITY:
+        case FilterOperation::BRIGHTNESS:
+        case FilterOperation::CONTRAST: {
+            float amount = static_cast<const BasicComponentTransferFilterOperation*>(&op)->amount();
+            switch (op.getOperationType()) {
+            case FilterOperation::INVERT:
+                webFilters.append(WebFilterOperation::createInvertFilter(amount));
+                break;
+            case FilterOperation::OPACITY:
+                webFilters.append(WebFilterOperation::createOpacityFilter(amount));
+                break;
+            case FilterOperation::BRIGHTNESS:
+                webFilters.append(WebFilterOperation::createBrightnessFilter(amount));
+                break;
+            case FilterOperation::CONTRAST:
+                webFilters.append(WebFilterOperation::createContrastFilter(amount));
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        }
+        case FilterOperation::BLUR: {
+            float pixelRadius = static_cast<const BlurFilterOperation*>(&op)->stdDeviation().getFloatValue();
+            webFilters.append(WebFilterOperation::createBlurFilter(pixelRadius));
+            break;
+        }
+        case FilterOperation::DROP_SHADOW: {
+            const DropShadowFilterOperation& dropShadowOp = *static_cast<const DropShadowFilterOperation*>(&op);
+            webFilters.append(WebFilterOperation::createDropShadowFilter(WebPoint(dropShadowOp.x(), dropShadowOp.y()), dropShadowOp.stdDeviation(), dropShadowOp.color().rgb()));
+            break;
+        }
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM:
+            return false; // Not supported.
+#endif
+        case FilterOperation::PASSTHROUGH:
+        case FilterOperation::NONE:
+            break;
+        }
+    }
+    return true;
+}
+
 bool GraphicsLayerChromium::setFilters(const FilterOperations& filters)
 {
-    m_layer.unwrap<LayerChromium>()->setFilters(filters);
+    WebFilterOperations webFilters;
+    if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters))
+        return false;
+    m_layer.setFilters(webFilters);
     return GraphicsLayer::setFilters(filters);
+}
+
+void GraphicsLayerChromium::setBackgroundFilters(const FilterOperations& filters)
+{
+    WebFilterOperations webFilters;
+    if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters))
+        return;
+    m_layer.setBackgroundFilters(webFilters);
 }
 
 void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
@@ -592,12 +678,12 @@ void GraphicsLayerChromium::updateAnchorPoint()
 
 void GraphicsLayerChromium::updateTransform()
 {
-    primaryLayer().setTransform(WebKit::WebTransformationMatrix(m_transform));
+    primaryLayer().setTransform(WebTransformationMatrix(m_transform));
 }
 
 void GraphicsLayerChromium::updateChildrenTransform()
 {
-    primaryLayer().setSublayerTransform(WebKit::WebTransformationMatrix(m_childrenTransform));
+    primaryLayer().setSublayerTransform(WebTransformationMatrix(m_childrenTransform));
 }
 
 void GraphicsLayerChromium::updateMasksToBounds()

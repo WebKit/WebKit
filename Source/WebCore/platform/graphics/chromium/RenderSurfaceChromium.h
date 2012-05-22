@@ -35,6 +35,7 @@
 #include "ShaderChromium.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
+#include <public/WebFilterOperations.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -90,11 +91,11 @@ public:
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
 
-    void setFilters(const FilterOperations& filters) { m_filters = filters; }
-    const FilterOperations& filters() const { return m_filters; }
+    void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
+    const WebKit::WebFilterOperations& filters() const { return m_filters; }
 
-    void setBackgroundFilters(const FilterOperations& filters) { m_backgroundFilters = filters; }
-    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+    void setBackgroundFilters(const WebKit::WebFilterOperations& filters) { m_backgroundFilters = filters; }
+    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
     bool skipsDraw() const { return m_skipsDraw; }
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
@@ -129,8 +130,8 @@ private:
     TransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
-    FilterOperations m_filters;
-    FilterOperations m_backgroundFilters;
+    WebKit::WebFilterOperations m_filters;
+    WebKit::WebFilterOperations m_backgroundFilters;
     IntRect m_clipRect;
     Vector<RefPtr<LayerChromium> > m_layerList;
 

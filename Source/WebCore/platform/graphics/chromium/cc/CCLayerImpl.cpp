@@ -385,7 +385,7 @@ void CCLayerImpl::setBackgroundColor(const Color& backgroundColor)
     m_layerPropertyChanged = true;
 }
 
-void CCLayerImpl::setFilters(const FilterOperations& filters)
+void CCLayerImpl::setFilters(const WebKit::WebFilterOperations& filters)
 {
     if (m_filters == filters)
         return;
@@ -394,7 +394,7 @@ void CCLayerImpl::setFilters(const FilterOperations& filters)
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::setBackgroundFilters(const FilterOperations& backgroundFilters)
+void CCLayerImpl::setBackgroundFilters(const WebKit::WebFilterOperations& backgroundFilters)
 {
     if (m_backgroundFilters == backgroundFilters)
         return;

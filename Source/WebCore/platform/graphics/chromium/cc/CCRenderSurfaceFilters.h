@@ -31,14 +31,17 @@
 
 class SkBitmap;
 
+namespace WebKit {
+class WebFilterOperations;
+}
+
 namespace WebCore {
-class FilterOperations;
 class FloatSize;
 class GraphicsContext3D;
 
 class CCRenderSurfaceFilters {
 public:
-    static SkBitmap apply(const FilterOperations& filters, unsigned textureId, const FloatSize&, GraphicsContext3D*);
+    static SkBitmap apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize&, GraphicsContext3D*);
 private:
     CCRenderSurfaceFilters();
 };

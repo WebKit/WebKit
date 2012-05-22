@@ -31,7 +31,6 @@
 #include "CCTiledLayerTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
-#include "FilterOperations.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "TextureManager.h"
@@ -49,6 +48,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/Platform.h>
+#include <public/WebFilterOperation.h>
+#include <public/WebFilterOperations.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -2428,8 +2429,8 @@ public:
         setTestLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
 
         {
-            FilterOperations filters;
-            filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::OPACITY));
+            WebFilterOperations filters;
+            filters.append(WebFilterOperation::createOpacityFilter(0.5));
             child->setFilters(filters);
         }
 
@@ -2456,8 +2457,8 @@ public:
         setTestLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
 
         {
-            FilterOperations filters;
-            filters.operations().append(BlurFilterOperation::create(Length(10, WebCore::Percent), FilterOperation::BLUR));
+            WebFilterOperations filters;
+            filters.append(WebFilterOperation::createBlurFilter(10));
             child->setFilters(filters);
         }
 

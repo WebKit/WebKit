@@ -31,11 +31,14 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
+namespace WebKit {
+class WebFilterOperations;
+}
+
 namespace WebCore {
 
 class CCLayerImpl;
 class CCRenderSurface;
-class FilterOperations;
 
 // Computes the region where pixels have actually changed on a RenderSurface. This region is used
 // to scissor what is actually drawn to the screen to save GPU computation and bandwidth.
@@ -45,7 +48,7 @@ public:
     ~CCDamageTracker();
 
     void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
-    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const FilterOperations&);
+    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const WebKit::WebFilterOperations&);
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
 private:

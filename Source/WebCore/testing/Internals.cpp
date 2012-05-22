@@ -473,8 +473,8 @@ void Internals::setBackgroundBlurOnNode(Node* node, int blurLength, ExceptionCod
         return;
     }
 
-    FilterOperations filters;
-    filters.operations().append(BlurFilterOperation::create(Length(blurLength, Fixed), FilterOperation::BLUR));
+    WebKit::WebFilterOperations filters;
+    filters.append(WebKit::WebFilterOperation::createBlurFilter(blurLength));
     platformLayer->setBackgroundFilters(filters);
 }
 #else

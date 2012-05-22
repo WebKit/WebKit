@@ -34,7 +34,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "PlatformString.h"
@@ -46,6 +45,7 @@
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
 
+#include <public/WebFilterOperations.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -53,6 +53,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+
 
 namespace WebCore {
 
@@ -115,13 +116,13 @@ public:
     void setOpacity(float);
     bool opacityIsAnimating() const;
 
-    void setFilters(const FilterOperations&);
-    const FilterOperations& filters() const { return m_filters; }
+    void setFilters(const WebKit::WebFilterOperations&);
+    const WebKit::WebFilterOperations& filters() { return m_filters; }
 
     // Background filters are filters applied to what is behind this layer, when they are viewed through non-opaque
     // regions in this layer. They are used through the WebLayer interface, and are not exposed to HTML.
-    void setBackgroundFilters(const FilterOperations&);
-    const FilterOperations& backgroundFilters() const { return m_backgroundFilters; }
+    void setBackgroundFilters(const WebKit::WebFilterOperations&);
+    const WebKit::WebFilterOperations& backgroundFilters() { return m_backgroundFilters; }
 
     virtual void setOpaque(bool);
     bool opaque() const { return m_opaque; }
@@ -318,8 +319,8 @@ private:
     float m_debugBorderWidth;
     String m_debugName;
     float m_opacity;
-    FilterOperations m_filters;
-    FilterOperations m_backgroundFilters;
+    WebKit::WebFilterOperations m_filters;
+    WebKit::WebFilterOperations m_backgroundFilters;
     float m_anchorPointZ;
     bool m_isDrawable;
     bool m_masksToBounds;

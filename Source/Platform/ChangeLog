@@ -1,3 +1,61 @@
+2012-05-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port chromium compositor to use WebFilterOperation(s)
+        https://bugs.webkit.org/show_bug.cgi?id=87046
+
+        Reviewed by Adrienne Walker.
+
+        This changes WebFilterOperation / WebFilterOperations from being simple wrappers over WebCore types to being
+        standalone. WebFilterOperation is a plain old data struct with some convenience constuctors and type
+        assertions. Each WebFilterOperation contains a type tag and the parameters needed for each filter.
+        WebFilterOperations represents an ordered list of WebFilterOperation instances and can be copied around as
+        needed. It also exposes a few convenience functions about how the filters will modify pixels.
+
+        * Platform.gypi:
+        * chromium/public/WebFilterOperation.h:
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::type):
+        (WebKit::WebFilterOperation::amount):
+        (WebKit::WebFilterOperation::dropShadowOffset):
+        (WebKit::WebFilterOperation::dropShadowColor):
+        (WebKit::WebFilterOperation::createGrayscaleFilter):
+        (WebKit::WebFilterOperation::createSepiaFilter):
+        (WebKit::WebFilterOperation::createSaturateFilter):
+        (WebKit::WebFilterOperation::createHueRotateFilter):
+        (WebKit::WebFilterOperation::createInvertFilter):
+        (WebKit::WebFilterOperation::createBrightnessFilter):
+        (WebKit::WebFilterOperation::createContrastFilter):
+        (WebKit::WebFilterOperation::createOpacityFilter):
+        (WebKit::WebFilterOperation::createBlurFilter):
+        (WebKit::WebFilterOperation::createDropShadowFilter):
+        (WebKit::WebFilterOperation::equals):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebFilterOperations.h:
+        (WebKit):
+        (WebKit::WebFilterOperations::WebFilterOperations):
+        (WebKit::WebFilterOperations::operator=):
+        (WebFilterOperations):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/src/WebFilterOperations.cpp: Added.
+        (WebKit):
+        (WebFilterOperationsPrivate):
+        (WebKit::WebFilterOperations::initialize):
+        (WebKit::WebFilterOperations::destroy):
+        (WebKit::WebFilterOperations::assign):
+        (WebKit::WebFilterOperations::equals):
+        (WebKit::WebFilterOperations::append):
+        (WebKit::WebFilterOperations::clear):
+        (WebKit::WebFilterOperations::isEmpty):
+        (WebKit::spreadForStdDeviation):
+        (WebKit::WebFilterOperations::getOutsets):
+        (WebKit::WebFilterOperations::hasFilterThatMovesPixels):
+        (WebKit::WebFilterOperations::hasFilterThatAffectsOpacity):
+        (WebKit::WebFilterOperations::size):
+        (WebKit::WebFilterOperations::at):
+
 2012-05-17  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move Web Workers methods to Platform.h

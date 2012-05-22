@@ -1,3 +1,38 @@
+2012-05-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port chromium compositor to use WebFilterOperation(s)
+        https://bugs.webkit.org/show_bug.cgi?id=87046
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setFilters):
+        (WebKit::WebLayer::setBackgroundFilters):
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::createSurface):
+        (WebKitTests::CCOcclusionTrackerTest::createDrawingSurface):
+        (WebKitTests::CCOcclusionTrackerTestFilters::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTwoBackgroundFiltersReduceOcclusionTwice::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilterWithClip::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionBelowBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionIfBackgroundFilterIsOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReduceOcclusionWhenBackgroundFilterIsPartiallyOccluded::runMyTest):
+        * tests/FilterOperationsTest.cpp: Added.
+          Tests the existing behavior of WebCore::FilterOperations::getOutsets and makes sure WebFilterOperations'
+          behavior matches.
+        (WebKit):
+        (WebKit::TEST):
+        * tests/GraphicsLayerChromiumTest.cpp:
+
 2012-05-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Store key paths in IDBKeyPath type instead of String

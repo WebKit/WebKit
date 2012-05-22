@@ -28,7 +28,6 @@
 
 #include "CCAnimationTestCommon.h"
 #include "CCOcclusionTrackerTestCommon.h"
-#include "FilterOperations.h"
 #include "LayerChromium.h"
 #include "Region.h"
 #include "TransformationMatrix.h"
@@ -37,11 +36,13 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCSingleThreadProxy.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebFilterOperation.h>
+#include <public/WebFilterOperations.h>
 
 using namespace WebCore;
+using namespace WebKit;
 using namespace WebKitTests;
 
 #define EXPECT_EQ_RECT(a, b) \
@@ -199,8 +200,8 @@ protected:
     typename Types::LayerType* createSurface(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         typename Types::LayerType* layer = createLayer(parent, transform, position, bounds);
-        FilterOperations filters;
-        filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createGrayscaleFilter(0.5));
         layer->setFilters(filters);
         return layer;
     }
@@ -246,8 +247,8 @@ protected:
     typename Types::ContentLayerType* createDrawingSurface(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
     {
         typename Types::ContentLayerType* layer = createDrawingLayer(parent, transform, position, bounds, opaque);
-        FilterOperations filters;
-        filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createGrayscaleFilter(0.5));
         layer->setFilters(filters);
         return layer;
     }
@@ -1221,16 +1222,16 @@ protected:
         typename Types::ContentLayerType* opaqueLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
         typename Types::ContentLayerType* opacityLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
 
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(10, WebCore::Percent), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(10));
         blurLayer->setFilters(filters);
 
-        filters.operations().clear();
-        filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+        filters.clear();
+        filters.append(WebFilterOperation::createGrayscaleFilter(0.5));
         opaqueLayer->setFilters(filters);
 
-        filters.operations().clear();
-        filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::OPACITY));
+        filters.clear();
+        filters.append(WebFilterOperation::createOpacityFilter(0.5));
         opacityLayer->setFilters(filters);
 
         this->calcDrawEtc(parent);
@@ -2495,8 +2496,8 @@ protected:
         typename Types::LayerType* occludingLayer5 = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(250, 50), IntSize(50, 50), true);
 
         // Filters make the layer own a surface.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(10, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(10));
         filteredSurface->setBackgroundFilters(filters);
 
         // Save the distance of influence for the blur effect.
@@ -2616,8 +2617,8 @@ protected:
         typename Types::LayerType* occludingLayerAbove = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(100, 100), IntSize(50, 50), true);
 
         // Filters make the layers own surfaces.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(3, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(3));
         filteredSurface1->setBackgroundFilters(filters);
         filteredSurface2->setBackgroundFilters(filters);
 
@@ -2681,8 +2682,8 @@ protected:
         typename Types::LayerType* occludingLayer5 = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(250, 50), IntSize(50, 50), true);
 
         // Filters make the layer own a surface. This filter is large enough that it goes outside the bottom of the clippingSurface.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(12, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(12));
         filteredSurface->setBackgroundFilters(filters);
 
         // Save the distance of influence for the blur effect.
@@ -2804,8 +2805,8 @@ protected:
         this->createReplicaLayer(filteredSurface, this->identityMatrix, FloatPoint(300, 0), IntSize());
 
         // Filters make the layer own a surface.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(3, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(3));
         filteredSurface->setBackgroundFilters(filters);
 
         this->calcDrawEtc(parent);
@@ -2853,8 +2854,8 @@ protected:
         typename Types::LayerType* aboveReplicaLayer = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(200, 50), IntSize(50, 50), true);
 
         // Filters make the layer own a surface.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(3, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(3));
         filteredSurface->setBackgroundFilters(filters);
 
         this->calcDrawEtc(parent);
@@ -2903,8 +2904,8 @@ protected:
         typename Types::LayerType* besideReplicaLayer = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(200, 40), IntSize(10, 10), true);
 
         // Filters make the layer own a surface.
-        FilterOperations filters;
-        filters.operations().append(BlurFilterOperation::create(Length(3, WebCore::Fixed), FilterOperation::BLUR));
+        WebFilterOperations filters;
+        filters.append(WebFilterOperation::createBlurFilter(3));
         filteredSurface->setBackgroundFilters(filters);
 
         // Save the distance of influence for the blur effect.

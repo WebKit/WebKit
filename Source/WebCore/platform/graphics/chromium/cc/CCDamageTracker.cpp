@@ -34,11 +34,11 @@
 
 #include "cc/CCDamageTracker.h"
 
-#include "FilterOperations.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCRenderSurface.h"
+#include <public/WebFilterOperations.h>
 
 namespace WebCore {
 
@@ -58,7 +58,7 @@ CCDamageTracker::~CCDamageTracker()
 {
 }
 
-static inline void expandDamageRectWithFilters(FloatRect& damageRect, const FilterOperations& filters)
+static inline void expandDamageRectWithFilters(FloatRect& damageRect, const WebKit::WebFilterOperations& filters)
 {
     int top, right, bottom, left;
     filters.getOutsets(top, right, bottom, left);
@@ -66,7 +66,7 @@ static inline void expandDamageRectWithFilters(FloatRect& damageRect, const Filt
     damageRect.expand(left + right, top + bottom);
 }
 
-static inline void expandDamageRectInsideRectWithFilters(FloatRect& damageRect, const FloatRect& filterRect, const FilterOperations& filters)
+static inline void expandDamageRectInsideRectWithFilters(FloatRect& damageRect, const FloatRect& filterRect, const WebKit::WebFilterOperations& filters)
 {
     FloatRect expandedDamageRect = damageRect;
     expandDamageRectWithFilters(expandedDamageRect, filters);
@@ -75,7 +75,7 @@ static inline void expandDamageRectInsideRectWithFilters(FloatRect& damageRect, 
     damageRect.unite(expandedDamageRect);
 }
 
-void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const FilterOperations& filters)
+void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const WebKit::WebFilterOperations& filters)
 {
     //
     // This function computes the "damage rect" of a target surface, and updates the state

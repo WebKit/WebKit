@@ -110,6 +110,7 @@
             'chromium/public/WebWorkerRunLoop.h',
             'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
+            'chromium/src/WebFilterOperations.cpp',
             'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebPrerenderingSupport.cpp',
             'chromium/src/WebString.cpp',

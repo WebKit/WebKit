@@ -341,7 +341,7 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
                                     program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), shaderQuadLocation);
 }
 
-SkBitmap CCRenderSurface::applyFilters(LayerRendererChromium* layerRenderer, const FilterOperations& filters, ManagedTexture* sourceTexture)
+SkBitmap CCRenderSurface::applyFilters(LayerRendererChromium* layerRenderer, const WebKit::WebFilterOperations& filters, ManagedTexture* sourceTexture)
 {
     if (filters.isEmpty())
         return SkBitmap();

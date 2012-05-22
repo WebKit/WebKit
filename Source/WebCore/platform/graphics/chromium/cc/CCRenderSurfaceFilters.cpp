@@ -36,6 +36,8 @@
 #include "SkColorMatrixFilter.h"
 #include "SkGpuDevice.h"
 #include "SkGrTexturePixelRef.h"
+#include <public/WebFilterOperation.h>
+#include <public/WebFilterOperations.h>
 
 namespace {
 
@@ -170,7 +172,7 @@ bool applyColorMatrix(SkCanvas* canvas, SkBitmap source, SkScalar matrix[20])
 
 namespace WebCore {
 
-SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned textureId, const FloatSize& size, GraphicsContext3D* context3D)
+SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize& size, GraphicsContext3D* context3D)
 {
     SkBitmap source;
     if (!context3D)
@@ -196,7 +198,7 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         // Save the previous texture cache destination (if any), and keep it
         // locked during draw to prevent it be re-used as destination.
         GrContext::TextureCacheEntry sourceEntry = dest;
-        const FilterOperation* filterOperation = filters.at(i);
+        const WebKit::WebFilterOperation& op = filters.at(i);
         // Allocate a destination texture.
         GrTextureDesc desc;
         desc.fFlags = kRenderTarget_GrTextureFlagBit | kNoStencil_GrTextureFlagBit;
@@ -211,88 +213,76 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         SkGpuDevice device(gr, dest.texture());
         SkCanvas canvas(&device);
         canvas.clear(0x0);
-        switch (filterOperation->getOperationType()) {
-        case FilterOperation::BRIGHTNESS: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        switch (op.type()) {
+        case WebKit::WebFilterOperation::FilterTypeBrightness: {
             SkScalar matrix[20];
-            getBrightnessMatrix(op->amount(), matrix);
+            getBrightnessMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::CONTRAST: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeContrast: {
             SkScalar matrix[20];
-            getContrastMatrix(op->amount(), matrix);
+            getContrastMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::GRAYSCALE: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeGrayscale: {
             SkScalar matrix[20];
-            getGrayscaleMatrix(1 - op->amount(), matrix);
+            getGrayscaleMatrix(1 - op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::SEPIA: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeSepia: {
             SkScalar matrix[20];
-            getSepiaMatrix(1 - op->amount(), matrix);
+            getSepiaMatrix(1 - op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::SATURATE: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeSaturate: {
             SkScalar matrix[20];
-            getSaturateMatrix(op->amount(), matrix);
+            getSaturateMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::HUE_ROTATE: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeHueRotate: {
             SkScalar matrix[20];
-            getHueRotateMatrix(op->amount(), matrix);
+            getHueRotateMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::INVERT: {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeInvert: {
             SkScalar matrix[20];
-            getInvertMatrix(op->amount(), matrix);
+            getInvertMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::OPACITY: {
-            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
+        case WebKit::WebFilterOperation::FilterTypeOpacity: {
             SkScalar matrix[20];
-            getOpacityMatrix(op->amount(), matrix);
+            getOpacityMatrix(op.amount(), matrix);
             applyColorMatrix(&canvas, source, matrix);
             break;
         }
-        case FilterOperation::BLUR: {
-            const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(filterOperation);
-            float stdX = floatValueForLength(op->stdDeviation(), 0);
-            float stdY = floatValueForLength(op->stdDeviation(), 1);
-            SkAutoTUnref<SkImageFilter> filter(new SkBlurImageFilter(stdX, stdY));
+        case WebKit::WebFilterOperation::FilterTypeBlur: {
+            float stdDeviation = op.amount();
+            SkAutoTUnref<SkImageFilter> filter(new SkBlurImageFilter(stdDeviation, stdDeviation));
             SkPaint paint;
             paint.setImageFilter(filter.get());
             canvas.drawSprite(source, 0, 0, &paint);
             break;
         }
-        case FilterOperation::DROP_SHADOW: {
-            const DropShadowFilterOperation* op = static_cast<const DropShadowFilterOperation*>(filterOperation);
-            SkAutoTUnref<SkImageFilter> blurFilter(new SkBlurImageFilter(op->stdDeviation(), op->stdDeviation()));
-            SkAutoTUnref<SkColorFilter> colorFilter(SkColorFilter::CreateModeFilter(op->color().rgb(), SkXfermode::kSrcIn_Mode));
+        case WebKit::WebFilterOperation::FilterTypeDropShadow: {
+            SkAutoTUnref<SkImageFilter> blurFilter(new SkBlurImageFilter(op.amount(), op.amount()));
+            SkAutoTUnref<SkColorFilter> colorFilter(SkColorFilter::CreateModeFilter(op.dropShadowColor(), SkXfermode::kSrcIn_Mode));
             SkPaint paint;
             paint.setImageFilter(blurFilter.get());
             paint.setColorFilter(colorFilter.get());
             paint.setXfermodeMode(SkXfermode::kSrcOver_Mode);
             canvas.saveLayer(0, &paint);
-            canvas.drawBitmap(source, op->x(), -op->y());
+            canvas.drawBitmap(source, op.dropShadowOffset().x, -op.dropShadowOffset().y);
             canvas.restore();
             canvas.drawBitmap(source, 0, 0);
             break;
         }
-        case FilterOperation::PASSTHROUGH:
         default:
             canvas.drawBitmap(source, 0, 0);
             break;

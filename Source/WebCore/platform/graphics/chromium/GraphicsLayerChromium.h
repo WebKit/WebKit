@@ -89,6 +89,7 @@ public:
 
     // Returns true if filter can be rendered by the compositor
     virtual bool setFilters(const FilterOperations&);
+    void setBackgroundFilters(const FilterOperations&);
 
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);

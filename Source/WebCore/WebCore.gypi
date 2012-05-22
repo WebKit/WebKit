@@ -8298,7 +8298,6 @@
             'platform/chromium/support/WebData.cpp',
             'platform/chromium/support/WebHTTPBody.cpp',
             'platform/chromium/support/WebHTTPLoadInfo.cpp',
-            'platform/chromium/support/WebFilterOperations.cpp',
             'platform/chromium/support/WebICECandidateDescriptor.cpp',
             'platform/chromium/support/WebICEOptions.cpp',
             'platform/chromium/support/WebMediaHints.cpp',
