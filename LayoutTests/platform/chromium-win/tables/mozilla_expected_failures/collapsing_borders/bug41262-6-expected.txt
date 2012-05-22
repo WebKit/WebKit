@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {CENTER} at (0,0) size 784x158
-        RenderTable {TABLE} at (340,0) size 103x90 [border: none]
+        RenderTable {TABLE} at (340,0) size 104x90 [border: none]
           RenderTableSection {THEAD} at (0,0) size 102x23
             RenderTableRow {TR} at (0,0) size 102x23
               RenderTableCell {TD} at (0,0) size 35x23 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]

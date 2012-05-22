@@ -1,3 +1,15 @@
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed rebaselines for chromium mac and windows.
+
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/core/standards1-expected.txt: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/standards1-expected.png: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/standards1-expected.png:
+
 2012-05-21  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Rebaseline for r117865.
