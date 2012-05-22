@@ -425,8 +425,6 @@ BUGWK65536 : fast/css/text-rendering.html = TEXT
 
 BUGWK49142 : fast/css/style-scoped = TEXT
 
-BUGWK87099 : fast/css/zoom-in-length-round-trip.html = TEXT
-
 // ENABLE(INPUT_TYPE_*) are not enabled.
 BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT

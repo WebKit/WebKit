@@ -7,6 +7,7 @@
 <pre id="console"></pre>
 <div id="container">
     <div id="target" style="width: 1px; height: 10px;"></div>
+    <div id="subpixel-test" style="width: 4.5px; height: 10px;"></div>
 </div>
 <script>
     function log(message)
@@ -22,13 +23,15 @@
     var containerStyle = document.getElementById("container").style;
     var zoom;
     var failed = false;
+
+    var rect = document.getElementById('subpixel-test').getBoundingClientRect();
+    var hasSubpixelSupport = rect.right - rect.left == 4.5;
     
     for (zoom = 100; zoom <= 200; zoom += 1) {
         containerStyle.setProperty("zoom", zoom / 100);
-        var rect = target.getBoundingClientRect();
-        var width = Math.round(rect.right - rect.left);
-        var height = Math.round(rect.bottom - rect.top);
-        if (width !== 1 || height !== 10) {
+        if (target.offsetWidth != 1 || target.offsetHeight != 10) {
+            if (hasSubpixelSupport && (target.offsetWidth == 1 || target.offsetWidth == 2) && (target.offsetHeight == 10 || target.offsetHeight == 11))
+                continue; // With subpixel layout and pixel snapping we extend the box with one pixel at certain zoom levels.
             failed = true;
             log("FAIL at " + zoom + "% magnification: 1 mapped to " + target.offsetWidth + " and 10 mapped to " + target.offsetHeight + ".");
         }

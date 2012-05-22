@@ -1,3 +1,14 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (r117815) fast/css/zoom-in-length-round-trip.html fails on Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=87145
+
+        Reviewed by Levi Weintraub.
+
+        Fix zoom-in-length-round-trip to support subpixel support turned on or off.
+
+        * fast/css/zoom-in-length-round-trip.html:
+
 2012-05-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Support Array-type key paths
