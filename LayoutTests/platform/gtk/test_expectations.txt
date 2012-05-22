@@ -1358,6 +1358,8 @@ BUGWK86771 SKIP : fast/dom/gc-10.html = FAIL
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL
 BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 
+BUGWK87099 : fast/css/zoom-in-length-round-trip.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

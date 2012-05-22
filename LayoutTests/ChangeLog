@@ -1,3 +1,14 @@
+2012-05-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Add a failing test expectation for a CSS test modified in r117815
+        (subpixel layout changes) and a GTK-specific baseline for a test
+        introduced in r117803.
+
+        * platform/gtk/accessibility/disabled-controls-not-focusable-expected.txt: Added.
+        * platform/gtk/test_expectations.txt:
+
 2012-05-22  Li Yin  <li.yin@intel.com>
 
         [WebSocket] WebSocket object should fire a simple event named error when it is required to fail the websocket connection.
