@@ -651,8 +651,8 @@ void LayoutTestController::setCacheModel(int cacheModel)
     case 1:
         webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
         break;
-    case 3:
-        webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);
+    case 2:
+        webkit_set_cache_model(WEBKIT_CACHE_MODEL_WEB_BROWSER);
         break;
     default:
         ASSERT_NOT_REACHED();
