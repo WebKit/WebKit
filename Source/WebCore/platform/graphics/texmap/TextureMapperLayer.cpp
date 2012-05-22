@@ -26,8 +26,12 @@
 
 #include "GraphicsLayerTextureMapper.h"
 #include "ImageBuffer.h"
-
+#include "NotImplemented.h"
 #include <wtf/MathExtras.h>
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#endif
 
 namespace WebCore {
 
@@ -122,8 +126,12 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     context->translate(-dirtyRect.x(), -dirtyRect.y());
     layer->paintGraphicsLayerContents(*context, dirtyRect);
 
-    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+    if (layer->showRepaintCounter()) {
+        layer->incrementRepaintCount();
+        drawRepaintCounter(context, layer);
+    }
 
+    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
     backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect);
 
@@ -561,6 +569,41 @@ void TextureMapperLayer::setDebugBorder(const Color& color, float width)
     m_debugBorderColor = color;
     m_debugBorderWidth = width * 2;
 }
+
+#if USE(CAIRO)
+void TextureMapperLayer::drawRepaintCounter(GraphicsContext* context, GraphicsLayer* layer)
+{
+
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_save(cr);
+
+    CString repaintCount = String::format("%i", layer->repaintCount()).utf8();
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 18);
+
+    cairo_text_extents_t repaintTextExtents;
+    cairo_text_extents(cr, repaintCount.data(), &repaintTextExtents);
+
+    static const int repaintCountBorderWidth = 10;
+    setSourceRGBAFromColor(cr, layer->showDebugBorders() ? m_debugBorderColor : Color(0, 255, 0, 127));
+    cairo_rectangle(cr, 0, 0,
+                    repaintTextExtents.width + (repaintCountBorderWidth * 2),
+                    repaintTextExtents.height + (repaintCountBorderWidth * 2));
+    cairo_fill(cr);
+
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_move_to(cr, repaintCountBorderWidth, repaintTextExtents.height + repaintCountBorderWidth);
+    cairo_show_text(cr, repaintCount.data());
+
+    cairo_restore(cr);
+}
+#else
+void TextureMapperLayer::drawRepaintCounter(GraphicsContext* context, GraphicsLayer* layer)
+{
+    notImplemented();
+}
+
+#endif
 
 }
 #endif

@@ -157,6 +157,8 @@ private:
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void updateBackingStore(TextureMapper*, GraphicsLayerTextureMapper*);
 
+    void drawRepaintCounter(GraphicsContext*, GraphicsLayer*);
+
     void syncAnimations();
     bool isVisible() const;
     enum ContentsLayerCount {

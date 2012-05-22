@@ -1,3 +1,20 @@
+2012-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] [Cairo] Implement repaint counters
+        https://bugs.webkit.org/show_bug.cgi?id=87062
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This just adds a debugging feature that shouldn't
+        affect the normal drawing of a page.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore): Now, if repaint counters are
+        enabled, increment the repaint count and call drawRepaintCounter.
+        (WebCore::TextureMapperLayer::drawRepaintCounter): Added.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer): Added declaration for drawRepaintCounter.
+
 2012-05-22  Simon Fraser  <simon.fraser@apple.com>
 
         Use the same animation begin time while updating compositing layers
