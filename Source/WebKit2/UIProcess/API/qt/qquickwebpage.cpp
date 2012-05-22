@@ -140,18 +140,41 @@ QTransform QQuickWebPage::transformFromItem() const
 
 QTransform QQuickWebPage::transformToItem() const
 {
-    QPointF pos = d->viewportItem->pageItemPos();
-    return QTransform(d->contentsScale, 0, 0, 0, d->contentsScale, 0, pos.x(), pos.y(), 1);
+    qreal xPos = x();
+    qreal yPos = y();
+
+    if (d->viewportItem->experimental()->flickableViewportEnabled()) {
+        // Flickable moves its contentItem so we need to take that position into
+        // account, as well as the potential displacement of the page on the
+        // contentItem because of additional QML items.
+        xPos += d->viewportItem->contentItem()->x();
+        yPos += d->viewportItem->contentItem()->y();
+    }
+
+    return QTransform(d->contentsScale, 0, 0, 0, d->contentsScale, 0, xPos, yPos, 1);
 }
 
 void QQuickWebPagePrivate::updateSize()
 {
     QSizeF scaledSize = contentsSize * contentsScale;
-    q->setSize(scaledSize);
-    viewportItem->updateContentsSize(scaledSize);
+
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (drawingArea && drawingArea->layerTreeHostProxy())
         drawingArea->layerTreeHostProxy()->setContentsSize(WebCore::FloatSize(contentsSize.width(), contentsSize.height()));
+
+    q->setSize(scaledSize);
+
+    if (viewportItem->experimental()->flickableViewportEnabled()) {
+        // Make sure that the content is sized to the page if the user did not
+        // add other flickable items. If that is not the case, the user needs to
+        // disable the default content item size property on the WebView and
+        // bind the contentWidth and contentHeight accordingly, in accordance
+        // accordance with normal Flickable behaviour.
+        if (viewportItem->experimental()->useDefaultContentItemSize()) {
+            viewportItem->setContentWidth(scaledSize.width());
+            viewportItem->setContentHeight(scaledSize.height());
+        }
+    }
 }
 
 QQuickWebPagePrivate::~QQuickWebPagePrivate()

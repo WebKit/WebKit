@@ -1,5 +1,20 @@
 2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Make the resizing code more straight forward
+        https://bugs.webkit.org/show_bug.cgi?id=87015
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::transformToItem):
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewFlickablePrivate):
+
+2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         [Qt] Add UI tests for fit-to-view
         https://bugs.webkit.org/show_bug.cgi?id=86857
 

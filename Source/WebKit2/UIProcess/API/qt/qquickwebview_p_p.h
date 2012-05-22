@@ -74,9 +74,6 @@ public:
     virtual void enableMouseEvents() { }
     virtual void disableMouseEvents() { }
 
-    virtual QPointF pageItemPos();
-    virtual void updateContentsSize(const QSizeF&) { }
-
     virtual void provisionalLoadDidStart(const QUrl& url);
     virtual void loadDidCommit();
     virtual void didSameDocumentNavigation();
@@ -225,9 +222,6 @@ public:
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
     virtual void onComponentComplete();
-
-    virtual QPointF pageItemPos();
-    virtual void updateContentsSize(const QSizeF&);
 
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }

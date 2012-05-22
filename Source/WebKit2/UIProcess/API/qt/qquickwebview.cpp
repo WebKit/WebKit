@@ -324,12 +324,6 @@ bool QQuickWebViewPrivate::transparentBackground() const
     return webPageProxy->drawsTransparentBackground();
 }
 
-QPointF QQuickWebViewPrivate::pageItemPos()
-{
-    ASSERT(pageView);
-    return pageView->pos();
-}
-
 /*!
     \qmlsignal WebView::loadingChanged(WebLoadRequest request)
 */
@@ -796,34 +790,6 @@ void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGr
 {
     QQuickWebViewPrivate::initialize(contextRef, pageGroupRef);
     webPageProxy->setUseFixedLayout(true);
-}
-
-QPointF QQuickWebViewFlickablePrivate::pageItemPos()
-{
-    Q_Q(QQuickWebView);
-    // Flickable moves its contentItem so we need to take that position into account,
-    // as well as the potential displacement of the page on the contentItem because
-    // of additional QML items.
-    qreal xPos = q->contentItem()->x() + pageView->x();
-    qreal yPos = q->contentItem()->y() + pageView->y();
-    return QPointF(xPos, yPos);
-}
-
-void QQuickWebViewFlickablePrivate::updateContentsSize(const QSizeF& size)
-{
-    Q_Q(QQuickWebView);
-
-    // Make sure that the contentItem is sized to the page
-    // if the user did not add other flickable items in QML.
-    // If the user adds items in QML he has to make sure to
-    // disable the default content item size property on the WebView
-    // and bind the contentWidth and contentHeight accordingly.
-    // This is in accordance with normal QML Flickable behaviour.
-    if (!m_useDefaultContentItemSize)
-        return;
-
-    q->setContentWidth(size.width());
-    q->setContentHeight(size.height());
 }
 
 void QQuickWebViewFlickablePrivate::onComponentComplete()
@@ -1837,18 +1803,6 @@ void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
 {
     Q_D(QQuickWebView);
     d->webPageProxy->loadHTMLString(html, baseUrl.toString());
-}
-
-QPointF QQuickWebView::pageItemPos()
-{
-    Q_D(QQuickWebView);
-    return d->pageItemPos();
-}
-
-void QQuickWebView::updateContentsSize(const QSizeF& size)
-{
-    Q_D(QQuickWebView);
-    d->updateContentsSize(size);
 }
 
 qreal QQuickWebView::zoomFactor() const

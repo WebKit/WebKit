@@ -141,10 +141,6 @@ public:
 
     static void platformInitialize(); // Only needed by WTR.
 
-    // Internal API used by WebPage.
-    void updateContentsSize(const QSizeF&);
-    QPointF pageItemPos();
-
     // Private C++-only API.
     qreal zoomFactor() const;
     void setZoomFactor(qreal);
