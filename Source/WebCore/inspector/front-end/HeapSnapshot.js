@@ -458,7 +458,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get dominatorIndex()
     {
-        return this._nodes[this.nodeIndex + this._snapshot._dominatorOffset];
+        return this._snapshot._dominatorsTree[this.nodeIndex / this._snapshot._nodeFieldCount];
     },
 
     get edges()
@@ -680,7 +680,6 @@ WebInspector.HeapSnapshot.prototype = {
         this._nodeIdOffset = meta.node_fields.indexOf("id");
         this._nodeSelfSizeOffset = meta.node_fields.indexOf("self_size");
         this._nodeRetainedSizeOffset = meta.node_fields.indexOf("retained_size");
-        this._dominatorOffset = meta.node_fields.indexOf("dominator");
         this._firstEdgeIndexOffset = meta.node_fields.indexOf("edges_index");
         this._nodeFieldCount = meta.node_fields.length;
 
