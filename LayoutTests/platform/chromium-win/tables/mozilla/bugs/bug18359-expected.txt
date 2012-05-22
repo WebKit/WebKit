@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x27
         RenderText {#text} at (0,0) size 363x26
           text run at (0,0) width 363: "SeaMonkey XPInstall Trigger Page"
-      RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {FORM} at (0,56) size 784x62
+      RenderBlock {HR} at (0,46) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {FORM} at (0,56) size 784x63
         RenderTable {TABLE} at (0,0) size 637x62
           RenderTableSection {TBODY} at (0,0) size 637x62
             RenderTableRow {TR} at (0,2) size 637x28
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,3) size 71x16
                     RenderText at (0,0) size 71x16
                       text run at (0,0) width 71: "Trigger case"
-layer at (124,72) size 419x16
+layer at (124,73) size 419x16
   RenderBlock {DIV} at (2,3) size 419x16
     RenderText {#text} at (0,0) size 101x16
       text run at (0,0) width 101: "http://jimbob/jars/"
