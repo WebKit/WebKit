@@ -1,3 +1,65 @@
+2012-05-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Use the same animation begin time while updating compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=87080
+
+        Reviewed by Dean Jackson.
+        
+        Tidied up some beginAnimationUpdate/endAnimationUpdate logic,
+        but further cleaning is required. We currently bracket some calls
+        to recaclcStyle() with begin/endAnimationUpdate, but not all.
+        We don't bracket layout, or compositing updates. This patch
+        adds bracketing around compositing updates, in order to be
+        able to add some assertions in a later patch that rely on
+        RenderLayer::currentTransform() giving consistent results,
+        since currentTransform() depends on the animation begin time.
+        
+        Made AnimationController::beginAnimationUpdate() and
+        AnimationController::endAnimationUpdate() nestable by adding
+        a counter.
+        
+        Added a stack-based class, AnimationUpdateBlock, which
+        calls begin/endAnimationUpdate.
+        
+        Replaced calls to begin/endAnimationUpdate in Document::updateStyleIfNeeded()
+        and Document::styleResolverChanged() with AnimationUpdateBlock. Filed a bug
+        to cover other calls to recalcStyle which might need this (87159).
+        
+        Removed a call to beginAnimationUpdate() in Document::implicitOpen(),
+        which was added in r42415. I believe that r57390 makes this unnecessary,
+        and was not able to reproduce the original bug after removing it. It
+        was the only unpaired beginAnimationUpdate call.
+        
+        Made AnimationControllerPrivate::getAnimatedStyleForRenderer() not 
+        use a new beginTime each time it was called, so its beginTime now
+        depends on some earlier beginAnimationUpdate.
+        
+        Fixed CSSComputedStyleDeclaration::getPropertyCSSValue() to use
+        an AnimationUpdateBlock so that calls to computed style do
+        use the current time to compute an animating value (as before).
+
+        Not testable.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * dom/Document.cpp:
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::styleResolverChanged):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::AnimationController):
+        (WebCore::AnimationController::beginAnimationUpdate):
+        (WebCore::AnimationController::endAnimationUpdate):
+        * page/animation/AnimationController.h:
+        (AnimationController):
+        (WebCore):
+        (AnimationUpdateBlock):
+        (WebCore::AnimationUpdateBlock::AnimationUpdateBlock):
+        (WebCore::AnimationUpdateBlock::~AnimationUpdateBlock):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+
 2012-05-22  Tony Chang  <tony@chromium.org>
 
         REGRESSION(r117613): Dromaeo/jslib-style-prototype regressed by 20%

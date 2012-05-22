@@ -1808,14 +1808,8 @@ void Document::updateStyleIfNeeded()
     if ((!m_pendingStyleRecalcShouldForce && !childNeedsStyleRecalc()) || inPageCache())
         return;
 
-    if (m_frame)
-        m_frame->animation()->beginAnimationUpdate();
-        
+    AnimationUpdateBlock animationUpdateBlock(m_frame ? m_frame->animation() : 0);
     recalcStyle(NoChange);
-
-    // Tell the animation controller that updateStyleIfNeeded is finished and it can do any post-processing
-    if (m_frame)
-        m_frame->animation()->endAnimationUpdate();
 }
 
 void Document::updateStyleForAllDocuments()
@@ -2297,11 +2291,6 @@ void Document::implicitOpen()
     m_parser = createParser();
     setParsing(true);
     setReadyState(Loading);
-
-    // If we reload, the animation controller sticks around and has
-    // a stale animation time. We need to update it here.
-    if (m_frame && m_frame->animation())
-        m_frame->animation()->beginAnimationUpdate();
 }
 
 HTMLElement* Document::body() const
@@ -3289,11 +3278,10 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 
     // This recalcStyle initiates a new recalc cycle. We need to bracket it to
     // make sure animations get the correct update time
-    if (m_frame)
-        m_frame->animation()->beginAnimationUpdate();
-    recalcStyle(Force);
-    if (m_frame)
-        m_frame->animation()->endAnimationUpdate();
+    {
+        AnimationUpdateBlock animationUpdateBlock(m_frame ? m_frame->animation() : 0);
+        recalcStyle(Force);
+    }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())

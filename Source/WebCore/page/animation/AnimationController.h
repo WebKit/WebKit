@@ -82,6 +82,25 @@ public:
 
 private:
     OwnPtr<AnimationControllerPrivate> m_data;
+    int m_beginAnimationUpdateCount;
+};
+
+class AnimationUpdateBlock {
+public:
+    AnimationUpdateBlock(AnimationController* animationController)
+        : m_animationController(animationController)
+    {
+        if (m_animationController)
+            m_animationController->beginAnimationUpdate();
+    }
+    
+    ~AnimationUpdateBlock()
+    {
+        if (m_animationController)
+            m_animationController->endAnimationUpdate();
+    }
+    
+    AnimationController* m_animationController;
 };
 
 } // namespace WebCore
