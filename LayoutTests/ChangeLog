@@ -1,3 +1,10 @@
+2012-05-22  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87136
+        REGRESSION(117918) - 4 webgl/tex-iomage-and-sub-image-2d-with-image tests failing on Mac bots.
+
+        * platform/mac/Skipped: Skipping tests until Kenneth Russel can take a look.
+
 2012-05-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Add region styling support for color property
