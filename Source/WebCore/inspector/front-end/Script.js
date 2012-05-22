@@ -167,13 +167,13 @@ WebInspector.Script.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {number} lineNumber
+     * @param {number=} columnNumber
      * @return {WebInspector.UILocation}
      */
-    rawLocationToUILocation: function(rawLocation)
+    rawLocationToUILocation: function(lineNumber, columnNumber)
     {
-        console.assert(rawLocation.scriptId === this.scriptId);
-        var uiLocation = this._sourceMapping.rawLocationToUILocation(rawLocation);
+        var uiLocation = this._sourceMapping.rawLocationToUILocation(new WebInspector.DebuggerModel.Location(this, lineNumber, columnNumber || 0));
         return uiLocation.uiSourceCode.overrideLocation(uiLocation);
     },
 
@@ -219,7 +219,7 @@ WebInspector.Script.Location = function(script, rawLocation, updateDelegate)
 WebInspector.Script.Location.prototype = {
     update: function()
     {
-        var uiLocation = this._script.rawLocationToUILocation(this._rawLocation);
+        var uiLocation = this._script.rawLocationToUILocation(this._rawLocation.lineNumber, this._rawLocation.columnNumber);
         if (uiLocation) {
             var uiSourceCode = uiLocation.uiSourceCode;
             if (this._uiSourceCodes.indexOf(uiSourceCode) === -1) {

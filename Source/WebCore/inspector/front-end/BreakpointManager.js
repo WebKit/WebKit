@@ -381,7 +381,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
             this._resetLocations();
             for (var i = 0; i < locations.length; ++i) {
                 var script = this._breakpointManager._debuggerModel.scriptForId(locations[i].scriptId);
-                var uiLocation = script.rawLocationToUILocation(locations[i]);
+                var uiLocation = script.rawLocationToUILocation(locations[i].lineNumber, locations[i].columnNumber);
                 if (this._breakpointManager.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber)) {
                     // location clash
                     this.remove();

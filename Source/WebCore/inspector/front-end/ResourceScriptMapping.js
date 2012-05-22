@@ -93,9 +93,15 @@ WebInspector.ResourceScriptMapping.prototype = {
             // Ignore resource in case it has not yet finished loading.
             if (resource && resource.request && !resource.request.finished)
                 resource = null;
+            // Only bind inline and standalone scripts.
+            if (resource && !this._shouldBindScriptToContentProvider(script, resource))
+                resource = null;
             if (!resource) {
                 // When there is no resource, lookup in-flight requests.
                 request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
+                // Only bind inline and standalone scripts.
+                if (request && !this._shouldBindScriptToContentProvider(script, request))
+                  request = null;
             }
         }
         console.assert(!resource || !request);
@@ -120,6 +126,18 @@ WebInspector.ResourceScriptMapping.prototype = {
         if (rawSourceCode.uiSourceCode())
             this._uiSourceCodeAdded(rawSourceCode, rawSourceCode.uiSourceCode());
         rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, this._handleUISourceCodeChanged, this);
+    },
+
+    /**
+     * @param {WebInspector.Script} script
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @return {boolean}
+     */
+    _shouldBindScriptToContentProvider: function(script, contentProvider)
+    {
+        if (script.isInlineScript())
+            return contentProvider.contentType() === WebInspector.resourceTypes.Document;
+        return contentProvider.contentType() === WebInspector.resourceTypes.Script;
     },
 
     /**

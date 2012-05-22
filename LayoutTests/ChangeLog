@@ -1,3 +1,13 @@
+2012-05-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [regression] dynamically created script tab is bound to the document resource.
+        https://bugs.webkit.org/show_bug.cgi?id=87119
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/debugger/dynamic-script-tag-expected.txt: Added.
+        * inspector/debugger/dynamic-script-tag.html: Added.
+
 2012-05-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Gardening of fast/spatial-navigation tests.

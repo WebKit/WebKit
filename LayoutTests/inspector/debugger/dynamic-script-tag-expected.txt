@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 1: 123
+Tests that dynamically added script tag gets its own JavaScriptSource and is not bound to the resource. Bug 87119
+
+Debugger was enabled.
+Is anonymous:false
+Is inline script:false
+dynamic-script-tag.html
+UI name: dynamic-script-tag.html
+UI resource: null
+UI content: console.log(123)
+Debugger was disabled.
+

@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function createScriptTag()
+{
+    var script = document.createElement("script");
+    script.innerHTML = "console.log(123)";
+    document.head.appendChild(script);
+}
+
+function test()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("createScriptTag()");
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step2);
+    }
+
+    function step2(event)
+    {
+        var script = event.data;
+        script.requestContent(callback);
+        function callback(content)
+        {
+            if (content !== "console.log(123)")
+                return;
+            InspectorTest.addResult("Is anonymous:" + script.isAnonymousScript());
+            InspectorTest.addResult("Is inline script:" + script.isInlineScript());
+            InspectorTest.addResult(new WebInspector.ParsedURL(script.sourceURL).displayName);
+            // Invoke post source map install.
+            setTimeout(step3.bind(this, script), 0);
+        }
+    }
+
+    function step3(script)
+    {
+        var uiLocation = script.rawLocationToUILocation(0, 0);
+        InspectorTest.addResult("UI name: " + uiLocation.uiSourceCode.parsedURL.displayName);
+        InspectorTest.addResult("UI resource: " + uiLocation.uiSourceCode.resource());
+        uiLocation.uiSourceCode.requestContent(callback);
+        function callback(content)
+        {
+            InspectorTest.addResult("UI content: " + content);
+            InspectorTest.completeDebuggerTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that dynamically added script tag gets its own JavaScriptSource and is not bound to the resource.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=87119">Bug 87119</a>
+</p>
+</body>
+
+</html>

@@ -535,7 +535,7 @@ WebInspector.DebuggerModel.prototype = {
         var script = this._scripts[rawLocation.scriptId];
         if (!script)
             return null;
-        return script.rawLocationToUILocation(rawLocation);
+        return script.rawLocationToUILocation(rawLocation.lineNumber, rawLocation.columnNumber);
     }
 }
 
