@@ -652,6 +652,7 @@ fast/loader/stop-provisional-loads.html
 # WebKitTestRunner needs layoutTestController.setPrinting
 # <https://bugs.webkit.org/show_bug.cgi?id=42693>
 printing/compositing-layer-printing.html
+printing/iframe-print.html
 printing/media-queries-print.html
 printing/page-rule-in-media-query.html
 printing/setPrinting.html
