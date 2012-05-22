@@ -1,3 +1,14 @@
+2012-05-21  Kent Tamura  <tkent@chromium.org>
+
+        Add performance tests for <textarea>
+        https://bugs.webkit.org/show_bug.cgi?id=86994
+
+        Reviewed by Ryosuke Niwa.
+
+        * DOM/textarea-dom.html: Added.
+        * DOM/textarea-edit.html: Added.
+        * Parser/textarea-parsing.html: Added.
+
 2012-05-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: upstream build dominators tree procedure from v8.
