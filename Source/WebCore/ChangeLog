@@ -1,3 +1,19 @@
+2012-05-09  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from removal of a line break object
+        https://bugs.webkit.org/show_bug.cgi?id=85997
+
+        Reviewed by David Hyatt.
+
+        Regression from r115343. That replaced a call to setNeedsLayout()
+        with a separate call that used a different bit during linebox
+        invalidation after renderer child removal. There are special cases
+        where layout isn't marked on parent nodes just from the removal, so
+        line dirtying needs to explicitly mark ancestors for layout.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setAncestorLineBoxDirty):
+
 2012-04-26  Ken Buchanan  <kenrb@chromium.org>
 
         Crash from removal of line break object after layout
