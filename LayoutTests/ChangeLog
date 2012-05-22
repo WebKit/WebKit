@@ -1,3 +1,13 @@
+2012-05-22  Andreas Kling  <kling@webkit.org>
+
+        DOM Attr objects pointing to "style" attribute should force reification when read.
+        <http://webkit.org/b/87076>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/attr-style-too-lazy-expected.txt: Added.
+        * fast/dom/attr-style-too-lazy.html: Added.
+
 2012-05-22  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Structure test_expectations.txt into meaningful sections

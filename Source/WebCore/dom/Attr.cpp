@@ -203,7 +203,7 @@ CSSStyleDeclaration* Attr::style()
 const AtomicString& Attr::value() const
 {
     if (m_element)
-        return m_element->getAttributeItem(qualifiedName())->value();
+        return m_element->getAttribute(qualifiedName());
     return m_standaloneValue;
 }
 
