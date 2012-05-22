@@ -92,6 +92,7 @@ public:
     static void scalePageBy(WebKitWebView*, float, float, float);
     static void setDefersLoading(WebKitWebView*, bool);
     static void setSmartInsertDeleteEnabled(WebKitWebView*, bool);
+    static void forceWebViewPaint(WebKitWebView*);
 
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);

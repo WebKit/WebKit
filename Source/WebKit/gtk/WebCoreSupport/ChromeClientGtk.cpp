@@ -85,6 +85,7 @@ ChromeClient::ChromeClient(WebKitWebView* webView)
     , m_adjustmentWatcher(webView)
     , m_closeSoonTimer(0)
     , m_displayTimer(this, &ChromeClient::paint)
+    , m_forcePaint(false)
     , m_lastDisplayTime(0)
     , m_repaintSoonSourceId(0)
 {
@@ -566,7 +567,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
     double timeUntilNextDisplay = minimumFrameInterval - timeSinceLastDisplay;
 
-    if (timeUntilNextDisplay > 0) {
+    if (timeUntilNextDisplay > 0 && !m_forcePaint) {
         m_displayTimer.startOneShot(timeUntilNextDisplay);
         return;
     }
@@ -606,6 +607,13 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     Frame* focusedFrame = core(m_webView)->focusController()->focusedOrMainFrame();
     if (focusedFrame && focusedFrame->editor()->canEdit())
         m_webView->priv->imFilter.setCursorRect(frame->selection()->absoluteCaretBounds());
+}
+
+void ChromeClient::forcePaint()
+{
+    m_forcePaint = true;
+    paint(0);
+    m_forcePaint = false;
 }
 
 void ChromeClient::invalidateRootView(const IntRect&, bool immediate)

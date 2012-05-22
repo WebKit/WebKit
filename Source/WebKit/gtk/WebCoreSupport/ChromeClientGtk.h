@@ -166,6 +166,7 @@ namespace WebKit {
 
         void performAllPendingScrolls();
         void paint(Timer<ChromeClient>*);
+        void forcePaint();
         void widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize);
 
     private:
@@ -175,6 +176,7 @@ namespace WebKit {
         unsigned int m_closeSoonTimer;
 
         Timer <ChromeClient> m_displayTimer;
+        bool m_forcePaint;
         Region m_dirtyRegion;
         Vector<IntRect> m_rectsToScroll;
         Vector<IntSize> m_scrollOffsets;
