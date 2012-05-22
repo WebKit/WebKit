@@ -2417,7 +2417,7 @@ BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS 
 // overhang even when we weren't over the edge.
 // * platform/ScrollView.cpp:
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting):
-BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
+BUGCR71783 LION SNOWLEOPARD : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 /////////////////////////////////////////////////////////////////////////////
 // GPU
