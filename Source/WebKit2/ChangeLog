@@ -1,1 +1,32 @@
+2012-05-22  Anders Carlsson  <andersca@apple.com>
+
+        Crash when a plug-in view outlives its containing WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=87163
+        <rdar://problem/10849258>
+
+        Reviewed by Dan Bernstein.
+
+        In rare cases, when a plug-in is kept alive for some reason it can outlive its WebPage. When that happens,
+        the PluginView destructor will try to access the (deleted) web page and we'll crash.
+
+        Fix this by making the WebPage destructor iterate over all the registered plug-ins and null out the m_webPage pointer.
+        Don't try to access the WebPage object if it's null.
+
+        Also, remove PLATFORM(MAC) ifdefs around the HashSet of known plug-in views as well as the member functions that access the set;
+        we want this to be cross platform now.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::webPageDestroyed):
+        (WebKit):
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::scalePage):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 == Rolled over to ChangeLog-2012-05-22 ==
