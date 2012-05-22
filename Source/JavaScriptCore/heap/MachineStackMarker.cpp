@@ -356,14 +356,20 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     return sizeof(CONTEXT);
 #elif OS(QNX)
     memset(&regs, 0, sizeof(regs));
-    regs.tid = pthread_self();
-    int fd = open("/proc/self", O_RDONLY);
+    regs.tid = platformThread;
+    // FIXME: If we find this hurts performance, we can consider caching the fd and keeping it open.
+    int fd = open("/proc/self/as", O_RDONLY);
     if (fd == -1) {
-        LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
+        LOG_ERROR("Unable to open /proc/self/as (errno: %d)", errno);
         CRASH();
     }
-    devctl(fd, DCMD_PROC_TIDSTATUS, &regs, sizeof(regs), 0);
+    int rc = devctl(fd, DCMD_PROC_TIDSTATUS, &regs, sizeof(regs), 0);
+    if (rc != EOK) {
+        LOG_ERROR("devctl(DCMD_PROC_TIDSTATUS) failed (error: %d)", rc);
+        CRASH();
+    }
     close(fd);
+    return sizeof(struct _debug_thread_info);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)

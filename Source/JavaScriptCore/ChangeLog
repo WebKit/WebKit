@@ -1,3 +1,16 @@
+2012-05-22  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] getPlatformThreadRegisters() should fetch target thread's registers
+        https://bugs.webkit.org/show_bug.cgi?id=87148
+
+        Reviewed by George Staikos.
+
+        Our previous implementation of getPlatformThreadRegisters() read registers in current
+        thread's context but it is supposed to read the target thread's registers.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::getPlatformThreadRegisters):
+
 2012-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support reflective arguments access
