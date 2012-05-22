@@ -1,3 +1,14 @@
+2012-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Flash player buttons do not work when page is zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=87056
+        <rdar://problem/11491501>
+
+        Reviewed by Oliver Hunt.
+
+        * platform/mac-wk2/plugins/mouse-events-scaled-iframe-expected.txt: Added.
+        * platform/mac-wk2/plugins/mouse-events-scaled-iframe.html: Added.
+
 2012-05-21  Abhishek Arya  <inferno@chromium.org>
 
         Regression(r117482): Run-in crashes relating to generated content and inline line box clearing.

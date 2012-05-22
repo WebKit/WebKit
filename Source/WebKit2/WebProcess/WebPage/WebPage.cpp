@@ -1014,6 +1014,11 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     m_page->setPageScaleFactor(scale, origin);
 
+#if PLATFORM(MAC)
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->pageScaleFactorDidChange();
+#endif
+
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
