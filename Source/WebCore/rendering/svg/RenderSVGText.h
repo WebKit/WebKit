@@ -52,7 +52,7 @@ public:
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
 
     void subtreeChildWasAdded(RenderObject*);
-    void subtreeChildWillBeRemoved(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
+    void subtreeChildWillBeRemoved(RenderObject*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeStyleDidChange(RenderSVGInlineText*);
     void subtreeTextDidChange(RenderSVGInlineText*);

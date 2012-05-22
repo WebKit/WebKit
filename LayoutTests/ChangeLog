@@ -1,5 +1,15 @@
 2012-05-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Crash in WebCore::SVGTextLayoutAttributesBuilder::fillCharacterDataMap
+        https://bugs.webkit.org/show_bug.cgi?id=86781
+
+        Reviewed by Rob Buis.
+
+        * svg/custom/bug86781-expected.txt: Added.
+        * svg/custom/bug86781.html: Added.
+
+2012-05-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Re-add expected results for three tests that were missing.
 
         * platform/mac/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.

@@ -168,6 +168,7 @@ inline bool RenderSVGText::shouldHandleSubtreeMutations() const
 void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
 {
     ASSERT(child);
+    ASSERT(child->isSVGInlineText() || child->isSVGInline());
     if (!shouldHandleSubtreeMutations() || documentBeingDestroyed())
         return;
 
@@ -237,9 +238,10 @@ void RenderSVGText::willBeDestroyed()
     RenderSVGBlock::willBeDestroyed();
 }
 
-void RenderSVGText::subtreeChildWillBeRemoved(RenderSVGInlineText* text, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)
+void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)
 {
-    ASSERT(text);
+    ASSERT(child);
+    ASSERT(child->isSVGInlineText() || child->isSVGInline());
     if (!shouldHandleSubtreeMutations())
         return;
 
@@ -248,10 +250,11 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderSVGInlineText* text, Vector<
     // The positioning elements cache depends on the size of each text renderer in the
     // subtree. If this changes, clear the cache. It's going to be rebuilt below.
     m_layoutAttributesBuilder.clearTextPositioningElements();
-    if (m_layoutAttributes.isEmpty())
+    if (m_layoutAttributes.isEmpty() || child->isSVGInline())
         return;
 
     // This logic requires that the 'text' child is still inserted in the tree.
+    RenderSVGInlineText* text = toRenderSVGInlineText(child);
     bool stopAfterNext = false;
     SVGTextLayoutAttributes* previous = 0;
     SVGTextLayoutAttributes* next = 0;
@@ -525,15 +528,9 @@ void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
 
 void RenderSVGText::removeChild(RenderObject* child)
 {
-    if (!child->isSVGInlineText()) {
-        RenderSVGBlock::removeChild(child);
-        return;
-    }
-
-    RenderSVGInlineText* text = toRenderSVGInlineText(child);
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     FontCachePurgePreventer fontCachePurgePreventer;
-    subtreeChildWillBeRemoved(text, affectedAttributes);
+    subtreeChildWillBeRemoved(child, affectedAttributes);
     RenderSVGBlock::removeChild(child);
     subtreeChildWasRemoved(affectedAttributes);
 }
