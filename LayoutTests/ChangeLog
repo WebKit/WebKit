@@ -1,3 +1,13 @@
+2012-05-22  Abhishek Arya  <inferno@chromium.org>
+
+        Assertion failure (toRenderBox() called on a RenderInline) beneath RenderBlock::blockBeforeWithinSelectionRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=86500
+
+        Reviewed by Ojan Vafai.
+
+        * fast/block/line-layout/selection-highlight-crash-expected.txt: Added.
+        * fast/block/line-layout/selection-highlight-crash.html: Added.
+
 2012-05-22  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] jquery/attributes.html SLOW -> TIMEOUT

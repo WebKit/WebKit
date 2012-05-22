@@ -3469,15 +3469,15 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
     if (isSelectionRoot())
         return 0;
 
-    const RenderBox* object = this;
+    const RenderObject* object = this;
     RenderObject* sibling;
     do {
         sibling = object->previousSibling();
         while (sibling && (!sibling->isRenderBlock() || toRenderBlock(sibling)->isSelectionRoot()))
             sibling = sibling->previousSibling();
 
-        offset -= LayoutSize(object->logicalLeft(), object->logicalTop());
-        object = object->parentBox();
+        offset -= LayoutSize(toRenderBlock(object)->logicalLeft(), toRenderBlock(object)->logicalTop());
+        object = object->parent();
     } while (!sibling && object && object->isRenderBlock() && !toRenderBlock(object)->isSelectionRoot());
 
     if (!sibling)
