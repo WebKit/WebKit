@@ -1,3 +1,16 @@
+2012-05-22  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION r110315: Event handler throws TypeError for an input element with name="arguments"
+        https://bugs.webkit.org/show_bug.cgi?id=86991
+
+        Reviewed by Ojan Vafai.
+
+        The added test checks whether an event handler is successfully invoked
+        for an input element with name="arguments".
+
+        * fast/forms/form-input-named-arguments-expected.txt: Added.
+        * fast/forms/form-input-named-arguments.html: Added.
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         Chromium linux and mac rebaselines.

@@ -18,6 +18,6 @@ script 5:
     end: 48:0
 script 6:
     start: 51:56
-    end: 52:7
+    end: 52:31
 Debugger was disabled.
 
