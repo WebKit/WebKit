@@ -1,3 +1,14 @@
+2012-05-22  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Structure test_expectations.txt into meaningful sections
+        https://bugs.webkit.org/show_bug.cgi?id=86628
+
+        Unreviewed, EFL gardening.
+
+        Organizing test_expectations.txt into categories.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-22  Andreas Kling  <kling@webkit.org>
 
         Add a layout test for attribute selector invalidation triggering recursive style recalc.

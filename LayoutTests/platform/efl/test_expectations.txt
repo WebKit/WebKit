@@ -2,6 +2,139 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+// We divide our test_expectations.txt into several categories:
+// 1. TESTS EXPECTED TO FAIL
+//    Test cases related to features that we don't expect to be activated for EFL since e.g.
+//    * the feature implementation in WebCore is not complete yet
+//    * the feature is not relevant for the EFL port
+//    * the feature is meant to solve a backwards compatibility issue on other platforms
+//    Test cases that don't apply for the EFL platform permanently.
+//    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
+//    should be moved here.
+
+// 2. CRASHES
+
+// 3. FLAKY TESTS
+
+// 4. FAILING TESTS
+//    * Interim failures that are moved here for further investigation as a result of daily
+//      gardening. They should be analysed quickly and either resolved or moved to 1).
+//    * Remaining failures that are moved here until further investigation after
+//      unskipping a directory or block of tests in the Skipped list. Mark cases as MISSING
+//      if you cannot yet generate new results since another feature is missing.
+//    * Tests that we expect to pass once the respective fix for DRT is available or
+//      a relevant compile time feature can be enabled for EFL.
+
+
+// Each line should have an associated bug. Please don't file new lines without one.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// TESTS EXPECTED TO FAIL
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
+BUGWKEFL SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
+BUGWKEFL SKIP : fast/canvas/fill-stroke-clip-reset-path.html = FAIL
+BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
+
+// Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
+
+// CSS Regions support not yet enabled, tracking in a separate EFL bug.
+BUGWK83897 SKIP : fast/regions = FAIL
+
+// Exclusions implementation not complete yet.
+BUGWK83898 SKIP : fast/exclusions = FAIL
+
+// CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
+BUGWK85465 SKIP : css3/filters = TEXT
+BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
+
+// This test assumes we cannot play RTSP, but we can.
+BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
+
+// Link prefetch is disabled by default
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-detached.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = FAIL
+BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
+BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
+BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
+
+// Test is flaky on other platforms.
+BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT
+
+// Seems to fail on mac as well
+BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
+BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
+
+// Perf tests are way too slow on debug builds.
+WONTFIX DEBUG : perf/adding-radio-buttons.html = FAIL PASS
+WONTFIX DEBUG : perf/array-binary-search.html = FAIL PASS
+WONTFIX DEBUG : perf/mouse-event.html = FAIL PASS
+
+// Newly added test which fails on other bots too
+BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
+
+// Missing drag'n'drop support.
+BUGWK86623 : editing/pasteboard/drag-and-drop-image-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-and-drop-objectimage-contenteditable.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-to-data-url.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-image-in-about-blank-frame.html = TEXT
+BUGWK86623 : editing/pasteboard/files-during-page-drags.html = TEXT
+BUGWK86623 : editing/selection/drag-text-delay.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-input-textarea.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-list.html = TEXT
+BUGWK86623 : editing/pasteboard/drag-drop-url-text.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-inputtext-acquires-style.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-link.html = TEXT
+BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
+BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
+
+// Missing drag'n'drop, needs baselines
+BUGWK86623 : editing/pasteboard/drag-drop-dead-frame.html = MISSING
+BUGWK86623 : editing/pasteboard/drag-drop-modifies-page.html = MISSING
+BUGWK86623 : editing/pasteboard/drag-image-to-contenteditable-in-iframe.html = MISSING
+BUGWK86623 : editing/pasteboard/drop-text-without-selection.html = MISSING
+BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
+BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// CRASHES
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FLAKY TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
+BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = FAIL PASS
+BUGWK83878 : media/track/track-mode.html = TEXT PASS
+BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
+BUGWK86072 : media/sources-fallback-codecs.html = FAIL PASS
+BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-001.htm = IMAGE PASS
+BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-003.htm = IMAGE PASS
+BUGWK86074 : media/svg-as-image-with-media-blocked.html = CRASH PASS
+BUGWK86075 : fast/events/message-port-close.html = CRASH PASS
+BUGWK86078 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT PASS
+BUGWK86079 : http/tests/misc/link-rel-icon-beforeload.html = TEXT PASS
+BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
+BUGWK86082 : security/block-test.html = TEXT PASS
+BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
+BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FAILING TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
 // Needs ENABLE_SHADOW_DOM
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
@@ -13,15 +146,6 @@ BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 
 // Not able to generate a meaningful expected result, since complex font rendering fails.
 BUGWK83275 : fast/text/international/text-spliced-font.html = FAIL MISSING
-
-// CSS Regions support not yet enabled, tracking in a separate EFL bug.
-BUGWK83897 SKIP : fast/regions = FAIL
-
-// Exclusions implementation not complete yet.
-BUGWK83898 SKIP : fast/exclusions = FAIL
-
-// CSS Variables are not yet enabled.
-BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
@@ -246,20 +370,6 @@ BUGWK82294 : compositing/tiling/huge-layer-with-layer-children.html = TEXT
 BUGWK82294 : compositing/tiling/huge-layer.html = TEXT
 BUGWK82294 : compositing/video/video-poster.html = TEXT
 
-// Link prefetch is disabled by default
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-detached.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = FAIL
-BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
-BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
-BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
-
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
 BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
@@ -305,10 +415,6 @@ BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = FAIL
 
 // These test -apple- prefixed CSS properties, which we don't support.
 WONTFIX SKIP : fast/css/apple-prefix.html = TEXT
-
-// CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
-BUGWK85465 SKIP : css3/filters = TEXT
-BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
 
 BUGWK75747 : fast/css/color-correction-on-background-image.html = TEXT
 BUGWK75747 : fast/css/color-correction-on-backgrounds.html = TEXT
@@ -429,9 +535,6 @@ BUGWK76048 : fast/text/font-kerning.html = IMAGE
 // Ligatures rendering issue.
 BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
 
-// Newly added test which fails on other bots too
-BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
-
 // Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
@@ -443,28 +546,6 @@ BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
 BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = TEXT
 
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
-
-// Perf tests are way too slow on debug builds.
-WONTFIX DEBUG : perf/adding-radio-buttons.html = FAIL PASS
-WONTFIX DEBUG : perf/array-binary-search.html = FAIL PASS
-WONTFIX DEBUG : perf/mouse-event.html = FAIL PASS
-
-// Flaky tests.
-BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
-BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = FAIL PASS
-BUGWK83878 : media/track/track-mode.html = TEXT PASS
-BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
-BUGWK86072 : media/sources-fallback-codecs.html = FAIL PASS
-BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-001.htm = IMAGE PASS
-BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-003.htm = IMAGE PASS
-BUGWK86074 : media/svg-as-image-with-media-blocked.html = CRASH PASS
-BUGWK86075 : fast/events/message-port-close.html = CRASH PASS
-BUGWK86078 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT PASS
-BUGWK86079 : http/tests/misc/link-rel-icon-beforeload.html = TEXT PASS
-BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
-BUGWK86082 : security/block-test.html = TEXT PASS
-BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
-BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 
 // Tests imported in r116658
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
@@ -501,29 +582,14 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 // New test introduced in r116858 fails
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
 
-// Seems to fail on mac as well
-BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
-BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
-
 // Fullscreen API not enabled.
 BUGWK85870 : media/media-fullscreen-not-in-document.html = TEXT
 
 // This test is specific to QuickTime media engine.
 BUGWKEFL SKIP : media/video-does-not-loop.html = FAIL
 
-// This test assumes we cannot play RTSP, but we can.
-BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
-
 // This test fails if mixer is not at 100%
 BUGWK83704 : media/event-attributes.html = TEXT
-
-// These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
-BUGWKEFL SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
-BUGWKEFL SKIP : fast/canvas/fill-stroke-clip-reset-path.html = FAIL
-BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
-
-// Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
 // Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
 BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
@@ -553,30 +619,6 @@ BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FA
 // Missing deletebutton controller implementation.
 BUGWK86615 : editing/deleting/5408255.html = TEXT
 BUGWK86615 : editing/deleting/regional-indicators.html = TEXT
-
-// Missing drag'n'drop support.
-BUGWK86623 : editing/pasteboard/drag-and-drop-image-contenteditable.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-and-drop-objectimage-contenteditable.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-drop-to-data-url.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-image-in-about-blank-frame.html = TEXT
-BUGWK86623 : editing/pasteboard/files-during-page-drags.html = TEXT
-BUGWK86623 : editing/selection/drag-text-delay.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-drop-input-textarea.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-drop-list.html = TEXT
-BUGWK86623 : editing/pasteboard/drag-drop-url-text.html = TEXT
-BUGWK86623 : editing/pasteboard/drop-inputtext-acquires-style.html = TEXT
-BUGWK86623 : editing/pasteboard/drop-link.html = TEXT
-BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
-BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
-
-// Missing drag'n'drop, needs baselines
-BUGWK86623 : editing/pasteboard/drag-drop-dead-frame.html = MISSING
-BUGWK86623 : editing/pasteboard/drag-drop-modifies-page.html = MISSING
-BUGWK86623 : editing/pasteboard/drag-image-to-contenteditable-in-iframe.html = MISSING
-BUGWK86623 : editing/pasteboard/drop-text-without-selection.html = MISSING
-BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
-BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 
 // Missing spell checking support (Efl's port does not support spell checking, Gtk port uses Enchant library https://bugs.webkit.org/show_bug.cgi?id=61787)
 BUGWK86637 : editing/spelling/grammar.html = TEXT
