@@ -2123,10 +2123,6 @@ fast/text/international/bdi-dir-default-to-auto.html
 # Regressions occured after Qt version update
 # ============================================================================= #
 
-# [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
-# https://bugs.webkit.org/show_bug.cgi?id=40362
-canvas/philip/tests/2d.path.stroke.overlap.html
-
 # [Qt] editing/execCommand/move-selection-back-line.html fails with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50144
 editing/execCommand/move-selection-back-line.html

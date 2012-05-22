@@ -59,6 +59,7 @@
 #include <QPaintEngine>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPainterPathStroker>
 #include <QPixmap>
 #include <QPolygonF>
 #include <QStack>
@@ -527,6 +528,12 @@ void GraphicsContext::fillPath(const Path& path)
         p->fillPath(platformPath, p->brush());
 }
 
+inline static void fillPathStroke(QPainter* painter, QPainterPathStroker& pathStroker, const QPainterPath& platformPath, const QBrush& brush)
+{
+    QPainterPath stroke = pathStroker.createStroke(platformPath);
+    painter->fillPath(stroke, brush);
+}
+
 void GraphicsContext::strokePath(const Path& path)
 {
     if (paintingDisabled())
@@ -536,6 +543,12 @@ void GraphicsContext::strokePath(const Path& path)
     QPen pen(p->pen());
     QPainterPath platformPath = path.platformPath();
     platformPath.setFillRule(toQtFillRule(fillRule()));
+    QPainterPathStroker pathStroker;
+    pathStroker.setJoinStyle(pen.joinStyle());
+    pathStroker.setDashOffset(pen.dashOffset());
+    pathStroker.setMiterLimit(pen.miterLimit());
+    pathStroker.setCapStyle(pen.capStyle());
+    pathStroker.setWidth(pen.widthF());
 
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
@@ -549,12 +562,9 @@ void GraphicsContext::strokePath(const Path& path)
                 if (m_state.strokeGradient) {
                     QBrush brush(*m_state.strokeGradient->platformGradient());
                     brush.setTransform(m_state.strokeGradient->gradientSpaceTransform());
-                    QPen shadowPen(pen);
-                    shadowPen.setBrush(brush);
-                    shadowPainter->strokePath(platformPath, shadowPen);
-                } else {
-                    shadowPainter->strokePath(platformPath, pen);
-                }
+                    fillPathStroke(shadowPainter, pathStroker, platformPath, brush);
+                } else
+                    fillPathStroke(shadowPainter, pathStroker, platformPath, pen.brush());
                 shadow->endShadowLayer(this);
             }
         } else {
@@ -564,24 +574,21 @@ void GraphicsContext::strokePath(const Path& path)
             shadowColor.setAlphaF(shadowColor.alphaF() * pen.color().alphaF());
             QPen shadowPen(pen);
             shadowPen.setColor(shadowColor);
-            p->strokePath(platformPath, shadowPen);
+            fillPathStroke(p, pathStroker, platformPath, shadowPen.brush());
             p->translate(-offset);
         }
     }
 
     if (m_state.strokePattern) {
         AffineTransform affine;
-        pen.setBrush(QBrush(m_state.strokePattern->createPlatformPattern(affine)));
-        p->setPen(pen);
-        p->strokePath(platformPath, pen);
+        QBrush brush = m_state.strokePattern->createPlatformPattern(affine);
+        fillPathStroke(p, pathStroker, platformPath, brush);
     } else if (m_state.strokeGradient) {
         QBrush brush(*m_state.strokeGradient->platformGradient());
         brush.setTransform(m_state.strokeGradient->gradientSpaceTransform());
-        pen.setBrush(brush);
-        p->setPen(pen);
-        p->strokePath(platformPath, pen);
+        fillPathStroke(p, pathStroker, platformPath, brush);
     } else
-        p->strokePath(platformPath, pen);
+        fillPathStroke(p, pathStroker, platformPath, pen.brush());
 }
 
 static inline void drawRepeatPattern(QPainter* p, QPixmap* image, const FloatRect& rect, const bool repeatX, const bool repeatY)

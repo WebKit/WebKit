@@ -1,3 +1,12 @@
+2012-05-22  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] canvas/philip/tests/2d.path.stroke.overlap.html fails with Qt-4.6.2 or higher
+        https://bugs.webkit.org/show_bug.cgi?id=40362
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/qt/Skipped: Unskip test after fix.
+
 2012-05-22  Emil A Eklund  <eae@chromium.org>
 
         REGRESSION (r117815) fast/css/zoom-in-length-round-trip.html fails on Mac bots
