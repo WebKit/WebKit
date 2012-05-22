@@ -1,3 +1,16 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium windows rebaselines.
+
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-image-tiled-expected.png: Removed.
+        * platform/chromium-win-xp/css2.1/20110323: Added.
+        * platform/chromium-win-xp/css2.1/20110323/absolute-replaced-height-004-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-image-tiled-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug131020-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug43854-2-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug59354-expected.png: Removed.
+
 2012-05-22  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip failing tests after r117815.
