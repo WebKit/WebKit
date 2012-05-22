@@ -1,5 +1,131 @@
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed. More rebaselines following r117815.
+
+        * fast/lists/008-expected.txt: Added.
+        * fast/lists/008-vertical-expected.txt: Added.
+        * fast/media/mq-relative-constraints-08-expected.txt: Added.
+        * fast/overflow/infiniteRecursionGuard-expected.txt: Added.
+        * fast/overflow/overflow-rtl-expected.txt: Added.
+        * fast/overflow/overflow-rtl-vertical-expected.txt: Added.
+        * fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * fast/table/multiple-captions-display-expected.png: Added.
+        * fast/table/table-hspace-align-center-expected.txt: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt: Added.
+        * platform/chromium-linux-x86/http/tests/navigation: Removed.
+        * platform/chromium-linux-x86/http/tests/navigation/javascriptlink-frames-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac-leopard/fast/lists/008-expected.png:
+        * platform/chromium-mac-leopard/fast/overflow/infiniteRecursionGuard-expected.png:
+        * platform/chromium-mac-leopard/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac-leopard/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/control-clip-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac-leopard/fast/selectors/unqualified-hover-strict-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/table/table-hspace-align-center-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-atsui-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/bidi-listbox-expected.png:
+        * platform/chromium-mac-leopard/fast/text/international/vertical-text-glyph-test-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/vertical-baseline-alignment-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/writing-mode/vertical-font-fallback-expected.txt: Added.
+        * platform/chromium-mac-leopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-leopard/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/line-height-determined-by-primary-font-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/span/clone-flexbox-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/replaced/table-percent-height-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-mac/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-clip-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac/fast/lists/008-expected.png:
+        * platform/chromium-mac/fast/lists/008-vertical-expected.png:
+        * platform/chromium-mac/fast/overflow/infiniteRecursionGuard-expected.png:
+        * platform/chromium-mac/fast/overflow/overflow-update-transform-expected.png:
+        * platform/chromium-mac/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac/fast/replaced/table-percent-height-expected.txt: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/chromium-mac/fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * platform/chromium-mac/fast/table/multiple-captions-display-expected.png:
+        * platform/chromium-mac/fast/table/table-hspace-align-center-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-listbox-atsui-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-listbox-expected.png:
+        * platform/chromium-mac/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Added.
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-win-vista/http/tests/navigation: Removed.
+        * platform/chromium-win-vista/http/tests/navigation/javascriptlink-frames-expected.png: Removed.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Added.
+        * platform/chromium-win/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-win/fast/forms/search-rtl-expected.png:
+        * platform/chromium-win/fast/multicol/break-properties-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/span/clone-flexbox-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/span/clone-summary-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/vertical-lr/break-properties-expected.txt: Removed.
+        * platform/chromium-win/fast/multicol/vertical-rl/break-properties-expected.txt: Removed.
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/chromium/fast/multicol/break-properties-expected.txt: Added.
+        * platform/chromium/fast/multicol/span: Added.
+        * platform/chromium/fast/multicol/span/clone-flexbox-expected.txt: Added.
+        * platform/chromium/fast/multicol/span/clone-summary-expected.txt: Added.
+        * platform/chromium/svg/zoom/page/zoom-svg-as-image-expected.txt: Added.
+        * platform/chromium/svg/zoom/page/zoom-svg-as-object-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/lists/008-expected.txt: Removed.
+        * platform/efl/fast/lists/008-vertical-expected.txt: Removed.
+        * platform/efl/fast/media/mq-relative-constraints-08-expected.txt: Removed.
+        * platform/efl/fast/overflow/infiniteRecursionGuard-expected.txt: Removed.
+        * platform/efl/fast/overflow/overflow-rtl-expected.txt: Removed.
+        * platform/efl/fast/overflow/overflow-rtl-vertical-expected.txt: Removed.
+        * platform/efl/fast/selectors/unqualified-hover-strict-expected.txt: Removed.
+        * platform/efl/fast/table/multiple-captions-display-expected.png: Removed.
+        * platform/efl/fast/table/table-hspace-align-center-expected.txt: Removed.
+        * platform/efl/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Removed.
+        * platform/gtk/fast/lists/008-expected.txt: Removed.
+        * platform/gtk/fast/lists/008-vertical-expected.txt: Removed.
+        * platform/gtk/fast/media/mq-relative-constraints-08-expected.txt: Removed.
+        * platform/gtk/fast/overflow/infiniteRecursionGuard-expected.txt: Removed.
+        * platform/gtk/fast/overflow/overflow-rtl-expected.txt: Removed.
+        * platform/gtk/fast/overflow/overflow-rtl-vertical-expected.txt: Removed.
+        * platform/gtk/fast/selectors/unqualified-hover-strict-expected.txt: Removed.
+        * platform/gtk/fast/table/multiple-captions-display-expected.png: Removed.
+        * platform/gtk/fast/table/table-hspace-align-center-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Removed.
+        * svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Added.
+
+2012-05-21  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed test expectation updates following r117815.
 
         * platform/chromium-linux-x86/svg/zoom: Added.

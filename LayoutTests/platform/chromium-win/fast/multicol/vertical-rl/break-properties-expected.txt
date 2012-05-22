@@ -1,3 +1,0 @@
-PASS: 'break-before' is at (748, 220)
-PASS: 'after-break' is at (748, 431)
-
