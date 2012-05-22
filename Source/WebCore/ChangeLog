@@ -1,3 +1,40 @@
+2012-04-26  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from removal of line break object after layout
+        https://bugs.webkit.org/show_bug.cgi?id=75461
+
+        Reviewed by David Hyatt.
+
+        There is a condition where objects can get removed from underneath
+        inlines while they represent a line break object in a RootInlineBox
+        of an ancestor block. If an intermediary inline has already been
+        marked as needing layout, then the line box will not get dirtied
+        because dirtyLineFromChangedChild thinks it already has been.
+
+        This patch introduces a new set in RenderObject to indicate whether
+        an ancestral line box corresponding to the current line has been
+        marked dirty or not. dirtyLinesFromChangedChild() can use this set 
+        rather than m_selfNeedsLayout, so it will not be confused if a
+        container was dirtied for some other reason that did not affect the
+        line box.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild): Use the new
+        set rather than m_selfNeedsLayout in the container to determine
+        whether to continue propagating upward.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::s_ancestorLineboxDirtySet): Instantiate the
+        static member.
+        (WebCore::RenderObject::willBeDestroyed): Clears the object from the
+        linebox set when it is being destroyed.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::s_ancestorLineboxDirtySet): Added static
+        member set.
+        (WebCore::RenderObject::setNeedsLayout): Clears the
+        object from the linebox set when layout bits are getting cleared.
+        (WebCore::RenderObject::ancestorLineBoxDirty): Added.
+        (WebCore::RenderObject::setAncestorLineBoxDirty): Added.
+
 2012-03-01  Abhishek Arya  <inferno@chromium.org>
 
         Prevent layout root to remain set on renderers getting destroyed.
