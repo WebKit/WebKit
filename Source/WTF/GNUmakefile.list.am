@@ -43,6 +43,7 @@ wtf_sources += \
     Source/WTF/wtf/Encoder.h \
     Source/WTF/wtf/ExportMacros.h \
     Source/WTF/wtf/FastAllocBase.h \
+    Source/WTF/wtf/FastBitVector.h \
     Source/WTF/wtf/FastMalloc.cpp \
     Source/WTF/wtf/FastMalloc.h \
     Source/WTF/wtf/FixedArray.h \

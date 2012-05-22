@@ -87,6 +87,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 #endif
+    dfg.m_dominators.compute(dfg);
     performVirtualRegisterAllocation(dfg);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)

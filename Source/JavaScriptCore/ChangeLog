@@ -1,3 +1,47 @@
+2012-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to compute dominators
+        https://bugs.webkit.org/show_bug.cgi?id=85269
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r115754 from dfgopt.
+        
+        Implements a naive dominator calculator, which is currently just used to
+        print information in graph dumps. I've enabled it by default mainly to
+        be able to track its performance impact. So far it appears that there is
+        none, which is unsurprising given that the number of basic blocks in most
+        procedures is small.
+        
+        Also tweaked bytecode dumping to reveal more useful information about the
+        nature of the code block.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * dfg/DFGDominators.cpp: Added.
+        (DFG):
+        (JSC::DFG::Dominators::Dominators):
+        (JSC::DFG::Dominators::~Dominators):
+        (JSC::DFG::Dominators::compute):
+        (JSC::DFG::Dominators::iterateForBlock):
+        * dfg/DFGDominators.h: Added.
+        (DFG):
+        (Dominators):
+        (JSC::DFG::Dominators::invalidate):
+        (JSC::DFG::Dominators::computeIfNecessary):
+        (JSC::DFG::Dominators::isValid):
+        (JSC::DFG::Dominators::dominates):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (Graph):
+
 2012-05-21  Michael Saboff  <msaboff@apple.com>
 
         Cleanup of Calls to operationStrCat and operationNewArray and Use Constructor after r117729

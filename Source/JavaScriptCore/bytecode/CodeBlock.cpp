@@ -475,10 +475,23 @@ void CodeBlock::dump(ExecState* exec)
     for (size_t i = 0; i < instructions().size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(instructions()[i].u.opcode)])
         ++instructionCount;
 
-    dataLog("%lu m_instructions; %lu bytes at %p; %d parameter(s); %d callee register(s); %d variable(s)\n\n",
+    dataLog(
+        "%lu m_instructions; %lu bytes at %p (%s); %d parameter(s); %d callee register(s); %d variable(s)",
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
-        this, m_numParameters, m_numCalleeRegisters, m_numVars);
+        this, codeTypeToString(codeType()), m_numParameters, m_numCalleeRegisters,
+        m_numVars);
+    if (m_numCapturedVars)
+        dataLog("; %d captured var(s)", m_numCapturedVars);
+    if (usesArguments()) {
+        dataLog(
+            "; uses arguments, in r%d, r%d",
+            argumentsRegister(),
+            unmodifiedArgumentsRegister(argumentsRegister()));
+    }
+    if (needsFullScopeChain() && codeType() == FunctionCode)
+        dataLog("; activation in r%d", activationRegister());
+    dataLog("\n\n");
 
     Vector<Instruction>::const_iterator begin = instructions().begin();
     Vector<Instruction>::const_iterator end = instructions().end();

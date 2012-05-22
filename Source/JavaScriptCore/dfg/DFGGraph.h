@@ -26,12 +26,15 @@
 #ifndef DFGGraph_h
 #define DFGGraph_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
 #include "DFGArgumentPosition.h"
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
+#include "DFGDominators.h"
 #include "DFGNode.h"
 #include "MethodOfGettingAValueProfile.h"
 #include "RegisterFile.h"
@@ -450,6 +453,7 @@ public:
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     BitVector m_preservedVars;
+    Dominators m_dominators;
     unsigned m_localVars;
     unsigned m_parameterSlots;
 private:

@@ -283,6 +283,22 @@ void Graph::dump()
         for (size_t i = 0; i < block->m_predecessors.size(); ++i)
             dataLog(" #%u", block->m_predecessors[i]);
         dataLog("\n");
+        if (m_dominators.isValid()) {
+            dataLog("  Dominated by:");
+            for (size_t i = 0; i < m_blocks.size(); ++i) {
+                if (!m_dominators.dominates(i, b))
+                    continue;
+                dataLog(" #%lu", i);
+            }
+            dataLog("\n");
+            dataLog("  Dominates:");
+            for (size_t i = 0; i < m_blocks.size(); ++i) {
+                if (!m_dominators.dominates(b, i))
+                    continue;
+                dataLog(" #%lu", i);
+            }
+            dataLog("\n");
+        }
         dataLog("  Phi Nodes:\n");
         for (size_t i = 0; i < block->phis.size(); ++i) {
             dumpCodeOrigin(lastNodeIndex, block->phis[i]);

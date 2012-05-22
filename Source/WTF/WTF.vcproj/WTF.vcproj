@@ -729,6 +729,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\FastBitVector.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\FastMalloc.cpp"
 			>
 			<FileConfiguration

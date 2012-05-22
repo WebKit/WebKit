@@ -1,3 +1,40 @@
+2012-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to compute dominators
+        https://bugs.webkit.org/show_bug.cgi?id=85269
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r115754 from dfgopt.
+        
+        Added a bitvector class suitable for cheap static analysis. This class
+        differs from BitVector in that instead of optimizing for space, it
+        optimizes for execution time. Its API is also somewhat less friendly,
+        which is intentional; it's meant to be used in places where you know
+        up front how bit your bitvectors are going to be.
+
+        * GNUmakefile.list.am:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/FastBitVector.h: Added.
+        (WTF):
+        (FastBitVector):
+        (WTF::FastBitVector::FastBitVector):
+        (WTF::FastBitVector::operator=):
+        (WTF::FastBitVector::numBits):
+        (WTF::FastBitVector::resize):
+        (WTF::FastBitVector::setAll):
+        (WTF::FastBitVector::clearAll):
+        (WTF::FastBitVector::set):
+        (WTF::FastBitVector::setAndCheck):
+        (WTF::FastBitVector::equals):
+        (WTF::FastBitVector::merge):
+        (WTF::FastBitVector::filter):
+        (WTF::FastBitVector::exclude):
+        (WTF::FastBitVector::clear):
+        (WTF::FastBitVector::get):
+        (WTF::FastBitVector::arrayLength):
+
 2012-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         Add support for private names
