@@ -1128,6 +1128,10 @@ void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.
     double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
+
+    // A scale factor of 0.0 means the history item actually has the "default scale factor" of 1.0.
+    if (!scaleFactor)
+        scaleFactor = 1.0;
     m_frame->page()->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
 
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
