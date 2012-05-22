@@ -81,7 +81,7 @@ function runTest(element, platform) {
 
 function runTestFor(platform) {
     if (window.internals)
-        window.internals.settings.setEditingBehavior(platform.toLowerCase());
+        internals.settings.setEditingBehavior(platform.toLowerCase());
     var tests = document.getElementById('tests');
     for (var i = 0; i < tests.childNodes.length; i++) {
         runTest(tests.childNodes[i], platform);

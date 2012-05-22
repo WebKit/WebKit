@@ -11,7 +11,7 @@ function test(platform, selectionExpected, result)
     // clear selection
     window.getSelection().removeAllRanges();
 
-    window.internals.settings.setEditingBehavior(platform);
+    internals.settings.setEditingBehavior(platform);
 
     var text = document.getElementById("text");
 

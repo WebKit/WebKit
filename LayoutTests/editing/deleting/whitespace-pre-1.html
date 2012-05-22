@@ -11,7 +11,7 @@ function runTestsOn(platform) {
     var s = window.getSelection();
 
     if (window.internals)
-        window.internals.settings.setEditingBehavior(platform);
+        internals.settings.setEditingBehavior(platform);
 
     s.setPosition(e, 0);
     s.modify("extend", "forward", "lineBoundary");

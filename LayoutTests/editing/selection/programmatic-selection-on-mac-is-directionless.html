@@ -122,7 +122,7 @@ function runTestsOn(platform, node) {
 
 function runTestsFor(platform) {
     debug(platform + ':');
-    window.internals.settings.setEditingBehavior(platform);
+    internals.settings.setEditingBehavior(platform);
     var listOfTestNodes = document.getElementById('test').childNodes;
 
     for (var i = 0; i < listOfTestNodes.length; i++) {

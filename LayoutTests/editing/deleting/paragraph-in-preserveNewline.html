@@ -12,7 +12,7 @@ function runTestsOn(platform) {
     var e = document.getElementById("test");
     
     if (window.internals)
-        window.internals.settings.setEditingBehavior(platform);
+        internals.settings.setEditingBehavior(platform);
 
     sel.setPosition(e, 0);
     sel.modify("extend", "forward", "character");

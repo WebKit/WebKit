@@ -50,7 +50,7 @@ function runInteractiveTests()
 function editingTest(editingBehavior)
 {
     if (window.internals)
-        window.internals.settings.setEditingBehavior(editingBehavior);
+        internals.settings.setEditingBehavior(editingBehavior);
     
     var expectMacStyleSelection = editingBehavior == "mac";
 

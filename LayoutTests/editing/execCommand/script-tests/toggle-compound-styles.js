@@ -23,7 +23,7 @@ for (var i = 0; i < platforms.length; i++) {
     debug('Platform: ' + platform);
 
     if (window.internals)
-        window.internals.settings.setEditingBehavior(platform);
+        internals.settings.setEditingBehavior(platform);
 
     if (platform == 'win' || platform == 'unix')
         platform = 'nonmac';

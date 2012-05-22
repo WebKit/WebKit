@@ -17,7 +17,7 @@ of the word (which is windows/unix behavior).
 function editingTest(behavior) {
     if (window.layoutTestController && window.internals) {
         layoutTestController.dumpAsText();
-        window.internals.settings.setEditingBehavior(behavior);
+        internals.settings.setEditingBehavior(behavior);
     }
 
     function getSetCaretFunction(node, container, offset) {

@@ -22,7 +22,7 @@ onload = function() {
 
 if (window.layoutTestController && window.internals) {
     layoutTestController.dumpAsText();
-    window.internals.settings.setEditingBehavior('win');
+    internals.settings.setEditingBehavior('win');
 }
 </script>
 <title>wrong result because VisiblePosition.left()/right() returns wrong result</title>

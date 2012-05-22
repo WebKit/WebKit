@@ -37,7 +37,7 @@ function doStep(step, location) {
         if (!expect(location == 'test-mac', 'navigation to test-mac'))
             return;
 
-        window.internals.settings.setEditingBehavior('mac');
+        internals.settings.setEditingBehavior('mac');
         testBackspaceNavigatesBack();
 
         break;
@@ -50,7 +50,7 @@ function doStep(step, location) {
         if (!expect(location == 'test-win', 'navigation to test-win'))
             return;
 
-        window.internals.settings.setEditingBehavior('win');
+        internals.settings.setEditingBehavior('win');
         testBackspaceNavigatesBack();
 
         break;
@@ -64,7 +64,7 @@ function doStep(step, location) {
             return;
 
         // Test unix behavior: that backspace does not go back.
-        window.internals.settings.setEditingBehavior('unix');
+        internals.settings.setEditingBehavior('unix');
 
         // We expect backspace to *not* navigate.
         // Start a navigation to the success page; if backspace causes us to go back,

@@ -16,7 +16,7 @@
 function editingTest(editingBehavior) {
 
     if (window.internals)
-        window.internals.settings.setEditingBehavior(editingBehavior);
+        internals.settings.setEditingBehavior(editingBehavior);
 
     var startTarget = document.getElementById('start');
     var endTarget = document.getElementById('end');

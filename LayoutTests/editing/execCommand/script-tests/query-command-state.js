@@ -43,7 +43,7 @@ function selectFirstTwoWords(container) {
 
 function runTests(editingBehavior) {
     if (window.internals)
-        window.internals.settings.setEditingBehavior(editingBehavior);
+        internals.settings.setEditingBehavior(editingBehavior);
     debug('Tests for ' + editingBehavior)
 
     testQueryCommandState("bold", 'hello', selectAll, {'mac': false, 'win': false}[editingBehavior]);

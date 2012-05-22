@@ -13,7 +13,7 @@ description("This tests that keys navigation through a paragraph work as expecte
 if (window.layoutTestController && window.internals) {
   layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
   layoutTestController.dumpAsText();
-  window.internals.settings.setEditingBehavior('mac');
+  internals.settings.setEditingBehavior('mac');
 
   var target = document.getElementById("target");
   target.focus();

@@ -36,7 +36,7 @@
 
     function runTest(behavior, expectedText)
     {
-        window.internals.settings.setEditingBehavior(behavior);
+        internals.settings.setEditingBehavior(behavior);
         doubleClickWord();
         getSelection().modify("extend", "backward", "character");
         getSelection().modify("extend", "backward", "character");

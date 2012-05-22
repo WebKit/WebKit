@@ -1,3 +1,61 @@
+2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Avoid using window.internals when internals is enough after r117771
+        https://bugs.webkit.org/show_bug.cgi?id=87059
+
+        Reviewed by Darin Adler.
+
+        Revision r117771 introduced a style change in the layout tests that was not
+        intended. This patch amends this by using "window.internals" only when checking
+        for the internals object. Once we know internals is there, we use directly.
+
+        This conforms to the style used for layoutTestController in the affected tests.
+
+        * editing/deleting/delete-ligature-003.html:
+        * editing/deleting/paragraph-in-preserveNewline.html:
+        * editing/deleting/whitespace-pre-1.html:
+        * editing/execCommand/script-tests/query-command-state.js:
+        (runTests):
+        * editing/execCommand/script-tests/query-text-alignment.js:
+        (runRangeTests):
+        * editing/execCommand/script-tests/toggle-compound-styles.js:
+        * editing/selection/5195166-1.html:
+        * editing/selection/5354455-1.html:
+        * editing/selection/caret-mode-paragraph-keys-navigation.html:
+        * editing/selection/collapse-selection-in-bidi.html:
+        * editing/selection/context-menu-text-selection.html:
+        * editing/selection/directionality-after-undo-replace.html:
+        * editing/selection/extend-after-mouse-selection.html:
+        * editing/selection/extend-selection-after-double-click.html:
+        * editing/selection/move-by-word-visually-crash-test-1.html:
+        * editing/selection/move-by-word-visually-crash-test-2.html:
+        * editing/selection/move-by-word-visually-crash-test-3.html:
+        * editing/selection/move-by-word-visually-crash-test-4.html:
+        * editing/selection/move-by-word-visually-crash-test-5.html:
+        * editing/selection/move-by-word-visually-crash-test-css-generated-content.html:
+        * editing/selection/move-by-word-visually-crash-test-textarea.html:
+        * editing/selection/move-by-word-visually-inline-block-positioned-element.html:
+        * editing/selection/move-by-word-visually-mac.html:
+        * editing/selection/move-by-word-visually-multi-line.html:
+        * editing/selection/move-by-word-visually-multi-space.html:
+        * editing/selection/move-by-word-visually-null-box.html:
+        * editing/selection/move-by-word-visually-single-space-inline-element.html:
+        * editing/selection/move-by-word-visually-single-space-one-element.html:
+        * editing/selection/move-by-word-visually-textarea.html:
+        * editing/selection/move-by-word-visually-wrong-left-right.html:
+        * editing/selection/programmatic-selection-on-mac-is-directionless.html:
+        * editing/selection/rtl-move-selection-right-left.html:
+        * editing/selection/script-tests/click-in-margins-inside-editable-div.js:
+        * editing/selection/script-tests/click-in-padding-with-multiple-line-boxes.js:
+        * editing/selection/script-tests/shift-click.js:
+        (runShiftClickTest):
+        * editing/selection/selection-extend-should-not-move-across-caret-on-mac.html:
+        * editing/style/iframe-onload-crash-mac.html:
+        * editing/style/iframe-onload-crash-unix.html:
+        * editing/style/iframe-onload-crash-win.html:
+        * fast/events/backspace-navigates-back.html:
+        * fast/forms/selection-direction.html:
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating more tests post r117815.

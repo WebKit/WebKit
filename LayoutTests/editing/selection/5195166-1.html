@@ -13,7 +13,7 @@ function log(str)
 
 function runTest(platform, expectedText)
 {
-    window.internals.settings.setEditingBehavior(platform);
+    internals.settings.setEditingBehavior(platform);
     
     var target = document.getElementById('select');
     var startX = target.offsetLeft + target.offsetWidth;
