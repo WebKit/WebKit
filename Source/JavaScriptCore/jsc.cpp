@@ -169,11 +169,14 @@ public:
     }
 
     static const ClassInfo s_info;
+    static const GlobalObjectMethodTable s_globalObjectMethodTable;
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
         return Structure::create(globalData, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
     }
+
+    static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return true; }
 
 protected:
     void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
@@ -231,9 +234,11 @@ COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
+const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
+
 
 GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure)
-    : JSGlobalObject(globalData, structure)
+    : JSGlobalObject(globalData, structure, &s_globalObjectMethodTable)
 {
 }
 

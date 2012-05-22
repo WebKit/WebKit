@@ -328,6 +328,16 @@ bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->developerExtrasEnabled();
 }
 
+void WKPreferencesSetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setJavaScriptExperimentsEnabled(enabled);
+}
+
+bool WKPreferencesGetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaScriptExperimentsEnabled();
+}
+
 void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable)
 {
     toImpl(preferencesRef)->setTextAreasAreResizable(resizable);

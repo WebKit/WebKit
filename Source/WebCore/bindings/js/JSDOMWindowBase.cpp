@@ -43,7 +43,7 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
 
 JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(globalData, structure, shell->world(), &s_globalObjectMethodTable)
@@ -173,6 +173,18 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
         return true;
 
     return page->chrome()->shouldInterruptJavaScript();
+}
+
+bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
+{
+    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    Frame* frame = thisObject->impl()->frame();
+    if (!frame)
+        return false;
+    Settings* settings = frame->settings();
+    if (!settings)
+        return false;
+    return settings->javaScriptExperimentsEnabled();
 }
 
 void JSDOMWindowBase::willRemoveFromWindowShell()

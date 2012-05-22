@@ -57,6 +57,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)developerExtrasEnabled;
 - (void)setDeveloperExtrasEnabled:(BOOL)flag;
 
+- (BOOL)javaScriptExperimentsEnabled;
+- (void)setJavaScriptExperimentsEnabled:(BOOL)flag;
+
 - (BOOL)authorAndUserStylesEnabled;
 - (void)setAuthorAndUserStylesEnabled:(BOOL)flag;
 

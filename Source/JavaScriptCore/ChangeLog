@@ -1,3 +1,31 @@
+2012-05-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Disable private names by default in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=87088
+
+        Reviewed by Geoff Garen.
+
+        r117859 introduced a preliminary implementation of ES6-like private name objects to JSC.
+        These are probably not yet ready to be web-facing, so disabling by default in WebCore.
+        Opting-in for JSC & DumpRenderTree so that we can still run the fast/js/names.html test.
+
+        * jsc.cpp:
+        (GlobalObject):
+        (GlobalObject::javaScriptExperimentsEnabled):
+            - Implemented new trap to opt-in to private names support.
+        * runtime/JSGlobalObject.cpp:
+        (JSC):
+        (JSC::JSGlobalObject::reset):
+            - Only add the Name property to the global object if experiments are enabled.
+        * runtime/JSGlobalObject.h:
+        (GlobalObjectMethodTable):
+            - Added new trap to enabled experiments.
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::finishCreation):
+            - Set the global object's m_experimentsEnabled state on construction.
+        (JSC::JSGlobalObject::javaScriptExperimentsEnabled):
+            - Defaults to off.
+
 2012-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         Truncating multiplication on integers should not OSR exit every time

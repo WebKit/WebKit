@@ -174,6 +174,7 @@ Settings::Settings(Page* page)
     , m_showsToolTipOverTruncatedText(false)
     , m_forceFTPDirectoryListings(false)
     , m_developerExtrasEnabled(false)
+    , m_javaScriptExperimentsEnabled(false)
     , m_authorAndUserStylesEnabled(true)
     , m_needsSiteSpecificQuirks(false)
     , m_fontRenderingMode(0)
@@ -663,6 +664,11 @@ void Settings::setForceFTPDirectoryListings(bool force)
 void Settings::setDeveloperExtrasEnabled(bool developerExtrasEnabled)
 {
     m_developerExtrasEnabled = developerExtrasEnabled;
+}
+
+void Settings::setJavaScriptExperimentsEnabled(bool javaScriptExperimentsEnabled)
+{
+    m_javaScriptExperimentsEnabled = javaScriptExperimentsEnabled;
 }
 
 void Settings::setAuthorAndUserStylesEnabled(bool authorAndUserStylesEnabled)

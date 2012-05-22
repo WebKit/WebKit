@@ -1,3 +1,24 @@
+2012-05-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Disable private names by default in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=87088
+
+        Reviewed by Geoff Garen.
+
+        r117859 introduced a preliminary implementation of ES6-like private name objects to JSC.
+        These are probably not yet ready to be web-facing, so disabling by default in WebCore.
+        Opting-in for JSC & DumpRenderTree so that we can still run the fast/js/names.html test.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetJavaScriptExperimentsEnabled):
+        (WKPreferencesGetJavaScriptExperimentsEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+            - Added JavaScriptExperimentsEnabled to WebPreferences.
+
 2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Clean up internal viewport animation API

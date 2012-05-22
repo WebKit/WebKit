@@ -260,6 +260,9 @@ namespace WebCore {
         
         void setDeveloperExtrasEnabled(bool);
         bool developerExtrasEnabled() const { return m_developerExtrasEnabled; }
+        
+        void setJavaScriptExperimentsEnabled(bool);
+        bool javaScriptExperimentsEnabled() const { return m_javaScriptExperimentsEnabled; }
 
         void setFrameFlatteningEnabled(bool);
         bool frameFlatteningEnabled() const { return m_frameFlatteningEnabled; }
@@ -639,6 +642,7 @@ namespace WebCore {
         bool m_showsToolTipOverTruncatedText : 1;
         bool m_forceFTPDirectoryListings : 1;
         bool m_developerExtrasEnabled : 1;
+        bool m_javaScriptExperimentsEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
         bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;

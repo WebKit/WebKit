@@ -639,6 +639,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setJavaScriptCanAccessClipboard:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
     [preferences setDeveloperExtrasEnabled:NO];
+    [preferences setJavaScriptExperimentsEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlatteningEnabled:NO];

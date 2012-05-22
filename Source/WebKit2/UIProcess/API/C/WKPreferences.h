@@ -133,6 +133,10 @@ WK_EXPORT bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferenc
 WK_EXPORT void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetJavaScriptExperimentsEnabled(WKPreferencesRef preferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetTextAreasAreResizable(WKPreferencesRef preferencesRef, bool resizable);
 WK_EXPORT bool WKPreferencesGetTextAreasAreResizable(WKPreferencesRef preferencesRef);

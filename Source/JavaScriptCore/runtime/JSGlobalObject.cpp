@@ -81,7 +81,7 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &JSVariableObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
-const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
+const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
 
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
@@ -247,9 +247,6 @@ void JSGlobalObject::reset(JSValue prototype)
     ErrorPrototype* errorPrototype = ErrorPrototype::create(exec, this, ErrorPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get()));
     m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), this, errorPrototype));
 
-    NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(exec->globalData(), this, m_objectPrototype.get()));
-    m_privateNameStructure.set(exec->globalData(), this, NameInstance::createStructure(exec->globalData(), this, privateNamePrototype));
-
     // Constructors
 
     JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -263,7 +260,6 @@ void JSGlobalObject::reset(JSValue prototype)
     m_regExpConstructor.set(exec->globalData(), this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get()), m_regExpPrototype.get()));
 
     m_errorConstructor.set(exec->globalData(), this, ErrorConstructor::create(exec, this, ErrorConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get()), errorPrototype));
-    JSCell* privateNameConstructor = NameConstructor::create(exec, this, NameConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get()), privateNamePrototype);
 
     Structure* nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->globalData(), this, errorPrototype);
     Structure* nativeErrorStructure = NativeErrorConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get());
@@ -283,7 +279,6 @@ void JSGlobalObject::reset(JSValue prototype)
     m_datePrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, dateConstructor, DontEnum);
     m_regExpPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
     errorPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
-    privateNamePrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, privateNameConstructor, DontEnum);
 
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Object"), objectConstructor, DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Function"), functionConstructor, DontEnum);
@@ -300,7 +295,6 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SyntaxError"), m_syntaxErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Name"), privateNameConstructor, DontEnum);
 
     m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.ustring(), globalFuncEval));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
@@ -314,6 +308,15 @@ void JSGlobalObject::reset(JSValue prototype)
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+
+    if (m_experimentsEnabled) {
+        NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(exec->globalData(), this, m_objectPrototype.get()));
+        m_privateNameStructure.set(exec->globalData(), this, NameInstance::createStructure(exec->globalData(), this, privateNamePrototype));
+
+        JSCell* privateNameConstructor = NameConstructor::create(exec, this, NameConstructor::createStructure(exec->globalData(), this, m_functionPrototype.get()), privateNamePrototype);
+        privateNamePrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, privateNameConstructor, DontEnum);
+        putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Name"), privateNameConstructor, DontEnum);
+    }
 
     resetPrototype(exec->globalData(), prototype);
 }

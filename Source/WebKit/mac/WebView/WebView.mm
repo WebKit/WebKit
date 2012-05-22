@@ -1453,6 +1453,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     settings->setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
     settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
+    settings->setJavaScriptExperimentsEnabled([preferences javaScriptExperimentsEnabled]);
     settings->setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
     settings->setApplicationChromeMode([preferences applicationChromeModeEnabled]);
     if ([preferences userStyleSheetEnabled]) {

@@ -357,6 +357,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPageCacheSupportsPluginsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitJavaScriptExperimentsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
@@ -850,6 +851,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 #else
     return YES; // always enable in debug builds
 #endif
+}
+
+- (void)setJavaScriptExperimentsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitJavaScriptExperimentsEnabledPreferenceKey];
+}
+
+- (BOOL)javaScriptExperimentsEnabled
+{
+    return [self _boolValueForKey:WebKitJavaScriptExperimentsEnabledPreferenceKey];
 }
 
 - (void)setDeveloperExtrasEnabled:(BOOL)flag

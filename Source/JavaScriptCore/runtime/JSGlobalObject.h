@@ -68,6 +68,9 @@ namespace JSC {
 
         typedef bool (*ShouldInterruptScriptFunctionPtr)(const JSGlobalObject*);
         ShouldInterruptScriptFunctionPtr shouldInterruptScript;
+
+        typedef bool (*JavaScriptExperimentsEnabledFunctionPtr)(const JSGlobalObject*);
+        JavaScriptExperimentsEnabledFunctionPtr javaScriptExperimentsEnabled;
     };
 
     class JSGlobalObject : public JSVariableObject {
@@ -145,6 +148,7 @@ namespace JSC {
         SymbolTable m_symbolTable;
 
         bool m_evalEnabled;
+        bool m_experimentsEnabled;
 
         static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
         const GlobalObjectMethodTable* m_globalObjectMethodTable;
@@ -184,6 +188,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);
+            m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
             init(this);
         }
 
@@ -191,6 +196,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);
+            m_experimentsEnabled = m_globalObjectMethodTable->javaScriptExperimentsEnabled(this);
             init(thisValue);
         }
 
@@ -292,6 +298,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE ExecState* globalExec();
 
         static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
+        static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return false; }
 
         bool isDynamicScope(bool& requiresDynamicChecks) const;
 
