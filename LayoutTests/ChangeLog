@@ -1,3 +1,13 @@
+2012-05-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk][LayoutTests] Repaint the complete WebKitWebView before dumping pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=86284
+
+        Unreviewed, removing test expectations for tests that should pass now
+        that the web view is repainted before dumping pixel results.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-22  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87136
