@@ -1,3 +1,13 @@
+2012-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        DFG should be able to compute dominators
+        https://bugs.webkit.org/show_bug.cgi?id=85269
+
+        Unreviewed trivial 32 bit buildfix after r117861.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2012-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to compute dominators

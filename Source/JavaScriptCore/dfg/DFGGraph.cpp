@@ -288,14 +288,14 @@ void Graph::dump()
             for (size_t i = 0; i < m_blocks.size(); ++i) {
                 if (!m_dominators.dominates(i, b))
                     continue;
-                dataLog(" #%lu", i);
+                dataLog(" #%lu", static_cast<unsigned long>(i));
             }
             dataLog("\n");
             dataLog("  Dominates:");
             for (size_t i = 0; i < m_blocks.size(); ++i) {
                 if (!m_dominators.dominates(b, i))
                     continue;
-                dataLog(" #%lu", i);
+                dataLog(" #%lu", static_cast<unsigned long>(i));
             }
             dataLog("\n");
         }
