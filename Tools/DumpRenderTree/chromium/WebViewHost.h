@@ -111,7 +111,9 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     WebKit::WebContextMenuData* lastContextMenuData() const;
     void clearContextMenuData();
 
+#if ENABLE(INPUT_SPEECH)
     MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
+#endif
 
 #if ENABLE(POINTER_LOCK)
     void didLosePointerLock();
@@ -162,9 +164,13 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
     virtual void postAccessibilityNotification(const WebKit::WebAccessibilityObject&, WebKit::WebAccessibilityNotification);
+#if ENABLE(NOTIFICATIONS)
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
+#endif
     virtual WebKit::WebGeolocationClient* geolocationClient();
+#if ENABLE(INPUT_SPEECH)
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
+#endif
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
 #if ENABLE(MEDIA_STREAM)
     virtual WebKit::WebUserMediaClient* userMediaClient();
@@ -397,7 +403,9 @@ private:
     OwnPtr<WebKit::WebGeolocationClientMock> m_geolocationClientMock;
 
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
+#if ENABLE(INPUT_SPEECH)
     OwnPtr<MockWebSpeechInputController> m_speechInputControllerMock;
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     OwnPtr<WebKit::WebUserMediaClientMock> m_userMediaClientMock;

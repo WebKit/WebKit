@@ -1,3 +1,18 @@
+2012-05-22  Hao Zheng  <zhenghao@chromium.org>
+
+        [chromium] WebViewHost should use ENABLE guards for some features.
+        https://bugs.webkit.org/show_bug.cgi?id=87087
+
+        Reviewed by Kent Tamura.
+
+        These features are disabled on OS(ANDROID) and so shouldn't be
+        compiled when the feature is off.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-05-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DumpRenderTree does not print didReceiveTitle messages

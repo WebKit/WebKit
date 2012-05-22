@@ -676,10 +676,12 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
     }
 }
 
+#if ENABLE(NOTIFICATIONS)
 WebNotificationPresenter* WebViewHost::notificationPresenter()
 {
     return m_shell->notificationPresenter();
 }
+#endif
 
 WebKit::WebGeolocationClient* WebViewHost::geolocationClient()
 {
@@ -693,12 +695,14 @@ WebKit::WebGeolocationClientMock* WebViewHost::geolocationClientMock()
     return m_geolocationClientMock.get();
 }
 
+#if ENABLE(INPUT_SPEECH)
 WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
 {
     if (!m_speechInputControllerMock)
         m_speechInputControllerMock = MockWebSpeechInputController::create(listener);
     return m_speechInputControllerMock.get();
 }
+#endif
 
 WebDeviceOrientationClientMock* WebViewHost::deviceOrientationClientMock()
 {
@@ -1457,8 +1461,10 @@ void WebViewHost::reset()
     if (m_geolocationClientMock.get())
         m_geolocationClientMock->resetMock();
 
+#if ENABLE(INPUT_SPEECH)
     if (m_speechInputControllerMock.get())
         m_speechInputControllerMock->clearResults();
+#endif
 
     m_currentCursor = WebCursorInfo();
     m_windowRect = WebRect();
