@@ -84,6 +84,10 @@ WebInspector.SearchController.prototype = {
         this._performSearch("");
     },
 
+    /**
+     * @param {Event} event
+     * @return {boolean}
+     */
     handleShortcut: function(event)
     {
         var isMac = WebInspector.isMac();
@@ -97,7 +101,8 @@ WebInspector.SearchController.prototype = {
 
                 if (isFindKey) {
                     this.focusSearchField();
-                    event.handled = true;
+                    event.consume();
+                    return true;
                 }
                 break;
 
@@ -105,7 +110,7 @@ WebInspector.SearchController.prototype = {
             case "F3":
                 if (!isMac) {
                     this.focusSearchField();
-                    event.handled = true;
+                    event.consume();
                 }
                 break;
 
@@ -118,10 +123,12 @@ WebInspector.SearchController.prototype = {
                             currentPanel.jumpToPreviousSearchResult();
                     } else if (currentPanel.jumpToNextSearchResult)
                         currentPanel.jumpToNextSearchResult();
-                    event.handled = true;
+                    event.consume();
+                    return true;
                 }
                 break;
         }
+        return false;
     },
 
     activePanelChanged: function()

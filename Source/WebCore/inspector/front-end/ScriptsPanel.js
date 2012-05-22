@@ -85,7 +85,6 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
 
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedFiles");
     this._editorContainer.show(this.editorView.mainElement);
-    WebInspector.OpenScriptDialog.install(this, this._uiSourceCodeProvider, this.editorView.mainElement);
 
     this._navigatorController = new WebInspector.NavigatorOverlayController(this, this.editorView, this._navigator.view, this._editorContainer.view);
 
@@ -131,9 +130,6 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     var evaluateInConsoleShortcut = WebInspector.KeyboardShortcut.makeDescriptor("e", WebInspector.KeyboardShortcut.Modifiers.Shift | WebInspector.KeyboardShortcut.Modifiers.Ctrl);
     helpSection.addKey(evaluateInConsoleShortcut.name, WebInspector.UIString("Evaluate selection in console"));
     this.registerShortcut(evaluateInConsoleShortcut.key, this._evaluateSelectionInConsole.bind(this));
-
-    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
-    helpSection.addKey(openResourceShortcut.name, WebInspector.UIString("Open file"));
 
     var outlineShortcut = WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
     helpSection.addKey(outlineShortcut.name, WebInspector.UIString("Go to member"));
@@ -1069,6 +1065,12 @@ WebInspector.ScriptsPanel.prototype = {
             contextMenu.appendItem(WebInspector.UIString("Revision history..."), this._showLocalHistory.bind(this, /** @type {WebInspector.UISourceCode} */ target));
             contextMenu.appendSeparator();
         }
+    },
+
+    showGoToSourceDialog: function()
+    {
+        WebInspector.inspectorView.setCurrentPanel(this);
+        WebInspector.OpenResourceDialog.show(this, this._uiSourceCodeProvider, this.editorView.mainElement);
     }
 }
 

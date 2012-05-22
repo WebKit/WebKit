@@ -50,6 +50,7 @@ WebInspector.AdvancedSearchController.createShortcut = function()
 WebInspector.AdvancedSearchController.prototype = {
     /**
      * @param {Event} event
+     * @return {boolean}
      */
     handleShortcut: function(event)
     {
@@ -60,7 +61,9 @@ WebInspector.AdvancedSearchController.prototype = {
             } else
                 this.close();
             event.consume();
+            return true;
         }
+        return false;
     },
 
     _frameNavigated: function()

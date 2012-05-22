@@ -572,26 +572,27 @@ WebInspector.JavaScriptOutlineDialog.prototype.__proto__ = WebInspector.Selectio
 /**
  * @constructor
  * @implements {WebInspector.SelectionDialogContentProvider}
- * @param {Array.<WebInspector.Resource>} resources
+ * @param {WebInspector.ScriptsPanel} panel
+ * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  */
-WebInspector.OpenResourceDialog = function(resources)
+WebInspector.OpenResourceDialog = function(panel, uiSourceCodeProvider)
 {
-    // FIXME: migrate from WebInspector.Resource to WebInspector.Source (base for Resource and UISourceCode) and make this dialog OpenSource.
     WebInspector.SelectionDialogContentProvider.call(this);
+    this._panel = panel;
 
-    this.resources = resources;
+    this._uiSourceCodes = uiSourceCodeProvider.uiSourceCodes();
 
-    function filterOutEmptyURLs(resource)
+    function filterOutEmptyURLs(uiSourceCode)
     {
-        return !!resource.parsedURL.lastPathComponent;
+        return !!uiSourceCode.parsedURL.lastPathComponent;
     }
-    this.resources = this.resources.filter(filterOutEmptyURLs);
+    this._uiSourceCodes = this._uiSourceCodes.filter(filterOutEmptyURLs);
 
-    function compareFunction(resource1, resource2)
+    function compareFunction(uiSourceCode1, uiSourceCode2)
     {
-        return resource1.parsedURL.lastPathComponent.localeCompare(resource2.parsedURL.lastPathComponent);
+        return uiSourceCode1.parsedURL.lastPathComponent.localeCompare(uiSourceCode2.parsedURL.lastPathComponent);
     }
-    this.resources.sort(compareFunction);
+    this._uiSourceCodes.sort(compareFunction);
 }
 
 WebInspector.OpenResourceDialog.createShortcut = function()
@@ -606,7 +607,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemTitleAt: function(itemIndex)
     {
-        return this.resources[itemIndex].parsedURL.lastPathComponent;
+        return this._uiSourceCodes[itemIndex].parsedURL.lastPathComponent;
     },
 
     /**
@@ -615,7 +616,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemKeyAt: function(itemIndex)
     {
-        return this.resources[itemIndex].parsedURL.lastPathComponent;
+        return this._uiSourceCodes[itemIndex].parsedURL.lastPathComponent;
     },
 
     /**
@@ -623,7 +624,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemsCount: function()
     {
-        return this.resources.length;
+        return this._uiSourceCodes.length;
     },
 
     /**
@@ -631,7 +632,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     requestItems: function(callback)
     {
-        callback(0, this.resources.length, 1, 1);
+        callback(0, this._uiSourceCodes.length, 1, 1);
     },
 
     /**
@@ -639,61 +640,22 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     selectItem: function(itemIndex)
     {
-        // Overriden by descendants;
+        this._panel.showUISourceCode(this._uiSourceCodes[itemIndex]);
     }
 }
 
 WebInspector.OpenResourceDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
 
 /**
- * @constructor
- * @extends {WebInspector.OpenResourceDialog}
- * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
- */
-WebInspector.OpenScriptDialog = function(panel, uiSourceCodeProvider)
-{
-    WebInspector.OpenResourceDialog.call(this, uiSourceCodeProvider.uiSourceCodes());
-    this._panel = panel;
-}
-
-/**
- * @param {WebInspector.ScriptsPanel} panel
- * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
- */
-WebInspector.OpenScriptDialog.install = function(panel, uiSourceCodeProvider, relativeToElement)
-{
-    function showOpenResourceDialog()
-    {
-        WebInspector.OpenScriptDialog._show(panel, uiSourceCodeProvider, relativeToElement);
-    }
-
-    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
-    panel.registerShortcut(openResourceShortcut.key, showOpenResourceDialog);
-}
-
-/**
  * @param {WebInspector.ScriptsPanel} panel
  * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  * @param {Element} relativeToElement
  */
-WebInspector.OpenScriptDialog._show = function(panel, uiSourceCodeProvider, relativeToElement)
+WebInspector.OpenResourceDialog.show = function(panel, uiSourceCodeProvider, relativeToElement)
 {
     if (WebInspector.Dialog.currentInstance())
         return;
 
-    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenScriptDialog(panel, uiSourceCodeProvider));
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenResourceDialog(panel, uiSourceCodeProvider));
     WebInspector.Dialog.show(relativeToElement, filteredItemSelectionDialog);
 }
-
-WebInspector.OpenScriptDialog.prototype = {
-    /**
-     * @param {number} itemIndex
-     */
-    selectItem: function(itemIndex)
-    {
-        this._panel.showUISourceCode(this.resources[itemIndex]);
-    }
-}
-
-WebInspector.OpenScriptDialog.prototype.__proto__ = WebInspector.OpenResourceDialog.prototype;

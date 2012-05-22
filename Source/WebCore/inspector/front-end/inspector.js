@@ -687,10 +687,13 @@ WebInspector._registerShortcuts = function()
 
     section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
     section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
-    
+
     var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
     section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all sources"));
-    
+
+    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
+    section.addKey(openResourceShortcut.name, WebInspector.UIString("Go to source"));
+
     if (WebInspector.isMac()) {
         keys = [
             shortcut.shortcutToString("g", shortcut.Modifiers.Meta),
@@ -730,23 +733,26 @@ WebInspector.documentKeyDown = function(event)
         }
     }
 
-    WebInspector.searchController.handleShortcut(event);
-    WebInspector.advancedSearchController.handleShortcut(event);
-    if (event.handled) {
-        event.consume(true);
+    if (WebInspector.searchController.handleShortcut(event))
         return;
-    }
+    if (WebInspector.advancedSearchController.handleShortcut(event))
+        return;
 
-    var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
+        case "U+004F": // O key
+            if (!event.shiftKey && !event.altKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event)) {
+                WebInspector.panels.scripts.showGoToSourceDialog();
+                event.consume(true);
+            }
+            break;
         case "U+0052": // R key
-            if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
+            if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event)) {
                 PageAgent.reload(event.shiftKey);
                 event.consume(true);
             }
             break;
         case "F5":
-            if (!isMac) {
+            if (!WebInspector.isMac()) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
                 event.consume(true);
             }
