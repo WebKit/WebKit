@@ -133,12 +133,18 @@ namespace JSC {
         {
         }
 
+        static ScratchBuffer* create(size_t size)
+        {
+            ScratchBuffer* result = new (fastMalloc(ScratchBuffer::allocationSize(size))) ScratchBuffer;
+
+            return result;
+        }
+
         static size_t allocationSize(size_t bufferSize) { return sizeof(size_t) + bufferSize; }
         void setActiveLength(size_t activeLength) { m_activeLength = activeLength; }
         size_t activeLength() const { return m_activeLength; };
         size_t* activeLengthPtr() { return &m_activeLength; };
         void* dataBuffer() { return m_buffer; }
-        void visitEncodedJSValues(SlotVisitor&);
 
         size_t m_activeLength;
         void* m_buffer[0];
@@ -315,7 +321,7 @@ namespace JSC {
                 // max(scratch buffer size) * 4.
                 sizeOfLastScratchBuffer = size * 2;
 
-                scratchBuffers.append(static_cast<ScratchBuffer*>(fastMalloc(ScratchBuffer::allocationSize(sizeOfLastScratchBuffer))));
+                scratchBuffers.append(ScratchBuffer::create(sizeOfLastScratchBuffer));
             }
 
             ScratchBuffer* result = scratchBuffers.last();

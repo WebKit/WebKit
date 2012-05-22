@@ -1,3 +1,25 @@
+2012-05-21  Michael Saboff  <msaboff@apple.com>
+
+        Cleanup of Calls to operationStrCat and operationNewArray and Use Constructor after r117729
+        https://bugs.webkit.org/show_bug.cgi?id=87027
+
+        Reviewed by Oliver Hunt.
+
+        Change calls to operationStrCat and operationNewArray to provide the
+        pointer to the EncodedJSValue* data buffer instead of the ScratchBuffer
+        that contains it.  Added a ScratchBuffer::create() function.
+        This is a clean-up to r117729.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSGlobalData.h:
+        (JSC::ScratchBuffer::create):
+        (JSC::ScratchBuffer::dataBuffer):
+        (JSC::JSGlobalData::scratchBufferForSize):
+
 2012-05-15  Gavin Barraclough  <barraclough@apple.com>
 
         Add support for private names
