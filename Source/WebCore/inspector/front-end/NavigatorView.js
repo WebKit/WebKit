@@ -344,7 +344,9 @@ WebInspector.NavigatorView.prototype = {
 
     handleContextMenu: function(event, uiSourceCode)
     {
-        // Overriden.
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendApplicableItems(uiSourceCode);
+        contextMenu.show(event);
     }
 }
 
@@ -470,7 +472,6 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
         this._titleTextNode.textContent = this._titleText;
         this.titleElement.appendChild(this._titleTextNode);
         this.listItemElement.appendChild(this.titleElement);
-        
         this.expand();
     },
 

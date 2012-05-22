@@ -460,9 +460,6 @@ WebInspector.SourceFrame.prototype = {
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)
     {
-        if (!window.getSelection().isCollapsed)
-            return;
-        WebInspector.populateResourceContextMenu(contextMenu, this._url, lineNumber);
     },
 
     inheritScrollPositions: function(sourceFrame)

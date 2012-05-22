@@ -147,11 +147,6 @@ WebInspector.addMainEventListeners = function(doc) {}
 
 WebInspector.openResource = function(url, external) {}
 
-/** @param {WebInspector.NetworkRequest} request */
-WebInspector.openRequestInNetworkPanel = function(request) {}
-
-WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber) {}
-
 /**
  * @param {string} expression
  * @param {boolean=} showResultOnly

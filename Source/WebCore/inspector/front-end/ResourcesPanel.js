@@ -1188,45 +1188,10 @@ WebInspector.FrameResourceTreeElement.prototype = {
     _handleContextMenuEvent: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, this._resource.url, false));
-        contextMenu.appendItem(WebInspector.copyLinkAddressLabel(), InspectorFrontendHost.copyText.bind(InspectorFrontendHost, this._resource.url));
-        this._appendOpenInNetworkPanelAction(contextMenu, event);
-        WebInspector.populateResourceContextMenu(contextMenu, this._resource.url, null);
-        this._appendSaveAsAction(contextMenu, event);
+        contextMenu.appendApplicableItems(this._resource);
+        if (this._resource.request)
+            contextMenu.appendApplicableItems(this._resource.request);
         contextMenu.show(event);
-    },
-
-    _appendOpenInNetworkPanelAction: function(contextMenu, event)
-    {
-        if (!this._resource.request)
-            return;
-
-        contextMenu.appendItem(WebInspector.openInNetworkPanelLabel(), WebInspector.openRequestInNetworkPanel.bind(WebInspector, this._resource.request));
-    },
-
-    _appendSaveAsAction: function(contextMenu, event)
-    {
-        if (!InspectorFrontendHost.canSave())
-            return;
-
-        if (this._resource.type !== WebInspector.resourceTypes.Document &&
-            this._resource.type !== WebInspector.resourceTypes.Stylesheet &&
-            this._resource.type !== WebInspector.resourceTypes.Script)
-            return;
-
-        function doSave(forceSaveAs, content)
-        {
-            WebInspector.fileManager.save(this._resource.url, content, forceSaveAs);
-        }
-
-        function save(forceSaveAs)
-        {
-            this._resource.requestContent(doSave.bind(this, forceSaveAs));
-        }
-
-        contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString("Save"), save.bind(this, false));
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this, true));
     },
 
     _setBubbleText: function(x)

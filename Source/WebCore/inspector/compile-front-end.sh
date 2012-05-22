@@ -39,5 +39,6 @@ java -jar ~/closure/compiler.jar\
     --warning_level VERBOSE\
     --language_in ECMASCRIPT5\
     --accept_const_keyword\
+    --module injected_script:1\
     --js Source/WebCore/inspector/InjectedScriptSource.js\
     --externs Source/WebCore/inspector/InjectedScriptExterns.js

@@ -1062,11 +1062,13 @@ WebInspector.ScriptsPanel.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
-        if (target instanceof WebInspector.UISourceCode) {
-            contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Revision history..."), this._showLocalHistory.bind(this, /** @type {WebInspector.UISourceCode} */ target));
-            contextMenu.appendSeparator();
-        }
+        if (!(target instanceof WebInspector.UISourceCode))
+            return;
+
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ target;
+        contextMenu.appendItem(WebInspector.UIString("Revision history..."), this._showLocalHistory.bind(this, uiSourceCode));
+        if (uiSourceCode.resource() && uiSourceCode.resource().request)
+            contextMenu.appendApplicableItems(uiSourceCode.resource().request);
     },
 
     showGoToSourceDialog: function()

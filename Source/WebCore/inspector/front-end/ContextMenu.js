@@ -101,7 +101,9 @@ WebInspector.ContextMenu.prototype = {
     {
         for (var i = 0; i < WebInspector.ContextMenu._providers.length; ++i) {
             var provider = WebInspector.ContextMenu._providers[i];
+            this.appendSeparator();
             provider.appendApplicableItems(this, target);
+            this.appendSeparator();
         }
     }
 }

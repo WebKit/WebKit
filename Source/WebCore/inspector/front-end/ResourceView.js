@@ -96,6 +96,13 @@ WebInspector.ResourceSourceFrame.prototype = {
     _contentChanged: function(event)
     {
         this.setContent(this._resource.content, false, this._resource.canonicalMimeType());
+    },
+
+    populateTextAreaContextMenu: function(contextMenu, lineNumber)
+    {
+        contextMenu.appendApplicableItems(this._resource);
+        if (this._resource.request)
+            contextMenu.appendApplicableItems(this._resource.request);
     }
 }
 

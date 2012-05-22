@@ -446,6 +446,11 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (this._zoomLevel)
         this._requestZoom();
 
+    var autoselectPanel = WebInspector.UIString("a panel chosen automatically");
+    var openAnchorLocationSetting = WebInspector.settings.createSetting("openLinkHandler", autoselectPanel);
+    this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
+    this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
+
     this._createPanels();
     this._createGlobalStatusBarItems();
 
@@ -462,11 +467,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
-
-    var autoselectPanel = WebInspector.UIString("a panel chosen automatically");
-    var openAnchorLocationSetting = WebInspector.settings.createSetting("openLinkHandler", autoselectPanel);
-    this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
-    this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
     this.extensionServer.initExtensions();
 
@@ -661,12 +661,6 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
     } else
         InspectorFrontendHost.openInNewTab(resourceURL);
-}
-
-WebInspector.openRequestInNetworkPanel = function(request)
-{
-    WebInspector.showPanel("network");
-    WebInspector.panels.network.revealAndHighlightRequest(request);
 }
 
 WebInspector._registerShortcuts = function()
@@ -967,17 +961,6 @@ WebInspector.inspect = function(payload, hints)
 WebInspector.updateFocusedNode = function(nodeId)
 {
     this.panels.elements.revealAndSelectNode(nodeId);
-}
-
-WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber)
-{
-    var registry = WebInspector.openAnchorLocationRegistry;
-    // Skip 0th handler, as it's 'Use default panel' one.
-    for (var i = 1; i < registry.handlerNames.length; ++i) {
-        var handler = registry.handlerNames[i];
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open using %s" : "Open Using %s", handler),
-            registry.dispatchToHandler.bind(registry, handler, { url: url, preferredLineNumber: preferredLineNumber }));
-    }
 }
 
 WebInspector._showAnchorLocation = function(anchor)

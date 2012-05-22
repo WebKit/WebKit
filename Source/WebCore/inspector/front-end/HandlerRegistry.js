@@ -31,6 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @implements {WebInspector.ContextMenu.Provider}
  */
 WebInspector.HandlerRegistry = function(setting)
 {
@@ -38,6 +39,7 @@ WebInspector.HandlerRegistry = function(setting)
     this._handlers = {};
     this._setting = setting;
     this._activeHandler = this._setting.get();
+    WebInspector.ContextMenu.registerProvider(this);
 }
 
 WebInspector.HandlerRegistry.prototype = {
@@ -86,6 +88,51 @@ WebInspector.HandlerRegistry.prototype = {
     {
         delete this._handlers[name];
         this.dispatchEventToListeners(WebInspector.HandlerRegistry.EventTypes.HandlersUpdated);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    appendApplicableItems: function(contextMenu, target)
+    {
+        if (!(target instanceof WebInspector.UISourceCode || target instanceof WebInspector.Resource))
+            return;
+        var contentProvider = /** @type {WebInspector.ContentProvider} */ target;
+        if (!contentProvider.contentURL())
+            return;
+
+        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, contentProvider.contentURL(), false));
+        // Skip 0th handler, as it's 'Use default panel' one.
+        for (var i = 1; i < this.handlerNames.length; ++i) {
+            var handler = this.handlerNames[i];
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open using %s" : "Open Using %s", handler),
+                this.dispatchToHandler.bind(this, handler, { url: contentProvider.contentURL() }));
+        }
+        contextMenu.appendItem(WebInspector.copyLinkAddressLabel(), InspectorFrontendHost.copyText.bind(InspectorFrontendHost, contentProvider.contentURL()));
+
+        if (!InspectorFrontendHost.canSave() || !contentProvider.contentURL())
+            return;
+
+        var contentType = contentProvider.contentType();
+        if (contentType !== WebInspector.resourceTypes.Document &&
+            contentType !== WebInspector.resourceTypes.Stylesheet &&
+            contentType !== WebInspector.resourceTypes.Script)
+            return;
+
+        function doSave(forceSaveAs, content)
+        {
+            WebInspector.fileManager.save(contentProvider.contentURL(), content, forceSaveAs);
+        }
+
+        function save(forceSaveAs)
+        {
+            contentProvider.requestContent(doSave.bind(this, forceSaveAs));
+        }
+
+        contextMenu.appendSeparator();
+        contextMenu.appendItem(WebInspector.UIString("Save"), save.bind(this, false));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this, true));
     }
 }
 
