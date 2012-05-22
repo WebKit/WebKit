@@ -171,7 +171,7 @@ class TestRunner:
             self._xvfb = subprocess.Popen(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except Exception as e:
-            sys.stderr.write("Failed to run Xvfb: %s\n", e)
+            sys.stderr.write("Failed to run Xvfb: %s\n" % e)
             sys.stderr.flush()
             return False
 

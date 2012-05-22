@@ -1,3 +1,13 @@
+2012-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix a small syntax error in the GTK+ API test runner.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/run-api-tests:
+        (TestRunner._setup_testing_environment): When reporting the error use
+        the correct Python format string syntax.
+
 2012-05-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [GTK][DRT] Wrong cache model is taken in LayoutTestController's setCacheModel()
