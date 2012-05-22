@@ -650,11 +650,8 @@ sub GenerateSetDOMException
     my $getIsolate = shift;
     my $result = "";
 
-    $result .= $indent . "if (UNLIKELY(ec)) {\n";
-    $result .= $indent . "    V8Proxy::setDOMException(ec, $getIsolate);\n";
-    $result .= $indent . "    return v8::Handle<v8::Value>();\n";
-    $result .= $indent . "}\n";
-
+    $result .= $indent . "if (UNLIKELY(ec))\n";
+    $result .= $indent . "    return V8Proxy::setDOMException(ec, $getIsolate);\n";
     return $result;
 }
 
@@ -1408,10 +1405,8 @@ END
         } else {
             AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $nativeClassName wrapper = V8${implClassName}::toNative(args.Holder());\n");
-            push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
-            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());\n");
-            push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
-            push(@implContentDecls, "    }\n");
+            push(@implContentDecls, "    if (wrapper->role() == AnimValRole)\n");
+            push(@implContentDecls, "        return V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());\n");
             my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
             push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
@@ -1466,8 +1461,7 @@ END
     if ($raisesExceptions) {
         push(@implContentDecls, "    }\n");
         push(@implContentDecls, "    fail:\n");
-        push(@implContentDecls, "    V8Proxy::setDOMException(ec, args.GetIsolate());\n");
-        push(@implContentDecls, "    return v8::Handle<v8::Value>();\n");
+        push(@implContentDecls, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContentDecls, "}\n\n");
@@ -3333,10 +3327,8 @@ sub GenerateFunctionCallString()
             push @arguments, "$paramName.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";
-            $result .= $indent . "if (!$paramName) {\n";
-            $result .= $indent . "    V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
-            $result .= $indent . "    return v8::Handle<v8::Value>();\n";
-            $result .= $indent . "}\n";
+            $result .= $indent . "if (!$paramName)\n";
+            $result .= $indent . "    return V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
         } elsif ($parameter->type eq "SVGMatrix" and $implClassName eq "SVGTransformList") {
             push @arguments, "$paramName.get()";
         } else {

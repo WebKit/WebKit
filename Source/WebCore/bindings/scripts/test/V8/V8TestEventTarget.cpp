@@ -59,8 +59,7 @@ static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
     return toV8(imp->item(index), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
@@ -100,8 +99,7 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
     return v8Boolean(result);
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 } // namespace TestEventTargetV8Internal

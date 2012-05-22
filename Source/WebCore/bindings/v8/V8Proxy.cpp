@@ -586,10 +586,10 @@ static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Va
         exception = toV8(interfaceName::create(description), isolate); \
         break;
 
-void V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
+v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
 {
     if (ec <= 0)
-        return;
+        return v8::Handle<v8::Value>();
 
     ExceptionCodeDescription description(ec);
 
@@ -599,7 +599,7 @@ void V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
     }
 
     if (exception.IsEmpty())
-        return;
+        return v8::Handle<v8::Value>();
 
     // Attach an Error object to the DOMException. This is then lazily used to get the stack value.
     v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
@@ -607,7 +607,7 @@ void V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
     ASSERT(exception->IsObject());
     exception->ToObject()->SetAccessor(v8String("stack", isolate), DOMExceptionStackGetter, DOMExceptionStackSetter, error);
 
-    v8::ThrowException(exception);
+    return v8::ThrowException(exception);
 }
 
 #undef TRY_TO_CREATE_EXCEPTION

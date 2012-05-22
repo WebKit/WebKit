@@ -234,7 +234,7 @@ namespace WebCore {
 
         // If the exception code is different from zero, a DOM exception is
         // schedule to be thrown.
-        static void setDOMException(int exceptionCode, v8::Isolate*);
+        static v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate*);
 
         // Schedule an error object to be thrown.
         static v8::Handle<v8::Value> throwError(ErrorType, const char* message, v8::Isolate* = 0);

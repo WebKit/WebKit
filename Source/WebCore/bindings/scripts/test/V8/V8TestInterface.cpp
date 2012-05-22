@@ -140,8 +140,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)

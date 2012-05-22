@@ -626,10 +626,8 @@ static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetter(v8::Local<v8::Str
     TestObj* imp = V8TestObj::toNative(info.Holder());
     ExceptionCode ec = 0;
     int v = imp->attrWithGetterException(ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return v8::Integer::New(v);
 }
 
@@ -670,10 +668,8 @@ static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v
     TestObj* imp = V8TestObj::toNative(info.Holder());
     ExceptionCode ec = 0;
     String v = imp->stringAttrWithGetterException(ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return v8String(v, info.GetIsolate());
 }
 
@@ -763,10 +759,8 @@ static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetter(v8::Local<
     if (!state)
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptStateAttributeRaises(state, ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
         return throwError(state.exception(), info.GetIsolate());
     return toV8(v.release(), info.GetIsolate());
@@ -798,10 +792,8 @@ static v8::Handle<v8::Value> withScriptExecutionContextAttributeRaisesAttrGetter
     if (!scriptContext)
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptExecutionContextAttributeRaises(scriptContext, ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return toV8(v.release(), info.GetIsolate());
 }
 
@@ -862,10 +854,8 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRa
     if (!scriptContext)
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptExecutionContextAndScriptStateAttributeRaises(state, scriptContext, ec);
-    if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec, info.GetIsolate());
-        return v8::Handle<v8::Value>();
-    }
+    if (UNLIKELY(ec))
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
         return throwError(state.exception(), info.GetIsolate());
     return toV8(v.release(), info.GetIsolate());
@@ -1347,8 +1337,7 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
@@ -1410,8 +1399,7 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return v8::Handle<v8::Value>();
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
@@ -1473,8 +1461,7 @@ static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Argu
     return v8::Handle<v8::Value>();
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Arguments& args)
@@ -1492,8 +1479,7 @@ static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Argum
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> withScriptExecutionContextCallback(const v8::Arguments& args)
@@ -1539,8 +1525,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptio
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesCallback(const v8::Arguments& args)
@@ -1928,8 +1913,7 @@ static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> convert1Callback(const v8::Arguments& args)
@@ -2026,8 +2010,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
 }
 
 } // namespace TestObjV8Internal
