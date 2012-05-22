@@ -1,3 +1,12 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        Even more unreviewed chromium test expectation updates.
+
+        * platform/chromium-linux-x86/platform/chromium/compositing/filters: Removed.
+        * platform/chromium-linux-x86/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/filters: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png: Removed.
+
 2012-05-22  Kenneth Russell  <kbr@google.com>
 
         Must set/reset pixel unpack alignment to 1 during texSubImage2D
