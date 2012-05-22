@@ -1,5 +1,24 @@
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium linux and windows rebaselines.
+
+        * fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/chromium-linux-x86/platform: Added.
+        * platform/chromium-linux-x86/platform/chromium: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing/filters: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/chromium-win/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/efl/fast/borders/border-image-side-reduction-expected.png: Removed.
+        * platform/gtk/fast/borders/border-image-side-reduction-expected.png: Removed.
+
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed rebaselines for chromium mac and windows.
 
         * platform/chromium-mac-leopard/tables/mozilla_expected_failures/core/standards1-expected.txt: Added.
