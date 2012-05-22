@@ -1,5 +1,15 @@
 2012-05-21  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium mac rebaseline for svg zoom tests.
+
+        * platform/chromium-linux/fast/repaint/reflection-repaint-test-expected.png: Removed.
+        * platform/chromium-linux/fast/repaint/transform-layout-repaint-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-as-object-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-as-object-expected.txt: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-object-expected.txt: Added.
+
+2012-05-21  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium linux and windows rebaselines.
 
         * fast/borders/border-image-side-reduction-expected.png: Added.
