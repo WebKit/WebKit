@@ -74,7 +74,8 @@ private:
     // FileIconLoaderClient implementation.
     virtual void updateRendering(PassRefPtr<Icon>) OVERRIDE;
 
-    void setFileList(const Vector<FileChooserFileInfo>&);
+    void setFiles(PassRefPtr<FileList>);
+    PassRefPtr<FileList> createFileList(const Vector<FileChooserFileInfo>& files) const;
 #if ENABLE(DIRECTORY_UPLOAD)
     void receiveDropForDirectoryUpload(const Vector<String>&);
 #endif
