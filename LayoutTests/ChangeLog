@@ -1,3 +1,15 @@
+2012-05-22  Rob Buis  <rbuis@rim.com>
+
+        ASSERTs in RenderInline::layout()
+        https://bugs.webkit.org/show_bug.cgi?id=63365
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test text content element children inside elements.
+
+        * svg/custom/disallowed-text-content-rendering-expected.txt: Added.
+        * svg/custom/disallowed-text-content-rendering.svg: Added.
+
 2012-05-22  Takashi Sakamoto  <tasak@google.com>
 
         Implement DOM_KEY_LOCATION_LEFT and RIGHT of KeyboardEvent's location property

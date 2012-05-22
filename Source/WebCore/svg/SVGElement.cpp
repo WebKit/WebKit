@@ -495,8 +495,22 @@ void SVGElement::finishParsingChildren()
 
 bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (childContext.node()->isSVGElement())
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, invalidTextContent, ());
+
+    if (invalidTextContent.isEmpty()) {
+        invalidTextContent.add(SVGNames::textPathTag);
+#if ENABLE(SVG_FONTS)
+        invalidTextContent.add(SVGNames::altGlyphTag);
+#endif
+        invalidTextContent.add(SVGNames::trefTag);
+        invalidTextContent.add(SVGNames::tspanTag);
+    }
+    if (childContext.node()->isSVGElement()) {
+        if (invalidTextContent.contains(static_cast<SVGElement*>(childContext.node())->tagQName()))
+            return false;
+
         return static_cast<SVGElement*>(childContext.node())->isValid();
+    }
     return false;
 }
 
