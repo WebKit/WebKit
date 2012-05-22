@@ -194,6 +194,8 @@ static qreal physicalOvershoot(qreal t)
 
 bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
 {
+    ASSERT(m_suspended);
+
     QRectF currentItemRectVisible = m_viewport->mapRectToWebContent(m_viewport->boundingRect());
     if (itemRect == currentItemRectVisible)
         return false;
@@ -347,7 +349,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     if (!targetArea.isValid())
         return;
 
-    if (scrollAnimationActive() || scaleAnimationActive())
+    if (m_suspendCount)
         return;
 
     m_hadUserInteraction = true;
@@ -427,7 +429,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
 bool QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immediate)
 {
-    if (scrollAnimationActive() || scaleAnimationActive())
+    if (!immediate && (scrollAnimationActive() || scaleAnimationActive()))
         return false;
 
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale()));
@@ -617,9 +619,14 @@ void QtViewportInteractionEngine::pinchGestureCancelled()
     m_scaleUpdateDeferrer.clear();
 }
 
+/*
+ * This is called for all changes of item scale, width or height.
+ * This is called when interacting, ie. during for instance pinch-zooming.
+ *
+ * FIXME: This is currently called twice if you concurrently change width and height.
+ */
 void QtViewportInteractionEngine::itemSizeChanged()
 {
-    // FIXME: This needs to be done smarter. What happens if it resizes when we were interacting?
     if (m_suspendCount)
         return;
 

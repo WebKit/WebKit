@@ -1,3 +1,21 @@
+2012-05-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Mini clean ups in the interaction engine
+        https://bugs.webkit.org/show_bug.cgi?id=87013
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+            Assert that we are suspended.
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+            Never zoom to any area if suspended which indicates other
+            animation or user interaction.
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+            If immediate is set, ignore suspension.
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+            Improve the comment.
+
 2012-05-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tap-to-zoom overshoot animation
