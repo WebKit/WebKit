@@ -58,6 +58,7 @@ Invalid code test: 12
 Code NaN must cause INVALID_ACCESS_ERR.
 PASS exceptionProto === DOMException.prototype is true
 PASS exceptionName is invalidAccessErr
+PASS onerror was called.
 runCodeTest: onclose().
 PASS closeEvent.code is abnormalClosure
 Skip invalid string test.
@@ -74,6 +75,7 @@ PASS result is false
 PASS exceptionProto === DOMException.prototype is true
 PASS exceptionName is syntaxErr
 Reason test: 2
+PASS onerror was called.
 runReasonTest: onclose().
 PASS closeEvent.code is abnormalClosure
 Code and reason test: 0

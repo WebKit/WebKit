@@ -89,6 +89,10 @@ function runCodeTest()
                 if (closeEvent.code == abnormalClosure)
                     runInvalidStringTest();
             };
+            ws.onerror = function()
+            {
+                testPassed("onerror was called.");
+            };
         }
         try {
             ws.close(codeTestCodes[id]);
@@ -127,6 +131,10 @@ function runReasonTest()
                 if (closeEvent.code == abnormalClosure)
                     runCodeAndReasonTest();
             };
+            ws.onerror = function()
+            {
+                testPassed("onerror was called.");
+            }
         }
         try {
             ws.close(normalClosure, reasonTestReasons[id]);

@@ -531,7 +531,7 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
 void WebSocket::didReceiveMessageError()
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage", this);
-    if (m_state != OPEN && m_state != CLOSING)
+    if (m_useHixie76Protocol && m_state != OPEN && m_state != CLOSING)
         return;
     ASSERT(scriptExecutionContext());
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));

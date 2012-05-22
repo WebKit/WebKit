@@ -1,3 +1,18 @@
+2012-05-22  Li Yin  <li.yin@intel.com>
+
+        [WebSocket] WebSocket object should fire a simple event named error when it is required to fail the websocket connection.
+        https://bugs.webkit.org/show_bug.cgi?id=86958
+
+        Spec:http://dev.w3.org/html5/websockets/#feedback-from-the-protocol
+        If the user agent was required to fail the websocket connection or the 
+        WebSocket connection is closed with prejudice, fire a simple event 
+        named error at the WebSocket object.
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/close-expected.txt:
+        * http/tests/websocket/tests/hybi/close.html:
+
 2012-05-22  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Remove an entry for css3/filters/custom/filter-repaint-custom-rotated.html
