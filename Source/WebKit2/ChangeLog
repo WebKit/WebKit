@@ -1,3 +1,24 @@
+2012-05-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add UI tests for fit-to-view
+        https://bugs.webkit.org/show_bug.cgi?id=86857
+
+        Reviewed by Simon Hausmann.
+
+        Make sure to always emit contentsScaleCommitted when the
+        contents size changes, so that it can be used for testing.
+
+        Also add a method to do single taps.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (touchPoint):
+        (QWebKitTest::touchTap):
+        (QWebKitTest::touchDoubleTap):
+        * UIProcess/API/qt/qwebkittest_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_fitToView.qml: Added.
+
 2012-05-21  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11460336> and https://bugs.webkit.org/show_bug.cgi?id=87061

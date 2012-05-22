@@ -942,14 +942,25 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(attributes, viewportSize, newSize);
 
+    bool scaleCommitNotified = false;
+
     if (!qFuzzyCompare(minimumScale, attributes.minimumScale)) {
         interactionEngine->setCSSScaleBounds(minimumScale, attributes.maximumScale);
         emit q->experimental()->test()->viewportChanged();
 
-        if (!interactionEngine->hadUserInteraction() && !pageIsSuspended)
+        if (!interactionEngine->hadUserInteraction() && !pageIsSuspended) {
+            // Emits contentsScaleCommitted();
+            scaleCommitNotified = true;
             interactionEngine->setCSSScale(minimumScale);
+        }
     }
+
+    // Emit for testing purposes, so that it can be verified that
+    // we didn't do scale adjustment.
+    if (!scaleCommitNotified)
+        emit q->experimental()->test()->contentsScaleCommitted();
 }
+
 
 /*!
     \qmlsignal WebView::onNavigationRequested(WebNavigationRequest request)

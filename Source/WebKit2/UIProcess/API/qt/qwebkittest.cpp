@@ -38,6 +38,34 @@ QWebKitTest::~QWebKitTest()
 {
 }
 
+static QTouchEvent::TouchPoint touchPoint(qreal x, qreal y)
+{
+    QPointF localPos(x, y);
+
+    QTouchEvent::TouchPoint point;
+    point.setLastPos(localPos);
+    QRectF touchRect(0, 0, 40, 40);
+    touchRect.moveCenter(localPos);
+    point.setRect(touchRect);
+
+    return point;
+}
+
+bool QWebKitTest::touchTap(QObject* item, qreal x, qreal y, int delay)
+{
+    if (!qobject_cast<QQuickWebView*>(item)) {
+        // FIXME: We only support the actual web view for now.
+        qWarning("Touch event \"DoubleTap\" not accepted by receiving item");
+        return false;
+    }
+
+    // FIXME: implement delay using QTest::qWait() or similar.
+    Q_UNUSED(delay);
+    m_webViewPrivate->pageView->eventHandler()->handleSingleTapEvent(touchPoint(x, y));
+
+    return true;
+}
+
 bool QWebKitTest::touchDoubleTap(QObject* item, qreal x, qreal y, int delay)
 {
     if (!qobject_cast<QQuickWebView*>(item)) {
@@ -49,15 +77,7 @@ bool QWebKitTest::touchDoubleTap(QObject* item, qreal x, qreal y, int delay)
     // FIXME: implement delay using QTest::qWait() or similar.
     Q_UNUSED(delay);
 
-    QPointF localPos(x, y);
-
-    QTouchEvent::TouchPoint point;
-    point.setLastPos(localPos);
-    QRectF touchRect(0, 0, 40, 40);
-    touchRect.moveCenter(localPos);
-    point.setRect(touchRect);
-
-    m_webViewPrivate->pageView->eventHandler()->handleDoubleTapEvent(point);
+    m_webViewPrivate->pageView->eventHandler()->handleDoubleTapEvent(touchPoint(x, y));
 
     return true;
 }

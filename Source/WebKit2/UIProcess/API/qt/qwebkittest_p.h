@@ -53,6 +53,7 @@ signals:
     void viewportChanged();
 
 public slots:
+    bool touchTap(QObject* item, qreal x, qreal y, int delay = -1);
     bool touchDoubleTap(QObject* item, qreal x, qreal y, int delay = -1);
 
 public:
