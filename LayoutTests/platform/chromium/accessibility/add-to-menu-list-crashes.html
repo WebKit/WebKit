@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+
+<p id="description">This test makes sure that adding a selected option to a menu list via an unusual route (document.write from an external script) doesn't trigger a crash when didUpdateActiveOption is called before the children are updated.</p>
+<div id="console"></div>
+
+<select id="menulist">
+    <option>1</option>
+    <script>
+        window.menulist = document.getElementById("menulist");
+        menulist.focus();
+        if (window.layoutTestController && window.accessibilityController) {
+            window.accessibleMenulist = accessibilityController.focusedElement;
+            window.accessiblePopup = accessibleMenulist.childAtIndex(0);
+            shouldBe("accessiblePopup.childrenCount", "1");
+        }
+    </script>
+    <script src="data:text/javascript,document.write('<option selected>2');"></script>
+    <script>
+        if (window.layoutTestController && window.accessibilityController)
+            shouldBe("accessiblePopup.childrenCount", "2");
+    </script>
+    <script>
+        menulist.removeChild(menulist.selectedOptions[0]);
+        if (window.layoutTestController && window.accessibilityController)
+            shouldBe("accessiblePopup.childrenCount", "1");
+    </script>
+</select>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

@@ -1,3 +1,13 @@
+2012-05-22  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Chromium AX: Crash when menulist adds selected option via document.write
+        https://bugs.webkit.org/show_bug.cgi?id=87028
+
+        Reviewed by Chris Fleizach.
+
+        * platform/chromium/accessibility/add-to-menu-list-crashes-expected.txt: Added.
+        * platform/chromium/accessibility/add-to-menu-list-crashes.html: Added.
+
 2012-05-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Crash in WebCore::SVGTextLayoutAttributesBuilder::fillCharacterDataMap

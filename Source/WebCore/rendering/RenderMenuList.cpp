@@ -119,6 +119,9 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
     createInnerBlock();
     m_innerBlock->addChild(newChild, beforeChild);
     ASSERT(m_innerBlock == firstChild());
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->childrenChanged(this);
 }
 
 void RenderMenuList::removeChild(RenderObject* oldChild)
