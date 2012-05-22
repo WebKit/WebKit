@@ -58,20 +58,22 @@ CCDamageTracker::~CCDamageTracker()
 {
 }
 
-static inline void expandDamageRectWithFilters(FloatRect& damageRect, const WebKit::WebFilterOperations& filters)
+static inline void expandRectWithFilters(FloatRect& rect, const WebKit::WebFilterOperations& filters)
 {
     int top, right, bottom, left;
     filters.getOutsets(top, right, bottom, left);
-    damageRect.move(-left, -top);
-    damageRect.expand(left + right, top + bottom);
+    rect.move(-left, -top);
+    rect.expand(left + right, top + bottom);
 }
 
-static inline void expandDamageRectInsideRectWithFilters(FloatRect& damageRect, const FloatRect& filterRect, const WebKit::WebFilterOperations& filters)
+static inline void expandDamageRectInsideRectWithFilters(FloatRect& damageRect, const FloatRect& preFilterRect, const WebKit::WebFilterOperations& filters)
 {
     FloatRect expandedDamageRect = damageRect;
-    expandDamageRectWithFilters(expandedDamageRect, filters);
-    expandedDamageRect.intersect(filterRect);
+    expandRectWithFilters(expandedDamageRect, filters);
+    FloatRect filterRect = preFilterRect;
+    expandRectWithFilters(filterRect, filters);
 
+    expandedDamageRect.intersect(filterRect);
     damageRect.unite(expandedDamageRect);
 }
 
@@ -157,7 +159,7 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
         m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);
 
         if (filters.hasFilterThatMovesPixels())
-            expandDamageRectWithFilters(m_currentDamageRect, filters);
+            expandRectWithFilters(m_currentDamageRect, filters);
     }
 
     // The next history map becomes the current map for the next frame.
@@ -288,11 +290,6 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
     FloatRect surfaceRectInTargetSpace = renderSurface->drawableContentRect(); // already includes replica if it exists.
     saveRectForNextFrame(layer->id(), surfaceRectInTargetSpace);
 
-    // If the layer has a background filter, this may cause pixels in our surface to be expanded, so we will need to expand any damage
-    // that exists below this layer by that amount.
-    if (layer->backgroundFilters().hasFilterThatMovesPixels())
-        expandDamageRectInsideRectWithFilters(targetDamageRect, surfaceRectInTargetSpace, layer->backgroundFilters());
-
     FloatRect damageRectInLocalSpace;
     if (surfaceIsNew || renderSurface->surfacePropertyChanged()) {
         // The entire surface contributes damage.
@@ -333,6 +330,13 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         if (replicaIsNew || replicaMaskLayer->layerPropertyChanged() || !replicaMaskLayer->updateRect().isEmpty())
             targetDamageRect.uniteIfNonZero(replicaMaskLayerRect);
     }
+
+    // If the layer has a background filter, this may cause pixels in our surface to be expanded, so we will need to expand any damage
+    // at or below this layer. We expand the damage from this layer too, as we need to readback those pixels from the surface with only
+    // the contents of layers below this one in them. This means we need to redraw any pixels in the surface being used for the blur in
+    // this layer this frame.
+    if (layer->backgroundFilters().hasFilterThatMovesPixels())
+        expandDamageRectInsideRectWithFilters(targetDamageRect, surfaceRectInTargetSpace, layer->backgroundFilters());
 }
 
 } // namespace WebCore

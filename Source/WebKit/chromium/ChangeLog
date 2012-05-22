@@ -1,3 +1,13 @@
+2012-05-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Expand damage from the background-blurred layer to ensure readback is only including pixels below that layer
+        https://bugs.webkit.org/show_bug.cgi?id=86884
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-05-22  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Fire error when there are problems opening a DB
