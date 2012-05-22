@@ -104,7 +104,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
 
     this.viewSelectElement = document.createElement("select");
     this.viewSelectElement.className = "status-bar-item";
-    this.viewSelectElement.addEventListener("change", this._changeView.bind(this), false);
+    this.viewSelectElement.addEventListener("change", this._onSelectedViewChanged.bind(this), false);
 
     this.views = [{title: "Summary", view: this.constructorsView, grid: this.constructorsDataGrid},
                   {title: "Comparison", view: this.diffView, grid: this.diffDataGrid},
@@ -427,6 +427,14 @@ WebInspector.HeapSnapshotView.prototype = {
         profile.sidebarElement.subtitle = Number.bytesToString(s.totalSize);
     },
 
+    /**
+     * @param {WebInspector.ContextMenu} contextMenu
+     */
+    populateContextMenu: function(contextMenu, event)
+    {
+        this.dataGrid.populateContextMenu(contextMenu, event);
+    },
+
     _selectionChanged: function(event)
     {
         var selectedNode = event.target.selectedNode;
@@ -473,15 +481,18 @@ WebInspector.HeapSnapshotView.prototype = {
             setTimeout(callback, 0);
             return;
         }
-        var grid = this.views[viewIndex].grid;
-        function sortingComplete()
+
+        function dataGridContentShown(event)
         {
-            grid.removeEventListener("sorting complete", sortingComplete, this);
-            setTimeout(callback, 0);
+            var dataGrid = event.data;
+            dataGrid.removeEventListener(WebInspector.HeapSnapshotSortableDataGrid.Events.ContentShown, dataGridContentShown, this);
+            if (dataGrid === this.dataGrid)
+                callback();
         }
-        this.views[viewIndex].grid.addEventListener("sorting complete", sortingComplete, this);
+        this.views[viewIndex].grid.addEventListener(WebInspector.HeapSnapshotSortableDataGrid.Events.ContentShown, dataGridContentShown, this);
+
         this.viewSelectElement.selectedIndex = viewIndex;
-        this._changeView({target: {selectedIndex: viewIndex}});
+        this._changeView(viewIndex);
     },
 
     _updateDataSourceAndView: function()
@@ -511,14 +522,17 @@ WebInspector.HeapSnapshotView.prototype = {
         }
     },
 
-    _changeView: function(event)
+    _onSelectedViewChanged: function(event)
     {
-        if (!event || !this._profileUid)
-            return;
-        if (event.target.selectedIndex === this.views.current)
+        this._changeView(event.target.selectedIndex);
+    },
+
+    _changeView: function(selectedIndex)
+    {
+        if (selectedIndex === this.views.current)
             return;
 
-        this.views.current = event.target.selectedIndex;
+        this.views.current = selectedIndex;
         this.currentView.detach();
         var view = this.views[this.views.current];
         this.currentView = view.view;

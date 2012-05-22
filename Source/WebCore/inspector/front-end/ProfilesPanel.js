@@ -428,6 +428,8 @@ WebInspector.ProfilesPanel.prototype = {
             return;
         }
         var contextMenu = new WebInspector.ContextMenu();
+        if (this.visibleView instanceof WebInspector.HeapSnapshotView)
+            this.visibleView.populateContextMenu(contextMenu, event);
         contextMenu.appendItem(WebInspector.UIString("Load profile\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
         contextMenu.show(event);
     },

@@ -385,6 +385,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         cell.addStyleClass("disclosure");
         if (this.depth)
             cell.style.setProperty("padding-left", (this.depth * this.dataGrid.indentWidth) + "px");
+        cell.heapSnapshotNode = this;
         return cell;
     },
 
@@ -1028,6 +1029,9 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
             callback(child);
         }
 
+        // Make sure hasChildren flag is updated before expanding this node as updateHasChildren response
+        // may not have been received yet.
+        this.hasChildren = true;
         this.expandWithoutPopulate(didExpand.bind(this));
     },
 

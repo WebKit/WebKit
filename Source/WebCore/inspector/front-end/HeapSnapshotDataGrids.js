@@ -44,7 +44,16 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns)
      * @type {WebInspector.HeapSnapshotGridNode}
      */
     this._highlightedNode = null;
+    /**
+     * @type {boolean}
+     */
+    this._populatedAndSorted = false;
+    this.addEventListener("sorting complete", this._sortingComplete, this);
     this.addEventListener("sorting changed", this.sortingChanged, this);
+}
+
+WebInspector.HeapSnapshotSortableDataGrid.Events = {
+    ContentShown: "ContentShown"
 }
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
@@ -61,6 +70,54 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         var children = this.topLevelNodes();
         for (var i = 0, l = children.length; i < l; ++i)
             children[i].dispose();
+    },
+
+    /**
+     * @override
+     */
+    wasShown: function()
+    {
+        if (this._populatedAndSorted)
+            this.dispatchEventToListeners(WebInspector.HeapSnapshotSortableDataGrid.Events.ContentShown, this);
+    },
+
+    _sortingComplete: function()
+    {
+        this.removeEventListener("sorting complete", this._sortingComplete, this);
+        this._populatedAndSorted = true;
+        this.dispatchEventToListeners(WebInspector.HeapSnapshotSortableDataGrid.Events.ContentShown, this);
+    },
+
+    /**
+     * @override
+     */
+    willHide: function()
+    {
+        this._clearCurrentHighlight();
+    },
+
+    /**
+     * @param {WebInspector.ContextMenu} contextMenu
+     */
+    populateContextMenu: function(contextMenu, event)
+    {
+        var td = event.target.enclosingNodeOrSelfWithNodeName("td");
+        if (!td)
+            return;
+        var node = td.heapSnapshotNode;
+        if (node instanceof WebInspector.HeapSnapshotInstanceNode || node instanceof WebInspector.HeapSnapshotObjectNode) {
+            function revealInDominatorsView()
+            {
+                WebInspector.panels.profiles.showObject(node.snapshotNodeId, "Dominators");
+            }
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Dominators View"), revealInDominatorsView.bind(this));
+        } else if (node instanceof WebInspector.HeapSnapshotDominatorObjectNode) {
+            function revealInSummaryView()
+            {
+                WebInspector.panels.profiles.showObject(node.snapshotNodeId, "Summary");
+            }
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInSummaryView.bind(this));
+        }
     },
 
     resetSortingCache: function()
@@ -167,8 +224,8 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             if (child.expanded)
                 child.sort();
         }
-        this.recursiveSortingLeave();
         this.updateVisibleNodes();
+        this.recursiveSortingLeave();
     },
 
     appendChildAfterSorting: function(child)
