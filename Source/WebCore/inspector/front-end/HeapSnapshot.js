@@ -458,7 +458,8 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get dominatorIndex()
     {
-        return this._snapshot._dominatorsTree[this.nodeIndex / this._snapshot._nodeFieldCount];
+        var nodeFieldCount = this._snapshot._nodeFieldCount;
+        return this._snapshot._dominatorsTree[this.nodeIndex / this._snapshot._nodeFieldCount] * nodeFieldCount;
     },
 
     get edges()
@@ -720,7 +721,8 @@ WebInspector.HeapSnapshot.prototype = {
         this._calculateFlags();
         this._calculateObjectToWindowDistance();
         var result = this._buildPostOrderIndex();
-        this._dominatorsTree = this._buildDominatorTree(result.postOrderIndex2NodeIndex, result.nodeOrdinal2PostOrderIndex);
+        // Actually it is array that maps node ordinal number to dominator node ordinal number.
+        this._dominatorsTree = this._buildDominatorTree(result.postOrderIndex2NodeOrdinal, result.nodeOrdinal2PostOrderIndex);
         this._calculateRetainedSizes();
         this._buildDominatedNodes();
     },
@@ -1087,7 +1089,7 @@ WebInspector.HeapSnapshot.prototype = {
         var flag = this._nodeFlags.pageObject;
 
         var nodesToVisit = new Uint32Array(nodeCount);
-        var postOrderIndex2NodeIndex = new Uint32Array(nodeCount);
+        var postOrderIndex2NodeOrdinal = new Uint32Array(nodeCount);
         var nodeOrdinal2PostOrderIndex = new Uint32Array(nodeCount);
         var painted = new Uint8Array(nodeCount);
         var nodesToVisitLength = 0;
@@ -1125,21 +1127,21 @@ WebInspector.HeapSnapshot.prototype = {
                 }
             } else {
                 nodeOrdinal2PostOrderIndex[nodeOrdinal] = postOrderIndex;
-                postOrderIndex2NodeIndex[postOrderIndex++] = nodeIndex;
+                postOrderIndex2NodeOrdinal[postOrderIndex++] = nodeOrdinal;
                 --nodesToVisitLength;
             }
         }
-        return {postOrderIndex2NodeIndex: postOrderIndex2NodeIndex, nodeOrdinal2PostOrderIndex: nodeOrdinal2PostOrderIndex};
+        return {postOrderIndex2NodeOrdinal: postOrderIndex2NodeOrdinal, nodeOrdinal2PostOrderIndex: nodeOrdinal2PostOrderIndex};
     },
 
     // The algorithm is based on the article:
     // K. Cooper, T. Harvey and K. Kennedy "A Simple, Fast Dominance Algorithm"
     // Softw. Pract. Exper. 4 (2001), pp. 1-10.
     /**
-     * @param {Array.<number>} postOrderIndex2NodeIndex
+     * @param {Array.<number>} postOrderIndex2NodeOrdinal
      * @param {Array.<number>} nodeOrdinal2PostOrderIndex
      */
-    _buildDominatorTree: function(postOrderIndex2NodeIndex, nodeOrdinal2PostOrderIndex)
+    _buildDominatorTree: function(postOrderIndex2NodeOrdinal, nodeOrdinal2PostOrderIndex)
     {
         var nodeFieldCount = this._nodeFieldCount;
         var nodes = this._nodes;
@@ -1158,7 +1160,7 @@ WebInspector.HeapSnapshot.prototype = {
         var flags = this._flags;
         var flag = this._nodeFlags.pageObject;
 
-        var nodesCount = postOrderIndex2NodeIndex.length;
+        var nodesCount = postOrderIndex2NodeOrdinal.length;
         var rootPostOrderedIndex = nodesCount - 1;
         var noEntry = nodesCount;
         var dominators = new Uint32Array(nodesCount);
@@ -1193,7 +1195,7 @@ WebInspector.HeapSnapshot.prototype = {
                 // then it can't propagate any further.
                 if (dominators[postOrderIndex] === rootPostOrderedIndex)
                     continue;
-                var nodeOrdinal = postOrderIndex2NodeIndex[postOrderIndex] / nodeFieldCount;
+                var nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
                 var nodeFlag = !!(flags[nodeOrdinal] & flag);
                 var newDominatorIndex = noEntry;
                 var beginRetainerIndex = firstRetainerIndex[nodeOrdinal];
@@ -1231,8 +1233,8 @@ WebInspector.HeapSnapshot.prototype = {
                 if (newDominatorIndex !== noEntry && dominators[postOrderIndex] !== newDominatorIndex) {
                     dominators[postOrderIndex] = newDominatorIndex;
                     changed = true;
-                    nodeIndex = postOrderIndex2NodeIndex[postOrderIndex];
-                    nodeOrdinal = nodeIndex / nodeFieldCount;
+                    nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
+                    nodeIndex = nodeOrdinal * nodeFieldCount;
                     beginEdgeToNodeFieldIndex = nodes[nodeIndex + firstEdgeIndexOffset] + edgeToNodeOffset;
                     endEdgeToNodeFieldIndex = nodeOrdinal < nodesCount - 1
                                                   ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
@@ -1249,8 +1251,8 @@ WebInspector.HeapSnapshot.prototype = {
 
         var dominatorsTree = new Uint32Array(nodesCount);
         for (var postOrderIndex = 0, l = dominators.length; postOrderIndex < l; ++postOrderIndex) {
-            var nodeOrdinal = postOrderIndex2NodeIndex[postOrderIndex] / nodeFieldCount;
-            dominatorsTree[nodeOrdinal] = postOrderIndex2NodeIndex[dominators[postOrderIndex]];
+            var nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
+            dominatorsTree[nodeOrdinal] = postOrderIndex2NodeOrdinal[dominators[postOrderIndex]];
         }
         return dominatorsTree;
     },
@@ -1274,7 +1276,7 @@ WebInspector.HeapSnapshot.prototype = {
             var currentNodeOrdinal = nodeOrdinal;
             retainedSizes[currentNodeOrdinal] += nodeSelfSize;
             do {
-                currentNodeOrdinal = dominatorsTree[currentNodeOrdinal] / nodeFieldCount;
+                currentNodeOrdinal = dominatorsTree[currentNodeOrdinal];
                 retainedSizes[currentNodeOrdinal] += nodeSelfSize;
             } while (currentNodeOrdinal !== rootNodeOrdinal);
         }
@@ -1297,7 +1299,7 @@ WebInspector.HeapSnapshot.prototype = {
         var nodeFieldCount = this._nodeFieldCount;
         var dominatorsTree = this._dominatorsTree;
         for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal)
-            ++indexArray[dominatorsTree[nodeOrdinal] / this._nodeFieldCount];
+            ++indexArray[dominatorsTree[nodeOrdinal]];
         // Put in the first slot of each dominatedNodes slice the count of entries
         // that will be filled.
         var firstDominatedNodeIndex = 0;
@@ -1310,7 +1312,7 @@ WebInspector.HeapSnapshot.prototype = {
         // Fill up the dominatedNodes array with indexes of dominated nodes. Skip the root (node at
         // index 0) as it is the only node that dominates itself.
         for (var nodeOrdinal = 1, l = this.nodeCount; nodeOrdinal < l; ++nodeOrdinal) {
-            var dominatorOrdinal = dominatorsTree[nodeOrdinal] / nodeFieldCount;
+            var dominatorOrdinal = dominatorsTree[nodeOrdinal];
             var dominatedRefIndex = indexArray[dominatorOrdinal];
             dominatedRefIndex += (--dominatedNodes[dominatedRefIndex]);
             dominatedNodes[dominatedRefIndex] = nodeOrdinal * nodeFieldCount;

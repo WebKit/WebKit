@@ -1,3 +1,17 @@
+2012-05-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: HeapSnapshot: speed-up calculateRetainedSize functon.
+        https://bugs.webkit.org/show_bug.cgi?id=87124
+
+        I found that in all dominators related functions we use nodeOrdinals.
+        At the moment we divide nodeIndex to nodeFieldCount and this operation too expensive for these simple algorithms.
+
+        Reviewed by Yury Semikhatsky.
+
+        Covered by existing tests.
+
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Test expectations need updating

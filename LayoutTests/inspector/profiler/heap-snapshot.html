@@ -98,10 +98,10 @@ function test()
         function heapSnapshotPostOrderIndexTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            var postOrderIndex = snapshot._buildPostOrderIndex().postOrderIndex2NodeIndex;
-            var expected = [28,35,21,14,7,0];
+            var postOrderIndex2NodeOrdinal = snapshot._buildPostOrderIndex().postOrderIndex2NodeOrdinal;
+            var expected = [4,5,3,2,1,0];
             for (var i = 0; i < expected.length; ++i)
-                InspectorTest.assertEquals(expected[i], postOrderIndex[i], "Post ordered indexes");
+                InspectorTest.assertEquals(expected[i], postOrderIndex2NodeOrdinal[i], "Post ordered indexes");
             next();
         },
 
@@ -109,8 +109,8 @@ function test()
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
             var result = snapshot._buildPostOrderIndex();
-            var dominatorsTree = snapshot._buildDominatorTree(result.postOrderIndex2NodeIndex, result.nodeOrdinal2PostOrderIndex);
-            var expected = [0, 0, 0, 0, 14, 21];
+            var dominatorsTree = snapshot._buildDominatorTree(result.postOrderIndex2NodeOrdinal, result.nodeOrdinal2PostOrderIndex);
+            var expected = [0, 0, 0, 0, 2, 3];
             for (var i = 0; i < expected.length; ++i)
                 InspectorTest.assertEquals(expected[i], dominatorsTree[i], "Dominators Tree");
             next();
