@@ -32,19 +32,19 @@
  * @constructor
  * @extends {WebInspector.SourceFrame}
  * @param {WebInspector.ScriptsPanel} scriptsPanel
- * @param {WebInspector.UISourceCode} uiSourceCode
+ * @param {WebInspector.JavaScriptSource} javaScriptSource
  */
-WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
+WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
 {
     this._scriptsPanel = scriptsPanel;
     this._breakpointManager = WebInspector.breakpointManager;
-    this._uiSourceCode = uiSourceCode;
+    this._javaScriptSource = javaScriptSource;
 
-    var locations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
+    var locations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
     for (var i = 0; i < locations.length; ++i)
         this._breakpointAdded({data:locations[i]});
 
-    WebInspector.SourceFrame.call(this, uiSourceCode);
+    WebInspector.SourceFrame.call(this, javaScriptSource);
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
@@ -55,18 +55,13 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
 
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
 }
 
 WebInspector.JavaScriptSourceFrame.prototype = {
-    get uiSourceCode()
-    {
-        return this._uiSourceCode;
-    },
-
     // View events
     wasShown: function()
     {
@@ -84,7 +79,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     canEditSource: function()
     {
-        return this._uiSourceCode.isEditable();
+        return this._javaScriptSource.isEditable();
     },
 
     /**
@@ -92,11 +87,11 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
-        if (!this._uiSourceCode.isDirty())
+        if (!this._javaScriptSource.isDirty())
             return;
 
         this._isCommittingEditing = true;
-        this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this));
+        this._javaScriptSource.commitWorkingCopy(this._didEditContent.bind(this));
     },
 
     /**
@@ -108,13 +103,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         var content = /** @type {string} */ event.data.content;
 
-        if (this._uiSourceCode.togglingFormatter())
-            this.setContent(content, false, this._uiSourceCode.mimeType());
+        if (this._javaScriptSource.togglingFormatter())
+            this.setContent(content, false, this._javaScriptSource.mimeType());
         else {
-            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
+            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
             for (var i = 0; i < breakpointLocations.length; ++i)
                 breakpointLocations[i].breakpoint.remove();
-            this.setContent(content, false, this._uiSourceCode.mimeType());
+            this.setContent(content, false, this._javaScriptSource.mimeType());
         }
     },
 
@@ -122,7 +117,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Continue to here" : "Continue to Here"), this._continueToLine.bind(this, lineNumber));
 
-        var breakpoint = this._breakpointManager.findBreakpoint(this._uiSourceCode, lineNumber);
+        var breakpoint = this._breakpointManager.findBreakpoint(this._javaScriptSource, lineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add breakpoint" : "Add Breakpoint"), this._setBreakpoint.bind(this, lineNumber, "", true));
@@ -149,21 +144,21 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(evaluateLabel, WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
             contextMenu.appendSeparator();
         }
-        contextMenu.appendApplicableItems(this._uiSourceCode);
+        contextMenu.appendApplicableItems(this._javaScriptSource);
     },
 
     afterTextChanged: function(oldRange, newRange)
     {
-        this._uiSourceCode.setWorkingCopy(this.textModel.text);
-        if (!this._uiSourceCode.isDirty())
+        this._javaScriptSource.setWorkingCopy(this.textModel.text);
+        if (!this._javaScriptSource.isDirty())
             this._didEditContent(null);
     },
 
     beforeTextChanged: function()
     {
-        if (!this._uiSourceCode.isDirty()) {
+        if (!this._javaScriptSource.isDirty()) {
             // Disable all breakpoints in the model, store them as muted breakpoints.
-            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
+            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
             var lineNumbers = {};
             for (var i = 0; i < breakpointLocations.length; ++i) {
                 var breakpoint = breakpointLocations[i].breakpoint;
@@ -353,7 +348,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _onMouseDown: function(event)
     {
-        if (this._uiSourceCode.isDirty())
+        if (this._javaScriptSource.isDirty())
             return;
 
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
@@ -363,7 +358,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         var lineNumber = target.lineNumber;
 
-        var breakpoint = this._breakpointManager.findBreakpoint(this._uiSourceCode, lineNumber);
+        var breakpoint = this._breakpointManager.findBreakpoint(this._javaScriptSource, lineNumber);
         if (breakpoint) {
             if (event.shiftKey)
                 breakpoint.setEnabled(!breakpoint.enabled());
@@ -475,7 +470,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         var uiLocation = /** @type {WebInspector.UILocation} */ event.data.uiLocation;
 
-        if (uiLocation.uiSourceCode !== this._uiSourceCode)
+        if (uiLocation.uiSourceCode !== this._javaScriptSource)
             return;
 
         var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ event.data.breakpoint;
@@ -486,11 +481,11 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     _breakpointRemoved: function(event)
     {
         var uiLocation = /** @type {WebInspector.UILocation} */ event.data.uiLocation;
-        if (uiLocation.uiSourceCode !== this._uiSourceCode)
+        if (uiLocation.uiSourceCode !== this._javaScriptSource)
             return;
 
         var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ event.data.breakpoint;
-        var remainingBreakpoint = this._breakpointManager.findBreakpoint(this._uiSourceCode, uiLocation.lineNumber);
+        var remainingBreakpoint = this._breakpointManager.findBreakpoint(this._javaScriptSource, uiLocation.lineNumber);
         if (!remainingBreakpoint && this.loaded)
             this._removeBreakpointDecoration(uiLocation.lineNumber);
     },
@@ -519,13 +514,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (typeof this._executionLineNumber === "number")
             this.setExecutionLine(this._executionLineNumber);
 
-        var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
+        var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
         for (var i = 0; i < breakpointLocations.length; ++i) {
             var breakpoint = breakpointLocations[i].breakpoint;
             this._addBreakpointDecoration(breakpointLocations[i].uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled(), false);
         }
 
-        var messages = this._uiSourceCode.consoleMessages();
+        var messages = this._javaScriptSource.consoleMessages();
         for (var i = 0; i < messages.length; ++i) {
             var message = messages[i];
             this.addMessageToSource(message.lineNumber, message.originalMessage);
@@ -539,7 +534,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _setBreakpoint: function(lineNumber, condition, enabled)
     {
-        this._breakpointManager.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
+        this._breakpointManager.setBreakpoint(this._javaScriptSource, lineNumber, condition, enabled);
     },
 
     /**
@@ -547,7 +542,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _continueToLine: function(lineNumber)
     {
-        var rawLocation = this._uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
+        var rawLocation = this._javaScriptSource.uiLocationToRawLocation(lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     }
 }
