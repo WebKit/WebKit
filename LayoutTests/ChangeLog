@@ -1,3 +1,17 @@
+2012-05-22  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Add missing baselines for r118039.
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/printing/iframe-print-expected.png: Added.
+        * platform/chromium-mac-leopard/printing/iframe-print-expected.png: Added.
+        * platform/chromium-mac-snowleopard/printing/iframe-print-expected.png: Added.
+        * platform/chromium-mac/printing/iframe-print-expected.png: Added.
+        * platform/chromium-mac/printing/iframe-print-expected.txt: Added.
+        * platform/chromium-win/printing/iframe-print-expected.png: Added.
+        * platform/chromium-win/printing/iframe-print-expected.txt: Added.
+
 2012-05-22  Jessie Berlin  <jberlin@apple.com>
 
         WK2 Skipped list should be updated to reflect that
