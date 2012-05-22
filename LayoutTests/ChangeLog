@@ -1,3 +1,9 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium test_expectations update, added bug number for a couple of skipped tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-22  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Add missing baselines for r118039.

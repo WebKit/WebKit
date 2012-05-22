@@ -3763,9 +3763,9 @@ BUGWK87075 : svg/animations/animate-path-animation-qQ-tT-inverse.html = PASS TIM
 BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-4.html = PASS TIMEOUT
 
 // Ref-tests can't have platform specific results.
-BUG_EAE SKIP : fast/regions/floats-basic-in-variable-width-regions.html = FAIL
-BUG_EAE SKIP : fast/regions/overflow-in-uniform-regions.html = FAIL
-BUG_EAE SKIP : fast/regions/render-region-renderer.html = FAIL
+BUGWK87175 SKIP : fast/regions/floats-basic-in-variable-width-regions.html = FAIL
+BUGWK87175 SKIP : fast/regions/overflow-in-uniform-regions.html = FAIL
+BUGWK87175 SKIP : fast/regions/render-region-renderer.html = FAIL
 
 // Failing since sub-pixel was turned on, eae and leviw working on it.
 BUG_EAE SKIP : fast/repaint/reflection-repaint-test.html = FAIL
