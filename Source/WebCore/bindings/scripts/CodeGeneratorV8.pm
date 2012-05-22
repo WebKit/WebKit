@@ -1054,7 +1054,7 @@ sub GenerateNormalAttrSetter
         my $argType = GetTypeFromSignature($attribute->signature);
         if (IsWrapperType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+            push(@implContentDecls, "        V8Proxy::throwTypeError(0, info.GetIsolate());\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
         }
@@ -1354,7 +1354,7 @@ END
         push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Callback(args);\n");
     }
     push(@implContentDecls, <<END);
-    V8Proxy::throwTypeError();
+    V8Proxy::throwTypeError(0, args.GetIsolate());
     return v8::Handle<v8::Value>();
 END
     push(@implContentDecls, "}\n\n");
@@ -1663,7 +1663,7 @@ sub GenerateParametersCheck
                 my $argType = GetTypeFromSignature($parameter);
                 if (IsWrapperType($argType)) {
                     $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n";
-                    $parameterCheckString .= "        V8Proxy::throwTypeError();\n";
+                    $parameterCheckString .= "        V8Proxy::throwTypeError(0, args.GetIsolate());\n";
                     $parameterCheckString .= "        return v8::Handle<v8::Value>();\n";
                     $parameterCheckString .= "    }\n";
                 }

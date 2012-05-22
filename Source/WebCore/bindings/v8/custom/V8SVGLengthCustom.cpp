@@ -66,7 +66,7 @@ void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     }
 
     if (!isUndefinedOrNull(value) && !value->IsNumber() && !value->IsBoolean()) {
-        V8Proxy::throwTypeError();
+        V8Proxy::throwTypeError(0, info.GetIsolate());
         return;
     }
 

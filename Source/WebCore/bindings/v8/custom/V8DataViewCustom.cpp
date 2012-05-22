@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
         return args.Holder();
     }
     if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0]))
-        return V8Proxy::throwTypeError();
+        return V8Proxy::throwTypeError(0, args.GetIsolate());
     return constructWebGLArrayWithArrayBufferArgument<DataView, char>(args, &info, v8::kExternalByteArray, false);
 }
 
