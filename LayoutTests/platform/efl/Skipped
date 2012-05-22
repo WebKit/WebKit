@@ -732,11 +732,6 @@ fast/text/midword-break-after-breakable-char.html
 fast/events/tab-focus-anchor.html
 fast/history/back-forward-reset-after-error-handling.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
-fast/spatial-navigation/snav-container-white-space.html
-fast/spatial-navigation/snav-fully-aligned-horizontally.html
-fast/spatial-navigation/snav-iframe-no-scrollable-content.html
-fast/spatial-navigation/snav-multiple-select.html
-fast/spatial-navigation/snav-single-select.html
 http/tests/canvas/webgl/origin-clean-conformance.html
 http/tests/inspector/network/ping.html
 http/tests/navigation/go-back-to-error-page.html

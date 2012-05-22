@@ -532,6 +532,11 @@ BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 // Font kerning issue, fails on GTK as well.
 BUGWK76048 : fast/text/font-kerning.html = IMAGE
 
+// Fails on GTK as well
+BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
+BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
+BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
+
 // Ligatures rendering issue.
 BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
 
