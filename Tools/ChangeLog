@@ -1,3 +1,15 @@
+2012-05-22  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt][WK2] EventSenderProxy::keyDown doesn't use the helper functions to send events
+        https://bugs.webkit.org/show_bug.cgi?id=87044
+
+        Reviewed by Alexis Menard.
+
+        Use sendOrQueueEvent instead of m_testController->mainWebView()->sendEvent
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
 2012-05-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk][LayoutTests] Repaint the complete WebKitWebView before dumping pixel results

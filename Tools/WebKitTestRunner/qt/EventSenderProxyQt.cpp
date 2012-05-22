@@ -238,10 +238,12 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
             code = Qt::Key_Menu;
         }
     }
-    QKeyEvent event(QEvent::KeyPress, code, modifiers, keyText);
-    m_testController->mainWebView()->sendEvent(&event);
-    QKeyEvent event2(QEvent::KeyRelease, code, modifiers, keyText);
-    m_testController->mainWebView()->sendEvent(&event2);
+
+    QKeyEvent* pressEvent = new QKeyEvent(QEvent::KeyPress, code, modifiers, keyText);
+    sendOrQueueEvent(pressEvent);
+    QKeyEvent* releaseEvent = new QKeyEvent(QEvent::KeyRelease, code, modifiers, keyText);
+    sendOrQueueEvent(releaseEvent);
+
 }
 
 void EventSenderProxy::updateClickCountForButton(int button)
