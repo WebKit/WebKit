@@ -444,13 +444,15 @@ WebInspector.HeapSnapshotNode.prototype = {
         }
     },
 
-    get classIndex()
+    classIndex: function()
     {
-        var type = this._type();
+        var snapshot = this._snapshot;
+        var nodes = snapshot._nodes;
+        var type = nodes[this.nodeIndex + snapshot._nodeTypeOffset];;
         switch (type) {
-        case this._snapshot._nodeObjectType:
-        case this._snapshot._nodeNativeType:
-            return this._name();
+        case snapshot._nodeObjectType:
+        case snapshot._nodeNativeType:
+            return nodes[this.nodeIndex + snapshot._nodeNameOffset];
         default:
             return -1 - type;
         }
@@ -963,6 +965,7 @@ WebInspector.HeapSnapshot.prototype = {
     {
         var aggregates = {};
         var aggregatesByClassName = {};
+        var classIndexes = [];
         var nodes = this._nodes;
         var nodesLength = nodes.length;
         var nodeNativeType = this._nodeNativeType;
@@ -980,7 +983,7 @@ WebInspector.HeapSnapshot.prototype = {
                 continue;
             if (!selfSize && nodes[nodeIndex + nodeTypeOffset] !== nodeNativeType)
                 continue;
-            var classIndex = node.classIndex;
+            var classIndex = node.classIndex();
             if (!(classIndex in aggregates)) {
                 var nodeType = node.type;
                 var nameMatters = nodeType === "object" || nodeType === "native";
@@ -994,6 +997,7 @@ WebInspector.HeapSnapshot.prototype = {
                     idxs: [nodeIndex]
                 };
                 aggregates[classIndex] = value;
+                classIndexes.push(classIndex);
                 aggregatesByClassName[node.className] = value;
             } else {
                 var clss = aggregates[classIndex];
@@ -1005,8 +1009,10 @@ WebInspector.HeapSnapshot.prototype = {
         }
 
         // Shave off provisionally allocated space.
-        for (var classIndex in aggregates)
-            aggregates[classIndex].idxs = aggregates[classIndex].idxs.slice(0);
+        for (var i = 0, l = classIndexes.length; i < l; ++i) {
+            var classIndex = classIndexes[i];
+            aggregates[classIndex].idxs = aggregates[classIndex].idxs.slice();
+        }
         return {aggregatesByClassName: aggregatesByClassName, aggregatesByClassIndex: aggregates};
     },
 
@@ -1028,7 +1034,7 @@ WebInspector.HeapSnapshot.prototype = {
         while (list.length) {
             var nodeIndex = list.pop();
             node.nodeIndex = nodeIndex;
-            var classIndex = node.classIndex;
+            var classIndex = node.classIndex();
             var seen = !!seenClassNameIndexes[classIndex];
             var nodeOrdinal = nodeIndex / nodeFieldCount;
             var dominatedIndexFrom = firstDominatedNodeIndex[nodeOrdinal];
