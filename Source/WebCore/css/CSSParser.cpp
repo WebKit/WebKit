@@ -494,7 +494,7 @@ static bool parseSimpleLengthValue(StylePropertySet* declaration, CSSPropertyID 
     return true;
 }
 
-static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int valueID)
+static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int valueID, const CSSParserContext& parserContext)
 {
     if (!valueID)
         return false;
@@ -532,6 +532,17 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueLtr || valueID == CSSValueRtl)
             return true;
         break;
+    case CSSPropertyDisplay:
+        // inline | block | list-item | run-in | inline-block | table |
+        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
+        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
+        // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
+        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlex) || valueID == CSSValueNone)
+            return true;
+        if (parserContext.isCSSGridLayoutEnabled && (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid))
+            return true;
+        break;
+
     case CSSPropertyEmptyCells: // show | hide | inherit
         if (valueID == CSSValueShow || valueID == CSSValueHide)
             return true;
@@ -819,6 +830,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:
+    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFloat:
     case CSSPropertyFontStyle:
@@ -902,7 +914,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
-static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important)
+static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext)
 {
     ASSERT(!string.isEmpty());
 
@@ -922,7 +934,7 @@ static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID prope
         value = cssValuePool().createInheritedValue();
     else if (valueID == CSSValueInitial)
         value = cssValuePool().createExplicitInitialValue();
-    else if (isValidKeywordPropertyAndValue(propertyId, valueID))
+    else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext))
         value = cssValuePool().createIdentifierValue(valueID);
     else
         return false;
@@ -948,7 +960,7 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
         return true;
     if (parseColorValue(declaration, propertyID, string, important, cssParserMode))
         return true;
-    if (parseKeywordValue(declaration, propertyID, string, important))
+    if (parseKeywordValue(declaration, propertyID, string, important, contextStyleSheet->parserContext()))
         return true;
 
     CSSParserContext context(cssParserMode);
@@ -1445,7 +1457,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     }
 
     if (isKeywordPropertyID(propId)) {
-        if (!isValidKeywordPropertyAndValue(propId, id))
+        if (!isValidKeywordPropertyAndValue(propId, id, m_context))
             return false;
         if (m_valueList->next() && !inShorthand())
             return false;
@@ -1457,17 +1469,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     RefPtr<CSSValue> parsedValue;
 
     switch (propId) {
-    case CSSPropertyDisplay:
-        // inline | block | list-item | run-in | inline-block | table |
-        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-        // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
-        if ((id >= CSSValueInline && id <= CSSValueWebkitInlineFlex) || id == CSSValueNone)
-            validPrimitive = true;
-        else if (cssGridLayoutEnabled() && (id == CSSValueWebkitGrid || id == CSSValueWebkitInlineGrid))
-            validPrimitive = true;
-        break;
-
     case CSSPropertySize:                 // <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
         return parseSize(propId, important);
 
@@ -2474,6 +2475,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyDirection:
+    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFloat:
     case CSSPropertyFontStyle:
@@ -4388,7 +4390,7 @@ bool CSSParser::parseFont(bool important)
     bool fontWeightParsed = false;
     CSSParserValue* value;
     while ((value = m_valueList->current())) {
-        if (!fontStyleParsed && isValidKeywordPropertyAndValue(CSSPropertyFontStyle, value->id)) {
+        if (!fontStyleParsed && isValidKeywordPropertyAndValue(CSSPropertyFontStyle, value->id, m_context)) {
             addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(value->id), important);
             fontStyleParsed = true;
         } else if (!fontVariantParsed && (value->id == CSSValueNormal || value->id == CSSValueSmallCaps)) {
