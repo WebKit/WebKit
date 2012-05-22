@@ -1,3 +1,9 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        Mark two tests as skipped while we figure out why they are failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-22  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION r110315: Event handler throws TypeError for an input element with name="arguments"

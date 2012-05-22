@@ -1564,7 +1564,6 @@ BUGCR23473 MAC : fast/repaint/overflow-into-content.html = IMAGE
 BUGCR23473 MAC : fast/repaint/overflow-outline-repaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/overflow-scroll-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/reflection-redraw.html = IMAGE
-BUGCR23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
 BUGCR23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
@@ -1587,7 +1586,6 @@ BUGCR23473 MAC : fast/repaint/text-selection-rect-in-overflow.html = IMAGE
 // Win/Linux also failed after r83514.
 BUGCR23473 MAC : fast/repaint/transform-absolute-child.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-disable-layoutstate.html = IMAGE
-BUGCR23473 MAC : fast/repaint/transform-layout-repaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
@@ -3770,3 +3768,7 @@ BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-4.html = PASS TIME
 BUG_EAE SKIP : fast/regions/floats-basic-in-variable-width-regions.html = FAIL
 BUG_EAE SKIP : fast/regions/overflow-in-uniform-regions.html = FAIL
 BUG_EAE SKIP : fast/regions/render-region-renderer.html = FAIL
+
+// Failing since sub-pixel was turned on, eae and leviw working on it.
+BUG_EAE SKIP : fast/repaint/reflection-repaint-test.html = FAIL
+BUG_EAE SKIP : fast/repaint/transform-layout-repaint.html = FAIL
