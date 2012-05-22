@@ -53,14 +53,9 @@ namespace WebCore {
 
 inline static double sliderPosition(HTMLInputElement* element)
 {
-    StepRange stepRange(element->createStepRange(RejectAny));
-
-    double oldValue;
-    bool parseSuccess = parseToDoubleForNumberType(element->value(), &oldValue);
-    if (!parseSuccess)
-        oldValue = stepRange.defaultValue();
-    double newValue = stepRange.clampValue(oldValue);
-    return stepRange.proportionFromValue(newValue);
+    const StepRange stepRange(element->createStepRange(RejectAny));
+    const double oldValue = parseToDoubleForNumberType(element->value(), stepRange.defaultValue());
+    return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 
 inline static bool hasVerticalAppearance(HTMLInputElement* input)

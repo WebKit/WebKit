@@ -99,7 +99,7 @@ void NumberInputType::setValueAsNumber(double newValue, TextFieldEventBehavior e
 
 bool NumberInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !parseToDoubleForNumberType(value, 0);
+    return !value.isEmpty() && !isfinite(parseToDoubleForNumberType(value));
 }
 
 bool NumberInputType::typeMismatch() const
@@ -127,15 +127,15 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
     preferredSize = defaultSize;
 
     unsigned minValueDecimalPlaces;
-    double minValueDouble;
     String minValue = element()->fastGetAttribute(minAttr);
-    if (!parseToDoubleForNumberTypeWithDecimalPlaces(minValue, &minValueDouble, &minValueDecimalPlaces))
+    double minValueDouble = parseToDoubleForNumberTypeWithDecimalPlaces(minValue, &minValueDecimalPlaces);
+    if (!isfinite(minValueDouble))
         return false;
 
     unsigned maxValueDecimalPlaces;
-    double maxValueDouble;
     String maxValue = element()->fastGetAttribute(maxAttr);
-    if (!parseToDoubleForNumberTypeWithDecimalPlaces(maxValue, &maxValueDouble, &maxValueDecimalPlaces))
+    double maxValueDouble = parseToDoubleForNumberTypeWithDecimalPlaces(maxValue, &maxValueDecimalPlaces);
+    if (!isfinite(maxValueDouble))
         return false;
 
     if (maxValueDouble < minValueDouble) {
@@ -143,12 +143,12 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
         maxValueDecimalPlaces = minValueDecimalPlaces;
     }
 
-    unsigned stepValueDecimalPlaces;
-    double stepValueDouble;
     String stepValue = element()->fastGetAttribute(stepAttr);
     if (equalIgnoringCase(stepValue, "any"))
         return false;
-    if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepValue, &stepValueDouble, &stepValueDecimalPlaces)) {
+    unsigned stepValueDecimalPlaces;
+    double stepValueDouble = parseToDoubleForNumberTypeWithDecimalPlaces(stepValue, &stepValueDecimalPlaces);
+    if (!isfinite(stepValueDouble)) {
         stepValueDouble = 1;
         stepValueDecimalPlaces = 0;
     }
@@ -188,20 +188,12 @@ void NumberInputType::handleWheelEvent(WheelEvent* event)
 
 double NumberInputType::parseToDouble(const String& src, double defaultValue) const
 {
-    double numberValue;
-    if (!parseToDoubleForNumberType(src, &numberValue))
-        return defaultValue;
-    ASSERT(isfinite(numberValue));
-    return numberValue;
+    return parseToDoubleForNumberType(src, defaultValue);
 }
 
 double NumberInputType::parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
 {
-    double numberValue;
-    if (!parseToDoubleForNumberTypeWithDecimalPlaces(src, &numberValue, decimalPlaces))
-        return defaultValue;
-    ASSERT(isfinite(numberValue));
-    return numberValue;
+    return parseToDoubleForNumberTypeWithDecimalPlaces(src, decimalPlaces, defaultValue);
 }
 
 String NumberInputType::serialize(double value) const
@@ -236,9 +228,10 @@ String NumberInputType::visibleValue() const
         return currentValue;
     // FIXME: The following three lines should be removed when we
     // remove the second argument of convertToLocalizedNumber().
-    double doubleValue = numeric_limits<double>::quiet_NaN();
+    // Note: parseToDoubleForNumberTypeWithDecimalPlaces set zero to decimalPlaces
+    // if currentValue isn't valid floating pointer number.
     unsigned decimalPlace;
-    parseToDoubleForNumberTypeWithDecimalPlaces(currentValue, &doubleValue, &decimalPlace);
+    parseToDoubleForNumberTypeWithDecimalPlaces(currentValue, &decimalPlace);
     return convertToLocalizedNumber(currentValue, decimalPlace);
 }
 
@@ -262,7 +255,7 @@ String NumberInputType::sanitizeValue(const String& proposedValue) const
 {
     if (proposedValue.isEmpty())
         return proposedValue;
-    return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : emptyAtom.string();
+    return isfinite(parseToDoubleForNumberType(proposedValue)) ? proposedValue : emptyString();
 }
 
 bool NumberInputType::hasUnacceptableValue()

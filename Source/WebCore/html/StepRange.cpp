@@ -122,7 +122,8 @@ StepRange::DoubleWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling
     }
 
     DoubleWithDecimalPlacesOrMissing step(0);
-    if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.value.value, &step.value.decimalPlaces) || step.value.value <= 0.0)
+    step.value.value = parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.value.decimalPlaces);
+    if (!isfinite(step.value.value) || step.value.value <= 0.0)
         return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
 
     switch (stepDescription.stepValueShouldBe) {

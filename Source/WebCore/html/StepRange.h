@@ -106,13 +106,13 @@ public:
     bool stepMismatch(double) const;
 
     // Clamp the middle value according to the step
-    double defaultValue()
+    double defaultValue() const
     {
         return clampValue((m_minimum + m_maximum) / 2);
     }
 
     // Map value into 0-1 range
-    double proportionFromValue(double value)
+    double proportionFromValue(double value) const
     {
         if (m_minimum == m_maximum)
             return 0;
@@ -121,7 +121,7 @@ public:
     }
 
     // Map from 0-1 range to value
-    double valueFromProportion(double proportion)
+    double valueFromProportion(double proportion) const
     {
         return m_minimum + proportion * (m_maximum - m_minimum);
     }

@@ -81,9 +81,7 @@ void HTMLMeterElement::parseAttribute(const Attribute& attribute)
 
 double HTMLMeterElement::min() const
 {
-    double min = 0;
-    parseToDoubleForNumberType(getAttribute(minAttr), &min);
-    return min;
+    return parseToDoubleForNumberType(getAttribute(minAttr), 0);
 }
 
 void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
@@ -97,9 +95,7 @@ void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
 
 double HTMLMeterElement::max() const
 {
-    double max = std::max(1.0, min());
-    parseToDoubleForNumberType(getAttribute(maxAttr), &max);
-    return std::max(max, min());
+    return std::max(parseToDoubleForNumberType(getAttribute(maxAttr), std::max(1.0, min())), min());
 }
 
 void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
@@ -113,8 +109,7 @@ void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
 
 double HTMLMeterElement::value() const
 {
-    double value = 0;
-    parseToDoubleForNumberType(getAttribute(valueAttr), &value);
+    double value = parseToDoubleForNumberType(getAttribute(valueAttr), 0);
     return std::min(std::max(value, min()), max());
 }
 
@@ -129,8 +124,7 @@ void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
 
 double HTMLMeterElement::low() const
 {
-    double low = min();
-    parseToDoubleForNumberType(getAttribute(lowAttr), &low);
+    double low = parseToDoubleForNumberType(getAttribute(lowAttr), min());
     return std::min(std::max(low, min()), max());
 }
 
@@ -145,8 +139,7 @@ void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
 
 double HTMLMeterElement::high() const
 {
-    double high = max();
-    parseToDoubleForNumberType(getAttribute(highAttr), &high);
+    double high = parseToDoubleForNumberType(getAttribute(highAttr), max());
     return std::min(std::max(high, low()), max());
 }
 
@@ -161,8 +154,7 @@ void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
 
 double HTMLMeterElement::optimum() const
 {
-    double optimum = (max() + min()) / 2;
-    parseToDoubleForNumberType(getAttribute(optimumAttr), &optimum);
+    double optimum = parseToDoubleForNumberType(getAttribute(optimumAttr), (max() + min()) / 2);
     return std::min(std::max(optimum, min()), max());
 }
 

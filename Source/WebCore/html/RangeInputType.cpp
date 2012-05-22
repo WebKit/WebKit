@@ -221,11 +221,7 @@ RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) c
 
 double RangeInputType::parseToDouble(const String& src, double defaultValue) const
 {
-    double numberValue;
-    if (!parseToDoubleForNumberType(src, &numberValue))
-        return defaultValue;
-    ASSERT(isfinite(numberValue));
-    return numberValue;
+    return parseToDoubleForNumberType(src, defaultValue);
 }
 
 String RangeInputType::serialize(double value) const

@@ -66,47 +66,49 @@ String serializeForNumberType(double number)
     return String(numberToString(number, buffer));
 }
 
-bool parseToDoubleForNumberType(const String& string, double* result)
+double parseToDoubleForNumberType(const String& string, double fallbackValue)
 {
     // See HTML5 2.5.4.3 `Real numbers.'
 
     // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
     UChar firstCharacter = string[0];
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
-        return false;
+        return fallbackValue;
 
     bool valid = false;
     double value = string.toDouble(&valid);
     if (!valid)
-        return false;
+        return fallbackValue;
 
     // NaN and infinity are considered valid by String::toDouble, but not valid here.
     if (!isfinite(value))
-        return false;
+        return fallbackValue;
 
     // Numbers are considered finite IEEE 754 single-precision floating point values.
     // See HTML5 2.5.4.3 `Real numbers.'
     if (-std::numeric_limits<float>::max() > value || value > std::numeric_limits<float>::max())
-        return false;
+        return fallbackValue;
 
-    if (result) {
-        // The following expression converts -0 to +0.
-        *result = value ? value : 0;
-    }
-
-    return true;
+    // The following expression converts -0 to +0.
+    return value ? value : 0;
 }
 
-bool parseToDoubleForNumberTypeWithDecimalPlaces(const String& string, double *result, unsigned *decimalPlaces)
+double parseToDoubleForNumberType(const String& string)
+{
+    return parseToDoubleForNumberType(string, std::numeric_limits<double>::quiet_NaN());
+}
+
+double parseToDoubleForNumberTypeWithDecimalPlaces(const String& string, unsigned *decimalPlaces, double fallbackValue)
 {
     if (decimalPlaces)
         *decimalPlaces = 0;
 
-    if (!parseToDoubleForNumberType(string, result))
-        return false;
+    double value = parseToDoubleForNumberType(string, std::numeric_limits<double>::quiet_NaN());
+    if (!isfinite(value))
+        return fallbackValue;
 
     if (!decimalPlaces)
-        return true;
+        return value;
 
     size_t dotIndex = string.find('.');
     size_t eIndex = string.find('e');
@@ -166,7 +168,12 @@ bool parseToDoubleForNumberTypeWithDecimalPlaces(const String& string, double *r
     else
         *decimalPlaces = static_cast<unsigned>(intDecimalPlaces);
 
-    return true;
+    return value;
+}
+
+double parseToDoubleForNumberTypeWithDecimalPlaces(const String& string, unsigned *decimalPlaces)
+{
+    return parseToDoubleForNumberTypeWithDecimalPlaces(string, decimalPlaces, std::numeric_limits<double>::quiet_NaN());
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
