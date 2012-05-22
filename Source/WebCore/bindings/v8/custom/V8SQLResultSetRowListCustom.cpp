@@ -43,23 +43,17 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
 {
     INC_STATS("DOM.SQLResultSetRowList.item()");
 
-    if (args.Length() == 0) {
-        V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.", args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (!args.Length())
+        return V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.", args.GetIsolate());
 
-    if (!args[0]->IsNumber()) {
-        V8Proxy::throwTypeError("Item index must be a number.");
-        return v8::Undefined();
-    }
+    if (!args[0]->IsNumber())
+        return V8Proxy::throwTypeError("Item index must be a number.");
 
     SQLResultSetRowList* rowList = V8SQLResultSetRowList::toNative(args.Holder());
 
     unsigned long index = args[0]->IntegerValue();
-    if (index >= rowList->length()) {
-        V8Proxy::throwError(V8Proxy::RangeError, "Item index is out of range.", args.GetIsolate());
-        return v8::Undefined();
-    }
+    if (index >= rowList->length())
+        return V8Proxy::throwError(V8Proxy::RangeError, "Item index is out of range.", args.GetIsolate());
 
     v8::Local<v8::Object> item = v8::Object::New();
     unsigned numColumns = rowList->columnNames().size();

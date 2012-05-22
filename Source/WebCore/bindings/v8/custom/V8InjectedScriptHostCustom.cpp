@@ -82,10 +82,8 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallback(const v8::Ar
     if (args.Length() < 1)
         return v8::Undefined();
 
-    if (!args[0]->IsInt32()) {
-        V8Proxy::throwTypeError("argument has to be an integer");
-        return v8::Undefined();
-    }
+    if (!args[0]->IsInt32())
+        return V8Proxy::throwTypeError("argument has to be an integer");
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     InjectedScriptHost::InspectableObject* object = host->inspectedObject(args[0]->ToInt32()->Value());
