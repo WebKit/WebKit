@@ -1031,20 +1031,6 @@ fast/forms/reset-autofilled.html
 # https://bugs.webkit.org/show_bug.cgi?id=42194
 fast/mutation/inline-event-listener.html
 
-# eventSender.keyDown is unimplemented
-# https://bugs.webkit.org/show_bug.cgi?id=57515
-fast/dom/shadow/access-key.html
-fast/dom/shadow/tab-order-iframe-and-shadow.html
-fast/events/onchange-setvalue.html
-fast/forms/focus-with-display-block.html
-fast/forms/input-search-press-escape-key.html
-fast/forms/placeholder-crash-with-scrollbar-corner.html
-fast/forms/search-disabled-readonly.html
-fast/forms/ValidityState-valueMissing-002.html
-fast/frames/focus-controller-crash-change-event.html
-svg/custom/focus-event-handling-keyboard.xhtml
-fast/forms/number/number-input-changeevent.html
-
 # WebKitTestRunner needs eventSender.contextClick()
 # https://bugs.webkit.org/show_bug.cgi?id=86881
 editing/selection/context-menu-text-selection.html
@@ -1063,26 +1049,7 @@ fast/dom/shadow/create-content-element.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
-fast/dom/shadow/content-element-api.html
-fast/dom/shadow/content-element-outside-shadow.html
-fast/dom/shadow/content-element-outside-shadow-style.html
-fast/dom/shadow/content-element-in-media-element.html
-fast/dom/shadow/content-element-in-meter-element.html
-fast/dom/shadow/shadow-root-js-api.html
-fast/dom/shadow/shadow-disable.html
-fast/dom/shadow/shadow-dom-event-dispatching.html
-fast/dom/shadow/shadow-root-activeElement.html
-fast/dom/shadow/shadow-root-attached.html
-fast/dom/shadow/shadow-root-innerHTML.html
-fast/dom/shadow/shadow-root-new.html
-fast/dom/shadow/shadow-ul-li.html
-fast/dom/shadow/shadow-root-append.html
-fast/dom/shadow/shadow-element-rendering-single.html
-fast/dom/shadow/shadow-element-rendering-multiple.html
-fast/dom/shadow/multiple-shadowroot.html
-fast/dom/shadow/multiple-shadowroot-rendering.html
-fast/dom/shadow/multiple-shadowroot-adopt.html
-fast/dom/shadow/get-element-by-id-in-shadow-root.html
+fast/dom/shadow
 
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
@@ -1342,6 +1309,10 @@ platform/mac/fast/forms/input-appearance-spinbutton-up.html
 # [WK2] http/tests/security/local-image-from-remote-whitelisted.html crashes
 # https://bugs.webkit.org/show_bug.cgi?id=73435
 http/tests/security/local-image-from-remote-whitelisted.html
+
+# [WK2] fast/forms/input-search-press-escape-key.html crashes
+# https://bugs.webkit.org/show_bug.cgi?id=87168
+fast/forms/input-search-press-escape-key.html
 
 # Editing input tests that time out unexpectedly.
 # https://bugs.webkit.org/show_bug.cgi?id=81547
