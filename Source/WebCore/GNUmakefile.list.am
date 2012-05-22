@@ -3266,6 +3266,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontSmoothingMode.h \
 	Source/WebCore/platform/graphics/FontTraitsMask.h \
 	Source/WebCore/platform/graphics/FontWidthVariant.h \
+	Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.cpp \
+	Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.h \
 	Source/WebCore/platform/graphics/FractionalLayoutPoint.h \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.cpp \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.h \

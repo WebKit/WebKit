@@ -3441,6 +3441,7 @@
             'platform/graphics/FontFastPath.cpp',
             'platform/graphics/FontPlatformData.cpp',
             'platform/graphics/FontPlatformData.h',
+            'platform/graphics/FractionalLayoutBoxExtent.cpp',
             'platform/graphics/FractionalLayoutRect.cpp',
             'platform/graphics/GeneratorGeneratedImage.cpp',
             'platform/graphics/GeneratedImage.h',

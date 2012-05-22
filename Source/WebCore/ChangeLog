@@ -1,3 +1,35 @@
+2012-05-22  Emil A Eklund  <eae@chromium.org>
+
+        Represents margins as box and simplify writing mode logic
+        https://bugs.webkit.org/show_bug.cgi?id=86952
+
+        Reviewed by Eric Seidel.
+        
+        Add a new class, FractionalLayoutBox, that represents the four sides of a
+        box and change RenderBox to use it to represent margins.
+
+        The new box class is intended to be used to represent things like
+        margins, paddings and borders where the current rect class isn't a good
+        fit. It also encapsulated a lot of the horizontal/vertical writing mode
+        and bidi logic allowing it to be reused.
+
+        No new tests, no change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FractionalLayoutBoxExtent.cpp: Added.
+        * platform/graphics/FractionalLayoutBoxExtent.h: Added.
+        * rendering/LayoutTypes.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderScrollbarPart.cpp:
+        * rendering/RenderScrollbarPart.h:
+
 2012-05-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace 'throwTypeError(); return Undefined();' with 'return throwTypeError();'

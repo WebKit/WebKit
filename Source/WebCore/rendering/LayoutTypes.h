@@ -37,6 +37,7 @@
 #define LayoutTypes_h
 
 #include "FloatRect.h"
+#include "FractionalLayoutBoxExtent.h"
 #include "FractionalLayoutRect.h"
 #include "FractionalLayoutUnit.h"
 #include "IntRect.h"
@@ -49,6 +50,7 @@ typedef FractionalLayoutUnit LayoutUnit;
 typedef FractionalLayoutPoint LayoutPoint;
 typedef FractionalLayoutSize LayoutSize;
 typedef FractionalLayoutRect LayoutRect;
+typedef FractionalLayoutBoxExtent LayoutBoxExtent;
 
 #define MAX_LAYOUT_UNIT LayoutUnit::max()
 #define MIN_LAYOUT_UNIT LayoutUnit::min()

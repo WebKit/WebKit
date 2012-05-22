@@ -28857,6 +28857,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FractionalLayoutBoxExtent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FractionalLayoutBoxExtent.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FractionalLayoutPoint.h"
 					>
 				</File>

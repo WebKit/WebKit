@@ -4329,7 +4329,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
     if (!prev->m_floatingObjects)
         return;
 
-    logicalLeftOffset += (isHorizontalWritingMode() ? marginLeft() : marginTop());
+    logicalLeftOffset += marginLogicalLeft();
 
     const FloatingObjectSet& prevSet = prev->m_floatingObjects->set();
     FloatingObjectSetIterator prevEnd = prevSet.end();

@@ -71,10 +71,6 @@ bool RenderBox::s_hadOverflowClip = false;
 
 RenderBox::RenderBox(Node* node)
     : RenderBoxModelObject(node)
-    , m_marginLeft(0)
-    , m_marginRight(0)
-    , m_marginTop(0)
-    , m_marginBottom(0)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
@@ -84,122 +80,6 @@ RenderBox::RenderBox(Node* node)
 
 RenderBox::~RenderBox()
 {
-}
-
-LayoutUnit RenderBox::marginBefore(const RenderStyle* overrideStyle) const
-{
-    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
-    case TopToBottomWritingMode:
-        return m_marginTop;
-    case BottomToTopWritingMode:
-        return m_marginBottom;
-    case LeftToRightWritingMode:
-        return m_marginLeft;
-    case RightToLeftWritingMode:
-        return m_marginRight;
-    }
-    ASSERT_NOT_REACHED();
-    return m_marginTop;
-}
-
-LayoutUnit RenderBox::marginAfter(const RenderStyle* overrideStyle) const
-{
-    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
-    case TopToBottomWritingMode:
-        return m_marginBottom;
-    case BottomToTopWritingMode:
-        return m_marginTop;
-    case LeftToRightWritingMode:
-        return m_marginRight;
-    case RightToLeftWritingMode:
-        return m_marginLeft;
-    }
-    ASSERT_NOT_REACHED();
-    return m_marginBottom;
-}
-
-LayoutUnit RenderBox::marginStart(const RenderStyle* overrideStyle) const
-{
-    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
-    if (styleToUse->isHorizontalWritingMode())
-        return styleToUse->isLeftToRightDirection() ? m_marginLeft : m_marginRight;
-    return styleToUse->isLeftToRightDirection() ? m_marginTop : m_marginBottom;
-}
-
-LayoutUnit RenderBox::marginEnd(const RenderStyle* overrideStyle) const
-{
-    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
-    if (styleToUse->isHorizontalWritingMode())
-        return styleToUse->isLeftToRightDirection() ? m_marginRight : m_marginLeft;
-    return styleToUse->isLeftToRightDirection() ? m_marginBottom : m_marginTop;
-}
-
-void RenderBox::setMarginStart(LayoutUnit margin, const RenderStyle* overrideStyle)
-{
-    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
-    if (styleToUse->isHorizontalWritingMode()) {
-        if (styleToUse->isLeftToRightDirection())
-            m_marginLeft = margin;
-        else
-            m_marginRight = margin;
-    } else {
-        if (styleToUse->isLeftToRightDirection())
-            m_marginTop = margin;
-        else
-            m_marginBottom = margin;
-    }
-}
-
-void RenderBox::setMarginEnd(LayoutUnit margin, const RenderStyle* overrideStyle)
-{
-    const RenderStyle* styleToUse = overrideStyle ? overrideStyle : style();
-    if (styleToUse->isHorizontalWritingMode()) {
-        if (styleToUse->isLeftToRightDirection())
-            m_marginRight = margin;
-        else
-            m_marginLeft = margin;
-    } else {
-        if (styleToUse->isLeftToRightDirection())
-            m_marginBottom = margin;
-        else
-            m_marginTop = margin;
-    }
-}
-
-void RenderBox::setMarginBefore(LayoutUnit margin, const RenderStyle* overrideStyle)
-{
-    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
-    case TopToBottomWritingMode:
-        m_marginTop = margin;
-        break;
-    case BottomToTopWritingMode:
-        m_marginBottom = margin;
-        break;
-    case LeftToRightWritingMode:
-        m_marginLeft = margin;
-        break;
-    case RightToLeftWritingMode:
-        m_marginRight = margin;
-        break;
-    }
-}
-
-void RenderBox::setMarginAfter(LayoutUnit margin, const RenderStyle* overrideStyle)
-{
-    switch (overrideStyle ? overrideStyle->writingMode() : style()->writingMode()) {
-    case TopToBottomWritingMode:
-        m_marginBottom = margin;
-        break;
-    case BottomToTopWritingMode:
-        m_marginTop = margin;
-        break;
-    case LeftToRightWritingMode:
-        m_marginRight = margin;
-        break;
-    case RightToLeftWritingMode:
-        m_marginLeft = margin;
-        break;
-    }
 }
 
 LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, LayoutUnit offsetFromTopOfFirstPage, RenderBoxRegionInfoFlags cacheFlag) const
@@ -2591,8 +2471,8 @@ void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit o
     const LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
     const Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
     const Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
-    LayoutUnit& marginLogicalLeftAlias = isHorizontal ? m_marginLeft : m_marginTop;
-    LayoutUnit& marginLogicalRightAlias = isHorizontal ? m_marginRight : m_marginBottom;
+    LayoutUnit& marginLogicalLeftAlias = m_marginBox.mutableLogicalLeft(style());
+    LayoutUnit& marginLogicalRightAlias = m_marginBox.mutableLogicalRight(style());
 
     Length logicalLeftLength = style()->logicalLeft();
     Length logicalRightLength = style()->logicalRight();
@@ -2922,18 +2802,16 @@ void RenderBox::computePositionedLogicalHeight()
 
     const LayoutUnit containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
-    bool isHorizontal = isHorizontalWritingMode();
     RenderStyle* styleToUse = style();
-    bool isFlipped = styleToUse->isFlippedBlocksWritingMode();
     const LayoutUnit bordersPlusPadding = borderAndPaddingLogicalHeight();
     const Length marginBefore = styleToUse->marginBefore();
     const Length marginAfter = styleToUse->marginAfter();
-    LayoutUnit& marginBeforeAlias = isHorizontal ? (isFlipped ? m_marginBottom : m_marginTop) : (isFlipped ? m_marginRight: m_marginLeft);
-    LayoutUnit& marginAfterAlias = isHorizontal ? (isFlipped ? m_marginTop : m_marginBottom) : (isFlipped ? m_marginLeft: m_marginRight);
+    LayoutUnit& marginBeforeAlias = m_marginBox.mutableBefore(styleToUse);
+    LayoutUnit& marginAfterAlias = m_marginBox.mutableAfter(styleToUse);
 
     Length logicalTopLength = styleToUse->logicalTop();
     Length logicalBottomLength = styleToUse->logicalBottom();
-        
+
     /*---------------------------------------------------------------------------*\
      * For the purposes of this section and the next, the term "static position"
      * (of an element) refers, roughly, to the position an element would have had
@@ -3190,8 +3068,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     Length logicalRight = style()->logicalRight();
     Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
     Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
-    LayoutUnit& marginLogicalLeftAlias = isHorizontal ? m_marginLeft : m_marginTop;
-    LayoutUnit& marginLogicalRightAlias = isHorizontal ? m_marginRight : m_marginBottom;
+    LayoutUnit& marginLogicalLeftAlias = m_marginBox.mutableLogicalLeft(style());
+    LayoutUnit& marginLogicalRightAlias = m_marginBox.mutableLogicalRight(style());
 
     /*-----------------------------------------------------------------------*\
      * 1. The used value of 'width' is determined as for inline replaced
@@ -3349,12 +3227,10 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     const LayoutUnit containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     // Variables to solve.
-    bool isHorizontal = isHorizontalWritingMode();
-    bool isFlipped = style()->isFlippedBlocksWritingMode();
     Length marginBefore = style()->marginBefore();
     Length marginAfter = style()->marginAfter();
-    LayoutUnit& marginBeforeAlias = isHorizontal ? (isFlipped ? m_marginBottom : m_marginTop) : (isFlipped ? m_marginRight: m_marginLeft);
-    LayoutUnit& marginAfterAlias = isHorizontal ? (isFlipped ? m_marginTop : m_marginBottom) : (isFlipped ? m_marginLeft: m_marginRight);
+    LayoutUnit& marginBeforeAlias = m_marginBox.mutableBefore(style());
+    LayoutUnit& marginAfterAlias = m_marginBox.mutableAfter(style());
 
     Length logicalTop = style()->logicalTop();
     Length logicalBottom = style()->logicalBottom();
@@ -3810,14 +3686,14 @@ bool RenderBox::isUnsplittableForPagination() const
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
     if (isReplaced())
-        return direction == HorizontalLine ? m_marginTop + height() + m_marginBottom : m_marginRight + width() + m_marginLeft;
+        return direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left();
     return 0;
 }
 
 LayoutUnit RenderBox::baselinePosition(FontBaseline baselineType, bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
     if (isReplaced()) {
-        LayoutUnit result = direction == HorizontalLine ? m_marginTop + height() + m_marginBottom : m_marginRight + width() + m_marginLeft;
+        LayoutUnit result = direction == HorizontalLine ? m_marginBox.top() + height() + m_marginBox.bottom() : m_marginBox.right() + width() + m_marginBox.left();
         if (baselineType == AlphabeticBaseline)
             return result;
         return result - result / 2;

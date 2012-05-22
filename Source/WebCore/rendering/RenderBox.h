@@ -221,22 +221,26 @@ public:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
-    virtual LayoutUnit marginTop() const { return m_marginTop; }
-    virtual LayoutUnit marginBottom() const { return m_marginBottom; }
-    virtual LayoutUnit marginLeft() const { return m_marginLeft; }
-    virtual LayoutUnit marginRight() const { return m_marginRight; }
-    void setMarginTop(LayoutUnit margin) { m_marginTop = margin; }
-    void setMarginBottom(LayoutUnit margin) { m_marginBottom = margin; }
-    void setMarginLeft(LayoutUnit margin) { m_marginLeft = margin; }
-    void setMarginRight(LayoutUnit margin) { m_marginRight = margin; }
-    virtual LayoutUnit marginBefore(const RenderStyle* overrideStyle = 0) const;
-    virtual LayoutUnit marginAfter(const RenderStyle* overrideStyle = 0) const;
-    virtual LayoutUnit marginStart(const RenderStyle* overrideStyle = 0) const;
-    virtual LayoutUnit marginEnd(const RenderStyle* overrideStyle = 0) const;
-    void setMarginStart(LayoutUnit, const RenderStyle* overrideStyle = 0);
-    void setMarginEnd(LayoutUnit, const RenderStyle* overrideStyle = 0);
-    void setMarginBefore(LayoutUnit, const RenderStyle* overrideStyle = 0);
-    void setMarginAfter(LayoutUnit, const RenderStyle* overrideStyle = 0);
+    virtual LayoutUnit marginTop() const OVERRIDE { return m_marginBox.top(); }
+    virtual LayoutUnit marginBottom() const OVERRIDE { return m_marginBox.bottom(); }
+    virtual LayoutUnit marginLeft() const OVERRIDE { return m_marginBox.left(); }
+    virtual LayoutUnit marginRight() const OVERRIDE { return m_marginBox.right(); }
+    void setMarginTop(LayoutUnit margin) { m_marginBox.setTop(margin); }
+    void setMarginBottom(LayoutUnit margin) { m_marginBox.setBottom(margin); }
+    void setMarginLeft(LayoutUnit margin) { m_marginBox.setLeft(margin); }
+    void setMarginRight(LayoutUnit margin) { m_marginBox.setRight(margin); }
+
+    virtual LayoutUnit marginLogicalLeft() const { return m_marginBox.logicalLeft(style()); }
+    virtual LayoutUnit marginLogicalRight() const { return m_marginBox.logicalRight(style()); }
+    
+    virtual LayoutUnit marginBefore(const RenderStyle* overrideStyle = 0) const OVERRIDE { return m_marginBox.before(overrideStyle ? overrideStyle : style()); }
+    virtual LayoutUnit marginAfter(const RenderStyle* overrideStyle = 0) const OVERRIDE { return m_marginBox.after(overrideStyle ? overrideStyle : style()); }
+    virtual LayoutUnit marginStart(const RenderStyle* overrideStyle = 0) const OVERRIDE { return m_marginBox.start(overrideStyle ? overrideStyle : style()); }
+    virtual LayoutUnit marginEnd(const RenderStyle* overrideStyle = 0) const OVERRIDE { return m_marginBox.end(overrideStyle ? overrideStyle : style()); }
+    void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setBefore(overrideStyle ? overrideStyle : style(), value); }
+    void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setAfter(overrideStyle ? overrideStyle : style(), value); }
+    void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setStart(overrideStyle ? overrideStyle : style(), value); }
+    void setMarginEnd(LayoutUnit value, const RenderStyle* overrideStyle = 0) { m_marginBox.setEnd(overrideStyle ? overrideStyle : style(), value); }
 
     // The following five functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
@@ -557,10 +561,7 @@ private:
     LayoutRect m_frameRect;
 
 protected:
-    LayoutUnit m_marginLeft;
-    LayoutUnit m_marginRight;
-    LayoutUnit m_marginTop;
-    LayoutUnit m_marginBottom;
+    LayoutBoxExtent m_marginBox;
 
     // The preferred logical width of the element if it were to break its lines at every possible opportunity.
     LayoutUnit m_minPreferredLogicalWidth;

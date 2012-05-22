@@ -294,6 +294,8 @@
 		1432E8490C51493F00B1500F /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1432E8480C51493F00B1500F /* GCController.cpp */; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
+		1482E0C6156C36DE00965065 /* FractionalLayoutBoxExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482E0C4156C36DE00965065 /* FractionalLayoutBoxExtent.cpp */; };
+		1482E0C7156C36DE00965065 /* FractionalLayoutBoxExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482E0C5156C36DE00965065 /* FractionalLayoutBoxExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144FCFE014EF2509000D17A3 /* FractionalLayoutRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144FCFDE14EF2509000D17A3 /* FractionalLayoutRect.cpp */; };
@@ -7180,6 +7182,8 @@
 		1432E8480C51493F00B1500F /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
+		1482E0C4156C36DE00965065 /* FractionalLayoutBoxExtent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractionalLayoutBoxExtent.cpp; sourceTree = "<group>"; };
+		1482E0C5156C36DE00965065 /* FractionalLayoutBoxExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutBoxExtent.h; sourceTree = "<group>"; };
 		144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
 		144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutPoint.h; sourceTree = "<group>"; };
 		144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutSize.h; sourceTree = "<group>"; };
@@ -19422,6 +19426,8 @@
 				37202198106213C600F25C4B /* FontSmoothingMode.h */,
 				3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */,
 				BCE4413512F7490B009B84B8 /* FontWidthVariant.h */,
+				1482E0C4156C36DE00965065 /* FractionalLayoutBoxExtent.cpp */,
+				1482E0C5156C36DE00965065 /* FractionalLayoutBoxExtent.h */,
 				144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */,
 				144FCFDE14EF2509000D17A3 /* FractionalLayoutRect.cpp */,
 				144FCFDF14EF2509000D17A3 /* FractionalLayoutRect.h */,
@@ -24917,6 +24923,7 @@
 				29A309B11561CAC400BBD8E5 /* VisitedLinks.h in Headers */,
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
 				371941971566B37200A276D8 /* WebCoreNSCellExtras.h in Headers */,
+				1482E0C7156C36DE00965065 /* FractionalLayoutBoxExtent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27943,6 +27950,7 @@
 				FDB052DF1561A42C00B500D6 /* AudioSummingJunction.cpp in Sources */,
 				371941961566B37200A276D8 /* WebCoreNSCellExtras.m in Sources */,
 				146CC115156988E400109E37 /* LengthBox.cpp in Sources */,
+				1482E0C6156C36DE00965065 /* FractionalLayoutBoxExtent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
