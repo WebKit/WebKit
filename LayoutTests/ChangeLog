@@ -1,3 +1,16 @@
+2012-05-22  Andreas Kling  <kling@webkit.org>
+
+        Add a layout test for attribute selector invalidation triggering recursive style recalc.
+        <http://webkit.org/b/21346>
+
+        Reviewed by Antti Koivisto.
+
+        Bug 21346 was already fixed somewhere in the semirecent past, so here's the provided
+        test case as form of a layout test to make sure we don't regress this again.
+
+        * fast/css/attribute-selector-recursive-update-on-setAttribute-expected.txt: Added.
+        * fast/css/attribute-selector-recursive-update-on-setAttribute.html: Added.
+
 2012-05-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: HeapProfiler: upstream retainedSize calculation.
