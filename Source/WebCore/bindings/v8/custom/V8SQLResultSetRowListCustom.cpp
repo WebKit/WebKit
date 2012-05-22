@@ -47,7 +47,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
         return V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.", args.GetIsolate());
 
     if (!args[0]->IsNumber())
-        return V8Proxy::throwTypeError("Item index must be a number.");
+        return V8Proxy::throwTypeError("Item index must be a number.", args.GetIsolate());
 
     SQLResultSetRowList* rowList = V8SQLResultSetRowList::toNative(args.Holder());
 

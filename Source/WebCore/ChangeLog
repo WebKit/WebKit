@@ -1,5 +1,67 @@
 2012-05-22  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Pass Isolate to throwTypeError()
+        https://bugs.webkit.org/show_bug.cgi?id=87111
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        This patch passes Isolate to throwTypeError() in custom bindings.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8AudioBufferSourceNodeCustom.cpp:
+        (WebCore::V8AudioBufferSourceNode::bufferAccessorSetter):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::setDragImageCallback):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::openCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::V8HTMLInputElement::selectionStartAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionStartAccessorSetter):
+        (WebCore::V8HTMLInputElement::selectionEndAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionEndAccessorSetter):
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorSetter):
+        (WebCore::V8HTMLInputElement::setSelectionRangeCallback):
+        * bindings/v8/custom/V8HTMLMediaElementCustom.cpp:
+        (WebCore::V8HTMLMediaElement::controllerAccessorSetter):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectedObjectCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::requestPermissionCallback):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/custom/V8WebKitMutationObserverCustom.cpp:
+        (WebCore::V8WebKitMutationObserver::constructorCallback):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::constructorCallback):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
+2012-05-22  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace 'setDOMException(); return Undefined();' with 'return setDOMException();'
         https://bugs.webkit.org/show_bug.cgi?id=87102
 
