@@ -85,7 +85,8 @@ namespace WebCore {
 
     void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedAttribute*, size_t attributeCount);
 
-    inline void configureAttribute(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute& attribute)
+    template<class ObjectOrTemplate>
+    inline void configureAttribute(v8::Handle<ObjectOrTemplate> instance, v8::Handle<ObjectOrTemplate> proto, const BatchedAttribute& attribute)
     {
         (attribute.onProto ? proto : instance)->SetAccessor(v8::String::New(attribute.name),
             attribute.getter,

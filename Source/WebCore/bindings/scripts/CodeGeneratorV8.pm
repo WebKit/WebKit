@@ -348,6 +348,7 @@ END
     }
 
     my @enabledAtRuntime;
+    my @enabledPerContext;
     foreach my $function (@{$dataNode->functions}) {
         my $name = $function->signature->name;
         my $attrExt = $function->signature->extendedAttributes;
@@ -397,6 +398,10 @@ END
         if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);
         }
+
+        if ($attrExt->{"V8EnabledPerContext"}) {
+            push(@enabledPerContext, $attribute);
+        }
     }
 
     GenerateHeaderNamedAndIndexedPropertyAccessors($dataNode);
@@ -407,6 +412,12 @@ END
         push(@headerContent, <<END);
     static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
     static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
+END
+    }
+
+    if (@enabledPerContext) {
+        push(@headerContent, <<END);
+    static void installPerContextProperties(v8::Handle<v8::Object>, ${implClassName}*);
 END
     }
 
@@ -2309,8 +2320,9 @@ sub GenerateImplementation
 
     # - Add default header template
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
-         
+
     AddToImplIncludes("RuntimeEnabledFeatures.h");
+    AddToImplIncludes("ContextEnabledFeatures.h");
     AddToImplIncludes("V8Proxy.h");
     AddToImplIncludes("V8Binding.h");
     AddToImplIncludes("V8BindingState.h");
@@ -2427,6 +2439,7 @@ sub GenerateImplementation
     my @disallowsShadowing;
     # Also separate out attributes that are enabled at runtime so we can process them specially.
     my @enabledAtRuntime;
+    my @enabledPerContext;
     my @normal;
     foreach my $attribute (@$attributes) {
 
@@ -2434,6 +2447,8 @@ sub GenerateImplementation
             push(@disallowsShadowing, $attribute);
         } elsif ($attribute->signature->extendedAttributes->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);
+        } elsif ($attribute->signature->extendedAttributes->{"V8EnabledPerContext"}) {
+            push(@enabledPerContext, $attribute);
         } else {
             push(@normal, $attribute);
         }
@@ -2839,6 +2854,32 @@ bool ${className}::HasInstance(v8::Handle<v8::Value> value)
 }
 
 END
+
+    if (@enabledPerContext) {
+        push(@implContent, <<END);
+void ${className}::installPerContextProperties(v8::Handle<v8::Object> instance, ${implClassName}* impl)
+{
+    v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
+END
+        # Setup the enable-by-settings attrs if we have them
+        foreach my $runtimeAttr (@enabledPerContext) {
+            my $enableFunction = GetContextEnableFunction($runtimeAttr->signature);
+            my $conditionalString = $codeGenerator->GenerateConditionalString($runtimeAttr->signature);
+            push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+            push(@implContent, "    if (ContextEnabledFeatures::${enableFunction}(impl)) {\n");
+            push(@implContent, "        static const BatchedAttribute attrData =\\\n");
+            GenerateSingleBatchedAttribute($interfaceName, $runtimeAttr, ";", "    ");
+            push(@implContent, <<END);
+        configureAttribute(instance, proto, attrData);
+END
+            push(@implContent, "    }\n");
+            push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
+        }
+
+        push(@implContent, <<END);
+}
+END
+    }
 
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         # MessagePort is handled like an active dom object even though it doesn't inherit
@@ -3951,6 +3992,20 @@ sub GetRuntimeEnableFunctionName
 
     # Otherwise return a function named RuntimeEnabledFeatures::{methodName}Enabled().
     return "RuntimeEnabledFeatures::" . $codeGenerator->WK_lcfirst($signature->name) . "Enabled";
+}
+
+sub GetContextEnableFunction
+{
+    my $signature = shift;
+
+    # If a parameter is given (e.g. "V8EnabledPerContext=FeatureName") return the {FeatureName}Allowed() method.
+    if ($signature->extendedAttributes->{"V8EnabledPerContext"} && $signature->extendedAttributes->{"V8EnabledPerContext"} ne "VALUE_IS_MISSING") {
+        return $codeGenerator->WK_lcfirst($signature->extendedAttributes->{"V8EnabledPerContext"}) . "Enabled";
+    }
+
+    # Or it fallbacks to the attribute name if the parameter value is missing.
+    my $attributeName = $signature->name;
+    return $codeGenerator->WK_lcfirst($attributeName) . "Enabled";
 }
 
 sub GetPassRefPtrType

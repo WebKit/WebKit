@@ -111,5 +111,6 @@ V8CustomToJSObject
 V8DependentLifetime
 V8DoNotCheckSignature
 V8EnabledAtRuntime=*
+V8EnabledPerContext=*
 V8ReadOnly
 V8Unforgeable

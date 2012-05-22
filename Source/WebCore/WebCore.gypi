@@ -1846,6 +1846,8 @@
             'bindings/generic/BindingSecurity.h',
             'bindings/generic/BindingSecurityBase.cpp',
             'bindings/generic/BindingSecurityBase.h',
+            'bindings/generic/ContextEnabledFeatures.cpp',
+            'bindings/generic/ContextEnabledFeatures.h',
             'bindings/generic/GenericBinding.h',
             'bindings/generic/RuntimeEnabledFeatures.cpp',
             'bindings/generic/RuntimeEnabledFeatures.h',

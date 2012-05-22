@@ -203,6 +203,9 @@ module test {
         [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in int intArg);
         attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
         attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
+        // V8EnabledPerContext currently only supports attributes.
+        attribute [V8EnabledPerContext] long enabledAtContextAttr1;
+        attribute [V8EnabledPerContext=FeatureName] long enabledAtContextAttr2;
 #endif
 
 

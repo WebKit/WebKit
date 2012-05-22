@@ -1074,6 +1074,38 @@ static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Loca
     return;
 }
 
+static v8::Handle<v8::Value> enabledAtContextAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtContextAttr1._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->enabledAtContextAttr1());
+}
+
+static void enabledAtContextAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtContextAttr1._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setEnabledAtContextAttr1(v);
+    return;
+}
+
+static v8::Handle<v8::Value> enabledAtContextAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtContextAttr2._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Integer::New(imp->enabledAtContextAttr2());
+}
+
+static void enabledAtContextAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.enabledAtContextAttr2._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setEnabledAtContextAttr2(v);
+    return;
+}
+
 static v8::Handle<v8::Value> floatArrayAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.floatArray._get");
@@ -2388,6 +2420,22 @@ bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
     return GetRawTemplate()->HasInstance(value);
 }
 
+void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, TestObj* impl)
+{
+    v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
+    if (RuntimeEnabledFeatures::enabledAtContextAttr1Allowed(impl)) {
+        static const BatchedAttribute attrData =\
+        // Attribute 'enabledAtContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
+        {"enabledAtContextAttr1", TestObjV8Internal::enabledAtContextAttr1AttrGetter, TestObjV8Internal::enabledAtContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        configureAttribute(instance, proto, attrData);
+    }
+    if (RuntimeEnabledFeatures::featureNameAllowed(impl)) {
+        static const BatchedAttribute attrData =\
+        // Attribute 'enabledAtContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
+        {"enabledAtContextAttr2", TestObjV8Internal::enabledAtContextAttr2AttrGetter, TestObjV8Internal::enabledAtContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        configureAttribute(instance, proto, attrData);
+    }
+}
 
 v8::Handle<v8::Object> V8TestObj::wrapSlow(PassRefPtr<TestObj> impl, v8::Isolate* isolate)
 {

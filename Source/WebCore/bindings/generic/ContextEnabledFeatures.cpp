@@ -7,6 +7,10 @@
  *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
@@ -24,26 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#include "config.h"
+#include "ContextEnabledFeatures.h"
 
-    interface [
-        Conditional=SHADOW_DOM,
-        Constructor(in Element host),
-        ConstructorRaisesException
-    ] ShadowRoot : DocumentFragment {
-        readonly attribute Element host;
-        readonly attribute Element activeElement;
-        attribute boolean applyAuthorStyles;
+#include "DOMWindow.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
+#include "RuntimeEnabledFeatures.h"
 
-        attribute [TreatNullAs=NullString] DOMString innerHTML
-            setter raises(DOMException);
+namespace WebCore {
 
-        DOMSelection getSelection();
-        Element getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
-        NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString className);
-        NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagName);
-        NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
-                                        in [Optional=DefaultIsUndefined] DOMString localName);
-    };
-
+#if ENABLE(SHADOW_DOM)
+bool ContextEnabledFeatures::shadowDOMEnabled(DOMWindow* window)
+{
+    if (!window)
+        return false;
+    if (Frame* frame = window->frame())
+        return frame->loader()->client()->shadowDOMAllowed(RuntimeEnabledFeatures::shadowDOMEnabled());
+    return false;
 }
+#endif
+
+} // namespace WebCore
