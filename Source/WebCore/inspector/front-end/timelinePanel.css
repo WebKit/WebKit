@@ -307,16 +307,6 @@
     pointer-events: none;
 }
 
-.timeline-overview-graph-side {
-    height: 20px;
-    z-index: 170;
-    pointer-events: none;
-}
-
-.timeline-overview-graph-side .timeline-graph-bar {
-    height: 13px;
-}
-
 .timeline-graph-bar-area {
     position: absolute;
     top: 0;

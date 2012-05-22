@@ -47,9 +47,9 @@ WebInspector.TimelinePresentationModel.categories = function()
     if (WebInspector.TimelinePresentationModel._categories)
         return WebInspector.TimelinePresentationModel._categories;
     WebInspector.TimelinePresentationModel._categories = {
-        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), "rgb(106, 152, 213)", "rgb(201, 220, 245)", "rgb(109, 157, 222)"),
-        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), "rgb(223, 175, 77)", "rgb(251, 222, 168)", "rgb(234, 182, 77)"),
-        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), "rgb(130, 59, 190)", "rgb(213, 185, 236)", "rgb(137, 62, 200)")
+        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), 0, "rgb(80, 135, 207)", "rgb(191, 214, 243)", "rgb(112, 162, 227)"),
+        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), 1, "rgb(220, 163, 49)", "rgb(253, 217, 144)", "rgb(253, 191, 68)"),
+        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "rgb(148, 88, 199)", "rgb(219, 195, 239)", "rgb(175, 120, 221)")
     };
     return WebInspector.TimelinePresentationModel._categories;
 };
@@ -754,6 +754,35 @@ WebInspector.TimelinePresentationModel.generatePopupContentForFrame = function(f
 }
 
 /**
+ * @param {CanvasRenderingContext2D} context
+ * @param {number} width
+ * @param {number} height
+ * @param {string} color0
+ * @param {string} color1
+ * @param {string} color2
+ */
+WebInspector.TimelinePresentationModel.createFillStyle = function(context, width, height, color0, color1, color2)
+{
+    var gradient = context.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, color0);
+    gradient.addColorStop(0.3, color1);
+    gradient.addColorStop(0.7, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+}
+
+/**
+ * @param {CanvasRenderingContext2D} context
+ * @param {number} width
+ * @param {number} height
+ * @param {WebInspector.TimelineCategory} category
+ */
+WebInspector.TimelinePresentationModel.createFillStyleForCategory = function(context, width, height, category)
+{
+    return WebInspector.TimelinePresentationModel.createFillStyle(context, width, height, category.fillColorStop0, category.fillColorStop1, category.borderColor);
+}
+
+/**
  * @interface
  */
 WebInspector.TimelinePresentationModel.Filter = function()
@@ -772,14 +801,16 @@ WebInspector.TimelinePresentationModel.Filter.prototype = {
  * @extends {WebInspector.Object}
  * @param {string} name
  * @param {string} title
+ * @param {number} overviewStripGroupIndex
  * @param {string} borderColor
  * @param {string} fillColorStop0
  * @param {string} fillColorStop1
  */
-WebInspector.TimelineCategory = function(name, title, borderColor, fillColorStop0, fillColorStop1)
+WebInspector.TimelineCategory = function(name, title, overviewStripGroupIndex, borderColor, fillColorStop0, fillColorStop1)
 {
     this.name = name;
     this.title = title;
+    this.overviewStripGroupIndex = overviewStripGroupIndex;
     this.borderColor = borderColor;
     this.fillColorStop0 = fillColorStop0;
     this.fillColorStop1 = fillColorStop1;
