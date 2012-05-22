@@ -157,6 +157,23 @@ function prepareDOMTree3(parent)
     debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
 }
 
+function prepareDOMTree4(parent)
+{
+    // Makes sure that <svg> in shadow DOM subtree, which is not supported at this time, does not crash.
+    parent.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'shadow-host'},
+                            createShadowRoot())));
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'svg-in-shadow-tree';
+    getNodeInShadowTreeStack('shadow-host/').appendChild(svg);
+
+    addEventListeners(['top', 'shadow-host/', 'shadow-host/svg-in-shadow-tree']);
+    getNodeInShadowTreeStack('shadow-host/').id = 'shadow-root';
+    parent.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+}
+
 function debugDispatchedEvent(eventType)
 {
     debug('\n  ' + eventType);
@@ -212,6 +229,10 @@ function test()
     moveMouse('B/G/L', 'B/G/J');
     moveMouse('A', 'D');
     moveMouse('D', 'A');
+
+    sandbox.innerHTML = '';
+    prepareDOMTree4(sandbox);
+    moveMouse('shadow-host/svg-in-shadow-tree', 'top');
 }
 
 test();

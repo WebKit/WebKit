@@ -1,3 +1,12 @@
+2012-05-22  Hayato Ito  <hayato@chromium.org>
+
+        Fix crashes when a mouse points a <svg> element in shadow DOM subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=86795
+
+        Reviewed by Nikolas Zimmermann.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+
 2012-05-22  Andreas Kling  <kling@webkit.org>
 
         DOM Attr objects pointing to "style" attribute should force reification when read.
