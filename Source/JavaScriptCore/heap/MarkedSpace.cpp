@@ -94,7 +94,7 @@ void MarkedSpace::freeBlocks(MarkedBlock* head)
         m_blocks.remove(block);
         block->sweep();
 
-        m_heap->blockAllocator().deallocate(block);
+        m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
     }
 }
 

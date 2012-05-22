@@ -112,9 +112,8 @@ namespace JSC {
             ReturnType m_count;
         };
 
-        static MarkedBlock* create(Heap*, size_t cellSize, bool cellsNeedDestruction);
-        static MarkedBlock* recycle(MarkedBlock*, Heap*, size_t cellSize, bool cellsNeedDestruction);
-        static void destroy(MarkedBlock*);
+        static MarkedBlock* create(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
+        static PageAllocationAligned destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
@@ -187,7 +186,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
+        MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);

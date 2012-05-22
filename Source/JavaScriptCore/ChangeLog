@@ -1,1 +1,77 @@
+2012-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        CopiedBlock and MarkedBlock should have proper value semantics (i.e., destructors)
+        https://bugs.webkit.org/show_bug.cgi?id=87172
+
+        Reviewed by Oliver Hunt and Phil Pizlo.
+
+        This enables MarkedBlock to own non-trivial sub-objects that require
+        destruction. It also fixes a FIXME about casting a CopiedBlock to a
+        MarkedBlock at destroy time.
+
+        CopiedBlock and MarkedBlock now accept an allocation chunk at create
+        time and return it at destroy time. Their client is expected to
+        allocate, recycle, and destroy these chunks.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::releaseFreeBlocks):
+        (JSC::BlockAllocator::blockFreeingThreadMain): Don't call MarkedBlock::destroy
+        because we expect that to be called before a block is put on our free
+        list now. Do manually deallocate our allocation chunk because that's
+        our job now.
+
+        * heap/BlockAllocator.h:
+        (BlockAllocator):
+        (JSC::BlockAllocator::allocate): Allocate never fails now. This is a
+        cleaner abstraction because only one object does all the VM allocation
+        and deallocation. Caching is an implementation detail.
+
+        (JSC::BlockAllocator::deallocate): We take an allocation chunk argument
+        instead of a block because we now expect the block to have been destroyed 
+        before we recycle its memory. For convenience, we still use the HeapBlock
+        class as our linked list node. This is OK because HeapBlock is a POD type.
+
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        (JSC::CopiedBlock::create):
+        (JSC::CopiedBlock::destroy):
+        (JSC::CopiedBlock::CopiedBlock): Added proper create and destroy functions,
+        to match MarkedBlock.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::getFreshBlock):
+        (JSC::CopiedSpace::freeAllBlocks):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::recycleBlock): Make sure to call destroy before
+        returning a block to the BlockAllocator. Otherwise, our destructors
+        won't run. (If we get this wrong now, we'll get a compile error.)
+
+        * heap/HeapBlock.h:
+        (JSC::HeapBlock::HeapBlock): const!
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock): No need to distinguish between
+        create and recycle -- MarkedBlock always accepts memory allocated by
+        its client now.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create): Don't allocate memory -- we assume that we're
+        passed already-allocated memory, to clarify the responsibility for VM
+        recycling.
+
+        (JSC::MarkedBlock::destroy): Do run our destructor before giving back
+        our VM -- that is the whole point of this patch.
+
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        * heap/MarkedSpace.cpp: const!
+
+        (JSC::MarkedSpace::freeBlocks): Make sure to call destroy before
+        returning a block to the BlockAllocator. Otherwise, our destructors
+        won't run. (If we get this wrong now, we'll get a compile error.)
+
 == Rolled over to ChangeLog-2012-05-22 ==

@@ -26,13 +26,13 @@
 #ifndef BlockAllocator_h
 #define BlockAllocator_h
 
+#include "HeapBlock.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
+#include <wtf/PageAllocationAligned.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
-
-class HeapBlock;
 
 // Simple allocator to reduce VM cost by holding onto blocks of memory for
 // short periods of time and then freeing them on a secondary thread.
@@ -42,8 +42,8 @@ public:
     BlockAllocator();
     ~BlockAllocator();
 
-    HeapBlock* allocate();
-    void deallocate(HeapBlock*);
+    PageAllocationAligned allocate();
+    void deallocate(PageAllocationAligned);
 
 private:
     void waitForRelativeTimeWhileHoldingLock(double relative);
@@ -63,24 +63,28 @@ private:
     ThreadIdentifier m_blockFreeingThread;
 };
 
-inline HeapBlock* BlockAllocator::allocate()
+inline PageAllocationAligned BlockAllocator::allocate()
 {
     MutexLocker locker(m_freeBlockLock);
     m_isCurrentlyAllocating = true;
-    if (!m_numberOfFreeBlocks) {
-        ASSERT(m_freeBlocks.isEmpty());
-        return 0;
+    if (m_numberOfFreeBlocks) {
+        ASSERT(!m_freeBlocks.isEmpty());
+        m_numberOfFreeBlocks--;
+        return m_freeBlocks.removeHead()->m_allocation;
     }
 
-    ASSERT(!m_freeBlocks.isEmpty());
-    m_numberOfFreeBlocks--;
-    return m_freeBlocks.removeHead();
+    ASSERT(m_freeBlocks.isEmpty());
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(HeapBlock::s_blockSize, HeapBlock::s_blockSize, OSAllocator::JSGCHeapPages);
+    if (!static_cast<bool>(allocation))
+        CRASH();
+    return allocation;
 }
 
-inline void BlockAllocator::deallocate(HeapBlock* block)
+inline void BlockAllocator::deallocate(PageAllocationAligned allocation)
 {
     MutexLocker locker(m_freeBlockLock);
-    m_freeBlocks.push(block);
+    HeapBlock* heapBlock = new(NotNull, allocation.base()) HeapBlock(allocation);
+    m_freeBlocks.push(heapBlock);
     m_numberOfFreeBlocks++;
 }
 

@@ -86,17 +86,11 @@ void* MarkedAllocator::allocateSlowCase()
     ASSERT(result);
     return result;
 }
-    
+
 MarkedBlock* MarkedAllocator::allocateBlock()
 {
-    MarkedBlock* block = static_cast<MarkedBlock*>(m_heap->blockAllocator().allocate());
-    if (block)
-        block = MarkedBlock::recycle(block, m_heap, m_cellSize, m_cellsNeedDestruction);
-    else
-        block = MarkedBlock::create(m_heap, m_cellSize, m_cellsNeedDestruction);
-    
+    MarkedBlock* block = MarkedBlock::create(m_heap->blockAllocator().allocate(), m_heap, m_cellSize, m_cellsNeedDestruction);
     m_markedSpace->didAddBlock(block);
-    
     return block;
 }
 

@@ -32,25 +32,21 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize, bool cellsNeedDestruction)
+MarkedBlock* MarkedBlock::create(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
 {
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockSize, OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation))
-        CRASH();
     return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize, cellsNeedDestruction);
 }
 
-MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
+PageAllocationAligned MarkedBlock::destroy(MarkedBlock* block)
 {
-    return new (NotNull, block) MarkedBlock(block->m_allocation, heap, cellSize, cellsNeedDestruction);
+    PageAllocationAligned allocation;
+    swap(allocation, block->m_allocation);
+
+    block->~MarkedBlock();
+    return allocation;
 }
 
-void MarkedBlock::destroy(MarkedBlock* block)
-{
-    block->m_allocation.deallocate();
-}
-
-MarkedBlock::MarkedBlock(PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
+MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction)
     : HeapBlock(allocation)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)

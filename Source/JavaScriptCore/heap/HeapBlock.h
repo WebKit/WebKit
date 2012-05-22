@@ -36,13 +36,13 @@ enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
 
 class HeapBlock : public DoublyLinkedListNode<HeapBlock> {
 public:
-    HeapBlock(PageAllocationAligned& allocation)
+    HeapBlock(const PageAllocationAligned& allocation)
         : DoublyLinkedListNode<HeapBlock>()
         , m_prev(0)
         , m_next(0)
         , m_allocation(allocation)
     {
-        ASSERT(allocation);
+        ASSERT(m_allocation);
     }
 
     HeapBlock* m_prev;

@@ -38,31 +38,50 @@ class CopiedBlock : public HeapBlock {
     friend class CopiedSpace;
     friend class CopiedAllocator;
 public:
-    CopiedBlock(PageAllocationAligned& allocation)
-        : HeapBlock(allocation)
-        , m_offset(payload())
-        , m_isPinned(false)
-    {
-        ASSERT(is8ByteAligned(static_cast<void*>(m_offset)));
-#if USE(JSVALUE64)
-        char* offset = static_cast<char*>(m_offset);
-        memset(static_cast<void*>(offset), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - offset));
-#else
-        JSValue emptyValue;
-        JSValue* limit = reinterpret_cast_ptr<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
-        for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_offset); currentValue < limit; currentValue++)
-            *currentValue = emptyValue;
-#endif
-    }
+    static CopiedBlock* create(const PageAllocationAligned&);
+    static PageAllocationAligned destroy(CopiedBlock*);
 
     char* payload();
     size_t size();
     size_t capacity();
 
 private:
+    CopiedBlock(const PageAllocationAligned&);
+
     void* m_offset;
     uintptr_t m_isPinned;
 };
+
+inline CopiedBlock* CopiedBlock::create(const PageAllocationAligned& allocation)
+{
+    return new(NotNull, allocation.base()) CopiedBlock(allocation);
+}
+
+inline PageAllocationAligned CopiedBlock::destroy(CopiedBlock* block)
+{
+    PageAllocationAligned allocation;
+    swap(allocation, block->m_allocation);
+
+    block->~CopiedBlock();
+    return allocation;
+}
+
+inline CopiedBlock::CopiedBlock(const PageAllocationAligned& allocation)
+    : HeapBlock(allocation)
+    , m_offset(payload())
+    , m_isPinned(false)
+{
+    ASSERT(is8ByteAligned(static_cast<void*>(m_offset)));
+#if USE(JSVALUE64)
+    char* offset = static_cast<char*>(m_offset);
+    memset(static_cast<void*>(offset), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - offset));
+#else
+    JSValue emptyValue;
+    JSValue* limit = reinterpret_cast_ptr<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
+    for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_offset); currentValue < limit; currentValue++)
+        *currentValue = emptyValue;
+#endif
+}
 
 inline char* CopiedBlock::payload()
 {
