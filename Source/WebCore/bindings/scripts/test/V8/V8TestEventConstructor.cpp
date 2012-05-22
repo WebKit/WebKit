@@ -21,6 +21,7 @@
 #include "config.h"
 #include "V8TestEventConstructor.h"
 
+#include "ContextEnabledFeatures.h"
 #include "Dictionary.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"

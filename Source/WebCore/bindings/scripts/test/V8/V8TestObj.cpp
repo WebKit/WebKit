@@ -21,6 +21,7 @@
 #include "config.h"
 #include "V8TestObj.h"
 
+#include "ContextEnabledFeatures.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -2423,13 +2424,13 @@ bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
 void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, TestObj* impl)
 {
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
-    if (RuntimeEnabledFeatures::enabledAtContextAttr1Allowed(impl)) {
+    if (ContextEnabledFeatures::enabledAtContextAttr1Enabled(impl)) {
         static const BatchedAttribute attrData =\
         // Attribute 'enabledAtContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledAtContextAttr1", TestObjV8Internal::enabledAtContextAttr1AttrGetter, TestObjV8Internal::enabledAtContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         configureAttribute(instance, proto, attrData);
     }
-    if (RuntimeEnabledFeatures::featureNameAllowed(impl)) {
+    if (ContextEnabledFeatures::featureNameEnabled(impl)) {
         static const BatchedAttribute attrData =\
         // Attribute 'enabledAtContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledAtContextAttr2", TestObjV8Internal::enabledAtContextAttr2AttrGetter, TestObjV8Internal::enabledAtContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};

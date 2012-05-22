@@ -21,6 +21,7 @@
 #include "config.h"
 #include "V8TestNamedConstructor.h"
 
+#include "ContextEnabledFeatures.h"
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"

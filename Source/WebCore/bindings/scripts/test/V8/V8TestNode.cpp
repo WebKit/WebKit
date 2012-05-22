@@ -21,6 +21,7 @@
 #include "config.h"
 #include "V8TestNode.h"
 
+#include "ContextEnabledFeatures.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
