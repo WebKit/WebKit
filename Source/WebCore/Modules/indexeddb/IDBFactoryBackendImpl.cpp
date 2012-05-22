@@ -129,8 +129,11 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
     }
 
     RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
-    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
-    databaseBackend->deleteDatabase(callbacks);
+    if (databaseBackend) {
+        m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+        databaseBackend->deleteDatabase(callbacks);
+    } else
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
 }
 
 PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
@@ -177,8 +180,11 @@ void IDBFactoryBackendImpl::openInternal(const String& name, IDBCallbacks* callb
     }
 
     RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
-    callbacks->onSuccess(RefPtr<IDBDatabaseBackendInterface>(databaseBackend.get()).release());
-    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+    if (databaseBackend) {
+        callbacks->onSuccess(RefPtr<IDBDatabaseBackendInterface>(databaseBackend.get()).release());
+        m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+    } else
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
 }
 
 } // namespace WebCore

@@ -93,6 +93,14 @@ private:
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };
 
+PassRefPtr<IDBDatabaseBackendImpl> IDBDatabaseBackendImpl::create(const String& name, IDBBackingStore* database, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
+{
+    RefPtr<IDBDatabaseBackendImpl> backend = adoptRef(new IDBDatabaseBackendImpl(name, database, coordinator, factory, uniqueIdentifier));
+    if (!backend->openInternal())
+        return 0;
+    return backend.release();
+}
+
 IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStore* backingStore, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_id(InvalidId)
@@ -103,19 +111,17 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_transactionCoordinator(coordinator)
 {
     ASSERT(!m_name.isNull());
-    openInternal();
 }
 
-void IDBDatabaseBackendImpl::openInternal()
+bool IDBDatabaseBackendImpl::openInternal()
 {
     bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_id);
     ASSERT(success == (m_id != InvalidId));
     if (success) {
         loadObjectStores();
-        return;
+        return true;
     }
-    if (!m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_id))
-        ASSERT_NOT_REACHED(); // FIXME: Need better error handling.
+    return m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_id);
 }
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
@@ -325,9 +331,10 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks)
     if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty())
         m_pendingOpenCalls.append(PendingOpenCall::create(callbacks));
     else {
-        if (m_id == InvalidId)
-            openInternal();
-        callbacks->onSuccess(this);
+        if (m_id == InvalidId && !openInternal())
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        else
+            callbacks->onSuccess(this);
     }
 }
 

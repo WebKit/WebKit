@@ -51,9 +51,9 @@ public:
     virtual ~IDBFactoryBackendImpl();
 
     // Notifications from weak pointers.
-    void removeIDBDatabaseBackend(const String& uniqueIdentifier);
+    virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier);
     void addIDBBackingStore(const String& fileIdentifier, IDBBackingStore*);
-    void removeIDBBackingStore(const String& fileIdentifier);
+    virtual void removeIDBBackingStore(const String& fileIdentifier);
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
 
@@ -61,9 +61,11 @@ public:
     virtual void openFromWorker(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, WorkerContext*, const String& dataDir);
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
 
-private:
+protected:
     IDBFactoryBackendImpl();
-    PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
+    virtual PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
+
+private:
     void openInternal(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, const String& dataDir);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;

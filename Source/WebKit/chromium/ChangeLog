@@ -1,3 +1,35 @@
+2012-05-22  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Fire error when there are problems opening a DB
+        https://bugs.webkit.org/show_bug.cgi?id=85579
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gypi:
+        * tests/IDBAbortOnCorruptTest.cpp: Added.
+        (WebCore):
+        (MockIDBCallbacks):
+        (WebCore::MockIDBCallbacks::MockIDBCallbacks):
+        (WebCore::MockIDBCallbacks::~MockIDBCallbacks):
+        (WebCore::MockIDBCallbacks::onError):
+        (WebCore::MockIDBCallbacks::onSuccess):
+        (WebCore::MockIDBCallbacks::onSuccessWithContinuation):
+        (WebCore::MockIDBCallbacks::onSuccessWithPrefetch):
+        (WebCore::MockIDBCallbacks::onBlocked):
+        (FailingBackingStore):
+        (WebCore::FailingBackingStore::~FailingBackingStore):
+        (WebCore::FailingBackingStore::open):
+        (WebCore::FailingBackingStore::createIDBDatabaseMetaData):
+        (FailingIDBFactoryBackendImpl):
+        (WebCore::FailingIDBFactoryBackendImpl::~FailingIDBFactoryBackendImpl):
+        (WebCore::FailingIDBFactoryBackendImpl::create):
+        (WebCore::FailingIDBFactoryBackendImpl::removeIDBDatabaseBackend):
+        (WebCore::FailingIDBFactoryBackendImpl::openBackingStore):
+        (WebCore::TEST):
+        * tests/IDBFakeBackingStore.h: Copied from Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.h.
+        (WebCore):
+        (IDBFakeBackingStore):
+
 2012-05-22  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Implement the ContextMenuItem SubMenu type
