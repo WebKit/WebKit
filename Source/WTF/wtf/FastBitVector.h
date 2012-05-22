@@ -35,20 +35,32 @@ namespace WTF {
 
 class FastBitVector {
 public:
-    FastBitVector() : m_numBits(0) { }
+    FastBitVector()
+        : m_array(0)
+        , m_numBits(0)
+    {
+    }
     
     FastBitVector(const FastBitVector& other)
-        : m_numBits(0)
+        : m_array(0)
+        , m_numBits(0)
     {
         *this = other;
+    }
+    
+    ~FastBitVector()
+    {
+        if (m_array)
+            fastFree(m_array);
     }
     
     FastBitVector& operator=(const FastBitVector& other)
     {
         size_t length = other.arrayLength();
-        PassOwnArrayPtr<uint32_t> newArray = adoptArrayPtr(
-            static_cast<uint32_t*>(fastCalloc(length, 4)));
-        memcpy(newArray.get(), other.m_array.get(), length * 4);
+        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(length, 4));
+        memcpy(newArray, other.m_array, length * 4);
+        if (m_array)
+            fastFree(m_array);
         m_array = newArray;
         m_numBits = other.m_numBits;
         return *this;
@@ -62,27 +74,28 @@ public:
         // use case for this method to be initializing the size of the bitvector.
         
         size_t newLength = (numBits + 31) >> 5;
-        PassOwnArrayPtr<uint32_t> newArray = adoptArrayPtr(
-            static_cast<uint32_t*>(fastCalloc(newLength, 4)));
-        memcpy(newArray.get(), m_array.get(), arrayLength() * 4);
+        uint32_t* newArray = static_cast<uint32_t*>(fastCalloc(newLength, 4));
+        memcpy(newArray, m_array, arrayLength() * 4);
+        if (m_array)
+            fastFree(m_array);
         m_array = newArray;
         m_numBits = numBits;
     }
     
     void setAll()
     {
-        memset(m_array.get(), 255, arrayLength() * 4);
+        memset(m_array, 255, arrayLength() * 4);
     }
     
     void clearAll()
     {
-        memset(m_array.get(), 0, arrayLength() * 4);
+        memset(m_array, 0, arrayLength() * 4);
     }
     
     void set(const FastBitVector& other)
     {
         ASSERT(m_numBits == other.m_numBits);
-        memcpy(m_array.get(), other.m_array.get(), arrayLength() * 4);
+        memcpy(m_array, other.m_array, arrayLength() * 4);
     }
     
     bool setAndCheck(const FastBitVector& other)
@@ -159,7 +172,7 @@ public:
 private:
     size_t arrayLength() const { return (m_numBits + 31) >> 5; }
     
-    OwnArrayPtr<uint32_t> m_array;
+    uint32_t* m_array; // No, this can't be an OwnArrayPtr.
     size_t m_numBits;
 };
 

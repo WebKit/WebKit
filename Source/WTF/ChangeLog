@@ -1,3 +1,22 @@
+2012-05-22  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r117861): It made almost all tests crash on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=87082
+
+        Reviewed by Csaba Osztrogonác.
+        
+        Using OwnArrayPtr is a bad idea if you allocate array with fastCalloc.
+
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::FastBitVector):
+        (WTF::FastBitVector::~FastBitVector):
+        (FastBitVector):
+        (WTF::FastBitVector::operator=):
+        (WTF::FastBitVector::resize):
+        (WTF::FastBitVector::setAll):
+        (WTF::FastBitVector::clearAll):
+        (WTF::FastBitVector::set):
+
 2012-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to compute dominators
