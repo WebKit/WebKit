@@ -1,3 +1,14 @@
+2012-05-22  Jessie Berlin  <jberlin@apple.com>
+
+        WTR fix after r118001.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Update the WTR implementation of keyDown to match the DRT one changed in r118001.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::keyDown):
+
 2012-05-22  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         [Chromium] Use overloaded printBegin() webkit API to support auto fit to page functionality.
