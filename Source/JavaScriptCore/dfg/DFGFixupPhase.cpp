@@ -79,6 +79,7 @@ private:
             if (codeBlock()->identifier(node.identifierNumber()) != globalData().propertyNames->length)
                 break;
             bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
+            bool isArguments = isArgumentsPrediction(m_graph[node.child1()].prediction());
             bool isString = isStringPrediction(m_graph[node.child1()].prediction());
             bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
             bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
@@ -97,6 +98,8 @@ private:
 #endif
             if (isArray)
                 node.setOp(GetArrayLength);
+            else if (isArguments)
+                node.setOp(GetArgumentsLength);
             else if (isString)
                 node.setOp(GetStringLength);
             else if (isInt8Array)
@@ -127,7 +130,9 @@ private:
         }
         case GetIndexedPropertyStorage: {
             PredictedType basePrediction = m_graph[node.child2()].prediction();
-            if (!(basePrediction & PredictInt32) && basePrediction) {
+            if ((!(basePrediction & PredictInt32) && basePrediction)
+                || m_graph[node.child1()].shouldSpeculateArguments()
+                || !isActionableArrayPrediction(m_graph[node.child1()].prediction())) {
                 node.setOpAndDefaultFlags(Nop);
                 m_graph.clearAndDerefChild1(node);
                 m_graph.clearAndDerefChild2(node);

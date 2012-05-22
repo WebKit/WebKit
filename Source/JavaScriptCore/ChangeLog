@@ -1,3 +1,80 @@
+2012-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support reflective arguments access
+        https://bugs.webkit.org/show_bug.cgi?id=85721
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r116345 from dfgopt.
+        
+        This adds support for op_create_arguments to the DFG. No other arguments-related
+        opcodes are added by this change, though it does add a lot of the scaffolding
+        necessary for the other ops.
+        
+        This also adds GetByVal/PutByVal optimizations for Arguments.
+        
+        Finally, this rationalizes slowPathCall with no return. Previously, that would
+        work via callOperation() overloads that took InvalidGPRReg as the return GPR.
+        But that creates awful ambiguity, since we had template functions that were
+        polymorphic over all parameters except the second, which was a GPRReg, and a
+        bunch of non-template overloads that also potentially had GPRReg as the second
+        argument. I finally started to hit this ambiguity and was getting absolutely
+        bizarre compiler errors, that made me feel like I was programming in SML. So,
+        I changed the no-argument overloads to take NoResultTag instead, which made
+        everything sensible again by eliminating the overload ambiguity.
+        
+        This is a ~7% speed-up on V8/earley and neutral elsewhere.
+
+        * bytecode/PredictedType.h:
+        (JSC::isArgumentsPrediction):
+        (JSC):
+        (JSC::isActionableMutableArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGCommon.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::unmodifiedArgumentsRegister):
+        (Node):
+        (JSC::DFG::Node::shouldSpeculateArguments):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegistersImpl):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::pickCanTrample):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Arguments.h:
+        (ArgumentsData):
+        (Arguments):
+        (JSC::Arguments::offsetOfData):
+
 2011-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         GC allocation trigger should be tuned to system RAM

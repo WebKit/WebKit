@@ -576,6 +576,13 @@ private:
             break;
         }
             
+        case CreateArguments: {
+            // At this stage we don't try to predict whether the arguments are ours or
+            // someone else's. We could, but we don't, yet.
+            changed |= setPrediction(PredictArguments);
+            break;
+        }
+            
         case NewFunction:
         case NewFunctionNoCheck:
         case NewFunctionExpression: {
@@ -585,6 +592,7 @@ private:
             
         case PutByValAlias:
         case GetArrayLength:
+        case GetArgumentsLength:
         case GetInt8ArrayLength:
         case GetInt16ArrayLength:
         case GetInt32ArrayLength:

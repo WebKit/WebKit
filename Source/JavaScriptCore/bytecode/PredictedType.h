@@ -156,6 +156,11 @@ inline bool isFloat64ArrayPrediction(PredictedType value)
     return value == PredictFloat64Array;
 }
 
+inline bool isArgumentsPrediction(PredictedType value)
+{
+    return !!value && (value & PredictArguments) == value;
+}
+
 inline bool isActionableIntMutableArrayPrediction(PredictedType value)
 {
     return isInt8ArrayPrediction(value)
@@ -182,6 +187,7 @@ inline bool isActionableTypedMutableArrayPrediction(PredictedType value)
 inline bool isActionableMutableArrayPrediction(PredictedType value)
 {
     return isArrayPrediction(value)
+        || isArgumentsPrediction(value)
         || isActionableTypedMutableArrayPrediction(value);
 }
 
@@ -199,11 +205,6 @@ inline bool isArrayOrOtherPrediction(PredictedType value)
 inline bool isMyArgumentsPrediction(PredictedType value)
 {
     return value == PredictMyArguments;
-}
-
-inline bool isArgumentsPrediction(PredictedType value)
-{
-    return !!value && (value & PredictArguments) == value;
 }
 
 inline bool isInt32Prediction(PredictedType value)

@@ -163,6 +163,7 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_init_lazy_reg:
     case op_create_activation:
     case op_tear_off_activation:
+    case op_create_arguments:
     case op_new_func:
     case op_new_func_exp:
         return true;
@@ -198,6 +199,7 @@ inline bool canInlineOpcode(OpcodeID opcodeID)
     case op_tear_off_activation:
     case op_new_func:
     case op_new_func_exp:
+    case op_create_arguments:
         return false;
         
     default:

@@ -668,6 +668,11 @@ public:
         }
     }
     template<typename CollectionType>
+    void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, NoResultTag)
+    {
+        silentSpillAllRegistersImpl(doSpill, plans, InvalidGPRReg, InvalidGPRReg, InvalidFPRReg);
+    }
+    template<typename CollectionType>
     void silentSpillAllRegistersImpl(bool doSpill, CollectionType& plans, FPRReg exclude)
     {
         silentSpillAllRegistersImpl(doSpill, plans, InvalidGPRReg, InvalidGPRReg, exclude);
@@ -697,6 +702,10 @@ public:
         return result;
     }
     static GPRReg pickCanTrample(FPRReg)
+    {
+        return GPRInfo::regT0;
+    }
+    static GPRReg pickCanTrample(NoResultTag)
     {
         return GPRInfo::regT0;
     }
@@ -1369,10 +1378,19 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3>
-    JITCompiler::Call callOperation(FunctionType operation, GPRReg result, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3)
+    JITCompiler::Call callOperation(V_DFGOperation_ECZ operation, GPRReg arg1, int arg2)
     {
-        ASSERT_UNUSED(result, result == InvalidGPRReg);
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
+        return appendCallWithExceptionCheck(operation);
+    }
+    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2)
+    {
+        return callOperation(operation, arg1, arg2);
+    }
+    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3)
+    {
         return callOperation(operation, arg1, arg2, arg3);
     }
     JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1)
@@ -1573,6 +1591,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
     }
+    JITCompiler::Call callOperation(V_DFGOperation_ECZ operation, GPRReg arg1, int arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
+        return appendCallWithExceptionCheck(operation);
+    }
     JITCompiler::Call callOperation(V_DFGOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
@@ -1583,16 +1606,19 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
     }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3, typename ArgumentType4>
-    JITCompiler::Call callOperation(FunctionType operation, GPRReg result, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4)
+    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2)
     {
-        ASSERT_UNUSED(result, result == InvalidGPRReg);
+        return callOperation(operation, arg1, arg2);
+    }
+    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3, typename ArgumentType4>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4)
+    {
         return callOperation(operation, arg1, arg2, arg3, arg4);
     }
     template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3, typename ArgumentType4, typename ArgumentType5>
-    JITCompiler::Call callOperation(FunctionType operation, GPRReg result, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4, ArgumentType5 arg5)
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4, ArgumentType5 arg5)
     {
-        ASSERT_UNUSED(result, result == InvalidGPRReg);
         return callOperation(operation, arg1, arg2, arg3, arg4, arg5);
     }
 
@@ -1962,6 +1988,8 @@ public:
     
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
+    void compileGetByValOnArguments(Node&);
+    void compileGetArgumentsLength(Node&);
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
     void compileDoubleAsInt32(Node&);

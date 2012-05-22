@@ -743,6 +743,12 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).makeTop();
             break;
         }
+        if (m_graph[node.child1()].shouldSpeculateArguments()) {
+            forNode(node.child1()).filter(PredictArguments);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).makeTop();
+            break;
+        }
         if (m_graph[node.child1()].prediction() == PredictString) {
             forNode(node.child1()).filter(PredictString);
             forNode(node.child2()).filter(PredictInt32);
@@ -820,13 +826,22 @@ bool AbstractState::execute(unsigned indexInBlock)
             m_isValid = false;
             break;
         }
-        if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+        if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
+#if USE(JSVALUE32_64)
+            || m_graph[node.child1()].shouldSpeculateArguments()
+#endif
+            ) {
             ASSERT(node.op() == PutByVal);
             clobberStructures(indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         }
         
+        if (m_graph[node.child1()].shouldSpeculateArguments()) {
+            forNode(node.child1()).filter(PredictArguments);
+            forNode(node.child2()).filter(PredictInt32);
+            break;
+        }
         if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
             forNode(node.child1()).filter(PredictInt8Array);
             forNode(node.child2()).filter(PredictInt32);
@@ -1043,6 +1058,11 @@ bool AbstractState::execute(unsigned indexInBlock)
         m_haveStructures = true;
         break;
         
+    case CreateArguments:
+        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->argumentsStructure());
+        m_haveStructures = true;
+        break;
+        
     case TearOffActivation:
         // Does nothing that is user-visible.
         break;
@@ -1083,6 +1103,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case GetArrayLength:
         forNode(node.child1()).filter(PredictArray);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+
+    case GetArgumentsLength:
+        forNode(node.child1()).filter(PredictArguments);
         forNode(nodeIndex).set(PredictInt32);
         break;
 
@@ -1147,6 +1172,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         PredictedType basePrediction = m_graph[node.child2()].prediction();
         if (!(basePrediction & PredictInt32) && basePrediction) {
             forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateArguments()) {
+            ASSERT_NOT_REACHED();
             break;
         }
         if (m_graph[node.child1()].prediction() == PredictString) {

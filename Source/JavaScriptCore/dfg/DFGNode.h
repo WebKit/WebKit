@@ -275,6 +275,12 @@ struct Node {
         return variableAccessData()->local();
     }
     
+    VirtualRegister unmodifiedArgumentsRegister()
+    {
+        ASSERT(op() == TearOffActivation);
+        return static_cast<VirtualRegister>(m_opInfo);
+    }
+    
     bool hasIdentifier()
     {
         switch (op()) {
@@ -740,6 +746,11 @@ struct Node {
     bool shouldSpeculateArray()
     {
         return isArrayPrediction(prediction());
+    }
+    
+    bool shouldSpeculateArguments()
+    {
+        return isArgumentsPrediction(prediction());
     }
     
     bool shouldSpeculateInt8Array()

@@ -131,6 +131,8 @@ inline bool isX86()
 
 enum SpillRegistersMode { NeedToSpill, DontSpill };
 
+enum NoResultTag { NoResult };
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

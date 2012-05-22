@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DFGOperations.h"
 
+#include "Arguments.h"
 #include "CodeBlock.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
@@ -1037,14 +1038,27 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
     return activation;
 }
 
-void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activation)
+JSCell* DFG_OPERATION operationCreateArguments(ExecState* exec)
 {
-    ASSERT(activation);
-    ASSERT(activation->inherits(&JSActivation::s_info));
+    return Arguments::create(exec->globalData(), exec);
+}
+
+void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell, int32_t unmodifiedArgumentsRegister)
+{
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    jsCast<JSActivation*>(activation)->tearOff(exec->globalData());
+    if (!activationCell) {
+        if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister).jsValue()) {
+            if (!exec->codeBlock()->isStrictMode())
+                asArguments(v)->tearOff(exec);
+        }
+    }
+    JSActivation* activation = jsCast<JSActivation*>(activationCell);
+    activation->tearOff(exec->globalData());
+    if (JSValue v = exec->uncheckedR(unmodifiedArgumentsRegister).jsValue())
+        asArguments(v)->didTearOffActivation(exec->globalData(), activation);
 }
+
 
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
 {

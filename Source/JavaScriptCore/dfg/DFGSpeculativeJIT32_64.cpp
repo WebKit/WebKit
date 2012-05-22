@@ -581,14 +581,14 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
     OwnPtr<SlowPathGenerator> slowPath;
     if (!slowPathTarget.isSet()) {
         slowPath = slowPathCall(
-            structureCheck.m_jump, this, optimizedCall, InvalidGPRReg, valueTagGPR, valuePayloadGPR,
+            structureCheck.m_jump, this, optimizedCall, NoResult, valueTagGPR, valuePayloadGPR,
             basePayloadGPR, identifier(identifierNumber));
     } else {
         JITCompiler::JumpList slowCases;
         slowCases.append(structureCheck.m_jump);
         slowCases.append(slowPathTarget);
         slowPath = slowPathCall(
-            slowCases, this, optimizedCall, InvalidGPRReg, valueTagGPR, valuePayloadGPR,
+            slowCases, this, optimizedCall, NoResult, valueTagGPR, valuePayloadGPR,
             basePayloadGPR, identifier(identifierNumber));
     }
     m_jit.addPropertyAccess(
@@ -2318,6 +2318,13 @@ void SpeculativeJIT::compile(Node& node)
             jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
             break;
         }
+        
+        if (at(node.child1()).shouldSpeculateArguments()) {
+            compileGetByValOnArguments(node);
+            if (!m_compileOkay)
+                return;
+            break;
+        }
 
         if (at(node.child1()).prediction() == PredictString) {
             compileGetByValOnString(node);
@@ -2429,7 +2436,9 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        if (!at(node.child2()).shouldSpeculateInteger() || !isActionableMutableArrayPrediction(at(node.child1()).prediction())) {
+        if (!at(node.child2()).shouldSpeculateInteger()
+            || !isActionableMutableArrayPrediction(at(node.child1()).prediction())
+            || at(node.child1()).shouldSpeculateArguments()) {
             SpeculateCellOperand base(this, node.child1()); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, node.child2());
             JSValueOperand value(this, node.child3());
@@ -2564,7 +2573,7 @@ void SpeculativeJIT::compile(Node& node)
             slowPathCall(
                 beyondArrayBounds, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
-                InvalidGPRReg, baseReg, propertyReg, valueTagReg, valuePayloadReg));
+                NoResult, baseReg, propertyReg, valueTagReg, valuePayloadReg));
 
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
@@ -3299,6 +3308,11 @@ void SpeculativeJIT::compile(Node& node)
         integerResult(resultGPR, m_compileIndex);
         break;
     }
+        
+    case GetArgumentsLength: {
+        compileGetArgumentsLength(node);
+        break;
+    }
 
     case GetStringLength: {
         SpeculateCellOperand base(this, node.child1());
@@ -3738,17 +3752,41 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case TearOffActivation: {
+    case CreateArguments: {
         JSValueOperand value(this, node.child1());
+        GPRTemporary result(this, value, false);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
+        GPRReg resultGPR = result.gpr();
         
-        JITCompiler::Jump created = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+        m_jit.move(valuePayloadGPR, resultGPR);
+        
+        JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+        
+        addSlowPathGenerator(
+            slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+        
+        cellResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case TearOffActivation: {
+        JSValueOperand activationValue(this, node.child1());
+        JSValueOperand argumentsValue(this, node.child2());
+        
+        GPRReg activationValueTagGPR = activationValue.tagGPR();
+        GPRReg activationValuePayloadGPR = activationValue.payloadGPR();
+        GPRReg argumentsValueTagGPR = argumentsValue.tagGPR();
+        
+        JITCompiler::JumpList created;
+        created.append(m_jit.branch32(JITCompiler::NotEqual, activationValueTagGPR, TrustedImm32(JSValue::EmptyValueTag)));
+        created.append(m_jit.branch32(JITCompiler::NotEqual, argumentsValueTagGPR, TrustedImm32(JSValue::EmptyValueTag)));
         
         addSlowPathGenerator(
             slowPathCall(
-                created, this, operationTearOffActivation, InvalidGPRReg, valuePayloadGPR));
+                created, this, operationTearOffActivation, NoResult, activationValuePayloadGPR,
+                static_cast<int32_t>(node.unmodifiedArgumentsRegister())));
         
         noResult(m_compileIndex);
         break;

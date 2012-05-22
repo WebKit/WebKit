@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "Arguments.h"
 #include "DFGSlowPathGenerator.h"
 #include "LinkBuffer.h"
 
@@ -2978,7 +2979,9 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node& node)
     
     GPRTemporary storage(this);
     GPRReg storageReg = storage.gpr();
-    if (at(node.child1()).prediction() == PredictString) {
+    if (at(node.child1()).shouldSpeculateArguments()) {
+        ASSERT_NOT_REACHED();
+    } else if (at(node.child1()).prediction() == PredictString) {
         if (!isStringPrediction(m_state.forNode(node.child1()).m_type))
             speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSString::s_info)));
 
@@ -3039,6 +3042,120 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node& node)
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
     }
     storageResult(storageReg, m_compileIndex);
+}
+
+void SpeculativeJIT::compileGetByValOnArguments(Node& node)
+{
+    SpeculateCellOperand base(this, node.child1());
+    SpeculateStrictInt32Operand property(this, node.child2());
+    GPRTemporary result(this);
+#if USE(JSVALUE32_64)
+    GPRTemporary resultTag(this);
+#endif
+    GPRTemporary scratch(this);
+    
+    GPRReg baseReg = base.gpr();
+    GPRReg propertyReg = property.gpr();
+    GPRReg resultReg = result.gpr();
+#if USE(JSVALUE32_64)
+    GPRReg resultTagReg = resultTag.gpr();
+#endif
+    GPRReg scratchReg = scratch.gpr();
+    
+    if (!m_compileOkay)
+        return;
+    
+    if (!isArgumentsPrediction(m_state.forNode(node.child1()).m_type)) {
+        speculationCheck(
+            BadType, JSValueSource::unboxedCell(baseReg), node.child1(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(baseReg, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(&Arguments::s_info)));
+    }
+    
+    m_jit.loadPtr(
+        MacroAssembler::Address(baseReg, Arguments::offsetOfData()),
+        scratchReg);
+
+    // Two really lame checks.
+    speculationCheck(
+        Uncountable, JSValueSource(), NoNode,
+        m_jit.branchPtr(
+            MacroAssembler::AboveOrEqual, propertyReg,
+            MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, numArguments))));
+    speculationCheck(
+        Uncountable, JSValueSource(), NoNode,
+        m_jit.branchTestPtr(
+            MacroAssembler::NonZero,
+            MacroAssembler::Address(
+                scratchReg, OBJECT_OFFSETOF(ArgumentsData, deletedArguments))));
+    
+    m_jit.move(propertyReg, resultReg);
+    m_jit.neg32(resultReg);
+    m_jit.signExtend32ToPtr(resultReg, resultReg);
+    m_jit.loadPtr(
+        MacroAssembler::Address(scratchReg, OBJECT_OFFSETOF(ArgumentsData, registers)),
+        scratchReg);
+    
+#if USE(JSVALUE32_64)
+    m_jit.load32(
+        MacroAssembler::BaseIndex(
+            scratchReg, resultReg, MacroAssembler::TimesEight,
+            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register) +
+            OBJECT_OFFSETOF(JSValue, u.asBits.tag)),
+        resultTagReg);
+    m_jit.load32(
+        MacroAssembler::BaseIndex(
+            scratchReg, resultReg, MacroAssembler::TimesEight,
+            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register) +
+            OBJECT_OFFSETOF(JSValue, u.asBits.payload)),
+        resultReg);
+    jsValueResult(resultTagReg, resultReg, m_compileIndex);
+#else
+    m_jit.loadPtr(
+        MacroAssembler::BaseIndex(
+            scratchReg, resultReg, MacroAssembler::TimesEight,
+            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register)),
+        resultReg);
+    jsValueResult(resultReg, m_compileIndex);
+#endif
+}
+
+void SpeculativeJIT::compileGetArgumentsLength(Node& node)
+{
+    SpeculateCellOperand base(this, node.child1());
+    GPRTemporary result(this, base);
+    
+    GPRReg baseReg = base.gpr();
+    GPRReg resultReg = result.gpr();
+    
+    if (!m_compileOkay)
+        return;
+    
+    if (!isArgumentsPrediction(m_state.forNode(node.child1()).m_type)) {
+        speculationCheck(
+            BadType, JSValueSource::unboxedCell(baseReg), node.child1(),
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(baseReg, JSCell::classInfoOffset()),
+                MacroAssembler::TrustedImmPtr(&Arguments::s_info)));
+    }
+    
+    m_jit.loadPtr(
+        MacroAssembler::Address(baseReg, Arguments::offsetOfData()),
+        resultReg);
+
+    speculationCheck(
+        Uncountable, JSValueSource(), NoNode,
+        m_jit.branchTest8(
+            MacroAssembler::NonZero,
+            MacroAssembler::Address(resultReg, OBJECT_OFFSETOF(ArgumentsData, overrodeLength))));
+    
+    m_jit.load32(
+        MacroAssembler::Address(resultReg, OBJECT_OFFSETOF(ArgumentsData, numArguments)),
+        resultReg);
+    integerResult(resultReg, m_compileIndex);
 }
 
 void SpeculativeJIT::compileNewFunctionNoCheck(Node& node)

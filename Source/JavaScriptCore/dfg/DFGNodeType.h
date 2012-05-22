@@ -117,6 +117,7 @@ namespace JSC { namespace DFG {
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \
+    macro(GetArgumentsLength, NodeResultInt32) \
     macro(GetStringLength, NodeResultInt32) \
     macro(GetInt8ArrayLength, NodeResultInt32) \
     macro(GetInt16ArrayLength, NodeResultInt32) \
@@ -189,6 +190,10 @@ namespace JSC { namespace DFG {
     /* being threaded with each other. */\
     macro(CreateActivation, NodeResultJS) \
     macro(TearOffActivation, NodeMustGenerate) \
+    \
+    /* Nodes used for arguments. Similar to activation support, only it makes even less */\
+    /* sense. */\
+    macro(CreateArguments, NodeResultJS) \
     \
     /* Nodes for creating functions. */\
     macro(NewFunctionNoCheck, NodeResultJS) \

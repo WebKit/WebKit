@@ -88,6 +88,7 @@ typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, E
 typedef size_t DFG_OPERATION (*S_DFGOperation_J)(EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EAZJ)(ExecState*, JSArray*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, Identifier*);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
@@ -153,7 +154,8 @@ void* DFG_OPERATION operationLinkCall(ExecState*);
 void* DFG_OPERATION operationVirtualConstruct(ExecState*);
 void* DFG_OPERATION operationLinkConstruct(ExecState*);
 JSCell* DFG_OPERATION operationCreateActivation(ExecState*);
-void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*);
+JSCell* DFG_OPERATION operationCreateArguments(ExecState*);
+void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*, int32_t unmodifiedArgumentsRegister);
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t);

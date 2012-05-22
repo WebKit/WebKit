@@ -356,11 +356,20 @@ public:
 #endif
     }
     
+    bool usesArguments() const
+    {
+#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
+        return true;
+#else
+        return m_codeBlock->usesArguments();
+#endif
+    }
+    
     // Pass an argument index. Currently it's ignored, but that's somewhat
     // of a bug.
     bool argumentIsCaptured(int) const
     {
-        return needsActivation();
+        return needsActivation() || usesArguments();
     }
     bool localIsCaptured(int operand) const
     {

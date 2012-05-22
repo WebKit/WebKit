@@ -611,7 +611,9 @@ private:
             break;
             
         case PutByVal:
-            if (m_graph.byValIsPure(node) && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
+            if (m_graph.byValIsPure(node)
+                && !m_graph[node.child1()].shouldSpeculateArguments()
+                && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
                 node.setOp(PutByValAlias);
             break;
             

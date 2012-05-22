@@ -2370,9 +2370,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_activation);
         }
             
+        case op_create_arguments: {
+            NodeIndex createArguments = addToGraph(CreateArguments, get(currentInstruction[1].u.operand));
+            set(currentInstruction[1].u.operand, createArguments);
+            set(unmodifiedArgumentsRegister(currentInstruction[1].u.operand), createArguments);
+            NEXT_OPCODE(op_create_arguments);
+        }
+            
         case op_tear_off_activation: {
             // This currently ignores arguments because we don't support them yet.
-            addToGraph(TearOffActivation, get(currentInstruction[1].u.operand));
+            addToGraph(TearOffActivation, OpInfo(unmodifiedArgumentsRegister(currentInstruction[2].u.operand)), get(currentInstruction[1].u.operand), get(currentInstruction[2].u.operand));
             NEXT_OPCODE(op_tear_off_activation);
         }
             

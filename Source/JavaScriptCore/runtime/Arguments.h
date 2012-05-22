@@ -41,16 +41,20 @@ namespace JSC {
 
         unsigned numArguments;
 
+        // We make these full byte booleans to make them easy to test from the JIT,
+        // and because even if they were single-bit booleans we still wouldn't save
+        // any space.
+        bool overrodeLength; 
+        bool overrodeCallee;
+        bool overrodeCaller;
+        bool isStrictMode;
+
         WriteBarrier<Unknown>* registers;
         OwnArrayPtr<WriteBarrier<Unknown> > registerArray;
 
         OwnArrayPtr<bool> deletedArguments;
 
         WriteBarrier<JSFunction> callee;
-        bool overrodeLength : 1;
-        bool overrodeCallee : 1;
-        bool overrodeCaller : 1;
-        bool isStrictMode : 1;
     };
 
     class Arguments : public JSNonFinalObject {
@@ -101,6 +105,8 @@ namespace JSC {
         { 
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info); 
         }
+        
+        static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(Arguments, d); }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
