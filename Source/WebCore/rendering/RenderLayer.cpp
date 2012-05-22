@@ -4149,8 +4149,13 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
 {
     if (!layer->isSelfPaintingLayer())
         return IntRect();
-    
+
     LayoutRect boundingBoxRect = layer->localBoundingBox();
+    if (layer->renderer()->isBox())
+        layer->renderBox()->flipForWritingMode(boundingBoxRect);
+    else
+        layer->renderer()->containingBlock()->flipForWritingMode(boundingBoxRect);
+
     if (layer->renderer()->isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin

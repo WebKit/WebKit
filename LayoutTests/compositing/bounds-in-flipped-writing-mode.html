@@ -1,0 +1,13 @@
+<body style="margin: 0; padding: 100px;">
+    <div style="width: 100px; height: 100px; background-color: red;"></div>
+    <div style="width: 100px; height: 100px; -webkit-writing-mode: horizontal-bt; -webkit-transform: translatez(0)">
+        <div style="-webkit-margin-before: 100px; height: 100px; background-color: green;"></div>
+    </div>
+    <pre id="console"></pre>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            document.getElementById("console").appendChild(document.createTextNode(layoutTestController.layerTreeAsText()));
+        }
+    </script>
+</body>

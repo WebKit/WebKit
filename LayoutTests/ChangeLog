@@ -1,5 +1,19 @@
 2012-05-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 117537
+
+    2012-05-17  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/11419933> Problems with flipped writing modes and compositing
+            https://bugs.webkit.org/show_bug.cgi?id=86032
+
+            Reviewed by Anders Carlsson.
+
+            * compositing/bounds-in-flipped-writing-mode-expected.txt: Added.
+            * compositing/bounds-in-flipped-writing-mode.html: Added.
+
+2012-05-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 117523
 
     2012-05-17  Filip Pizlo  <fpizlo@apple.com>
