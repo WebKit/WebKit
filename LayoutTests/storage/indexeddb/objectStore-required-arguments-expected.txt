@@ -14,8 +14,8 @@ PASS objectStore.put(); threw exception TypeError: Not enough arguments.
 PASS objectStore.add(); threw exception TypeError: Not enough arguments.
 PASS objectStore.delete(); threw exception TypeError: Type error.
 PASS objectStore.get(); threw exception TypeError: Type error.
-PASS objectStore.createIndex(); threw exception TypeError: Not enough arguments.
-PASS objectStore.createIndex('foo'); threw exception TypeError: Not enough arguments.
+PASS objectStore.createIndex(); threw exception TypeError: Type error.
+PASS objectStore.createIndex('foo'); threw exception TypeError: Type error.
 PASS objectStore.index(); threw exception TypeError: Not enough arguments.
 PASS objectStore.deleteIndex(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true

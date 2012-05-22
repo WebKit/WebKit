@@ -39,7 +39,7 @@ function cleanDatabase()
         { name: "1", options: { autoIncrement: true } },
         { name: "2", options: { autoIncrement: false } },
         { name: "3", options: { keyPath: "" } },
-        { name: "4", options: { keyPath: "", autoIncrement: true } },
+        { name: "4", options: { keyPath: "", autoIncrement: true }, fail: true },
         { name: "5", options: { keyPath: "", autoIncrement: false } },
         { name: "6", options: { keyPath: "foo" } },
         { name: "7", options: { keyPath: "foo", autoIncrement: false } },
@@ -49,15 +49,18 @@ function cleanDatabase()
     for (var index in objectStoreInfo) {
         index = parseInt(index);
         info = objectStoreInfo[index];
-        objectStore = evalAndLog("objectStore = db.createObjectStore(info.name, info.options);");
-        shouldBe("objectStore.name", "info.name");
-        if (info.options && info.options.keyPath) {
-            shouldBe("objectStore.keyPath", "info.options.keyPath");
+        if (!info.fail) {
+            objectStore = evalAndLog("objectStore = db.createObjectStore(info.name, info.options);");
+            shouldBe("objectStore.name", "info.name");
+            if (info.options && info.options.keyPath) {
+                shouldBe("objectStore.keyPath", "info.options.keyPath");
+            }
+            shouldBe("objectStore.indexNames.length", "0");
+            shouldBe("event.target.transaction.db", "db");
+            shouldBeEqualToString("event.target.transaction.mode", "versionchange");
+        } else {
+            evalAndExpectException("objectStore = db.createObjectStore(info.name, info.options)", "DOMException.INVALID_ACCESS_ERR");
         }
-        shouldBe("objectStore.indexNames.length", "0");
-        shouldBe("event.target.transaction.db", "db");
-        shouldBe("event.target.transaction.readyState", "IDBTransaction.LOADING");
-        shouldBe("event.target.transaction.mode", "'versionchange'");
     }
 
     finishJSTest();

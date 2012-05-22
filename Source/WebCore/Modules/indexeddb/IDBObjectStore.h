@@ -62,10 +62,8 @@ public:
     IDBTransaction* transaction() const;
     bool autoIncrement() const;
 
-    // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBRequest> add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return add(context, value, 0, ec);  }
     PassRefPtr<IDBRequest> put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return put(context, value, 0, ec);  }
-    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec) { return openCursor(context, key, IDBCursor::directionNext(), ec); } 
@@ -78,7 +76,11 @@ public:
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKey> key, ExceptionCode&);
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
+    // FIXME: Try to modify the code generator so this duplication is unneeded.
     PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
+    PassRefPtr<IDBIndex> createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
     PassRefPtr<IDBIndex> createIndex(const String&, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
 
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);

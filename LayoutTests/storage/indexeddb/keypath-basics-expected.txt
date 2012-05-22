@@ -8,6 +8,8 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 indexedDB.open(name)
 db = event.target.result
 request = db.setVersion('1')
+
+testValidKeyPaths():
 Deleted all object stores.
 store = db.createObjectStore('name')
 PASS store.keyPath is null
@@ -37,129 +39,98 @@ PASS store.keyPath is 'foo.bar.baz'
 index = store.createIndex('name', 'foo.bar.baz')
 PASS index.keyPath is 'foo.bar.baz'
 Deleted all object stores.
+
+testInvalidKeyPaths():
 Deleted all object stores.
-globalKeyPath = '[]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+
+Object store key path may not be empty or an array if autoIncrement is true
+Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ''})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.INVALID_ACCESS_ERR
 Deleted all object stores.
-globalKeyPath = '["foo"]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: []})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.INVALID_ACCESS_ERR
 Deleted all object stores.
-globalKeyPath = '["foo", "bar"]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ['a']})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.INVALID_ACCESS_ERR
 Deleted all object stores.
-globalKeyPath = '["", ""]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ['']})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.INVALID_ACCESS_ERR
 Deleted all object stores.
-globalKeyPath = '[1.0, 2.0]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+
+Key paths which are never valid:
+Expecting exception from db.createObjectStore('name', {keyPath: ' '})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', ' ')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = '[["foo"]]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo '})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo ')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = '["foo", ["bar"]]'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo bar'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo bar')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = ' '
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo. bar'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo. bar')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = 'foo '
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo .bar'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo .bar')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = 'foo bar'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo..bar'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo..bar')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = 'foo. bar'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: '+foo'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', '+foo')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = 'foo .bar'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: 'foo%'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', 'foo%')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = 'foo..bar'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: '1'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', '1')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
-globalKeyPath = '+foo'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+Expecting exception from db.createObjectStore('name', {keyPath: '1.0'})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo%'
-Expecting exception from db.createObjectStore('name', {keyPath: globalKeyPath})
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', '1.0')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = ' '
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo '
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo bar'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo. bar'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo .bar'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo..bar'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = '+foo'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
-Deleted all object stores.
-globalKeyPath = 'foo%'
-store = db.createObjectStore('storeName')
-Expecting exception from store.createIndex('name', globalKeyPath)
-PASS Exception was thrown.
-PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
+PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.
 PASS successfullyParsed is true
 

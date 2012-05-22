@@ -153,13 +153,11 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
 
 } // anonymous namespace
 
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const IDBKeyPath& keyPath)
+static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
-    IDB_TRACE("createIDBKeyFromSerializedValueAndKeyPath");
-    ASSERT(keyPath.type() == IDBKeyPath::StringType);
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
-    IDBParseKeyPath(keyPath.string(), keyPathElements, error);
+    IDBParseKeyPath(keyPath, keyPathElements, error);
     ASSERT(error == IDBKeyPathParseErrorNone);
 
     V8AuxiliaryContext context;
@@ -168,6 +166,30 @@ PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<Serializ
     if (v8Key.IsEmpty())
         return 0;
     return createIDBKeyFromValue(v8Key);
+}
+
+
+PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const IDBKeyPath& keyPath)
+{
+    IDB_TRACE("createIDBKeyFromSerializedValueAndKeyPath");
+    ASSERT(!keyPath.isNull());
+
+    RefPtr<SerializedScriptValue> value = prpValue;
+
+    if (keyPath.type() == IDBKeyPath::ArrayType) {
+        IDBKey::KeyArray result;
+        const Vector<String>& array = keyPath.array();
+        for (size_t i = 0; i < array.size(); ++i) {
+            RefPtr<IDBKey> key = createIDBKeyFromSerializedValueAndKeyPath(value, array[i]);
+            if (!key)
+                return 0;
+            result.append(key);
+        }
+        return IDBKey::createArray(result);
+    }
+
+    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    return createIDBKeyFromSerializedValueAndKeyPath(value, keyPath.string());
 }
 
 PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const IDBKeyPath& keyPath)

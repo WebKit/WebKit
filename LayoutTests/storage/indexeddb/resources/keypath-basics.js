@@ -25,6 +25,8 @@ function openSuccess()
 
 function testValidKeyPaths()
 {
+    debug("");
+    debug("testValidKeyPaths():");
     deleteAllObjectStores(db);
 
     evalAndLog("store = db.createObjectStore('name')");
@@ -52,30 +54,24 @@ function testValidKeyPaths()
 
 function testInvalidKeyPaths()
 {
+    debug("");
+    debug("testInvalidKeyPaths():");
     deleteAllObjectStores(db);
 
-    testKeyPaths = ['[]', '["foo"]', '["foo", "bar"]', '["", ""]', '[1.0, 2.0]', '[["foo"]]', '["foo", ["bar"]]'];
+    debug("");
+    debug("Object store key path may not be empty or an array if autoIncrement is true");
+    testKeyPaths = ["''", "[]", "['a']", "['']"];
     testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        evalAndExpectException("db.createObjectStore('name', {keyPath: globalKeyPath})", "IDBDatabaseException.NON_TRANSIENT_ERR");
+        store = evalAndExpectException("store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: " + keyPath + "})", "DOMException.INVALID_ACCESS_ERR");
         deleteAllObjectStores(db);
     });
 
-    testKeyPaths = [' ', 'foo ', 'foo bar', 'foo. bar', 'foo .bar', 'foo..bar', '+foo', 'foo%'];
+    debug("");
+    debug("Key paths which are never valid:");
+    testKeyPaths = ["' '", "'foo '", "'foo bar'", "'foo. bar'", "'foo .bar'", "'foo..bar'", "'+foo'", "'foo%'", "'1'", "'1.0'"];
     testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        evalAndExpectException("db.createObjectStore('name', {keyPath: globalKeyPath})", "IDBDatabaseException.NON_TRANSIENT_ERR");
-        deleteAllObjectStores(db);
-    });
-
-    testKeyPaths = [' ', 'foo ', 'foo bar', 'foo. bar', 'foo .bar', 'foo..bar', '+foo', 'foo%'];
-    testKeyPaths.forEach(function (keyPath) {
-        globalKeyPath = keyPath;
-        debug("globalKeyPath = '" + globalKeyPath + "'");
-        store = evalAndLog("store = db.createObjectStore('storeName')");
-        evalAndExpectException("store.createIndex('name', globalKeyPath)", "IDBDatabaseException.NON_TRANSIENT_ERR");
+        evalAndExpectException("db.createObjectStore('name', {keyPath: " + keyPath + "})", "DOMException.SYNTAX_ERR");
+        evalAndExpectException("db.createObjectStore('name').createIndex('name', " + keyPath + ")", "DOMException.SYNTAX_ERR");
         deleteAllObjectStores(db);
     });
 

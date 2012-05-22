@@ -95,18 +95,26 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     IDBKeyPath keyPath;
     if (!options.isUndefinedOrNull()) {
         String keyPathString;
-        if (options.getWithUndefinedOrNullCheck("keyPath", keyPathString))
+        Vector<String> keyPathArray;
+        if (options.get("keyPath", keyPathArray))
+            keyPath = IDBKeyPath(keyPathArray);
+        else if (options.getWithUndefinedOrNullCheck("keyPath", keyPathString))
             keyPath = IDBKeyPath(keyPathString);
     }
 
     if (!keyPath.isNull() && !keyPath.isValid()) {
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        ec = SYNTAX_ERR;
         return 0;
     }
 
     bool autoIncrement = false;
-    options.get("autoIncrement", autoIncrement);
-    // FIXME: Look up evictable and pass that on as well.
+    if (!options.isUndefinedOrNull())
+        options.get("autoIncrement", autoIncrement);
+
+    if (autoIncrement && ((keyPath.type() == IDBKeyPath::StringType && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::ArrayType)) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
 
     RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->createObjectStore(name, keyPath, autoIncrement, m_versionChangeTransaction->backend(), ec);
     if (!objectStoreBackend) {

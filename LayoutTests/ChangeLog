@@ -1,3 +1,29 @@
+2012-05-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Support Array-type key paths
+        https://bugs.webkit.org/show_bug.cgi?id=84207
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/keypath-arrays-expected.txt: Added.
+        * storage/indexeddb/keypath-arrays.html: Added.
+        * storage/indexeddb/keypath-basics-expected.txt:
+        * storage/indexeddb/mozilla/create-objectstore-basics-expected.txt:
+        * storage/indexeddb/mozilla/resources/create-objectstore-basics.js:
+        (cleanDatabase):
+        * storage/indexeddb/objectStore-required-arguments-expected.txt:
+        * storage/indexeddb/resources/keypath-arrays.js: Added.
+        (test.request.onsuccess):
+        (test):
+        (openSuccess.request.onsuccess):
+        (openSuccess):
+        (testKeyPaths.checkStore.request.onsuccess):
+        (testKeyPaths.checkStore):
+        (testKeyPaths.checkIndex.request.onsuccess):
+        (testKeyPaths.checkIndex):
+        (testKeyPaths):
+        * storage/indexeddb/resources/keypath-basics.js:
+
 2012-05-22  Abhishek Arya  <inferno@chromium.org>
 
         Assertion failure (toRenderBox() called on a RenderInline) beneath RenderBlock::blockBeforeWithinSelectionRoot()
