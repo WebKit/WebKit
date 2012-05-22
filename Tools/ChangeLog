@@ -1,3 +1,29 @@
+2012-05-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Key modifier bit flags have enum type.
+        https://bugs.webkit.org/show_bug.cgi?id=86838
+
+        Reviewed by Antonio Gomes.
+
+        Refactoring. Key modifier flags are unsigned int.
+        Key modifier bit flags used have enum type. It caused problems as a key can have several modifiers 
+        at the same time and the union of modifiers (i.e. EvasKeyModifierControl | EvasKeyModifierShift) 
+        would have been out of EvasKeyModifier enum.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (KeyEventInfo::KeyEventInfo):
+        (KeyEventInfo):
+        (MouseEventInfo::MouseEventInfo):
+        (MouseEventInfo):
+        (setEvasModifiers):
+        (modifiersFromJSValue):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+        (createKeyEventInfo):
+        (sendKeyDown):
+
 2012-05-22  Takashi Sakamoto  <tasak@google.com>
 
         Implement DOM_KEY_LOCATION_LEFT and RIGHT of KeyboardEvent's location property

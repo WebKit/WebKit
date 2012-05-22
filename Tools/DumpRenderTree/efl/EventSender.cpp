@@ -109,7 +109,7 @@ enum EventQueueStrategy {
 };
 
 struct KeyEventInfo {
-    KeyEventInfo(const CString& keyName, const CString& keyString, EvasKeyModifier modifiers)
+    KeyEventInfo(const CString& keyName, const CString& keyString, unsigned modifiers)
         : keyName(keyName)
         , keyString(keyString)
         , modifiers(modifiers)
@@ -118,11 +118,11 @@ struct KeyEventInfo {
 
     const CString keyName;
     const CString keyString;
-    EvasKeyModifier modifiers;
+    unsigned modifiers;
 };
 
 struct MouseEventInfo {
-    MouseEventInfo(EvasMouseEvent event, EvasKeyModifier modifiers = EvasKeyModifierNone, EvasMouseButton button = EvasMouseButtonNone, int horizontalDelta = 0, int verticalDelta = 0)
+    MouseEventInfo(EvasMouseEvent event, unsigned modifiers = EvasKeyModifierNone, EvasMouseButton button = EvasMouseButtonNone, int horizontalDelta = 0, int verticalDelta = 0)
         : event(event)
         , modifiers(modifiers)
         , button(button)
@@ -132,7 +132,7 @@ struct MouseEventInfo {
     }
 
     EvasMouseEvent event;
-    EvasKeyModifier modifiers;
+    unsigned modifiers;
     EvasMouseButton button;
     int horizontalDelta;
     int verticalDelta;
@@ -160,7 +160,7 @@ static void feedOrQueueMouseEvent(MouseEventInfo*, EventQueueStrategy);
 static void feedMouseEvent(MouseEventInfo*);
 static void feedQueuedMouseEvents();
 
-static void setEvasModifiers(Evas* evas, EvasKeyModifier modifiers)
+static void setEvasModifiers(Evas* evas, unsigned modifiers)
 {
     static const char* modifierNames[] = { "Control", "Shift", "Alt", "Super" };
     for (unsigned modifier = 0; modifier < 4; ++modifier) {
@@ -227,7 +227,7 @@ static EvasKeyModifier modifierFromJSValue(JSContextRef context, const JSValueRe
     return EvasKeyModifierNone;
 }
 
-static EvasKeyModifier modifiersFromJSValue(JSContextRef context, const JSValueRef modifiers)
+static unsigned modifiersFromJSValue(JSContextRef context, const JSValueRef modifiers)
 {
     // The value may either be a string with a single modifier or an array of modifiers.
     if (JSValueIsString(context, modifiers))
@@ -237,12 +237,12 @@ static EvasKeyModifier modifiersFromJSValue(JSContextRef context, const JSValueR
     if (!modifiersArray)
         return EvasKeyModifierNone;
 
-    unsigned modifier = 0;
+    unsigned modifier = EvasKeyModifierNone;
     JSRetainPtr<JSStringRef> lengthProperty(Adopt, JSStringCreateWithUTF8CString("length"));
     int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty.get(), 0), 0);
     for (int i = 0; i < modifiersCount; ++i)
-        modifier |= static_cast<unsigned>(modifierFromJSValue(context, JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0)));
-    return static_cast<EvasKeyModifier>(modifier);
+        modifier |= modifierFromJSValue(context, JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0));
+    return modifier;
 }
 
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -262,7 +262,7 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
 
     updateClickCount(button);
 
-    EvasKeyModifier modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
+    unsigned modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
     MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventDown, modifiers, static_cast<EvasMouseButton>(button));
     feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     gButtonCurrentlyDown = button;
@@ -284,7 +284,7 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     gLastClickTimeOffset = gTimeOffset;
     gButtonCurrentlyDown = 0;
 
-    EvasKeyModifier modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
+    unsigned modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
     MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventUp, modifiers, translateMouseButtonNumber(button));
     feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     return JSValueMakeUndefined(context);
@@ -362,7 +362,7 @@ static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObject
     return JSValueMakeUndefined(context);
 }
 
-static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, EvasKeyModifier modifiers)
+static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, unsigned modifiers)
 {
     if (equals(character, "leftArrow"))
         return new KeyEventInfo("KP_Left", "", modifiers);
@@ -388,7 +388,7 @@ static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, EvasKeyModifie
     return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
 }
 
-static KeyEventInfo* keyNameFromJSValue(JSStringRef character, EvasKeyModifier modifiers)
+static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifiers)
 {
     if (equals(character, "leftArrow"))
         return new KeyEventInfo("Left", "", modifiers);
@@ -471,7 +471,7 @@ static KeyEventInfo* createKeyEventInfo(JSContextRef context, size_t argumentCou
     if (exception && *exception)
         return 0;
 
-    EvasKeyModifier modifiers = EvasKeyModifierNone;
+    unsigned modifiers = EvasKeyModifierNone;
     if (argumentCount >= 2)
         modifiers = modifiersFromJSValue(context, arguments[1]);
 
@@ -485,7 +485,7 @@ static void sendKeyDown(Evas* evas, KeyEventInfo* keyEventInfo)
 
     const char* keyName = keyEventInfo->keyName.data();
     const char* keyString = keyEventInfo->keyString.data();
-    EvasKeyModifier modifiers = keyEventInfo->modifiers;
+    unsigned modifiers = keyEventInfo->modifiers;
 
     DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
 
