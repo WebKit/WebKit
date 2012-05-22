@@ -373,6 +373,9 @@ public:
 
     LayoutUnit computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart, RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0);
 
+    void placeRunInIfNeeded(RenderObject* newChild, PlaceGeneratedRunInFlag);
+    bool runInIsPlacedIntoSiblingBlock(RenderObject* runIn);
+
 #ifndef NDEBUG
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
 #endif

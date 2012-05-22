@@ -1,3 +1,25 @@
+2012-05-21  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(r117482): Run-in crashes relating to generated content and inline line box clearing.
+        https://bugs.webkit.org/show_bug.cgi?id=86879
+
+        Reviewed by Julien Chaffraix.
+
+        These tests need to show dump render tree to show the correct location of run-in placement. All
+        renderings match IE and Opera. 
+
+        * fast/lists/parent-box-not-box-crash-expected.txt: Rebaselined, since now run-in functions correctly
+        by being the first child before list marker.
+        * fast/runin/generated-content-crash-expected.png: Added.
+        * fast/runin/generated-content-crash-expected.txt: Added.
+        * fast/runin/generated-content-crash.html: Added.
+        * fast/runin/move-run-in-original-position-crash-expected.png: Added.
+        * fast/runin/move-run-in-original-position-crash-expected.txt: Added.
+        * fast/runin/move-run-in-original-position-crash.html: Added.
+        * fast/runin/runin-between-list-marker-and-before-content-expected.png:
+        * fast/runin/runin-between-list-marker-and-before-content-expected.txt: Rebaselined, since now run-in
+        functions correctly by being the first child before list marker.
+
 2012-05-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Yet more updated test expectations following r117815.

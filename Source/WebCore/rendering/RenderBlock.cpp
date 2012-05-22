@@ -853,6 +853,10 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         }
     }
 
+    // Nothing goes before the intruded run-in.
+    if (beforeChild && beforeChild->isRunIn() && runInIsPlacedIntoSiblingBlock(beforeChild))
+        beforeChild = beforeChild->nextSibling();
+
     // Check for a spanning element in columns.
     RenderBlock* columnsBlockAncestor = columnsBlockForSpanningElement(newChild);
     if (columnsBlockAncestor) {
@@ -934,13 +938,8 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
 
     RenderBox::addChild(newChild, beforeChild);
  
-    // Handle positioning of run-ins.
-    if (newChild->isRunIn())
-        moveRunInUnderSiblingBlockIfNeeded(newChild);
-    else if (RenderObject* prevSibling = newChild->previousSibling()) {
-        if (prevSibling->isRunIn())
-            moveRunInUnderSiblingBlockIfNeeded(prevSibling);
-    }
+    // Handle placement of run-ins.
+    placeRunInIfNeeded(newChild, DoNotPlaceGeneratedRunIn);
 
     if (madeBoxesNonInline && parent() && isAnonymousBlock() && parent()->isRenderBlock())
         toRenderBlock(parent())->removeLeftoverAnonymousBlock(this);
@@ -1047,14 +1046,14 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
     if (!child)
         return;
 
+    deleteLineBoxTree();
+
     // Since we are going to have block children, we have to move
     // back the run-in to its original place.
     if (child->isRunIn()) {
         moveRunInToOriginalPosition(child);
         child = firstChild();
     }
-
-    deleteLineBoxTree();
 
     while (child) {
         RenderObject *inlineRunStart, *inlineRunEnd;
@@ -1769,11 +1768,26 @@ static void destroyRunIn(RenderBoxModelObject* runIn)
     ASSERT(runIn->isRunIn());
     ASSERT(!runIn->firstChild());
 
-    // If it is a block run-in, delete its line box tree as well. This is needed as our
-    // children got moved and our line box tree is no longer valid.
+    // Delete our line box tree. This is needed as our children got moved
+    // and our line box tree is no longer valid.
     if (runIn->isRenderBlock())
         toRenderBlock(runIn)->deleteLineBoxTree();
+    else if (runIn->isRenderInline())
+        toRenderInline(runIn)->deleteLineBoxTree();
+    else
+        ASSERT_NOT_REACHED();
+
     runIn->destroy();
+}
+
+void RenderBlock::placeRunInIfNeeded(RenderObject* newChild, PlaceGeneratedRunInFlag flag)
+{
+    if (newChild->isRunIn() && (flag == PlaceGeneratedRunIn || !newChild->isBeforeOrAfterContent()))
+        moveRunInUnderSiblingBlockIfNeeded(newChild);
+    else if (RenderObject* prevSibling = newChild->previousSibling()) {
+        if (prevSibling->isRunIn() && (flag == PlaceGeneratedRunIn || !newChild->isBeforeOrAfterContent()))
+            moveRunInUnderSiblingBlockIfNeeded(prevSibling);
+    }
 }
 
 RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* runIn)
@@ -1852,19 +1866,31 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     // since it handles correct placement of the children, especially where we cannot insert
     // anything before the first child. e.g. details tag. See https://bugs.webkit.org/show_bug.cgi?id=58228.
     curr->addChild(newRunIn, curr->firstChild());
+
+    // Make sure that |this| get a layout since its run-in child moved.
+    curr->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+bool RenderBlock::runInIsPlacedIntoSiblingBlock(RenderObject* runIn)
+{
+    ASSERT(runIn->isRunIn());
+
+    // If we don't have a parent, we can't be moved into our sibling block.
+    if (!parent())
+        return false;
+
+    // An intruded run-in needs to be an inline.
+    if (!runIn->isRenderInline())
+        return false;
+
+    return true;
 }
 
 void RenderBlock::moveRunInToOriginalPosition(RenderObject* runIn)
 {
     ASSERT(runIn->isRunIn());
 
-    // If we don't have a parent, there is nothing to move. This might
-    // happen if |this| got detached from parent after |runIn| run into |this|.
-    if (!parent())
-        return;
-
-    // An intruded run-in needs to be an inline.
-    if (!runIn->isRenderInline())
+    if (!runInIsPlacedIntoSiblingBlock(runIn))
         return;
 
     RenderBoxModelObject* oldRunIn = toRenderBoxModelObject(runIn);
@@ -1873,6 +1899,9 @@ void RenderBlock::moveRunInToOriginalPosition(RenderObject* runIn)
 
     // Add the run-in block as our previous sibling.
     parent()->addChild(newRunIn, this);
+
+    // Make sure that the parent holding the new run-in gets layout.
+    parent()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
