@@ -45,7 +45,7 @@ static size_t computeRAMSize()
 {
 #if OS(DARWIN)
     int mib[2];
-    size_t ramSize;
+    uint64_t ramSize;
     size_t length;
 
     mib[0] = CTL_HW;
@@ -54,7 +54,7 @@ static size_t computeRAMSize()
     int sysctlResult = sysctl(mib, 2, &ramSize, &length, 0, 0);
     if (sysctlResult == -1)
         return ramSizeGuess;
-    return ramSize;
+    return ramSize > std::numeric_limits<size_t>::max() ? std::numeric_limits<size_t>::max() : static_cast<size_t>(ramSize);
 #elif OS(UNIX)
     long pages = sysconf(_SC_PHYS_PAGES);
     long pageSize = sysconf(_SC_PAGE_SIZE);

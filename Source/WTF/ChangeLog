@@ -1,3 +1,13 @@
+2012-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * wtf/RAMSize.cpp:
+        (WTF::computeRAMSize): sysctl expects a uint64_t, so use that and then
+        cast back to size_t. Since it's coneivable that a 32bit process would
+        run on a system with more than 4GB RAM, I added a paranoid check for
+        that condition.
+
 2012-05-22  Jessie Berlin  <jberlin@apple.com>
 
         Build fix.
