@@ -60,10 +60,15 @@ bool WebViewInputMethodFilter::sendSimpleKeyEvent(GdkEventKey* event, WTF::Strin
 
 bool WebViewInputMethodFilter::sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend)
 {
-    PlatformKeyboardEvent platformEvent(event, CompositionResults(resultsToSend & Composition ? m_confirmedComposition : String(),
-                                                                  resultsToSend & Preedit ? m_preedit : String(),
-                                                                  m_cursorOffset));
-    return focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent);
+    PlatformKeyboardEvent platformEvent(event, CompositionResults(CompositionResults::WillSendCompositionResultsSoon));
+    if (!focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent))
+        return false;
+
+    if (resultsToSend & Composition && !m_confirmedComposition.isNull())
+        confirmCompositionText(m_confirmedComposition);
+    if (resultsToSend & Preedit && !m_preedit.isNull())
+        setPreedit(m_preedit, m_cursorOffset);
+    return true;
 }
 
 void WebViewInputMethodFilter::confirmCompositionText(String text)

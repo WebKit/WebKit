@@ -262,7 +262,7 @@ void EditorClient::respondToChangedSelection(Frame* frame)
     setSelectionPrimaryClipboardIfNeeded(m_webView);
 #endif
 
-    if (m_updatingComposition || !frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
+    if (!frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
         return;
 
     unsigned start;
@@ -418,7 +418,7 @@ bool EditorClient::executePendingEditorCommands(Frame* frame, bool allowTextInse
     return success;
 }
 
-bool EditorClient::handleInputMethodKeyboardEvent(KeyboardEvent* event)
+static bool keyboardEventHadCompositionResults(KeyboardEvent* event)
 {
     if (event->type() != eventNames().keydownEvent)
         return false;
@@ -427,33 +427,7 @@ bool EditorClient::handleInputMethodKeyboardEvent(KeyboardEvent* event)
     if (!platformEvent)
         return false;
 
-    Frame* frame = core(m_webView)->focusController()->focusedOrMainFrame();
-    if (!frame || !frame->editor()->canEdit())
-        return false;
-
-    const CompositionResults& compositionResults = platformEvent->compositionResults();
-    if (!compositionResults.compositionUpdated())
-        return false;
-
-    m_updatingComposition = true;
-
-    // PlatformKeyboardEvent returns an empty string when there are composition results.
-    // That prevents the delivery of keypress, which is the behavior we want for composition
-    // events. See EventHandler::keyEvent. 
-    ASSERT(platformEvent->text().isNull());
-
-    if (!compositionResults.confirmedComposition.isNull())
-        frame->editor()->confirmComposition(compositionResults.confirmedComposition);
-
-    String preedit = compositionResults.preedit;
-    if (!preedit.isNull()) {
-        Vector<CompositionUnderline> underlines;
-        underlines.append(CompositionUnderline(0, preedit.length(), Color(1, 1, 1), false));
-        frame->editor()->setComposition(preedit, underlines, compositionResults.preeditCursorOffset, compositionResults.preeditCursorOffset);
-    }
-
-    m_updatingComposition = false;
-    return true;
+    return platformEvent->compositionResults().compositionUpdated();
 }
 
 void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
@@ -467,7 +441,7 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (!platformEvent)
         return;
 
-    if (handleInputMethodKeyboardEvent(event))
+    if (keyboardEventHadCompositionResults(event))
         return;
 
     KeyBindingTranslator::EventType type = event->type() == eventNames().keydownEvent ?
@@ -519,6 +493,9 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     // Input method results are handled in handleKeyboardEvent, so that we can wait
     // to trigger composition updates until after the keydown event handler. This better
     // matches other browsers.
+    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    if (platformEvent && platformEvent->compositionResults().compositionUpdated())
+        event->preventDefault();
 }
 
 EditorClient::EditorClient(WebKitWebView* webView)
@@ -528,7 +505,6 @@ EditorClient::EditorClient(WebKitWebView* webView)
 #endif
     , m_webView(webView)
     , m_smartInsertDeleteEnabled(false)
-    , m_updatingComposition(false)
 {
 }
 

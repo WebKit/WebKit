@@ -135,8 +135,6 @@ class EditorClient : public WebCore::EditorClient {
         virtual bool shouldShowUnicodeMenu();
 
     private:
-        bool handleInputMethodKeyboardEvent(WebCore::KeyboardEvent*);
-
 #if ENABLE(SPELLCHECK)
         TextCheckerClientGtk m_textCheckerClient;
 #else
@@ -146,7 +144,6 @@ class EditorClient : public WebCore::EditorClient {
         WebCore::KeyBindingTranslator m_keyBindingTranslator;
         Vector<WTF::String> m_pendingEditorCommands;
         bool m_smartInsertDeleteEnabled;
-        bool m_updatingComposition;
     };
 }
 

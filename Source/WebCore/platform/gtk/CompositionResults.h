@@ -32,38 +32,32 @@ namespace WebCore {
 
 struct CompositionResults {
     CompositionResults()
-        : preeditCursorOffset(0)
+        : associatedWithPendingCompositionUpdate(false)
     {
     }
 
     CompositionResults(String simpleString)
         : simpleString(simpleString)
-        , preeditCursorOffset(0)
+        , associatedWithPendingCompositionUpdate(false)
     {
     }
 
-    CompositionResults(String confirmedComposition, String preedit, int preeditCursorOffset)
-        : confirmedComposition(confirmedComposition)
-        , preedit(preedit)
-        , preeditCursorOffset(preeditCursorOffset)
+    enum ResultsIndicator { WillSendCompositionResultsSoon };
+    CompositionResults(ResultsIndicator)
+        : associatedWithPendingCompositionUpdate(true)
     {
     }
 
     bool compositionUpdated() const
     {
-        return !confirmedComposition.isNull() || !preedit.isNull();
+        return associatedWithPendingCompositionUpdate;
     }
 
     // Some simple input methods return a string for all keyboard events. This
     // value should be treated as the string representation of the keycode.
     String simpleString;
 
-    // If the input method had a "real" composition it will be stored here.
-    String confirmedComposition;
-
-    // The event may have caused the preedit to update.
-    String preedit;
-    int preeditCursorOffset;
+    bool associatedWithPendingCompositionUpdate;
 };
 
 }

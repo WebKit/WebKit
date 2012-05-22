@@ -1,3 +1,28 @@
+2012-05-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] REGRESSION(r116135): Keys that confirm composition trigger a default action
+        https://bugs.webkit.org/show_bug.cgi?id=86925
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of sending composition results with a keydown event, simply send whether
+        or not the event had results. Activate the results after processing the event. This
+        allows for input methods to modify the DOM after the keydown event and to still
+        prevent the default action during handleInputMethodKeydown.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::respondToChangedSelection): This patch removes the m_updatingComposition
+        so we no longer have to check it here.
+        (WebKit::EditorClient::keyboardEventHadCompositionResults): Added.
+        (WebKit::EditorClient::handleInputMethodKeydown): Now prevent the default action when
+        the keyboard event had composition results.
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h: Remove the m_updatingComposition member, as it's no
+        longer used.
+        * WebCoreSupport/WebViewInputMethodFilter.cpp:
+        (WebKit::WebViewInputMethodFilter::sendKeyEventWithCompositionResults): Now send the
+        composition results after the key event.
+
 2012-05-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk][LayoutTests] Repaint the complete WebKitWebView before dumping pixel results
