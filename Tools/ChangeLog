@@ -1,3 +1,12 @@
+2012-05-23  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implements the registerProtocolHandler method and option.
+        https://bugs.webkit.org/show_bug.cgi?id=73638
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitperl/FeatureList.pm: Turn on the ENABLE_REGISTER_PROTOCOL_HANDLER option as default on EFL port.
+
 2012-05-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] EventSender should properly handle (left|right)(control|shift|alt) after r118001
