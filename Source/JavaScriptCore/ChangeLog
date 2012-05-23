@@ -1,3 +1,13 @@
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to make C function calls from DFG code on ARM in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=87313
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
 2012-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to inline functions that use arguments reflectively

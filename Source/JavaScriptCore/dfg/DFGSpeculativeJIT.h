@@ -1749,7 +1749,7 @@ public:
     }
 #endif
     
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !CPU(ARM_THUMB2)
     void prepareForExternalCall()
     {
         for (unsigned i = 0; i < sizeof(void*) / 4; i++)
