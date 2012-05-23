@@ -1,3 +1,15 @@
+2012-05-23  Alice Boxhall  <aboxhall@chromium.org>
+
+        AX: Contenteditable tables should always be exposed as data tables
+        https://bugs.webkit.org/show_bug.cgi?id=87052
+
+        Reviewed by Chris Fleizach.
+
+        Tested in accessibility/table-detection.html.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable): Return true if the node is contenteditable.
+
 2012-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo per Darin's comment.
