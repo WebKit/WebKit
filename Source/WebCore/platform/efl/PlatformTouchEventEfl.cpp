@@ -35,19 +35,17 @@
 
 namespace WebCore {
 
-PlatformTouchEvent::PlatformTouchEvent(Eina_List* points, const IntPoint pos, PlatformEvent::Type type, int metaState)
-    : PlatformEvent(type, false, false, false, false, currentTime())
+PlatformTouchEvent::PlatformTouchEvent(const Eina_List* points, const IntPoint pos, PlatformEvent::Type type, PlatformEvent::Modifiers modifiers)
+    : PlatformEvent(type, modifiers, currentTime())
 {
+    const Eina_List* list;
     void* item;
 
-    EINA_LIST_FREE(points, item) {
+    EINA_LIST_FOREACH(points, list, item) {
         Ewk_Touch_Point* point = static_cast<Ewk_Touch_Point*>(item);
         IntPoint pnt = IntPoint(point->x - pos.x(), point->y - pos.y());
-
         m_touchPoints.append(PlatformTouchPoint(point->id, pnt, static_cast<PlatformTouchPoint::State>(point->state)));
     }
-
-    // FIXME: We don't support metaState for now.
 }
 
 }

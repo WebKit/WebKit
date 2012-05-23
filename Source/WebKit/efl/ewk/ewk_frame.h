@@ -861,11 +861,11 @@ EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mou
  * @param o frame object to feed touch event
  * @param action the action of touch event
  * @param points a list of points (Ewk_Touch_Point) to process
- * @param metaState DEPRECTAED, not supported for now
+ * @param metaState modifiers state of touch event. Users are expected to pass ORed values of the ECORE_EVENT_MODIFIER macros in Ecore_Input.h, such as ECORE_EVENT_MODIFIER_ALT or ECORE_EVENT_MODIFIER_SHIFT
  *
  * @return @c EINA_TRUE if touch event was handled, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type action, Eina_List *points, int metaState);
+EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type action, Eina_List *points, unsigned modifiers);
 
 /**
  * Feeds the keyboard key down event to the frame.

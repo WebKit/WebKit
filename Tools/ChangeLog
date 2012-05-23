@@ -1,3 +1,30 @@
+2012-05-22  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Implement touch event
+        https://bugs.webkit.org/show_bug.cgi?id=86720
+
+        Reviewed by Hajime Morita.
+
+        Currently EFL DRT doesn't support touch event.
+        Therefore, this patch enabled it and implemented some eventSender function callbacks.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (TouchEventInfo::TouchEventInfo):
+        (TouchEventInfo):
+        (touchPointList):
+        (sendTouchEvent):
+        (addTouchPointCallback):
+        (touchStartCallback):
+        (updateTouchPointCallback):
+        (touchMoveCallback):
+        (cancelTouchPointCallback):
+        (touchCancelCallback):
+        (releaseTouchPointCallback):
+        (touchEndCallback):
+        (clearTouchPointsCallback):
+        (setTouchModifierCallback):
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Fix chromium_android_unittest

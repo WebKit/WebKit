@@ -322,7 +322,7 @@ my @features = (
       define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
-      define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry()), value => \$touchEventsSupport },
+      define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },
 
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },

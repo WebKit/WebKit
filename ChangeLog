@@ -1,1 +1,14 @@
+2012-05-22  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Implement touch event
+        https://bugs.webkit.org/show_bug.cgi?id=86720
+
+        Reviewed by Hajime Morita.
+
+        Currently EFL DRT doesn't support touch event.
+        Therefore, this patch enabled it and implemented some eventSender function callbacks.
+
+        * Source/cmake/FindEFL.cmake: Add ecore-input to dependency check.
+        * Source/cmake/OptionsEfl.cmake: Enable touch event option.
+
 == Rolled over to ChangeLog-2012-05-22 ==

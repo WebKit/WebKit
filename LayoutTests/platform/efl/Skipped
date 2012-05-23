@@ -53,8 +53,9 @@ http/tests/local/fileapi/send-sliced-dragged-file.html
 http/tests/local/formdata
 http/tests/security/clipboard/clipboard-file-access.html
 
-# EFL's EventSender does not implement addTouchPoint, clearTouchPoints, touchStart and other touch-related callbacks
-fast/events/touch
+# EFL's EventSender does not implement gesture-related callbacks
+fast/events/touch/gesture
+fast/events/touch/page-scaled-touch-gesture-click.html
 
 # EFL's port requires implementation of ClipboardEfl and DragClientEfl classes in order to suppport drag n drop functionality
 fast/events/drag-and-drop-subframe-dataTransfer.html
@@ -420,6 +421,7 @@ fast/forms/number/input-number-size.html
 fast/forms/number/input-spinbutton-capturing.html
 fast/forms/number/spin-button-gets-disabled-or-readonly.html
 fast/forms/number/spin-button-state.html
+fast/events/touch/touch-before-pressing-spin-button.html
 
 # This test is out-dated since r95899.
 # https://bugs.webkit.org/show_bug.cgi?id=65709

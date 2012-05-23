@@ -36,11 +36,14 @@
 
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeChrome.h"
+#include "IntPoint.h"
 #include "JSStringUtils.h"
 #include "NotImplemented.h"
+#include "PlatformEvent.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
+#include <Ecore_Input.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -148,6 +151,27 @@ struct DelayedEvent {
     MouseEventInfo* eventInfo;
     unsigned long delay;
 };
+
+struct TouchEventInfo {
+    TouchEventInfo(unsigned id, Ewk_Touch_Point_Type state, const WebCore::IntPoint& point)
+        : state(state)
+        , point(point)
+        , id(id)
+    {
+    }
+
+    unsigned id;
+    Ewk_Touch_Point_Type state;
+    WebCore::IntPoint point;
+};
+
+static unsigned touchModifiers;
+
+WTF::Vector<TouchEventInfo>& touchPointList()
+{
+    DEFINE_STATIC_LOCAL(WTF::Vector<TouchEventInfo>, staticTouchPointList, ());
+    return staticTouchPointList;
+}
 
 WTF::Vector<DelayedEvent>& delayedEventQueue()
 {
@@ -591,6 +615,163 @@ static JSValueRef scheduleAsynchronousKeyDownCallback(JSContextRef context, JSOb
     return JSValueMakeUndefined(context);
 }
 
+static void sendTouchEvent(Ewk_Touch_Event_Type type)
+{
+    Eina_List* eventList = 0;
+
+    for (unsigned i = 0; i < touchPointList().size(); ++i) {
+        Ewk_Touch_Point* event = new Ewk_Touch_Point;
+        WebCore::IntPoint point = touchPointList().at(i).point;
+        event->id = touchPointList().at(i).id;
+        event->x = point.x();
+        event->y = point.y();
+        event->state = touchPointList().at(i).state;
+        eventList = eina_list_append(eventList, event);
+    }
+
+    ewk_frame_feed_touch_event(browser->mainFrame(), type, eventList, touchModifiers);
+
+    void* listData;
+    EINA_LIST_FREE(eventList, listData) {
+        Ewk_Touch_Point* event = static_cast<Ewk_Touch_Point*>(listData);
+        delete event;
+    }
+
+    for (unsigned i = 0; i < touchPointList().size(); ) {
+        if (touchPointList().at(i).state == EWK_TOUCH_POINT_RELEASED)
+            touchPointList().remove(i);
+        else {
+            touchPointList().at(i).state = EWK_TOUCH_POINT_STATIONARY;
+            ++i;
+        }
+    }
+}
+
+static JSValueRef addTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 2)
+        return JSValueMakeUndefined(context);
+
+    int x = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    ASSERT(!exception || !*exception);
+    int y = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
+    ASSERT(!exception || !*exception);
+
+    const WebCore::IntPoint point(x, y);
+    const unsigned id = touchPointList().isEmpty() ? 0 : touchPointList().last().id + 1;
+    TouchEventInfo eventInfo(id, EWK_TOUCH_POINT_PRESSED, point);
+    touchPointList().append(eventInfo);
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef touchStartCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    sendTouchEvent(EWK_TOUCH_START);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef updateTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 3)
+        return JSValueMakeUndefined(context);
+
+    int index = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    ASSERT(!exception || !*exception);
+    int x = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
+    ASSERT(!exception || !*exception);
+    int y = static_cast<int>(JSValueToNumber(context, arguments[2], exception));
+    ASSERT(!exception || !*exception);
+
+    if (index < 0 || index >= touchPointList().size())
+        return JSValueMakeUndefined(context);
+
+    WebCore::IntPoint& point = touchPointList().at(index).point;
+    point.setX(x);
+    point.setY(y);
+    touchPointList().at(index).state = EWK_TOUCH_POINT_MOVED;
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef touchMoveCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    sendTouchEvent(EWK_TOUCH_MOVE);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef cancelTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+
+    int index = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    ASSERT(!exception || !*exception);
+    if (index < 0 || index >= touchPointList().size())
+        return JSValueMakeUndefined(context);
+
+    touchPointList().at(index).state = EWK_TOUCH_POINT_CANCELLED;
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef touchCancelCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    sendTouchEvent(EWK_TOUCH_CANCEL);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef releaseTouchPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+
+    int index = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    ASSERT(!exception || !*exception);
+    if (index < 0 || index >= touchPointList().size())
+        return JSValueMakeUndefined(context);
+
+    touchPointList().at(index).state = EWK_TOUCH_POINT_RELEASED;
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef touchEndCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    sendTouchEvent(EWK_TOUCH_END);
+    touchModifiers = 0;
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef clearTouchPointsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    touchPointList().clear();
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setTouchModifierCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 2)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> jsModifier(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    unsigned mask = 0;
+
+    if (equals(jsModifier, "alt"))
+        mask |= ECORE_EVENT_MODIFIER_ALT;
+    else if (equals(jsModifier, "ctrl"))
+        mask |= ECORE_EVENT_MODIFIER_CTRL;
+    else if (equals(jsModifier, "meta"))
+        mask |= ECORE_EVENT_MODIFIER_WIN;
+    else if (equals(jsModifier, "shift"))
+        mask |= ECORE_EVENT_MODIFIER_SHIFT;
+
+    if (JSValueToBoolean(context, arguments[1]))
+        touchModifiers |= mask;
+    else
+        touchModifiers &= ~mask;
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "mouseScrollBy", mouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "continuousMouseScrollBy", continuousMouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -606,6 +787,16 @@ static JSStaticFunction staticFunctions[] = {
     { "textZoomOut", textZoomOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "zoomPageIn", zoomPageInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "zoomPageOut", zoomPageOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "addTouchPoint", addTouchPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "touchStart", touchStartCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "updateTouchPoint", updateTouchPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "touchMove", touchMoveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "releaseTouchPoint", releaseTouchPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "touchEnd", touchEndCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "cancelTouchPoint", cancelTouchPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "touchCancel", touchCancelCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "clearTouchPoints", clearTouchPointsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "setTouchModifier", setTouchModifierCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

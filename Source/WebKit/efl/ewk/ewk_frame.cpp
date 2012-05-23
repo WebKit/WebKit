@@ -54,6 +54,7 @@
 #include "ewk_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_view_private.h"
+#include <Ecore_Input.h>
 #include <Eina.h>
 #include <Evas.h>
 #include <eina_safety_checks.h>
@@ -948,7 +949,7 @@ Eina_Bool ewk_frame_feed_mouse_move(Evas_Object* ewkFrame, const Evas_Event_Mous
     return smartData->frame->eventHandler()->mouseMoved(event);
 }
 
-Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type action, Eina_List* points, int metaState)
+Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type action, Eina_List* points, unsigned modifiers)
 {
 #if ENABLE(TOUCH_EVENTS)
     EINA_SAFETY_ON_NULL_RETURN_VAL(points, false);
@@ -979,7 +980,17 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
         return false;
     }
 
-    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), type, metaState);
+    unsigned touchModifiers = 0;
+    if (modifiers & ECORE_EVENT_MODIFIER_ALT)
+        touchModifiers |= WebCore::PlatformEvent::AltKey;
+    if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
+        touchModifiers |= WebCore::PlatformEvent::CtrlKey;
+    if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
+        touchModifiers |= WebCore::PlatformEvent::ShiftKey;
+    if (modifiers & ECORE_EVENT_MODIFIER_WIN)
+        touchModifiers |= WebCore::PlatformEvent::MetaKey;
+
+    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), type, static_cast<WebCore::PlatformEvent::Modifiers>(touchModifiers));
     return smartData->frame->eventHandler()->handleTouchEvent(touchEvent);
 #else
     return false;

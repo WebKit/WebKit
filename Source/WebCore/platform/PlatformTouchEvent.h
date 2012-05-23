@@ -61,7 +61,7 @@ public:
     }
 
 #if PLATFORM(EFL)
-    PlatformTouchEvent(Eina_List*, const IntPoint, PlatformEvent::Type, int metaState);
+    PlatformTouchEvent(const Eina_List*, const IntPoint, PlatformEvent::Type, PlatformEvent::Modifiers);
 #elif PLATFORM(BLACKBERRY)
     PlatformTouchEvent(BlackBerry::Platform::TouchEvent*);
 #endif
