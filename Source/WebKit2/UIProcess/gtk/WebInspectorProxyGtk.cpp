@@ -54,15 +54,18 @@ static const char* inspectorFilesBasePath()
     return inspectorFilesPath;
 }
 
-static gboolean inspectorWindowClosed(GtkWidget* window, GdkEvent*, gpointer userData)
+static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
 {
     WebInspectorProxy* inspectorProxy = static_cast<WebInspectorProxy*>(userData);
 
     // Inform WebProcess about webinspector closure. Not doing so,
     // results in failure of subsequent invocation of webinspector.
     inspectorProxy->close();
+}
 
-    return FALSE;
+void WebInspectorProxy::initializeInspectorClientGtk(const WKInspectorClientGtk* inspectorClient)
+{
+    m_client.initialize(inspectorClient);
 }
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
@@ -70,11 +73,15 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(m_page);
     ASSERT(!m_inspectorView);
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(page()->process()->context(), inspectorPageGroup()));
+    g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
     return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
 }
 
 void WebInspectorProxy::createInspectorWindow()
 {
+    if (m_client.openWindow(this))
+        return;
+
     ASSERT(!m_inspectorWindow);
     m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -84,7 +91,6 @@ void WebInspectorProxy::createInspectorWindow()
 
     gtk_window_set_title(GTK_WINDOW(m_inspectorWindow), _("Web Inspector"));
     gtk_window_set_default_size(GTK_WINDOW(m_inspectorWindow), initialWindowWidth, initialWindowHeight);
-    g_signal_connect(m_inspectorWindow, "delete-event", G_CALLBACK(inspectorWindowClosed), this);
 
     gtk_container_add(GTK_CONTAINER(m_inspectorWindow), m_inspectorView);
     gtk_widget_show(m_inspectorView);
@@ -102,10 +108,16 @@ void WebInspectorProxy::platformOpen()
         platformAttach();
     else
         createInspectorWindow();
+    g_signal_connect(m_inspectorView, "destroy", G_CALLBACK(inspectorViewDestroyed), this);
 }
 
 void WebInspectorProxy::platformDidClose()
 {
+    if (m_inspectorView)
+        g_signal_handlers_disconnect_by_func(m_inspectorView, reinterpret_cast<void*>(inspectorViewDestroyed), this);
+
+    m_client.didClose(this);
+
     if (m_inspectorWindow) {
         gtk_widget_destroy(m_inspectorWindow);
         m_inspectorWindow = 0;
@@ -115,6 +127,9 @@ void WebInspectorProxy::platformDidClose()
 
 void WebInspectorProxy::platformBringToFront()
 {
+    if (m_client.bringToFront(this))
+        return;
+
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (WebCore::widgetIsOnscreenToplevelWindow(parent))
         gtk_window_present(GTK_WINDOW(parent));
@@ -130,6 +145,8 @@ bool WebInspectorProxy::platformIsFront()
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
+    m_client.inspectedURLChanged(this, url);
+
     if (!m_inspectorWindow)
         return;
     GOwnPtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), url.utf8().data()));
@@ -165,6 +182,9 @@ void WebInspectorProxy::platformAttach()
         m_inspectorWindow = 0;
     }
 
+    if (m_client.attach(this))
+        return;
+
     gtk_container_add(GTK_CONTAINER(m_page->viewWidget()), m_inspectorView);
     gtk_widget_show(m_inspectorView);
 }
@@ -175,7 +195,9 @@ void WebInspectorProxy::platformDetach()
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
-    gtk_container_remove(GTK_CONTAINER(m_page->viewWidget()), m_inspectorView);
+    if (!m_client.detach(this))
+        gtk_container_remove(GTK_CONTAINER(m_page->viewWidget()), m_inspectorView);
+
     if (!m_isVisible)
         return;
 
@@ -186,6 +208,8 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 {
     if (!m_isAttached)
         return;
+
+    m_client.didChangeAttachedHeight(this, height);
     webkitWebViewBaseSetInspectorViewHeight(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
 }
 

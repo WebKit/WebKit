@@ -35,6 +35,7 @@ webkit2_h_api += \
 	$(WebKit2)/Shared/API/c/WKUserContentURLPattern.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKAPICastGtk.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKFullScreenClientGtk.h \
+	$(WebKit2)/UIProcess/API/C/gtk/WKInspectorClientGtk.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKView.h \
 	$(WebKit2)/UIProcess/API/C/soup/WKAPICastSoup.h \
 	$(WebKit2)/UIProcess/API/C/soup/WKContextSoup.h \
@@ -469,6 +470,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKFullScreenClientGtk.h \
+	Source/WebKit2/UIProcess/API/C/gtk/WKInspectorClientGtk.cpp \
+	Source/WebKit2/UIProcess/API/C/gtk/WKInspectorClientGtk.h \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKView.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKAPICastSoup.h \
@@ -628,6 +631,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebInspector.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebInspectorPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebResource.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebResourcePrivate.h \
@@ -675,6 +681,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenClientGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenClientGtk.h \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebInspectorClientGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebInspectorClientGtk.h \
 	Source/WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPopupMenuProxyGtk.cpp \

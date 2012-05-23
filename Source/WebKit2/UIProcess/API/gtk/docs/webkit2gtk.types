@@ -17,3 +17,4 @@ webkit_web_resource_get_type
 webkit_cookie_manager_get_type
 webkit_plugin_get_type
 webkit_mime_info_get_type
+webkit_web_inspector_get_type

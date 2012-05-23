@@ -40,6 +40,7 @@
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebContext.h>
+#include <webkit2/WebKitWebInspector.h>
 #include <webkit2/WebKitWebResource.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWindowProperties.h>
@@ -298,6 +299,10 @@ webkit_web_view_get_main_resource                  (WebKitWebView             *w
 
 WEBKIT_API GList *
 webkit_web_view_get_subresources                   (WebKitWebView             *web_view);
+
+WEBKIT_API WebKitWebInspector *
+webkit_web_view_get_inspector                      (WebKitWebView             *web_view);
+
 G_END_DECLS
 
 #endif

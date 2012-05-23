@@ -1,3 +1,111 @@
+2012-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add inspector API to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=87113
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.cpp: Added.
+        (WKInspectorSetInspectorClientGtk):
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.h: Added.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp: Added.
+        (webkitWebInspectorFinalize):
+        (webkit_web_inspector_init):
+        (webkit_web_inspector_class_init):
+        (openWindow): Emit WebKitWebInspector::open-window singal.
+        (didClose): Emit WebKitWebInspector::closed signal.
+        (bringToFront): Emit WebKitWebInspector::bring-to-front singal.
+        (inspectedURLChanged): Set the inspected URI and emit
+        GObject::notify signal if it changed.
+        (attach): Emit WebKitWebInspector::attach signal.
+        (detach): Emit WebKitWebInspector::detach signal.
+        (didChangeAttachedHeight): Set the attached height and emit
+        GObject::notify signal if it changed.
+        (webkitWebInspectorCreate): Ceate a new WebKitWebInspector object
+        for the given WKInspector. Also initialize and set the inspector
+        client.
+        (webkit_web_inspector_get_web_view): Return the web view used to
+        render the inspector.
+        (webkit_web_inspector_get_inspected_uri): Return the URI that is
+        being inspected.
+        (webkit_web_inspector_is_attached): Whether the inspector view is
+        currently attached.
+        (webkit_web_inspector_attach): Request to attach the inspector.
+        (webkit_web_inspector_detach): Request to detach the inspector.
+        (webkit_web_inspector_show): Request to show the inspector.
+        (webkit_web_inspector_close): Request to close the inspector.
+        (webkit_web_inspector_get_attached_height): Return the height that
+        the inspector view should have when attached.
+        * UIProcess/API/gtk/WebKitWebInspector.h: Added.
+        * UIProcess/API/gtk/WebKitWebInspectorPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_inspector): Return the WebKitWebInspector
+        associated to the web view.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitWebInspector.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ad new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_web_inspector_get_type.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test for the
+        inspector API.
+        * UIProcess/API/gtk/tests/TestInspector.cpp: Added.
+        (testInspectorDefault):
+        (testInspectorCustom):
+        (testInspectorWindowDestroyed):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::showInWindowAndWaitUntilMapped): Add optional
+        parameter to create a toplevel or popup window.
+        (WebViewTest::resizeView): Helper function to set the widget
+        allocation to a given size.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/webkit2.h: Include WebKitWebInspector.h
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::inspectorView): Return the view used
+        to render the inspector.
+        * UIProcess/gtk/WebInspectorClientGtk.cpp: Added.
+        (WebKit::WebInspectorClientGtk::openWindow):
+        (WebKit::WebInspectorClientGtk::didClose):
+        (WebKit::WebInspectorClientGtk::bringToFront):
+        (WebKit::WebInspectorClientGtk::inspectedURLChanged):
+        (WebKit::WebInspectorClientGtk::attach):
+        (WebKit::WebInspectorClientGtk::detach):
+        (WebKit::WebInspectorClientGtk::didChangeAttachedHeight):
+        * UIProcess/gtk/WebInspectorClientGtk.h: Added.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::inspectorViewDestroyed): Close the inspector page when
+        the inspector view is destroyed, instead of when the inspector
+        window is deleted, because the inspector view can now be inside a
+        window created by the user.
+        (WebKit::WebInspectorProxy::initializeInspectorClientGtk):
+        Initialze the inspector client.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Add a
+        weak pointer to the inspector view to make sure it's NULL when
+        destroyed.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Call
+        openWindow on the inspector client, and return early if the
+        callback was handled.
+        (WebKit::WebInspectorProxy::platformOpen): Connect to destroy
+        signal of the inspector view to close the page when the view is
+        destroyed.
+        (WebKit::WebInspectorProxy::platformDidClose): Call didClose on
+        the inspector client.
+        (WebKit::WebInspectorProxy::platformBringToFront): Call
+        bringToFront on the inspector client, and return early if the
+        callback was handled.
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Call
+        inspectedURLChanged on the inspector client.
+        (WebKit::WebInspectorProxy::platformAttach): Call attach on the
+        inspector client and return if the callback was handled.
+        (WebKit::WebInspectorProxy::platformDetach): Call detach on the
+        inspector client and return if the callback was handled.
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight): Call
+        didChangeAttachedHeight on the inspector client.
+
 2012-05-22  Anders Carlsson  <andersca@apple.com>
 
         Functions dispatched by dispatchAfterEnsuringUpdatedScrollPosition can be called after drawing area has been destroyed

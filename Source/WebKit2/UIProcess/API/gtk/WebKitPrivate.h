@@ -30,6 +30,8 @@
 #include <WebKit2/WKDownload.h>
 #include <WebKit2/WKFindOptions.h>
 #include <WebKit2/WKFullScreenClientGtk.h>
+#include <WebKit2/WKInspector.h>
+#include <WebKit2/WKInspectorClientGtk.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKSerializedScriptValue.h>
 #include <WebKit2/WKString.h>

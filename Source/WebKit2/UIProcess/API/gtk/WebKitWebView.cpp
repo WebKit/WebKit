@@ -37,6 +37,7 @@
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -120,6 +121,8 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitWebResource> mainResource;
     LoadingResourcesMap loadingResourcesMap;
     ResourcesMap subresourcesMap;
+
+    GRefPtr<WebKitWebInspector> inspector;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -1921,4 +1924,24 @@ GList* webkit_web_view_get_subresources(WebKitWebView* webView)
         subresources = g_list_prepend(subresources, it->second.get());
 
     return g_list_reverse(subresources);
+}
+
+/**
+ * webkit_web_view_get_inspector:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the #WebKitWebInspector associated to @web_view
+ *
+ * Returns: (transfer none): the #WebKitWebInspector of @web_view
+ */
+WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    if (!webView->priv->inspector) {
+        WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+        webView->priv->inspector = adoptGRef(webkitWebInspectorCreate(toAPI(page->inspector())));
+    }
+
+    return webView->priv->inspector.get();
 }

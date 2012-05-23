@@ -91,6 +91,7 @@ webkit_web_view_can_execute_editing_command
 webkit_web_view_can_execute_editing_command_finish
 webkit_web_view_execute_editing_command
 webkit_web_view_get_find_controller
+webkit_web_view_get_inspector
 webkit_web_view_get_javascript_global_context
 webkit_web_view_run_javascript
 webkit_web_view_run_javascript_finish
@@ -635,4 +636,30 @@ WEBKIT_TYPE_MIME_INFO
 webkit_plugin_get_type
 webkit_mime_info_get_type
 WebKitPluginPrivate
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebInspector</FILE>
+WebKitWebInspector
+webkit_web_inspector_get_web_view
+webkit_web_inspector_get_inspected_uri
+webkit_web_inspector_is_attached
+webkit_web_inspector_attach
+webkit_web_inspector_detach
+webkit_web_inspector_show
+webkit_web_inspector_close
+webkit_web_inspector_get_attached_height
+
+<SUBSECTION Standard>
+WebKitWebInspectorClass
+WEBKIT_TYPE_WEB_INSPECTOR
+WEBKIT_WEB_INSPECTOR
+WEBKIT_IS_WEB_INSPECTOR
+WEBKIT_WEB_INSPECTOR_CLASS
+WEBKIT_IS_WEB_INSPECTOR_CLASS
+WEBKIT_WEB_INSPECTOR_GET_CLASS
+
+<SUBSECTION Private>
+webkit_web_inspector_get_type
+WebKitWebInspectorPrivate
 </SECTION>

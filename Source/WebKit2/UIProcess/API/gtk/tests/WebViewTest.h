@@ -44,7 +44,8 @@ public:
     void waitUntilLoadFinished();
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
-    void showInWindowAndWaitUntilMapped();
+    void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP);
+    void resizeView(int width, int height);
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
     void clickMouseButton(int x, int y, unsigned int button = 1, unsigned int mouseModifiers = 0);

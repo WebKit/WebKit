@@ -48,6 +48,10 @@ OBJC_CLASS WKWebInspectorWKView;
 #include <WebCore/WindowMessageListener.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "WebInspectorClientGtk.h"
+#endif
+
 namespace WebKit {
 
 class WebFrameProxy;
@@ -89,6 +93,11 @@ public:
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange();
+#endif
+
+#if PLATFORM(GTK)
+    GtkWidget* inspectorView() const { return m_inspectorView; };
+    void initializeInspectorClientGtk(const WKInspectorClientGtk*);
 #endif
 
     void showConsole();
@@ -204,6 +213,7 @@ private:
     HWND m_inspectorWindow;
     RefPtr<WebView> m_inspectorView;
 #elif PLATFORM(GTK)
+    WebInspectorClientGtk m_client;
     GtkWidget* m_inspectorView;
     GtkWidget* m_inspectorWindow;
 #endif

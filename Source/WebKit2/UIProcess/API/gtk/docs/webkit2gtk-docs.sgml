@@ -32,6 +32,7 @@
     <xi:include href="xml/WebKitFindController.xml"/>
     <xi:include href="xml/WebKitCookieManager.xml"/>
     <xi:include href="xml/WebKitPlugin.xml"/>
+    <xi:include href="xml/WebKitWebInspector.xml"/>
   </chapter>
 
   <index id="index-all">
