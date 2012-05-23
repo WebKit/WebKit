@@ -125,6 +125,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMApplicationCache.h \
 	DerivedSources/WebCore/JSDOMCoreException.cpp \
 	DerivedSources/WebCore/JSDOMCoreException.h \
+	DerivedSources/WebCore/JSDOMError.cpp \
+	DerivedSources/WebCore/JSDOMError.h \
 	DerivedSources/WebCore/JSDOMFormData.cpp \
 	DerivedSources/WebCore/JSDOMFormData.h \
 	DerivedSources/WebCore/JSDOMImplementation.cpp \
@@ -740,6 +742,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/CompositionEvent.idl \
 	$(WebCore)/dom/CustomEvent.idl \
 	$(WebCore)/dom/DOMCoreException.idl \
+	$(WebCore)/dom/DOMError.idl \
 	$(WebCore)/dom/DOMImplementation.idl \
 	$(WebCore)/dom/DOMStringList.idl \
 	$(WebCore)/dom/DOMStringMap.idl \
@@ -1835,6 +1838,8 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentType.h \
 	Source/WebCore/dom/DOMCoreException.cpp \
 	Source/WebCore/dom/DOMCoreException.h \
+	Source/WebCore/dom/DOMError.cpp \
+	Source/WebCore/dom/DOMError.h \
 	Source/WebCore/dom/DOMImplementation.cpp \
 	Source/WebCore/dom/DOMImplementation.h \
 	Source/WebCore/dom/DOMStringList.cpp \

@@ -5210,6 +5210,8 @@
 		BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC1BDF24156C1883001C1243 /* DOMError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1BDF20156C17A9001C1243 /* DOMError.cpp */; };
+		BC1BDF25156C18C7001C1243 /* DOMError.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1BDF21156C17A9001C1243 /* DOMError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
 		BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272860E82E70700E7F975 /* StyleReflection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272A10E82E87C00E7F975 /* CursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12322,6 +12324,9 @@
 		BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTraversal.h; sourceTree = "<group>"; };
 		BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; };
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
+		BC1BDF20156C17A9001C1243 /* DOMError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMError.cpp; sourceTree = "<group>"; };
+		BC1BDF21156C17A9001C1243 /* DOMError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMError.h; sourceTree = "<group>"; };
+		BC1BDF22156C17A9001C1243 /* DOMError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMError.idl; sourceTree = "<group>"; };
 		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
 		BC2272860E82E70700E7F975 /* StyleReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleReflection.h; path = style/StyleReflection.h; sourceTree = "<group>"; };
 		BC2272A10E82E87C00E7F975 /* CursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorData.h; path = style/CursorData.h; sourceTree = "<group>"; };
@@ -21142,6 +21147,9 @@
 				A8185F3109765765005826D9 /* DocumentType.h */,
 				93EEC1E809C2877700C515D1 /* DocumentType.idl */,
 				978D07BD145A0F6C0096908D /* DOMCoreException.cpp */,
+				BC1BDF20156C17A9001C1243 /* DOMError.cpp */,
+				BC1BDF21156C17A9001C1243 /* DOMError.h */,
+				BC1BDF22156C17A9001C1243 /* DOMError.idl */,
 				BC60D6E80D28D83400B9918F /* DOMCoreException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */,
 				BC9A6141146859D9006057FD /* DOMExceptions.in */,
@@ -24924,6 +24932,7 @@
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
 				371941971566B37200A276D8 /* WebCoreNSCellExtras.h in Headers */,
 				1482E0C7156C36DE00965065 /* FractionalLayoutBoxExtent.h in Headers */,
+				BC1BDF25156C18C7001C1243 /* DOMError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27951,6 +27960,7 @@
 				371941961566B37200A276D8 /* WebCoreNSCellExtras.m in Sources */,
 				146CC115156988E400109E37 /* LengthBox.cpp in Sources */,
 				1482E0C6156C36DE00965065 /* FractionalLayoutBoxExtent.cpp in Sources */,
+				BC1BDF24156C1883001C1243 /* DOMError.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

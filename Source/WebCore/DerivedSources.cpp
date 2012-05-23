@@ -84,6 +84,7 @@
 #include "JSDocumentType.cpp"
 #include "JSDOMApplicationCache.cpp"
 #include "JSDOMCoreException.cpp"
+#include "JSDOMError.cpp"
 #include "JSDOMFileSystem.cpp"
 #include "JSDOMFileSystemSync.cpp"
 #include "JSDOMFormData.cpp"

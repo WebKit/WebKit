@@ -200,6 +200,7 @@ SET(WebCore_IDL_FILES
     dom/Document.idl
     dom/DocumentType.idl
     dom/DOMCoreException.idl
+    dom/DOMError.idl
     dom/DOMImplementation.idl
     dom/DOMStringList.idl
     dom/DOMStringMap.idl
@@ -571,6 +572,7 @@ SET(WebCore_SOURCES
     dom/DocumentOrderedMap.cpp
     dom/DocumentType.cpp
     dom/DOMCoreException.cpp
+    dom/DOMError.cpp
     dom/DOMImplementation.cpp
     dom/DOMStringList.cpp
     dom/DOMStringMap.cpp

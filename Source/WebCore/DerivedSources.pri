@@ -212,6 +212,7 @@ IDL_BINDINGS += \
     $$PWD/dom/Document.idl \
     $$PWD/dom/DocumentType.idl \
     $$PWD/dom/DOMCoreException.idl \
+    $$PWD/dom/DOMError.idl \
     $$PWD/dom/DOMImplementation.idl \
     $$PWD/dom/DOMStringList.idl \
     $$PWD/dom/DOMStringMap.idl \

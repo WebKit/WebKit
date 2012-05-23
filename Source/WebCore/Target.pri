@@ -543,6 +543,7 @@ SOURCES += \
     dom/DocumentParser.cpp \
     dom/DocumentType.cpp \
     dom/DOMCoreException.cpp \
+    dom/DOMError.cpp \
     dom/DOMImplementation.cpp \
     dom/DOMStringList.cpp \
     dom/DOMStringMap.cpp \
@@ -1705,6 +1706,7 @@ HEADERS += \
     dom/DocumentMarkerController.h \
     dom/DocumentOrderedMap.h \
     dom/DocumentType.h \
+    dom/DOMEvent.h \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \
     dom/DOMStringMap.h \

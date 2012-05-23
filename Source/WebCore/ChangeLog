@@ -1,3 +1,25 @@
+2012-05-23  Alec Flett  <alecflett@chromium.org>
+
+        Implement DOM4 DOMError
+        https://bugs.webkit.org/show_bug.cgi?id=87055
+
+        Reviewed by Adam Barth.
+
+        Implement the DOMError class and it's IDL interface.
+
+        No new tests. Not testable yet, as it's not used.
+
+        * WebCore.gypi:
+        * dom/DOMError.cpp: Added.
+        (WebCore):
+        (WebCore::DOMError::DOMError):
+        * dom/DOMError.h: Added.
+        (WebCore):
+        (DOMError):
+        (WebCore::DOMError::create):
+        (WebCore::DOMError::name):
+        * dom/DOMError.idl: Added.
+
 2012-05-23  Kenneth Russell  <kbr@google.com>
 
         REGRESSION(117918) - 4 webgl/tex-iomage-and-sub-image-2d-with-image tests failing on Mac bots.
