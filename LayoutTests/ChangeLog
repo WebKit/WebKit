@@ -1,5 +1,13 @@
 2012-05-23  Steve Block  <steveblock@google.com>
 
+        Fix crashing expectation for several media/ LayoutTests
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-23  Steve Block  <steveblock@google.com>
+
         Set crashing expectation for several media/ LayoutTests
 
         Unreviewed gardening.
