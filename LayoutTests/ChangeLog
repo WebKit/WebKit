@@ -1,3 +1,14 @@
+2012-05-23  Kenneth Russell  <kbr@google.com>
+
+        webgl/context-lost failing on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=81284
+
+        Unreviewed test expectations update. The fix for Bug 87136 fixed
+        the underlying bug here; adjusting test expectations.
+
+        * platform/mac-snowleopard/fast/canvas/webgl/context-lost-expected.txt: Removed.
+        * platform/mac/fast/canvas/webgl/context-lost-expected.txt: Removed.
+
 2012-05-23  Abhishek Arya  <inferno@chromium.org>
 
         Crash in run-ins with continuations while moving back to original position.
