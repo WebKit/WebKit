@@ -23,6 +23,12 @@
 
 2012-05-22  Stephanie Lewis  <slewis@apple.com>
 
+        Unreviewed, update result missed by http://trac.webkit.org/changeset/117673.
+
+        * platform/mac-wk2/fast/forms/plaintext-mode-2-expected.txt:
+
+2012-05-22  Stephanie Lewis  <slewis@apple.com>
+
         See https://bugs.webkit.org/show_bug.cgi?id=87187
         <rdar://problem/11511011> acid3 fails on WebKit2 (87187)
 
