@@ -84,9 +84,6 @@ inspector/elements/edit-dom-actions.html
 inspector/extensions/extensions-events.html
 inspector/styles/styles-computed-trace.html
 
-# Needs rebaseline
-fast/js/constructor-length.html
-
 # Fail until SUBPIXEL_LAYOUT is enabled
 # https://bugs.webkit.org/show_bug.cgi?id=85532
 fast/sub-pixel/client-width-height-snapping.html
@@ -307,7 +304,8 @@ fast/images/animated-gif-restored-from-bfcache.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/text/zero-font-size.html
 
-# LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
+# WTR needs an implementation of applicationCacheDiskUsageForOrigin
+# https://bugs.webkit.org/show_bug.cgi?id=87188
 http/tests/appcache/origin-usage.html
 http/tests/canvas/webgl/origin-clean-conformance.html
 http/tests/navigation/ping-cross-origin-from-https.html
@@ -317,10 +315,6 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
 java/embedding-java-with-object.html
-
-# Assigning location.hash is not immediately reflected in location object
-# <rdar://problem/8867804>
-svg/css/cursor-replace.svg
 
 # WebKitTestRunner needs to support layoutTestController.dumpDOMAsWebArchive
 # <https://bugs.webkit.org/show_bug.cgi?id=42324>
@@ -719,10 +713,6 @@ http/tests/loading/state-object-security-exception.html
 fast/parser/remove-misnested-iframe-in-beforeload.html
 fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
-# CSSValue and CSSPrimitiveValue prototypes are wrong
-# <rdar://problem/8772988>
-fast/dom/global-constructors.html
-
 # WebKit2 doesn't support tiled layers
 # <rdar://problem/8735596>
 compositing/tiling/huge-layer-resize.html
@@ -928,10 +918,6 @@ platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
 # WebKitTestRunner needs layoutTestController.addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
-# WebKit2 needs support for moving/resizing and querying the location/size the window
-fast/dom/Window/window-resize-and-move-arguments.html
-fast/dom/Window/window-resize.html
-
 # WebKitTestRunner needs to sanitize file urls in the output
 http/tests/misc/image-blocked-src-change.html
 http/tests/misc/image-blocked-src-no-change.html
@@ -1040,9 +1026,6 @@ editing/spelling/spellcheck-input-search-crash.html
 fast/events/moving-text-should-fire-drop-and-dragend-events.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 editing/pasteboard/drag-drop-url-with-style.html
-
-# missing window.internals.createShadowContentElement
-fast/dom/shadow/create-content-element.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
