@@ -1,0 +1,6 @@
+PASS Rendered signal is of correct length.
+PASS Rendered signal matches sum of two audio-rate gain changing signals plus baseline gain.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

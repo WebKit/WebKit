@@ -1,3 +1,31 @@
+2012-05-23  Chris Rogers  <crogers@google.com>
+
+        AudioParam must support fan-in (multiple audio connections) (take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=83610
+
+        Reviewed by Kenneth Russell.
+        
+        This re-lands bug: https://bugs.webkit.org/show_bug.cgi?id=83610
+        Now that a fix has been landed: http://trac.webkit.org/changeset/118099
+
+        Test: webaudio/audioparam-summingjunction.html
+
+        * Modules/webaudio/AudioParam.cpp:
+        * Modules/webaudio/AudioParam.h:
+        (WebCore::AudioParam::calculateSampleAccurateValues):
+        (WebCore::AudioParam::calculateAudioRateSignalValues):
+        Sums intrinsic parameter value with all audio-rate connections.
+        
+        (WebCore::AudioParam::connect):
+        (WebCore::AudioParam::disconnect):
+        Support multiple connections.
+        
+        (WebCore::AudioParam::hasSampleAccurateValues):
+        If we have one or more audio-rate connections.
+        
+        (WebCore::AudioParam::AudioParam):
+        AudioParam now sub-classes AudioSummingJunction.
+
 2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] webintents/web-intents-delivery-reuse.html is failing on EFL port
