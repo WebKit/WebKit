@@ -59,10 +59,6 @@ public:
 
     void recalcShadowTreeStyle(StyleChange);
 
-    void setNeedsRedistributing();
-    void clearNeedsRedistributing();
-    bool needsRedistributing();
-
     InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();
 

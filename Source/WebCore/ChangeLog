@@ -1,3 +1,28 @@
+2012-05-22  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] ElementShadow::m_needsRedistributing  should be on ContentDistributor
+        https://bugs.webkit.org/show_bug.cgi?id=87216
+
+        Reviewed by Kentaro Hara.
+
+        Moved ElementShadow::m_needsRedistributing to ContentDistributor::m_needsRedistributing
+
+        No new tests. No behavior change.
+
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::recalcStyle):
+        (WebCore::ElementShadow::needsRedistributing):
+        (WebCore::ElementShadow::setNeedsRedistributing):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * dom/ShadowRoot.h: Removed outdated declarations.
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ContentDistributor):
+        * html/shadow/ContentDistributor.h:
+        (WebCore::ContentDistributor::needsRedistributing):
+        (WebCore::ContentDistributor::setNeedsRedistributing):
+        (WebCore::ContentDistributor::clearNeedsRedistributing):
+
 2012-05-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Pass Isolate to v8::Null() in CodeGeneratorV8.pm

@@ -39,7 +39,6 @@
 namespace WebCore {
 
 ElementShadow::ElementShadow()
-    : m_needsRedistributing(false)
 {
 }
 
@@ -207,7 +206,7 @@ void ElementShadow::recalcStyle(Node::StyleChange change)
         styleResolver->popParentShadowRoot(youngest);
     }
 
-    clearNeedsRedistributing();
+    m_distributor.clearNeedsRedistributing();
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         root->clearNeedsStyleRecalc();
         root->clearChildNeedsStyleRecalc();
@@ -216,7 +215,7 @@ void ElementShadow::recalcStyle(Node::StyleChange change)
 
 bool ElementShadow::needsRedistributing()
 {
-    return m_needsRedistributing || (youngestShadowRoot() && youngestShadowRoot()->hasInsertionPoint());
+    return m_distributor.needsRedistributing() || (youngestShadowRoot() && youngestShadowRoot()->hasInsertionPoint());
 }
 
 void ElementShadow::hostChildrenChanged()
@@ -232,8 +231,7 @@ void ElementShadow::hostChildrenChanged()
 
 void ElementShadow::setNeedsRedistributing()
 {
-    m_needsRedistributing = true;
-
+    m_distributor.setNeedsRedistributing();
     host()->setNeedsStyleRecalc();
 }
 

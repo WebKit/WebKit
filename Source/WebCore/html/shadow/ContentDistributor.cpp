@@ -36,6 +36,7 @@ namespace WebCore {
 
 ContentDistributor::ContentDistributor()
     : m_phase(Prevented)
+    , m_needsRedistributing(false)
 {
 }
 

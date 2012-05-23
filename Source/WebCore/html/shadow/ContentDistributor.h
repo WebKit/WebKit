@@ -61,7 +61,9 @@ public:
 
     void preparePoolFor(Element* shadowHost);
     bool poolIsReady() const;
-
+    bool needsRedistributing() const { return m_needsRedistributing; }
+    void setNeedsRedistributing() { m_needsRedistributing = true; }
+    void clearNeedsRedistributing() { m_needsRedistributing = false; }
 private:
     enum DistributionPhase {
         Prevented,
@@ -72,6 +74,7 @@ private:
     Vector<RefPtr<Node> > m_pool;
     DistributionPhase m_phase;
     HashMap<const Node*, InsertionPoint*> m_nodeToInsertionPoint;
+    bool m_needsRedistributing : 1;
 };
 
 inline bool ContentDistributor::inDistribution() const

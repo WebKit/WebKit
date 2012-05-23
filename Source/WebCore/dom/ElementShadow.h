@@ -64,7 +64,6 @@ public:
     bool needsStyleRecalc();
     void recalcStyle(Node::StyleChange);
     void setNeedsRedistributing();
-    void clearNeedsRedistributing();
     bool needsRedistributing();
     void hostChildrenChanged();
 
@@ -79,7 +78,6 @@ private:
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     ContentDistributor m_distributor;
-    bool m_needsRedistributing : 1;
     WTF_MAKE_NONCOPYABLE(ElementShadow);
 };
 
@@ -101,11 +99,6 @@ inline ContentDistributor& ElementShadow::distributor()
 inline const ContentDistributor& ElementShadow::distributor() const
 {
     return m_distributor;
-}
-
-inline void ElementShadow::clearNeedsRedistributing()
-{
-    m_needsRedistributing = false;
 }
 
 inline Element* ElementShadow::host() const
