@@ -1,3 +1,17 @@
+2012-05-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] FloatSize Qt Support
+        https://bugs.webkit.org/show_bug.cgi?id=87237
+
+        Reviewed by Andreas Kling.
+
+        Basic cleanup possible to new Qt support in FloatSize.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::layoutSize):
+
 2012-04-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make the web view's url property follow the active url

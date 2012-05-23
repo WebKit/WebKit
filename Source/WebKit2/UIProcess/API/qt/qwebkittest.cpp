@@ -128,5 +128,5 @@ QVariant QWebKitTest::isScalable() const
 
 QVariant QWebKitTest::layoutSize() const
 {
-    return QSizeF(m_webViewPrivate->attributes.layoutSize.width(), m_webViewPrivate->attributes.layoutSize.height());
+    return QSizeF(m_webViewPrivate->attributes.layoutSize);
 }

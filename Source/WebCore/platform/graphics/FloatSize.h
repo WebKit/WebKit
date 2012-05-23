@@ -31,6 +31,12 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
+class QSizeF;
+QT_END_NAMESPACE
+#endif
+
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -113,6 +119,11 @@ public:
     {
         return FloatSize(m_height, m_width);
     }
+
+#if PLATFORM(QT)
+    FloatSize(const QSizeF&);
+    operator QSizeF() const;
+#endif
 
 #if PLATFORM(BLACKBERRY)
     FloatSize(const BlackBerry::Platform::FloatSize&);
