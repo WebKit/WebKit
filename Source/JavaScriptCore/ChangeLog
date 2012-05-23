@@ -1,3 +1,73 @@
+2012-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to inline functions that use arguments reflectively
+        https://bugs.webkit.org/show_bug.cgi?id=86132
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r116838 from dfgopt.
+        
+        This turns on inlining of functions that use arguments reflectively, but it
+        does not do any of the obvious optimizations that this exposes. I'll save that
+        for another patch - the important thing for now is that this contains all of
+        the plumbing necessary to make this kind of inlining sound even in bizarro
+        cases like an inline callee escaping the arguments object to parts of the
+        inline caller where the arguments are otherwise dead. Or even more fun cases
+        like where you've inlined to an inline stack that is three-deep, and the
+        function on top of the inline stack reflectively accesses the arguments of a
+        function that is in the middle of the inline stack. Any subsequent
+        optimizations that we do for the obvious cases of arguments usage in inline
+        functions will have to take care not to break the baseline functionality that
+        this patch plumbs together.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::argumentsRegisterFor):
+        (AssemblyHelpers):
+        * dfg/DFGByteCodeParser.cpp:
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/CallFrame.cpp:
+        (JSC):
+        (JSC::CallFrame::someCodeBlockForPossiblyInlinedCode):
+        * interpreter/CallFrame.h:
+        (ExecState):
+        (JSC::ExecState::someCodeBlockForPossiblyInlinedCode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveArgumentsFromVMCode):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        (JSC):
+        (JSC::Arguments::tearOffForInlineCallFrame):
+        * runtime/Arguments.h:
+        (Arguments):
+        (JSC::Arguments::create):
+        (JSC::Arguments::finishCreation):
+        (JSC):
+
 2012-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         Every OSR exit on ARM results in a crash

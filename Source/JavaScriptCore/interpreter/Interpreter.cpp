@@ -5282,7 +5282,7 @@ JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunctio
     if (!functionCallFrame)
         return jsNull();
 
-    CodeBlock* codeBlock = functionCallFrame->codeBlock();
+    CodeBlock* codeBlock = functionCallFrame->someCodeBlockForPossiblyInlinedCode();
     if (codeBlock->usesArguments()) {
         ASSERT(codeBlock->codeType() == FunctionCode);
         int argumentsRegister = codeBlock->argumentsRegister();

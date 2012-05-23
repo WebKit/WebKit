@@ -238,11 +238,15 @@ namespace JSC  {
         // to the caller. This resolves issues surrounding inlining and the
         // HostCallFrameFlag stuff.
         CallFrame* trueCallerFrame();
+        
+        CodeBlock* someCodeBlockForPossiblyInlinedCode();
 #else
         bool isInlineCallFrame() { return false; }
         
         CallFrame* trueCallFrame(AbstractPC) { return this; }
         CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
+        
+        CodeBlock* someCodeBlockForPossiblyInlinedCode() { return codeBlock(); }
 #endif
         
         // Call this to get the true call frame (accounted for inlining and any

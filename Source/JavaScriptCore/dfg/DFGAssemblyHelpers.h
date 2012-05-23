@@ -341,6 +341,16 @@ public:
         return m_baselineCodeBlock;
     }
     
+    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return codeBlock()->argumentsRegister();
+        
+        return baselineCodeBlockForInlineCallFrame(
+            codeOrigin.inlineCallFrame)->argumentsRegister() +
+            codeOrigin.inlineCallFrame->stackOffset;
+    }
+    
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
     
     static const double twoToThe32;

@@ -358,6 +358,9 @@ void Arguments::tearOff(CallFrame* callFrame)
     if (!d->numArguments)
         return;
 
+    // Must be called for the same call frame from which it was created.
+    ASSERT(bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == d->registers);
+    
     d->registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[d->numArguments]);
     d->registers = d->registerArray.get() + CallFrame::offsetFor(d->numArguments + 1);
 
@@ -367,7 +370,28 @@ void Arguments::tearOff(CallFrame* callFrame)
         return;
     }
 
-    InlineCallFrame* inlineCallFrame = callFrame->inlineCallFrame();
+    tearOffForInlineCallFrame(
+        callFrame->globalData(), callFrame->registers(), callFrame->inlineCallFrame());
+}
+
+void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+{
+    if (isTornOff())
+        return;
+    
+    if (!d->numArguments)
+        return;
+    
+    d->registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[d->numArguments]);
+    d->registers = d->registerArray.get() + CallFrame::offsetFor(d->numArguments + 1);
+
+    tearOffForInlineCallFrame(
+        callFrame->globalData(), callFrame->registers() + inlineCallFrame->stackOffset,
+        inlineCallFrame);
+}
+
+void Arguments::tearOffForInlineCallFrame(JSGlobalData& globalData, Register* registers, InlineCallFrame* inlineCallFrame)
+{
     for (size_t i = 0; i < d->numArguments; ++i) {
         ValueRecovery& recovery = inlineCallFrame->arguments[i + 1];
         // In the future we'll support displaced recoveries (indicating that the
@@ -376,7 +400,7 @@ void Arguments::tearOff(CallFrame* callFrame)
         // it's much less likely that we'll support in-register recoveries since
         // this code does not (easily) have access to registers.
         JSValue value;
-        Register* location = &callFrame->registers()[CallFrame::argumentOffset(i)];
+        Register* location = &registers[CallFrame::argumentOffset(i)];
         switch (recovery.technique()) {
         case AlreadyInRegisterFile:
             value = location->jsValue();
@@ -404,7 +428,7 @@ void Arguments::tearOff(CallFrame* callFrame)
             ASSERT_NOT_REACHED();
             break;
         }
-        argument(i).set(callFrame->globalData(), this, value);
+        argument(i).set(globalData, this, value);
     }
 }
 

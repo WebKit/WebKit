@@ -90,7 +90,7 @@ private:
             bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
             bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
             bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
-            if (!isArray && !isString && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint8ClampedArray && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
+            if (!isArray && !isArguments && !isString && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint8ClampedArray && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
                 break;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)

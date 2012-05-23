@@ -998,7 +998,17 @@ private:
         
         InlineStackEntry* m_caller;
         
-        InlineStackEntry(ByteCodeParser*, CodeBlock*, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, JSFunction* callee, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart, CodeSpecializationKind);
+        InlineStackEntry(
+            ByteCodeParser*,
+            CodeBlock*,
+            CodeBlock* profiledBlock,
+            BlockIndex callsiteBlockHead,
+            VirtualRegister calleeVR,
+            JSFunction* callee,
+            VirtualRegister returnValueVR,
+            VirtualRegister inlineCallFrameStart,
+            int argumentCountIncludingThis,
+            CodeSpecializationKind);
         
         ~InlineStackEntry()
         {
@@ -1066,13 +1076,29 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         dataLog("not set.\n");
 #endif
     
-    if (m_graph.isFunctionConstant(callTarget))
+    if (m_graph.isFunctionConstant(callTarget)) {
         callType = ConstantFunction;
-    else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
-             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Call at [@%lu, bc#%u] has a function constant: %p, exec %p.\n",
+                m_graph.size(), m_currentIndex,
+                m_graph.valueOfFunctionConstant(callTarget),
+                m_graph.valueOfFunctionConstant(callTarget)->executable());
+#endif
+    } else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
+               && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
         callType = LinkedFunction;
-    else
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Call at [@%lu, bc#%u] is linked to: %p, exec %p.\n",
+                m_graph.size(), m_currentIndex, callLinkStatus.callTarget(),
+                callLinkStatus.callTarget()->executable());
+#endif
+    } else {
         callType = UnknownFunction;
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Call at [@%lu, bc#%u] is has an unknown or ambiguous target.\n",
+                m_graph.size(), m_currentIndex);
+#endif
+    }
     if (callType != UnknownFunction) {
         int argumentCountIncludingThis = currentInstruction[2].u.operand;
         int registerOffset = currentInstruction[3].u.operand;
@@ -1193,8 +1219,15 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // FIXME: Don't flush constants!
     
     Vector<VariableAccessData*, 8> arguments;
-    for (int i = 1; i < argumentCountIncludingThis; ++i)
-        arguments.append(flushArgument(registerOffset + argumentToOperand(i)));
+    for (int i = 1; i < argumentCountIncludingThis; ++i) {
+        VariableAccessData* variableAccessData =
+            flushArgument(registerOffset + argumentToOperand(i));
+        arguments.append(variableAccessData);
+        
+        // Are we going to be capturing arguments? If so make sure we record this fact.
+        if (codeBlock->argumentIsCaptured(i))
+            variableAccessData->mergeIsCaptured(true);
+    }
     
     int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
@@ -1210,7 +1243,12 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
             m_graph.m_blocks[i]->ensureLocals(newNumLocals);
     }
 
-    InlineStackEntry inlineStackEntry(this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1, (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), expectedFunction, (VirtualRegister)m_inlineStackTop->remapOperand(usesResult ? resultOperand : InvalidVirtualRegister), (VirtualRegister)inlineCallFrameStart, kind);
+    InlineStackEntry inlineStackEntry(
+        this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1,
+        (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), expectedFunction,
+        (VirtualRegister)m_inlineStackTop->remapOperand(
+            usesResult ? resultOperand : InvalidVirtualRegister),
+        (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
     
     // Link up the argument variable access datas to their argument positions.
     for (int i = 1; i < argumentCountIncludingThis; ++i) {
@@ -2667,7 +2705,17 @@ void ByteCodeParser::buildOperandMapsIfNecessary()
     m_haveBuiltOperandMaps = true;
 }
 
-ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParser, CodeBlock* codeBlock, CodeBlock* profiledBlock, BlockIndex callsiteBlockHead, VirtualRegister calleeVR, JSFunction* callee, VirtualRegister returnValueVR, VirtualRegister inlineCallFrameStart, CodeSpecializationKind kind)
+ByteCodeParser::InlineStackEntry::InlineStackEntry(
+    ByteCodeParser* byteCodeParser,
+    CodeBlock* codeBlock,
+    CodeBlock* profiledBlock,
+    BlockIndex callsiteBlockHead,
+    VirtualRegister calleeVR,
+    JSFunction* callee,
+    VirtualRegister returnValueVR,
+    VirtualRegister inlineCallFrameStart,
+    int argumentCountIncludingThis,
+    CodeSpecializationKind kind)
     : m_byteCodeParser(byteCodeParser)
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
@@ -2700,7 +2748,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
         inlineCallFrame.stackOffset = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize;
         inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
-        inlineCallFrame.arguments.resize(codeBlock->numParameters()); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
         
         if (inlineCallFrame.caller.inlineCallFrame)
@@ -2711,7 +2759,13 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
         }
         
         for (int i = codeBlock->m_numCapturedVars; i--;)
-            inlineCallFrame.capturedVars.set(i + inlineCallFrameStart);
+            inlineCallFrame.capturedVars.set(i + inlineCallFrame.stackOffset);
+        
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Current captured variables: ");
+        inlineCallFrame.capturedVars.dump(WTF::dataFile());
+        dataLog("\n");
+#endif
         
         byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
         m_inlineCallFrame = &byteCodeParser->m_codeBlock->inlineCallFrames().last();
@@ -2867,7 +2921,10 @@ bool ByteCodeParser::parse()
     ASSERT(m_graph.needsActivation());
 #endif
     
-    InlineStackEntry inlineStackEntry(this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, 0, InvalidVirtualRegister, InvalidVirtualRegister, CodeForCall);
+    InlineStackEntry inlineStackEntry(
+        this, m_codeBlock, m_profiledBlock, NoBlock, InvalidVirtualRegister, 0,
+        InvalidVirtualRegister, InvalidVirtualRegister, m_codeBlock->numParameters(),
+        CodeForCall);
     
     parseCodeBlock();
 

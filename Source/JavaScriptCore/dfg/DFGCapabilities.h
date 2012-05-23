@@ -197,15 +197,10 @@ inline bool canInlineOpcode(OpcodeID opcodeID)
         return false;
         
     // We don't support inlining code that creates activations or has nested functions.
-    case op_init_lazy_reg:
     case op_create_activation:
     case op_tear_off_activation:
     case op_new_func:
     case op_new_func_exp:
-    case op_create_arguments:
-    case op_tear_off_arguments:
-    case op_get_argument_by_val:
-    case op_get_arguments_length:
         return false;
         
     default:

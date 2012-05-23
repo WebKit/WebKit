@@ -52,7 +52,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("DFG compiling code block %p(%p), number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->instructionCount());
+    dataLog("DFG compiling code block %p(%p) for executable %p, number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->ownerExecutable(), codeBlock->instructionCount());
 #endif
     
     Graph dfg(exec->globalData(), codeBlock);

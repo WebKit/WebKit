@@ -1043,6 +1043,12 @@ JSCell* DFG_OPERATION operationCreateArguments(ExecState* exec)
     return Arguments::create(exec->globalData(), exec);
 }
 
+JSCell* DFG_OPERATION operationCreateInlinedArguments(
+    ExecState* exec, InlineCallFrame* inlineCallFrame)
+{
+    return Arguments::create(exec->globalData(), exec, inlineCallFrame);
+}
+
 void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell, int32_t unmodifiedArgumentsRegister)
 {
     JSGlobalData& globalData = exec->globalData();
@@ -1062,22 +1068,34 @@ void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
 
 void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell)
 {
-    ASSERT(exec->codeBlock()->usesArguments() && !exec->codeBlock()->needsFullScopeChain());
+    ASSERT(exec->codeBlock()->usesArguments());
+    ASSERT(!exec->codeBlock()->needsFullScopeChain());
     asArguments(argumentsCell)->tearOff(exec);
 }
 
-EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec)
+void DFG_OPERATION operationTearOffInlinedArguments(
+    ExecState* exec, JSCell* argumentsCell, InlineCallFrame* inlineCallFrame)
+{
+    // This should only be called when the inline code block uses arguments but does not
+    // need a full scope chain. We could assert it, except that the assertion would be
+    // rather expensive and may cause side effects that would greatly diverge debug-mode
+    // behavior from release-mode behavior, since getting the code block of an inline
+    // call frame implies call frame reification.
+    asArguments(argumentsCell)->tearOff(exec, inlineCallFrame);
+}
+
+EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
 {
     Identifier ident(&exec->globalData(), "length");
-    JSValue baseValue = exec->uncheckedR(exec->codeBlock()->argumentsRegister()).jsValue();
+    JSValue baseValue = exec->uncheckedR(argumentsRegister).jsValue();
     PropertySlot slot(baseValue);
     return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
-EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t index)
+EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t argumentsRegister, int32_t index)
 {
     return JSValue::encode(
-        exec->uncheckedR(exec->codeBlock()->argumentsRegister()).jsValue().get(exec, index));
+        exec->uncheckedR(argumentsRegister).jsValue().get(exec, index));
 }
 
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)

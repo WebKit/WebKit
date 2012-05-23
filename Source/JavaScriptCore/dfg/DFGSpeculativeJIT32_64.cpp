@@ -3771,8 +3771,15 @@ void SpeculativeJIT::compile(Node& node)
         
         JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
         
-        addSlowPathGenerator(
-            slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    notCreated, this, operationCreateInlinedArguments, resultGPR,
+                    node.codeOrigin.inlineCallFrame));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+        }
         
         cellResult(resultGPR, m_compileIndex);
         break;
@@ -3807,9 +3814,17 @@ void SpeculativeJIT::compile(Node& node)
         JITCompiler::Jump created = m_jit.branch32(
             JITCompiler::NotEqual, argumentsValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
         
-        addSlowPathGenerator(
-            slowPathCall(
-                created, this, operationTearOffArguments, NoResult, argumentsValuePayloadGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    created, this, operationTearOffInlinedArguments, NoResult,
+                    argumentsValuePayloadGPR, node.codeOrigin.inlineCallFrame));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(
+                    created, this, operationTearOffArguments, NoResult,
+                    argumentsValuePayloadGPR));
+        }
         
         noResult(m_compileIndex);
         break;
@@ -3823,11 +3838,17 @@ void SpeculativeJIT::compile(Node& node)
         
         JITCompiler::Jump created = m_jit.branch32(
             JITCompiler::NotEqual,
-            JITCompiler::tagFor(m_jit.codeBlock()->argumentsRegister()),
+            JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
             TrustedImm32(JSValue::EmptyValueTag));
         
-        m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultPayloadGPR);
-        m_jit.sub32(TrustedImm32(1), resultPayloadGPR);
+        if (node.codeOrigin.inlineCallFrame) {
+            m_jit.move(
+                Imm32(node.codeOrigin.inlineCallFrame->arguments.size() - 1),
+                resultPayloadGPR);
+        } else {
+            m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultPayloadGPR);
+            m_jit.sub32(TrustedImm32(1), resultPayloadGPR);
+        }
         m_jit.move(TrustedImm32(JSValue::Int32Tag), resultTagGPR);
         
         // FIXME: the slow path generator should perform a forward speculation that the
@@ -3837,7 +3858,8 @@ void SpeculativeJIT::compile(Node& node)
         addSlowPathGenerator(
             slowPathCall(
                 created, this, operationGetArgumentsLength,
-                JSValueRegs(resultTagGPR, resultPayloadGPR)));
+                JSValueRegs(resultTagGPR, resultPayloadGPR),
+                m_jit.argumentsRegisterFor(node.codeOrigin)));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
         break;
@@ -3855,35 +3877,46 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.append(
             m_jit.branch32(
                 JITCompiler::NotEqual,
-                JITCompiler::tagFor(m_jit.codeBlock()->argumentsRegister()),
+                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
                 TrustedImm32(JSValue::EmptyValueTag)));
         
         m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
-        slowPath.append(
-            m_jit.branch32(
-                JITCompiler::AboveOrEqual,
-                resultPayloadGPR,
-                JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        if (node.codeOrigin.inlineCallFrame) {
+            slowPath.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual,
+                    resultPayloadGPR,
+                    Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
+        } else {
+            slowPath.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual,
+                    resultPayloadGPR,
+                    JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        }
         
         m_jit.neg32(resultPayloadGPR);
         
+        size_t baseOffset =
+            ((node.codeOrigin.inlineCallFrame
+              ? node.codeOrigin.inlineCallFrame->stackOffset
+              : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
         m_jit.load32(
             JITCompiler::BaseIndex(
                 GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register) +
-                OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+                baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
             resultTagGPR);
         m_jit.load32(
             JITCompiler::BaseIndex(
                 GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register) +
-                OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+                baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
             resultPayloadGPR);
         
         addSlowPathGenerator(
             slowPathCall(
                 slowPath, this, operationGetArgumentByVal,
-                JSValueRegs(resultTagGPR, resultPayloadGPR), indexGPR));
+                JSValueRegs(resultTagGPR, resultPayloadGPR),
+                m_jit.argumentsRegisterFor(node.codeOrigin), indexGPR));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
         break;

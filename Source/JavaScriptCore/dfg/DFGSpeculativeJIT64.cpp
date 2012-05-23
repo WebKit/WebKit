@@ -3760,6 +3760,8 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CreateActivation: {
+        ASSERT(!node.codeOrigin.inlineCallFrame);
+        
         JSValueOperand value(this, node.child1());
         GPRTemporary result(this, value);
         
@@ -3788,14 +3790,23 @@ void SpeculativeJIT::compile(Node& node)
         
         JITCompiler::Jump notCreated = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR);
         
-        addSlowPathGenerator(
-            slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    notCreated, this, operationCreateInlinedArguments, resultGPR,
+                    node.codeOrigin.inlineCallFrame));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+        }
         
         cellResult(resultGPR, m_compileIndex);
         break;
     }
         
     case TearOffActivation: {
+        ASSERT(!node.codeOrigin.inlineCallFrame);
+
         JSValueOperand activationValue(this, node.child1());
         JSValueOperand argumentsValue(this, node.child2());
         GPRReg activationValueGPR = activationValue.gpr();
@@ -3820,9 +3831,16 @@ void SpeculativeJIT::compile(Node& node)
         
         JITCompiler::Jump created = m_jit.branchTestPtr(JITCompiler::NonZero, argumentsValueGPR);
         
-        addSlowPathGenerator(
-            slowPathCall(
-                created, this, operationTearOffArguments, NoResult, argumentsValueGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    created, this, operationTearOffInlinedArguments, NoResult,
+                    argumentsValueGPR, node.codeOrigin.inlineCallFrame));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(
+                    created, this, operationTearOffArguments, NoResult, argumentsValueGPR));
+        }
         
         noResult(m_compileIndex);
         break;
@@ -3833,11 +3851,22 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultGPR = result.gpr();
         
         JITCompiler::Jump created = m_jit.branchTestPtr(
-            JITCompiler::NonZero, JITCompiler::addressFor(m_jit.codeBlock()->argumentsRegister()));
+            JITCompiler::NonZero,
+            JITCompiler::addressFor(
+                m_jit.argumentsRegisterFor(node.codeOrigin)));
         
-        m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
-        m_jit.sub32(TrustedImm32(1), resultGPR);
-        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        if (node.codeOrigin.inlineCallFrame) {
+            m_jit.move(
+                ImmPtr(
+                    bitwise_cast<void*>(
+                        JSValue::encode(
+                            jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1)))),
+                resultGPR);
+        } else {
+            m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
+            m_jit.sub32(TrustedImm32(1), resultGPR);
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        }
         
         // FIXME: the slow path generator should perform a forward speculation that the
         // result is an integer. For now we postpone the speculation by having this return
@@ -3845,7 +3874,8 @@ void SpeculativeJIT::compile(Node& node)
         
         addSlowPathGenerator(
             slowPathCall(
-                created, this, operationGetArgumentsLength, resultGPR));
+                created, this, operationGetArgumentsLength, resultGPR,
+                m_jit.argumentsRegisterFor(node.codeOrigin)));
         
         jsValueResult(resultGPR, m_compileIndex);
         break;
@@ -3861,14 +3891,23 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.append(
             m_jit.branchTestPtr(
                 JITCompiler::NonZero,
-                JITCompiler::addressFor(m_jit.codeBlock()->argumentsRegister())));
+                JITCompiler::addressFor(
+                    m_jit.argumentsRegisterFor(node.codeOrigin))));
         
         m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
-        slowPath.append(
-            m_jit.branch32(
-                JITCompiler::AboveOrEqual,
-                resultGPR,
-                JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        if (node.codeOrigin.inlineCallFrame) {
+            slowPath.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual,
+                    resultGPR,
+                    Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
+        } else {
+            slowPath.append(
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual,
+                    resultGPR,
+                    JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        }
         
         m_jit.neg32(resultGPR);
         m_jit.signExtend32ToPtr(resultGPR, resultGPR);
@@ -3876,12 +3915,16 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(
             JITCompiler::BaseIndex(
                 GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight,
-                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register)),
+                ((node.codeOrigin.inlineCallFrame
+                  ? node.codeOrigin.inlineCallFrame->stackOffset
+                  : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register)),
             resultGPR);
         
         addSlowPathGenerator(
             slowPathCall(
-                slowPath, this, operationGetArgumentByVal, resultGPR, indexGPR));
+                slowPath, this, operationGetArgumentByVal, resultGPR, 
+                m_jit.argumentsRegisterFor(node.codeOrigin),
+                indexGPR));
         
         jsValueResult(resultGPR, m_compileIndex);
         break;

@@ -370,12 +370,31 @@ void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
 #endif
 }
 
-void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
+void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op, CacheDumpMode cacheDumpMode)
 {
     int func = (++it)->u.operand;
     int argCount = (++it)->u.operand;
     int registerOffset = (++it)->u.operand;
-    dataLog("[%4d] %s\t %s, %d, %d\n", location, op, registerName(exec, func).data(), argCount, registerOffset);
+    dataLog("[%4d] %s\t %s, %d, %d", location, op, registerName(exec, func).data(), argCount, registerOffset);
+    if (cacheDumpMode == DumpCaches) {
+#if ENABLE(LLINT)
+        LLIntCallLinkInfo* callLinkInfo = it[1].u.callLinkInfo;
+        if (callLinkInfo->lastSeenCallee) {
+            dataLog(" llint(%p, exec %p)",
+                    callLinkInfo->lastSeenCallee.get(),
+                    callLinkInfo->lastSeenCallee->executable());
+        } else
+            dataLog(" llint(not set)");
+#endif
+#if ENABLE(JIT)
+        JSFunction* target = getCallLinkInfo(location).lastSeenCallee.get();
+        if (target)
+            dataLog(" jit(%p, exec %p)", target, target->executable());
+        else
+            dataLog(" jit(not set)");
+#endif
+    }
+    dataLog("\n");
     it += 2;
 }
 
@@ -1249,11 +1268,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_call: {
-            printCallOp(exec, location, it, "call");
+            printCallOp(exec, location, it, "call", DumpCaches);
             break;
         }
         case op_call_eval: {
-            printCallOp(exec, location, it, "call_eval");
+            printCallOp(exec, location, it, "call_eval", DontDumpCaches);
             break;
         }
         case op_call_varargs: {
@@ -1293,7 +1312,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_construct: {
-            printCallOp(exec, location, it, "construct");
+            printCallOp(exec, location, it, "construct", DumpCaches);
             break;
         }
         case op_strcat: {

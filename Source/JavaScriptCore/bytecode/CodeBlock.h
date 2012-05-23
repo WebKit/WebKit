@@ -1122,7 +1122,8 @@ namespace JSC {
         void printConditionalJump(ExecState*, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator&, int location, const char* op);
         void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&);
         void printGetByIdCacheStatus(ExecState*, int location);
-        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        enum CacheDumpMode { DumpCaches, DontDumpCaches };
+        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op, CacheDumpMode);
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
         void visitStructures(SlotVisitor&, Instruction* vPC);
         

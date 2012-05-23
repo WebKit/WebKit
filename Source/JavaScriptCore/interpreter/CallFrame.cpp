@@ -181,6 +181,16 @@ CallFrame* CallFrame::trueCallerFrame()
     
     return machineCaller->trueCallFrame(returnPC())->removeHostCallFrameFlag();
 }
+
+CodeBlock* CallFrame::someCodeBlockForPossiblyInlinedCode()
+{
+    if (!isInlineCallFrame())
+        return codeBlock();
+    
+    return jsCast<FunctionExecutable*>(inlineCallFrame()->executable.get())->baselineCodeBlockFor(
+        inlineCallFrame()->isCall ? CodeForCall : CodeForConstruct);
+}
+
 #endif
 
 Register* CallFrame::frameExtentInternal()

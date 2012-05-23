@@ -67,6 +67,13 @@ namespace JSC {
             arguments->finishCreation(callFrame);
             return arguments;
         }
+        
+        static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+        {
+            Arguments* arguments = new (NotNull, allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+            arguments->finishCreation(callFrame, inlineCallFrame);
+            return arguments;
+        }
 
         enum { MaxArguments = 0x10000 };
 
@@ -75,6 +82,8 @@ namespace JSC {
         
         Arguments(CallFrame*);
         Arguments(CallFrame*, NoParametersType);
+        
+        void tearOffForInlineCallFrame(JSGlobalData& globalData, Register*, InlineCallFrame*);
 
     public:
         static const ClassInfo s_info;
@@ -92,6 +101,7 @@ namespace JSC {
         
         void copyToArguments(ExecState*, CallFrame*, uint32_t length);
         void tearOff(CallFrame*);
+        void tearOff(CallFrame*, InlineCallFrame*);
         bool isTornOff() const { return d->registerArray; }
         void didTearOffActivation(JSGlobalData& globalData, JSActivation* activation)
         {
@@ -112,6 +122,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         void finishCreation(CallFrame*);
+        void finishCreation(CallFrame*, InlineCallFrame*);
 
     private:
         static void destroy(JSCell*);
@@ -177,6 +188,26 @@ namespace JSC {
         // declared parameters, so we need to tear off immediately.
         if (d->isStrictMode || !callee->jsExecutable()->parameterCount())
             tearOff(callFrame);
+    }
+
+    inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+    {
+        Base::finishCreation(callFrame->globalData());
+        ASSERT(inherits(&s_info));
+
+        JSFunction* callee = inlineCallFrame->callee.get();
+        d->numArguments = inlineCallFrame->arguments.size() - 1;
+        d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers()) + inlineCallFrame->stackOffset;
+        d->callee.set(callFrame->globalData(), this, callee);
+        d->overrodeLength = false;
+        d->overrodeCallee = false;
+        d->overrodeCaller = false;
+        d->isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
+
+        // The bytecode generator omits op_tear_off_activation in cases of no
+        // declared parameters, so we need to tear off immediately.
+        if (d->isStrictMode || !callee->jsExecutable()->parameterCount())
+            tearOff(callFrame, inlineCallFrame);
     }
 
 } // namespace JSC
