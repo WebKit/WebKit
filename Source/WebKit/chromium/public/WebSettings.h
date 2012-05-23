@@ -151,7 +151,6 @@ public:
     virtual bool viewportEnabled() const = 0;
     virtual void setDefaultTileSize(WebSize) = 0;
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
-    virtual void setFixedPositionCreatesStackingContext(bool) = 0;
 
 
 protected:

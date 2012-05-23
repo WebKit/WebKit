@@ -54,7 +54,6 @@ module window {
         void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);
         void setMediaPlaybackRequiresUserGesture(in boolean enabled) raises(DOMException);
         void setEditingBehavior(in DOMString behavior) raises(DOMException);
-        void setFixedPositionCreatesStackingContext(in boolean creates) raises(DOMException);
     };
 }
 

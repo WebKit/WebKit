@@ -570,9 +570,6 @@ namespace WebCore {
         void setNeedsDidFinishLoadOrderQuirk(bool needsQuirk) { m_needsDidFinishLoadOrderQuirk = needsQuirk; }
         bool needsDidFinishLoadOrderQuirk() const { return m_needsDidFinishLoadOrderQuirk; }
 
-        void setFixedPositionCreatesStackingContext(bool creates) { m_fixedPositionCreatesStackingContext = creates; }
-        bool fixedPositionCreatesStackingContext() const { return m_fixedPositionCreatesStackingContext; }
-
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -740,8 +737,6 @@ namespace WebCore {
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
         bool m_requestAnimationFrameEnabled : 1;
         bool m_needsDidFinishLoadOrderQuirk : 1;
-
-        bool m_fixedPositionCreatesStackingContext : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
