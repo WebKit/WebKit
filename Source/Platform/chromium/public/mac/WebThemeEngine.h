@@ -28,4 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../../../Platform/chromium/public/win/WebThemeEngine.h"
+#ifndef WebThemeEngine_h
+#define WebThemeEngine_h
+
+#include "../WebCanvas.h"
+
+namespace WebKit {
+
+struct WebRect;
+
+class WebThemeEngine {
+public:
+    enum State {
+        StateDisabled,
+        StateInactive,
+        StateActive,
+        StatePressed,
+    };
+
+    enum Size {
+        SizeRegular,
+        SizeSmall,
+    };
+
+    enum ScrollbarOrientation {
+        ScrollbarOrientationHorizontal,
+        ScrollbarOrientationVertical,
+    };
+
+    enum ScrollbarParent {
+        ScrollbarParentScrollView,
+        ScrollbarParentRenderLayer,
+    };
+
+    struct ScrollbarInfo {
+        ScrollbarOrientation orientation;
+        ScrollbarParent parent;
+        int maxValue;
+        int currentValue;
+        int visibleSize;
+        int totalSize;
+    };
+
+    virtual void paintScrollbarThumb(WebCanvas*, State, Size, const WebRect&, const ScrollbarInfo&) { }
+};
+
+} // namespace WebKit
+
+#endif

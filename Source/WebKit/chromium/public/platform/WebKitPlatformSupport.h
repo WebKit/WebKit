@@ -56,16 +56,12 @@ class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 class WebStorageNamespace; // FIXME: Does this belong in platform?
-class WebThemeEngine;
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
 public:
     // May return null if sandbox support is not necessary
     virtual WebSandboxSupport* sandboxSupport() { return 0; }
-
-    // May return null on some platforms.
-    virtual WebThemeEngine* themeEngine() { return 0; }
 
     // DOM Storage --------------------------------------------------
 

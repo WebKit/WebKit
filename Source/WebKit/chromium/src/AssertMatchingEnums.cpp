@@ -118,7 +118,7 @@
 
 #if OS(DARWIN)
 #include "PlatformSupport.h"
-#include "platform/mac/WebThemeEngine.h"
+#include <public/mac/WebThemeEngine.h>
 #endif
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \

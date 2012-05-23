@@ -58,6 +58,7 @@ class WebPeerConnectionHandlerClient;
 class WebURL;
 class WebURLLoader;
 class WebSocketStreamHandle;
+class WebThemeEngine;
 class WebThread;
 class WebWorkerRunLoop;
 
@@ -78,6 +79,9 @@ public:
 
     // Must return non-null.
     virtual WebMimeRegistry* mimeRegistry() { return 0; }
+
+    // May return null on some platforms.
+    virtual WebThemeEngine* themeEngine() { return 0; }
 
 
     // Audio --------------------------------------------------------------

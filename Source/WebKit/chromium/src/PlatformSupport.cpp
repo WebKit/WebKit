@@ -61,17 +61,17 @@
 
 #if OS(WINDOWS)
 #include "platform/WebRect.h"
-#include "platform/win/WebThemeEngine.h"
+#include <public/win/WebThemeEngine.h>
 #endif
 
 #if OS(DARWIN)
-#include "platform/mac/WebThemeEngine.h"
+#include <public/mac/WebThemeEngine.h>
 #elif OS(UNIX) && !OS(ANDROID)
-#include "platform/linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
+#include <public/linux/WebThemeEngine.h>
 #elif OS(ANDROID)
-#include "platform/android/WebThemeEngine.h"
+#include <public/android/WebThemeEngine.h>
 #endif
 
 #include "NativeImageSkia.h"
@@ -571,7 +571,7 @@ void PlatformSupport::paintButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintButton(
+    WebKit::Platform::current()->themeEngine()->paintButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -579,7 +579,7 @@ void PlatformSupport::paintMenuList(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintMenuList(
+    WebKit::Platform::current()->themeEngine()->paintMenuList(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -587,7 +587,7 @@ void PlatformSupport::paintScrollbarArrow(
     GraphicsContext* gc, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintScrollbarArrow(
+    WebKit::Platform::current()->themeEngine()->paintScrollbarArrow(
         gc->platformContext()->canvas(), state, classicState, rect);
 }
 
@@ -595,7 +595,7 @@ void PlatformSupport::paintScrollbarThumb(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintScrollbarThumb(
+    WebKit::Platform::current()->themeEngine()->paintScrollbarThumb(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -603,7 +603,7 @@ void PlatformSupport::paintScrollbarTrack(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect, const IntRect& alignRect)
 {
-    webKitPlatformSupport()->themeEngine()->paintScrollbarTrack(
+    WebKit::Platform::current()->themeEngine()->paintScrollbarTrack(
         gc->platformContext()->canvas(), part, state, classicState, rect,
         alignRect);
 }
@@ -612,7 +612,7 @@ void PlatformSupport::paintSpinButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintSpinButton(
+    WebKit::Platform::current()->themeEngine()->paintSpinButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -624,7 +624,7 @@ void PlatformSupport::paintTextField(
     // Fallback to white when |color| is invalid.
     RGBA32 backgroundColor = color.isValid() ? color.rgb() : Color::white;
 
-    webKitPlatformSupport()->themeEngine()->paintTextField(
+    WebKit::Platform::current()->themeEngine()->paintTextField(
         gc->platformContext()->canvas(), part, state, classicState, rect,
         backgroundColor, fillContentArea, drawEdges);
 }
@@ -633,14 +633,14 @@ void PlatformSupport::paintTrackbar(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitPlatformSupport()->themeEngine()->paintTrackbar(
+    WebKit::Platform::current()->themeEngine()->paintTrackbar(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
 void PlatformSupport::paintProgressBar(
     GraphicsContext* gc, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds)
 {
-    webKitPlatformSupport()->themeEngine()->paintProgressBar(
+    WebKit::Platform::current()->themeEngine()->paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
 }
 
@@ -659,7 +659,7 @@ void PlatformSupport::paintScrollbarThumb(
     webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
 
     WebKit::WebCanvas* webCanvas = gc->platformContext()->canvas();
-    webKitPlatformSupport()->themeEngine()->paintScrollbarThumb(
+    WebKit::Platform::current()->themeEngine()->paintScrollbarThumb(
         webCanvas,
         static_cast<WebThemeEngine::State>(state),
         static_cast<WebThemeEngine::Size>(size),
@@ -763,7 +763,7 @@ static void GetWebThemeExtraParams(PlatformSupport::ThemePart part, PlatformSupp
 
 IntSize PlatformSupport::getThemePartSize(ThemePart part)
 {
-     return webKitPlatformSupport()->themeEngine()->getSize(WebThemePart(part));
+     return WebKit::Platform::current()->themeEngine()->getSize(WebThemePart(part));
 }
 
 void PlatformSupport::paintThemePart(
@@ -771,7 +771,7 @@ void PlatformSupport::paintThemePart(
 {
     WebThemeEngine::ExtraParams webThemeExtraParams;
     GetWebThemeExtraParams(part, state, extraParams, &webThemeExtraParams);
-    webKitPlatformSupport()->themeEngine()->paint(
+    WebKit::Platform::current()->themeEngine()->paint(
         gc->platformContext()->canvas(), WebThemePart(part), WebThemeState(state), rect, &webThemeExtraParams);
 }
 
