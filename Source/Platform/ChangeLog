@@ -1,3 +1,18 @@
+2012-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118218.
+        http://trac.webkit.org/changeset/118218
+        https://bugs.webkit.org/show_bug.cgi?id=87299
+
+        breaks webkit win builder (Requested by pilgrim_google__ on
+        #webkit).
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        * chromium/public/WebLocalizedString.h: Removed.
+
 2012-05-23  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move themeEngine to Platform.h

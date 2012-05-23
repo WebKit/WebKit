@@ -68,7 +68,6 @@
             'chromium/public/WebLayer.h',
             'chromium/public/WebLayerTreeView.h',
             'chromium/public/WebLayerTreeViewClient.h',
-            'chromium/public/WebLocalizedString.h',
             'chromium/public/WebMediaHints.h',
             'chromium/public/WebMediaStreamCenter.h',
             'chromium/public/WebMediaStreamCenterClient.h',

@@ -28,4 +28,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../../Platform/chromium/public/WebLocalizedString.h"
+#ifndef WebLocalizedString_h
+#define WebLocalizedString_h
+
+namespace WebKit {
+
+struct WebLocalizedString {
+    enum Name {
+        AXButtonActionVerb,
+        AXCheckedCheckBoxActionVerb,
+        AXHeadingText,
+        AXImageMapText,
+        AXLinkActionVerb,
+        AXLinkText,
+        AXListMarkerText,
+        AXRadioButtonActionVerb,
+        AXTextFieldActionVerb,
+        AXUncheckedCheckBoxActionVerb,
+        AXWebAreaText,
+        CalendarClear,
+        CalendarToday,
+        DateFormatDayInMonthLabel,
+        DateFormatMonthLabel,
+        DateFormatYearLabel,
+        DetailsLabel,
+        FileButtonChooseFileLabel,
+        FileButtonChooseMultipleFilesLabel,
+        FileButtonNoFileSelectedLabel,
+        InputElementAltText,
+        KeygenMenuHighGradeKeySize,
+        KeygenMenuMediumGradeKeySize,
+        MissingPluginText,
+        MultipleFileUploadText,
+        ResetButtonDefaultLabel,
+        SearchableIndexIntroduction,
+        SearchMenuClearRecentSearchesText,
+        SearchMenuNoRecentSearchesText,
+        SearchMenuRecentSearchesText,
+        SubmitButtonDefaultLabel,
+        ValidationPatternMismatch,
+        ValidationRangeOverflow,
+        ValidationRangeUnderflow,
+        ValidationStepMismatch,
+        ValidationTooLong,
+        ValidationTypeMismatch,
+        ValidationTypeMismatchForEmail,
+        ValidationTypeMismatchForMultipleEmail,
+        ValidationTypeMismatchForURL,
+        ValidationValueMissing,
+        ValidationValueMissingForCheckbox,
+        ValidationValueMissingForFile,
+        ValidationValueMissingForMultipleFile,
+        ValidationValueMissingForRadio,
+        ValidationValueMissingForSelect,
+    };
+};
+
+} // namespace WebKit
+
+#endif
