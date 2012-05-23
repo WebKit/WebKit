@@ -304,7 +304,7 @@ class Port(object):
 
     def driver_name(self):
         # FIXME: Seems we should get this from the Port's Driver class.
-        return self.get_option('driver_name', 'DumpRenderTree')
+        return "DumpRenderTree"
 
     def expected_baselines_by_extension(self, test_name):
         """Returns a dict mapping baseline suffix to relative path for each baseline in

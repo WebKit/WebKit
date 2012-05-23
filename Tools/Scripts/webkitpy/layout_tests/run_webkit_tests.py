@@ -297,8 +297,6 @@ def parse_args(args=None):
         optparse.make_option("--additional-drt-flag", action="append",
             default=[], help="Additional command line flag to pass to DumpRenderTree "
                  "Specify multiple times to add multiple flags."),
-        optparse.make_option("--driver-name", type="string",
-            help="Alternative DumpRenderTree binary to use"),
         optparse.make_option("--additional-platform-directory", action="append",
             default=[], help="Additional directory where to look for test "
                  "baselines (will take precendence over platform baselines). "

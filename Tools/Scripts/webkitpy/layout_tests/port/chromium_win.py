@@ -161,7 +161,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self.get_option('configuration')
-        binary_name = '%s.exe' % self.driver_name()
+        binary_name = 'DumpRenderTree.exe'
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
