@@ -1,3 +1,28 @@
+2012-05-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Pass Isolate to v8::Null() in CodeGeneratorV8.pm
+        https://bugs.webkit.org/show_bug.cgi?id=87202
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        This patch passes Isolate to v8::Null() in CodeGeneratorV8.pm.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateFunctionCallback):
+        (NativeToJSValue):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::contentDocumentAttrGetter):
+        (WebCore::TestObjV8Internal::getSVGDocumentCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::valueAttrGetter):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::readonlyValueAttrGetter):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetter):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetter):
+
 2012-05-22  Andreas Kling  <kling@webkit.org>
 
         Short-circuit Element::attrIfExists() when the Element has no Attr list.
