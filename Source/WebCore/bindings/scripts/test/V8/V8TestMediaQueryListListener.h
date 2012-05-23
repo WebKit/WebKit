@@ -59,7 +59,7 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListList
 inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return V8TestMediaQueryListListener::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl, v8::Isolate* isolate = 0)

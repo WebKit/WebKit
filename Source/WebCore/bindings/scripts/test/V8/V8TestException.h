@@ -59,7 +59,7 @@ v8::Handle<v8::Object> V8TestException::wrap(TestException* impl, v8::Isolate* i
 inline v8::Handle<v8::Value> toV8(TestException* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return V8TestException::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestException > impl, v8::Isolate* isolate = 0)

@@ -66,7 +66,7 @@ v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl, v8::Isolate* isolate)
 inline v8::Handle<v8::Value> toV8(TestObj* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return V8TestObj::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl, v8::Isolate* isolate = 0)

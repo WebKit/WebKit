@@ -1,3 +1,80 @@
+2012-05-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8][Performance] Pass Isolate to v8::Null() in V8Node::toV8()
+        https://bugs.webkit.org/show_bug.cgi?id=87193
+
+        Reviewed by Adam Barth.
+
+        This patch improves the performance of Bindings/undefined-first-child.html by 58.7%,
+        Bindings/undefined-get-element-by-id.html by 26.8%,
+        Dromaeo/dom-query.html(getElementById (not in document)) by 9.8%,
+        and Dromaeo/dom-query.html(getElementsByName (not in document)) by 2.1%.
+        These benchmarks test the performance of accessing an undefined Node object.
+
+        Performance test results in my Linux desktop:
+
+        [Bindings/undefined-first-child.html]
+          - without my patch
+          RESULT Bindings: undefined-first-child= 481.843775891 runs/s
+          median= 474.934036939 runs/s, stdev= 17.7753278263 runs/s, min= 471.204188482 runs/s, max= 534.629404617 runs/s
+
+          - with my patch
+          RESULT Bindings: undefined-first-child= 764.720531908 runs/s
+          median= 803.515696424 runs/s, stdev= 54.7402312963 runs/s, min= 688.806888069 runs/s, max= 807.061790668 runs/s
+
+        [Bindings/undefined-get-element-by-id.html]
+          - without my patch
+          RESULT Bindings: undefined-get-element-by-id= 236.642705579 runs/s
+          median= 234.527786832 runs/s, stdev= 5.77090297761 runs/s, min= 231.362467866 runs/s, max= 246.305418719 runs/s
+
+          - with my patch
+          RESULT Bindings: undefined-get-element-by-id= 300.031032067 runs/s
+          median= 303.797468354 runs/s, stdev= 6.99060409266 runs/s, min= 287.581699346 runs/s, max= 304.955527319 runs/s
+
+        [Dromaeo/dom-query.html(getElementById (not in document))]
+          - without my patch
+          2855.80runs/s ±0.30%
+
+          - with my patch
+          3136.20runs/s ±0.22%
+
+        [Dromaeo/dom-query.html(getElementsByName (not in document))]
+          - without my patch
+          2198.00runs/s ±0.50%
+
+          - with my patch
+          2243.40runs/s ±3.39%
+
+        Currently v8::Null() looks up Isolate, which is a bottleneck of
+        V8Node::toV8() for undefined Nodes. This patch removes the Isolate
+        look-up by passing Isolate to v8::Null(), like v8::Null(isolate).
+
+        * bindings/scripts/CodeGeneratorV8.pm: Modified as described above.
+        (GenerateHeader):
+
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h: Updated run-bindings-tests results.
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::toV8):
+
 2012-05-22  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r116629) tests for <style scoped> is crashing

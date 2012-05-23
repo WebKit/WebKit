@@ -61,7 +61,7 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl, v8
 inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return V8TestActiveDOMObject::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestActiveDOMObject > impl, v8::Isolate* isolate = 0)
