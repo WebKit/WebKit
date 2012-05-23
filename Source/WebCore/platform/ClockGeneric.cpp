@@ -49,7 +49,7 @@ float ClockGeneric::currentTime() const
 {
     if (m_running)
         m_lastTime = now();
-    float time = (narrowPrecisionToFloat(m_lastTime - m_startTime) * m_rate) + m_offset;
+    float time = narrowPrecisionToFloat(((m_lastTime - m_startTime) * m_rate) + m_offset);
     return time;
 }
 
@@ -79,8 +79,8 @@ void ClockGeneric::stop()
     m_running = false;
 }
 
-float ClockGeneric::now() const
+double ClockGeneric::now() const
 {
-    return narrowPrecisionToFloat(WTF::currentTime());
+    return WTF::currentTime();
 }
 

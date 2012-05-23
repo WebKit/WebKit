@@ -45,11 +45,11 @@ private:
     virtual void stop();
     virtual bool isRunning() const { return m_running; }
 
-    float now() const;
+    double now() const;
 
     bool m_running;
     float m_rate;
-    float m_offset;
+    double m_offset;
     double m_startTime;
     mutable double m_lastTime;
 };

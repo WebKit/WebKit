@@ -1,3 +1,21 @@
+2012-05-23  Jer Noble  <jer.noble@apple.com>
+
+        GenericClock loses precision due to float->double conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=87227
+
+        Reviewed by Darin Adler.
+
+        No new tests; fixes media/media-controller-time.html on Chromium.
+
+        Only narrow to float after the entire calculation is complete. This requires now() and m_offset
+        to be double-precision.
+
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::currentTime): 
+        (ClockGeneric::now): Make double-precision.
+        * platform/ClockGeneric.h:
+        (ClockGeneric): Make m_offset double-precision.
+
 2012-05-22  Jer Noble  <jer.noble@apple.com>
 
         PlatformClockCM has uninitialized m_rate member.
