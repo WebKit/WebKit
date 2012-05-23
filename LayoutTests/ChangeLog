@@ -1,3 +1,12 @@
+2012-05-23  Levi Weintraub  <leviw@chromium.org>
+
+        fast/sub-pixel/layout-boxes-with-zoom.html fails at 166% zoom on Windows only
+        https://bugs.webkit.org/show_bug.cgi?id=87282
+
+        Unreviewed. Marking fast/sub-pixel/layout-boxes-with-zoom.html as failing on Chromium Windows.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-23  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed gardening - inspector/profiler/heap-snapshot-summary-show-ranges.html

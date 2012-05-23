@@ -3773,6 +3773,7 @@ BUGWK87175 SKIP : fast/regions/render-region-renderer.html = FAIL
 BUG_EAE SKIP : fast/repaint/reflection-repaint-test.html = FAIL
 BUG_EAE SKIP : fast/repaint/transform-layout-repaint.html = FAIL
 BUGWK87137 WIN DEBUG : fast/block/margin-collapse/103.html = CRASH
+BUGWK87282 WIN : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
 
 BUGWK87160 XP VISTA WIN7 : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-canvas2d-layer.html = PASS CRASH
 BUGWK87160 XP VISTA : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH
