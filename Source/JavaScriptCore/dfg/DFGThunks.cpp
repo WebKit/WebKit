@@ -50,16 +50,16 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
         jit.storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
     }
     
+    // Tell GC mark phase how much of the scratch buffer is active during call.
+    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), GPRInfo::regT0);
+
     // Set up one argument.
 #if CPU(X86)
     jit.poke(GPRInfo::callFrameRegister, 0);
 #else
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #endif
-
-    // Tell GC mark phase how much of the scratch buffer is active during call.
-    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), GPRInfo::regT0);
 
     MacroAssembler::Call functionCall = jit.call();
 
