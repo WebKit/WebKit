@@ -1,5 +1,11 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Fix typo in r118235.
+
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Roll in r116340 to the 536 branch (needed test cleanup that didn't make the branch cut).
 
         * platform/mac-wk2/Skipped:
