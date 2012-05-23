@@ -78,11 +78,14 @@
             'type': 'executable',
             'mac_bundle': 1,
             'dependencies': [
+                'ImageDiff',
+                'copy_TestNetscapePlugIn',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+                '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
@@ -117,7 +120,6 @@
                         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:libEGL',
                         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:libGLESv2',
                     ],
-
                     'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
                     'sources': [
                         '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
@@ -194,6 +196,11 @@
                         ['exclude', 'Mac\\.cpp$'],
                     ],
                 }],
+                ['os_posix!=1 or OS=="mac"', {
+                    'sources/': [
+                        ['exclude', 'Posix\\.cpp$'],
+                    ],
+                }],
                 ['use_x11 == 1', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
@@ -219,7 +226,7 @@
                     ],
                 },{ # use_x11 != 1
                     'sources/': [
-                        ['exclude', 'Linux\\.cpp$']
+                        ['exclude', 'X11\\.cpp$'],
                     ]
                 }],
                 ['toolkit_uses_gtk == 1', {
@@ -232,26 +239,30 @@
                     'include_dirs': [
                         '<(source_dir)/WebKit/chromium/public/gtk',
                     ],
-                },{ # toolkit_uses_gtk != 1
-                    'sources/': [
-                        ['exclude', 'Gtk\\.cpp$']
-                    ]
                 }],
                 ['OS=="android"', {
+                    'type': 'shared_library',
                     'dependencies': [
                         'ImageDiff#host',
+                        '<(chromium_src_dir)/base/base.gyp:test_support_base',
+                        '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
+                        '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
                     ],
-                    'sources/': [
-                        ['include', 'chromium/TestShellLinux\\.cpp$'],
-                    ],
-                },{ # OS!="android"
-                    'sources/': [
-                        ['exclude', '(Android)\\.cpp$']
-                    ],
-                    'dependencies': [
+                    'dependencies!': [
                         'ImageDiff',
                         'copy_TestNetscapePlugIn',
                         '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
+                    ],
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)',
+                        'files': [
+                            '<(ahem_path)',
+                            '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
+                        ]
+                    }],
+                }, { # OS!="android"
+                    'sources/': [
+                        ['exclude', 'Android\\.cpp$'],
                     ],
                 }],
                 ['inside_chromium_build==1 and component=="shared_library"', {
@@ -389,6 +400,44 @@
                 # as nullptr) conflict with upcoming c++0x types.
                 'cflags_cc': ['-Wno-c++0x-compat'],
             },
+        }],
+        ['OS=="android"', {
+            # Wrap libDumpRenderTree.so into an android apk for execution.
+            # See <(chromium_src_dir)/base/base.gyp for TODO(jrg)s about this strategy.
+            'targets': [{
+                'target_name': 'DumpRenderTree_apk',
+                'type': 'none',
+                'dependencies': [
+                    'DumpRenderTree',
+                ],
+                'actions': [{
+                    # Generate apk files (including source and antfile) from
+                    # a template, and builds them.
+                    'action_name': 'generate_and_build',
+                    'inputs': [
+                        '<(chromium_src_dir)/testing/android/generate_native_test.py',
+                        '<(PRODUCT_DIR)/lib.target/libDumpRenderTree.so',
+                        # FIXME: Build the jar for native tests with SDK.
+                        # For now we are using Android.mk to build the apk.
+                    ],
+                    'outputs': [
+                        '<(PRODUCT_DIR)/DumpRenderTree_apk/ChromeNativeTests-debug.apk',
+                    ],
+                    'action': [
+                        '<(chromium_src_dir)/testing/android/generate_native_test.py',
+                        '--native_library',
+                        '<(PRODUCT_DIR)/lib.target/libDumpRenderTree.so',
+                        # FIXME: Build the jar for native tests with SDK.
+                        # '--jar',
+                        # 'foo/bar.jar',
+                        '--output',
+                        '<(PRODUCT_DIR)/DumpRenderTree_apk',
+                        '--ant-args',
+                        '-DPRODUCT_DIR=<(PRODUCT_DIR)',
+                        '--ant-compile'
+                    ],
+                }],
+            }],
         }],
     ], # conditions
 }

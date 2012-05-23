@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,55 +31,26 @@
 #include "config.h"
 #include "TestShell.h"
 
-#include "SkTypeface.h"
-#include "WebView.h"
-#include "webkit/support/webkit_support.h"
-
-#if !OS(ANDROID)
 #include <fontconfig/fontconfig.h>
-#endif
 
 #if USE(GTK)
 #include <gtk/gtk.h>
-#endif
-#include <signal.h>
-#include <unistd.h>
 
-static void AlarmHandler(int)
+void openStartupDialog()
 {
-    // If the alarm alarmed, kill the process since we have a really bad hang.
-    puts("\n#TEST_TIMED_OUT\n");
-    puts("#EOF\n");
-    fflush(stdout);
-    exit(0);
+    GtkWidget* dialog = gtk_message_dialog_new(
+        0, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Attach to me?");
+    gtk_window_set_title(GTK_WINDOW(dialog), "DumpRenderTree");
+    gtk_dialog_run(GTK_DIALOG(dialog)); // Runs a nested message loop.
+    gtk_widget_destroy(dialog);
 }
 
-void TestShell::waitTestFinished()
+bool checkLayoutTestSystemDependencies()
 {
-    ASSERT(!m_testIsPending);
-    m_testIsPending = true;
-
-    // Install an alarm signal handler that will kill us if we time out.
-    struct sigaction alarmAction;
-    alarmAction.sa_handler = AlarmHandler;
-    sigemptyset(&alarmAction.sa_mask);
-    alarmAction.sa_flags = 0;
-
-    struct sigaction oldAction;
-    sigaction(SIGALRM, &alarmAction, &oldAction);
-    alarm(layoutTestTimeoutForWatchDog() / 1000);
-
-    // TestFinished() will post a quit message to break this loop when the page
-    // finishes loading.
-    while (m_testIsPending)
-        webkit_support::RunMessageLoop();
-
-    // Remove the alarm.
-    alarm(0);
-    sigaction(SIGALRM, &oldAction, 0);
+    return true;
 }
+#endif // USE(GTK)
 
-#if !OS(ANDROID)
 static bool checkAndLoadFontFile(FcConfig* fontcfg, const char* path1, const char* path2)
 {
     const char* font = path1;
@@ -206,7 +177,6 @@ static void setupFontconfig()
         exit(1);
     }
 }
-#endif // !OS(ANDROID)
 
 void platformInit(int* argc, char*** argv)
 {
@@ -216,8 +186,5 @@ void platformInit(int* argc, char*** argv)
     gtk_init(argc, argv);
 #endif
 
-#if !OS(ANDROID)
     setupFontconfig();
-#endif
 }
-

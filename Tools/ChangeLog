@@ -1,3 +1,29 @@
+2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Run DumpRenderTree as an apk (C++ and gyp part)
+        https://bugs.webkit.org/show_bug.cgi?id=86922
+
+        Because we have new platformInit() in TestShellAndroid.cpp, and
+        we still need the timeout part in TestShellLinux.cpp, TestShellLinux.cpp
+        is split into TestShellPosix.cpp and TestShellX11.cpp.
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestShellAndroid.cpp: Added. Handles command lines to redirect stdin/stdout/stderr.
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellGtk.cpp: Removed. Merged into TestShellX11.cpp
+        * DumpRenderTree/chromium/TestShellLinux.cpp: Removed. Split into TestShellPosix.cpp and TestShellX11.cpp.
+        * DumpRenderTree/chromium/TestShellPosix.cpp: Split from TestShellLinux.cpp, containing the timeout handling part, compiled when os_posix=1 (excluding mac).
+        (AlarmHandler):
+        (TestShell::waitTestFinished):
+        * DumpRenderTree/chromium/TestShellX11.cpp: Split from TestShellLinux.cpp, containing the fontconfig part, compiled when use_x11=1
+        (openStartupDialog): from TestShellGtk.cpp
+        (checkLayoutTestSystemDependencies): from TestShellGtk.cpp.
+        (setupFontconfig):
+        (platformInit):
+
 2012-05-22  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement touch event

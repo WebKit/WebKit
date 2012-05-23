@@ -1,3 +1,12 @@
+2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Run DumpRenderTree as an apk (C++ and gyp part)
+        https://bugs.webkit.org/show_bug.cgi?id=86922
+
+        Reviewed by Kent Tamura.
+
+        * All.gyp: Added DumpRenderTree_apk into dependencies for Android.
+
 2012-05-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call canAccelerate2dCanvas directly

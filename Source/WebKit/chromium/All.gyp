@@ -44,6 +44,13 @@
                 '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree',
                 '../../../Tools/TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:TestWebKitAPI',
             ],
+            'conditions': [
+                ['OS=="android"', {
+                    'dependencies': [
+                        '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree_apk',
+                    ],
+                }],
+            ],
         }
     ],
 }

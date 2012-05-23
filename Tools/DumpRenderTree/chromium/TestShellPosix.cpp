@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,21 +32,40 @@
 #include "TestShell.h"
 
 #include "webkit/support/webkit_support.h"
-#include <fontconfig/fontconfig.h>
-#include <gtk/gtk.h>
+
 #include <signal.h>
+#include <unistd.h>
 
-
-void openStartupDialog()
+static void AlarmHandler(int)
 {
-    GtkWidget* dialog = gtk_message_dialog_new(
-        0, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Attach to me?");
-    gtk_window_set_title(GTK_WINDOW(dialog), "DumpRenderTree");
-    gtk_dialog_run(GTK_DIALOG(dialog)); // Runs a nested message loop.
-    gtk_widget_destroy(dialog);
+    // If the alarm alarmed, kill the process since we have a really bad hang.
+    puts("\n#TEST_TIMED_OUT\n");
+    puts("#EOF\n");
+    fflush(stdout);
+    exit(0);
 }
 
-bool checkLayoutTestSystemDependencies()
+void TestShell::waitTestFinished()
 {
-    return true;
+    ASSERT(!m_testIsPending);
+    m_testIsPending = true;
+
+    // Install an alarm signal handler that will kill us if we time out.
+    struct sigaction alarmAction;
+    alarmAction.sa_handler = AlarmHandler;
+    sigemptyset(&alarmAction.sa_mask);
+    alarmAction.sa_flags = 0;
+
+    struct sigaction oldAction;
+    sigaction(SIGALRM, &alarmAction, &oldAction);
+    alarm(layoutTestTimeoutForWatchDog() / 1000);
+
+    // TestFinished() will post a quit message to break this loop when the page
+    // finishes loading.
+    while (m_testIsPending)
+        webkit_support::RunMessageLoop();
+
+    // Remove the alarm.
+    alarm(0);
+    sigaction(SIGALRM, &oldAction, 0);
 }
