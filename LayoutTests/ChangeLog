@@ -1,3 +1,10 @@
+2012-05-22  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87208
+        Unreviewed, checking in failing results.
+
+        * platform/mac/http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+
 2012-05-22  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r116629) tests for <style scoped> is crashing
