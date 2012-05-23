@@ -1,3 +1,19 @@
+2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: eliminate getters from HeapSnapshot.js
+        https://bugs.webkit.org/show_bug.cgi?id=87241
+
+        getters can't be inlined by engine at the moment.
+        I found that conversion getters into functions gives us about 600 ms
+
+        RESULT heap-snapshot: switch-to-containment-view= 1920 ms
+        vs
+        RESULT heap-snapshot: switch-to-containment-view= 1367 ms
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Debugger should correctly show catch scope

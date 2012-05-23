@@ -523,9 +523,9 @@ WebInspector.HeapSnapshotObjectNode._createProvider = function(isFromBaseSnapsho
 {
     var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
     var filter = "function(edge) {\n" +
-        "    return !edge.isInvisible\n" +
-        "        && (" + !tree.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isSynthetic))\n" +
-        "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));\n" +
+        "    return !edge.isInvisible()\n" +
+        "        && (" + !tree.showRetainingEdges + " || (edge.node().id() !== 1 && !edge.node().isSynthetic()))\n" +
+        "        && (" + showHiddenData + " || (!edge.isHidden() && !edge.node().isHidden()));\n" +
         "}\n";
     var snapshot = isFromBaseSnapshot ? tree.baseSnapshot : tree.snapshot;
     if (tree.showRetainingEdges)
@@ -642,8 +642,8 @@ WebInspector.HeapSnapshotInstanceNode._createProvider = function(snapshot, nodeI
     return snapshot.createEdgesProvider(
         nodeIndex,
         "function(edge) {" +
-        "    return !edge.isInvisible" +
-        "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
+        "    return !edge.isInvisible()" +
+        "        && (" + showHiddenData + " || (!edge.isHidden() && !edge.node().isHidden()));" +
         "}");
 }
 

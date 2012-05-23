@@ -1,3 +1,125 @@
+2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: eliminate getters from HeapSnapshot.js
+        https://bugs.webkit.org/show_bug.cgi?id=87241
+
+        getters can't be inlined by engine at the moment.
+        I found that conversion getters into functions gives us about 600 ms
+
+        RESULT heap-snapshot: switch-to-containment-view= 1920 ms
+        vs
+        RESULT heap-snapshot: switch-to-containment-view= 1367 ms
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotEdge.prototype.hasStringName):
+        (WebInspector.HeapSnapshotEdge.prototype.isElement):
+        (WebInspector.HeapSnapshotEdge.prototype.isHidden):
+        (WebInspector.HeapSnapshotEdge.prototype.isWeak):
+        (WebInspector.HeapSnapshotEdge.prototype.isInternal):
+        (WebInspector.HeapSnapshotEdge.prototype.isInvisible):
+        (WebInspector.HeapSnapshotEdge.prototype.isShortcut):
+        (WebInspector.HeapSnapshotEdge.prototype.name):
+        (WebInspector.HeapSnapshotEdge.prototype.node):
+        (WebInspector.HeapSnapshotEdge.prototype.nodeIndex):
+        (WebInspector.HeapSnapshotEdge.prototype.rawEdges):
+        (WebInspector.HeapSnapshotEdge.prototype.toString):
+        (WebInspector.HeapSnapshotEdge.prototype.type):
+        (WebInspector.HeapSnapshotEdge.prototype._hasStringName):
+        (WebInspector.HeapSnapshotEdge.prototype._name):
+        (WebInspector.HeapSnapshotEdge.prototype._nameOrIndex):
+        (WebInspector.HeapSnapshotEdgeIterator.prototype.index):
+        (WebInspector.HeapSnapshotEdgeIterator.prototype.setIndex):
+        (WebInspector.HeapSnapshotEdgeIterator.prototype.item):
+        (WebInspector.HeapSnapshotRetainerEdge):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.clone):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.hasStringName):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isElement):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isHidden):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isInternal):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isInvisible):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isShortcut):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.isWeak):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.name):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.node):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.nodeIndex):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.retainerIndex):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.setRetainerIndex):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype._node):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype._edge):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.toString):
+        (WebInspector.HeapSnapshotRetainerEdge.prototype.type):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.first):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.hasNext):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.index):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.setIndex):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.item):
+        (WebInspector.HeapSnapshotRetainerEdgeIterator.prototype.next):
+        (WebInspector.HeapSnapshotNode.prototype.canBeQueried):
+        (WebInspector.HeapSnapshotNode.prototype.distanceToWindow):
+        (WebInspector.HeapSnapshotNode.prototype.className):
+        (WebInspector.HeapSnapshotNode.prototype.dominatorIndex):
+        (WebInspector.HeapSnapshotNode.prototype.edges):
+        (WebInspector.HeapSnapshotNode.prototype.edgesCount):
+        (WebInspector.HeapSnapshotNode.prototype.flags):
+        (WebInspector.HeapSnapshotNode.prototype.id):
+        (WebInspector.HeapSnapshotNode.prototype.isHidden):
+        (WebInspector.HeapSnapshotNode.prototype.isNative):
+        (WebInspector.HeapSnapshotNode.prototype.isSynthetic):
+        (WebInspector.HeapSnapshotNode.prototype.isWindow):
+        (WebInspector.HeapSnapshotNode.prototype.isDetachedDOMTreesRoot):
+        (WebInspector.HeapSnapshotNode.prototype.isDetachedDOMTree):
+        (WebInspector.HeapSnapshotNode.prototype.isRoot):
+        (WebInspector.HeapSnapshotNode.prototype.name):
+        (WebInspector.HeapSnapshotNode.prototype.rawEdges):
+        (WebInspector.HeapSnapshotNode.prototype.retainedSize):
+        (WebInspector.HeapSnapshotNode.prototype.retainers):
+        (WebInspector.HeapSnapshotNode.prototype.selfSize):
+        (WebInspector.HeapSnapshotNode.prototype.type):
+        (WebInspector.HeapSnapshotNode.prototype._name):
+        (WebInspector.HeapSnapshotNode.prototype._edgeIndexesEnd):
+        (WebInspector.HeapSnapshotNode.prototype._nextNodeIndex):
+        (WebInspector.HeapSnapshotNode.prototype._type):
+        (WebInspector.HeapSnapshotNodeIterator):
+        (WebInspector.HeapSnapshotNodeIterator.prototype.hasNext):
+        (WebInspector.HeapSnapshotNodeIterator.prototype.index):
+        (WebInspector.HeapSnapshotNodeIterator.prototype.setIndex):
+        (WebInspector.HeapSnapshotNodeIterator.prototype.item):
+        (WebInspector.HeapSnapshotNodeIterator.prototype.next):
+        (WebInspector.HeapSnapshot.prototype._allNodes):
+        (WebInspector.HeapSnapshot.prototype.rootNode):
+        (WebInspector.HeapSnapshot.prototype.get totalSize):
+        (WebInspector.HeapSnapshot.prototype._dominatedNodesOfNode):
+        (WebInspector.HeapSnapshot.prototype.aggregatesForDiff):
+        (WebInspector.HeapSnapshot.prototype._calculateObjectToWindowDistance):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._calculateClassesRetainedSize):
+        (WebInspector.HeapSnapshot.prototype._sortAggregateIndexes):
+        (WebInspector.HeapSnapshot.prototype._markInvisibleEdges):
+        (WebInspector.HeapSnapshot.prototype._markDetachedDOMTreeNodes):
+        (WebInspector.HeapSnapshot.prototype._markQueriableHeapObjects):
+        (WebInspector.HeapSnapshot.prototype._calculateDiffForClass):
+        (WebInspector.HeapSnapshot.prototype._nodeForSnapshotObjectId):
+        (WebInspector.HeapSnapshot.prototype.nodeClassName):
+        (WebInspector.HeapSnapshot.prototype.dominatorIdsForNode):
+        (WebInspector.HeapSnapshot.prototype.createEdgesProvider):
+        (WebInspector.HeapSnapshot.prototype.createRetainingEdgesProvider):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype._createIterationOrder):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.isEmpty):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.item):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.serializeItemsRange):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.serializeItem):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareEdgeFieldName):
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareNodeField):
+        (WebInspector.HeapSnapshotNodesProvider):
+        (WebInspector.HeapSnapshotNodesProvider.prototype.nodePosition):
+        (WebInspector.HeapSnapshotNodesProvider.prototype.serializeItem):
+        (WebInspector.HeapSnapshotNodesProvider.prototype.sort.sortByNodeField):
+        * inspector/front-end/HeapSnapshotGridNodes.js:
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProviderProxy.prototype.isEmpty):
+
 2012-05-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Debugger should correctly show catch scope
