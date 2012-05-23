@@ -49,11 +49,6 @@ enum BackingStoreRemovalPolicy {
     DoNotRemoveFromBackingStore
 };
 
-enum CookieFilter {
-    NoHttpOnlyCookie,
-    WithHttpOnlyCookies,
-};
-
 enum CookieStorageAcceptPolicy {
     CookieStorageAcceptPolicyAlways,
     CookieStorageAcceptPolicyNever,
@@ -79,7 +74,7 @@ public:
     bool canLocalAccessAllCookies() const { return m_shouldDumpAllCookies; }
     void setCanLocalAccessAllCookies(bool enabled) { m_shouldDumpAllCookies = enabled; }
 
-    void setCookies(const KURL&, const String& value);
+    void setCookies(const KURL&, const String& value, CookieFilter = WithHttpOnlyCookies);
 
     void removeAllCookies(BackingStoreRemovalPolicy);
     void removeCookieWithName(const KURL&, const String& cookieName);
@@ -101,7 +96,7 @@ public:
 
     void setCookiePolicy(CookieStorageAcceptPolicy policy) { m_policy = policy; }
     CookieStorageAcceptPolicy cookiePolicy() const { return m_policy; }
-    void setPrivateMode(const bool);
+    void setPrivateMode(bool);
 
     String generateHtmlFragmentForCookies();
     String getCookie(const KURL& requestURL, CookieFilter) const;
@@ -117,9 +112,9 @@ private:
     CookieManager();
     virtual ~CookieManager();
 
-    void checkAndTreatCookie(ParsedCookie*, BackingStoreRemovalPolicy);
+    void checkAndTreatCookie(ParsedCookie*, BackingStoreRemovalPolicy, CookieFilter = WithHttpOnlyCookies);
 
-    void addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore);
+    void addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore, CookieFilter = WithHttpOnlyCookies);
 
     CookieMap* findOrCreateCookieMap(CookieMap* protocolMap, const String& domain, bool findOnly);
 

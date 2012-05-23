@@ -1,3 +1,23 @@
+2012-05-22  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Possible to clobber httponly cookie.
+        https://bugs.webkit.org/show_bug.cgi?id=86067
+
+        Reviewed by Rob Buis.
+
+        If a cookie is set by javaScript and there is already a same httpOnly cookie in cookieManager,
+        we should reject it. If it has a httpOnly property, we reject it, too.
+
+        Test: http/tests/cookies/js-get-and-set-http-only-cookie.php
+
+        * platform/blackberry/CookieJarBlackBerry.cpp:
+        (WebCore::setCookies):
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore::CookieManager::setCookies):
+        (WebCore::CookieManager::shouldRejectNotHttpCookie):
+        (WebCore):
+        * platform/blackberry/CookieManager.h:
+
 2012-05-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't drop children of a RenderSurface from the renderSurfaceLayerList when then position of the surface in its clipRect is not known

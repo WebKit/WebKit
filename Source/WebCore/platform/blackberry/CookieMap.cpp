@@ -54,28 +54,31 @@ CookieMap::~CookieMap()
     deleteAllCookiesAndDomains();
 }
 
-ParsedCookie* CookieMap::addOrReplaceCookie(ParsedCookie* cookie)
+bool CookieMap::addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie** replacedCookie, CookieFilter filter)
 {
     CookieLog("CookieMap - Attempting to add cookie - %s", cookie->name().utf8().data());
 
-    ParsedCookie* prevCookie = 0;
     size_t cookieCount = m_cookieVector.size();
     for (size_t i = 0; i < cookieCount; i++) {
-        if (m_cookieVector[i]->name() == cookie->name() && m_cookieVector[i]->path() == cookie->path()) {
-            prevCookie = m_cookieVector[i];
-            m_cookieVector[i] = cookie;
-            if (prevCookie == m_oldestCookie)
+        if (m_cookieVector[i]->name() == candidateCookie->name() && m_cookieVector[i]->path() == candidateCookie->path()) {
+
+            if (filter == NoHttpOnlyCookie && m_cookieVector[i]->isHttpOnly())
+                return false;
+
+            *replacedCookie = m_cookieVector[i];
+            m_cookieVector[i] = candidateCookie;
+            if (*replacedCookie == m_oldestCookie)
                 updateOldestCookie();
-            return prevCookie;
+            return true;
         }
     }
 
-    m_cookieVector.append(cookie);
-    if (!cookie->isSession())
+    m_cookieVector.append(candidateCookie);
+    if (!candidateCookie->isSession())
         cookieManager().addedCookie();
-    if (!m_oldestCookie || m_oldestCookie->lastAccessed() > cookie->lastAccessed())
-        m_oldestCookie = cookie;
-    return 0;
+    if (!m_oldestCookie || m_oldestCookie->lastAccessed() > candidateCookie->lastAccessed())
+        m_oldestCookie = candidateCookie;
+    return true;
 }
 
 ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* cookie)
@@ -99,12 +102,15 @@ ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* c
     return prevCookie;
 }
 
-ParsedCookie* CookieMap::removeCookie(const ParsedCookie* cookie)
+ParsedCookie* CookieMap::removeCookie(const ParsedCookie* cookie, CookieFilter filter)
 {
     size_t cookieCount = m_cookieVector.size();
     for (size_t position = 0; position < cookieCount; ++position) {
-        if (m_cookieVector[position]->name() == cookie->name() && m_cookieVector[position]->path() == cookie->path())
+        if (m_cookieVector[position]->name() == cookie->name() && m_cookieVector[position]->path() == cookie->path()) {
+            if (filter == NoHttpOnlyCookie && m_cookieVector[position]->isHttpOnly())
+                return 0;
             return removeCookieAtIndex(position, cookie);
+        }
     }
     return 0;
 }

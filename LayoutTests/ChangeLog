@@ -1,3 +1,14 @@
+2012-05-22  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Possible to clobber httponly cookie.
+        https://bugs.webkit.org/show_bug.cgi?id=86067
+
+        Reviewed by Rob Buis.
+
+        * http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+        * http/tests/cookies/js-get-and-set-http-only-cookie.php: Added.
+        * http/tests/cookies/script-tests/js-get-and-set-http-only-cookie.js: Added.
+
 2012-05-22  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement touch event

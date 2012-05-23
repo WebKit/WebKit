@@ -131,7 +131,7 @@ static bool shouldIgnoreDomain(const String protocol)
     return protocol == "file" || protocol == "local";
 }
 
-void CookieManager::setCookies(const KURL& url, const String& value)
+void CookieManager::setCookies(const KURL& url, const String& value, CookieFilter filter)
 {
     CookieLog("CookieManager - Setting cookies");
     CookieParser parser(url);
@@ -139,7 +139,7 @@ void CookieManager::setCookies(const KURL& url, const String& value)
 
     for (size_t i = 0; i < cookies.size(); ++i) {
         BackingStoreRemovalPolicy treatment = m_privateMode ? DoNotRemoveFromBackingStore : RemoveFromBackingStore;
-        checkAndTreatCookie(cookies[i], treatment);
+        checkAndTreatCookie(cookies[i], treatment, filter);
     }
 }
 
@@ -306,9 +306,15 @@ void CookieManager::setCookieJar(const char* fileName)
     m_cookieBackingStore->open(m_cookieJarFileName);
 }
 
-void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore)
+void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore, CookieFilter filter)
 {
     CookieLog("CookieManager - checkAndTreatCookie - processing url with domain - %s & protocol %s\n", candidateCookie->domain().utf8().data(), candidateCookie->protocol().utf8().data());
+
+    // A cookie which is not from http shouldn't have a httpOnly property.
+    if (filter == NoHttpOnlyCookie && candidateCookie->isHttpOnly()) {
+        delete candidateCookie;
+        return;
+    }
 
     const bool ignoreDomain = shouldIgnoreDomain(candidateCookie->protocol());
 
@@ -356,7 +362,7 @@ void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingSt
             m_cookieBackingStore->remove(candidateCookie);
         else if (curMap) {
             // RemoveCookie will return 0 if the cookie doesn't exist.
-            ParsedCookie* expired = curMap->removeCookie(candidateCookie);
+            ParsedCookie* expired = curMap->removeCookie(candidateCookie, filter);
             // Cookie is useless, Remove the cookie from the backingstore if it exists.
             // Backup check for BackingStoreCookieEntry incase someone incorrectly uses this enum.
             if (expired && postToBackingStore != BackingStoreCookieEntry && !expired->isSession()) {
@@ -369,14 +375,23 @@ void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingSt
             delete candidateCookie;
     } else {
         ASSERT(curMap);
-        addCookieToMap(curMap, candidateCookie, postToBackingStore);
+        addCookieToMap(curMap, candidateCookie, postToBackingStore, filter);
     }
 }
 
-void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore)
+void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore, CookieFilter filter)
 {
-    ParsedCookie* prevCookie = targetMap->addOrReplaceCookie(candidateCookie);
-    if (prevCookie) {
+    ParsedCookie* replacedCookie = 0;
+
+    if (!targetMap->addOrReplaceCookie(candidateCookie, &replacedCookie, filter)) {
+
+        CookieLog("CookieManager - rejecting new cookie - %s.\n", candidateCookie->toString().utf8().data());
+
+        delete candidateCookie;
+        return;
+    }
+ 
+    if (replacedCookie) {
 
         CookieLog("CookieManager - updating new cookie - %s.\n", candidateCookie->toString().utf8().data());
 
@@ -385,7 +400,7 @@ void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidate
         // If new cookie is non-session and old one is, we have to add it to backingstore
         // If both sessions are non-session, then we update it in the backingstore
         bool newIsSession = candidateCookie->isSession();
-        bool oldIsSession = prevCookie->isSession();
+        bool oldIsSession = replacedCookie->isSession();
 
         if (postToBackingStore == RemoveFromBackingStore) {
             if (!newIsSession && !oldIsSession)
@@ -394,7 +409,7 @@ void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidate
                 // Must manually decrease the counter because it was not counted when
                 // the cookie was removed in cookieVector.
                 removedCookie();
-                m_cookieBackingStore->remove(prevCookie);
+                m_cookieBackingStore->remove(replacedCookie);
             } else if (!newIsSession && oldIsSession) {
                 // Must manually increase the counter because it was not counted when
                 // the cookie was added in cookieVector.
@@ -402,7 +417,7 @@ void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidate
                 m_cookieBackingStore->insert(candidateCookie);
             }
         }
-        delete prevCookie;
+        delete replacedCookie;
         return;
     }
 
@@ -456,7 +471,7 @@ void CookieManager::getBackingStoreCookies()
     }
 }
 
-void CookieManager::setPrivateMode(const bool mode)
+void CookieManager::setPrivateMode(bool mode)
 {
     if (m_privateMode == mode)
         return;
@@ -499,7 +514,6 @@ CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const St
     }
     return curMap;
 }
-
 
 void CookieManager::removeCookieWithName(const KURL& url, const String& cookieName)
 {
