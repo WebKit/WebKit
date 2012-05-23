@@ -1,3 +1,18 @@
+2012-05-22  Kent Tamura  <tkent@chromium.org>
+
+        Fix a crash in HTMLFormControlElement::disabled().
+        https://bugs.webkit.org/show_bug.cgi?id=86534
+
+        Reviewed by Hajime Morita.
+
+        Node::removedFrom() was not called in some cases. This patch fixes it.
+
+        No new tests. It's almost impossible to make a reliable test.
+
+        * dom/ContainerNodeAlgorithms.h:
+        Remove inDocument() check so that Node::removedFrom() is called even if
+        a parent node in an orphan tree is deleted but a child node remains,
+
 2012-05-22  James Robinson  <jamesr@chromium.org>
 
         Add a Setting to make position:fixed form a new stacking context

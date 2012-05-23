@@ -135,8 +135,7 @@ namespace Private {
             // Clean up any TreeScope to a removed tree.
             if (Document* containerDocument = container->ownerDocument())
                 containerDocument->adoptIfNeeded(node);
-            if (node->inDocument())
-                ChildNodeRemovalNotifier(container).notify(node);
+            ChildNodeRemovalNotifier(container).notify(node);
         }
     };
 
