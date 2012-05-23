@@ -1,5 +1,12 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Roll in r116340 to the 536 branch (needed test cleanup that didn't make the branch cut).
+
+        * platform/mac-wk2/Skipped:
+        * platform/mac-wk2/media/no-auto-play-in-sandbox-expected.txt: Removed.
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Roll out r116176 on the 536 branch, since r116009 was rolled out on the 536 branch.
 
         r116176 updated the test in response to the switch to FractionalLayoutUnits, but the
