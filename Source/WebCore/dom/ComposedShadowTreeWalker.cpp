@@ -52,7 +52,8 @@ ComposedShadowTreeWalker::ComposedShadowTreeWalker(const Node* node, Policy poli
     : m_node(node)
     , m_policy(policy)
 {
-    assertPostcondition();
+    // FIXME: Refactor ComposedShadowTreeWalker so that we can assert node here.
+    // https://bugs.webkit.org/show_bug.cgi?id=87004
 }
 
 ComposedShadowTreeWalker ComposedShadowTreeWalker::fromFirstChild(const Node* node, Policy policy)
