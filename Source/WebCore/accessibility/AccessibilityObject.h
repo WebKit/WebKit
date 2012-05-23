@@ -313,7 +313,8 @@ protected:
 public:
     virtual ~AccessibilityObject();
     virtual void detach();
-        
+    virtual bool isDetached() const { return true; }
+
     typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
     
     virtual bool isAccessibilityRenderObject() const { return false; }
@@ -707,7 +708,6 @@ protected:
     virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }
     virtual void scrollTo(const IntPoint&) const { }
 
-    virtual bool isDetached() const { return true; }
     static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);

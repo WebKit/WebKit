@@ -3428,8 +3428,14 @@ void AccessibilityRenderObject::contentChanged()
         if (parent->supportsARIALiveRegion())
             cache->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
 
-        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->isContentEditable())
+        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->isContentEditable()) {
+            // isContentEditable() might trigger a layout update and invalidate the parent.
+            ASSERT(!parent->renderer() || parent->renderer() == renderParent);
+            if (parent->isDetached())
+                break;
+            
             cache->postNotification(renderParent, AXObjectCache::AXValueChanged, true);
+        }
     }
 }
     
