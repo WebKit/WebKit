@@ -192,7 +192,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self.get_option('configuration')
-        binary_name = 'DumpRenderTree'
+        binary_name = self.driver_name()
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):

@@ -1,3 +1,21 @@
+2012-05-22  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add --driver-name option to run_webkit_tests.py to allow for selecting alternative DRT binaries
+        https://bugs.webkit.org/show_bug.cgi?id=87128
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.driver_name):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort._path_to_driver):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_driver_name_option):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort._path_to_driver):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-05-22  Jessie Berlin  <jberlin@apple.com>
 
         WTR fix after r118001.
