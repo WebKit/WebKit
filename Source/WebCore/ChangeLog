@@ -1,3 +1,13 @@
+2012-05-23  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Enable HeapSnapshotRealWorker in production mode.
+        https://bugs.webkit.org/show_bug.cgi?id=87240
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotWorker):
+
 2012-05-23  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: inspector's Find is not consuming event as of r117974.
