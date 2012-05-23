@@ -1,3 +1,28 @@
+2012-05-23  Michael Saboff  <msaboff@apple.com>
+
+        Crash in fast/files/read tests during Garbage Collection
+        https://bugs.webkit.org/show_bug.cgi?id=87165
+
+        Reviewed by Alexey Proskuryakov.
+
+        Changed hasPendingActivity() processing to use ActiveDOMObject::hasPendingActivity()
+        and associated setPendingActivity() / unsetPendingActivity().
+
+        Fixed two existing tests with change.
+
+        * Modules/filesystem/FileWriter.cpp:
+        (WebCore::FileWriter::stop):
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::truncate):
+        (WebCore::FileWriter::signalCompletion):
+        * Modules/filesystem/FileWriter.h:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readInternal):
+        (WebCore::FileReader::doAbort):
+        (WebCore::FileReader::didFinishLoading):
+        (WebCore::FileReader::didFail):
+        * fileapi/FileReader.h:
+
 2012-05-23  Abhishek Arya  <inferno@chromium.org>
 
         Crash in run-ins with continuations while moving back to original position.

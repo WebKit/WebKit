@@ -79,7 +79,6 @@ public:
     // ActiveDOMObject
     virtual bool canSuspend() const;
     virtual void stop();
-    virtual bool hasPendingActivity() const;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;

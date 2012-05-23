@@ -77,11 +77,6 @@ const AtomicString& FileWriter::interfaceName() const
     return eventNames().interfaceForFileWriter;
 }
 
-bool FileWriter::hasPendingActivity() const
-{
-    return m_readyState == WRITING || ActiveDOMObject::hasPendingActivity();
-}
-
 bool FileWriter::canSuspend() const
 {
     // FIXME: It is not currently possible to suspend a FileWriter, so pages with FileWriter can not go into page cache.
@@ -95,6 +90,8 @@ void FileWriter::stop()
         return;
     doOperation(OperationAbort);
     m_readyState = DONE;
+
+    setPendingActivity(this);
 }
 
 void FileWriter::write(Blob* data, ExceptionCode& ec)
@@ -114,6 +111,9 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
         setError(FileError::SECURITY_ERR, ec);
         return;
     }
+
+    setPendingActivity(this);
+
     m_blobBeingWritten = data;
     m_readyState = WRITING;
     m_bytesWritten = 0;
@@ -154,6 +154,9 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
         setError(FileError::SECURITY_ERR, ec);
         return;
     }
+
+    setPendingActivity(this);
+
     m_readyState = WRITING;
     m_bytesWritten = 0;
     m_bytesToWrite = 0;
@@ -294,6 +297,9 @@ void FileWriter::signalCompletion(FileError::ErrorCode code)
     } else
         fireEvent(eventNames().writeEvent);
     fireEvent(eventNames().writeendEvent);
+    
+    // All possible events have fired and we're done, no more pending activity.
+    unsetPendingActivity(this);
 }
 
 void FileWriter::fireEvent(const AtomicString& type)

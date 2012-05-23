@@ -70,7 +70,6 @@ public:
 
     // ActiveDOMObject
     virtual bool canSuspend() const;
-    virtual bool hasPendingActivity() const;
     virtual void stop();
 
     // EventTarget
