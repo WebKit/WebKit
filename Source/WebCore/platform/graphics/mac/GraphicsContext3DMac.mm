@@ -114,7 +114,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_layerComposited(false)
     , m_internalColorFormat(0)
     , m_boundFBO(0)
-    , m_activeTexture(0)
+    , m_activeTexture(GL_TEXTURE0)
     , m_boundTexture0(0)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)

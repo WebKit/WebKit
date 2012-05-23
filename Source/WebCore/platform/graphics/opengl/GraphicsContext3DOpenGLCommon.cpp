@@ -345,7 +345,7 @@ void GraphicsContext3D::bindRenderbuffer(GC3Denum target, Platform3DObject rende
 void GraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     makeContextCurrent();
-    if (m_activeTexture && target == GL_TEXTURE_2D)
+    if (m_activeTexture == GL_TEXTURE0 && target == GL_TEXTURE_2D)
         m_boundTexture0 = texture;
     ::glBindTexture(target, texture);
 }

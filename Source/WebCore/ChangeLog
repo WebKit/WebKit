@@ -1,3 +1,27 @@
+2012-05-23  Kenneth Russell  <kbr@google.com>
+
+        REGRESSION(117918) - 4 webgl/tex-iomage-and-sub-image-2d-with-image tests failing on Mac bots.
+        https://bugs.webkit.org/show_bug.cgi?id=87136
+
+        Reviewed by Stephen White.
+
+        Fixed longstanding bug in GraphicsContext3D constructor in Mac
+        port, and logic error in tracking of texture bound to unit 0. Also
+        fixed up Cairo port's constructor by code inspection. This code is
+        ripe for cleanup; Bug 87198 filed for this.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+            Initialize missing members.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+            Correctly initialize m_activeTexture.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::bindTexture):
+            Fix logic error in tracking of texture bound to unit 0.
+
 2012-05-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Layers on main thread should get a RenderSurface for animating transform only if masksToBounds is true also

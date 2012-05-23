@@ -1,3 +1,14 @@
+2012-05-23  Kenneth Russell  <kbr@google.com>
+
+        REGRESSION(117918) - 4 webgl/tex-iomage-and-sub-image-2d-with-image tests failing on Mac bots.
+        https://bugs.webkit.org/show_bug.cgi?id=87136
+
+        Reviewed by Stephen White.
+
+        Unskipped tests.
+
+        * platform/mac/Skipped:
+
 2012-05-23  Chris Fleizach  <cfleizach@apple.com>
 
         Regression(r112694): Crash in WebCore::AXObjectCache::postNotification

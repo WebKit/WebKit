@@ -71,6 +71,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_fbo(0)
     , m_depthStencilBuffer(0)
     , m_boundFBO(0)
+    , m_activeTexture(GL_TEXTURE0)
+    , m_boundTexture0(0)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
