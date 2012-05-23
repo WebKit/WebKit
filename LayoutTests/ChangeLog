@@ -1,3 +1,9 @@
+2012-05-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a failing test.
+
+        * platform/qt/Skipped:
+
 2012-05-22  Hayato Ito  <hayato@chromium.org>
 
         Remove an assertion since an event's target might be a shadow root if a text node is clicked.

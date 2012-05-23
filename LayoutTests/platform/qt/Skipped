@@ -321,6 +321,10 @@ http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
 # https://bugs.webkit.org/show_bug.cgi?id=87099
 fast/css/zoom-in-length-round-trip.html
 
+# Disable private names by default in WebCore
+# https://bugs.webkit.org/show_bug.cgi?id=87088
+fast/js/names.html
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #
