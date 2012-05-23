@@ -1,5 +1,11 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Skip a test failing on the 536 branch due to missing WTR support.
+
+        * platform/wk2/Skipped:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Skip the IFrame Seamless tests on the 536 branch because IFRAME_SEAMLESS is diabled on the 536 branch.
 
         * platform/mac/Skipped:
