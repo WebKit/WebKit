@@ -8,7 +8,12 @@ function makeClosure(n) {
   var makeClosureLocalVar = 'local.' + n;
   return function innerFunction(x) {
     var innerFunctionLocalVar = x + 2;
-    debugger;
+    try {
+      throw new Error("An exception");
+    } catch (e) {
+      e.toString();
+      debugger;
+    }
     return n + makeClosureLocalVar + x + innerFunctionLocalVar;
   }
 }

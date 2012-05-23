@@ -6,6 +6,8 @@ Evaluated script in console.
 Script execution paused.
 
 Dump scope sections:
+Catch
+    e: Error
 Local
     innerFunctionLocalVar: 2012
     this: Window

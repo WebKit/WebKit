@@ -95,6 +95,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                     break;
                 case "catch":
                     title = WebInspector.UIString("Catch");
+                    subtitle = null;
                     break;
                 case "with":
                     title = WebInspector.UIString("With Block");

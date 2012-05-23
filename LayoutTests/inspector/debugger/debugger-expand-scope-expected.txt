@@ -6,6 +6,8 @@ Evaluated script in console.
 Script execution paused.
 
 Dump scope sections:
+WindowWith Block
+    e: Error
 Local
     arguments: Arguments[1]
     innerFunctionLocalVar: 2012

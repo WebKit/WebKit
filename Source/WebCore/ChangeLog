@@ -1,3 +1,15 @@
+2012-05-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Debugger should correctly show catch scope
+        https://bugs.webkit.org/show_bug.cgi?id=87197
+
+        Reviewed by Vsevolod Vlasov.
+
+        * bindings/v8/DebuggerScript.js: In case of Catch scope the scope object
+        is a synthetic one which means that it contains all standard object properties.
+        When passing this object further we need to leave only properties available in
+        the catch block(only variable thar stores the exception in fact).
+
 2012-05-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] FloatSize Qt Support

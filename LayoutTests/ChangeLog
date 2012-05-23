@@ -1,3 +1,16 @@
+2012-05-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Debugger should correctly show catch scope
+        https://bugs.webkit.org/show_bug.cgi?id=87197
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added test for "catch" block to the debugger test.
+
+        * inspector/debugger/debugger-expand-scope-expected.txt:
+        * inspector/debugger/debugger-expand-scope.html:
+        * platform/chromium/inspector/debugger/debugger-expand-scope-expected.txt:
+
 2012-05-23  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Gardening of failing tests

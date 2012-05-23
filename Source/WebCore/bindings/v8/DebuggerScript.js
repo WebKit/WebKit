@@ -239,6 +239,7 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         switch (scopeMirror.scopeType()) {
         case ScopeType.Local:
         case ScopeType.Closure:
+        case ScopeType.Catch:
             // For transient objects we create a "persistent" copy that contains
             // the same properties.
             scopeObject = {};
@@ -255,7 +256,6 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
             break;
         case ScopeType.Global:
         case ScopeType.With:
-        case ScopeType.Catch:
             scopeObject = scopeMirror.details_.object();
             break;
         }
