@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x299
-  RenderBlock {HTML} at (0,0) size 800x299
-    RenderBody {BODY} at (8,20) size 784x271
-      RenderBlock {DIV} at (0,252) size 784x19
+layer at (0,0) size 800x298
+  RenderBlock {HTML} at (0,0) size 800x298
+    RenderBody {BODY} at (8,20) size 784x270
+      RenderBlock {DIV} at (0,252) size 784x18
         RenderText {#text} at (0,0) size 604x19
           text run at (0,0) width 604: "PASS - \"-webkit-transform.1\" property for \"inner\" element at 0.5s saw something close to: 0.76"
         RenderBR {BR} at (604,0) size 0x19

@@ -83,13 +83,13 @@ layer at (0,0) size 800x106
       RenderMathMLBlock {math:mo} at (0,0) size 11x16
         RenderText {math:mo} at (0,-4) size 11x25
           text run at (0,-4) width 11: "+"
-    RenderMathMLFraction {math:mfrac} at (176,36) size 77x70
-      RenderMathMLBlock {math:mfrac} at (0,0) size 77x16
+    RenderMathMLFraction {math:mfrac} at (176,36) size 79x70
+      RenderMathMLBlock {math:mfrac} at (0,0) size 79x16
         RenderInline {math:mi} at (0,0) size 11x25
-          RenderText {#text} at (33,-4) size 11x25
-            text run at (33,-4) width 11: "B"
-      RenderMathMLBlock {math:mfrac} at (0,16) size 77x54
-        RenderMathMLRow {math:mrow} at (4,2) size 70x52
+          RenderText {#text} at (34,-4) size 11x25
+            text run at (34,-4) width 11: "B"
+      RenderMathMLBlock {math:mfrac} at (0,16) size 79x54
+        RenderMathMLRow {math:mrow} at (5,2) size 71x52
           RenderInline {math:mi} at (0,0) size 11x25
             RenderText {#text} at (0,4) size 11x25
               text run at (0,4) width 11: "C"
@@ -97,13 +97,13 @@ layer at (0,0) size 800x106
             RenderMathMLBlock {math:mo} at (0,0) size 11x16
               RenderText {math:mo} at (0,-4) size 11x25
                 text run at (0,-4) width 11: "+"
-          RenderMathMLFraction {math:mfrac} at (23,0) size 47x52
-            RenderMathMLBlock {math:mfrac} at (0,0) size 47x16
-              RenderInline {math:mi} at (0,0) size 13x25
-                RenderText {#text} at (17,-4) size 13x25
-                  text run at (17,-4) width 13: "D"
-            RenderMathMLBlock {math:mfrac} at (0,16) size 47x36
-              RenderMathMLRow {math:mrow} at (4,2) size 40x34
+          RenderMathMLFraction {math:mfrac} at (23,0) size 48x52
+            RenderMathMLBlock {math:mfrac} at (0,0) size 48x16
+              RenderInline {math:mi} at (0,0) size 12x25
+                RenderText {#text} at (18,-4) size 12x25
+                  text run at (18,-4) width 12: "D"
+            RenderMathMLBlock {math:mfrac} at (0,16) size 48x36
+              RenderMathMLRow {math:mrow} at (5,2) size 40x34
                 RenderInline {math:mi} at (0,0) size 10x25
                   RenderText {#text} at (0,4) size 10x25
                     text run at (0,4) width 10: "E"

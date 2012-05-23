@@ -1,3 +1,194 @@
+2012-05-23  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Rebaseline test results for BUG 86355
+        https://bugs.webkit.org/show_bug.cgi?id=86956
+
+        Unreviewed, EFL gardening.
+
+        Updated test results for BUG 86355.
+
+        * platform/efl/compositing/animation/state-at-end-event-transform-layer-expected.png:
+        * platform/efl/compositing/animation/state-at-end-event-transform-layer-expected.txt:
+        * platform/efl/compositing/bounds-in-flipped-writing-mode-expected.txt: Added.
+        * platform/efl/compositing/color-matching/image-color-matching-expected.png:
+        * platform/efl/compositing/color-matching/image-color-matching-expected.txt:
+        * platform/efl/compositing/color-matching/pdf-image-match-expected.png:
+        * platform/efl/compositing/color-matching/pdf-image-match-expected.txt:
+        * platform/efl/compositing/compositing-visible-descendant-expected.png:
+        * platform/efl/compositing/compositing-visible-descendant-expected.txt:
+        * platform/efl/compositing/direct-image-compositing-expected.png:
+        * platform/efl/compositing/direct-image-compositing-expected.txt:
+        * platform/efl/compositing/generated-content-expected.png:
+        * platform/efl/compositing/generated-content-expected.txt:
+        * platform/efl/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/efl/compositing/geometry/abs-position-inside-opacity-expected.txt:
+        * platform/efl/compositing/geometry/clipping-foreground-expected.png:
+        * platform/efl/compositing/geometry/clipping-foreground-expected.txt:
+        * platform/efl/compositing/geometry/composited-html-size-expected.png:
+        * platform/efl/compositing/geometry/composited-html-size-expected.txt:
+        * platform/efl/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/efl/compositing/geometry/fixed-in-composited-expected.txt:
+        * platform/efl/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/efl/compositing/geometry/layer-due-to-layer-children-deep-expected.txt:
+        * platform/efl/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/efl/compositing/geometry/layer-due-to-layer-children-expected.txt:
+        * platform/efl/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt:
+        * platform/efl/compositing/geometry/outline-change-expected.png:
+        * platform/efl/compositing/geometry/outline-change-expected.txt:
+        * platform/efl/compositing/geometry/partial-layout-update-expected.png:
+        * platform/efl/compositing/geometry/partial-layout-update-expected.txt:
+        * platform/efl/compositing/geometry/root-layer-update-expected.png:
+        * platform/efl/compositing/geometry/root-layer-update-expected.txt:
+        * platform/efl/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png:
+        * platform/efl/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt:
+        * platform/efl/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/efl/compositing/geometry/video-fixed-scrolling-expected.txt:
+        * platform/efl/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/efl/compositing/geometry/video-opacity-overlay-expected.txt:
+        * platform/efl/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/efl/compositing/iframes/composited-iframe-alignment-expected.txt:
+        * platform/efl/compositing/iframes/composited-iframe-scroll-expected.txt: Added.
+        * platform/efl/compositing/iframes/iframe-content-flipping-expected.txt: Added.
+        * platform/efl/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/efl/compositing/iframes/iframe-copy-on-scroll-expected.txt:
+        * platform/efl/compositing/iframes/leave-compositing-iframe-expected.txt: Added.
+        * platform/efl/compositing/images/direct-image-background-color-expected.png:
+        * platform/efl/compositing/images/direct-image-background-color-expected.txt:
+        * platform/efl/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/efl/compositing/layers-inside-overflow-scroll-expected.txt:
+        * platform/efl/compositing/masks/direct-image-mask-expected.png:
+        * platform/efl/compositing/masks/direct-image-mask-expected.txt:
+        * platform/efl/compositing/masks/masked-ancestor-expected.png:
+        * platform/efl/compositing/masks/masked-ancestor-expected.txt:
+        * platform/efl/compositing/masks/multiple-masks-expected.png:
+        * platform/efl/compositing/masks/multiple-masks-expected.txt:
+        * platform/efl/compositing/masks/simple-composited-mask-expected.png:
+        * platform/efl/compositing/masks/simple-composited-mask-expected.txt:
+        * platform/efl/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/efl/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/efl/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/efl/compositing/overflow/fixed-position-ancestor-clip-expected.txt:
+        * platform/efl/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/efl/compositing/overflow/overflow-compositing-descendant-expected.txt:
+        * platform/efl/compositing/overflow/overflow-positioning-expected.png:
+        * platform/efl/compositing/overflow/overflow-positioning-expected.txt:
+        * platform/efl/compositing/overflow/overflow-scroll-expected.png:
+        * platform/efl/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/efl/compositing/overflow/parent-overflow-expected.png:
+        * platform/efl/compositing/overflow/parent-overflow-expected.txt:
+        * platform/efl/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/efl/compositing/overflow/scroll-ancestor-update-expected.txt:
+        * platform/efl/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/efl/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/efl/compositing/overflow/theme-affects-visual-overflow-expected.png: Added.
+        * platform/efl/compositing/overflow/theme-affects-visual-overflow-expected.txt: Added.
+        * platform/efl/compositing/plugins/1x1-composited-plugin-expected.txt: Added.
+        * platform/efl/compositing/plugins/composited-plugin-expected.png:
+        * platform/efl/compositing/plugins/composited-plugin-expected.txt:
+        * platform/efl/compositing/plugins/large-to-small-composited-plugin-expected.txt: Added.
+        * platform/efl/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/efl/compositing/reflections/animation-inside-reflection-expected.txt:
+        * platform/efl/compositing/reflections/compositing-change-inside-reflection-expected.png:
+        * platform/efl/compositing/reflections/compositing-change-inside-reflection-expected.txt:
+        * platform/efl/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/efl/compositing/reflections/deeply-nested-reflections-expected.txt:
+        * platform/efl/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/efl/compositing/reflections/load-video-in-reflection-expected.txt:
+        * platform/efl/compositing/reflections/masked-reflection-on-composited-expected.png:
+        * platform/efl/compositing/reflections/masked-reflection-on-composited-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-anchor-point-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-animated-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-mask-change-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-mask-change-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-on-overflow-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-opacity-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-opacity-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-size-change-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-size-change-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-transformed-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-transformed2-expected.txt:
+        * platform/efl/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/efl/compositing/reflections/nested-reflection-transition-expected.txt:
+        * platform/efl/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/efl/compositing/reflections/reflection-in-composited-expected.txt:
+        * platform/efl/compositing/reflections/reflection-opacity-expected.png:
+        * platform/efl/compositing/reflections/reflection-opacity-expected.txt:
+        * platform/efl/compositing/reflections/reflection-ordering-expected.png:
+        * platform/efl/compositing/reflections/reflection-ordering-expected.txt:
+        * platform/efl/compositing/reflections/reflection-positioning-expected.png:
+        * platform/efl/compositing/reflections/reflection-positioning-expected.txt:
+        * platform/efl/compositing/reflections/reflection-positioning2-expected.png:
+        * platform/efl/compositing/reflections/reflection-positioning2-expected.txt:
+        * platform/efl/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/efl/compositing/reflections/simple-composited-reflections-expected.txt:
+        * platform/efl/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/efl/compositing/reflections/transform-inside-reflection-expected.txt:
+        * platform/efl/compositing/repaint/become-overlay-composited-layer-expected.png:
+        * platform/efl/compositing/repaint/become-overlay-composited-layer-expected.txt:
+        * platform/efl/compositing/repaint/composited-document-element-expected.png:
+        * platform/efl/compositing/repaint/composited-document-element-expected.txt:
+        * platform/efl/compositing/repaint/layer-repaint-expected.png:
+        * platform/efl/compositing/repaint/layer-repaint-expected.txt:
+        * platform/efl/compositing/repaint/layer-repaint-rects-expected.png:
+        * platform/efl/compositing/repaint/layer-repaint-rects-expected.txt:
+        * platform/efl/compositing/repaint/opacity-between-absolute-expected.png:
+        * platform/efl/compositing/repaint/opacity-between-absolute-expected.txt:
+        * platform/efl/compositing/repaint/opacity-between-absolute2-expected.png:
+        * platform/efl/compositing/repaint/opacity-between-absolute2-expected.txt:
+        * platform/efl/compositing/self-painting-layers-expected.png:
+        * platform/efl/compositing/self-painting-layers-expected.txt:
+        * platform/efl/compositing/shadows/shadow-drawing-expected.png:
+        * platform/efl/compositing/shadows/shadow-drawing-expected.txt:
+        * platform/efl/compositing/sibling-positioning-expected.png:
+        * platform/efl/compositing/sibling-positioning-expected.txt:
+        * platform/efl/compositing/text-on-large-layer-expected.png:
+        * platform/efl/compositing/text-on-large-layer-expected.txt:
+        * platform/efl/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/efl/compositing/transitions/scale-transition-no-start-expected.txt:
+        * platform/efl/compositing/transitions/singular-scale-transition-expected.png:
+        * platform/efl/compositing/transitions/singular-scale-transition-expected.txt:
+        * platform/efl/compositing/video/video-background-color-expected.png:
+        * platform/efl/compositing/video/video-background-color-expected.txt:
+        * platform/efl/compositing/visibility/visibility-composited-expected.png: Added.
+        * platform/efl/compositing/visibility/visibility-composited-expected.txt: Added.
+        * platform/efl/compositing/visibility/visibility-composited-transforms-expected.png: Copied from LayoutTests/platform/efl/mathml/presentation/fenced-expected.png.
+        * platform/efl/compositing/visibility/visibility-composited-transforms-expected.txt: Added.
+        * platform/efl/mathml/presentation/attributes-expected.png:
+        * platform/efl/mathml/presentation/attributes-expected.txt:
+        * platform/efl/mathml/presentation/fenced-expected.png:
+        * platform/efl/mathml/presentation/fenced-expected.txt:
+        * platform/efl/mathml/presentation/fenced-mi-expected.png:
+        * platform/efl/mathml/presentation/fenced-mi-expected.txt:
+        * platform/efl/mathml/presentation/fractions-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/efl/mathml/presentation/sub-expected.png:
+        * platform/efl/mathml/presentation/sub-expected.txt:
+        * platform/efl/mathml/presentation/subsup-expected.png:
+        * platform/efl/mathml/presentation/subsup-expected.txt:
+        * platform/efl/mathml/presentation/sup-expected.png:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+        * platform/efl/mathml/presentation/tables-expected.png:
+        * platform/efl/mathml/presentation/tables-expected.txt:
+        * platform/efl/mathml/presentation/tokenElements-expected.png:
+        * platform/efl/mathml/presentation/tokenElements-expected.txt:
+        * platform/efl/mathml/presentation/under-expected.png:
+        * platform/efl/mathml/presentation/under-expected.txt:
+        * platform/efl/mathml/presentation/underover-expected.png:
+        * platform/efl/mathml/presentation/underover-expected.txt:
+
 2012-05-23  Steve Block  <steveblock@google.com>
 
         Fix crashing expectation for several media/ LayoutTests

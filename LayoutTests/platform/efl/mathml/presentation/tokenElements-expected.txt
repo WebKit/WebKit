@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {html} at (0,0) size 800x86
-    RenderBody {body} at (8,16) size 784x54
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 291x19
           text run at (0,0) width 291: "Following elements should use a regular font: "
         RenderMathMLMath {math} at (291,2) size 58x16
@@ -21,7 +21,7 @@ layer at (0,0) size 800x86
             RenderText {#text} at (45,-4) size 12x25
               text run at (45,-4) width 12: "&"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,35) size 784x19
+      RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 241x19
           text run at (0,0) width 241: "Following element should be in italic: "
         RenderMathMLMath {math} at (241,2) size 9x16

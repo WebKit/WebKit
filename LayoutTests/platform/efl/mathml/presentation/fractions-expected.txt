@@ -95,14 +95,14 @@ layer at (0,0) size 800x352
       RenderBlock {p} at (0,236) size 784x34
         RenderText {#text} at (0,6) size 138x19
           text run at (0,6) width 138: "numerator alignment: "
-        RenderMathMLMath {math} at (138,0) size 97x34
-          RenderMathMLFraction {mfrac} at (1,0) size 95x34
-            RenderMathMLBlock {mfrac} at (0,0) size 95x16
+        RenderMathMLMath {math} at (138,0) size 98x34
+          RenderMathMLFraction {mfrac} at (1,0) size 96x34
+            RenderMathMLBlock {mfrac} at (0,0) size 96x16
               RenderInline {mi} at (0,0) size 7x25
                 RenderText {#text} at (3,-4) size 7x25
                   text run at (3,-4) width 7: "x"
-            RenderMathMLBlock {mfrac} at (0,16) size 95x18
-              RenderMathMLRow {mrow} at (4,2) size 88x16
+            RenderMathMLBlock {mfrac} at (0,16) size 96x18
+              RenderMathMLRow {mrow} at (5,2) size 88x16
                 RenderInline {mn} at (0,0) size 8x25
                   RenderText {#text} at (0,-4) size 8x25
                     text run at (0,-4) width 8: "1"
@@ -134,16 +134,16 @@ layer at (0,0) size 800x352
                 RenderInline {mn} at (0,0) size 8x25
                   RenderText {#text} at (80,-4) size 8x25
                     text run at (80,-4) width 8: "5"
-        RenderText {#text} at (235,6) size 4x19
-          text run at (235,6) width 4: " "
-        RenderMathMLMath {math} at (239,0) size 97x34
-          RenderMathMLFraction {mfrac} at (1,0) size 95x34
-            RenderMathMLBlock {mfrac} at (0,0) size 95x16
-              RenderInline {mi} at (0,0) size 7x25
-                RenderText {#text} at (44,-4) size 7x25
-                  text run at (44,-4) width 7: "x"
-            RenderMathMLBlock {mfrac} at (0,16) size 95x18
-              RenderMathMLRow {mrow} at (4,2) size 88x16
+        RenderText {#text} at (236,6) size 4x19
+          text run at (236,6) width 4: " "
+        RenderMathMLMath {math} at (240,0) size 98x34
+          RenderMathMLFraction {mfrac} at (1,0) size 96x34
+            RenderMathMLBlock {mfrac} at (0,0) size 96x16
+              RenderInline {mi} at (0,0) size 8x25
+                RenderText {#text} at (44,-4) size 8x25
+                  text run at (44,-4) width 8: "x"
+            RenderMathMLBlock {mfrac} at (0,16) size 96x18
+              RenderMathMLRow {mrow} at (5,2) size 88x16
                 RenderInline {mn} at (0,0) size 8x25
                   RenderText {#text} at (0,-4) size 8x25
                     text run at (0,-4) width 8: "1"
@@ -175,16 +175,16 @@ layer at (0,0) size 800x352
                 RenderInline {mn} at (0,0) size 8x25
                   RenderText {#text} at (80,-4) size 8x25
                     text run at (80,-4) width 8: "5"
-        RenderText {#text} at (336,6) size 4x19
-          text run at (336,6) width 4: " "
-        RenderMathMLMath {math} at (340,0) size 97x34
-          RenderMathMLFraction {mfrac} at (1,0) size 95x34
-            RenderMathMLBlock {mfrac} at (0,0) size 95x16
+        RenderText {#text} at (338,6) size 4x19
+          text run at (338,6) width 4: " "
+        RenderMathMLMath {math} at (342,0) size 98x34
+          RenderMathMLFraction {mfrac} at (1,0) size 96x34
+            RenderMathMLBlock {mfrac} at (0,0) size 96x16
               RenderInline {mi} at (0,0) size 7x25
-                RenderText {#text} at (85,-4) size 7x25
-                  text run at (85,-4) width 7: "x"
-            RenderMathMLBlock {mfrac} at (0,16) size 95x18
-              RenderMathMLRow {mrow} at (4,2) size 88x16
+                RenderText {#text} at (86,-4) size 7x25
+                  text run at (86,-4) width 7: "x"
+            RenderMathMLBlock {mfrac} at (0,16) size 96x18
+              RenderMathMLRow {mrow} at (5,2) size 88x16
                 RenderInline {mn} at (0,0) size 8x25
                   RenderText {#text} at (0,-4) size 8x25
                     text run at (0,-4) width 8: "1"

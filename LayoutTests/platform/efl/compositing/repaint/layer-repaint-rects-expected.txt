@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x51
-  RenderBlock {HTML} at (0,0) size 800x51
-    RenderBody {BODY} at (0,16) size 800x19
-      RenderBlock {P} at (0,0) size 800x19
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (0,16) size 800x18
+      RenderBlock {P} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 656x19
           text run at (0,0) width 656: "Tests repaint after a layer stops compositing. You should see no red below after the end of the transition."
 layer at (0,100) size 402x232

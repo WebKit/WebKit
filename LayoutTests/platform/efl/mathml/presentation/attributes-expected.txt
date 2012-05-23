@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x248
-  RenderBlock {html} at (0,0) size 800x248
-    RenderBody {body} at (8,16) size 784x216
+layer at (0,0) size 800x246
+  RenderBlock {html} at (0,0) size 800x246
+    RenderBody {body} at (8,16) size 784x214
       RenderBlock {p} at (0,0) size 784x34
         RenderText {#text} at (0,6) size 432x19
           text run at (0,6) width 432: "following elements should appear in blue on an orange background: "
@@ -23,10 +23,11 @@ layer at (0,0) size 800x248
           RenderInline {mn} at (0,0) size 8x25 [color=#0000FF]
             RenderText {#text} at (30,4) size 8x25
               text run at (30,4) width 8: "1"
-          RenderMathMLSquareRoot {msqrt} at (38,5) size 20x22 [color=#0000FF]
-            RenderInline {mn} at (0,0) size 8x25
-              RenderText {#text} at (12,-1) size 8x25
-                text run at (12,-1) width 8: "2"
+          RenderMathMLSquareRoot {msqrt} at (38,5) size 20x19 [color=#0000FF]
+            RenderMathMLRow (anonymous) at (12,3) size 8x16
+              RenderInline {mn} at (0,0) size 8x25
+                RenderText {#text} at (0,-4) size 8x25
+                  text run at (0,-4) width 8: "2"
         RenderText {#text} at (491,6) size 4x19
           text run at (491,6) width 4: " "
         RenderMathMLMath {math} at (495,0) size 15x34 [bgcolor=#FFA500]
@@ -57,7 +58,7 @@ layer at (0,0) size 800x248
             RenderText {#text} at (24,-8) size 14x49
               text run at (24,-8) width 14: "x"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,98) size 784x19
+      RenderBlock {p} at (0,98) size 784x18
         RenderText {#text} at (0,0) size 86x19
           text run at (0,0) width 86: "font variants: "
         RenderMathMLMath {math} at (86,2) size 47x16
@@ -74,7 +75,7 @@ layer at (0,0) size 800x248
             RenderText {#text} at (35,-4) size 11x25
               text run at (35,-4) width 11: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,133) size 784x32
+      RenderBlock {p} at (0,132) size 784x32
         RenderText {#text} at (0,11) size 152x19
           text run at (0,11) width 152: "test font style attributes: "
         RenderMathMLMath {math} at (152,0) size 58x32
@@ -91,8 +92,8 @@ layer at (0,0) size 800x248
             RenderText {#text} at (45,9) size 12x25
               text run at (45,9) width 12: "A"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,181) size 784x35
-        RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock {p} at (0,180) size 784x34
+        RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 226x19
             text run at (0,0) width 226: "following element should be inline: "
           RenderMathMLMath {math} at (226,2) size 9x16
@@ -101,7 +102,7 @@ layer at (0,0) size 800x248
                 text run at (1,-4) width 7: "x"
           RenderText {#text} at (235,0) size 234x19
             text run at (235,0) width 234: ", and this one centered on a new line:"
-        RenderMathMLMath {math} at (0,19) size 784x16
+        RenderMathMLMath {math} at (0,18) size 784x16
           RenderInline {mi} at (0,0) size 8x25
             RenderText {#text} at (388,-4) size 8x25
               text run at (388,-4) width 8: "x"
