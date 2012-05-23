@@ -67,9 +67,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    RefPtr<Attr> removedAttr = m_element->detachAttribute(index);
-    m_element->removeAttribute(index);
-    return removedAttr.release();
+    return m_element->detachAttribute(index);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
@@ -79,9 +77,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, con
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    RefPtr<Attr> removedAttr = m_element->detachAttribute(index);
-    m_element->removeAttribute(index);
-    return removedAttr.release();
+    return m_element->detachAttribute(index);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)

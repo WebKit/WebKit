@@ -1,5 +1,26 @@
 2012-05-23  Andreas Kling  <kling@webkit.org>
 
+        Let Element::detachAttribute() handle removal of the attribute.
+        <http://webkit.org/b/87242>
+
+        Reviewed by Antti Koivisto.
+
+        All the call sites were removing the attribute after detaching it, so move
+        that into detachAttribute(). The function name already made it sound like it
+        removes the attribute anyway.
+
+        Also sprinkle some assertions wrt being called with guaranteed presence of
+        attributeData() and the provided index in the attribute vector.
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttributeNode):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItemNS):
+
+2012-05-23  Andreas Kling  <kling@webkit.org>
+
         Streamline Element teardown for the no-Attr-objects case.
         <http://webkit.org/b/87228>
 

@@ -189,10 +189,10 @@ PassRefPtr<Element> Element::cloneElementWithoutAttributesAndChildren()
 
 PassRefPtr<Attr> Element::detachAttribute(size_t index)
 {
-    if (!attributeData())
-        return 0;
+    ASSERT(attributeData());
 
     Attribute* attribute = attributeData()->attributeItem(index);
+    ASSERT(attribute);
 
     RefPtr<Attr> attr = attrIfExists(attribute->name());
     if (attr)
@@ -200,6 +200,7 @@ PassRefPtr<Attr> Element::detachAttribute(size_t index)
     else
         attr = Attr::create(document(), attribute->name(), attribute->value());
 
+    attributeData()->removeAttribute(index, this);
     return attr.release();
 }
 
@@ -1442,9 +1443,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
         return 0;
     }
 
-    RefPtr<Attr> oldAttr = detachAttribute(index);
-    attributeData->removeAttribute(index, this);
-    return oldAttr.release();
+    return detachAttribute(index);
 }
 
 void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
