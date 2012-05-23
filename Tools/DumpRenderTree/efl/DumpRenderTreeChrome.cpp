@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 ProFUSION Embedded Systems
  * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +52,7 @@
 using namespace WebCore;
 
 HashMap<unsigned long, CString> DumpRenderTreeChrome::m_dumpAssignedUrls;
+Evas_Object* DumpRenderTreeChrome::m_provisionalLoadFailedFrame = 0;
 
 PassOwnPtr<DumpRenderTreeChrome> DumpRenderTreeChrome::create(Evas* evas)
 {
@@ -114,6 +116,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(mainFrame, "intent,new", onFrameIntentNew, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
+    evas_object_smart_callback_add(mainFrame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(mainFrame, "load,error", onFrameLoadError, 0);
@@ -521,6 +524,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     evas_object_smart_callback_add(frame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(frame, "intent,new", onFrameIntentNew, 0);
     evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
+    evas_object_smart_callback_add(frame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(frame, "load,error", onFrameLoadError, 0);
@@ -536,6 +540,16 @@ void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, voi
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
         printf("%s - didStartProvisionalLoadForFrame\n", frameName.utf8().data());
+    }
+}
+
+void DumpRenderTreeChrome::onFrameProvisionalLoadFailed(void*, Evas_Object* frame, void*)
+{
+    m_provisionalLoadFailedFrame = frame;
+
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didFailProvisionalLoadWithError\n", frameName.utf8().data());
     }
 }
 
@@ -568,10 +582,16 @@ void DumpRenderTreeChrome::onFrameLoadFinished(void*, Evas_Object* frame, void* 
 
 void DumpRenderTreeChrome::onFrameLoadError(void*, Evas_Object* frame, void*)
 {
-    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+    // In case of provisional load error, we receive both "load,error" and "load,provisional,failed"
+    // signals. m_provisionalLoadFailedFrame is used to avoid printing twice the load error: in
+    // onFrameProvisionalLoadFailed() and onFrameLoadError().
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks() && frame != m_provisionalLoadFailedFrame) {
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
         printf("%s - didFailLoadWithError\n", frameName.utf8().data());
     }
+
+    if (m_provisionalLoadFailedFrame && frame == m_provisionalLoadFailedFrame)
+        m_provisionalLoadFailedFrame = 0;
 
     if (frame == topLoadingFrame)
         topLoadingFrameLoadFinished();

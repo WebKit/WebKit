@@ -1,5 +1,26 @@
 2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's DRT does not print didFailProvisionalLoadWithError messages
+        https://bugs.webkit.org/show_bug.cgi?id=85956
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Catch new "load,provisional,failed" signal and print
+        didFailProvisionalLoadWithError messages when LayoutTestController's
+        dumpFrameLoadCallbacks() returns true. Also make sure the
+        didFailLoadWithError message is not printed in case of provisional
+        load failure.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameProvisionalLoadFailed):
+        (DumpRenderTreeChrome::onFrameLoadError):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
+2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] EFL's DRT needs to call Settings::setValidationMessageTimerMagnification(-1)
         https://bugs.webkit.org/show_bug.cgi?id=86366
 

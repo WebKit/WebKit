@@ -519,9 +519,6 @@ BUGWK84839 : editing/execCommand/remove-list-from-range-selection.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-item-1.html = MISSING
 BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 
-// EFL's DRT does not print didFailProvisionalLoadWithError messages
-BUGWK85956 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
-
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
 // Font kerning issue, fails on GTK as well.

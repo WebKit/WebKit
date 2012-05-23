@@ -3032,6 +3032,21 @@ void ewk_view_load_provisional(Evas_Object* ewkView)
 
 /**
  * @internal
+ * Reports the main frame provisional load failed.
+ *
+ * @param ewkView View.
+ * @param error Load error.
+ *
+ * Emits signal: "load,provisional" on View with pointer to Ewk_Frame_Load_Error.
+ */
+void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Frame_Load_Error* error)
+{
+    DBG("ewkView=%p, error=%p", ewkView, error);
+    evas_object_smart_callback_call(ewkView, "load,provisional,failed", const_cast<Ewk_Frame_Load_Error*>(error));
+}
+
+/**
+ * @internal
  * Reports view can be shown after a new window is created.
  *
  * @param ewkView Frame.

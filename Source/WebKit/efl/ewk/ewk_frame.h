@@ -58,6 +58,7 @@
  *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,provisional", void: frame started provisional load.
+ *  - "load,provisional,failed", Ewk_Frame_Load_Error*: frame provisional load failed.
  *  - "load,started", void: frame started loading the document.
  *  - "mixedcontent,displayed", void: frame has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: frame has loaded and run mixed content.

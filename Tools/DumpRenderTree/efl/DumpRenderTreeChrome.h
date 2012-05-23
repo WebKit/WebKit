@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 ProFUSION Embedded Systems
  * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,6 +67,7 @@ private:
     OwnPtr<GCController> m_gcController;
     Vector<Evas_Object*> m_extraViews;
     static HashMap<unsigned long, CString> m_dumpAssignedUrls;
+    static Evas_Object* m_provisionalLoadFailedFrame;
 
     // Smart callbacks
     static void onWindowObjectCleared(void*, Evas_Object*, void*);
@@ -94,6 +96,7 @@ private:
     static void onFrameIconChanged(void*, Evas_Object*, void*);
 
     static void onFrameProvisionalLoad(void*, Evas_Object*, void*);
+    static void onFrameProvisionalLoadFailed(void*, Evas_Object*, void*);
 
     static void onFrameLoadCommitted(void*, Evas_Object*, void*);
 

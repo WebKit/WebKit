@@ -7,6 +7,7 @@
  * Copyright (C) 2008 Kenneth Rohde Christiansen
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation
  *
  * All rights reserved.
  *
@@ -791,6 +792,27 @@ void FrameLoaderClientEfl::dispatchDidLoadResourceByXMLHttpRequest(unsigned long
 
 void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& err)
 {
+    Ewk_Frame_Load_Error error;
+    CString errorDomain = err.domain().utf8();
+    CString errorDescription = err.localizedDescription().utf8();
+    CString failingUrl = err.failingURL().utf8();
+
+    DBG("ewkFrame=%p, error=%s (%d, cancellation=%hhu) \"%s\", url=%s",
+        m_frame, errorDomain.data(), err.errorCode(), err.isCancellation(),
+        errorDescription.data(), failingUrl.data());
+
+    error.code = err.errorCode();
+    error.is_cancellation = err.isCancellation();
+    error.domain = errorDomain.data();
+    error.description = errorDescription.data();
+    error.failing_url = failingUrl.data();
+    error.resource_identifier = 0;
+    error.frame = m_frame;
+
+    ewk_frame_load_provisional_failed(m_frame, &error);
+    if (ewk_view_frame_main_get(m_view) == m_frame)
+        ewk_view_load_provisional_failed(m_view, &error);
+
     dispatchDidFailLoad(err);
 }
 

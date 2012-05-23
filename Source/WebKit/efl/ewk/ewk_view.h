@@ -60,6 +60,7 @@
  *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,provisional", void: view started provisional load.
+ *  - "load,provisional,failed", Ewk_Frame_Load_Error*: view provisional load failed.
  *  - "load,resource,finished", unsigned long*: reports resource load finished and it gives
  *    a pointer to its identifier.
  *  - "load,resource,failed", Ewk_Frame_Load_Error*: reports resource load failure and it

@@ -42,6 +42,7 @@ void ewk_frame_core_gone(Evas_Object* ewkFrame);
 void ewk_frame_load_committed(Evas_Object* ewkFrame);
 void ewk_frame_load_started(Evas_Object* ewkFrame);
 void ewk_frame_load_provisional(Evas_Object* ewkFrame);
+void ewk_frame_load_provisional_failed(Evas_Object* ewkFrame, const Ewk_Frame_Load_Error* error);
 void ewk_frame_load_firstlayout_finished(Evas_Object* ewkFrame);
 void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object* ewkFrame);
 void ewk_frame_load_document_finished(Evas_Object* ewkFrame);

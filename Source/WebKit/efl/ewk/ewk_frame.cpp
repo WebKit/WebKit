@@ -1384,6 +1384,20 @@ void ewk_frame_load_provisional(Evas_Object* ewkFrame)
 
 /**
  * @internal
+ * Reports the frame provisional load failed.
+ *
+ * @param ewkFrame Frame.
+ * @param error Load error.
+ *
+ * Emits signal: "load,provisional,failed" with pointer to Ewk_Frame_Load_Error.
+ */
+void ewk_frame_load_provisional_failed(Evas_Object* ewkFrame, const Ewk_Frame_Load_Error* error)
+{
+    evas_object_smart_callback_call(ewkFrame, "load,provisional,failed", const_cast<Ewk_Frame_Load_Error*>(error));
+}
+
+/**
+ * @internal
  * Reports the frame finished first layout.
  *
  * @param ewkFrame Frame.

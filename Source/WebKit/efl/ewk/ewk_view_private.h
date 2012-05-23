@@ -54,6 +54,7 @@ void ewk_view_uri_changed(Evas_Object* ewkView);
 void ewk_view_load_document_finished(Evas_Object* ewkView, Evas_Object* frame);
 void ewk_view_load_started(Evas_Object* ewkView, Evas_Object* ewkFrame);
 void ewk_view_load_provisional(Evas_Object* ewkView);
+void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Frame_Load_Error* error);
 void ewk_view_frame_main_load_started(Evas_Object* ewkView);
 void ewk_view_frame_main_cleared(Evas_Object* ewkView);
 void ewk_view_frame_main_icon_received(Evas_Object* ewkView);
