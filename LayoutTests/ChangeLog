@@ -1,5 +1,12 @@
 2012-05-23  Joshua Bell  <jsbell@chromium.org>
 
+        Unreviewed gardening - inspector/profiler/heap-snapshot-summary-show-ranges.html
+        flakes on non-debug test runs too.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
         Unreviewed gardening - add timeout and crash expectations for a few tests.
 
         * platform/chromium/test_expectations.txt:
