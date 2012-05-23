@@ -1,3 +1,15 @@
+2012-05-23  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Small refactoring WebPage::confirmComposition.
+        https://bugs.webkit.org/show_bug.cgi?id=87243
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change nested if into an early return to reduce complexity.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::confirmComposition):
+
 2012-05-22  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Missing tests for the evaluateJavaScript API

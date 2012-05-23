@@ -336,12 +336,12 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
     Editor* editor = targetFrame->editor();
     editor->confirmComposition(compositionString);
 
-    RefPtr<Range> selectionRange;
-    if (selectionStart != -1) {
-        Element* scope = targetFrame->selection()->rootEditableElement();
-        selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
-        ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
-    }
+    if (selectionStart == -1)
+        return;
+
+    Element* scope = targetFrame->selection()->rootEditableElement();
+    RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
+    ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
 
     if (selectionRange) {
         VisibleSelection selection(selectionRange.get(), SEL_DEFAULT_AFFINITY);
