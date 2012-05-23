@@ -1,3 +1,21 @@
+2012-05-23  Darin Adler  <darin@apple.com>
+
+        Optimize iteration of empty hash tables
+        https://bugs.webkit.org/show_bug.cgi?id=87215
+
+        Reviewed by Geoffrey Garen.
+
+        Iteration of empty hash tables was showing up on simple page loading
+        profiles due to the use of hash tables in the
+        NodeListsNodeData::invalidateCaches and
+        NodeListsNodeData::invalidateCachesThatDependOnAttributes functions.
+        It's worth optimizing the case of an empty table.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::begin): Return the known-good end iterator when the
+        table is empty. This makes iterating an empty table faster because we
+        avoid skipping empty and deleted buckets.
+
 2012-05-22  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix.
