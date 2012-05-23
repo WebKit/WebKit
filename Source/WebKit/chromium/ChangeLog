@@ -1,3 +1,28 @@
+2012-05-22  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Apply viewport tag initial-scale only once
+        https://bugs.webkit.org/show_bug.cgi?id=82949
+
+        Reviewed by Adam Barth.
+
+        First, check that isPageScaleFactorSet return false before setting
+        initial-scale. We need to call dispatchViewportPropertiesDidChange()
+        when the viewport width changes, since that's an input to the viewport
+        tag calculation. When this happens, we shouldn't pop back to initial
+        scale.
+
+        Second, check that isNewNavigation is true when deciding to clear
+        isPageScaleFactorIsSet in didCommitLoad. We only want to clear it on
+        the very first commit, otherwise we'll pop back to initial scale if
+        the user zooms in before the load is complete.
+
+        New test WebFrameTest::FixedLayoutInitializeAtMinimumPageScale.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::didCommitLoad):
+
 2012-05-21  Shawn Singh  <shawnsingh@chromium.org>
 
         Improve W3C conformance of backface-visibility

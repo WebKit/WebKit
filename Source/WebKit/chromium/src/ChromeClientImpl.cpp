@@ -665,14 +665,14 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     int layoutHeight = computed.layoutSize.height();
     m_webView->setFixedLayoutSize(IntSize(layoutWidth, layoutHeight));
 
-    // FIXME: Investigate the impact this has on layout/rendering if any.
-    // This exposes the correct device scale to javascript and media queries.
+    bool needInitializePageScale = !m_webView->isPageScaleFactorSet();
     if (useDefaultDeviceScaleFactor && settings->defaultDeviceScaleFactor())
         m_webView->setDeviceScaleFactor(settings->defaultDeviceScaleFactor());
     else
         m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
     m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
-    m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);
+    if (needInitializePageScale)
+        m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);
 #endif
 }
 

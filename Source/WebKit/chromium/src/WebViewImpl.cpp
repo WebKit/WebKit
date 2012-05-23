@@ -3102,7 +3102,7 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
-    if (!isNavigationWithinPage)
+    if (*isNewNavigation && !isNavigationWithinPage)
         m_pageScaleFactorIsSet = false;
 
     m_gestureAnimation.clear();

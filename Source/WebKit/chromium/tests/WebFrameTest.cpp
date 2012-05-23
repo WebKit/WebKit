@@ -34,11 +34,13 @@
 
 #include "Frame.h"
 #include "FrameTestHelpers.h"
+#include "FrameView.h"
 #include "ResourceError.h"
 #include "WebDocument.h"
 #include "WebFindOptions.h"
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
+#include "WebFrameImpl.h"
 #include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSearchableFormData.h"
@@ -242,6 +244,43 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
 
     // Force the layout to happen before leaving the test.
     webView->mainFrame()->contentAsText(1024).utf8();
+}
+
+TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.horizontalDPI = 160;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client));
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+
+    int defaultFixedLayoutWidth = 980;
+    float minimumPageScaleFactor = viewportWidth / (float) defaultFixedLayoutWidth;
+    EXPECT_EQ(minimumPageScaleFactor, webViewImpl->pageScaleFactor());
+
+    // Assume the user has pinch zoomed to page scale factor 2.
+    float userPinchPageScaleFactor = 2;
+    webViewImpl->setPageScaleFactorPreservingScrollOffset(userPinchPageScaleFactor);
+    webViewImpl->mainFrameImpl()->frameView()->layout();
+
+    // Make sure we don't reset to initial scale if the page continues to load.
+    bool isNewNavigation;
+    webViewImpl->didCommitLoad(&isNewNavigation, false);
+    webViewImpl->didChangeContentsSize();
+    EXPECT_EQ(userPinchPageScaleFactor, webViewImpl->pageScaleFactor());
+
+    // Make sure we don't reset to initial scale if the viewport size changes.
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight + 100));
+    EXPECT_EQ(userPinchPageScaleFactor, webViewImpl->pageScaleFactor());
 }
 #endif
 
