@@ -1,5 +1,14 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Roll back in the gardening done after r116039 for the 536 branch.
+
+        It was rolled out accidentally in r116070 when rolling out the changes related to r116009.
+
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Skip a test failing on the 536 branch due to missing WTR support.
 
         * platform/wk2/Skipped:
