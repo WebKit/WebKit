@@ -1,3 +1,45 @@
+2011-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Encapsulated some calculations for whether portions of the heap are empty
+        https://bugs.webkit.org/show_bug.cgi?id=87210
+
+        Reviewed by Gavin Barraclough.
+
+        This is a step toward incremental DOM finalization.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap): Explicitly call freeAllBlocks() instead of relying
+        implicitly on all blocks thinking they're empty. In future, we may
+        choose to tear down the heap without first setting all data structures
+        to "empty".
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isEmpty):
+        (JSC::MarkedBlock::gatherDirtyCells): Renamed markCountIsZero to isEmpty,
+        in preparation for making it check for outstanding finalizers in addition
+        to marked cells.
+
+        * heap/MarkedSpace.cpp:
+        (Take):
+        (JSC::Take::Take):
+        (JSC::Take::operator()):
+        (JSC::Take::returnValue):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::freeAllBlocks): Refactored the "Take" functor to support
+        a conditional isEmpty check, so it dould be shared by shrink() and freeAllBlocks().
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::WeakBlock):
+        (JSC::WeakBlock::visitLiveWeakImpls):
+        (JSC::WeakBlock::visitDeadWeakImpls):
+        * heap/WeakBlock.h:
+        (WeakBlock):
+        (JSC::WeakBlock::isEmpty):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep):
+        (JSC::WeakSet::shrink): Use isEmpty(), in preparation for changes in
+        its implementation.
+
 2012-05-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Remove references to $$QT_SOURCE_TREE

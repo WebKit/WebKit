@@ -56,7 +56,7 @@ WeakBlock::WeakBlock(PageAllocation& allocation)
         addToFreeList(&m_sweepResult.freeList, weakImpl);
     }
 
-    ASSERT(!m_sweepResult.isNull() && m_sweepResult.blockIsFree);
+    ASSERT(isEmpty());
 }
 
 void WeakBlock::finalizeAll()
@@ -93,7 +93,7 @@ void WeakBlock::sweep()
 void WeakBlock::visitLiveWeakImpls(HeapRootVisitor& heapRootVisitor)
 {
     // If a block is completely empty, a visit won't have any effect.
-    if (!m_sweepResult.isNull() && m_sweepResult.blockIsFree)
+    if (isEmpty())
         return;
 
     SlotVisitor& visitor = heapRootVisitor.visitor();
@@ -121,7 +121,7 @@ void WeakBlock::visitLiveWeakImpls(HeapRootVisitor& heapRootVisitor)
 void WeakBlock::visitDeadWeakImpls(HeapRootVisitor&)
 {
     // If a block is completely empty, a visit won't have any effect.
-    if (!m_sweepResult.isNull() && m_sweepResult.blockIsFree)
+    if (isEmpty())
         return;
 
     for (size_t i = 0; i < weakImplCount(); ++i) {

@@ -134,7 +134,7 @@ namespace JSC {
 
         void clearMarks();
         size_t markCount();
-        bool markCountIsZero(); // Faster than markCount().
+        bool isEmpty();
 
         size_t cellSize();
         bool cellsNeedDestruction();
@@ -270,7 +270,7 @@ namespace JSC {
         return m_marks.count();
     }
 
-    inline bool MarkedBlock::markCountIsZero()
+    inline bool MarkedBlock::isEmpty()
     {
         return m_marks.isEmpty();
     }
@@ -409,7 +409,7 @@ void MarkedBlock::gatherDirtyCells(DirtyCellVector& dirtyCells)
     // blocks twice during GC.
     m_state = Marked;
     
-    if (markCountIsZero())
+    if (isEmpty())
         return;
     
     size_t cellSize = this->cellSize();

@@ -98,43 +98,54 @@ void MarkedSpace::freeBlocks(MarkedBlock* head)
     }
 }
 
-class TakeIfUnmarked {
+class Take {
 public:
     typedef MarkedBlock* ReturnType;
-    
-    TakeIfUnmarked(MarkedSpace*);
+
+    enum TakeMode { TakeIfEmpty, TakeAll };
+
+    Take(TakeMode, MarkedSpace*);
     void operator()(MarkedBlock*);
     ReturnType returnValue();
     
 private:
+    TakeMode m_takeMode;
     MarkedSpace* m_markedSpace;
-    DoublyLinkedList<MarkedBlock> m_empties;
+    DoublyLinkedList<MarkedBlock> m_blocks;
 };
 
-inline TakeIfUnmarked::TakeIfUnmarked(MarkedSpace* newSpace)
-    : m_markedSpace(newSpace)
+inline Take::Take(TakeMode takeMode, MarkedSpace* newSpace)
+    : m_takeMode(takeMode)
+    , m_markedSpace(newSpace)
 {
 }
 
-inline void TakeIfUnmarked::operator()(MarkedBlock* block)
+inline void Take::operator()(MarkedBlock* block)
 {
-    if (!block->markCountIsZero())
+    if (m_takeMode == TakeIfEmpty && !block->isEmpty())
         return;
     
     m_markedSpace->allocatorFor(block).removeBlock(block);
-    m_empties.append(block);
+    m_blocks.append(block);
 }
 
-inline TakeIfUnmarked::ReturnType TakeIfUnmarked::returnValue()
+inline Take::ReturnType Take::returnValue()
 {
-    return m_empties.head();
+    return m_blocks.head();
 }
 
 void MarkedSpace::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    TakeIfUnmarked takeIfUnmarked(this);
-    freeBlocks(forEachBlock(takeIfUnmarked));
+    Take takeIfEmpty(Take::TakeIfEmpty, this);
+    freeBlocks(forEachBlock(takeIfEmpty));
+}
+
+void MarkedSpace::freeAllBlocks()
+{
+    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
+    Take take(Take::TakeAll, this);
+    freeBlocks(forEachBlock(take));
 }
 
 #if ENABLE(GGC)

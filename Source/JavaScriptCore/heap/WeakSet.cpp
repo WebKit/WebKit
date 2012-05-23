@@ -65,7 +65,7 @@ void WeakSet::sweep()
         next = block->next();
 
         // If a block is completely empty, a new sweep won't have any effect.
-        if (!block->sweepResult().isNull() && block->sweepResult().blockIsFree)
+        if (block->isEmpty())
             continue;
 
         block->takeSweepResult(); // Force a new sweep by discarding the last sweep.
@@ -79,7 +79,7 @@ void WeakSet::shrink()
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
         next = block->next();
 
-        if (!block->sweepResult().isNull() && block->sweepResult().blockIsFree)
+        if (block->isEmpty())
             removeAllocator(block);
     }
 }

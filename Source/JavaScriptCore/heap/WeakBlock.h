@@ -61,6 +61,8 @@ public:
 
     static WeakImpl* asWeakImpl(FreeCell*);
 
+    bool isEmpty();
+
     void sweep();
     const SweepResult& sweepResult();
     SweepResult takeSweepResult();
@@ -149,6 +151,11 @@ inline void WeakBlock::addToFreeList(FreeCell** freeList, WeakImpl* weakImpl)
     ASSERT((char*)freeCell > (char*)this && (char*)freeCell < (char*)this + blockSize);
     freeCell->next = *freeList;
     *freeList = freeCell;
+}
+
+inline bool WeakBlock::isEmpty()
+{
+    return !m_sweepResult.isNull() && m_sweepResult.blockIsFree;
 }
 
 } // namespace JSC

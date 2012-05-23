@@ -263,7 +263,7 @@ Heap::~Heap()
 {
     delete m_markListSet;
 
-    m_objectSpace.shrink();
+    m_objectSpace.freeAllBlocks();
     m_storageSpace.freeAllBlocks();
 
     ASSERT(!size());
