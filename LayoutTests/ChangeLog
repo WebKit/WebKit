@@ -1,3 +1,14 @@
+2012-05-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Webarchives tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=87225
+
+        Unreviewed. The EFL port has no support for webarchives, so the related testcases should 
+        be put to test_expectations as expected to fail.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-23  Alice Boxhall  <aboxhall@chromium.org>
 
         AX: Contenteditable tables should always be exposed as data tables

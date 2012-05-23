@@ -371,12 +371,6 @@ fast/frames/meta-refresh-user-gesture.html
 # The EFL port has no support for usermedia
 fast/mediastream
 
-# The EFL port has no support for webarchives
-http/tests/webarchive
-svg/webarchive
-svg/custom/image-with-prefix-in-webarchive.svg
-webarchive
-
 # For now, Web Audio API is disabled
 webaudio
 

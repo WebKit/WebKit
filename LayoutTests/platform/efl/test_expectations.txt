@@ -103,6 +103,12 @@ BUGWK86623 : editing/pasteboard/drop-text-without-selection.html = MISSING
 BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
 BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 
+// The EFL port has no support for webarchives.
+BUGWKEFL SKIP : webarchive = FAIL
+BUGWKEFL SKIP : http/tests/webarchive = FAIL
+BUGWKEFL SKIP : svg/webarchive = FAIL
+BUGWKEFL SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
