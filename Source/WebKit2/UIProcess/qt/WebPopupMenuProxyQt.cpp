@@ -186,12 +186,15 @@ void PopupMenuItemModel::select(int index)
     if (!item.enabled)
         return;
 
-    Item& oldItem = m_items[oldIndex];
-    oldItem.selected = false;
     item.selected = true;
     m_selectedModelIndex = index;
 
-    emit dataChanged(this->index(oldIndex), this->index(oldIndex));
+    if (oldIndex != -1) {
+        Item& oldItem = m_items[oldIndex];
+        oldItem.selected = false;
+        emit dataChanged(this->index(oldIndex), this->index(oldIndex));
+    }
+
     emit dataChanged(this->index(index), this->index(index));
 }
 

@@ -1,3 +1,22 @@
+2012-05-23  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][Wk2] Assertion failure when selecting an option in select list with size attribute greater than one
+        https://bugs.webkit.org/show_bug.cgi?id=86974
+
+        Reviewed by Simon Hausmann.
+
+        Select list with size attribute greater than one will not initially have any
+        item in selected state (if no option has 'selected' tag), resulting in
+        m_selectedModelIndex in WebPopupMenuProxyQt to be invalid. Hence, need to check
+        whether the old index is invalid before accessing the item at that index.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_itemSelector.qml: Added new test that
+          tests selection in a select list with size attribute value of 2.
+        * UIProcess/API/qt/tests/qmltests/common/selectwithsize.html: Added.
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::PopupMenuItemModel::select): Check whether old index is valid before accessing
+          the item at that index.
+
 2012-05-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r116188): After exiting full screen, Safari window is frozen, then inline video speeds through frames as it catches up with audio

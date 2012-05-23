@@ -107,5 +107,13 @@ TestWebView {
             tryCompare(webView, "selectorLoaded", true)
             compare(webView.title, "No new selection was made")
         }
+
+        function test_selectWithSize() {
+            webView.url = Qt.resolvedUrl("../common/selectwithsize.html")
+            verify(webView.waitForLoadSucceeded())
+            titleSpy.clear()
+
+            test_selectFirstThenAcceptDirectly()
+        }
     }
 }
