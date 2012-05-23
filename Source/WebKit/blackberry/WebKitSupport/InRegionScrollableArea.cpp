@@ -70,14 +70,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_scrollsHorizontally = view->contentsWidth() > view->visibleWidth();
         m_scrollsVertically = view->contentsHeight() > view->visibleHeight();
 
-        m_minimumScrollPosition = m_webPage->mapToTransformed(calculateMinimumScrollPosition(
-            view->visibleContentRect().size(),
-            0.0 /*overscrollLimit*/));
-        m_maximumScrollPosition = m_webPage->mapToTransformed(calculateMaximumScrollPosition(
-            view->visibleContentRect().size(),
-            view->contentsSize(),
-            0.0 /*overscrollLimit*/));
-
+        m_overscrollLimitFactor = 0.0; // FIXME eventually support overscroll
     } else { // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
 
         RenderBox* box = m_layer->renderBox();
@@ -100,32 +93,8 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_scrollsHorizontally = box->scrollWidth() != box->clientWidth() && box->scrollsOverflowX();
         m_scrollsVertically = box->scrollHeight() != box->clientHeight() && box->scrollsOverflowY();
 
-        m_minimumScrollPosition = m_webPage->mapToTransformed(calculateMinimumScrollPosition(
-            Platform::IntSize(box->clientWidth(), box->clientHeight()),
-            0.0 /*overscrollLimit*/));
-        m_maximumScrollPosition = m_webPage->mapToTransformed(calculateMaximumScrollPosition(
-            Platform::IntSize(box->clientWidth(), box->clientHeight()),
-            Platform::IntSize(box->scrollWidth(), box->scrollHeight()),
-            0.0 /*overscrollLimit*/));
+        m_overscrollLimitFactor = 0.0; // FIXME eventually support overscroll
     }
-}
-
-Platform::IntPoint InRegionScrollableArea::calculateMinimumScrollPosition(const Platform::IntSize& viewportSize, float overscrollLimitFactor) const
-{
-    // FIXME: Eventually we should support overscroll like iOS5 does.
-    ASSERT(!allowsOverscroll());
-
-    return Platform::IntPoint(-(viewportSize.width() * overscrollLimitFactor),
-                              -(viewportSize.height() * overscrollLimitFactor));
-}
-
-Platform::IntPoint InRegionScrollableArea::calculateMaximumScrollPosition(const Platform::IntSize& viewportSize, const Platform::IntSize& contentsSize, float overscrollLimitFactor) const
-{
-    // FIXME: Eventually we should support overscroll like iOS5 does.
-    ASSERT(!allowsOverscroll());
-
-    return Platform::IntPoint(std::max(contentsSize.width() - viewportSize.width(), 0) + overscrollLimitFactor,
-                              std::max(contentsSize.height() - viewportSize.height(), 0) + overscrollLimitFactor);
 }
 
 RenderLayer* InRegionScrollableArea::layer() const
