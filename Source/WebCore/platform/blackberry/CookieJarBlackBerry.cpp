@@ -69,7 +69,7 @@ void setCookies(Document* document, KURL const& url, String const& value)
         return;
 
     ASSERT(document && url == document->cookieURL());
-    cookieManager().setCookies(url, value, NoHttpOnlyCookie);
+    cookieManager().setCookies(url, value);
 }
 
 bool cookiesEnabled(Document const*)

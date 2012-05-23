@@ -1,3 +1,27 @@
+2012-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118105.
+        http://trac.webkit.org/changeset/118105
+        https://bugs.webkit.org/show_bug.cgi?id=87255
+
+        New LayoutTest is causing several cookie tests to fail on
+        numerous bots (Requested by steveblock on #webkit).
+
+        * platform/blackberry/CookieJarBlackBerry.cpp:
+        (WebCore::setCookies):
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore::CookieManager::setCookies):
+        (WebCore::CookieManager::checkAndTreatCookie):
+        (WebCore::CookieManager::addCookieToMap):
+        (WebCore::CookieManager::setPrivateMode):
+        (WebCore):
+        * platform/blackberry/CookieManager.h:
+        * platform/blackberry/CookieMap.cpp:
+        (WebCore::CookieMap::addOrReplaceCookie):
+        (WebCore::CookieMap::removeCookie):
+        * platform/blackberry/CookieMap.h:
+        (CookieMap):
+
 2012-05-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] EventSender should properly handle (left|right)(control|shift|alt) after r118001

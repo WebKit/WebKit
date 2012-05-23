@@ -1,3 +1,16 @@
+2012-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118105.
+        http://trac.webkit.org/changeset/118105
+        https://bugs.webkit.org/show_bug.cgi?id=87255
+
+        New LayoutTest is causing several cookie tests to fail on
+        numerous bots (Requested by steveblock on #webkit).
+
+        * http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Removed.
+        * http/tests/cookies/js-get-and-set-http-only-cookie.php: Removed.
+        * http/tests/cookies/script-tests/js-get-and-set-http-only-cookie.js: Removed.
+
 2012-05-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] EventSender should properly handle (left|right)(control|shift|alt) after r118001
