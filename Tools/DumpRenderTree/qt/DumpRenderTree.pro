@@ -50,7 +50,7 @@ SOURCES += \
     main.cpp
 
 wince*: {
-    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat $$WCECOMPAT/include
+    INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat $$WCECOMPAT/include
     LIBS += $$WCECOMPAT/lib/wcecompat.lib
 }
 

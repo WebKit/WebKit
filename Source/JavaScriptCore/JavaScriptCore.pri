@@ -42,6 +42,6 @@ win32-* {
 }
 
 wince* {
-    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
+    INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat
     INCLUDEPATH += $$SOURCE_DIR/os-win32
 }

@@ -27,7 +27,7 @@ CONFIG += staticlib
 }
 
 wince* {
-    SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.c
+    SOURCES += $$QT.core.sources/../3rdparty/ce-compat/ce_time.c
 }
 
 include(yarr/yarr.pri)

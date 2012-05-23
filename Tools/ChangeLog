@@ -1,5 +1,16 @@
 2012-05-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Remove references to $$QT_SOURCE_TREE
+
+        With a modularized Qt, it's ambigious. What we really want is qtbase,
+        which qtcore is a proxy for (we assume it will always live in qtbase).
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
+2012-05-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Fix qmake conditional for c++-11 compat warnings
 
         Reviewed by Tor Arne Vestbø.
