@@ -101,7 +101,7 @@ WebInspector.SearchController.prototype = {
 
                 if (isFindKey) {
                     this.focusSearchField();
-                    event.consume();
+                    event.consume(true);
                     return true;
                 }
                 break;
@@ -123,7 +123,7 @@ WebInspector.SearchController.prototype = {
                             currentPanel.jumpToPreviousSearchResult();
                     } else if (currentPanel.jumpToNextSearchResult)
                         currentPanel.jumpToNextSearchResult();
-                    event.consume();
+                    event.consume(true);
                     return true;
                 }
                 break;

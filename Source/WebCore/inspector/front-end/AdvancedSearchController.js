@@ -60,7 +60,7 @@ WebInspector.AdvancedSearchController.prototype = {
                 this.show();
             } else
                 this.close();
-            event.consume();
+            event.consume(true);
             return true;
         }
         return false;

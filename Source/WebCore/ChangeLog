@@ -1,3 +1,12 @@
+2012-05-23  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: inspector's Find is not consuming event as of r117974.
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController.prototype.handleShortcut):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.handleShortcut):
+
 2012-05-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: enable drag-an-drop from the navigator panel.
