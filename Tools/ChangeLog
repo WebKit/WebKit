@@ -1,3 +1,19 @@
+2012-05-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac DRT should be able to load external URLs for replay performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=86191
+
+        Reviewed by Alexey Proskuryakov.
+
+        Let external URL requests go through if the test file is not a local file or hosted at localhost.
+        e.g. "DumpRenderTree http://webkit.org/" as supposed to "DumpRenderTree test.html" or
+        "DumpRenderTree http://localhost:8000/".
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (isLocalhost):
+        (hostIsUsedBySomeTestsToGenerateError):
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+
 2012-05-23  Malcolm MacLeod <malcolm.macleod@tshwanedje.com>
 
         [wx] In wxWebKit release builds on MSW, keep release settings but also build the 

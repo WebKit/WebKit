@@ -127,6 +127,17 @@ using namespace std;
     return @"<unknown>";
 }
 
+BOOL isLocalhost(NSString *host)
+{
+    // FIXME: Support IPv6 loopbacks.
+    return NSOrderedSame == [host compare:@"127.0.0.1"] || NSOrderedSame == [host caseInsensitiveCompare:@"localhost"];
+}
+
+BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
+{
+    return NSOrderedSame == [host compare:@"255.255.255.255"];
+}
+
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
@@ -149,13 +160,16 @@ using namespace std;
 
     NSURL *url = [request URL];
     NSString *host = [url host];
-    if (host
-        && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])
-        && NSOrderedSame != [host compare:@"127.0.0.1"]
-        && NSOrderedSame != [host compare:@"255.255.255.255"] // used in some tests that expect to get back an error
-        && NSOrderedSame != [host caseInsensitiveCompare:@"localhost"]) {
-        printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
-        return nil;
+    if (host && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])) {
+        NSString *testPathOrURL = [NSString stringWithUTF8String:gLayoutTestController->testPathOrURL().c_str()];
+        NSString *lowercaseTestPathOrURL = [testPathOrURL lowercaseString];
+        NSString *testHost = 0;
+        if ([lowercaseTestPathOrURL hasPrefix:@"http:"] || [lowercaseTestPathOrURL hasPrefix:@"https:"])
+            testHost = [[NSURL URLWithString:testPathOrURL] host];
+        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && (!testHost || isLocalhost(testHost))) {
+            printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+            return nil;
+        }
     }
 
     if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
