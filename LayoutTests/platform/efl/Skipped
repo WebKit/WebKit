@@ -291,12 +291,6 @@ fast/loader/crash-copying-backforwardlist.html
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
-# BUG: Needs setPrinting
-# https://bugs.webkit.org/show_bug.cgi?id=20011
-printing/setPrinting.html
-printing/single-line-must-not-be-split-into-two-pages.html
-printing/width-overflow.html
-
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 
@@ -841,12 +835,6 @@ media/controls-styling.html
 
 # BUG: volume control rendered when there is no audio
 media/video-no-audio.html
-
-# BUG: getting a red square instead of a green one
-printing/media-queries-print.html
-
-# BUG: there is a "0" at the top right corner
-printing/simultaneous-position-float-change.html
 
 # BUG: Only works if --gui is passed (due to the current implementation of PlatformScreenEfl::screenRect).
 fast/media/invalid-lengths.html
