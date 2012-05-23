@@ -125,6 +125,11 @@
         "CSS": {
             "filename": r"Source/WebCore/css/",
         },
+        "DOMAttributes": {
+            "filename": r"Source/WebCore/dom/.*Attr.*"
+                        r"|Source/WebCore/dom/NamedNodeMap\.(cpp|h|idl)"
+                        r"|Source/WebCore/dom/Element\.(cpp|h|idl)",
+        },
         "EFL": {
             "filename": r"Source/WebKit/efl/"
                         r"|Source/WebCore/platform/efl/"
@@ -157,10 +162,11 @@
         # two different accounts as far as bugzilla is concerned.
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "CMake": [ "rakuco@webkit.org", ],
-        "CSS": [ "alexis.menard@openbossa.org", "macpherson@chromium.org", ],
+        "CSS": [ "alexis.menard@openbossa.org", "macpherson@chromium.org", "cmarcelo@webkit.org" ],
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
+        "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", ],
         "Forms": [ "tkent@chromium.org", ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
@@ -169,8 +175,8 @@
         "Loader": [ "japhet@chromium.org" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", ],
-        "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", ],
-        "QtWebKit2PublicAPI": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", ],
+        "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
+        "QtWebKit2PublicAPI": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
         "Rendering": [ "eric@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
