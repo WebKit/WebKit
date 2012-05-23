@@ -1,3 +1,20 @@
+2012-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add a quirk for applications that depend on the relative ordering of progressCompleted/didFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=87178
+        <rdar://problem/11468434>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add plumbing for the quirk to flip the relative ordering of progressCompleted/didFinishLoad back
+        to the behavior before http://trac.webkit.org/changeset/94105. Make it apply to any Mail.app linked
+        against WebKit before that revision.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (-[WebView _needsDidFinishLoadOrderQuirk]):
+        (-[WebView _preferencesChanged:]):
+
 2012-05-21  Gavin Barraclough  <barraclough@apple.com>
 
         Disable private names by default in WebCore

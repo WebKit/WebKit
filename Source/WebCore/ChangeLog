@@ -1,3 +1,25 @@
+2012-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add a quirk for applications that depend on the relative ordering of progressCompleted/didFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=87178
+        <rdar://problem/11468434>
+
+        Reviewed by Maciej Stachowiak.
+
+        Some applications depend on the relative ordering of progressCompleted/didFinishLoad, which was changed
+        to be more correct in http://trac.webkit.org/changeset/94105. For applications built before 94105, we can
+        provide the old behavior. For the time being, this will only apply to Mail.app.
+
+        No new tests, will not affect behavior for any application except Mail.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setNeedsDidFinishLoadOrderQuirk):
+        (WebCore::Settings::needsDidFinishLoadOrderQuirk):
+
 2012-05-22  Alexis Menard  <alexis.menard@openbossa.org>
 
         Move some CSS regions properties to CSSParser::isValidKeywordPropertyAndValue.
