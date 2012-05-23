@@ -130,14 +130,14 @@ HTMLCollection* HTMLMapElement::areas()
     return ensureCachedHTMLCollection(MapAreas);
 }
 
-Node::InsertionNotificationRequest HTMLMapElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument())
         treeScope()->addImageMap(this);
     return HTMLElement::insertedInto(insertionPoint);
 }
 
-void HTMLMapElement::removedFrom(Node* insertionPoint)
+void HTMLMapElement::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument())
         treeScope()->removeImageMap(this);

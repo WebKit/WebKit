@@ -1,3 +1,208 @@
+2012-05-23  Darin Adler  <darin@apple.com>
+
+        Use ContainerNode instead of Node where possible
+        https://bugs.webkit.org/show_bug.cgi?id=87220
+
+        Reviewed by Geoffrey Garen.
+
+        It's better to use a more specific type; in some cases we even generate
+        more efficient code if we have a more specific type. Also, we want any
+        type casts to be as close as possible to the corresponding type checks,
+        so eliminating these uses of toContainerNode is a plus, also.
+
+        * dom/ContainerNodeAlgorithms.h: Changed insertionPoint to be a ContainerNode
+        instead of a Node. Fixed spelling error "inseretions". Changed
+        (WebCore::ChildFrameDisconnector::Target::Target): Changed type of frame owner
+        element to HTMLFrameOwnerElement from Node.
+
+        * dom/DocumentType.cpp:
+        (WebCore::DocumentType::insertedInto):
+        (WebCore::DocumentType::removedFrom):
+        * dom/DocumentType.h:
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::insertedInto):
+        (WebCore::Node::removedFrom):
+        * dom/Node.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::insertedInto):
+        (WebCore::ProcessingInstruction::removedFrom):
+        * dom/ProcessingInstruction.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::insertedInto):
+        * dom/ScriptElement.h:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::insertedInto):
+        (WebCore::FormAssociatedElement::removedFrom):
+        * html/FormAssociatedElement.h:
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::insertedInto):
+        (WebCore::HTMLBaseElement::removedFrom):
+        * html/HTMLBaseElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto):
+        (WebCore::HTMLBodyElement::didNotifyDescendantInsertions):
+        * html/HTMLBodyElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::insertedInto):
+        (WebCore::HTMLFormControlElement::removedFrom):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::insertedInto):
+        (WebCore::HTMLFormElement::didNotifyDescendantInsertions):
+        (WebCore::HTMLFormElement::removedFrom):
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::insertedInto):
+        (WebCore::HTMLFrameElementBase::didNotifyDescendantInsertions):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::insertedInto):
+        (WebCore::HTMLFrameSetElement::removedFrom):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::insertedInto):
+        (WebCore::HTMLIFrameElement::removedFrom):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::insertedInto):
+        (WebCore::HTMLInputElement::removedFrom):
+        * html/HTMLInputElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::insertedInto):
+        (WebCore::HTMLLinkElement::removedFrom):
+        * html/HTMLLinkElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::insertedInto):
+        (WebCore::HTMLMapElement::removedFrom):
+        * html/HTMLMapElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::insertedInto):
+        (WebCore::HTMLMediaElement::removedFrom):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::insertedInto):
+        * html/HTMLMetaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::insertedInto):
+        (WebCore::HTMLObjectElement::removedFrom):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::insertedInto):
+        * html/HTMLOptionElement.h:
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::insertedInto):
+        * html/HTMLQuoteElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedInto):
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::insertedInto):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedInto):
+        (WebCore::HTMLSourceElement::removedFrom):
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::insertedInto):
+        (WebCore::HTMLStyleElement::removedFrom):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::insertedInto):
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::insertedInto):
+        (WebCore::HTMLTitleElement::removedFrom):
+        * html/HTMLTitleElement.h:
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedInto):
+        (WebCore::HTMLTrackElement::removedFrom):
+        * html/HTMLTrackElement.h:
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::insertedInto):
+        * mathml/MathMLMathElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removedFrom):
+        * svg/SVGElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::insertedInto):
+        (WebCore::SVGFEImageElement::removedFrom):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::insertedInto):
+        (WebCore::SVGFontFaceElement::removedFrom):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::insertedInto):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::insertedInto):
+        (WebCore::SVGGlyphElement::removedFrom):
+        * svg/SVGGlyphElement.h:
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto):
+        (WebCore::SVGHKernElement::removedFrom):
+        * svg/SVGHKernElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::insertedInto):
+        * svg/SVGImageElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::insertedInto):
+        (WebCore::SVGSVGElement::removedFrom):
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::insertedInto):
+        * svg/SVGScriptElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::insertedInto):
+        (WebCore::SVGStyleElement::removedFrom):
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::insertedInto):
+        (WebCore::SVGStyledElement::removedFrom):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::insertedInto):
+        (WebCore::SVGTRefElement::removedFrom):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedInto):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::insertedInto):
+        (WebCore::SVGTitleElement::removedFrom):
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedInto):
+        (WebCore::SVGUseElement::removedFrom):
+        * svg/SVGUseElement.h:
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto):
+        (WebCore::SVGVKernElement::removedFrom):
+        * svg/SVGVKernElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedInto):
+        (WebCore::SVGSMILElement::removedFrom):
+        * svg/animation/SVGSMILElement.h:
+        Changed arguments of insertedInto and removedFrom to ContainerNode instead of Node.
+        Did the same with didNotifyDescendantInsertions, while fixing the typo in its name.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Put a typecast toHTMLElement here.
+        The check for isListElement and isLegacyAppleStyleSpan takes care of the type checking.
+        (WebCore::ReplaceSelectionCommand::insertAsListItems): Changed this function to take
+        an HTMLElement instead of a Node, then we can drop use of the toContainerNode function.
+        * editing/ReplaceSelectionCommand.h:
+
+        * editing/TextIterator.cpp: Fixed a typo in a comment.
+
 2012-05-23  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: filter out debugging stuff from the heap class view

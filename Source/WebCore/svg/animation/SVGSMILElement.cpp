@@ -193,7 +193,7 @@ void SVGSMILElement::reset()
     resolveFirstInterval();
 }
 
-Node::InsertionNotificationRequest SVGSMILElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode* rootParent)
 {
     SVGElement::insertedInto(rootParent);
     if (!rootParent->inDocument())
@@ -222,7 +222,7 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(Node* rootParent
     return InsertionDone;
 }
 
-void SVGSMILElement::removedFrom(Node* rootParent)
+void SVGSMILElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument()) {
         if (m_timeContainer) {

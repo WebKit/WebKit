@@ -60,7 +60,7 @@ void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
         oldDocument->unregisterFormElementWithFormAttribute(this);
 }
 
-void FormAssociatedElement::insertedInto(Node* insertionPoint)
+void FormAssociatedElement::insertedInto(ContainerNode* insertionPoint)
 {
     resetFormOwner();
     if (!insertionPoint->inDocument())
@@ -71,7 +71,7 @@ void FormAssociatedElement::insertedInto(Node* insertionPoint)
         element->document()->registerFormElementWithFormAttribute(this);
 }
 
-void FormAssociatedElement::removedFrom(Node* insertionPoint)
+void FormAssociatedElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement* element = toHTMLElement(this);
     if (insertionPoint->inDocument() && element->fastHasAttribute(formAttr))

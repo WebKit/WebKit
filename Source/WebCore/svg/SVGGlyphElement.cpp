@@ -61,13 +61,13 @@ void SVGGlyphElement::parseAttribute(const Attribute& attribute)
         SVGStyledElement::parseAttribute(attribute);
 }
 
-Node::InsertionNotificationRequest SVGGlyphElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGGlyphElement::insertedInto(ContainerNode* rootParent)
 {
     invalidateGlyphCache();
     return SVGStyledElement::insertedInto(rootParent);
 }
 
-void SVGGlyphElement::removedFrom(Node* rootParent)
+void SVGGlyphElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument())
         invalidateGlyphCache();

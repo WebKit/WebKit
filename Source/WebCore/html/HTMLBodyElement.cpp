@@ -152,15 +152,15 @@ void HTMLBodyElement::parseAttribute(const Attribute& attribute)
         HTMLElement::parseAttribute(attribute);
 }
 
-Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifyDescendantInseretions;
+        return InsertionShouldCallDidNotifyDescendantInsertions;
     return InsertionDone;
 }
 
-void HTMLBodyElement::didNotifyDescendantInseretions(Node* insertionPoint)
+void HTMLBodyElement::didNotifyDescendantInsertions(ContainerNode* insertionPoint)
 {
     ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
     ASSERT(document());

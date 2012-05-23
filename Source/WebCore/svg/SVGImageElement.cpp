@@ -211,7 +211,7 @@ void SVGImageElement::attach()
     }
 }
 
-Node::InsertionNotificationRequest SVGImageElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGImageElement::insertedInto(ContainerNode* rootParent)
 {
     SVGStyledTransformableElement::insertedInto(rootParent);
     if (!rootParent->inDocument())

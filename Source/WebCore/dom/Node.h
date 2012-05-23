@@ -523,28 +523,28 @@ public:
     // This is similar to the DOMNodeInsertedIntoDocument DOM event, but does not require the overhead of event
     // dispatching.
     //
-    // Webkit notifies this callback regardless if the subtree of the node is a document tree or a floating subtree.
+    // WebKit notifies this callback regardless if the subtree of the node is a document tree or a floating subtree.
     // Implementation can determine the type of subtree by seeing insertionPoint->inDocument().
     // For a performance reason, notifications are delivered only to ContainerNode subclasses if the insertionPoint is out of document.
     //
-    // There are another callback named didNotifyDescendantInseretions(), which is called after all the descendant is notified.
-    // Only a few subclasses actually need this. To utilize this, the node should return InsertionShouldCallDidNotifyDescendantInseretions
+    // There are another callback named didNotifyDescendantInsertions(), which is called after all the descendant is notified.
+    // Only a few subclasses actually need this. To utilize this, the node should return InsertionShouldCallDidNotifyDescendantInsertions
     // from insrtedInto().
     //
     enum InsertionNotificationRequest {
         InsertionDone,
-        InsertionShouldCallDidNotifyDescendantInseretions
+        InsertionShouldCallDidNotifyDescendantInsertions
     };
 
-    virtual InsertionNotificationRequest insertedInto(Node* insertionPoint);
-    virtual void didNotifyDescendantInseretions(Node*) { }
+    virtual InsertionNotificationRequest insertedInto(ContainerNode* insertionPoint);
+    virtual void didNotifyDescendantInsertions(ContainerNode*) { }
 
     // Notifies the node that it is no longer part of the tree.
     //
     // This is a dual of insertedInto(), and is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
     // dispatching, and is called _after_ the node is removed from the tree.
     //
-    virtual void removedFrom(Node* insertionPoint);
+    virtual void removedFrom(ContainerNode* insertionPoint);
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;

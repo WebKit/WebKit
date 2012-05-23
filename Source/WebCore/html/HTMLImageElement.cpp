@@ -167,7 +167,7 @@ void HTMLImageElement::attach()
     }
 }
 
-Node::InsertionNotificationRequest HTMLImageElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode* insertionPoint)
 {
     if (!m_form) {
         // m_form can be non-null if it was set in constructor.
@@ -188,7 +188,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(Node* insertio
     return HTMLElement::insertedInto(insertionPoint);
 }
 
-void HTMLImageElement::removedFrom(Node* insertionPoint)
+void HTMLImageElement::removedFrom(ContainerNode* insertionPoint)
 {
     if (m_form)
         m_form->removeImgElement(this);

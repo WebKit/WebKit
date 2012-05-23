@@ -2449,7 +2449,7 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
     return document();
 }
 
-Node::InsertionNotificationRequest Node::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPoint)
 {
     ASSERT(insertionPoint->inDocument() || isContainerNode());
     if (insertionPoint->inDocument())
@@ -2457,7 +2457,7 @@ Node::InsertionNotificationRequest Node::insertedInto(Node* insertionPoint)
     return InsertionDone;
 }
 
-void Node::removedFrom(Node* insertionPoint)
+void Node::removedFrom(ContainerNode* insertionPoint)
 {
     ASSERT(insertionPoint->inDocument() || isContainerNode());
     if (insertionPoint->inDocument())

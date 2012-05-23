@@ -54,7 +54,7 @@ PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSourceElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     Element* parent = parentElement();
@@ -63,7 +63,7 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(Node* inserti
     return InsertionDone;
 }
 
-void HTMLSourceElement::removedFrom(Node* removalRoot)
+void HTMLSourceElement::removedFrom(ContainerNode* removalRoot)
 {
     Element* parent = parentElement();
     if (!parent && removalRoot->isElementNode())

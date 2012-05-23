@@ -50,7 +50,7 @@ void HTMLBaseElement::parseAttribute(const Attribute& attribute)
         HTMLElement::parseAttribute(attribute);
 }
 
-Node::InsertionNotificationRequest HTMLBaseElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLBaseElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
@@ -58,7 +58,7 @@ Node::InsertionNotificationRequest HTMLBaseElement::insertedInto(Node* insertion
     return InsertionDone;
 }
 
-void HTMLBaseElement::removedFrom(Node* insertionPoint)
+void HTMLBaseElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument())

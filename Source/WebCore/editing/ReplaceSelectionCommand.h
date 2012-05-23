@@ -31,10 +31,7 @@
 namespace WebCore {
 
 class DocumentFragment;
-class EditingStyle;
-class Node;
 class ReplacementFragment;
-class StylePropertySet;
 
 class ReplaceSelectionCommand : public CompositeEditCommand {
 public:
@@ -75,7 +72,7 @@ private:
         RefPtr<Node> m_lastNodeInserted;
     };
 
-    Node* insertAsListItems(PassRefPtr<Node>, Node* insertionNode, const Position&, InsertedNodes&);
+    Node* insertAsListItems(PassRefPtr<HTMLElement> listElement, Node* insertionNode, const Position&, InsertedNodes&);
 
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);

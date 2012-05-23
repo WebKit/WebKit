@@ -243,7 +243,7 @@ void HTMLLinkElement::clearSheet()
     m_sheet = 0;
 }
 
-Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
@@ -259,7 +259,7 @@ Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(Node* insertion
     return InsertionDone;
 }
 
-void HTMLLinkElement::removedFrom(Node* insertionPoint)
+void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (!insertionPoint->inDocument())

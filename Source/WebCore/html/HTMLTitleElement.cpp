@@ -44,7 +44,7 @@ PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTitleElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
@@ -52,7 +52,7 @@ Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(Node* insertio
     return InsertionDone;
 }
 
-void HTMLTitleElement::removedFrom(Node* insertionPoint)
+void HTMLTitleElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument())

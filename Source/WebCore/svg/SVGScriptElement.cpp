@@ -117,7 +117,7 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-Node::InsertionNotificationRequest SVGScriptElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGScriptElement::insertedInto(ContainerNode* rootParent)
 {
     SVGElement::insertedInto(rootParent);
     ScriptElement::insertedInto(rootParent);

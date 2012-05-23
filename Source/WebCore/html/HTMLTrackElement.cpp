@@ -72,7 +72,7 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTrackElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
@@ -83,7 +83,7 @@ Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(Node* insertio
     return InsertionDone;
 }
 
-void HTMLTrackElement::removedFrom(Node* insertionPoint)
+void HTMLTrackElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLMediaElement* parent = mediaElement();
     if (!parent && WebCore::isMediaElement(insertionPoint))

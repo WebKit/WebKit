@@ -495,7 +495,7 @@ bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& chi
     return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
-Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode* insertionPoint)
 {
     LOG(Media, "HTMLMediaElement::insertedInto");
     HTMLElement::insertedInto(insertionPoint);
@@ -505,7 +505,7 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(Node* insertio
     return InsertionDone;
 }
 
-void HTMLMediaElement::removedFrom(Node* insertionPoint)
+void HTMLMediaElement::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument()) {
         LOG(Media, "HTMLMediaElement::removedFromDocument");

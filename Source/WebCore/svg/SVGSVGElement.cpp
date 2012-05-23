@@ -478,14 +478,14 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGViewportContainer(this);
 }
 
-Node::InsertionNotificationRequest SVGSVGElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode* rootParent)
 {
     if (rootParent->inDocument())
         document()->accessSVGExtensions()->addTimeContainer(this);
     return SVGStyledLocatableElement::insertedInto(rootParent);
 }
 
-void SVGSVGElement::removedFrom(Node* rootParent)
+void SVGSVGElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument())
         document()->accessSVGExtensions()->removeTimeContainer(this);

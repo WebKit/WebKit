@@ -54,8 +54,8 @@ protected:
     bool isURLAllowed() const;
 
     virtual void parseAttribute(const Attribute&) OVERRIDE;
-    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
-    virtual void didNotifyDescendantInseretions(Node*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void didNotifyDescendantInsertions(ContainerNode*) OVERRIDE;
     virtual void attach();
 
 private:

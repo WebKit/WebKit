@@ -153,15 +153,15 @@ void HTMLFrameElementBase::setNameAndOpenURL()
     openURL();
 }
 
-Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLFrameOwnerElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifyDescendantInseretions;
+        return InsertionShouldCallDidNotifyDescendantInsertions;
     return InsertionDone;
 }
 
-void HTMLFrameElementBase::didNotifyDescendantInseretions(Node* insertionPoint)
+void HTMLFrameElementBase::didNotifyDescendantInsertions(ContainerNode* insertionPoint)
 {
     ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
 

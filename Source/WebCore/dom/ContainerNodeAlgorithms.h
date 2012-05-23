@@ -23,18 +23,18 @@
 #define ContainerNodeAlgorithms_h
 
 #include "Document.h"
+#include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-class Node;
-
 class ChildNodeInsertionNotifier {
 public:
-    explicit ChildNodeInsertionNotifier(Node* insertionPoint)
+    explicit ChildNodeInsertionNotifier(ContainerNode* insertionPoint)
         : m_insertionPoint(insertionPoint)
-    { }
+    {
+    }
 
     void notifyInsertedIntoDocument(Node*);
     void notify(Node*);
@@ -45,14 +45,15 @@ private:
     void notifyNodeInsertedIntoDocument(Node*);
     void notifyNodeInsertedIntoTree(ContainerNode*);
 
-    Node* m_insertionPoint;
+    ContainerNode* m_insertionPoint;
 };
 
 class ChildNodeRemovalNotifier {
 public:
-    explicit ChildNodeRemovalNotifier(Node* insertionPoint)
+    explicit ChildNodeRemovalNotifier(ContainerNode* insertionPoint)
         : m_insertionPoint(insertionPoint)
-    { }
+    {
+    }
 
     void notify(Node*);
 
@@ -62,15 +63,15 @@ private:
     void notifyNodeRemovedFromDocument(Node*);
     void notifyNodeRemovedFromTree(ContainerNode*);
 
-    Node* m_insertionPoint;
+    ContainerNode* m_insertionPoint;
 };
 
 namespace Private {
 
     template<class GenericNode, class GenericNodeContainer>
-    void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
+    void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer*);
 
-};
+}
 
 // Helper functions for TreeShared-derived classes, which have a 'Node' style interface
 // This applies to 'ContainerNode' and 'SVGElementInstance'
@@ -195,8 +196,8 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node* nod
     if (node->isContainerNode())
         notifyDescendantInsertedIntoDocument(toContainerNode(node));
 
-    if (request == Node::InsertionShouldCallDidNotifyDescendantInseretions)
-        node->didNotifyDescendantInseretions(m_insertionPoint);
+    if (request == Node::InsertionShouldCallDidNotifyDescendantInsertions)
+        node->didNotifyDescendantInsertions(m_insertionPoint);
 }
 
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode* node)
@@ -207,8 +208,8 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     Node::InsertionNotificationRequest request = node->insertedInto(m_insertionPoint);
 
     notifyDescendantInsertedIntoTree(node);
-    if (request == Node::InsertionShouldCallDidNotifyDescendantInseretions)
-        node->didNotifyDescendantInseretions(m_insertionPoint);
+    if (request == Node::InsertionShouldCallDidNotifyDescendantInsertions)
+        node->didNotifyDescendantInsertions(m_insertionPoint);
 
     allowEventDispatch();
 }
@@ -275,17 +276,18 @@ private:
 
     class Target {
     public:
-        Target(Node* element)
+        Target(HTMLFrameOwnerElement* element)
             : m_owner(element)
             , m_ownerParent(element->parentNode())
-        { }
+        {
+        }
 
         bool isValid() const { return m_owner->parentNode() == m_ownerParent; }
         void disconnect();
 
     private:
-        RefPtr<Node> m_owner;
-        Node* m_ownerParent;
+        RefPtr<HTMLFrameOwnerElement> m_owner;
+        ContainerNode* m_ownerParent;
     };
 
     Vector<Target, 10> m_list;
@@ -303,7 +305,7 @@ inline void ChildFrameDisconnector::collectDescendant(Node* root)
             continue;
         Element* element = toElement(node);
         if (element->hasCustomCallbacks() && element->isFrameOwnerElement())
-            m_list.append(node);
+            m_list.append(toFrameOwnerElement(element));
         if (ElementShadow* shadow = element->shadow())
             collectDescendant(shadow);
     }
@@ -316,7 +318,7 @@ inline void ChildFrameDisconnector::disconnect()
         Target& target = m_list[i];
         if (target.isValid())
             target.disconnect();
-    };
+    }
 }
 
 } // namespace WebCore

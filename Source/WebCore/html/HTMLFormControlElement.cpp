@@ -222,7 +222,7 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
-Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode* insertionPoint)
 {
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
@@ -231,7 +231,7 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Node* in
     return InsertionDone;
 }
 
-void HTMLFormControlElement::removedFrom(Node* insertionPoint)
+void HTMLFormControlElement::removedFrom(ContainerNode* insertionPoint)
 {
     m_fieldSetAncestorValid = false;
     m_dataListAncestorState = Unknown;

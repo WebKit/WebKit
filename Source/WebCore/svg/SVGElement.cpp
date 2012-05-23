@@ -171,7 +171,7 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
     setAttribute(XMLNames::baseAttr, value);
 }
 
-void SVGElement::removedFrom(Node* rootParent)
+void SVGElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument()) {
         document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);

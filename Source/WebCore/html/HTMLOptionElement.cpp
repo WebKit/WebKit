@@ -306,7 +306,7 @@ bool HTMLOptionElement::disabled() const
     return ownElementDisabled() || (parentNode() && parentNode()->isHTMLElement() && static_cast<HTMLElement*>(parentNode())->disabled());
 }
 
-Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode* insertionPoint)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();

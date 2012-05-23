@@ -54,7 +54,7 @@ void HTMLMetaElement::parseAttribute(const Attribute& attribute)
         HTMLElement::parseAttribute(attribute);
 }
 
-Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())

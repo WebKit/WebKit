@@ -358,7 +358,7 @@ void SVGStyledElement::attach()
         object->updateFromElement();
 }
 
-Node::InsertionNotificationRequest SVGStyledElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGStyledElement::insertedInto(ContainerNode* rootParent)
 {
     SVGElement::insertedInto(rootParent);
     updateRelativeLengthsInformation();
@@ -390,7 +390,7 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     }
 }
 
-void SVGStyledElement::removedFrom(Node* rootParent)
+void SVGStyledElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument())
         updateRelativeLengthsInformation(false, this);

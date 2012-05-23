@@ -105,7 +105,7 @@ RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderIFrame(this);
 }
 
-Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(ContainerNode* insertionPoint)
 {
     InsertionNotificationRequest result = HTMLFrameElementBase::insertedInto(insertionPoint);
     if (insertionPoint->inDocument() && document()->isHTMLDocument())
@@ -113,7 +113,7 @@ Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(Node* inserti
     return result;
 }
 
-void HTMLIFrameElement::removedFrom(Node* insertionPoint)
+void HTMLIFrameElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLFrameElementBase::removedFrom(insertionPoint);
     if (insertionPoint->inDocument() && document()->isHTMLDocument())

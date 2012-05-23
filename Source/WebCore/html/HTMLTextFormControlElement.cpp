@@ -70,7 +70,7 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const NodeRenderingCo
     return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
-Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLFormControlElement::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())

@@ -174,7 +174,7 @@ static inline bool isWellFormedDocument(Document* document)
     return true;
 }
 
-Node::InsertionNotificationRequest SVGUseElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* rootParent)
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGStyledTransformableElement::insertedInto(rootParent);
@@ -188,7 +188,7 @@ Node::InsertionNotificationRequest SVGUseElement::insertedInto(Node* rootParent)
     return InsertionDone;
 }
 
-void SVGUseElement::removedFrom(Node* rootParent)
+void SVGUseElement::removedFrom(ContainerNode* rootParent)
 {
     SVGStyledTransformableElement::removedFrom(rootParent);
     if (rootParent->inDocument())

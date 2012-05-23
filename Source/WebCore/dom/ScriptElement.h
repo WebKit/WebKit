@@ -28,8 +28,8 @@
 namespace WebCore {
 
 class CachedScript;
+class ContainerNode;
 class Element;
-class Node;
 class ScriptElement;
 class ScriptSourceCode;
 
@@ -67,7 +67,7 @@ protected:
     bool forceAsync() const { return m_forceAsync; }
 
     // Helper functions used by our parent classes.
-    void insertedInto(Node*);
+    void insertedInto(ContainerNode*);
     void childrenChanged();
     void handleSourceAttribute(const String& sourceUrl);
     void handleAsyncAttribute();

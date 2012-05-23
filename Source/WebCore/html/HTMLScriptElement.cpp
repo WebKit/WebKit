@@ -72,7 +72,7 @@ void HTMLScriptElement::parseAttribute(const Attribute& attribute)
         HTMLElement::parseAttribute(attribute);
 }
 
-Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     ScriptElement::insertedInto(insertionPoint);

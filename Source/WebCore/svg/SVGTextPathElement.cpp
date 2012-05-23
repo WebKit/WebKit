@@ -139,7 +139,7 @@ bool SVGTextPathElement::rendererIsNeeded(const NodeRenderingContext& context)
     return false;
 }
 
-Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(ContainerNode* rootParent)
 {
     SVGStyledElement::insertedInto(rootParent);
     if (!rootParent->inDocument())

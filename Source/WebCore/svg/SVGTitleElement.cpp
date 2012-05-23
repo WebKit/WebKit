@@ -38,7 +38,7 @@ PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName
     return adoptRef(new SVGTitleElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest SVGTitleElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGTitleElement::insertedInto(ContainerNode* rootParent)
 {
     SVGStyledElement::insertedInto(rootParent);
     if (!rootParent->inDocument())
@@ -49,7 +49,7 @@ Node::InsertionNotificationRequest SVGTitleElement::insertedInto(Node* rootParen
     return InsertionDone;
 }
 
-void SVGTitleElement::removedFrom(Node* rootParent)
+void SVGTitleElement::removedFrom(ContainerNode* rootParent)
 {
     SVGElement::removedFrom(rootParent);
     if (rootParent->inDocument())

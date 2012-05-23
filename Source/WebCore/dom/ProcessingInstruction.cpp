@@ -287,7 +287,7 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls)
     addSubresourceURL(urls, sheet()->baseURL());
 }
 
-Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(ContainerNode* insertionPoint)
 {
     Node::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
@@ -297,7 +297,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Node* ins
     return InsertionDone;
 }
 
-void ProcessingInstruction::removedFrom(Node* insertionPoint)
+void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
 {
     Node::removedFrom(insertionPoint);
     if (!insertionPoint->inDocument())

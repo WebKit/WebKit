@@ -79,8 +79,8 @@ private:
 
     virtual bool willRecalcStyle(StyleChange);
 
-    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
-    virtual void removedFrom(Node*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
 
     OwnArrayPtr<Length> m_rowLengths;
     OwnArrayPtr<Length> m_colLengths;

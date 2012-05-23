@@ -887,7 +887,7 @@ void Element::setChangedSinceLastFormControlChangeEvent(bool)
 {
 }
 
-Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertionPoint)
 {
     // need to do superclass processing first so inDocument() is true
     // by the time we reach updateId
@@ -912,7 +912,7 @@ Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
     return InsertionDone;
 }
 
-void Element::removedFrom(Node* insertionPoint)
+void Element::removedFrom(ContainerNode* insertionPoint)
 {
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())

@@ -210,7 +210,7 @@ bool HTMLFrameSetElement::willRecalcStyle(StyleChange)
     return true;
 }
 
-Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
@@ -221,7 +221,7 @@ Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(Node* inser
     return InsertionDone;
 }
 
-void HTMLFrameSetElement::removedFrom(Node* insertionPoint)
+void HTMLFrameSetElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument()) {

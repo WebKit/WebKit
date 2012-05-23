@@ -134,7 +134,7 @@ void SVGStyleElement::finishParsingChildren()
     SVGElement::finishParsingChildren();
 }
 
-Node::InsertionNotificationRequest SVGStyleElement::insertedInto(Node* rootParent)
+Node::InsertionNotificationRequest SVGStyleElement::insertedInto(ContainerNode* rootParent)
 {
     SVGElement::insertedInto(rootParent);
     if (rootParent->inDocument())
@@ -142,7 +142,7 @@ Node::InsertionNotificationRequest SVGStyleElement::insertedInto(Node* rootParen
     return InsertionDone;
 }
 
-void SVGStyleElement::removedFrom(Node* rootParent)
+void SVGStyleElement::removedFrom(ContainerNode* rootParent)
 {
     SVGElement::removedFrom(rootParent);
     if (rootParent->inDocument())

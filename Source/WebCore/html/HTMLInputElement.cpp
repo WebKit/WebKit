@@ -1336,7 +1336,7 @@ void HTMLInputElement::didChangeForm()
     addToRadioButtonGroup();
 }
 
-Node::InsertionNotificationRequest HTMLInputElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLInputElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLTextFormControlElement::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
@@ -1346,7 +1346,7 @@ Node::InsertionNotificationRequest HTMLInputElement::insertedInto(Node* insertio
     return InsertionDone;
 }
 
-void HTMLInputElement::removedFrom(Node* insertionPoint)
+void HTMLInputElement::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument())
         removeFromRadioButtonGroup();

@@ -328,14 +328,14 @@ bool HTMLObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
     return HTMLPlugInImageElement::rendererIsNeeded(context);
 }
 
-Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLPlugInImageElement::insertedInto(insertionPoint);
     FormAssociatedElement::insertedInto(insertionPoint);
     return InsertionDone;
 }
 
-void HTMLObjectElement::removedFrom(Node* insertionPoint)
+void HTMLObjectElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLPlugInImageElement::removedFrom(insertionPoint);
     FormAssociatedElement::removedFrom(insertionPoint);
