@@ -334,6 +334,12 @@ webkit_settings_get_media_playback_allows_inline               (WebKitSettings *
 WEBKIT_API void
 webkit_settings_set_media_playback_allows_inline               (WebKitSettings *settings,
                                                                 gboolean        enabled);
+WEBKIT_API gboolean
+webkit_settings_get_draw_compositing_indicators                (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_draw_compositing_indicators                (WebKitSettings *settings,
+                                                                gboolean        enabled);
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

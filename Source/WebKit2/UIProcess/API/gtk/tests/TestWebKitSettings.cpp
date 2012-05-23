@@ -219,6 +219,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_media_playback_allows_inline(settings, FALSE);
     g_assert(!webkit_settings_get_media_playback_allows_inline(settings));
 
+    // By default, debug indicators are disabled.
+    g_assert(!webkit_settings_get_draw_compositing_indicators(settings));
+    webkit_settings_set_draw_compositing_indicators(settings, TRUE);
+    g_assert(webkit_settings_get_draw_compositing_indicators(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

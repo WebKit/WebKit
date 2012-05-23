@@ -1,3 +1,24 @@
+2012-05-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Add an API to enable and disable composited layer indicators
+        https://bugs.webkit.org/show_bug.cgi?id=87053
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a WebKitSetting that allows the client to enable and disable debug
+        borders and repaint counters for accelerated content.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Added.
+        (webKitSettingsGetProperty): Added.
+        (webkit_settings_class_init): Add the new property.
+        (webkit_settings_set_draw_compositing_indicators): Added.
+        (webkit_settings_get_draw_compositing_indicators): Added.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add the new API points to the
+        documentation.
+        * UIProcess/API/gtk/test/TestWebKitSettings.h: Add a new unit test.
+
 2012-05-23  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Small refactoring WebPage::confirmComposition.

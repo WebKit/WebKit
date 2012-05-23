@@ -108,7 +108,8 @@ enum {
     PROP_ZOOM_TEXT_ONLY,
     PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
-    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE
+    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
+    PROP_DRAW_COMPOSITING_INDICATORS
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -226,6 +227,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
         webkit_settings_set_media_playback_allows_inline(settings, g_value_get_boolean(value));
+        break;
+    case PROP_DRAW_COMPOSITING_INDICATORS:
+        webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -348,6 +352,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
         g_value_set_boolean(value, webkit_settings_get_media_playback_allows_inline(settings));
+        break;
+    case PROP_DRAW_COMPOSITING_INDICATORS:
+        g_value_set_boolean(value, webkit_settings_get_draw_compositing_indicators(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -906,6 +913,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Media playback allows inline"),
                                                          _("Whether media playback allows inline"),
                                                          TRUE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:draw-compositing-indicators:
+     *
+     * Whether to draw compositing borders and repaint counters on layers drawn
+     * with accelerated compositing. This is useful for debugging issues related
+     * to web content that is composited with the GPU.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_DRAW_COMPOSITING_INDICATORS,
+                                    g_param_spec_boolean("draw-compositing-indicators",
+                                                         _("Draw compositing indicators"),
+                                                         _("Whether to draw compositing borders and repaint counters"),
+                                                         FALSE,
                                                          readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
@@ -2312,4 +2334,40 @@ gboolean webkit_settings_get_media_playback_allows_inline(WebKitSettings* settin
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), TRUE);
 
     return WKPreferencesGetMediaPlaybackAllowsInline(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_draw_compositing_indicators:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:draw-compositing-indicators property.
+ */
+void webkit_settings_set_draw_compositing_indicators(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (WKPreferencesGetCompositingBordersVisible(priv->preferences.get()) == enabled
+        && WKPreferencesGetCompositingRepaintCountersVisible(priv->preferences.get()) == enabled)
+        return;
+
+    WKPreferencesSetCompositingBordersVisible(priv->preferences.get(), enabled);
+    WKPreferencesSetCompositingRepaintCountersVisible(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "draw-compositing-indicators");
+}
+
+/**
+ * webkit_settings_get_draw_compositing_indicators:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:draw-compositing-indicators property.
+ *
+ * Returns: %TRUE If compositing borders are drawn or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_draw_compositing_indicators(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+    return WKPreferencesGetCompositingBordersVisible(settings->priv->preferences.get())
+           && WKPreferencesGetCompositingRepaintCountersVisible(settings->priv->preferences.get());
 }
