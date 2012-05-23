@@ -76,6 +76,7 @@ public:
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
     void setEditingBehavior(const String&, ExceptionCode&);
+    void setFixedPositionCreatesStackingContext(bool, ExceptionCode&);
 
     void restoreTo(Settings*);
 
@@ -93,6 +94,7 @@ private:
     bool m_originalShadowDOMEnabled;
 #endif
     EditingBehaviorType m_originalEditingBehavior;
+    bool m_originalFixedPositionCreatesStackingContext;
 };
 
 } // namespace WebCore

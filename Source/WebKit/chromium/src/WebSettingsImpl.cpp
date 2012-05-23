@@ -586,6 +586,11 @@ void WebSettingsImpl::setMediaPlaybackRequiresUserGesture(bool required)
     m_settings->setMediaPlaybackRequiresUserGesture(required);
 }
 
+void WebSettingsImpl::setFixedPositionCreatesStackingContext(bool creates)
+{
+    m_settings->setFixedPositionCreatesStackingContext(creates);
+}
+
 void WebSettingsImpl::setViewportEnabled(bool enabled)
 {
     m_viewportEnabled = enabled;

@@ -268,6 +268,7 @@ Settings::Settings(Page* page)
     , m_wantsBalancedSetDefersLoadingBehavior(false)
     , m_requestAnimationFrameEnabled(true)
     , m_needsDidFinishLoadOrderQuirk(false)
+    , m_fixedPositionCreatesStackingContext(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

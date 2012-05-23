@@ -1,3 +1,22 @@
+2012-05-22  James Robinson  <jamesr@chromium.org>
+
+        Add a Setting to make position:fixed form a new stacking context
+        https://bugs.webkit.org/show_bug.cgi?id=87186
+
+        Reviewed by Adam Barth.
+
+        Adds layout tests that confirm we don't creates stacking contexts for position:fixed by default, but we do when
+        the fixedPositionCreatesStackingContext Setting is true.
+
+        Qt and Blackberry will need different expectations since they set this via an #ifdef
+
+        * fast/block/positioning/fixed-position-stacking-context-expected.png: Added.
+        * fast/block/positioning/fixed-position-stacking-context-expected.txt: Added.
+        * fast/block/positioning/fixed-position-stacking-context.html: Added.
+        * fast/block/positioning/fixed-position-stacking-context2-expected.png: Added.
+        * fast/block/positioning/fixed-position-stacking-context2-expected.txt: Added.
+        * fast/block/positioning/fixed-position-stacking-context2.html: Added.
+
 2012-05-22  Adam Barth  <abarth@webkit.org>
 
         RenderInline::absoluteRects does some incorrect layout math
