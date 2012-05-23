@@ -1,3 +1,13 @@
+2012-05-22  Levi Weintraub  <leviw@chromium.org>
+
+        NULL ptr in WebCore::RenderBlock::layoutRunsAndFloatsInRange
+        https://bugs.webkit.org/show_bug.cgi?id=77786
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/block/line-layout/crash-in-isolate-with-positioned-child-expected.txt: Added.
+        * fast/block/line-layout/crash-in-isolate-with-positioned-child.html: Added.
+
 2012-05-22  Hayato Ito  <hayato@chromium.org>
 
         Make ComposedShadowTreeWalker traverse inactive insertion points correctly.
