@@ -782,6 +782,7 @@ IconDatabase::IconDatabase()
     , m_iconURLImportComplete(false)
     , m_syncThreadHasWorkToDo(false)
     , m_disabledSuddenTerminationForSyncThread(false)
+    , m_retainOrReleaseIconRequested(false)
     , m_initialPruningComplete(false)
     , m_client(defaultClient())
     , m_imported(false)
@@ -1419,7 +1420,10 @@ void IconDatabase::syncThreadMainLoop()
 
         if (m_retainOrReleaseIconRequested) {
             MutexLocker locker(m_urlAndIconLock);
-            performPendingRetainAndReleaseOperations();
+            // Previous flag check was done outside of the lock and flag could be changed by another thread.
+            // Do not move mutex outside to avoid unnecessary locking on every loop, but recheck the flag under mutex.
+            if (m_retainOrReleaseIconRequested)
+                performPendingRetainAndReleaseOperations();
         }
         
         bool didAnyWork = true;
