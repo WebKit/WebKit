@@ -1,5 +1,14 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Roll out r116176 on the 536 branch, since r116009 was rolled out on the 536 branch.
+
+        r116176 updated the test in response to the switch to FractionalLayoutUnits, but the
+        LayoutUnits changes were rolled out of the 536 branch.
+
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Roll out 116019 on the 536 branch, since r116009 was rolled out on the 536 branch.
 
         r116019 updated the test in response to the switch to FractionalLayoutUnits, but the
