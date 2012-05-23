@@ -1,3 +1,13 @@
+2012-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should allow inlining in case of certain arity mismatches
+        https://bugs.webkit.org/show_bug.cgi?id=86059
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+
 2012-05-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG variable capture analysis should work even if the variables arose through inlining

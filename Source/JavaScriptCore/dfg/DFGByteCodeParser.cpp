@@ -1145,9 +1145,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     FunctionExecutable* executable = expectedFunction->jsExecutable();
     
-    // Does the number of arguments we're passing match the arity of the target? We could
-    // inline arity check failures, but for simplicity we currently don't.
-    if (static_cast<int>(executable->parameterCount()) + 1 != argumentCountIncludingThis)
+    // Does the number of arguments we're passing match the arity of the target? We currently
+    // inline only if the number of arguments passed is greater than or equal to the number
+    // arguments expected.
+    if (static_cast<int>(executable->parameterCount()) + 1 > argumentCountIncludingThis)
         return false;
     
     // Have we exceeded inline stack depth, or are we trying to inline a recursive call?
@@ -1212,8 +1213,11 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     InlineStackEntry inlineStackEntry(this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1, (VirtualRegister)m_inlineStackTop->remapOperand(callTarget), expectedFunction, (VirtualRegister)m_inlineStackTop->remapOperand(usesResult ? resultOperand : InvalidVirtualRegister), (VirtualRegister)inlineCallFrameStart, kind);
     
     // Link up the argument variable access datas to their argument positions.
-    for (int i = 1; i < argumentCountIncludingThis; ++i)
+    for (int i = 1; i < argumentCountIncludingThis; ++i) {
+        if (static_cast<size_t>(i) >= inlineStackEntry.m_argumentPositions.size())
+            break;
         inlineStackEntry.m_argumentPositions[i]->addVariable(arguments[i - 1]);
+    }
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
