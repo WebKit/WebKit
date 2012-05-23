@@ -1,3 +1,22 @@
+2012-05-22  MORITA Hajime  <morrita@google.com>
+
+        [Chromium][API] Introduce WebPermissionClient::allowWebComponents()
+        https://bugs.webkit.org/show_bug.cgi?id=87097
+
+        Reviewed by Kent Tamura.
+
+        - Added WebPermissionClient::allowWebComponents(), and
+        - Implemented FrameLoaderClientImpl::shadowDOMAllowed() using it.
+
+        * public/WebPermissionClient.h:
+        (WebPermissionClient):
+        (WebKit::WebPermissionClient::allowWebComponents):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::shadowDOMAllowed):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-05-22  James Robinson  <jamesr@chromium.org>
 
         Add a Setting to make position:fixed form a new stacking context
