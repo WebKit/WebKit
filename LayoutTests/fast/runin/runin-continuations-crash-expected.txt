@@ -1,0 +1,3 @@
+WebKit Bug 87264 - Crash in run-ins with continuations while moving back to original position.
+Test passes if it does not crash.
+

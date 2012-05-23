@@ -1835,8 +1835,8 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     if (!runIn->isRenderBlock())
         return;
 
-    // We shouldn't run in into the sibling block if we are part of a
-    // continuation chain. In that case, treat it as a normal block.
+    // FIXME: We don't support run-ins with or as part of a continuation
+    // as it makes the back-and-forth placing complex.
     if (runIn->isElementContinuation() || runIn->virtualContinuation())
         return;
 
@@ -1894,6 +1894,14 @@ void RenderBlock::moveRunInToOriginalPosition(RenderObject* runIn)
     ASSERT(runIn->isRunIn());
 
     if (!runInIsPlacedIntoSiblingBlock(runIn))
+        return;
+
+    // FIXME: Run-in that are now placed in sibling block can break up into continuation
+    // chains when new children are added to it. We cannot easily send them back to their
+    // original place since that requires writing integration logic with RenderInline::addChild
+    // and all other places that might cause continuations to be created (without blowing away
+    // |this|). Disabling this feature for now to prevent crashes.
+    if (runIn->isElementContinuation() || runIn->virtualContinuation())
         return;
 
     RenderBoxModelObject* oldRunIn = toRenderBoxModelObject(runIn);

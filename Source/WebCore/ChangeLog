@@ -1,5 +1,23 @@
 2012-05-23  Abhishek Arya  <inferno@chromium.org>
 
+        Crash in run-ins with continuations while moving back to original position.
+        https://bugs.webkit.org/show_bug.cgi?id=87264
+
+        Reviewed by Julien Chaffraix.
+
+        Run-in that are now placed in sibling block can break up into continuation
+        chains when new children are added to it. We cannot easily send them back to their
+        original place since that requires writing integration logic with RenderInline::addChild
+        and all other places that might cause continuations to be created (without blowing away
+        |this|). Disabling this feature for now to prevent crashes.
+
+        Test: fast/runin/runin-continuations-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveRunInToOriginalPosition):
+
+2012-05-23  Abhishek Arya  <inferno@chromium.org>
+
         Crash in RenderInline::linesVisualOverflowBoundingBox.
         https://bugs.webkit.org/show_bug.cgi?id=85804
 

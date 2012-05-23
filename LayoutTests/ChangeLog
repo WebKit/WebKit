@@ -1,5 +1,15 @@
 2012-05-23  Abhishek Arya  <inferno@chromium.org>
 
+        Crash in run-ins with continuations while moving back to original position.
+        https://bugs.webkit.org/show_bug.cgi?id=87264
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/runin/runin-continuations-crash-expected.txt: Added.
+        * fast/runin/runin-continuations-crash.html: Added.
+
+2012-05-23  Abhishek Arya  <inferno@chromium.org>
+
         Crash in RenderInline::linesVisualOverflowBoundingBox.
         https://bugs.webkit.org/show_bug.cgi?id=85804
 
