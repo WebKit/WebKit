@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title>Fixed position elements do not establish stacking contexts by default</title>
+<style>
+div {
+    height: 100px;
+    width: 100px;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    position:fixed;
+}
+
+.red {
+    position:fixed;
+    background: red;
+    z-index: 1;
+}
+
+.green {
+    position:fixed;
+    background: green;
+    z-index: 2;
+}
+</style>
+<div class="red"></div>
+<div class="container">
+  <div class="red"></div>
+  <div class="green"></div>
+</div>
