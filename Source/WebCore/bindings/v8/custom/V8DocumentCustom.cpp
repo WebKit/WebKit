@@ -119,7 +119,7 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
 v8::Handle<v8::Value> toV8(Document* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     if (impl->isHTMLDocument())
         return toV8(static_cast<HTMLDocument*>(impl), isolate, forceNewObject);
 #if ENABLE(SVG)

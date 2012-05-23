@@ -87,7 +87,7 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> 
 v8::Handle<v8::Value> toV8(DOMStringMap* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl, isolate);
     // Add a hidden reference from the element to the DOMStringMap.
     Element* element = impl->element();

@@ -187,7 +187,7 @@ void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
 v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, isolate, forceNewObject);
     if (wrapper.IsEmpty())
         return wrapper;

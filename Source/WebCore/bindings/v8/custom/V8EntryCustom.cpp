@@ -47,7 +47,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(Entry* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
 
     if (impl->isFile())
         return toV8(static_cast<FileEntry*>(impl), isolate);

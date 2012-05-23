@@ -603,7 +603,7 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
 v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
 {
     if (!window)
-        return v8::Null();
+        return v8::Null(isolate);
     // Initializes environment of a frame, and return the global object
     // of the frame.
     Frame* frame = window->frame();

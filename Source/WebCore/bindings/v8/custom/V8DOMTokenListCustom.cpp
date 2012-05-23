@@ -41,7 +41,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(DOMTokenList* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl, isolate);
     // Add a hidden reference from the element to the DOMTokenList.
     Element* element = impl->element();

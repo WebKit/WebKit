@@ -46,7 +46,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     switch (impl->type()) {
     case CSSRule::UNKNOWN_RULE:
         // CSSUnknownRule.idl is explicitly excluded as it doesn't add anything

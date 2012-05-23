@@ -39,21 +39,21 @@ namespace WebCore {
 
 namespace {
 
-v8::Handle<v8::Value> createAccelerationObject(const DeviceMotionData::Acceleration* acceleration)
+static v8::Handle<v8::Value> createAccelerationObject(const DeviceMotionData::Acceleration* acceleration, v8::Isolate* isolate)
 {
     v8::Local<v8::Object> object = v8::Object::New();
-    object->Set(v8::String::New("x"), acceleration->canProvideX() ? v8::Number::New(acceleration->x()) : v8::Null());
-    object->Set(v8::String::New("y"), acceleration->canProvideY() ? v8::Number::New(acceleration->y()) : v8::Null());
-    object->Set(v8::String::New("z"), acceleration->canProvideZ() ? v8::Number::New(acceleration->z()) : v8::Null());
+    object->Set(v8::String::New("x"), acceleration->canProvideX() ? v8::Number::New(acceleration->x()) : v8::Null(isolate));
+    object->Set(v8::String::New("y"), acceleration->canProvideY() ? v8::Number::New(acceleration->y()) : v8::Null(isolate));
+    object->Set(v8::String::New("z"), acceleration->canProvideZ() ? v8::Number::New(acceleration->z()) : v8::Null(isolate));
     return object;
 }
 
-v8::Handle<v8::Value> createRotationRateObject(const DeviceMotionData::RotationRate* rotationRate)
+static v8::Handle<v8::Value> createRotationRateObject(const DeviceMotionData::RotationRate* rotationRate, v8::Isolate* isolate)
 {
     v8::Local<v8::Object> object = v8::Object::New();
-    object->Set(v8::String::New("alpha"), rotationRate->canProvideAlpha() ? v8::Number::New(rotationRate->alpha()) : v8::Null());
-    object->Set(v8::String::New("beta"),  rotationRate->canProvideBeta()  ? v8::Number::New(rotationRate->beta())  : v8::Null());
-    object->Set(v8::String::New("gamma"), rotationRate->canProvideGamma() ? v8::Number::New(rotationRate->gamma()) : v8::Null());
+    object->Set(v8::String::New("alpha"), rotationRate->canProvideAlpha() ? v8::Number::New(rotationRate->alpha()) : v8::Null(isolate));
+    object->Set(v8::String::New("beta"),  rotationRate->canProvideBeta()  ? v8::Number::New(rotationRate->beta())  : v8::Null(isolate));
+    object->Set(v8::String::New("gamma"), rotationRate->canProvideGamma() ? v8::Number::New(rotationRate->gamma()) : v8::Null(isolate));
     return object;
 }
 
@@ -129,8 +129,8 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->acceleration())
-        return v8::Null();
-    return createAccelerationObject(imp->deviceMotionData()->acceleration());
+        return v8::Null(info.GetIsolate());
+    return createAccelerationObject(imp->deviceMotionData()->acceleration(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -139,8 +139,8 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorG
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->accelerationIncludingGravity())
-        return v8::Null();
-    return createAccelerationObject(imp->deviceMotionData()->accelerationIncludingGravity());
+        return v8::Null(info.GetIsolate());
+    return createAccelerationObject(imp->deviceMotionData()->accelerationIncludingGravity(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -149,8 +149,8 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->rotationRate())
-        return v8::Null();
-    return createRotationRateObject(imp->deviceMotionData()->rotationRate());
+        return v8::Null(info.GetIsolate());
+    return createRotationRateObject(imp->deviceMotionData()->rotationRate(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -159,7 +159,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
     if (!imp->deviceMotionData()->canProvideInterval())
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
     return v8::Number::New(imp->deviceMotionData()->interval());
 }
 

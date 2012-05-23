@@ -45,7 +45,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(CSSValue* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     if (impl->isWebKitCSSTransformValue())
         return toV8(static_cast<WebKitCSSTransformValue*>(impl), isolate);
     if (impl->isValueList())

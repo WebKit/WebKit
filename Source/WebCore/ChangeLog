@@ -1,3 +1,70 @@
+2012-05-23  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Pass Isolate to v8::Null() in custom bindings (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=87207
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        This patch passes Isolate to v8::Null() in custom bindings.
+
+        Also this patch makes V8DeviceMotionEventCustom::createAccelerationObject()
+        and V8DeviceMotionEventCustom::createRotationRateObject() static.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8CSSValueCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::typesAccessorGetter):
+        * bindings/v8/custom/V8CoordinatesCustom.cpp:
+        (WebCore::V8Coordinates::altitudeAccessorGetter):
+        (WebCore::V8Coordinates::altitudeAccuracyAccessorGetter):
+        (WebCore::V8Coordinates::headingAccessorGetter):
+        (WebCore::V8Coordinates::speedAccessorGetter):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMTokenListCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::accelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::rotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::intervalAccessorGetter):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::alphaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::betaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::gammaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::absoluteAccessorGetter):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorGetter):
+        * bindings/v8/custom/V8EntryCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8EntrySyncCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Float64ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::toV8):
+
 2012-05-22  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] ElementShadow::m_needsRedistributing  should be on ContentDistributor

@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> toV8(DataView* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return V8DataView::wrap(impl, isolate);
 }
 

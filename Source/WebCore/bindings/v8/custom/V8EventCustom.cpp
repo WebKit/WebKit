@@ -76,7 +76,7 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
 v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
 {
     if (!event)
-        return v8::Null();
+        return v8::Null(isolate);
 
     String desiredInterface = event->interfaceName();
 
