@@ -1,3 +1,27 @@
+2012-05-22  Hayato Ito  <hayato@chromium.org>
+
+        Make ComposedShadowTreeWalker traverse inactive insertion points correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=86830
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixed InsertionPoint::isActive() issue, which may return true
+        wrongly even if the insertion point is not in Shadow DOM subtree.
+        Now ComposedShadowTreeWalker can traverse inactive insertion
+        points correctly using InsertionPoint::isActive().
+
+        Test: fast/dom/shadow/composed-shadow-tree-walker.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseNode):
+        (WebCore::ComposedShadowTreeWalker::escapeFallbackContentElement):
+        (WebCore::ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::isActive):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::isActiveInsertionPoint):
+        (WebCore):
+
 2012-05-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call canAccelerate2dCanvas directly

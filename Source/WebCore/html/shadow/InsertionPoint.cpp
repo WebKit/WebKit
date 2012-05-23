@@ -101,6 +101,8 @@ bool InsertionPoint::isShadowBoundary() const
 
 bool InsertionPoint::isActive() const
 {
+    if (!shadowRoot())
+        return false;
     const Node* node = parentNode();
     while (node) {
         if (WebCore::isInsertionPoint(node))

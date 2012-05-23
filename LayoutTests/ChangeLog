@@ -1,3 +1,13 @@
+2012-05-22  Hayato Ito  <hayato@chromium.org>
+
+        Make ComposedShadowTreeWalker traverse inactive insertion points correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=86830
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/composed-shadow-tree-walker-expected.txt:
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+
 2012-05-22  Stephanie Lewis  <slewis@apple.com>
 
         See https://bugs.webkit.org/show_bug.cgi?id=87199

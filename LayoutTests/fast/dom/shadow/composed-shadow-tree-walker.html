@@ -156,6 +156,12 @@ showComposedShadowTree(
                                createDOM('div', {'id': 'e'})),
               createDOM('div', {'id': 'f'})));
 
+debug('Test for inactive insertion points.');
+showComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createDOM('content', {'id': 'b'},
+                        createDOM('content', {'id': 'c'}))));
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

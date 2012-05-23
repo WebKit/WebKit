@@ -150,6 +150,21 @@ DIV	 id=b
 DIV	 id=d
 DIV	 id=a
 
+Test for inactive insertion points.
+Composed Shadow Tree:
+DIV	 id=a
+	CONTENT	 id=b
+		CONTENT	 id=c
+
+Traverse in forward.
+DIV	 id=a
+CONTENT	 id=b
+CONTENT	 id=c
+Traverse in backward.
+CONTENT	 id=c
+CONTENT	 id=b
+DIV	 id=a
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

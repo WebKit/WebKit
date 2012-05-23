@@ -102,6 +102,11 @@ inline const InsertionPoint* toInsertionPoint(const Node* node)
     return static_cast<const InsertionPoint*>(node);
 }
 
+inline bool isActiveInsertionPoint(const Node* node)
+{
+    return isInsertionPoint(node) && toInsertionPoint(node)->isActive();
+}
+
 inline bool isShadowBoundary(Node* node)
 {
     if (!isInsertionPoint(node))
