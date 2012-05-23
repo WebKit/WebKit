@@ -1,3 +1,17 @@
+2012-05-22  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry]Pages contain video or audio tags should be in pageCache
+        https://bugs.webkit.org/show_bug.cgi?id=87116
+
+        Reviewed by George Staikos.
+        
+        There is not any reason to disable pageCache for video/audio 
+        tags probably. By my testing, Back and Forward are working for 
+        those pages contain video and audio tags.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::canCachePage):
+
 2012-05-22  Konrad Piascik  <kpaiscik@rim.com>
 
         [BlackBerry] Remove unused/unimplemented methods from InspectorClientBlackberry
