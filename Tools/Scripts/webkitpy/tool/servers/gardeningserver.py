@@ -150,15 +150,13 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._run_webkit_patch(command)
         self._serve_text('success')
 
-    def optimizebaselines(self):
-        test = self.query['test'][0]
-        command = [ 'optimize-baselines']
-
-        if 'suffixes' in self.query:
-            command.append('--suffixes')
-            command.append(self.query['suffixes'][0])
-
-        command.append(test)
-        self._run_webkit_patch(command)
-
+    def rebaselineall(self):
+        # FIXME: Optimize this to de-dup bot results, run in parallel, cache zips, etc.
+        test_list = self._read_entity_body_as_json()
+        for test in test_list:
+            all_suffixes = set()
+            for builder, suffixes in test_list[test].iteritems():
+                all_suffixes.update(set(suffixes))
+                self._run_webkit_patch(['rebaseline-test', '--suffixes', ','.join(suffixes), builder, test])
+            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
         self._serve_text('success')

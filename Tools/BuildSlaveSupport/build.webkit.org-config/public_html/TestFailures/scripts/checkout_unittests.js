@@ -56,28 +56,13 @@ test("updateExpectations", 4, function() {
     });
 });
 
-test("optimizeBaselines", 3, function() {
-    var simulator = new NetworkSimulator();
-    simulator.post = function(url, callback)
-    {
-        equals(url, 'http://127.0.0.1:8127/optimizebaselines?test=another%2Ftest.svg&suffixes=txt%2Cpng');
-        simulator.scheduleCallback(callback);
-    };
-
-    simulator.runTest(function() {
-        checkout.optimizeBaselines('another/test.svg', 'txt,png', function() {
-            ok(true);
-        });
-    });
-});
-
-test("rebaseline", 6, function() {
+test("rebaseline", 4, function() {
     var simulator = new NetworkSimulator();
 
-    var requestedURLs = [];
-    simulator.post = function(url, callback)
+    var requests = [];
+    simulator.post = function(url, body, callback)
     {
-        requestedURLs.push(url);
+        requests.push([url, body]);
         simulator.scheduleCallback(callback);
     };
     simulator.ajax = function(options)
@@ -115,12 +100,15 @@ test("rebaseline", 6, function() {
         });
     });
 
-    deepEqual(requestedURLs, [
-        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Linux&test=another%2Ftest.svg&suffixes=png",
-        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&suffixes=png%2Ctxt",
-        "http://127.0.0.1:8127/rebaseline?builder=Webkit+Vista&test=fast%2Ftest.html&suffixes=txt%2Cpng",
-        "http://127.0.0.1:8127/optimizebaselines?test=another%2Ftest.svg&suffixes=png%2Ctxt",
-        "http://127.0.0.1:8127/optimizebaselines?test=fast%2Ftest.html&suffixes=png%2Ctxt"
+    deepEqual(requests, [
+        ["http://127.0.0.1:8127/rebaselineall",
+         JSON.stringify({
+             "another/test.svg": {
+                 "WebKit Linux": ["png"], 
+                 "WebKit Mac10.6": ["png","txt"]},
+             "fast/test.html": {
+                 "Webkit Vista": ["txt","png"]
+             }})]
     ]);
 });
 

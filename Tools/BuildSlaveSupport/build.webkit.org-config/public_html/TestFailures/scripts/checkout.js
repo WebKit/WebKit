@@ -75,18 +75,6 @@ checkout.updateExpectations = function(failureInfoList, callback, checkoutUnavai
     }, checkoutUnavailable);
 };
 
-checkout.optimizeBaselines = function(testName, suffixes, callback, checkoutUnavailable)
-{
-    callIfCheckoutAvailable(function() {
-        net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
-            'test': testName,
-            'suffixes': suffixes,
-        }), function() {
-            callback();
-        });
-    }, checkoutUnavailable);
-};
-
 checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
@@ -102,26 +90,14 @@ checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
 checkout.rebaseline = function(failureInfoList, callback, progressCallback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
-        base.callInSequence(function(failureInfo, callback) {
-            var suffixes = base.uniquifyArray(base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList))).join(',');
-
-            net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
-                'builder': failureInfo.builderName,
-                'test': failureInfo.testName,
-                'suffixes': suffixes,
-            }), function() {
-                if (progressCallback)
-                    progressCallback(failureInfo);
-                callback();
-            });
-        }, failureInfoList, function() {
-            var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
-            var suffixes = base.uniquifyArray(base.flattenArray(
-                failureInfoList.map(function(failureInfo) {
-                    return base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList))
-                }))).join(',');
-            base.callInSequence(function(testName, callback) { checkout.optimizeBaselines(testName, suffixes, callback)}, testNameList, callback);
-        });
+        var tests = {};
+        for (var i = 0; i < failureInfoList.length; i++) {
+            var failureInfo = failureInfoList[i];
+            tests[failureInfo.testName] = tests[failureInfo.testName] || {};
+            tests[failureInfo.testName][failureInfo.builderName] = 
+                base.uniquifyArray(base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList)));
+        }
+        net.post(config.kLocalServerURL + '/rebaselineall', JSON.stringify(tests), function() { callback() });
     }, checkoutUnavailable);
 };
 

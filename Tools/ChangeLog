@@ -1,3 +1,25 @@
+2012-05-23  Dirk Pranke  <dpranke@chromium.org>
+
+        garden-o-matic should not fetch from debug bots if it also knows about the release bots
+        https://bugs.webkit.org/show_bug.cgi?id=86916
+
+        Reviewed by Adam Barth.
+
+        This change pushes all of the logic for rebaselining a cluster
+        of failures (a list of tests failing a list of suffixes on a
+        list of bots) onto the server, so there is a single call from
+        the web page; we will then be able to optimize the performance
+        of the rebaselining better.
+
+        Also remove the 'optimizebaseline' entry point on garden-o-matic
+        (and the client-side call) since we don't need it any more.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaselineall):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+
 2012-05-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac DRT should be able to load external URLs for replay performance tests

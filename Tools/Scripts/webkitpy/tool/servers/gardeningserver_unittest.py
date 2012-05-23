@@ -181,22 +181,17 @@ class GardeningServerTest(unittest.TestCase):
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rollout?revision=2314&reason=MOCK+rollout+reason", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
-    def test_rebaseline(self):
+    def test_rebaselineall(self):
         builders._exact_matches = {"MOCK builder": {"port_name": "mock-port-name", "specifiers": set(["mock-specifier"])}}
-        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt,png', 'MOCK builder', 'user-scripts/another-test.html'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', u'txt,png', u'MOCK builder', u'user-scripts/another-test.html'], cwd=/mock-checkout\nMOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'txt,png', u'user-scripts/another-test.html'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
-        self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffixes=txt,png", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+        self._post_to_path("/rebaselineall", body='{"user-scripts/another-test.html":{"MOCK builder": ["txt","png"]}}', expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def test_rebaseline_new_port(self):
         builders._exact_matches = {"MOCK builder": {"port_name": "mock-port-name", "specifiers": set(["mock-specifier"]), "move_overwritten_baselines_to": ["mock-port-fallback", "mock-port-fallback2"]}}
         expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt,png', 'MOCK builder', 'user-scripts/another-test.html', 'mock-port-fallback', 'mock-port-fallback2'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffixes=txt,png", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
-
-    def test_optimizebaselines(self):
-        expected_stderr = "MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html'], cwd=/mock-checkout\n"
-        expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
-        self._post_to_path("/optimizebaselines?test=user-scripts/another-test.html&suffixes=txt,png", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def test_updateexpectations(self):
         expected_stderr = ""
