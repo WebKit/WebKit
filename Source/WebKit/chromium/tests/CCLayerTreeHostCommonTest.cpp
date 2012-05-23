@@ -946,8 +946,9 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     TransformationMatrix sublayerTransform;
     sublayerTransform.scale3d(10.0, 1.0, 1.0);
 
-    // In combination with descendantDrawsContent, an animated transform forces the layer to have a new renderSurface.
+    // In combination with descendantDrawsContent and masksToBounds, an animated transform forces the layer to have a new renderSurface.
     addAnimatedTransformToController(*renderSurface2->layerAnimationController(), 10, 30, 0);
+    renderSurface2->setMasksToBounds(true);
 
     // Also put transform animations on grandChildOfRoot, and grandChildOfRS2
     addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
@@ -1544,8 +1545,9 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithAnimatingTransforms)
     backfaceMatrix.rotate3d(0, 1, 0, 180);
     backfaceMatrix.translate(-50, -50);
 
-    // Having a descendant, and animating transforms, will make the animatingSurface own a render surface.
+    // Having a descendant that draws, masksToBounds, and animating transforms, will make the animatingSurface own a render surface.
     addAnimatedTransformToController(*animatingSurface->layerAnimationController(), 10, 30, 0);
+    animatingSurface->setMasksToBounds(true);
     // This is just an animating layer, not a surface.
     addAnimatedTransformToController(*animatingChild->layerAnimationController(), 10, 30, 0);
 

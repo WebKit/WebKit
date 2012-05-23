@@ -259,17 +259,16 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
     if (layerIsInExisting3DRenderingContext(layer) && !layer->preserves3D() && descendantDrawsContent)
         return true;
 
-    // On the main thread side, animating transforms are unknown, and may cause a RenderSurface on the impl side.
-    // Since they are cheap, we create a rendersurface for all animating transforms to cover these cases, and so
-    // that we can consider descendants as not animating relative to their target to aid culling.
-    if (!transformToParentIsKnown(layer) && descendantDrawsContent)
-        return true;
-
     // If the layer clips its descendants but it is not axis-aligned with respect to its parent.
-    if (layer->masksToBounds() && !axisAlignedWithRespectToParent && descendantDrawsContent)
+    // On the main thread, when the transform is being animated, it is treated as unknown and we
+    // always error on the side of making a render surface, to let us consider descendents as
+    // not animating relative to their target to aid culling.
+    if (layer->masksToBounds() && (!axisAlignedWithRespectToParent || !transformToParentIsKnown(layer)) && descendantDrawsContent)
         return true;
 
     // If the layer has opacity != 1 and does not have a preserves-3d transform style.
+    // On the main thread, when opacity is being animated, it is treated as neither 1
+    // nor 0.
     if (!layerOpacityIsOpaque(layer) && !layer->preserves3D() && descendantDrawsContent)
         return true;
 

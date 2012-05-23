@@ -1,3 +1,22 @@
+2012-05-23  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Layers on main thread should get a RenderSurface for animating transform only if masksToBounds is true also
+        https://bugs.webkit.org/show_bug.cgi?id=87184
+
+        Reviewed by James Robinson.
+
+        Layers on main thread get a RenderSurface if their impl counterpart may
+        have a RenderSurface due to its animating transform. We currently create
+        a RenderSurface for all layers with an animating transform and
+        a descendant that drawsContents. But a RenderSurface on impl also
+        implies that the layer masksToBounds. So only make a RenderSurface on
+        main thread when the layer also masksToBounds.
+
+        Modified unit test CCLayerTreeHostCommonTest.verifyAnimationsForRenderSurfaceHierarchy.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::subtreeShouldRenderToSeparateSurface):
+
 2012-05-23  Chris Fleizach  <cfleizach@apple.com>
 
         Regression(r112694): Crash in WebCore::AXObjectCache::postNotification 
