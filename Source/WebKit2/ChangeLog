@@ -1,3 +1,14 @@
+2012-05-23  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 117539
+
+    2012-05-17  Philippe Normand  <pnormand@igalia.com>
+
+            Unreviewed, WebKit2 GTK/Qt build fix attempt after r117516.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
 2012-05-22  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116492
