@@ -2493,10 +2493,13 @@ template<ByteCodeParser::PhiStackType stackType>
 void ByteCodeParser::processPhiStack()
 {
     Vector<PhiStackEntry, 16>& phiStack = (stackType == ArgumentPhiStack) ? m_argumentPhiStack : m_localPhiStack;
-
+    
     while (!phiStack.isEmpty()) {
         PhiStackEntry entry = phiStack.last();
         phiStack.removeLast();
+        
+        if (!entry.m_block->isReachable)
+            continue;
         
         PredecessorList& predecessors = entry.m_block->m_predecessors;
         unsigned varNo = entry.m_varNo;
@@ -2505,7 +2508,7 @@ void ByteCodeParser::processPhiStack()
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
 #endif
-
+        
         for (size_t i = 0; i < predecessors.size(); ++i) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("     Dealing with predecessor block %u.\n", predecessors[i]);
@@ -2930,12 +2933,6 @@ bool ByteCodeParser::parse()
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     m_graph.determineReachability();
-    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
-        ASSERT(block);
-        if (!block->isReachable)
-            m_graph.m_blocks[blockIndex].clear();
-    }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     dataLog("Processing local variable phis.\n");
 #endif
@@ -2948,6 +2945,13 @@ bool ByteCodeParser::parse()
 #endif
     processPhiStack<ArgumentPhiStack>();
     
+    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        ASSERT(block);
+        if (!block->isReachable)
+            m_graph.m_blocks[blockIndex].clear();
+    }
+
     fixVariableAccessPredictions();
     
     m_graph.m_preservedVars = m_preservedVars;
