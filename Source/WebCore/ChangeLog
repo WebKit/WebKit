@@ -1,3 +1,20 @@
+2012-05-22  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r98359): Video does not render on http://panic.com/dietcoda/
+        https://bugs.webkit.org/show_bug.cgi?id=87171
+
+        Reviewed by Maciej Stachowiak.
+
+        No new tests; behavior is very timing specific and only occurs on a subset of all platforms.
+
+        Instead of calling prepareForRendering() from metadataLoaded(), which may fail and cause subsequent
+        calls to prepareForRendering() to short circuit, call createVideoLayer() directly, which achieves
+        the original goals of the fix for http://webkit.org/b/70448, but without breaking subsequent calls
+        to prepareForRendering() if called at the wrong time.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::metadataLoaded):
+
 2012-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Add a quirk for applications that depend on the relative ordering of progressCompleted/didFinishLoad
