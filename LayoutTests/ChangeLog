@@ -1,5 +1,11 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Skip the IFrame Seamless tests on the 536 branch because IFRAME_SEAMLESS is diabled on the 536 branch.
+
+        * platform/mac/Skipped:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Skip the CSS Regions tests on the 536 branch because CSS_REGIONS is disabled on the 536 branch.
 
         * platform/mac/Skipped:

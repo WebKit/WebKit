@@ -30,6 +30,10 @@
 # <rdar://problem/10887709>
 fast/regions
 
+# IFrame Seamless is disabled on the 536 branch
+# <rdar://problem/11401642>
+fast/frames/seamless
+
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html
 
