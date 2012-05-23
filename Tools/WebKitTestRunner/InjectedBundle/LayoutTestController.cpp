@@ -543,6 +543,11 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool sho
     InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
+void LayoutTestController::setDefersLoading(bool shouldDeferLoading)
+{
+    WKBundlePageSetDefersLoading(InjectedBundle::shared().page()->page(), shouldDeferLoading);
+}
+
 void LayoutTestController::setPageVisibility(JSStringRef state)
 {
     WebCore::PageVisibilityState visibilityState = WebCore::PageVisibilityStateVisible;

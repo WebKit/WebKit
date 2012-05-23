@@ -790,10 +790,6 @@ editing/pasteboard/drag-files-to-editable-element.html
 # https://bugs.webkit.org/show_bug.cgi?id=63806
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 
-# WebKitTestRunner needs an implementation of layoutTestController.setDefersLoading
-# https://bugs.webkit.org/show_bug.cgi?id=64313
-loader/load-defer-resume-crash.html
-
 # [WK2] New tests introduced in 100895 fail
 # https://bugs.webkit.org/show_bug.cgi?id=73913
 http/tests/security/referrer-policy-https-always.html

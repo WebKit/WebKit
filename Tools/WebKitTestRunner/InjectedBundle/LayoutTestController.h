@@ -184,6 +184,8 @@ public:
     void setTextDirection(JSStringRef);
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(bool);
+
+    void setDefersLoading(bool);
     
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool value) { m_globalFlag = value; }

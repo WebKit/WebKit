@@ -127,6 +127,8 @@ module WTR {
         void setWillSendRequestReturnsNull(in boolean flag);
         
         void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
+
+        void setDefersLoading(in boolean flag);
         
         // Focus testing.
         void addChromeInputField(in object callback);
