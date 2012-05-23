@@ -74,7 +74,8 @@ public:
     virtual void enableMouseEvents() { }
     virtual void disableMouseEvents() { }
 
-    virtual void provisionalLoadDidStart(const QUrl& url);
+    virtual void provisionalLoadDidStart(const WTF::String& url);
+    virtual void didReceiveServerRedirectForProvisionalLoad(const WTF::String& url);
     virtual void loadDidCommit();
     virtual void didSameDocumentNavigation();
     virtual void titleDidChange();
@@ -198,6 +199,7 @@ protected:
     bool m_allowAnyHTTPSCertificateForLocalHost;
     QUrl m_iconURL;
     int m_loadProgress;
+    WTF::String m_currentUrl;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {

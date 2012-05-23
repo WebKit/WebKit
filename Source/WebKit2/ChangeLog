@@ -1,3 +1,52 @@
+2012-04-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make the web view's url property follow the active url
+
+        https://bugs.webkit.org/show_bug.cgi?id=77554
+
+        The url property of the webview now reflects the 'active' url of the
+        page, which maps to either the currently loading url, in the case of
+        an ongoing load, or the result of a load, even when the load failed.
+
+        In practice this means that setting the url though QML, or navigating
+        to a new url in the page by e.g clicking, will both instantly change
+        the url-property of the webview to the target url. This differs from
+        earlier behavior, where we would update the url when the load
+        committed.
+
+        An optional argument is added to loadHtml(), to allow setting
+        the unreachable url when providing replacement content for failed
+        loads.
+
+        Finally, the location bar in the minibrowser is updated to behave
+        a bit more like normal browsers in terms of when the url will change
+        and how active focus is handled.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebView::reload):
+        (QQuickWebView::url):
+        (QQuickWebView::setUrl):
+        (QQuickWebView::loadHtml):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/common/link.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/redirect.html: Added.
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::QtWebPageLoadClient):
+        (QtWebPageLoadClient::didStartProvisionalLoadForFrame):
+        (QtWebPageLoadClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (QtWebPageLoadClient::didCommitLoadForFrame):
+        (QtWebPageLoadClient::dispatchLoadFailed):
+        (QtWebPageLoadClient::didFailProvisionalLoadWithErrorForFrame):
+        (QtWebPageLoadClient::didFailLoadWithErrorForFrame):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (QtWebPageLoadClient):
+
 2012-05-23  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Race condition in LayerTreeHost/Proxy can cause blank rendering

@@ -22,7 +22,9 @@
 #define QtWebPageLoadClient_h
 
 #include <QtGlobal>
+#include <WebFrameProxy.h>
 #include <WKPage.h>
+#include <wtf/text/WTFString.h>
 
 QT_BEGIN_NAMESPACE
 class QUrl;
@@ -39,7 +41,8 @@ public:
     QtWebPageLoadClient(WKPageRef, QQuickWebView*);
 
 private:
-    void didStartProvisionalLoad(const QUrl&);
+    void didStartProvisionalLoad(const WTF::String&);
+    void didReceiveServerRedirectForProvisionalLoad(const WTF::String&);
     void didCommitLoad();
     void didSameDocumentNavigation();
     void didReceiveTitle();
@@ -47,11 +50,12 @@ private:
     void didChangeBackForwardList();
 
     void dispatchLoadSucceeded();
-    void dispatchLoadFailed(const QtWebError&);
+    void dispatchLoadFailed(WebFrameProxy*, const QtWebError&);
 
 
     // WKPageLoadClient callbacks.
     static void didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
     static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef userData, const void* clientInfo);
     static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
     static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);

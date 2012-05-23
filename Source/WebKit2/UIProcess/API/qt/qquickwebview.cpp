@@ -328,12 +328,21 @@ bool QQuickWebViewPrivate::transparentBackground() const
     \qmlsignal WebView::loadingChanged(WebLoadRequest request)
 */
 
-void QQuickWebViewPrivate::provisionalLoadDidStart(const QUrl& url)
+void QQuickWebViewPrivate::provisionalLoadDidStart(const WTF::String& url)
 {
     Q_Q(QQuickWebView);
 
-    QWebLoadRequest loadRequest(url, QQuickWebView::LoadStartedStatus);
+    q->emitUrlChangeIfNeeded();
+
+    QWebLoadRequest loadRequest(QString(url), QQuickWebView::LoadStartedStatus);
     emit q->loadingChanged(&loadRequest);
+}
+
+void QQuickWebViewPrivate::didReceiveServerRedirectForProvisionalLoad(const WTF::String&)
+{
+    Q_Q(QQuickWebView);
+
+    q->emitUrlChangeIfNeeded();
 }
 
 void QQuickWebViewPrivate::loadDidCommit()
@@ -342,7 +351,6 @@ void QQuickWebViewPrivate::loadDidCommit()
     ASSERT(q->loading());
 
     emit q->navigationHistoryChanged();
-    emit q->urlChanged();
     emit q->titleChanged();
 }
 
@@ -350,8 +358,8 @@ void QQuickWebViewPrivate::didSameDocumentNavigation()
 {
     Q_Q(QQuickWebView);
 
+    q->emitUrlChangeIfNeeded();
     emit q->navigationHistoryChanged();
-    emit q->urlChanged();
 }
 
 void QQuickWebViewPrivate::titleDidChange()
@@ -413,6 +421,7 @@ void QQuickWebViewPrivate::setNeedsDisplay()
 void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURL)
 {
     Q_Q(QQuickWebView);
+
     if (q->url() != pageURL)
         return;
 
@@ -636,6 +645,9 @@ void QQuickWebViewPrivate::setIcon(const QUrl& iconURL)
 {
     Q_Q(QQuickWebView);
     if (m_iconURL == iconURL)
+        return;
+
+    if (!webPageProxy->mainFrame())
         return;
 
     String oldPageURL = QUrl::fromPercentEncoding(m_iconURL.encodedFragment());
@@ -1429,6 +1441,19 @@ void QQuickWebView::stop()
 void QQuickWebView::reload()
 {
     Q_D(QQuickWebView);
+
+    WebFrameProxy* mainFrame = d->webPageProxy->mainFrame();
+    if (mainFrame && !mainFrame->unreachableURL().isEmpty() && mainFrame->url() != blankURL()) {
+        // We are aware of the unreachable url on the UI process side, but since we haven't
+        // loaded alternative/subsitute data for it (an error page eg.) WebCore doesn't know
+        // about the unreachable url yet. If we just do a reload at this point WebCore will try to
+        // reload the currently committed url instead of the unrachable url. To work around this
+        // we override the reload here by doing a manual load.
+        d->webPageProxy->loadURL(mainFrame->unreachableURL());
+        // FIXME: We should make WebCore aware of the unreachable url regardless of substitute-loads
+        return;
+    }
+
     const bool reloadFromOrigin = true;
     d->webPageProxy->reload(reloadFromOrigin);
 }
@@ -1436,10 +1461,11 @@ void QQuickWebView::reload()
 QUrl QQuickWebView::url() const
 {
     Q_D(const QQuickWebView);
-    RefPtr<WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
-    if (!mainFrame)
-        return QUrl();
-    return QUrl(QString(mainFrame->url()));
+
+    // FIXME: Enable once we are sure this should not trigger
+    // Q_ASSERT(d->m_currentUrl == d->webPageProxy->activeURL());
+
+    return QUrl(d->m_currentUrl);
 }
 
 void QQuickWebView::setUrl(const QUrl& url)
@@ -1450,6 +1476,19 @@ void QQuickWebView::setUrl(const QUrl& url)
         return;
 
     d->webPageProxy->loadURL(url.toString());
+    emitUrlChangeIfNeeded();
+}
+
+// Make sure we don't emit urlChanged unless it actually changed
+void QQuickWebView::emitUrlChangeIfNeeded()
+{
+    Q_D(QQuickWebView);
+
+    WTF::String activeUrl = d->webPageProxy->activeURL();
+    if (activeUrl != d->m_currentUrl) {
+        d->m_currentUrl = activeUrl;
+        emit urlChanged();
+    }
 }
 
 QUrl QQuickWebView::icon() const
@@ -1797,12 +1836,19 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
     External objects such as stylesheets or images referenced in the HTML
     document are located relative to \a baseUrl.
 
+    If an \a unreachableUrl is passed it is used as the url for the loaded
+    content. This is typically used to display error pages for a failed
+    load.
+
     \sa WebView::url
 */
-void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
+void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl, const QUrl& unreachableUrl)
 {
     Q_D(QQuickWebView);
-    d->webPageProxy->loadHTMLString(html, baseUrl.toString());
+    if (unreachableUrl.isValid())
+        d->webPageProxy->loadAlternateHTMLString(html, baseUrl.toString(), unreachableUrl.toString());
+    else
+        d->webPageProxy->loadHTMLString(html, baseUrl.toString());
 }
 
 qreal QQuickWebView::zoomFactor() const
