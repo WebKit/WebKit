@@ -1157,12 +1157,12 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return m_mediaQuery.release();
 }
 
-Vector<CSSProperty> CSSParser::filteredProperties() const
+PassRefPtr<StylePropertySet> CSSParser::createStylePropertySet()
 {
     BitArray<numCSSProperties> seenProperties;
     BitArray<numCSSProperties> seenImportantProperties;
 
-    Vector<CSSProperty> results;
+    StylePropertyVector results;
     results.reserveInitialCapacity(m_parsedProperties.size());
 
     for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
@@ -1187,10 +1187,10 @@ Vector<CSSProperty> CSSParser::filteredProperties() const
             seenImportantProperties.set(propertyIDIndex);
         seenProperties.set(propertyIDIndex);
 
-        results.append(property);
+        results.uncheckedAppend(property);
     }
 
-    return results;
+    return StylePropertySet::adopt(results, m_context.mode);
 }
 
 void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
@@ -9100,7 +9100,7 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
         rule->parserAdoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
+        rule->setProperties(createStylePropertySet());
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -9136,7 +9136,7 @@ StyleRuleBase* CSSParser::createFontFaceRule()
         }
     }
     RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create();
-    rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
+    rule->setProperties(createStylePropertySet());
     clearProperties();
     StyleRuleFontFace* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -9209,7 +9209,7 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
-        rule->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
+        rule->setProperties(createStylePropertySet());
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
     }
@@ -9287,7 +9287,7 @@ StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 
     RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
     keyframe->setKeyText(keyString);
-    keyframe->setProperties(StylePropertySet::create(filteredProperties(), m_context.mode));
+    keyframe->setProperties(createStylePropertySet());
 
     clearProperties();
 

@@ -56,11 +56,13 @@ StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
 {
 }
 
-StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties, CSSParserMode cssParserMode)
-    : m_properties(properties)
-    , m_cssParserMode(cssParserMode)
+StylePropertySet::StylePropertySet(StylePropertyVector& properties, CSSParserMode cssParserMode)
+    : m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
 {
+    m_properties.swap(properties);
+
+    // This shrinkToFit() will be a no-op in the typical case (no duplicate properties were eliminated after parsing.)
     m_properties.shrinkToFit();
 }
 
@@ -870,7 +872,7 @@ bool StylePropertySet::removePropertiesInSet(const CSSPropertyID* set, unsigned 
     for (unsigned i = 0; i < length; ++i)
         toRemove.add(set[i]);
 
-    Vector<CSSProperty, 4> newProperties;
+    StylePropertyVector newProperties;
     newProperties.reserveInitialCapacity(m_properties.size());
 
     unsigned size = m_properties.size();
@@ -948,14 +950,14 @@ PassRefPtr<StylePropertySet> StylePropertySet::copy() const
 
 PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
-    Vector<CSSProperty> list;
+    StylePropertyVector list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return StylePropertySet::create(list);
+    return StylePropertySet::adopt(list);
 }
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
@@ -999,7 +1001,7 @@ unsigned StylePropertySet::averageSizeInBytes()
 
 // See the function above if you need to update this.
 class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
-    Vector<CSSProperty, 4> properties;
+    StylePropertyVector properties;
     unsigned bitfield;
 };
 COMPILE_ASSERT(sizeof(StylePropertySet) == sizeof(SameSizeAsStylePropertySet), style_property_set_should_stay_small);

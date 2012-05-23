@@ -282,7 +282,7 @@ public:
 
     void clearProperties();
 
-    Vector<CSSProperty> filteredProperties() const;
+    PassRefPtr<StylePropertySet> createStylePropertySet();
 
     CSSParserContext m_context;
 

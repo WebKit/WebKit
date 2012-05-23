@@ -1,5 +1,40 @@
 2012-05-23  Andreas Kling  <kling@webkit.org>
 
+        CSSParser: Simplify StylePropertySet creation.
+        <http://webkit.org/b/87259>
+
+        Reviewed by Alexis Menard.
+
+        Turn CSSParser's filteredProperties() into createStylePropertySet() which filters the parsed
+        properties and creates a new StylePropertySet, adopting the vector to avoid the Vector copy we
+        were previously incurring.
+
+        Added a StylePropertyVector typedef for Vector<CSSProperty, 4> since we need to pass this type
+        to the constructor for Vector::swap() to work.
+
+        And thus StylePropertySet::create(const Vector<CSSProperty>&, CSSParserMode) became
+        StylePropertySet::adopt(StylePropertyVector&, CSSParserMode).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStylePropertySet):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createKeyframe):
+        * css/CSSParser.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::copyPropertiesInSet):
+        (SameSizeAsStylePropertySet):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::adopt):
+        (StylePropertySet):
+
+2012-05-23  Andreas Kling  <kling@webkit.org>
+
         Kill some frivolous null-checking of Element::m_attributeData.
         <http://webkit.org/b/87248>
 

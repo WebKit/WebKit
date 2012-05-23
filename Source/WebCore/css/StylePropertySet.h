@@ -39,6 +39,8 @@ class StyledElement;
 class StylePropertyShorthand;
 class StyleSheetInternal;
 
+typedef Vector<CSSProperty, 4> StylePropertyVector;
+
 class StylePropertySet : public RefCounted<StylePropertySet> {
 public:
     ~StylePropertySet();
@@ -47,7 +49,7 @@ public:
     {
         return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> create(const Vector<CSSProperty>& properties, CSSParserMode cssParserMode = CSSStrictMode)
+    static PassRefPtr<StylePropertySet> adopt(StylePropertyVector& properties, CSSParserMode cssParserMode = CSSStrictMode)
     {
         return adoptRef(new StylePropertySet(properties, cssParserMode));
     }
@@ -117,7 +119,7 @@ public:
     
 private:
     StylePropertySet(CSSParserMode);
-    StylePropertySet(const Vector<CSSProperty>&, CSSParserMode);
+    StylePropertySet(StylePropertyVector&, CSSParserMode);
     StylePropertySet(const StylePropertySet&);
 
     void setNeedsStyleRecalc();
@@ -138,7 +140,7 @@ private:
     const CSSProperty* findPropertyWithId(CSSPropertyID) const;
     CSSProperty* findPropertyWithId(CSSPropertyID);
 
-    Vector<CSSProperty, 4> m_properties;
+    StylePropertyVector m_properties;
 
     unsigned m_cssParserMode : 2;
     mutable unsigned m_ownsCSSOMWrapper : 1;
