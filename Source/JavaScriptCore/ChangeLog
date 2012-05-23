@@ -4,6 +4,8 @@
         https://bugs.webkit.org/show_bug.cgi?id=86059
 
         Reviewed by Geoff Garen.
+        
+        Merge r116620 from dfgopt.
 
         * dfg/DFGByteCodeParser.cpp:
         (JSC::DFG::ByteCodeParser::handleInlining):
