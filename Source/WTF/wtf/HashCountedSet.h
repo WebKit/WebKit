@@ -39,6 +39,8 @@ namespace WTF {
         typedef typename ImplType::AddResult AddResult;
         
         HashCountedSet() {}
+
+        void swap(HashCountedSet&);
         
         int size() const;
         int capacity() const;
@@ -75,6 +77,12 @@ namespace WTF {
     private:
         ImplType m_impl;
     };
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    inline void HashCountedSet<Value, HashFunctions, Traits>::swap(HashCountedSet& other)
+    {
+        m_impl.swap(other.m_impl);
+    }
     
     template<typename Value, typename HashFunctions, typename Traits>
     inline int HashCountedSet<Value, HashFunctions, Traits>::size() const

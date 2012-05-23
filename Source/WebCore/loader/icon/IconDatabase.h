@@ -165,7 +165,6 @@ private:
     bool m_iconURLImportComplete;
     bool m_syncThreadHasWorkToDo;
     bool m_disabledSuddenTerminationForSyncThread;
-    bool m_retainOrReleaseIconRequested;
 
     Mutex m_urlAndIconLock;
     // Holding m_urlAndIconLock is required when accessing any of the following data structures or the objects they contain
@@ -188,6 +187,7 @@ private:
     // Holding m_urlsToRetainOrReleaseLock is required when accessing any of the following data structures.
     HashCountedSet<String> m_urlsToRetain;
     HashCountedSet<String> m_urlsToRelease;
+    bool m_retainOrReleaseIconRequested;
 
 // *** Sync Thread Only ***
 public:

@@ -1,3 +1,20 @@
+2012-05-23  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 117744
+
+    2012-05-21  Andreas Kling  <kling@webkit.org>
+
+            REGRESSION(r117501): IconDatabase asserts on startup in synchronousIconForPageURL().
+            <http://webkit.org/b/86935>
+            <rdar://problem/11480012>
+
+            Reviewed by Anders Carlsson.
+
+            Added a swap() to HashCountedSet.
+
+            * wtf/HashCountedSet.h:
+            (HashCountedSet::swap):
+
 2012-05-04  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Implement numberOfProcessorCores() for QNX
