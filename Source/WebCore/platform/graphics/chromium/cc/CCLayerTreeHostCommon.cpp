@@ -564,8 +564,10 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         FloatSize centerOffsetDueToClipping;
 
         // Don't clip if the layer is reflected as the reflection shouldn't be
-        // clipped.
-        if (!layer->replicaLayer()) {
+        // clipped. If the layer is animating, then the surface's transform to
+        // its target is not known on the main thread, and we should not use it
+        // to clip.
+        if (!layer->replicaLayer() && transformToParentIsKnown(layer)) {
             if (!renderSurface->clipRect().isEmpty() && !clippedContentRect.isEmpty()) {
                 IntRect surfaceClipRect = CCLayerTreeHostCommon::calculateVisibleRect(renderSurface->clipRect(), clippedContentRect, renderSurface->originTransform());
                 clippedContentRect.intersect(surfaceClipRect);

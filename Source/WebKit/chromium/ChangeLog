@@ -1,3 +1,14 @@
+2012-05-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't drop children of a RenderSurface from the renderSurfaceLayerList when then position of the surface in its clipRect is not known
+        https://bugs.webkit.org/show_bug.cgi?id=87181
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-05-22  MORITA Hajime  <morrita@google.com>
 
         [Chromium][API] Introduce WebPermissionClient::allowWebComponents()

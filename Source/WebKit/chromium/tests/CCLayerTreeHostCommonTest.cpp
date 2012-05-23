@@ -700,6 +700,78 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfacesCrashRepro)
     EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsSurfaceWithoutVisibleContent)
+{
+    // When a renderSurface has a clipRect, it is used to clip the contentRect
+    // of the surface. When the renderSurface is animating its transforms, then
+    // the contentRect's position in the clipRect is not defined on the main
+    // thread, and its contentRect should not be clipped.
+
+    // The test tree is set up as follows:
+    //  - parent is a container layer that masksToBounds=true to cause clipping.
+    //  - child is a renderSurface, which has a clipRect set to the bounds of the parent.
+    //  - grandChild is a renderSurface, and the only visible content in child. It is positioned outside of the clipRect from parent.
+
+    // In this configuration, grandChild should be outside the clipped
+    // contentRect of the child, making grandChild not appear in the
+    // renderSurfaceLayerList. However, when we place an animation on the child,
+    // this clipping should be avoided and we should keep the grandChild
+    // in the renderSurfaceLayerList.
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->addChild(child);
+    child->addChild(grandChild);
+    grandChild->addChild(leafNode);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(200, 200), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+
+    parent->setMasksToBounds(true);
+    child->setOpacity(0.4f);
+    grandChild->setOpacity(0.4f);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->createRenderSurface();
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    // Without an animation, we should cull child and grandChild from the renderSurfaceLayerList.
+    ASSERT_EQ(1U, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+
+    // Now put an animating transform on child.
+    addAnimatedTransformToController(*child->layerAnimationController(), 10, 30, 0);
+
+    parent->clearRenderSurface();
+    child->clearRenderSurface();
+    grandChild->clearRenderSurface();
+    renderSurfaceLayerList.clear();
+    dummyLayerList.clear();
+
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->createRenderSurface();
+    renderSurfaceLayerList.append(parent.get());
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    // With an animating transform, we should keep child and grandChild in the renderSurfaceLayerList.
+    ASSERT_EQ(3U, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+    EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
+    EXPECT_EQ(grandChild->id(), renderSurfaceLayerList[2]->id());
+}
+
 TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToLayers)
 {
     // Verify that layers get the appropriate clipRects when their parent masksToBounds is true.
