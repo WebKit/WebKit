@@ -125,13 +125,9 @@ void StorageAreaProxy::dispatchLocalStorageEvent(PageGroup* pageGroup, const Str
     const HashSet<Page*>& pages = pageGroup->pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != pages.end(); ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(frame->domWindow()->optionalLocalStorage(), sourceAreaInstance)) {
-                // FIXME: maybe only raise if the window has an onstorage listener attached to avoid creating the Storage instance.
-                ExceptionCode ec = 0;
-                Storage* storage = frame->domWindow()->localStorage(ec);
-                if (!ec)
-                    frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
-            }
+            Storage* storage = frame->domWindow()->optionalLocalStorage();
+            if (storage && frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(storage, sourceAreaInstance))
+                frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
         }
     }
 }
@@ -157,20 +153,15 @@ void StorageAreaProxy::dispatchSessionStorageEvent(PageGroup* pageGroup, const S
         return;
 
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(frame->domWindow()->optionalSessionStorage(), sourceAreaInstance)) {
-            // FIXME: maybe only raise if the window has an onstorage listener attached to avoid creating the Storage instance.
-            ExceptionCode ec = 0;
-            Storage* storage = frame->domWindow()->sessionStorage(ec);
-            if (!ec)
-                frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
-        }
+        Storage* storage = frame->domWindow()->optionalSessionStorage();
+        if (storage && frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(storage, sourceAreaInstance))
+            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
     }
 }
 
 bool StorageAreaProxy::isEventSource(Storage* storage, WebKit::WebStorageArea* sourceAreaInstance)
 {
-    if (!storage)
-        return false;
+    ASSERT(storage);
     StorageAreaProxy* areaProxy = static_cast<StorageAreaProxy*>(storage->area());
     return areaProxy->m_storageArea == sourceAreaInstance;
 }

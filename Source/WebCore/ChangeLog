@@ -1,3 +1,23 @@
+2012-05-23  Michael Nordman  <michaeln@google.com>
+
+        [chromium] DomStorage events handling needs TLC (3)
+        https://bugs.webkit.org/show_bug.cgi?id=87031
+        https://code.google.com/p/chromium/issues/detail?id=128482
+        Create WebCore::Storage instances as a side effect of attaching storage event handlers.
+        This allows storage events in chromium to be propagated with less IPC chatter.
+
+        Worth noting that in non-chromium ports, creation of the localStorage instance can have
+        an additional side effect of scheduling a background task to read the area's values
+        from disk, which given the interest in events is probably a beneficial side effect.
+
+        Reviewed by Adam Barth.
+
+        No new tests. Existing tests cover this.
+
+        * page/DOMWindow.cpp:
+        (WebCore::didAddStorageEventListener):
+        (WebCore::DOMWindow::addEventListener):
+
 2012-05-23  Michael Saboff  <msaboff@apple.com>
 
         Crash in fast/files/read tests during Garbage Collection
