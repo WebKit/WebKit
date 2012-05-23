@@ -1503,7 +1503,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
                 else if (layoutState.isFullLayout() || o->needsLayout()) {
                     // Replaced elements
                     toRenderBox(o)->dirtyLineBoxes(layoutState.isFullLayout());
-                    o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (!o->isText())
@@ -2273,6 +2272,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             width.addUncommittedWidth(borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox));
         } else if (current.m_obj->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(current.m_obj);
+            replacedBox->layoutIfNeeded();
 
             // Break on replaced elements if either has normal white-space.
             if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!current.m_obj->isImage() || allowImagesToBreak)) {

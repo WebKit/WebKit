@@ -1,3 +1,13 @@
+2012-05-23  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderInline::linesVisualOverflowBoundingBox.
+        https://bugs.webkit.org/show_bug.cgi?id=85804
+
+        Reviewed by Dave Hyatt.
+
+        * fast/block/inline-children-root-linebox-crash-expected.txt: Added.
+        * fast/block/inline-children-root-linebox-crash.html: Added.
+
 2012-05-23  Chris Rogers  <crogers@google.com>
 
         AudioParam must support fan-in (multiple audio connections)
