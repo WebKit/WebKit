@@ -1,5 +1,14 @@
 2012-05-23  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Marking a pair of fast/history layout tests as flaky (TEXT).
+        https://bugs.webkit.org/show_bug.cgi?id=87321
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] http/tests/cache/history-only-cached-subresource-loads{-max-age-https}.html are now
         failing with TEXT differences, so updated failure expectations.
 

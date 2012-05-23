@@ -3789,3 +3789,6 @@ BUGWK87275 : html5lib/runner.html = PASS CRASH
 BUGWK87275 SLOW : html5lib/webkit-resumer.html = PASS CRASH
 // The above was previously marked as follows:
 //BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
+
+BUGWK87321 XP : fast/history/history-subframe-with-name.html = TEXT PASS
+BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
