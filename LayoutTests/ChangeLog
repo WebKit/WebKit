@@ -1,3 +1,14 @@
+2012-05-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed, rolling out r118157.
+        http://trac.webkit.org/changeset/118157
+        https://bugs.webkit.org/show_bug.cgi?id=87100
+
+        Newly added tests are not connected to 8483 bug.
+        editing/style directory should be unskiped first.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-23  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Rebaseline test results for BUG 86355

@@ -525,10 +525,6 @@ BUGWK84839 : editing/execCommand/print.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-from-range-selection.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-item-1.html = MISSING
 BUGWK84839 : editing/execCommand/selectAll.html = MISSING
-BUGWK84839 : editing/style/5065910.html = MISSING
-BUGWK84839 : editing/style/font-family-with-space.html = MISSING
-BUGWK84839 : editing/style/smoosh-styles-001.html = MISSING
-BUGWK84839 : editing/style/style-boundary-005.html = MISSING
 
 // DRT doesn't check for isPrinting().
 BUGWK87226 : printing/iframe-print.html = TEXT
