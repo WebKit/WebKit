@@ -1,3 +1,12 @@
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] http/tests/cache/history-only-cached-subresource-loads{-max-age-https}.html are now
+        failing with TEXT differences, so updated failure expectations.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-23  James Robinson  <jamesr@chromium.org>
 
         Add a Setting to make position:fixed form a new stacking context
