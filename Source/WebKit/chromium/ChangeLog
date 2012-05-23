@@ -1,3 +1,12 @@
+2012-05-23  Antti Koivisto  <antti@apple.com>
+
+        Build fix.
+
+        Not reviewed.
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::insertUserStyleSheet):
+
 2012-05-22  Alexandre Elias  <aelias@google.com>
 
         [chromium] Apply viewport tag initial-scale only once
