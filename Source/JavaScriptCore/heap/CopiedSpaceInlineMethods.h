@@ -35,11 +35,21 @@
 
 namespace JSC {
 
+inline bool CopiedSpace::contains(CopiedBlock* block)
+{
+    return !m_blockFilter.ruleOut(reinterpret_cast<Bits>(block)) && m_blockSet.contains(block);
+}
+
 inline bool CopiedSpace::contains(void* ptr, CopiedBlock*& result)
 {
     CopiedBlock* block = blockFor(ptr);
+    if (contains(block)) {
+        result = block;
+        return true;
+    }
+    block = oversizeBlockFor(ptr);
     result = block;
-    return !m_toSpaceFilter.ruleOut(reinterpret_cast<Bits>(block)) && m_toSpaceSet.contains(block);
+    return contains(block);
 }
 
 inline void CopiedSpace::pin(CopiedBlock* block)
@@ -53,7 +63,7 @@ inline void CopiedSpace::startedCopying()
     m_fromSpace = m_toSpace;
     m_toSpace = temp;
 
-    m_toSpaceFilter.reset();
+    m_blockFilter.reset();
     m_allocator.startedCopying();
 
     ASSERT(!m_inCopyingPhase);
@@ -98,8 +108,8 @@ inline CheckedBoolean CopiedSpace::addNewBlock()
         return false;
         
     m_toSpace->push(block);
-    m_toSpaceFilter.add(reinterpret_cast<Bits>(block));
-    m_toSpaceSet.add(block);
+    m_blockFilter.add(reinterpret_cast<Bits>(block));
+    m_blockSet.add(block);
     m_allocator.resetCurrentBlock(block);
     return true;
 }

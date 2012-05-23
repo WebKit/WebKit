@@ -64,6 +64,7 @@ public:
     void pin(CopiedBlock*);
     bool isPinned(void*);
 
+    bool contains(CopiedBlock*);
     bool contains(void*, CopiedBlock*&);
 
     size_t size();
@@ -96,9 +97,8 @@ private:
 
     CopiedAllocator m_allocator;
 
-    TinyBloomFilter m_toSpaceFilter;
-    TinyBloomFilter m_oversizeFilter;
-    HashSet<CopiedBlock*> m_toSpaceSet;
+    TinyBloomFilter m_blockFilter;
+    HashSet<CopiedBlock*> m_blockSet;
 
     Mutex m_toSpaceLock;
 

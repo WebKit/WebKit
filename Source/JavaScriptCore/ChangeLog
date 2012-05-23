@@ -1,3 +1,31 @@
+2012-05-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CopiedSpace::contains doesn't check for oversize blocks
+        https://bugs.webkit.org/show_bug.cgi?id=87180
+
+        Reviewed by Geoffrey Garen.
+
+        When doing a conservative scan we use CopiedSpace::contains to determine if a particular 
+        address points into the CopiedSpace. Currently contains() only checks if the address 
+        points to a block in to-space, which means that pointers to oversize blocks may not get scanned. 
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::doneCopying):
+        * heap/CopiedSpace.h: Refactored CopiedSpace so that all blocks (oversize and to-space) are 
+        in a single hash set and bloom filter for membership testing.
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::contains): We check for the normal block first. Since the oversize blocks are
+        only page aligned, rather than block aligned, we have to re-mask the ptr to check if it's in 
+        CopiedSpace. Also added a helper function of the same name that takes a CopiedBlock* and checks
+        if it's in CopiedSpace so that check isn't typed out twice.
+        (JSC):
+        (JSC::CopiedSpace::startedCopying):
+        (JSC::CopiedSpace::addNewBlock):
+
 2012-05-22  Geoffrey Garen  <ggaren@apple.com>
 
         CopiedBlock and MarkedBlock should have proper value semantics (i.e., destructors)
