@@ -1,3 +1,15 @@
+2012-05-23  Raymes Khoury  <raymes@chromium.org>
+
+        Change acceptMIMETypes member to acceptTypes now that file extensions are legal accept types
+        https://bugs.webkit.org/show_bug.cgi?id=87271
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFileChooserParams.h:
+        (WebFileChooserParams):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+
 2012-05-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Layers on main thread should get a RenderSurface for animating transform only if masksToBounds is true also
