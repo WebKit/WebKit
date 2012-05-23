@@ -39,7 +39,9 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
 {
     MacroAssembler jit;
     
-    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(globalData->scratchBufferForSize(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters)));
+    size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
+    ScratchBuffer* scratchBuffer = globalData->scratchBufferForSize(scratchSize);
+    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
     
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
         jit.storePtr(GPRInfo::toRegister(i), buffer + i);
@@ -54,9 +56,16 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
 #else
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #endif
-    
+
+    // Tell GC mark phase how much of the scratch buffer is active during call.
+    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), GPRInfo::regT0);
+
     MacroAssembler::Call functionCall = jit.call();
-    
+
+    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(0), GPRInfo::regT0);
+
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         jit.move(MacroAssembler::TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
         jit.loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
