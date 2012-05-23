@@ -39,7 +39,9 @@ from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port import Port
 
 
-class ChromiumAndroidPortTest(port_testcase.PortTestCase):
+# FIXME: Temporarily disabled. https://bugs.webkit.org/show_bug.cgi?id=87196
+
+class ChromiumAndroidPortTest: # (port_testcase.PortTestCase):
     port_name = 'chromium-android'
     port_maker = chromium_android.ChromiumAndroidPort
 
@@ -82,7 +84,7 @@ class ChromiumAndroidPortTest(port_testcase.PortTestCase):
         self.assertEquals(port.get_last_stacktrace(), '/data/tombstones/tombstone_03')
 
 
-class ChromiumAndroidDriverTest(unittest.TestCase):
+class ChromiumAndroidDriverTest: # (unittest.TestCase):
     def setUp(self):
         mock_port = Port(MockSystemHost())
         self.driver = chromium_android.ChromiumAndroidDriver(mock_port, worker_number=0, pixel_tests=True)
