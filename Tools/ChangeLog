@@ -1,3 +1,42 @@
+2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Run DumpRenderTree as an apk (python part)
+        https://bugs.webkit.org/show_bug.cgi?id=86923
+
+        chromium_android.py is modified to support running DumpRenderTree as
+        an apk, so that we can run the tests (e.g. video) requiring features
+        implemented in Java on Android.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.default_child_processes):
+        (ChromiumAndroidPort.check_wdiff):
+        (ChromiumAndroidPort.check_build):
+        (ChromiumAndroidPort.start_helper):
+        (ChromiumAndroidPort.skipped_layout_tests):
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort._path_to_driver):
+        (ChromiumAndroidPort._get_crash_log):
+        (ChromiumAndroidPort._push_executable):
+        (ChromiumAndroidPort._run_adb_command):
+        (ChromiumAndroidPort._get_last_stacktrace):
+        (ChromiumAndroidPort._get_logcat):
+        (ChromiumAndroidPort._setup_performance):
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._command_wrapper):
+        (ChromiumAndroidDriver.cmd_line):
+        (ChromiumAndroidDriver._file_exists_on_device):
+        (ChromiumAndroidDriver._deadlock_detector):
+        (ChromiumAndroidDriver._start):
+        (ChromiumAndroidDriver.run_test):
+        (ChromiumAndroidDriver.stop):
+        (ChromiumAndroidDriver._write_command_and_read_line):
+        (ChromiumAndroidDriver._output_image):
+        (ChromiumAndroidDriver._get_stderr):
+
 2012-05-22  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Reverting r118084 - webkit_tests failing on chromium mac.
