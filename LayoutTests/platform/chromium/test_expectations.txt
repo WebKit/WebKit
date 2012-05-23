@@ -2778,8 +2778,6 @@ BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.ht
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom.html = FAIL
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/effect-color-check.html = FAIL
 
-// <style scoped> not yet enabled.
-BUGWK49142 SKIP : fast/css/style-scoped = PASS
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 SKIP : fast/regions/style-scoped-in-flow-override-container-style.html = PASS
 BUGWK49142 SKIP : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = PASS

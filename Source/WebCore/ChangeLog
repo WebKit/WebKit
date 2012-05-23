@@ -1,3 +1,27 @@
+2012-05-22  MORITA Hajime  <morrita@google.com>
+
+        REGRESSION(r116629) tests for <style scoped> is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=87191
+
+        Reviewed by Kent Tamura.
+
+        unregisterWithScopingNode() and registerWithScopingNode() doesn't follow
+        refactoring around removedFrom(), insertedInto() and willRemove().
+        This change aligns them to such recent changes.
+
+        No new tests. Covered by existing tests.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode)
+        (WebCore::HTMLStyleElement::insertedInto):
+        - Allowed registerWithScopingNode() only for in-document traversal.
+          That is how it originally did.
+        (WebCore::HTMLStyleElement::removedFrom):
+        - Gave ex-parent to unregisterWithScopingNode().
+        * html/HTMLStyleElement.h:
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        (HTMLStyleElement):
+
 2012-05-21  Shawn Singh  <shawnsingh@chromium.org>
 
         Improve W3C conformance of backface-visibility

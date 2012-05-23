@@ -77,7 +77,8 @@ private:
     virtual const AtomicString& type() const;
 
     void registerWithScopingNode();
-    void unregisterWithScopingNode();
+    void unregisterWithScopingNode() { unregisterWithScopingNode(parentNode()); }
+    void unregisterWithScopingNode(ContainerNode* scope);
 
     bool m_firedLoad;
     bool m_loadedSheet;

@@ -126,7 +126,7 @@ void HTMLStyleElement::registerWithScopingNode()
     m_isRegisteredWithScopingNode = true;
 }
 
-void HTMLStyleElement::unregisterWithScopingNode()
+void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
     // Note: We cannot rely on the 'scoped' element still being present when this method is invoked.
     // Therefore we cannot rely on scoped()!
@@ -136,7 +136,6 @@ void HTMLStyleElement::unregisterWithScopingNode()
     if (!RuntimeEnabledFeatures::styleScopedEnabled())
         return;
 
-    ContainerNode* scope = parentNode();
     ASSERT(scope);
     if (scope) {
         ASSERT(scope->hasScopedHTMLStyleChild());
@@ -153,12 +152,14 @@ void HTMLStyleElement::unregisterWithScopingNode()
 Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(Node* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument())
+    if (insertionPoint->inDocument()) {
         StyleElement::insertedIntoDocument(document(), this);
 #if ENABLE(STYLE_SCOPED)
-    if (scoped() && !m_isRegisteredWithScopingNode)
-        registerWithScopingNode();
+        if (scoped() && !m_isRegisteredWithScopingNode)
+            registerWithScopingNode();
 #endif
+    }
+
     return InsertionDone;
 }
 
@@ -171,8 +172,10 @@ void HTMLStyleElement::removedFrom(Node* insertionPoint)
     // That is, because willRemove() is also called if an ancestor is removed from the document.
     // Now, if we want to register <style scoped> even if it's not inDocument,
     // we'd need to find a way to discern whether that is the case, or whether <style scoped> itself is about to be removed.
-    if (m_isRegisteredWithScopingNode)
-        unregisterWithScopingNode();
+    if (m_isRegisteredWithScopingNode) {
+        Node* scope = parentNode() ? parentNode() : insertionPoint;
+        unregisterWithScopingNode(toContainerNode(scope));
+    }
 #endif
 
     if (insertionPoint->inDocument())

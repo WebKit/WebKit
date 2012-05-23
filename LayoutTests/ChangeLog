@@ -1,3 +1,16 @@
+2012-05-22  MORITA Hajime  <morrita@google.com>
+
+        REGRESSION(r116629) tests for <style scoped> is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=87191
+
+        - Unskipped accidentally skipped test for <style scoped>.
+        - Updated outdated expectations.
+
+        Reviewed by Kent Tamura.
+
+        * fast/css/style-scoped/style-scoped-in-shadow-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-21  Shawn Singh  <shawnsingh@chromium.org>
 
         Improve W3C conformance of backface-visibility
