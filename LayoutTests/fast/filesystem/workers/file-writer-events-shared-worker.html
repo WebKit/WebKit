@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+    <title>File Writer Events Shared Worker</title>
+    <script src="../../js/resources/js-test-pre.js"></script>
+ </head>
+ <body>
+    <div id="description"></div>
+    <div id="console"></div>
+    <script>
+        var worker = startWorker("../resources/shared-worker-stub.js", true /* shared */);
+        worker.port.postMessage("IMPORT:file-writer-events.js");
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+ </body>
+</html>
+
+
+

@@ -485,9 +485,7 @@ function startWorker(testScriptURL, shared)
 {
     self.jsTestIsAsync = true;
     debug('Starting worker: ' + testScriptURL);
-    var worker = shared ? new SharedWorker(testScriptURL) : new Worker(testScriptURL);
-    if (shared)
-        worker.port.onmessage = function(event) { worker.onmessage(event); };
+    var worker = shared ? new SharedWorker(testScriptURL, "Shared Worker") : new Worker(testScriptURL);
     worker.onmessage = function(event)
     {
         var workerPrefix = "[Worker] ";
@@ -515,23 +513,52 @@ function startWorker(testScriptURL, shared)
         finishJSTest();
     }
 
+    if (shared) {
+        worker.port.onmessage = function(event) { worker.onmessage(event); };
+        worker.port.start();
+    }
     return worker;
 }
 
 if (isWorker()) {
+    var workerPort = self;
+    if (self.name == "Shared Worker") {
+        self.onconnect = function(e) {
+            workerPort = e.ports[0];
+            workerPort.onmessage = function(event)
+            {
+                
+                var colon = event.data.indexOf(":");
+                if (colon == -1) {
+                    testFailed("Unrecognized message to shared worker: " + event.data);
+                    return;
+                }
+                var code = event.data.substring(0, colon);
+                var payload = event.data.substring(colon + 1);
+                try {
+                    if (code == "IMPORT")
+                        importScripts(payload);
+                    else
+                        testFailed("Unrecognized message to shared worker: " + event.data);
+                } catch (ex) {
+                    testFailed("Caught exception in shared worker onmessage: " + ex);
+                }
+            };
+        };
+    }
     description = function(msg, quiet) {
-        postMessage('DESC:' + msg);
+        workerPort.postMessage('DESC:' + msg);
     }
     testFailed = function(msg) {
-        postMessage('FAIL:' + msg);
+        workerPort.postMessage('FAIL:' + msg);
     }
     testPassed = function(msg) {
-        postMessage('PASS:' + msg);
+        workerPort.postMessage('PASS:' + msg);
     }
     finishJSTest = function() {
-        postMessage('DONE:');
+        workerPort.postMessage('DONE:');
     }
     debug = function(msg) {
-        postMessage(msg);
+        workerPort.postMessage(msg);
     }
 }
