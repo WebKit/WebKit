@@ -1,3 +1,11 @@
+2012-05-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix qmake conditional for c++-11 compat warnings
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT does not print didFailProvisionalLoadWithError messages
