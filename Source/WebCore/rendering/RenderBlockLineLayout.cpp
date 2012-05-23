@@ -1001,7 +1001,7 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         // rniwa says previousLineBrokeCleanly is just a WinIE hack and could always be false here?
         isolatedResolver.createBidiRunsForLine(endOfLine, NoVisualOverride, previousLineBrokeCleanly);
         // Note that we do not delete the runs from the resolver.
-        // We're not guarnateed to get any BidiRuns in the previous step. If we don't, we allow the placeholder
+        // We're not guaranteed to get any BidiRuns in the previous step. If we don't, we allow the placeholder
         // itself to be turned into an InlineBox. We can't remove it here without potentially losing track of
         // the logically last run.
         if (isolatedResolver.runs().runCount())

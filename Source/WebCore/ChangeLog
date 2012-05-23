@@ -1,3 +1,10 @@
+2012-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo per Darin's comment.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::constructBidiRuns):
+
 2012-05-23  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Pass Isolate to v8::Null() in custom bindings (Part 2)
