@@ -44,6 +44,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -115,9 +116,10 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     setLastChangeWasNotUserEdit();
-    if (!m_isDirty)
+    if (m_isDirty)
+        setInnerTextValue(value());
+    else
         setNonDirtyValue(defaultValue());
-    setInnerTextValue(value());
 }
 
 bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) const
@@ -372,15 +374,15 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
 
 String HTMLTextAreaElement::defaultValue() const
 {
-    String value = "";
+    StringBuilder value;
 
     // Since there may be comments, ignore nodes other than text nodes.
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())
-            value += toText(n)->data();
+            value.append(toText(n)->data());
     }
 
-    return value;
+    return value.toString();
 }
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)

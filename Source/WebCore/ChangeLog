@@ -1,3 +1,22 @@
+2012-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit spends ~20% of time in HTMLTextAreaElement::defaultValue() when opening a review page
+        https://bugs.webkit.org/show_bug.cgi?id=86813
+
+        Reviewed by Eric Seidel.
+
+        Replace String and calls to String::operator+= by StringBuilder and calls to append respectively.
+        While there are other optimizations we can implement such as not replacing all nodes in the shadow DOM,
+        or not serializing the value when detecting whether the value had changed, they require considerable
+        amount of refactoring and this change alone seems to buy us a lot so let us defer those 'til later time.
+
+        Also avoid the redundant call to setValue in childrenChanged when the value is dirty.
+        This should halve the time we spend in setting the value.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        (WebCore::HTMLTextAreaElement::defaultValue):
+
 2012-05-23  Alice Boxhall  <aboxhall@chromium.org>
 
         AX: Contenteditable tables should always be exposed as data tables
