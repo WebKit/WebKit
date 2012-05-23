@@ -1,3 +1,26 @@
+2012-05-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't force the visibleLayerRect to be empty for animating layers whose front face is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=86886
+
+        Reviewed by Adrienne Walker.
+
+        Previously we would force the visibleLayerRect to be empty for these
+        animating layers, and then special case the pre-painting code to
+        paint them if they were within some size limit, to avoid having the
+        layer steal too much memory.
+
+        Instead, just use the visibleLayerRect given to the layer. Since the
+        transform flips the layer such that its back face is visible, it will
+        also compute a visibleLayerRect in the front face of the layer, and
+        its size will be bounded by the viewport. This will cause the
+        layer to be painted with visible priority instead of prepainted, but
+        ensures the visible parts of the layer is painted and ready to go when
+        the animation flips the layer around.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateVisibleLayerRect):
+
 2012-05-22  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r98359): Video does not render on http://panic.com/dietcoda/

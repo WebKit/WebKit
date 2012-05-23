@@ -1,3 +1,13 @@
+2012-05-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't force the visibleLayerRect to be empty for animating layers whose front face is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=86886
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+
 2012-05-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move cookieJar to Platform.h

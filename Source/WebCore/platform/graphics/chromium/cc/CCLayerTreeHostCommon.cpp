@@ -78,11 +78,6 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
 {
     ASSERT(layer->targetRenderSurface());
 
-    // Animated layers can exist in the render surface tree that are not visible currently
-    // and have their back face showing. In this case, their visible rect should be empty.
-    if (!layer->doubleSided() && layer->screenSpaceTransform().isBackFaceVisible())
-        return IntRect();
-
     IntRect targetSurfaceRect = layer->targetRenderSurface()->contentRect();
 
     if (layer->usesLayerClipping())

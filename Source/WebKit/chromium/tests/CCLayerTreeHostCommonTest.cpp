@@ -1318,11 +1318,11 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCulling)
 
     EXPECT_FALSE(child2->visibleLayerRect().isEmpty());
 
-    // But if the back face is visible, then the visibleLayerRect should be empty.
-    EXPECT_TRUE(animatingChild->visibleLayerRect().isEmpty());
-    EXPECT_TRUE(animatingSurface->visibleLayerRect().isEmpty());
-    // And any layers in the subtree should not be considered visible either.
-    EXPECT_TRUE(childOfAnimatingSurface->visibleLayerRect().isEmpty());
+    // The animating layers should have a visibleLayerRect that represents the area of the front face that is within the viewport.
+    EXPECT_EQ(animatingChild->visibleLayerRect(), IntRect(IntPoint(), animatingChild->contentBounds()));
+    EXPECT_EQ(animatingSurface->visibleLayerRect(), IntRect(IntPoint(), animatingSurface->contentBounds()));
+    // And layers in the subtree of the animating layer should have valid visibleLayerRects also.
+    EXPECT_EQ(childOfAnimatingSurface->visibleLayerRect(), IntRect(IntPoint(), childOfAnimatingSurface->contentBounds()));
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3dForFlatteningSurface)
