@@ -1,3 +1,17 @@
+2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DRT needs to call Settings::setValidationMessageTimerMagnification(-1)
+        https://bugs.webkit.org/show_bug.cgi?id=86366
+
+        Reviewed by Antonio Gomes.
+
+        Add helper function to DumpRenderTreeSupportEfl to set the validation
+        message timer magnification.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-05-22  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Implements the registerProtocolHandler method and option.

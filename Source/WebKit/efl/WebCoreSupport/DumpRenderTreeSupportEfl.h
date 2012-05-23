@@ -99,6 +99,7 @@ public:
     static void deliverAllMutationsIfNecessary();
     static String markerTextForListItem(JSContextRef, JSValueRef nodeObject);
     static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);
+    static void setValidationMessageTimerMagnification(Evas_Object* ewkView, int value);
     static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
     static void setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool);
     static void setSerializeHTTPLoads(bool);

@@ -276,9 +276,6 @@ fast/forms/mailto/post-multiple-items.html
 fast/forms/mailto/post-text-plain-with-accept-charset.html
 fast/forms/mailto/post-text-plain.html
 
-# Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
-fast/forms/validation-message-appearance.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

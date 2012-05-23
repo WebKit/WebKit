@@ -641,6 +641,13 @@ void DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(Evas_Object* 
         corePage->settings()->setInteractiveFormValidationEnabled(enabled);
 }
 
+void DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification(Evas_Object* ewkView, int value)
+{
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (corePage)
+        corePage->settings()->setValidationMessageTimerMagnification(value);
+}
+
 JSValueRef DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
     if (!value)

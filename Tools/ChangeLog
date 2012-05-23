@@ -1,3 +1,15 @@
+2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's DRT needs to call Settings::setValidationMessageTimerMagnification(-1)
+        https://bugs.webkit.org/show_bug.cgi?id=86366
+
+        Reviewed by Antonio Gomes.
+
+        Call Settings::setValidationMessageTimerMagnification(-1) between the tests.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-05-22  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitpy/thirdparty/mod_pywebsocket: Added property svn:ignore.
