@@ -1,0 +1,12 @@
+This tests the implementation of the 'name' attribute on the NamedFlow object attached to a flow thread. For more details see http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-named-flow
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedFlow.name is 'flow-name'
+PASS namedFlow.name is 'flow-name'
+PASS namedFlow.name is 'flow-name'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

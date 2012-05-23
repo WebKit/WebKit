@@ -1,3 +1,16 @@
+2012-05-23  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions]Implement NamedFlow::name attribute
+        https://bugs.webkit.org/show_bug.cgi?id=79645
+
+        Test for the NamedFlow::name attribute per the CSS Regions WD 3-May-2012 recommendation:
+        http://www.w3.org/TR/2012/WD-css3-regions-20120503/
+
+        Reviewed by Andreas Kling.
+
+        * fast/regions/webkit-named-flow-name-expected.txt: Added.
+        * fast/regions/webkit-named-flow-name.html: Added.
+
 2012-05-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed, rolling out r118157.

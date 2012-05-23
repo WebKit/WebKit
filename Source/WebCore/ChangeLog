@@ -1,3 +1,22 @@
+2012-05-23  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions]Implement NamedFlow::name attribute
+        https://bugs.webkit.org/show_bug.cgi?id=79645
+
+        Implementation for the NamedFlow::name attribute per the CSS Regions WD 3-May-2012 recommendation:
+        http://www.w3.org/TR/2012/WD-css3-regions-20120503/
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/regions/webkit-named-flow-name.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::name):
+        (WebCore):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+
 2012-05-23  Andreas Kling  <kling@webkit.org>
 
         Let the compiler generate FontFamily's copy ctor and assignment operator.

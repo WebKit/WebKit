@@ -45,6 +45,11 @@ WebKitNamedFlow::~WebKitNamedFlow()
 {
 }
 
+String WebKitNamedFlow::name() const
+{
+    return m_parentFlowThread->flowThreadName();
+}
+
 bool WebKitNamedFlow::overflow() const
 {
     m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
