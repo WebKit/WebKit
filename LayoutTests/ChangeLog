@@ -1,3 +1,16 @@
+2012-05-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] webintents/web-intents-delivery-reuse.html is failing on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=87092
+
+        Reviewed by Adam Barth.
+
+        Remove webintents/web-intents-delivery-reuse.html from test
+        expectations now that window.webkitIntent is really replaceable and
+        now that the test is passing.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-23  Abhishek Arya  <inferno@chromium.org>
 
         ASSERT failure toRenderProgress in HTMLProgressElement::didElementStateChange

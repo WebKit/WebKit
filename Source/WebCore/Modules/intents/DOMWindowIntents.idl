@@ -32,7 +32,7 @@ module window {
     ] DOMWindowIntents {
         attribute IntentConstructor WebKitIntent;
 
-        readonly attribute [Replaceable] DeliveredIntent webkitIntent;
+        attribute [Replaceable] DeliveredIntent webkitIntent;
     };
 
 }
