@@ -551,6 +551,12 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
     // d = -dot (Pn', R0) / dot (Pn', Rd)
     if (clamped)
         *clamped = false;
+
+    if (m33() == 0) {
+        // In this case, the projection plane is parallel to the ray we are trying to
+        // trace, and there is no well-defined value for the projection.
+        return FloatPoint();
+    }
     
     double x = p.x();
     double y = p.y();
@@ -562,8 +568,12 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
 
     double w = x * m14() + y * m24() + z * m34() + m44();
     if (w <= 0) {
-        outX = copysign(numeric_limits<int>::max(), outX);
-        outY = copysign(numeric_limits<int>::max(), outY);
+        // Using int max causes overflow when other code uses the projected point. To
+        // represent infinity yet reduce the risk of overflow, we use a large but
+        // not-too-large number here when clamping.
+        const int kLargeNumber = 100000000;
+        outX = copysign(kLargeNumber, outX);
+        outY = copysign(kLargeNumber, outY);
         if (clamped)
             *clamped = true;
     } else if (w != 1) {
@@ -577,11 +587,22 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
 FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
 {
     FloatQuad projectedQuad;
-    projectedQuad.setP1(projectPoint(q.p1()));
-    projectedQuad.setP2(projectPoint(q.p2()));
-    projectedQuad.setP3(projectPoint(q.p3()));
-    projectedQuad.setP4(projectPoint(q.p4()));
-    
+
+    bool clamped1 = false;
+    bool clamped2 = false;
+    bool clamped3 = false;
+    bool clamped4 = false;
+
+    projectedQuad.setP1(projectPoint(q.p1(), &clamped1));
+    projectedQuad.setP2(projectPoint(q.p2(), &clamped2));
+    projectedQuad.setP3(projectPoint(q.p3(), &clamped3));
+    projectedQuad.setP4(projectPoint(q.p4(), &clamped4));
+
+    // If all points on the quad had w < 0, then the entire quad would not be visible to the projected surface.
+    bool everythingWasClipped = clamped1 && clamped2 && clamped3 && clamped4;
+    if (everythingWasClipped)
+        return FloatQuad();
+
     return projectedQuad;
 }
 
