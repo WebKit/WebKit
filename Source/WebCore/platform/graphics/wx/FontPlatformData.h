@@ -68,6 +68,11 @@ public:
         : m_font(font)
     {}
 
+    ~FontHolder()
+    {
+        delete m_font;
+    }
+
     wxFont* font() { return m_font; }
 
 private:

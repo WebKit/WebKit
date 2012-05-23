@@ -1,5 +1,14 @@
 2012-05-23  Robin Dunn  <robin@alldunn.com>
 
+        [wx] Fix memory leak in FontHolder.
+        https://bugs.webkit.org/show_bug.cgi?id=87281
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/graphics/wx/FontPlatformData.h:
+
+2012-05-23  Robin Dunn  <robin@alldunn.com>
+
         [wx] Make sure we do not create a substitute font if the facename is not found.
         https://bugs.webkit.org/show_bug.cgi?id=87280
 
