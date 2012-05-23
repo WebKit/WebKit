@@ -59,7 +59,7 @@
 #endif
 
 #if PLATFORM(CHROMIUM)
-#include "PlatformSupport.h"
+#include <public/Platform.h>
 #endif
 
 namespace WebCore {
@@ -485,7 +485,7 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
         return false;
 
 #if PLATFORM(CHROMIUM)
-    if (!PlatformSupport::canAccelerate2dCanvas())
+    if (!WebKit::Platform::current()->canAccelerate2dCanvas())
         return false;
 #endif
 

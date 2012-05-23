@@ -317,7 +317,14 @@ public:
     // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
     virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
+    // Returns true if the platform is capable of producing an offscreen context suitable for accelerating 2d canvas.
+    // This will return false if the platform cannot promise that contexts will be preserved across operations like
+    // locking the screen or if the platform cannot provide a context with suitable performance characteristics.
+    //
+    // This value must be checked again after a context loss event as the platform's capabilities may have changed.
+    virtual bool canAccelerate2dCanvas() { return false; }
 
+    
     // WebRTC ----------------------------------------------------------
 
     // DEPRECATED
