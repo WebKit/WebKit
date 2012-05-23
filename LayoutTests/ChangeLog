@@ -1,3 +1,28 @@
+2012-05-23  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: filter out debugging stuff from the heap class view
+        https://bugs.webkit.org/show_bug.cgi?id=86723
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-comparison-dom-groups-change.html:
+        * inspector/profiler/heap-snapshot-comparison-show-all.html:
+        * inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html:
+        * inspector/profiler/heap-snapshot-containment-show-all.html:
+        * inspector/profiler/heap-snapshot-containment-show-next.html:
+        * inspector/profiler/heap-snapshot-containment-shown-node-count-preserved-when-sorting.html:
+        * inspector/profiler/heap-snapshot-dominators-expansion-preserved-when-sorting.html:
+        * inspector/profiler/heap-snapshot-dominators-show-all.html:
+        * inspector/profiler/heap-snapshot-dominators-show-next.html:
+        * inspector/profiler/heap-snapshot-dominators-shown-node-count-preserved-when-sorting.html:
+        * inspector/profiler/heap-snapshot-dominators-sorting.html:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockObject):
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockRaw):
+        (initialize_HeapSnapshotTest):
+        (initialize_HeapSnapshotTest.):
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-23  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Today's ingredients for a green bot

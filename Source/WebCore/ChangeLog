@@ -1,3 +1,22 @@
+2012-05-23  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: filter out debugging stuff from the heap class view
+        https://bugs.webkit.org/show_bug.cgi?id=86723
+
+        We mark objects that are accessible from user roots (e.g. Window)
+        with pageObject attribute. This fix filters out all non-pageObjects
+        from the classes view.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.isPageObject):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._calculateClassesRetainedSize):
+        (WebInspector.HeapSnapshot.prototype._buildPostOrderIndex):
+        (WebInspector.HeapSnapshot.prototype._markPageOwnedNodes):
+        (WebInspector.HeapSnapshot.prototype.createNodesProviderForClass):
+
 2012-05-23  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions]Implement NamedFlow::name attribute

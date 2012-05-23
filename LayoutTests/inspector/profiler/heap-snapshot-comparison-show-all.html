@@ -7,13 +7,14 @@
 function test()
 {
     var instanceCount = 24;
+    var firstId = 100;
     function createHeapSnapshotA()
     {
-        return InspectorTest.createHeapSnapshot(instanceCount, 5);
+        return InspectorTest.createHeapSnapshot(instanceCount, firstId);
     }
     function createHeapSnapshotB()
     {
-        return InspectorTest.createHeapSnapshot(instanceCount + 1, 5 + instanceCount);
+        return InspectorTest.createHeapSnapshot(instanceCount + 1, firstId + instanceCount * 2);
     }
 
     InspectorTest.runHeapSnapshotTestSuite([

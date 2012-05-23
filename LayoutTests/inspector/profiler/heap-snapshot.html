@@ -40,7 +40,7 @@ function test()
             var edgesRoot = nodeRoot.rawEdges();
             InspectorTest.assertEquals(nodeRoot.edgesCount() * snapshot._edgeFieldsCount, edgesRoot.length, "rawEdges length");
             var edge = new WebInspector.HeapSnapshotEdge(snapshot, edgesRoot);
-            InspectorTest.assertEquals("property", edge.type(), "edge type");
+            InspectorTest.assertEquals("shortcut", edge.type(), "edge type");
             InspectorTest.assertEquals("a", edge.name(), "edge name");
             InspectorTest.assertEquals("A", edge.node().name(), "edge node name");
             next();
