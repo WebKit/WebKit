@@ -43,7 +43,7 @@ public:
     };
 
     Type type() const;
-    QUrl url() const;
+    QString url() const;
     int errorCode() const;
     QString description() const;
     bool isCancellation() const;

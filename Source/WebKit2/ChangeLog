@@ -1,3 +1,16 @@
+2012-05-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make QtWebError return the failing URL as a QString instead of QUrl
+
+        We don't want to use QUrl inside QtWebKit (only in the API layer), due
+        to how QUrl normalizes the url.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/qt/QtWebError.cpp:
+        (WebKit::QtWebError::url):
+        * UIProcess/qt/QtWebError.h:
+
 2012-05-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add inspector API to WebKit2 GTK+
