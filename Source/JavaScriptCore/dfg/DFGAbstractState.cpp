@@ -1064,6 +1064,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case TearOffActivation:
+    case TearOffArguments:
         // Does nothing that is user-visible.
         break;
         

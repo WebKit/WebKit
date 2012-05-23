@@ -156,6 +156,7 @@ void* DFG_OPERATION operationLinkConstruct(ExecState*);
 JSCell* DFG_OPERATION operationCreateActivation(ExecState*);
 JSCell* DFG_OPERATION operationCreateArguments(ExecState*);
 void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*, int32_t unmodifiedArgumentsRegister);
+void DFG_OPERATION operationTearOffArguments(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t);

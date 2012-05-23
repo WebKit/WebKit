@@ -3807,6 +3807,20 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case TearOffArguments: {
+        JSValueOperand argumentsValue(this, node.child1());
+        GPRReg argumentsValueGPR = argumentsValue.gpr();
+        
+        JITCompiler::Jump created = m_jit.branchTestPtr(JITCompiler::NonZero, argumentsValueGPR);
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                created, this, operationTearOffArguments, NoResult, argumentsValueGPR));
+        
+        noResult(m_compileIndex);
+        break;
+    }
+        
     case NewFunctionNoCheck:
         compileNewFunctionNoCheck(node);
         break;

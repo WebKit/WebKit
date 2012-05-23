@@ -1383,6 +1383,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
         return appendCallWithExceptionCheck(operation);
     }
+    template<typename FunctionType, typename ArgumentType1>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1)
+    {
+        return callOperation(operation, arg1);
+    }
     template<typename FunctionType, typename ArgumentType1, typename ArgumentType2>
     JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2)
     {
@@ -1605,6 +1610,11 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
+    }
+    template<typename FunctionType, typename ArgumentType1>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1)
+    {
+        return callOperation(operation, arg1);
     }
     template<typename FunctionType, typename ArgumentType1, typename ArgumentType2>
     JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2)

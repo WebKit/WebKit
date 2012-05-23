@@ -1060,6 +1060,12 @@ void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
 }
 
 
+void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell)
+{
+    ASSERT(exec->codeBlock()->usesArguments() && !exec->codeBlock()->needsFullScopeChain());
+    asArguments(argumentsCell)->tearOff(exec);
+}
+
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));

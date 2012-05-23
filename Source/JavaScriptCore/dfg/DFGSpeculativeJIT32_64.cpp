@@ -3792,6 +3792,22 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case TearOffArguments: {
+        JSValueOperand argumentsValue(this, node.child1());
+        GPRReg argumentsValueTagGPR = argumentsValue.tagGPR();
+        GPRReg argumentsValuePayloadGPR = argumentsValue.payloadGPR();
+        
+        JITCompiler::Jump created = m_jit.branch32(
+            JITCompiler::NotEqual, argumentsValueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                created, this, operationTearOffArguments, NoResult, argumentsValuePayloadGPR));
+        
+        noResult(m_compileIndex);
+        break;
+    }
+        
     case NewFunctionNoCheck:
         compileNewFunctionNoCheck(node);
         break;
