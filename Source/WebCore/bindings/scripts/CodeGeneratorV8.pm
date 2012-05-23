@@ -2106,6 +2106,114 @@ sub GenerateSingleBatchedAttribute
     push(@implContent, $indent . "    {\"$attrName\", $getter, $setter, $data, $accessControl, static_cast<v8::PropertyAttribute>($propAttr), $on_proto}" . $delimiter . "\n");
 }
 
+sub IsStandardFunction
+{
+    my $dataNode = shift;
+    my $function = shift;
+
+    my $interfaceName = $dataNode->name;
+    my $attrExt = $function->signature->extendedAttributes;
+    return 0 if $attrExt->{"V8Unforgeable"};
+    return 0 if $function->isStatic;
+    return 0 if $attrExt->{"V8EnabledAtRuntime"};
+    return 0 if RequiresCustomSignature($function);
+    return 0 if $attrExt->{"V8DoNotCheckSignature"};
+    return 0 if ($attrExt->{"DoNotCheckSecurity"} && ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow"));
+    return 0 if $attrExt->{"NotEnumerable"};
+    return 0 if $attrExt->{"V8ReadOnly"};
+    return 1;
+}
+
+sub GenerateNonStandardFunction
+{
+    my $dataNode = shift;
+    my $function = shift;
+
+    my $interfaceName = $dataNode->name;
+    my $attrExt = $function->signature->extendedAttributes;
+    my $name = $function->signature->name;
+
+    my $property_attributes = "v8::DontDelete";
+    if ($attrExt->{"NotEnumerable"}) {
+        $property_attributes .= " | v8::DontEnum";
+    }
+    if ($attrExt->{"V8ReadOnly"}) {
+        $property_attributes .= " | v8::ReadOnly";
+    }
+
+    my $commentInfo = "Function '$name' (ExtAttr: '" . join(' ', keys(%{$attrExt})) . "')";
+
+    my $template = "proto";
+    if ($attrExt->{"V8Unforgeable"}) {
+        $template = "instance";
+    }
+    if ($function->isStatic) {
+        $template = "desc";
+    }
+
+    my $conditional = "";
+    if ($attrExt->{"V8EnabledAtRuntime"}) {
+        # Only call Set()/SetAccessor() if this method should be enabled
+        my $enable_function = GetRuntimeEnableFunctionName($function->signature);
+        $conditional = "if (${enable_function}())\n        ";
+    }
+
+    if ($attrExt->{"DoNotCheckSecurity"} &&
+        ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
+        # Mark the accessor as ReadOnly and set it on the proto object so
+        # it can be shadowed. This is really a hack to make it work.
+        # There are several sceneria to call into the accessor:
+        #   1) from the same domain: "window.open":
+        #      the accessor finds the DOM wrapper in the proto chain;
+        #   2) from the same domain: "window.__proto__.open":
+        #      the accessor will NOT find a DOM wrapper in the prototype chain
+        #   3) from another domain: "window.open":
+        #      the access find the DOM wrapper in the prototype chain
+        #   "window.__proto__.open" from another domain will fail when
+        #   accessing '__proto__'
+        #
+        # The solution is very hacky and fragile, it really needs to be replaced
+        # by a better solution.
+        $property_attributes .= " | v8::ReadOnly";
+        push(@implContent, <<END);
+
+    // $commentInfo
+    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+END
+        return;
+    }
+
+    my $signature = "defaultSignature";
+    if ($attrExt->{"V8DoNotCheckSignature"} || $function->isStatic) {
+       $signature = "v8::Local<v8::Signature>()";
+    }
+
+    if (RequiresCustomSignature($function)) {
+        $signature = "${name}Signature";
+        push(@implContent, "\n    // Custom Signature '$name'\n", CreateCustomSignature($function));
+    }
+
+    # Normal function call is a template
+    my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
+
+    if ($property_attributes eq "v8::DontDelete") {
+        $property_attributes = "";
+    } else {
+        $property_attributes = ", static_cast<v8::PropertyAttribute>($property_attributes)";
+    }
+
+    if ($template eq "proto" && $conditional eq "" && $signature eq "defaultSignature" && $property_attributes eq "") {
+        die "This shouldn't happen: Intraface '$interfaceName' $commentInfo\n";
+    }
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
+    push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+
+    push(@implContent, "    ${conditional}$template->Set(v8::String::New(\"$name\"), v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), ${signature})$property_attributes);\n");
+
+    push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
+}
+
 sub GenerateImplementationIndexer
 {
     my $dataNode = shift;
@@ -2456,25 +2564,8 @@ sub GenerateImplementation
     foreach my $function (@{$dataNode->functions}) {
         # Only one table entry is needed for overloaded methods:
         next if $function->{overloadIndex} > 1;
-
-        my $attrExt = $function->signature->extendedAttributes;
         # Don't put any nonstandard functions into this table:
-        if ($attrExt->{"V8Unforgeable"}) {
-            next;
-        }
-        if ($function->isStatic) {
-            next;
-        }
-        if ($attrExt->{"V8EnabledAtRuntime"} || RequiresCustomSignature($function) || $attrExt->{"V8DoNotCheckSignature"}) {
-            next;
-        }
-        if ($attrExt->{"DoNotCheckSecurity"} &&
-            ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
-            next;
-        }
-        if ($attrExt->{"NotEnumerable"} || $attrExt->{"V8ReadOnly"}) {
-            next;
-        }
+        next if !IsStandardFunction($dataNode, $function);
         if (!$has_callbacks) {
             $has_callbacks = 1;
             push(@implContent, "static const BatchedCallback ${interfaceName}Callbacks[] = {\n");
@@ -2668,92 +2759,8 @@ END
         next if $function->{overloadIndex} > 1;
 
         $total_functions++;
-        my $attrExt = $function->signature->extendedAttributes;
-        my $name = $function->signature->name;
-
-        my $property_attributes = "v8::DontDelete";
-        if ($attrExt->{"NotEnumerable"}) {
-            $property_attributes .= " | v8::DontEnum";
-        }
-        if ($attrExt->{"V8ReadOnly"}) {
-            $property_attributes .= " | v8::ReadOnly";
-        }
-
-        my $commentInfo = "Function '$name' (ExtAttr: '" . join(' ', keys(%{$attrExt})) . "')";
-
-        my $template = "proto";
-        if ($attrExt->{"V8Unforgeable"}) {
-            $template = "instance";
-        }
-        if ($function->isStatic) {
-            $template = "desc";
-        }
-
-        my $conditional = "";
-        if ($attrExt->{"V8EnabledAtRuntime"}) {
-            # Only call Set()/SetAccessor() if this method should be enabled
-            my $enable_function = GetRuntimeEnableFunctionName($function->signature);
-            $conditional = "if (${enable_function}())\n        ";
-        }
-
-        if ($attrExt->{"DoNotCheckSecurity"} &&
-            ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
-            # Mark the accessor as ReadOnly and set it on the proto object so
-            # it can be shadowed. This is really a hack to make it work.
-            # There are several sceneria to call into the accessor:
-            #   1) from the same domain: "window.open":
-            #      the accessor finds the DOM wrapper in the proto chain;
-            #   2) from the same domain: "window.__proto__.open":
-            #      the accessor will NOT find a DOM wrapper in the prototype chain
-            #   3) from another domain: "window.open":
-            #      the access find the DOM wrapper in the prototype chain
-            #   "window.__proto__.open" from another domain will fail when
-            #   accessing '__proto__'
-            #
-            # The solution is very hacky and fragile, it really needs to be replaced
-            # by a better solution.
-            $property_attributes .= " | v8::ReadOnly";
-            push(@implContent, <<END);
-
-    // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
-END
-            $num_callbacks++;
-            next;
-        }
-
-        my $signature = "defaultSignature";
-        if ($attrExt->{"V8DoNotCheckSignature"} || $function->isStatic) {
-            $signature = "v8::Local<v8::Signature>()";
-        }
-
-        if (RequiresCustomSignature($function)) {
-            $signature = "${name}Signature";
-            push(@implContent, "\n    // Custom Signature '$name'\n", CreateCustomSignature($function));
-        }
-
-        # Normal function call is a template
-        my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-
-        if ($property_attributes eq "v8::DontDelete") {
-            $property_attributes = "";
-        } else {
-            $property_attributes = ", static_cast<v8::PropertyAttribute>($property_attributes)";
-        }
-
-        if ($template eq "proto" && $conditional eq "" && $signature eq "defaultSignature" && $property_attributes eq "") {
-            # Standard type of callback, already created in the batch, so skip it here.
-            next;
-        }
-
-        my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
-        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-
-        push(@implContent, <<END);
-    ${conditional}$template->Set(v8::String::New("$name"), v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), ${signature})$property_attributes);
-END
-
-        push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
+        next if IsStandardFunction($dataNode, $function);
+        GenerateNonStandardFunction($dataNode, $function);
         $num_callbacks++;
     }
 
