@@ -1,3 +1,13 @@
+2012-05-23  Abhishek Arya  <inferno@chromium.org>
+
+        ASSERT failure toRenderProgress in HTMLProgressElement::didElementStateChange
+        https://bugs.webkit.org/show_bug.cgi?id=87274
+
+        Reviewed by Darin Adler.
+
+        * fast/runin/progress-run-in-crash-expected.txt: Added.
+        * fast/runin/progress-run-in-crash.html: Added.
+
 2012-05-23  Kenneth Russell  <kbr@google.com>
 
         REGRESSION(117918) - 4 webgl/tex-iomage-and-sub-image-2d-with-image tests failing on Mac bots.

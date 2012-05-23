@@ -1,3 +1,20 @@
+2012-05-23  Abhishek Arya  <inferno@chromium.org>
+
+        ASSERT failure toRenderProgress in HTMLProgressElement::didElementStateChange
+        https://bugs.webkit.org/show_bug.cgi?id=87274
+
+        Reviewed by Darin Adler.
+
+        Progress bar can't run-in. Prevent it from becoming a run-in, leading to an
+        unworkable RenderInline.
+
+        Test: fast/runin/progress-run-in-crash.html
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveRunInUnderSiblingBlockIfNeeded):
+
 2012-05-23  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] UI thread unnecessarily blocks on WebKit thread when servicing requestAnimationFrames

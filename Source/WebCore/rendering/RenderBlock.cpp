@@ -1846,6 +1846,9 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     if (runInNode && runInNode->hasTagName(selectTag))
         return;
 
+    if (runInNode && runInNode->hasTagName(progressTag))
+        return;
+
     RenderObject* curr = runIn->nextSibling();
     if (!curr || !curr->isRenderBlock() || !curr->childrenInline())
         return;
