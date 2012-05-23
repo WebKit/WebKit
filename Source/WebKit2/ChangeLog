@@ -1,3 +1,16 @@
+2012-05-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r116188): After exiting full screen, Safari window is frozen, then inline video speeds through frames as it catches up with audio
+        https://bugs.webkit.org/show_bug.cgi?id=87206
+
+        Reviewed by Darin Adler.
+
+        When re-enabling the Safari window's autodisplay flag, also force the window to re-display.
+        Otherwise, the window will not repaint itself until it is forced to by user interaction.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+
 2012-05-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Add an API to enable and disable composited layer indicators

@@ -382,6 +382,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
 - (void)completeFinishExitFullScreenAnimationAfterRepaint
 {
     [[_webView window] setAutodisplay:YES];
+    [[_webView window] displayIfNeeded];
     NSEnableScreenUpdates();
 }
 
