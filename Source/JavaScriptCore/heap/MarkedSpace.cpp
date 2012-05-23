@@ -30,6 +30,42 @@ namespace JSC {
 
 class Structure;
 
+class Take {
+public:
+    typedef MarkedBlock* ReturnType;
+
+    enum TakeMode { TakeIfEmpty, TakeAll };
+
+    Take(TakeMode, MarkedSpace*);
+    void operator()(MarkedBlock*);
+    ReturnType returnValue();
+    
+private:
+    TakeMode m_takeMode;
+    MarkedSpace* m_markedSpace;
+    DoublyLinkedList<MarkedBlock> m_blocks;
+};
+
+inline Take::Take(TakeMode takeMode, MarkedSpace* newSpace)
+    : m_takeMode(takeMode)
+    , m_markedSpace(newSpace)
+{
+}
+
+inline void Take::operator()(MarkedBlock* block)
+{
+    if (m_takeMode == TakeIfEmpty && !block->isEmpty())
+        return;
+    
+    m_markedSpace->allocatorFor(block).removeBlock(block);
+    m_blocks.append(block);
+}
+
+inline Take::ReturnType Take::returnValue()
+{
+    return m_blocks.head();
+}
+
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_heap(heap)
 {
@@ -42,6 +78,20 @@ MarkedSpace::MarkedSpace(Heap* heap)
         allocatorFor(cellSize).init(heap, this, cellSize, false);
         destructorAllocatorFor(cellSize).init(heap, this, cellSize, true);
     }
+}
+
+MarkedSpace::~MarkedSpace()
+{
+    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
+    Take take(Take::TakeAll, this);
+    freeBlocks(forEachBlock(take));
+}
+
+void MarkedSpace::lastChanceToFinalize()
+{
+    canonicalizeCellLivenessData();
+    clearMarks();
+    sweep();
 }
 
 void MarkedSpace::resetAllocators()
@@ -98,54 +148,11 @@ void MarkedSpace::freeBlocks(MarkedBlock* head)
     }
 }
 
-class Take {
-public:
-    typedef MarkedBlock* ReturnType;
-
-    enum TakeMode { TakeIfEmpty, TakeAll };
-
-    Take(TakeMode, MarkedSpace*);
-    void operator()(MarkedBlock*);
-    ReturnType returnValue();
-    
-private:
-    TakeMode m_takeMode;
-    MarkedSpace* m_markedSpace;
-    DoublyLinkedList<MarkedBlock> m_blocks;
-};
-
-inline Take::Take(TakeMode takeMode, MarkedSpace* newSpace)
-    : m_takeMode(takeMode)
-    , m_markedSpace(newSpace)
-{
-}
-
-inline void Take::operator()(MarkedBlock* block)
-{
-    if (m_takeMode == TakeIfEmpty && !block->isEmpty())
-        return;
-    
-    m_markedSpace->allocatorFor(block).removeBlock(block);
-    m_blocks.append(block);
-}
-
-inline Take::ReturnType Take::returnValue()
-{
-    return m_blocks.head();
-}
-
 void MarkedSpace::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
     Take takeIfEmpty(Take::TakeIfEmpty, this);
     freeBlocks(forEachBlock(takeIfEmpty));
-}
-
-void MarkedSpace::freeAllBlocks()
-{
-    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    Take take(Take::TakeAll, this);
-    freeBlocks(forEachBlock(take));
 }
 
 #if ENABLE(GGC)

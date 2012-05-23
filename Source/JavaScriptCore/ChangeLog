@@ -1,3 +1,56 @@
+2012-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored heap tear-down to use normal value semantics (i.e., destructors)
+        https://bugs.webkit.org/show_bug.cgi?id=87302
+
+        Reviewed by Oliver Hunt.
+
+        This is a step toward incremental DOM finalization.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::~CopiedSpace):
+        * heap/CopiedSpace.h:
+        (CopiedSpace): Just use our destructor, instead of relying on the heap
+        to send us a special message at a special time.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Use OwnPtr for m_markListSet because this is not Sparta.
+
+        (JSC::Heap::~Heap): No need for delete or freeAllBlocks because normal
+        destructors do this work automatically now.
+
+        (JSC::Heap::lastChanceToFinalize): Just call lastChanceToFinalize on our
+        sub-objects, and assume it does the right thing. This improves encapsulation,
+        so we can add items requiring finalization to our sub-objects.
+
+        * heap/Heap.h: Moved m_blockAllocator to get the right destruction order.
+
+        * heap/MarkedSpace.cpp:
+        (Take):
+        (JSC):
+        (JSC::Take::Take):
+        (JSC::Take::operator()):
+        (JSC::Take::returnValue): Moved to the top of the file so it can be used
+        in another function.
+
+        (JSC::MarkedSpace::~MarkedSpace): Delete all outstanding memory, like a good
+        destructor should.
+
+        (JSC::MarkedSpace::lastChanceToFinalize): Moved some code here from the heap,
+        since it pertains to our internal implementation details.
+
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::lastChanceToFinalize):
+        * heap/WeakBlock.h:
+        (WeakBlock):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::lastChanceToFinalize):
+        * heap/WeakSet.h:
+        (WeakSet): Stop using a special freeAllBlocks() callback and just implement
+        lastChanceToFinalize.
+
 2011-05-22  Geoffrey Garen  <ggaren@apple.com>
 
         Encapsulated some calculations for whether portions of the heap are empty

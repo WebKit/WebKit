@@ -244,7 +244,6 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
-    , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_machineThreads(this)
     , m_sharedData(globalData)
@@ -261,13 +260,6 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
 
 Heap::~Heap()
 {
-    delete m_markListSet;
-
-    m_objectSpace.freeAllBlocks();
-    m_storageSpace.freeAllBlocks();
-
-    ASSERT(!size());
-    ASSERT(!capacity());
 }
 
 bool Heap::isPagedOut(double deadline)
@@ -286,11 +278,8 @@ void Heap::lastChanceToFinalize()
     if (size_t size = m_protectedValues.size())
         WTFLogAlways("ERROR: JavaScriptCore heap deallocated while %ld values were still protected", static_cast<unsigned long>(size));
 
-    m_weakSet.finalizeAll();
-    m_objectSpace.canonicalizeCellLivenessData();
-    m_objectSpace.clearMarks();
-    m_objectSpace.sweep();
-    m_globalData->smallStrings.finalizeSmallStrings();
+    m_weakSet.lastChanceToFinalize();
+    m_objectSpace.lastChanceToFinalize();
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");

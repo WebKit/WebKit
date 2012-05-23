@@ -40,10 +40,10 @@ WeakSet::~WeakSet()
     m_blocks.clear();
 }
 
-void WeakSet::finalizeAll()
+void WeakSet::lastChanceToFinalize()
 {
     for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->finalizeAll();
+        block->lastChanceToFinalize();
 }
 
 void WeakSet::visitLiveWeakImpls(HeapRootVisitor& visitor)

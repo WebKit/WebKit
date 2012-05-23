@@ -59,7 +59,7 @@ WeakBlock::WeakBlock(PageAllocation& allocation)
     ASSERT(isEmpty());
 }
 
-void WeakBlock::finalizeAll()
+void WeakBlock::lastChanceToFinalize()
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];

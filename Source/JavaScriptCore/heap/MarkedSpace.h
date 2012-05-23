@@ -71,6 +71,8 @@ public:
     static const size_t maxCellSize = 2048;
 
     MarkedSpace(Heap*);
+    ~MarkedSpace();
+    void lastChanceToFinalize();
 
     MarkedAllocator& firstAllocator();
     MarkedAllocator& allocatorFor(size_t);
@@ -93,7 +95,6 @@ public:
     template<typename Functor> typename Functor::ReturnType forEachBlock();
     
     void shrink();
-    void freeAllBlocks();
     void freeBlocks(MarkedBlock* head);
 
     void didAddBlock(MarkedBlock*);

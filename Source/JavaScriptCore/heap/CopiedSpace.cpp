@@ -40,6 +40,18 @@ CopiedSpace::CopiedSpace(Heap* heap)
 {
 }
 
+CopiedSpace::~CopiedSpace()
+{
+    while (!m_toSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_toSpace->removeHead())));
+
+    while (!m_fromSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_fromSpace->removeHead())));
+
+    while (!m_oversizeBlocks.isEmpty())
+        CopiedBlock::destroy(static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead())).deallocate();
+}
+
 void CopiedSpace::init()
 {
     m_toSpace = &m_blocks1;
@@ -237,18 +249,6 @@ CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, Cop
     ASSERT(is8ByteAligned(block->m_offset));
     *outBlock = block;
     return true;
-}
-
-void CopiedSpace::freeAllBlocks()
-{
-    while (!m_toSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_toSpace->removeHead())));
-
-    while (!m_fromSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_fromSpace->removeHead())));
-
-    while (!m_oversizeBlocks.isEmpty())
-        CopiedBlock::destroy(static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead())).deallocate();
 }
 
 size_t CopiedSpace::size()

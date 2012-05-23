@@ -36,7 +36,7 @@ class WeakImpl;
 class WeakSet {
 public:
     WeakSet(Heap*);
-    void finalizeAll();
+    void lastChanceToFinalize();
     ~WeakSet();
 
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);

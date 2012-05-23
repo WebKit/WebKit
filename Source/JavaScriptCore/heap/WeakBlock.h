@@ -70,7 +70,7 @@ public:
     void visitLiveWeakImpls(HeapRootVisitor&);
     void visitDeadWeakImpls(HeapRootVisitor&);
 
-    void finalizeAll();
+    void lastChanceToFinalize();
 
 private:
     static FreeCell* asFreeCell(WeakImpl*);

@@ -143,7 +143,7 @@ namespace JSC {
         void pushTempSortVector(Vector<ValueStringPair>*);
         void popTempSortVector(Vector<ValueStringPair>*);
     
-        HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
+        HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = adoptPtr(new HashSet<MarkedArgumentBuffer*>); return *m_markListSet; }
         
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
@@ -206,10 +206,9 @@ namespace JSC {
         size_t m_bytesAbandoned;
         
         OperationInProgress m_operationInProgress;
+        BlockAllocator m_blockAllocator;
         MarkedSpace m_objectSpace;
         CopiedSpace m_storageSpace;
-
-        BlockAllocator m_blockAllocator;
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_destroyedTypeCounts;
@@ -217,7 +216,7 @@ namespace JSC {
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
-        HashSet<MarkedArgumentBuffer*>* m_markListSet;
+        OwnPtr<HashSet<MarkedArgumentBuffer*> > m_markListSet;
 
         OwnPtr<GCActivityCallback> m_activityCallback;
         

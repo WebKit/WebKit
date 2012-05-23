@@ -50,6 +50,7 @@ class CopiedSpace {
     friend class JIT;
 public:
     CopiedSpace(Heap*);
+    ~CopiedSpace();
     void init();
 
     CheckedBoolean tryAllocate(size_t, void**);
@@ -70,7 +71,6 @@ public:
     size_t size();
     size_t capacity();
 
-    void freeAllBlocks();
     bool isPagedOut(double deadline);
 
     static CopiedBlock* blockFor(void*);
