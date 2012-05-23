@@ -1,4 +1,4 @@
-2012-05-22  Hayato Ito  <hayato@chromium.org>
+2012-05-22  Andreas Kling  <kling@webkit.org>
 
         Short-circuit Element::attrIfExists() when the Element has no Attr list.
         <http://webkit.org/b/87214>
@@ -12,7 +12,7 @@
         * dom/Element.cpp:
         (WebCore::Element::attrIfExists):
 
-2012-05-22  Andreas Kling  <kling@webkit.org>
+2012-05-22  Hayato Ito  <hayato@chromium.org>
 
         Remove an assertion since an event's target might be a shadow root if a text node is clicked.
         https://bugs.webkit.org/show_bug.cgi?id=87072
