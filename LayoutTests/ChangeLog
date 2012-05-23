@@ -1,3 +1,31 @@
+2012-05-23  Emil A Eklund  <eae@chromium.org>
+
+        Add test for subpixel precision in DOM APIs
+        https://bugs.webkit.org/show_bug.cgi?id=85534
+
+        Reviewed by Eric Seidel.
+
+        Add test for increased precision due to subpixel support in the
+        getBoundingClientRect api. Also test that clientWidth returns the pixel
+        snapped value.
+
+        * fast/sub-pixel/client-rect-has-subpixel-precision-expected.html: Added.
+        * fast/sub-pixel/client-rect-has-subpixel-precision.html: Added.
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+        Mark as skipped on all platforms but chromium for now.
+
 2012-05-23  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: filter out debugging stuff from the heap class view
