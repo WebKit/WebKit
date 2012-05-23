@@ -1,3 +1,9 @@
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
+        Skip the CSS Regions tests on the 536 branch because CSS_REGIONS is disabled on the 536 branch.
+
+        * platform/mac/Skipped:
+
 2012-05-23  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116543
