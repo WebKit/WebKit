@@ -163,7 +163,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
         ensureAttributeData()->setClass(newClassString, shouldFoldCase);
         if (DOMTokenList* classList = optionalClassList())
             static_cast<ClassList*>(classList)->reset(newClassString);
-    } else if (attributeData())
+    } else
         attributeData()->clearClass();
     setNeedsStyleRecalc();
 }

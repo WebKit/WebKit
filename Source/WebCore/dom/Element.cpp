@@ -134,8 +134,11 @@ Element::~Element()
 
     if (shadow())
         rareData()->m_shadow.clear();
-    if (m_attributeData && hasAttrList())
+
+    if (hasAttrList()) {
+        ASSERT(m_attributeData);
         m_attributeData->detachAttrObjectsFromElement(this);
+    }
 }
 
 inline ElementRareData* Element::rareData() const
@@ -699,14 +702,12 @@ void Element::attributeChanged(const Attribute& attribute)
     document()->incDOMTreeVersion();
 
     if (isIdAttributeName(attribute.name())) {
-        if (attributeData()) {
-            if (attribute.isNull())
-                attributeData()->setIdForStyleResolution(nullAtom);
-            else if (document()->inQuirksMode())
-                attributeData()->setIdForStyleResolution(attribute.value().lower());
-            else
-                attributeData()->setIdForStyleResolution(attribute.value());
-        }
+        if (attribute.isNull())
+            attributeData()->setIdForStyleResolution(nullAtom);
+        else if (document()->inQuirksMode())
+            attributeData()->setIdForStyleResolution(attribute.value().lower());
+        else
+            attributeData()->setIdForStyleResolution(attribute.value());
         setNeedsStyleRecalc();
     } else if (attribute.name() == HTMLNames::nameAttr)
         setHasName(!attribute.isNull());
@@ -900,18 +901,13 @@ Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
     if (!insertionPoint->inDocument())
         return InsertionDone;
 
-    if (m_attributeData) {
-        if (hasID()) {
-            Attribute* idItem = getAttributeItem(document()->idAttributeName());
-            if (idItem && !idItem->isNull())
-                updateId(nullAtom, idItem->value());
-        }
-        if (hasName()) {
-            Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
-            if (nameItem && !nameItem->isNull())
-                updateName(nullAtom, nameItem->value());
-        }
-    }
+    const AtomicString& idValue = getIdAttribute();
+    if (!idValue.isNull())
+        updateId(nullAtom, idValue);
+
+    const AtomicString& nameValue = getNameAttribute();
+    if (!nameValue.isNull())
+        updateName(nullAtom, nameValue);
 
     return InsertionDone;
 }
@@ -926,18 +922,13 @@ void Element::removedFrom(Node* insertionPoint)
     setSavedLayerScrollOffset(IntSize());
 
     if (insertionPoint->inDocument()) {
-        if (m_attributeData) {
-            if (hasID()) {
-                Attribute* idItem = getAttributeItem(document()->idAttributeName());
-                if (idItem && !idItem->isNull())
-                    updateId(idItem->value(), nullAtom);
-            }
-            if (hasName()) {
-                Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
-                if (nameItem && !nameItem->isNull())
-                    updateName(nameItem->value(), nullAtom);
-            }
-        }
+        const AtomicString& idValue = getIdAttribute();
+        if (!idValue.isNull())
+            updateId(idValue, nullAtom);
+
+        const AtomicString& nameValue = getNameAttribute();
+        if (!nameValue.isNull())
+            updateName(nameValue, nullAtom);
     }
 
     ContainerNode::removedFrom(insertionPoint);
@@ -1434,8 +1425,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
     ASSERT(document() == attr->document());
 
     ElementAttributeData* attributeData = updatedAttributeData();
-    if (!attributeData)
-        return 0;
+    ASSERT(attributeData);
 
     size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
     if (index == notFound) {
@@ -1714,9 +1704,11 @@ void Element::cancelFocusAppearanceUpdate()
 
 void Element::normalizeAttributes()
 {
-    ElementAttributeData* attributeData = updatedAttributeData();
-    if (!attributeData || attributeData->isEmpty())
+    if (!hasAttrList())
         return;
+
+    ElementAttributeData* attributeData = updatedAttributeData();
+    ASSERT(attributeData);
 
     const Vector<Attribute>& attributes = attributeData->attributeVector();
     for (size_t i = 0; i < attributes.size(); ++i) {

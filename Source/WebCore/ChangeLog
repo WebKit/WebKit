@@ -1,5 +1,29 @@
 2012-05-23  Andreas Kling  <kling@webkit.org>
 
+        Kill some frivolous null-checking of Element::m_attributeData.
+        <http://webkit.org/b/87248>
+
+        Reviewed by Antti Koivisto.
+
+        Replace unnecessary Element::m_attributeData with assertions where it makes sense.
+        Others are flat out removed because it should be obvious from context that it's non-null.
+        E.g if an attribute has changed, we're obviously storing it somewhere.
+
+        Also added a short-circuit to Element::normalize() if there are no Attr objects
+        associated with the element.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::normalizeAttributes):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+
+2012-05-23  Andreas Kling  <kling@webkit.org>
+
         Let Element::detachAttribute() handle removal of the attribute.
         <http://webkit.org/b/87242>
 
