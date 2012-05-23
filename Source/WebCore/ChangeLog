@@ -1,3 +1,15 @@
+2012-05-23  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Implement transparency layer support.
+        https://bugs.webkit.org/show_bug.cgi?id=87279
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+
 2012-05-23  Jer Noble  <jer.noble@apple.com>
 
         GenericClock loses precision due to float->double conversion.

@@ -668,19 +668,29 @@ void GraphicsContext::clearPlatformShadow()
     notImplemented(); 
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float)
-{ 
-    notImplemented(); 
+void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+{
+    if (paintingDisabled())
+        return;
+
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        gc->BeginLayer(opacity);
 }
 
 void GraphicsContext::endPlatformTransparencyLayer()
 { 
-    notImplemented(); 
+    if (paintingDisabled())
+        return;
+    
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        gc->EndLayer();
 }
 
 bool GraphicsContext::supportsTransparencyLayers()
 {
-    return false;
+    return true;
 }
 
 void GraphicsContext::clearRect(const FloatRect&) 
