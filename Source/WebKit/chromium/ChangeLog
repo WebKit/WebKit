@@ -1,3 +1,13 @@
+2012-05-23  Jay Civelli  <jcivelli@chromium.org>
+
+        [chromium] Provides a way to cancel an external popup menu before it is shown.
+        https://bugs.webkit.org/show_bug.cgi?id=83474
+
+        Reviewed by Kent Tamura.
+
+        * src/ExternalPopupMenu.cpp:
+        (WebKit::ExternalPopupMenu::show):
+
 2012-05-23  Michael Nordman  <michaeln@google.com>
 
         [chromium] DomStorage events handling needs TLC (3)

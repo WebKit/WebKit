@@ -69,7 +69,12 @@ void ExternalPopupMenu::show(const IntRect& rect, FrameView* v, int index)
         return;
     m_webExternalPopupMenu =
         m_webViewClient->createExternalPopupMenu(info, this);
-    m_webExternalPopupMenu->show(v->contentsToWindow(rect));
+    if (m_webExternalPopupMenu)
+        m_webExternalPopupMenu->show(v->contentsToWindow(rect));
+    else {
+        // The client might refuse to create a popup (when there is already one pending to be shown for example).
+        didCancel();
+    }
 }
 
 void ExternalPopupMenu::hide()
