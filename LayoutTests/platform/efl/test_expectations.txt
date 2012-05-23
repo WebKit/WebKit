@@ -112,11 +112,17 @@ BUGWKEFL SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL
 // Feature not mature yet and disabled by default on WebCore
 BUGWK87088 : fast/js/names.html = TEXT
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWK87253 : http/tests/messaging/cross-domain-message-event-dispatch.html = CRASH
+BUGWK87253 : http/tests/security/view-source-no-javascript-url.html = CRASH
+BUGWK87253 : http/tests/security/local-video-src-from-remote.html = CRASH
+BUGWK87253 : media/track/track-kind.html = CRASH
+BUGWK87253 : media/track/text-track-is-reachable.html = CRASH
+BUGWK87253 : media/video-source-none-supported.html = CRASH
+BUGWK87253 : media/video-source-inserted.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -610,9 +616,6 @@ BUGWK84167 : editing/pasteboard/innerText-inline-table.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/iframe.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
-BUGWK84167 : fast/css-generated-content/inline-display-types.html = IMAGE+TEXT
-BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
-BUGWK84167 : fast/inline-block/001.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 
 // Incomplete Web Intents support
