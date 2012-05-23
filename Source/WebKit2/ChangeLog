@@ -1,3 +1,16 @@
+2012-05-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (117623) - Entering/exiting fullscreen HTML5 videos, there is a quick animated fade
+        https://bugs.webkit.org/show_bug.cgi?id=87294
+
+        Reviewed by Darin Adler.
+
+        When setting the sublayers array on the layer hosting view, wrap the call in a CATransaction which disables
+        animations.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateAcceleratedCompositingMode:WebKit::]):
+
 2012-05-23  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][Wk2] Assertion failure when selecting an option in select list with size attribute greater than one

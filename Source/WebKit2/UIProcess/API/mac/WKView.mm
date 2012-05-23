@@ -2514,8 +2514,15 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext
 {
     if (_data->_layerHostingView) {
+        // Wrap the call to setSublayers: in a CATransaction with actions disabled to
+        // keep CA from cross-fading between the two sublayer arrays.
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+
         CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
         [[_data->_layerHostingView.get() layer] setSublayers:[NSArray arrayWithObject:renderLayer]];
+
+        [CATransaction commit];
     } else {
         [self _exitAcceleratedCompositingMode];
         [self _enterAcceleratedCompositingMode:layerTreeContext];
