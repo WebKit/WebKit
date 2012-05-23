@@ -32,6 +32,10 @@
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
+#include "PlatformString.h"
+
+#include <wx/defs.h>
+#include <wx/fontenum.h>
 
 namespace WebCore {
 
@@ -95,6 +99,11 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
+    // wx will ALWAYS create a valid font, even if the font family we're looking for is not available.
+    // So we check to make sure the font is the one we're looking for before creating the font.
+    if (!wxFontEnumerator::IsValidFacename(family.string()))
+        return 0;
+
     return new FontPlatformData(fontDescription,family);
 }
 
