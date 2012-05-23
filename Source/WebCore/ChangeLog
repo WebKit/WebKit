@@ -1,3 +1,13 @@
+2012-05-23  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
+
+        [wx] Fix scrollbar drawing under wxGTK.
+        https://bugs.webkit.org/show_bug.cgi?id=87150
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/wx/wxcode/gtk/scrollbar_render.cpp:
+        (wxRenderer_DrawScrollbar):
+
 2012-05-23  Antti Koivisto  <antti@apple.com>
 
         Rename StyleSheetInternal to StyleSheetContents
