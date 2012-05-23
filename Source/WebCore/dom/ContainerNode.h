@@ -95,6 +95,10 @@ public:
 
     void disconnectDescendantFrames();
 
+    // More efficient versions of these two functions for the case where we are starting with a ContainerNode.
+    Node* traverseNextNode() const;
+    Node* traverseNextNode(const Node* stayWithin) const;
+
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);
 
@@ -243,6 +247,15 @@ inline Node* Node::traverseNextNode() const
     return traverseNextSibling();
 }
 
+inline Node* ContainerNode::traverseNextNode() const
+{
+    // More efficient than the Node::traverseNextNode above, because
+    // this does not need to do the isContainerNode check inside firstChild.
+    if (firstChild())
+        return firstChild();
+    return traverseNextSibling();
+}
+
 inline Node* Node::traverseNextSibling(const Node* stayWithin) const
 {
     if (this == stayWithin)
@@ -254,6 +267,15 @@ inline Node* Node::traverseNextSibling(const Node* stayWithin) const
 
 inline Node* Node::traverseNextNode(const Node* stayWithin) const
 {
+    if (firstChild())
+        return firstChild();
+    return traverseNextSibling(stayWithin);
+}
+
+inline Node* ContainerNode::traverseNextNode(const Node* stayWithin) const
+{
+    // More efficient than the Node::traverseNextNode above, because
+    // this does not need to do the isContainerNode check inside firstChild.
     if (firstChild())
         return firstChild();
     return traverseNextSibling(stayWithin);
