@@ -254,24 +254,17 @@ private:
         m_graph.m_blocks[blockIndex].clear();
     }
     
-    NodeIndex findOperandSource(const Operands<NodeIndex, NodeIndexTraits>& variables, int operand)
-    {
-        NodeIndex nodeIndex = variables.operand(operand);
-        if (nodeIndex == NoNode)
-            return NoNode;
-        if (m_graph[nodeIndex].op() == SetLocal)
-            return m_graph[nodeIndex].child1().index();
-        return nodeIndex;
-    }
-    
     void keepOperandAlive(BasicBlock* block, CodeOrigin codeOrigin, int operand)
     {
-        if (m_graph.isCaptured(operand))
-            return;
-        NodeIndex nodeIndex = findOperandSource(block->variablesAtTail, operand);
+        NodeIndex nodeIndex = block->variablesAtTail.operand(operand);
         if (nodeIndex == NoNode)
             return;
-        if (!m_graph[nodeIndex].shouldGenerate())
+        if (m_graph[nodeIndex].variableAccessData()->isCaptured())
+            return;
+        if (m_graph[nodeIndex].op() == SetLocal)
+            nodeIndex = m_graph[nodeIndex].child1().index();
+        Node& node = m_graph[nodeIndex];
+        if (!node.shouldGenerate())
             return;
         ASSERT(m_graph[nodeIndex].op() != SetLocal);
         NodeIndex phantomNodeIndex = m_graph.size();
@@ -286,7 +279,7 @@ private:
         Node& child = m_graph[edge];
         if (child.op() != GetLocal)
             return;
-        if (m_graph.isCaptured(child.local()))
+        if (child.variableAccessData()->isCaptured())
             return;
         NodeIndex originalNodeIndex = block->variablesAtTail.operand(child.local());
         ASSERT(originalNodeIndex != NoNode);
@@ -444,19 +437,20 @@ private:
     {
         NodeIndex atSecondTail = secondBlock->variablesAtTail.operand(operand);
         
-        if (m_graph.isCaptured(operand)) {
-            // The second block did something to a variable that is captured, so reflect this.
-            firstBlock->variablesAtTail.operand(operand) = atSecondTail;
-            return;
-        }
-        
         if (atSecondTail == NoNode) {
             // If the variable is dead at the end of the second block, then do nothing; essentially
             // this means that we want the tail state to reflect whatever the first block did.
             return;
         }
-        
+
         Node& secondNode = m_graph[atSecondTail];
+        
+        if (secondNode.variableAccessData()->isCaptured()) {
+            // The second block did something to a variable that is captured, so reflect this.
+            firstBlock->variablesAtTail.operand(operand) = atSecondTail;
+            return;
+        }
+        
         switch (secondNode.op()) {
         case SetLocal:
         case Flush: {

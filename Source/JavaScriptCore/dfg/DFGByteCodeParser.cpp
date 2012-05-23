@@ -113,11 +113,11 @@ private:
     // Add spill locations to nodes.
     void allocateVirtualRegisters();
     
-    VariableAccessData* newVariableAccessData(int operand)
+    VariableAccessData* newVariableAccessData(int operand, bool isCaptured)
     {
         ASSERT(operand < FirstConstantRegisterIndex);
         
-        m_graph.m_variableAccessData.append(VariableAccessData(static_cast<VirtualRegister>(operand)));
+        m_graph.m_variableAccessData.append(VariableAccessData(static_cast<VirtualRegister>(operand), isCaptured));
         return &m_graph.m_variableAccessData.last();
     }
     
@@ -178,6 +178,7 @@ private:
     NodeIndex getLocal(unsigned operand)
     {
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.local(operand);
+        bool isCaptured = m_codeBlock->localIsCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
         
         if (nodeIndex != NoNode) {
             Node* nodePtr = &m_graph[nodeIndex];
@@ -189,6 +190,7 @@ private:
                 Node& flushChild = m_graph[nodeIndex];
                 if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
+                    variableAccessData->mergeIsCaptured(isCaptured);
                     nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
@@ -199,7 +201,9 @@ private:
             ASSERT(&m_graph[nodeIndex] == nodePtr);
             ASSERT(nodePtr->op() != Flush);
 
-            if (m_graph.localIsCaptured(operand)) {
+            nodePtr->variableAccessData()->mergeIsCaptured(isCaptured);
+                
+            if (isCaptured) {
                 // We wish to use the same variable access data as the previous access,
                 // but for all other purposes we want to issue a load since for all we
                 // know, at this stage of compilation, the local has been clobbered.
@@ -221,7 +225,7 @@ private:
         // expand m_preservedVars to cover these.
         m_preservedVars.set(operand);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
@@ -234,11 +238,13 @@ private:
     }
     void setLocal(unsigned operand, NodeIndex value)
     {
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        bool isCaptured = m_codeBlock->localIsCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
+        
+        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
         
-        bool shouldFlush = m_graph.localIsCaptured(operand);
+        bool shouldFlush = isCaptured;
         
         if (!shouldFlush) {
             // If this is in argument position, then it should be flushed.
@@ -267,6 +273,9 @@ private:
     NodeIndex getArgument(unsigned operand)
     {
         unsigned argument = operandToArgument(operand);
+        
+        bool isCaptured = m_codeBlock->argumentIsCaptured(argument);
+        
         ASSERT(argument < m_numArguments);
         
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
@@ -281,6 +290,7 @@ private:
                 Node& flushChild = m_graph[nodeIndex];
                 if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
+                    variableAccessData->mergeIsCaptured(isCaptured);
                     nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
@@ -291,6 +301,8 @@ private:
             ASSERT(&m_graph[nodeIndex] == nodePtr);
             ASSERT(nodePtr->op() != Flush);
             
+            nodePtr->variableAccessData()->mergeIsCaptured(isCaptured);
+            
             if (nodePtr->op() == SetArgument) {
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
@@ -300,7 +312,7 @@ private:
                 return nodeIndex;
             }
             
-            if (m_graph.argumentIsCaptured(argument)) {
+            if (isCaptured) {
                 if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
                 return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
@@ -313,7 +325,7 @@ private:
             return nodePtr->child1().index();
         }
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
 
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
@@ -327,9 +339,11 @@ private:
     void setArgument(int operand, NodeIndex value)
     {
         unsigned argument = operandToArgument(operand);
+        bool isCaptured = m_codeBlock->argumentIsCaptured(argument);
+        
         ASSERT(argument < m_numArguments);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         InlineStackEntry* stack = m_inlineStackTop;
         while (stack->m_inlineCallFrame) // find the machine stack entry.
             stack = stack->m_caller;
@@ -346,6 +360,7 @@ private:
         // some other local variable.
         
         operand = m_inlineStackTop->remapOperand(operand);
+        bool isCaptured = m_codeBlock->isCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
         
         ASSERT(operand < FirstConstantRegisterIndex);
         
@@ -380,11 +395,12 @@ private:
             // This gives us guidance to see that the variable also needs to be flushed
             // for arguments, even if it already had to be flushed for other reasons.
             VariableAccessData* variableAccessData = node.variableAccessData();
+            variableAccessData->mergeIsCaptured(isCaptured);
             addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
             return variableAccessData;
         }
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand);
+        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         nodeIndex = addToGraph(Flush, OpInfo(variableAccessData), phi);
         if (operandIsArgument(operand)) {
@@ -1480,7 +1496,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentBlock == m_graph.m_blocks[0].get() && !m_inlineStackTop->m_inlineCallFrame) {
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
-            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argumentToOperand(argument))));
+            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argumentToOperand(argument), m_codeBlock->argumentIsCaptured(argument))));
             m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
@@ -2463,7 +2479,7 @@ void ByteCodeParser::processPhiStack()
                 dataLog("      Did not find node, adding phi.\n");
 #endif
 
-                valueInPredecessor = insertPhiNode(OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))), predecessorBlock);
+                valueInPredecessor = insertPhiNode(OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo), false)), predecessorBlock);
                 var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
                     predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);
@@ -2580,6 +2596,7 @@ void ByteCodeParser::fixVariableAccessPredictions()
     for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
         VariableAccessData* data = &m_graph.m_variableAccessData[i];
         data->find()->predict(data->nonUnifiedPrediction());
+        data->find()->mergeIsCaptured(data->isCaptured());
     }
 }
 
@@ -2681,6 +2698,17 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.arguments.resize(codeBlock->numParameters()); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
+        
+        if (inlineCallFrame.caller.inlineCallFrame)
+            inlineCallFrame.capturedVars = inlineCallFrame.caller.inlineCallFrame->capturedVars;
+        else {
+            for (int i = byteCodeParser->m_codeBlock->m_numCapturedVars; i--;)
+                inlineCallFrame.capturedVars.set(i);
+        }
+        
+        for (int i = codeBlock->m_numCapturedVars; i--;)
+            inlineCallFrame.capturedVars.set(i + inlineCallFrameStart);
+        
         byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
         m_inlineCallFrame = &byteCodeParser->m_codeBlock->inlineCallFrames().last();
         

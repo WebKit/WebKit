@@ -1928,12 +1928,19 @@ void SpeculativeJIT::compile(Node& node)
         AbstractValue& value = block()->valuesAtHead.operand(node.local());
 
         // If we have no prediction for this local, then don't attempt to compile.
-        if (prediction == PredictNone || value.isClear()) {
+        if (prediction == PredictNone) {
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
             break;
         }
         
-        if (!m_jit.graph().isCaptured(node.local())) {
+        if (!node.variableAccessData()->isCaptured()) {
+            // If the CFA is tracking this variable and it found that the variable
+            // cannot have been assigned, then don't attempt to proceed.
+            if (value.isClear()) {
+                terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
+                break;
+            }
+            
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
                 FPRTemporary result(this);
                 m_jit.loadDouble(JITCompiler::addressFor(node.local()), result.fpr());
@@ -1965,7 +1972,7 @@ void SpeculativeJIT::compile(Node& node)
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
 
         DataFormat format;
-        if (m_jit.graph().isCaptured(node.local()))
+        if (node.variableAccessData()->isCaptured())
             format = DataFormatJS;
         else if (isCellPrediction(value.m_type))
             format = DataFormatJSCell;
@@ -2015,7 +2022,7 @@ void SpeculativeJIT::compile(Node& node)
         // OSR exit, would not be visible to the old JIT in any way.
         m_codeOriginForOSR = nextNode->codeOrigin;
         
-        if (!m_jit.graph().isCaptured(node.local())) {
+        if (!node.variableAccessData()->isCaptured()) {
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
                 SpeculateDoubleOperand value(this, node.child1());
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));

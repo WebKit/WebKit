@@ -1,5 +1,87 @@
 2012-05-08  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG variable capture analysis should work even if the variables arose through inlining
+        https://bugs.webkit.org/show_bug.cgi?id=85945
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r116555 from dfgopt.
+        
+        This just changes how the DFG queries whether a variable is captured. It does not
+        change any user-visible behavior.
+        
+        As part of this change, I further solidified the policy that the CFA behaves in an
+        undefined way for captured locals and queries about their values will not yield
+        reliable results. This will likely be changed in the future, but for now it makes
+        sense.
+        
+        One fun part about this change is that it recognizes that the same variable may
+        be both captured and not, at the same time, because their live interval spans
+        inlining boundaries. This only happens in the case of arguments to functions that
+        capture their arguments, and this change treats them with just the right touch of
+        conservatism: they will be treated as if captured by the caller as well as the 
+        callee.
+        
+        Finally, this also adds captured variable reasoning to the InlineCallFrame, which
+        I thought might be useful for later tooling.
+        
+        This is perf-neutral, since it does it does not make the DFG take advantage of this
+        new functionality in any way. In particular, it is still the case that the DFG will
+        not inline functions that use arguments reflectively or that create activations.
+
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::needsActivation):
+        (JSC::CodeBlock::argumentIsCaptured):
+        (JSC::CodeBlock::localIsCaptured):
+        (JSC::CodeBlock::isCaptured):
+        * bytecode/CodeOrigin.h:
+        (InlineCallFrame):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::merge):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::newVariableAccessData):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flushArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::fixVariableAccessPredictions):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::fixTailOperand):
+        * dfg/DFGCommon.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::nameOfVariableAccessData):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::needsActivation):
+        (JSC::DFG::Graph::usesArguments):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsCaptured):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::isCaptured):
+
+2012-05-08  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should support op_get_argument_by_val and op_get_arguments_length
         https://bugs.webkit.org/show_bug.cgi?id=85911
 

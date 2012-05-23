@@ -51,12 +51,13 @@ public:
         clearVotes();
     }
     
-    VariableAccessData(VirtualRegister local)
+    VariableAccessData(VirtualRegister local, bool isCaptured)
         : m_local(local)
         , m_prediction(PredictNone)
         , m_argumentAwarePrediction(PredictNone)
         , m_flags(0)
         , m_doubleFormatState(EmptyDoubleFormatState)
+        , m_isCaptured(isCaptured)
     {
         clearVotes();
     }
@@ -70,6 +71,20 @@ public:
     int operand()
     {
         return static_cast<int>(local());
+    }
+    
+    bool mergeIsCaptured(bool isCaptured)
+    {
+        bool newIsCaptured = m_isCaptured | isCaptured;
+        if (newIsCaptured == m_isCaptured)
+            return false;
+        m_isCaptured = newIsCaptured;
+        return true;
+    }
+    
+    bool isCaptured()
+    {
+        return m_isCaptured;
     }
     
     bool predict(PredictedType prediction)
@@ -220,6 +235,8 @@ private:
     
     float m_votes[2];
     DoubleFormatState m_doubleFormatState;
+    
+    bool m_isCaptured;
 };
 
 } } // namespace JSC::DFG

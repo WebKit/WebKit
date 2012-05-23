@@ -349,46 +349,12 @@ public:
     
     bool needsActivation() const
     {
-#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
-        return true;
-#else
         return m_codeBlock->needsFullScopeChain() && m_codeBlock->codeType() != GlobalCode;
-#endif
     }
     
     bool usesArguments() const
     {
-#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
-        return true;
-#else
         return m_codeBlock->usesArguments();
-#endif
-    }
-    
-    // Pass an argument index. Currently it's ignored, but that's somewhat
-    // of a bug.
-    bool argumentIsCaptured(int) const
-    {
-        return needsActivation() || usesArguments();
-    }
-    bool localIsCaptured(int operand) const
-    {
-#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
-        return operand < m_codeBlock->m_numVars;
-#else
-        return operand < m_codeBlock->m_numCapturedVars;
-#endif
-    }
-    
-    bool isCaptured(int operand) const
-    {
-        if (operandIsArgument(operand))
-            return argumentIsCaptured(operandToArgument(operand));
-        return localIsCaptured(operand);
-    }
-    bool isCaptured(VirtualRegister virtualRegister) const
-    {
-        return isCaptured(static_cast<int>(virtualRegister));
     }
     
     unsigned numSuccessors(BasicBlock* block)

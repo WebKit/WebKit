@@ -866,7 +866,7 @@ private:
             if (!variableAccessData->isRoot())
                 continue;
             if (operandIsArgument(variableAccessData->local())
-                || m_graph.isCaptured(variableAccessData->local()))
+                || variableAccessData->isCaptured())
                 continue;
             m_changed |= variableAccessData->tallyVotesForShouldUseDoubleFormat();
         }
@@ -877,7 +877,7 @@ private:
             if (!variableAccessData->isRoot())
                 continue;
             if (operandIsArgument(variableAccessData->local())
-                || m_graph.isCaptured(variableAccessData->local()))
+                || variableAccessData->isCaptured())
                 continue;
             m_changed |= variableAccessData->makePredictionForDoubleFormat();
         }

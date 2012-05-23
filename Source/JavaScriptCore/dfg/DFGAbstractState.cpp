@@ -111,7 +111,7 @@ void AbstractState::initialize(Graph& graph)
             continue;
         }
         
-        if (graph.argumentIsCaptured(i)) {
+        if (node.variableAccessData()->isCaptured()) {
             root->valuesAtHead.argument(i).makeTop();
             continue;
         }
@@ -147,7 +147,8 @@ void AbstractState::initialize(Graph& graph)
         root->valuesAtTail.argument(i).clear();
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        if (graph.localIsCaptured(i))
+        NodeIndex nodeIndex = root->variablesAtHead.local(i);
+        if (nodeIndex != NoNode && graph[nodeIndex].variableAccessData()->isCaptured())
             root->valuesAtHead.local(i).makeTop();
         else
             root->valuesAtHead.local(i).clear();
@@ -195,7 +196,8 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
             dataLog("        Merging state for argument %zu.\n", argument);
 #endif
             AbstractValue& destination = block->valuesAtTail.argument(argument);
-            if (m_graph.argumentIsCaptured(argument)) {
+            NodeIndex nodeIndex = block->variablesAtTail.argument(argument);
+            if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
                 if (!destination.isTop()) {
                     destination.makeTop();
                     changed = true;
@@ -209,7 +211,8 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
             dataLog("        Merging state for local %zu.\n", local);
 #endif
             AbstractValue& destination = block->valuesAtTail.local(local);
-            if (m_graph.localIsCaptured(local)) {
+            NodeIndex nodeIndex = block->variablesAtTail.local(local);
+            if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
                 if (!destination.isTop()) {
                     destination.makeTop();
                     changed = true;
@@ -255,7 +258,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case GetLocal: {
-        if (m_graph.isCaptured(node.local()))
+        if (node.variableAccessData()->isCaptured())
             forNode(nodeIndex).makeTop();
         else
             forNode(nodeIndex) = m_variables.operand(node.local());
@@ -263,7 +266,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
         
     case SetLocal: {
-        if (m_graph.isCaptured(node.local()))
+        if (node.variableAccessData()->isCaptured())
             break;
         
         if (node.variableAccessData()->shouldUseDoubleFormat()) {
@@ -1426,7 +1429,8 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     
     for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
         AbstractValue& destination = to->valuesAtHead.argument(argument);
-        if (m_graph.argumentIsCaptured(argument)) {
+        NodeIndex nodeIndex = from->variablesAtTail.argument(argument);
+        if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
             if (destination.isTop())
                 continue;
             destination.makeTop();
@@ -1438,7 +1442,8 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     
     for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
         AbstractValue& destination = to->valuesAtHead.local(local);
-        if (m_graph.localIsCaptured(local)) {
+        NodeIndex nodeIndex = from->variablesAtTail.local(local);
+        if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
             if (destination.isTop())
                 continue;
             destination.makeTop();

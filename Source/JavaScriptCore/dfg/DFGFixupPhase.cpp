@@ -218,7 +218,7 @@ private:
         }
             
         case SetLocal: {
-            if (m_graph.isCaptured(node.local()))
+            if (node.variableAccessData()->isCaptured())
                 break;
             if (!node.variableAccessData()->shouldUseDoubleFormat())
                 break;

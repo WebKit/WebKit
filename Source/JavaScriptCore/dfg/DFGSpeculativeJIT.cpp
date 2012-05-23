@@ -974,7 +974,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
         NodeIndex nodeIndex = block.variablesAtHead.argument(i);
-        if (nodeIndex == NoNode || m_jit.graph().argumentIsCaptured(i))
+        if (nodeIndex == NoNode || m_jit.codeBlock()->argumentIsCaptured(i))
             m_arguments[i] = ValueSource(ValueInRegisterFile);
         else
             m_arguments[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
@@ -986,10 +986,12 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_variables.size() == block.variablesAtHead.numberOfLocals());
     for (size_t i = 0; i < m_variables.size(); ++i) {
         NodeIndex nodeIndex = block.variablesAtHead.local(i);
-        if ((nodeIndex == NoNode || !at(nodeIndex).refCount()) && !m_jit.graph().localIsCaptured(i))
-            m_variables[i] = ValueSource(SourceIsDead);
-        else if (m_jit.graph().localIsCaptured(i))
+        // FIXME: Use the variable access data, not the first node in the block.
+        // https://bugs.webkit.org/show_bug.cgi?id=87205
+        if (m_jit.codeBlock()->localIsCaptured(at(block[0]).codeOrigin.inlineCallFrame, i))
             m_variables[i] = ValueSource(ValueInRegisterFile);
+        else if (nodeIndex == NoNode || !at(nodeIndex).refCount())
+            m_variables[i] = ValueSource(SourceIsDead);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
             m_variables[i] = ValueSource(DoubleInRegisterFile);
         else

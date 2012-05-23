@@ -449,6 +449,31 @@ namespace JSC {
             return m_activationRegister;
         }
         bool usesArguments() const { return m_argumentsRegister != -1; }
+        
+        bool needsActivation() const
+        {
+            return needsFullScopeChain() && codeType() != GlobalCode;
+        }
+        
+        bool argumentIsCaptured(int) const
+        {
+            return needsActivation() || usesArguments();
+        }
+        
+        bool localIsCaptured(InlineCallFrame* inlineCallFrame, int operand) const
+        {
+            if (!inlineCallFrame)
+                return operand < m_numCapturedVars;
+            
+            return inlineCallFrame->capturedVars.get(operand);
+        }
+        
+        bool isCaptured(InlineCallFrame* inlineCallFrame, int operand) const
+        {
+            if (operandIsArgument(operand))
+                return argumentIsCaptured(operandToArgument(operand));
+            return localIsCaptured(inlineCallFrame, operand);
+        }
 
         CodeType codeType() const { return m_codeType; }
 

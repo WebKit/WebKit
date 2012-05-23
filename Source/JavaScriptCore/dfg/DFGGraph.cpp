@@ -65,13 +65,18 @@ const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessDa
     if (!index)
         return "A";
 
-    static char buf[10];
+    static char buf[100];
     BoundsCheckedPointer<char> ptr(buf, sizeof(buf));
     
     while (index) {
         *ptr++ = 'A' + (index % 26);
         index /= 26;
     }
+    
+    if (variableAccessData->isCaptured())
+        *ptr++ = '*';
+    
+    ptr.strcat(predictionToAbbreviatedString(variableAccessData->prediction()));
     
     *ptr++ = 0;
     

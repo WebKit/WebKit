@@ -28,6 +28,7 @@
 
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
+#include <wtf/BitVector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -92,6 +93,7 @@ struct InlineCallFrame {
     WriteBarrier<ExecutableBase> executable;
     WriteBarrier<JSFunction> callee;
     CodeOrigin caller;
+    BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
     unsigned stackOffset : 31;
     bool isCall : 1;
 };

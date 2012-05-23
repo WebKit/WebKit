@@ -77,9 +77,6 @@
 #define DFG_ENABLE_SUCCESS_STATS 0
 // Enable verification that the DFG is able to insert code for control flow edges.
 #define DFG_ENABLE_EDGE_CODE_VERIFICATION 0
-// Pretend that all variables in the top-level code block got captured. Great
-// for testing code gen for activations.
-#define DFG_ENABLE_ALL_VARIABLES_CAPTURED 0
 
 namespace JSC { namespace DFG {
 
