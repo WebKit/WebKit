@@ -1,3 +1,18 @@
+2012-05-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: enable drag-an-drop from the navigator panel.
+        https://bugs.webkit.org/show_bug.cgi?id=87238
+
+        Reviewed by Vsevolod Vlasov.
+
+        Making tree item draggable.
+
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorSourceTreeElement.prototype.onattach):
+        (WebInspector.NavigatorSourceTreeElement.prototype._onmousedown.callback):
+        (WebInspector.NavigatorSourceTreeElement.prototype._onmousedown):
+        (WebInspector.NavigatorSourceTreeElement.prototype._ondragstart):
+
 2012-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit spends ~20% of time in HTMLTextAreaElement::defaultValue() when opening a review page

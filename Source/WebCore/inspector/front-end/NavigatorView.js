@@ -582,8 +582,33 @@ WebInspector.NavigatorSourceTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
+        this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("click", this._onclick.bind(this), false);
         this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
+        this.listItemElement.addEventListener("mousedown", this._onmousedown.bind(this), false);
+        this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+    },
+
+    _onmousedown: function(event)
+    {
+        if (event.which === 1) // Warm-up data for drag'n'drop
+            this._uiSourceCode.requestContent(callback.bind(this));
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function callback(content, contentEncoded, mimeType)
+        {
+            this._warmedUpContent = content;
+        }
+    },
+
+    _ondragstart: function(event)
+    {
+        event.dataTransfer.setData("text/plain", this._warmedUpContent);
+        event.dataTransfer.effectAllowed = "copy";
+        return true;
     },
 
     onspace: function()
