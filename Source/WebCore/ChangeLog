@@ -1,3 +1,18 @@
+2012-05-23  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        Use PluginDataNone.cpp always when NETSCAPE_PLUGIN_API is OFF
+        https://bugs.webkit.org/show_bug.cgi?id=87096
+
+        Reviewed by Andy Estes.
+
+        Fix a build error by adding an extra check in PluginData.cpp to use
+        PluginStrategy only when NETSCAPE_PLUGIN_API is ON.
+
+        No new tests. This is only a build fix.
+
+        * plugins/PluginData.cpp:
+        (WebCore):
+
 2012-05-23  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
 
         [wx] Fix scrollbar drawing under wxGTK.

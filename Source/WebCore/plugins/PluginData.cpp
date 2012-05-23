@@ -64,7 +64,7 @@ String PluginData::pluginNameForMimeType(const String& mimeType) const
     return String();
 }
 
-#if USE(PLATFORM_STRATEGIES)
+#if USE(PLATFORM_STRATEGIES) && ENABLE(NETSCAPE_PLUGIN_API)
 void PluginData::refresh()
 {
     platformStrategies()->pluginStrategy()->refreshPlugins();
