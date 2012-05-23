@@ -1,5 +1,13 @@
 2012-05-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip new, but failing tests.
+        * platform/qt/printing/iframe-print-expected.png: Added after r118039.
+        * platform/qt/printing/iframe-print-expected.txt: Added after r118039.
+
+2012-05-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, skip a failing test.
 
         * platform/qt/Skipped:
