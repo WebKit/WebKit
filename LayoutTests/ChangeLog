@@ -1,5 +1,11 @@
 2012-05-23  Emil A Eklund  <eae@chromium.org>
 
+        Unskip sub-pixel tests on chromium now that they flag has been turned on (in r 117815).
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-23  Emil A Eklund  <eae@chromium.org>
+
         Add test for subpixel precision in DOM APIs
         https://bugs.webkit.org/show_bug.cgi?id=85534
 

@@ -3645,11 +3645,6 @@ BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
-// Skip until SUBPIXEL_LAYOUT is enabled
-BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
-BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
-BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
-
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
 
 BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIMEOUT PASS
