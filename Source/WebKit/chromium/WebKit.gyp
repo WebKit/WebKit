@@ -317,7 +317,6 @@
                 'public/platform/WebLayer.h',
                 'public/platform/WebLayerTreeView.h',
                 'public/platform/WebLayerTreeViewClient.h',
-                'public/platform/WebLocalizedString.h',
                 'public/platform/WebNonCopyable.h',
                 'public/platform/WebPoint.h',
                 'public/platform/WebPrivateOwnPtr.h',

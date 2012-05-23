@@ -33,7 +33,6 @@
 
 #include "WebCommon.h"
 #include "WebGraphicsContext3D.h"
-#include "WebLocalizedString.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -118,14 +117,6 @@ public:
     // If refresh is true, then cached information should not be used to
     // satisfy this call.
     virtual void getPluginList(bool refresh, WebPluginListBuilder*) { }
-
-
-    // Resources -----------------------------------------------------------
-
-    // Returns a localized string resource (with substitution parameters).
-    virtual WebString queryLocalizedString(WebLocalizedString::Name) { return WebString(); }
-    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter) { return WebString(); }
-    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter1, const WebString& parameter2) { return WebString(); }
 
 
     // Shared Workers ------------------------------------------------------
