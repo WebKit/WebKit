@@ -353,7 +353,11 @@ def common_configure(conf):
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
             # wx settings
             global config
-            is_debug = (config == 'Debug')
+            is_debug = (config == 'Debug')            
+            # generate debug symbols even in release mode, as it helps debugging.
+            if not is_debug:
+                conf.env.append_value('CXXFLAGS', '/Zi')
+                conf.env.append_value('LINKFLAGS', '/debug')
             wxdefines, wxincludes, wxlibs, wxlibpaths = get_wxmsw_settings(wx_root, shared=True, unicode=True, debug=is_debug, wxPython=Options.options.wxpython)
             conf.env['CXXDEFINES_WX'] = wxdefines
             conf.env['CPPPATH_WX'] = wxincludes
