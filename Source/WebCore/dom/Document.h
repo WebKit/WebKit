@@ -1125,7 +1125,7 @@ public:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
     void webkitCancelAnimationFrame(int id);
-    void serviceScriptedAnimations(double monotonicAnimationStartTime);
+    void serviceScriptedAnimations(DOMTimeStamp);
 #endif
 
     virtual EventTarget* errorEventTarget();

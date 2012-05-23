@@ -1432,6 +1432,13 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     TRACE_EVENT("WebViewImpl::updateAnimations", this, 0);
 
+    WebFrameImpl* webframe = mainFrameImpl();
+    if (!webframe)
+        return;
+    FrameView* view = webframe->frameView();
+    if (!view)
+        return;
+
     // Create synthetic wheel events as necessary for fling.
     if (m_gestureAnimation) {
         if (m_gestureAnimation->animate(monotonicFrameBeginTime))
@@ -1439,9 +1446,6 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
         else
             m_gestureAnimation.clear();
     }
-
-    if (!m_page)
-        return;
 
     PageWidgetDelegate::animate(m_page.get(), monotonicFrameBeginTime);
 #endif

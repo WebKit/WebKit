@@ -29,7 +29,6 @@
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 
 #include "Document.h"
-#include "DocumentLoader.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "RequestAnimationFrameCallback.h"
@@ -52,7 +51,7 @@ ScriptedAnimationController::ScriptedAnimationController(Document* document, Pla
     , m_suspendCount(0)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_animationTimer(this, &ScriptedAnimationController::animationTimerFired)
-    , m_lastAnimationFrameTimeMonotonic(0)
+    , m_lastAnimationFrameTime(0)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_useTimer(false)
 #endif
@@ -107,12 +106,10 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     }
 }
 
-void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTimeNow)
+void ScriptedAnimationController::serviceScriptedAnimations(DOMTimeStamp time)
 {
     if (!m_callbacks.size() || m_suspendCount)
         return;
-
-    double highResNowMs = 1000.0 * m_document->loader()->timing()->convertMonotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.
@@ -127,7 +124,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
         if (!callback->m_firedOrCancelled) {
             callback->m_firedOrCancelled = true;
             InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(m_document, callback->m_id);
-            callback->handleEvent(highResNowMs);
+            callback->handleEvent(time);
             InspectorInstrumentation::didFireAnimationFrame(cookie);
         }
     }
@@ -143,14 +140,14 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
     if (m_callbacks.size())
         scheduleAnimation();
 }
-
+    
 void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displayID)
 {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
 #else
     UNUSED_PARAM(displayID);
-#endif
+#endif    
 }
 
 void ScriptedAnimationController::scheduleAnimation()
@@ -163,14 +160,14 @@ void ScriptedAnimationController::scheduleAnimation()
     if (!m_useTimer) {
         if (DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this))
             return;
-
+            
         m_useTimer = true;
     }
 #endif
     if (m_animationTimer.isActive())
         return;
-
-    double scheduleDelay = max<double>(MinimumAnimationInterval - (monotonicallyIncreasingTime() - m_lastAnimationFrameTimeMonotonic), 0);
+        
+    double scheduleDelay = max<double>(MinimumAnimationInterval - (currentTime() - m_lastAnimationFrameTime), 0);
     m_animationTimer.startOneShot(scheduleDelay);
 #else
     if (FrameView* frameView = m_document->view())
@@ -181,19 +178,12 @@ void ScriptedAnimationController::scheduleAnimation()
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 void ScriptedAnimationController::animationTimerFired(Timer<ScriptedAnimationController>*)
 {
-    m_lastAnimationFrameTimeMonotonic = monotonicallyIncreasingTime();
-    serviceScriptedAnimations(m_lastAnimationFrameTimeMonotonic);
-}
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void ScriptedAnimationController::displayRefreshFired(double monotonicTimeNow)
-{
-    serviceScriptedAnimations(monotonicTimeNow);
+    m_lastAnimationFrameTime = currentTime();
+    serviceScriptedAnimations(convertSecondsToDOMTimeStamp(m_lastAnimationFrameTime));
 }
 #endif
-#endif
-
-
 
 }
 
 #endif
+

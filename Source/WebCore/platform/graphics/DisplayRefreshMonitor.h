@@ -113,7 +113,7 @@ private:
     void notifyClients();
     static void refreshDisplayOnMainThread(void* data);
 
-    double m_monotonicAnimationStartTime;
+    double m_timestamp;
     bool m_active;
     bool m_scheduled;
     bool m_previousFrameDone;

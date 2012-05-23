@@ -112,7 +112,7 @@ public:
     bool needsFullRepaint() const { return m_doFullRepaint; }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    void serviceScriptedAnimations(double monotonicAnimationStartTime);
+    void serviceScriptedAnimations(DOMTimeStamp);
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
