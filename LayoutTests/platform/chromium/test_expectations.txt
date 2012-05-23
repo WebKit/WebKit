@@ -3025,6 +3025,7 @@ BUGWK87258 : media/track/track-cues-seeking.html = CRASH PASS
 BUGWK87258 : media/track/track-cues-sorted-before-dispatch.html = CRASH PASS
 BUGWK87258 : media/track/track-prefer-captions.html = CRASH PASS
 BUGWK87258 : media/video-source-none-supported.html = CRASH PASS
+BUGWK87258 : media/video-src-invalid-remove.html = CRASH PASS
 BUGWK87258 : media/video-timeupdate-during-playback.html = CRASH PASS
 
 BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
