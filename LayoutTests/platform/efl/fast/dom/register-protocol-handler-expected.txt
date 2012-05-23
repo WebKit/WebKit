@@ -1,0 +1,20 @@
+This test makes sure that navigator.registerProtocolHandler throws the proper exceptions and has no-op default implementation.
+
+Pass: window.navigator.registerProtocolHandler is defined.
+Pass: Invalid protocol "http" threw SECURITY_ERR exception.
+Pass: Invalid protocol "https" threw SECURITY_ERR exception.
+Pass: Invalid protocol "file" threw SECURITY_ERR exception.
+Pass: Valid protocol "irc" allowed.
+Pass: Valid protocol "mailto" allowed.
+Pass: Valid protocol "mms" allowed.
+Pass: Valid protocol "news" allowed.
+Pass: Valid protocol "nntp" allowed.
+Pass: Valid protocol "sms" allowed.
+Pass: Valid protocol "smsto" allowed.
+Pass: Valid protocol "tel" allowed.
+Pass: Valid protocol "urn" allowed.
+Pass: Valid protocol "webcal" allowed.
+Pass: Invalid url "" threw SYNTAX_ERR exception.
+Pass: Invalid url "%S" threw SYNTAX_ERR exception.
+Pass: Valid call succeeded.
+

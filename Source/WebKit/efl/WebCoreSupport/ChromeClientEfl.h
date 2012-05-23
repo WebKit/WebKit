@@ -179,6 +179,10 @@ public:
     virtual void numWheelEventHandlersChanged(unsigned) { }
     virtual void numTouchEventHandlersChanged(unsigned) { }
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
+#endif
+
     Evas_Object* m_view;
     KURL m_hoveredLinkURL;
 };

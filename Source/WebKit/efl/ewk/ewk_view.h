@@ -70,6 +70,7 @@
  *  - "menubar,visible,set", Eina_Bool: sets menubar visibility.
  *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
+ *  - "protocolhandler,registration,requested", Ewk_Custom_Handler_Data: add a handler url for the given protocol.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "ready", void: page is fully loaded.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
@@ -307,6 +308,17 @@ struct _Ewk_Color {
     unsigned char g; /**< Green channel. */
     unsigned char b; /**< Blue channel. */
     unsigned char a; /**< Alpha channel. */
+};
+
+/// Creates a type name for @a _Ewk_Custom_Handler_Data.
+typedef struct _Ewk_Custom_Handler_Data Ewk_Custom_Handler_Data;
+/// Contains the target scheme and the url which take care of the target.
+struct _Ewk_Custom_Handler_Data {
+    Evas_Object *ewkView; /**< Reference to the view object. */
+    const char *scheme; /**< Reference to the scheme that will be handled. (eg. "application/x-soup") */
+    const char *base_url; /**< Reference to the resolved url if the url is relative url. (eg. "https://www.example.com/") */
+    const char *url; /**< Reference to the url which will handle the given protocol. (eg. "soup?url=%s") */
+    const char *title; /**< Reference to the descriptive title of the handler. (eg. "SoupWeb") */
 };
 
 /**

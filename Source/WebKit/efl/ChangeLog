@@ -1,3 +1,27 @@
+2012-05-22  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implements the registerProtocolHandler method and option.
+        https://bugs.webkit.org/show_bug.cgi?id=73638
+
+        Reviewed by Andreas Kling.
+
+        The registerProtocolHandler() method allows Web sites to register themselves
+        as possible handlers for particular schemes.
+
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registerprotocolhandler
+
+        * WebCoreSupport/ChromeClientEfl.cpp: Adds a new function.
+        (WebCore):
+        (WebCore::customHandlersDataCreate): Creates and fills the data object.
+        (WebCore::customHandlersDataDelete): Deletes the data object.
+        (WebCore::ChromeClientEfl::registerProtocolHandler): Registers a protocol and the handler of it.
+        * WebCoreSupport/ChromeClientEfl.h: Adds a prototype.
+        (ChromeClientEfl):
+        * ewk/ewk_custom_handlers.cpp: Added.
+        (ewk_custom_handlers_register_protocol_handler):
+        * ewk/ewk_view.h: Adds Data structure.
+        * ewk/ewk_view_private.h: Adds private function.
+
 2012-05-22  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement touch event

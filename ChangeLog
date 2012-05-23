@@ -1,3 +1,18 @@
+2012-05-22  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implements the registerProtocolHandler method and option.
+        https://bugs.webkit.org/show_bug.cgi?id=73638
+
+        Reviewed by Andreas Kling.
+
+        The registerProtocolHandler() method allows Web sites to register themselves
+        as possible handlers for particular schemes.
+
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registerprotocolhandler
+
+        * Source/cmake/OptionsEfl.cmake: Adds the build option.
+        * Source/cmakeconfig.h.cmake: Adds the build option.
+
 2012-05-22  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement touch event

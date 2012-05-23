@@ -149,6 +149,10 @@ bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_N
 WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
 #endif
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data);
+#endif
+
 namespace EWKPrivate {
 WebCore::Page *corePage(const Evas_Object *ewkView);
 PlatformPageClient corePageClient(Evas_Object* ewkView);

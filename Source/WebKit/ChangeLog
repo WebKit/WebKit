@@ -1,3 +1,17 @@
+2012-05-22  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implements the registerProtocolHandler method and option.
+        https://bugs.webkit.org/show_bug.cgi?id=73638
+
+        Reviewed by Andreas Kling.
+
+        The registerProtocolHandler() method allows Web sites to register themselves
+        as possible handlers for particular schemes.
+
+        http://dev.w3.org/html5/spec/Overview.html#dom-navigator-registerprotocolhandler
+
+        * PlatformEfl.cmake: Adds the new file into the source list.
+
 2012-05-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Minor style fixes in web intents code are needed
