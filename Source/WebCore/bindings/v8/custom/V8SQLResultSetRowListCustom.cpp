@@ -67,7 +67,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
                 value = v8String(sqlValue.string());
                 break;
             case SQLValue::NullValue:
-                value = v8::Null();
+                value = v8::Null(args.GetIsolate());
                 break;
             case SQLValue::NumberValue:
                 value = v8::Number::New(sqlValue.number());

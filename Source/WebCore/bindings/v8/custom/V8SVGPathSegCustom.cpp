@@ -60,7 +60,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(SVGPathSeg* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     switch (impl->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
         return toV8(static_cast<SVGPathSegClosePath*>(impl), isolate);

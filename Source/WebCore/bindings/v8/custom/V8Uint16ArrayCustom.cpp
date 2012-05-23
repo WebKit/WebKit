@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8Uint16Array::setCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> toV8(Uint16Array* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Handle<v8::Object> wrapper = V8Uint16Array::wrap(impl, isolate);
     if (!wrapper.IsEmpty())
         wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalUnsignedShortArray, impl->length());

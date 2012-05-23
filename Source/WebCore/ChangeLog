@@ -1,5 +1,79 @@
 2012-05-23  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Pass Isolate to v8::Null() in custom bindings (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=87209
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        This patch passes Isolate to v8::Null() in custom bindings.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::stateAccessorGetter):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ImageDataCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        (WebCore::toV8Slow):
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        (WebCore::V8PopStateEvent::stateAccessorGetter):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8SVGElementCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8SVGPathSegCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ScriptProfileCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ScriptProfileNodeCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8StyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8TrackEventCustom.cpp:
+        (WebCore::V8TrackEvent::trackAccessorGetter):
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Uint8ClampedArrayCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        (WebCore::V8WebGLRenderingContext::getSupportedExtensionsCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::toV8):
+
+2012-05-23  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Pass Isolate to v8::Null() in custom bindings (Part 1)
         https://bugs.webkit.org/show_bug.cgi?id=87207
 

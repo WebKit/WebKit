@@ -41,7 +41,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(IDBKey* key, v8::Isolate* isolate)
 {
     if (!key)
-        return v8::Null();
+        return v8::Null(isolate);
 
     switch (key->type()) {
     case IDBKey::InvalidType:

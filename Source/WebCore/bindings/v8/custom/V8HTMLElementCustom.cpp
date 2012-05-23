@@ -44,7 +44,7 @@ namespace WebCore {
 static v8::Handle<v8::Value> toV8Object(MicroDataItemValue* itemValue, v8::Isolate* isolate)
 {
     if (!itemValue)
-        return v8::Null();
+        return v8::Null(isolate);
 
     if (itemValue->isNode())
         return toV8(itemValue->getNode(), isolate);
@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> toV8Object(MicroDataItemValue* itemValue, v8::Isola
 v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     return createV8HTMLWrapper(impl, isolate, forceNewObject);
 }
 

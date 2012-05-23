@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8ScriptProfileNode::callUIDAccessorGetter(v8::Local<v8::S
 v8::Handle<v8::Value> toV8(ScriptProfileNode* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Local<v8::Function> function = V8ScriptProfileNode::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.

@@ -44,7 +44,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(ScriptProfile* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Local<v8::Function> function = V8ScriptProfile::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.

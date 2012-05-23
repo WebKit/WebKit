@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8TrackEvent::trackAccessorGetter(v8::Local<v8::String> na
     TrackBase* track = trackEvent->track();
     
     if (!track)
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
 
     switch (track->type()) {
     case TrackBase::BaseTrack:
@@ -67,7 +67,7 @@ v8::Handle<v8::Value> V8TrackEvent::trackAccessorGetter(v8::Local<v8::String> na
         break;
     }
 
-    return v8::Null();
+    return v8::Null(info.GetIsolate());
 }
 
 } // namespace WebCore

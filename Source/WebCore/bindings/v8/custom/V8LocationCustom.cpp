@@ -275,7 +275,7 @@ bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Va
 v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)
 {
     if (!impl)
-        return v8::Null();
+        return v8::Null(isolate);
     v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
     if (wrapper.IsEmpty()) {
         wrapper = V8Location::wrap(impl, isolate);
