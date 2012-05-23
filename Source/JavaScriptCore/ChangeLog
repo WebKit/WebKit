@@ -1,3 +1,38 @@
+2012-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored WeakBlock to use malloc, clarify behavior
+        https://bugs.webkit.org/show_bug.cgi?id=87318
+
+        Reviewed by Filip Pizlo.
+
+        We want to use malloc so we can make these smaller than 4KB,
+        since an individual MarkedBlock will usually have fewer than
+        4KB worth of weak pointers.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots): Renamed visitLiveWeakImpls to visit, since
+        we no longer need to distinguish from "visitDeadWeakImpls".
+
+        Renamed "visitDeadWeakImpls" to "reap" because we're not actually
+        doing any visiting -- we're just tagging things as dead.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::destroy):
+        (JSC::WeakBlock::WeakBlock): Malloc!
+
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap): Renamed as above.
+
+        * heap/WeakBlock.h:
+        (WeakBlock): Reduced to 3KB, as explained above.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::visit):
+        (JSC::WeakSet::reap):
+        * heap/WeakSet.h:
+        (WeakSet): Updated for renames, and to match WebKit style.
+
 2012-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         Use after free in JSC::DFG::ByteCodeParser::processPhiStack

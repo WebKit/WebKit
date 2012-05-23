@@ -36,19 +36,16 @@ namespace JSC {
 
 WeakBlock* WeakBlock::create()
 {
-    PageAllocation allocation = PageAllocation::allocate(blockSize, OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation))
-        CRASH();
-    return new (NotNull, allocation.base()) WeakBlock(allocation);
+    void* allocation = fastMalloc(blockSize);
+    return new (NotNull, allocation) WeakBlock;
 }
 
 void WeakBlock::destroy(WeakBlock* block)
 {
-    block->m_allocation.deallocate();
+    fastFree(block);
 }
 
-WeakBlock::WeakBlock(PageAllocation& allocation)
-    : m_allocation(allocation)
+WeakBlock::WeakBlock()
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
@@ -90,7 +87,7 @@ void WeakBlock::sweep()
     ASSERT(!m_sweepResult.isNull());
 }
 
-void WeakBlock::visitLiveWeakImpls(HeapRootVisitor& heapRootVisitor)
+void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
 {
     // If a block is completely empty, a visit won't have any effect.
     if (isEmpty())
@@ -118,9 +115,9 @@ void WeakBlock::visitLiveWeakImpls(HeapRootVisitor& heapRootVisitor)
     }
 }
 
-void WeakBlock::visitDeadWeakImpls(HeapRootVisitor&)
+void WeakBlock::reap()
 {
-    // If a block is completely empty, a visit won't have any effect.
+    // If a block is completely empty, a reaping won't have any effect.
     if (isEmpty())
         return;
 

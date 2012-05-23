@@ -561,7 +561,7 @@ void Heap::markRoots(bool fullGC)
     {
         GCPHASE(VisitingLiveWeakHandles);
         while (true) {
-            m_weakSet.visitLiveWeakImpls(heapRootVisitor);
+            m_weakSet.visit(heapRootVisitor);
             harvestWeakReferences();
             if (visitor.isEmpty())
                 break;
@@ -576,8 +576,8 @@ void Heap::markRoots(bool fullGC)
     }
 
     {
-        GCPHASE(VisitingDeadWeakHandles);
-        m_weakSet.visitDeadWeakImpls(heapRootVisitor);
+        GCPHASE(ReapingWeakHandles);
+        m_weakSet.reap();
     }
 
     GCCOUNTER(VisitedValueCount, visitor.visitCount());

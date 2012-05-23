@@ -46,16 +46,16 @@ void WeakSet::lastChanceToFinalize()
         block->lastChanceToFinalize();
 }
 
-void WeakSet::visitLiveWeakImpls(HeapRootVisitor& visitor)
+void WeakSet::visit(HeapRootVisitor& visitor)
 {
     for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->visitLiveWeakImpls(visitor);
+        block->visit(visitor);
 }
 
-void WeakSet::visitDeadWeakImpls(HeapRootVisitor& visitor)
+void WeakSet::reap()
 {
     for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->visitDeadWeakImpls(visitor);
+        block->reap();
 }
 
 void WeakSet::sweep()

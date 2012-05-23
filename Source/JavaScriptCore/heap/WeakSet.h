@@ -35,15 +35,15 @@ class WeakImpl;
 
 class WeakSet {
 public:
-    WeakSet(Heap*);
-    void lastChanceToFinalize();
-    ~WeakSet();
-
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    void visitLiveWeakImpls(HeapRootVisitor&);
-    void visitDeadWeakImpls(HeapRootVisitor&);
+    WeakSet(Heap*);
+    ~WeakSet();
+    void lastChanceToFinalize();
+
+    void visit(HeapRootVisitor&);
+    void reap();
 
     void sweep();
     void resetAllocator();
