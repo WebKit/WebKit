@@ -1,3 +1,19 @@
+2012-05-23  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] UI thread unnecessarily blocks on WebKit thread when servicing requestAnimationFrames
+        https://bugs.webkit.org/show_bug.cgi?id=87289
+
+        Reviewed by Antonio Gomes.
+
+        requestAnimationFrame already covered by tests in LayoutTests/fast/animation.
+
+        If UI thread cannot acquire DisplayRefreshMonitor mutex immediately,
+        avoid blocking on the mutex, it can trigger the frame change on the next
+        animation tick instead.
+
+        * platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+
 2012-05-23  Alec Flett  <alecflett@chromium.org>
 
         Implement DOM4 DOMError
