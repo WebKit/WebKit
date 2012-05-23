@@ -1068,6 +1068,25 @@ bool AbstractState::execute(unsigned indexInBlock)
         // Does nothing that is user-visible.
         break;
         
+    case GetMyArgumentsLength:
+        // This potentially clobbers all structures if the arguments object had a getter
+        // installed on the length property.
+        clobberStructures(indexInBlock);
+        // We currently make no guarantee about what this returns because it does not
+        // speculate that the length property is actually a length.
+        forNode(nodeIndex).makeTop();
+        break;
+        
+    case GetMyArgumentByVal:
+        // This potentially clobbers all structures if the property we're accessing has
+        // a getter. We don't speculate against this.
+        clobberStructures(indexInBlock);
+        // But we do speculate that the index is an integer.
+        forNode(node.child1()).filter(PredictInt32);
+        // And the result is unknown.
+        forNode(nodeIndex).makeTop();
+        break;
+        
     case NewFunction:
     case NewFunctionExpression:
     case NewFunctionNoCheck:

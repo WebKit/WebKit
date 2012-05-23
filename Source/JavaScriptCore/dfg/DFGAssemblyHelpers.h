@@ -134,15 +134,27 @@ public:
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register));
     }
+    static Address addressFor(int operand)
+    {
+        return addressFor(static_cast<VirtualRegister>(operand));
+    }
 
     static Address tagFor(VirtualRegister virtualRegister)
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
+    static Address tagFor(int operand)
+    {
+        return tagFor(static_cast<VirtualRegister>(operand));
+    }
 
     static Address payloadFor(VirtualRegister virtualRegister)
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    }
+    static Address payloadFor(int operand)
+    {
+        return payloadFor(static_cast<VirtualRegister>(operand));
     }
 
     Jump branchIfNotObject(GPRReg structureReg)

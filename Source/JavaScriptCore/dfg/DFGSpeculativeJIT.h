@@ -1211,6 +1211,11 @@ public:
     // machine registers, and delegate the calling convention specific
     // decision as to how to fill the regsiters to setupArguments* methods.
 #if USE(JSVALUE64)
+    JITCompiler::Call callOperation(J_DFGOperation_E operation, GPRReg result)
+    {
+        m_jit.setupArgumentsExecState();
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg result, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
@@ -1269,6 +1274,11 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EZ operation, GPRReg result, GPRReg arg1)
     {
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
@@ -1431,6 +1441,11 @@ public:
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
+    JITCompiler::Call callOperation(J_DFGOperation_E operation, GPRReg resultTag, GPRReg resultPayload)
+    {
+        m_jit.setupArgumentsExecState();
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
@@ -1504,6 +1519,11 @@ public:
     JITCompiler::Call callOperation(J_DFGOperation_EJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload)
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag);
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EZ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(C_DFGOperation_E operation, GPRReg result)
@@ -1651,6 +1671,12 @@ public:
 
 #undef EABI_32BIT_DUMMY_ARG
     
+    template<typename FunctionType>
+    JITCompiler::Call callOperation(
+        FunctionType operation, JSValueRegs result)
+    {
+        return callOperation(operation, result.tagGPR(), result.payloadGPR());
+    }
     template<typename FunctionType, typename ArgumentType1>
     JITCompiler::Call callOperation(
         FunctionType operation, JSValueRegs result, ArgumentType1 arg1)
@@ -1998,8 +2024,10 @@ public:
     
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
+
     void compileGetByValOnArguments(Node&);
     void compileGetArgumentsLength(Node&);
+    
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
     void compileDoubleAsInt32(Node&);

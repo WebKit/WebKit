@@ -167,6 +167,8 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_tear_off_arguments:
     case op_new_func:
     case op_new_func_exp:
+    case op_get_argument_by_val:
+    case op_get_arguments_length:
         return true;
         
     default:
@@ -202,6 +204,8 @@ inline bool canInlineOpcode(OpcodeID opcodeID)
     case op_new_func_exp:
     case op_create_arguments:
     case op_tear_off_arguments:
+    case op_get_argument_by_val:
+    case op_get_arguments_length:
         return false;
         
     default:

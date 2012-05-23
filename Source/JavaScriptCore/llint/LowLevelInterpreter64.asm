@@ -1058,8 +1058,10 @@ _llint_op_get_argument_by_val:
     negi t2
     sxi2p t2, t2
     loadis 8[PB, PC, 8], t3
+    loadp 32[PB, PC, 8], t1
     loadp ThisArgumentOffset[cfr, t2, 8], t0
     storep t0, [cfr, t3, 8]
+    valueProfile(t0, t1)
     dispatch(5)
 
 .opGetArgumentByValSlow:

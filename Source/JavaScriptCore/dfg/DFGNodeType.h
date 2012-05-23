@@ -195,6 +195,8 @@ namespace JSC { namespace DFG {
     /* sense. */\
     macro(CreateArguments, NodeResultJS) \
     macro(TearOffArguments, NodeMustGenerate) \
+    macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for creating functions. */\
     macro(NewFunctionNoCheck, NodeResultJS) \

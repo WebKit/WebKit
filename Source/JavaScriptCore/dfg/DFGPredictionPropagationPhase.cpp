@@ -437,6 +437,17 @@ private:
             break;
         }
             
+        case GetMyArgumentByVal: {
+            changed |= mergePrediction(node.getHeapPrediction());
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            break;
+        }
+            
+        case GetMyArgumentsLength: {
+            changed |= setPrediction(PredictInt32);
+            break;
+        }
+            
         case GetPropertyStorage: 
         case GetIndexedPropertyStorage: {
             changed |= setPrediction(PredictOther);

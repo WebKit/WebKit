@@ -3808,6 +3808,80 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case GetMyArgumentsLength: {
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
+        
+        JITCompiler::Jump created = m_jit.branch32(
+            JITCompiler::NotEqual,
+            JITCompiler::tagFor(m_jit.codeBlock()->argumentsRegister()),
+            TrustedImm32(JSValue::EmptyValueTag));
+        
+        m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultPayloadGPR);
+        m_jit.sub32(TrustedImm32(1), resultPayloadGPR);
+        m_jit.move(TrustedImm32(JSValue::Int32Tag), resultTagGPR);
+        
+        // FIXME: the slow path generator should perform a forward speculation that the
+        // result is an integer. For now we postpone the speculation by having this return
+        // a JSValue.
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                created, this, operationGetArgumentsLength,
+                JSValueRegs(resultTagGPR, resultPayloadGPR)));
+        
+        jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
+        break;
+    }
+        
+    case GetMyArgumentByVal: {
+        SpeculateStrictInt32Operand index(this, node.child1());
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
+        GPRReg indexGPR = index.gpr();
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
+        
+        JITCompiler::JumpList slowPath;
+        slowPath.append(
+            m_jit.branch32(
+                JITCompiler::NotEqual,
+                JITCompiler::tagFor(m_jit.codeBlock()->argumentsRegister()),
+                TrustedImm32(JSValue::EmptyValueTag)));
+        
+        m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
+        slowPath.append(
+            m_jit.branch32(
+                JITCompiler::AboveOrEqual,
+                resultPayloadGPR,
+                JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        
+        m_jit.neg32(resultPayloadGPR);
+        
+        m_jit.load32(
+            JITCompiler::BaseIndex(
+                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register) +
+                OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+            resultTagGPR);
+        m_jit.load32(
+            JITCompiler::BaseIndex(
+                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register) +
+                OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+            resultPayloadGPR);
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                slowPath, this, operationGetArgumentByVal,
+                JSValueRegs(resultTagGPR, resultPayloadGPR), indexGPR));
+        
+        jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
+        break;
+    }
+        
     case NewFunctionNoCheck:
         compileNewFunctionNoCheck(node);
         break;

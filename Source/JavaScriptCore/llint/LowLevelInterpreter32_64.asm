@@ -1214,8 +1214,10 @@ _llint_op_get_argument_by_val:
     loadi 4[PC], t3
     loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
     loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t1
+    loadi 16[PC], t2
     storei t0, TagOffset[cfr, t3, 8]
     storei t1, PayloadOffset[cfr, t3, 8]
+    valueProfile(t0, t1, t2)
     dispatch(5)
 
 .opGetArgumentByValSlow:

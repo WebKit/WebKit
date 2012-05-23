@@ -3821,6 +3821,65 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case GetMyArgumentsLength: {
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        JITCompiler::Jump created = m_jit.branchTestPtr(
+            JITCompiler::NonZero, JITCompiler::addressFor(m_jit.codeBlock()->argumentsRegister()));
+        
+        m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
+        m_jit.sub32(TrustedImm32(1), resultGPR);
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        
+        // FIXME: the slow path generator should perform a forward speculation that the
+        // result is an integer. For now we postpone the speculation by having this return
+        // a JSValue.
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                created, this, operationGetArgumentsLength, resultGPR));
+        
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case GetMyArgumentByVal: {
+        SpeculateStrictInt32Operand index(this, node.child1());
+        GPRTemporary result(this);
+        GPRReg indexGPR = index.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        JITCompiler::JumpList slowPath;
+        slowPath.append(
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::addressFor(m_jit.codeBlock()->argumentsRegister())));
+        
+        m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
+        slowPath.append(
+            m_jit.branch32(
+                JITCompiler::AboveOrEqual,
+                resultGPR,
+                JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+        
+        m_jit.neg32(resultGPR);
+        m_jit.signExtend32ToPtr(resultGPR, resultGPR);
+        
+        m_jit.loadPtr(
+            JITCompiler::BaseIndex(
+                GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight,
+                CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register)),
+            resultGPR);
+        
+        addSlowPathGenerator(
+            slowPathCall(
+                slowPath, this, operationGetArgumentByVal, resultGPR, indexGPR));
+        
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
     case NewFunctionNoCheck:
         compileNewFunctionNoCheck(node);
         break;

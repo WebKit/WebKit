@@ -1066,6 +1066,20 @@ void DFG_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsC
     asArguments(argumentsCell)->tearOff(exec);
 }
 
+EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec)
+{
+    Identifier ident(&exec->globalData(), "length");
+    JSValue baseValue = exec->uncheckedR(exec->codeBlock()->argumentsRegister()).jsValue();
+    PropertySlot slot(baseValue);
+    return JSValue::encode(baseValue.get(exec, ident, slot));
+}
+
+EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t index)
+{
+    return JSValue::encode(
+        exec->uncheckedR(exec->codeBlock()->argumentsRegister()).jsValue().get(exec, index));
+}
+
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));

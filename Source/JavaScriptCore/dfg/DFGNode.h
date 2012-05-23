@@ -512,6 +512,7 @@ struct Node {
         case GetById:
         case GetByIdFlush:
         case GetByVal:
+        case GetMyArgumentByVal:
         case Call:
         case Construct:
         case GetByOffset:

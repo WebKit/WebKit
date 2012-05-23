@@ -2387,6 +2387,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_tear_off_arguments);
         }
             
+        case op_get_arguments_length: {
+            set(currentInstruction[1].u.operand, addToGraph(GetMyArgumentsLength));
+            NEXT_OPCODE(op_get_arguments_length);
+        }
+            
+        case op_get_argument_by_val: {
+            set(currentInstruction[1].u.operand,
+                addToGraph(
+                    GetMyArgumentByVal, OpInfo(0), OpInfo(getPrediction()),
+                    get(currentInstruction[3].u.operand)));
+            NEXT_OPCODE(op_get_argument_by_val);
+        }
+            
         case op_new_func: {
             if (!currentInstruction[3].u.operand) {
                 set(currentInstruction[1].u.operand,

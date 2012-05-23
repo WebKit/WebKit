@@ -1,3 +1,51 @@
+2012-05-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support op_get_argument_by_val and op_get_arguments_length
+        https://bugs.webkit.org/show_bug.cgi?id=85911
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r116467 from dfgopt.
+        
+        This adds a simple and relatively conservative implementation of op_get_argument_by_val
+        and op_get_arguments_length. We can optimize these later. For now it's great to have
+        the additional coverage.
+        
+        This patch appears to be perf-neutral.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::addressFor):
+        (JSC::DFG::AssemblyHelpers::tagFor):
+        (JSC::DFG::AssemblyHelpers::payloadFor):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-05-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support op_tear_off_arguments
