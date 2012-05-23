@@ -229,7 +229,7 @@ layer at (130,84) size 300x150
         RenderBody {BODY} at (8,16) size 284x0
           RenderBlock {P} at (0,0) size 284x0
 layer at (17,18) size 80x36
-  RenderBlock (positioned) {A} at (17,18) size 80x36 [color=#FFFFFF]
+  RenderBlock (positioned) {A} at (17,18) size 80x36 [color=#FF0000]
     RenderText {#text} at (0,0) size 71x36
       text run at (0,0) width 67: "YOU SHOULD"
       text run at (0,12) width 71: "NOT SEE THIS"
