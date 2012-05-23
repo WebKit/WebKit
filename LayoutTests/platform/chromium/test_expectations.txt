@@ -3025,6 +3025,7 @@ BUGWK87258 : media/track/track-cues-sorted-before-dispatch.html = CRASH PASS
 BUGWK87258 : media/track/track-language-preference.html = CRASH PASS
 BUGWK87258 : media/track/track-load-from-element-readyState.html = CRASH PASS
 BUGWK87258 : media/track/track-prefer-captions.html = CRASH PASS
+BUGWK87258 : media/track/track-text-track-destructor-crash.html = CRASH PASS
 BUGWK87258 : media/track/track-webvtt-tc019-cue-size.html = CRASH PASS
 BUGWK87258 : media/video-source-none-supported.html = CRASH PASS
 BUGWK87258 : media/video-src-invalid-remove.html = CRASH PASS

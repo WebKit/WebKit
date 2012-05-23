@@ -1,3 +1,9 @@
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed gardening - one more media/track test is crashy.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-22  Jer Noble  <jer.noble@apple.com>
 
         PlatformClockCM has uninitialized m_rate member.
