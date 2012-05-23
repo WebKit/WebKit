@@ -37,8 +37,6 @@ class SharedFontFamily;
 class FontFamily {
 public:
     FontFamily() { }
-    FontFamily(const FontFamily&);    
-    FontFamily& operator=(const FontFamily&);
 
     void setFamily(const AtomicString& family) { m_family = family; }
     const AtomicString& family() const { return m_family; }

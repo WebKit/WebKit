@@ -28,19 +28,6 @@
 
 namespace WebCore {
 
-FontFamily::FontFamily(const FontFamily& other)
-    : m_family(other.m_family)
-    , m_next(other.m_next)
-{
-}
-
-FontFamily& FontFamily::operator=(const FontFamily& other)
-{
-    m_family = other.m_family;
-    m_next = other.m_next;
-    return *this;
-}
-
 bool operator==(const FontFamily& a, const FontFamily& b)
 {
     if (a.family() != b.family())

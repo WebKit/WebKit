@@ -1,5 +1,14 @@
 2012-05-23  Andreas Kling  <kling@webkit.org>
 
+        Let the compiler generate FontFamily's copy ctor and assignment operator.
+
+        Blindly rubberstamped by the brave Antti Koivisto.
+
+        * platform/graphics/FontFamily.cpp:
+        * platform/graphics/FontFamily.h:
+
+2012-05-23  Andreas Kling  <kling@webkit.org>
+
         CSSParser: Simplify StylePropertySet creation.
         <http://webkit.org/b/87259>
 
