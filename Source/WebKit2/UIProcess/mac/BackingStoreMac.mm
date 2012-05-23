@@ -105,9 +105,8 @@ void BackingStore::resetScrolledRect()
 
     CGContextScaleCTM(context.get(), m_deviceScaleFactor, m_deviceScaleFactor);
 
-    CGContextTranslateCTM(context.get(), -m_scrolledRect.location().x(), -m_scrolledRect.location().y());
-    CGContextTranslateCTM(context.get(), 0, m_scrolledRect.size().height());
     CGContextScaleCTM(context.get(), 1, -1);
+    CGContextTranslateCTM(context.get(), -m_scrolledRect.x(), -m_scrolledRect.maxY());
     paint(context.get(), m_scrolledRect);
 
     IntRect sourceRect(IntPoint(), m_scrolledRect.size());
