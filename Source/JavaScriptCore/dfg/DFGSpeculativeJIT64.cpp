@@ -2977,7 +2977,7 @@ void SpeculativeJIT::compile(Node& node)
 
         GPRResult result(this);
         
-        callOperation(op == StrCat ? operationStrCat : operationNewArray, result.gpr(), static_cast<void *>(scratchBuffer), node.numChildren());
+        callOperation(op == StrCat ? operationStrCat : operationNewArray, result.gpr(), static_cast<void *>(buffer), node.numChildren());
 
         if (scratchSize) {
             GPRTemporary scratch(this);
