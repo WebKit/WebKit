@@ -104,6 +104,13 @@
                 '<@(drt_files)',
             ],
             'conditions': [
+                ['OS=="mac" or OS=="win" or toolkit_uses_gtk==1', {
+                    # These platforms have their own implementations of
+                    # checkLayoutTestSystemDependencies() and openStartupDialog().
+                    'sources/': [
+                        ['exclude', 'TestShellStub\\.cpp$'],
+                    ],
+                }],
                 ['OS=="win"', {
                     'dependencies': [
                         'LayoutTestHelper',

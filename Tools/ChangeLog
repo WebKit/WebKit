@@ -1,3 +1,13 @@
+2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Move conditions in DumpRenderTree.gypi into DumpRenderTree.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=87176
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+
 2012-05-22  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add --driver-name option to run_webkit_tests.py to allow for selecting alternative DRT binaries

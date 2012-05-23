@@ -37,6 +37,7 @@
             'chromium/TestShellLinux.cpp',
             'chromium/TestShellGtk.cpp',
             'chromium/TestShellMac.mm',
+            'chromium/TestShellStub.cpp',
             'chromium/TestShellWin.cpp',
             'chromium/TestWebPlugin.cpp',
             'chromium/TestWebPlugin.h',
@@ -46,6 +47,12 @@
             'chromium/WebPermissions.h',
             'chromium/WebPreferences.cpp',
             'chromium/WebPreferences.h',
+            'chromium/WebThemeControlDRTWin.cpp',
+            'chromium/WebThemeControlDRTWin.h',
+            'chromium/WebThemeEngineDRTMac.mm',
+            'chromium/WebThemeEngineDRTMac.h',
+            'chromium/WebThemeEngineDRTWin.cpp',
+            'chromium/WebThemeEngineDRTWin.h',
             'chromium/WebUserMediaClientMock.cpp',
             'chromium/WebUserMediaClientMock.h',
             'chromium/WebViewHost.cpp',
@@ -73,27 +80,6 @@
             'TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp',
             'TestNetscapePlugIn/Tests/PrivateBrowsing.cpp',
             'TestNetscapePlugIn/main.cpp',
-        ],
-        'conditions': [
-            ['(OS=="linux" and toolkit_uses_gtk!=1) or OS=="android"', {
-                'drt_files': [
-                    'chromium/TestShellStub.cpp',
-                ],
-            }],
-            ['OS=="win"', {
-                'drt_files': [
-                    'chromium/WebThemeControlDRTWin.cpp',
-                    'chromium/WebThemeControlDRTWin.h',
-                    'chromium/WebThemeEngineDRTWin.cpp',
-                    'chromium/WebThemeEngineDRTWin.h',
-                ],
-            }],
-            ['OS=="mac"', {
-                'drt_files': [
-                    'chromium/WebThemeEngineDRTMac.mm',
-                    'chromium/WebThemeEngineDRTMac.h',
-                ],
-            }],
         ],
     }
 }
