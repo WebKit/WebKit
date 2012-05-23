@@ -1,3 +1,16 @@
+2012-05-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] EventSender should properly handle (left|right)(control|shift|alt) after r118001
+        https://bugs.webkit.org/show_bug.cgi?id=87221
+
+        Reviewed by Martin Robinson.
+
+        Convert leftAlt, leftControl, leftShift, rightAlt, rightControl and
+        rightShift key names into proper GDK key symbols.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (createKeyPressEvent):
+
 2012-04-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make the web view's url property follow the active url

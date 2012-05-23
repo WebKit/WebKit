@@ -213,17 +213,14 @@ int PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(unsigned keycode)
         case GDK_KP_Enter:
         case GDK_Return:
             return VK_RETURN; //(0D) Return key
-        case GDK_Shift_L:
-        case GDK_Shift_R:
-            return VK_SHIFT; // (10) SHIFT key
-        case GDK_Control_L:
-        case GDK_Control_R:
-            return VK_CONTROL; // (11) CTRL key
+
+            // VK_SHIFT (10) SHIFT key
+            // VK_CONTROL (11) CTRL key
+
         case GDK_Menu:
             return VK_APPS;  // (5D) Applications key (Natural keyboard)
-        case GDK_Alt_L:
-        case GDK_Alt_R:
-            return VK_MENU; // (12) ALT key
+
+            // VK_MENU (12) ALT key
 
         case GDK_Pause:
             return VK_PAUSE; // (13) PAUSE key
@@ -403,12 +400,19 @@ int PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(unsigned keycode)
         case GDK_Scroll_Lock:
             return VK_SCROLL; // (91) SCROLL LOCK key
 
-            // VK_LSHIFT (A0) Left SHIFT key
-            // VK_RSHIFT (A1) Right SHIFT key
-            // VK_LCONTROL (A2) Left CONTROL key
-            // VK_RCONTROL (A3) Right CONTROL key
-            // VK_LMENU (A4) Left MENU key
-            // VK_RMENU (A5) Right MENU key
+        case GDK_Shift_L:
+            return VK_LSHIFT; // (A0) Left SHIFT key
+        case GDK_Shift_R:
+            return VK_RSHIFT; // (A1) Right SHIFT key
+        case GDK_Control_L:
+            return VK_LCONTROL; // (A2) Left CONTROL key
+        case GDK_Control_R:
+            return VK_RCONTROL; // (A3) Right CONTROL key
+        case GDK_Alt_L:
+            return VK_LMENU; // (A4) Left MENU key
+        case GDK_Alt_R:
+            return VK_RMENU; // (A5) Right MENU key
+
             // VK_BROWSER_BACK (A6) Windows 2000/XP: Browser Back key
             // VK_BROWSER_FORWARD (A7) Windows 2000/XP: Browser Forward key
             // VK_BROWSER_REFRESH (A8) Windows 2000/XP: Browser Refresh key

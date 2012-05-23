@@ -1,3 +1,19 @@
+2012-05-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] EventSender should properly handle (left|right)(control|shift|alt) after r118001
+        https://bugs.webkit.org/show_bug.cgi?id=87221
+
+        Reviewed by Martin Robinson.
+
+        No new tests - covered by fast/events/keydown-leftright-keys.html.
+
+        Windows key code for shift, control and alt keys should respect the
+        left or right position of that key. This way the DOM location code of
+        a key event is properly determined for these keys.
+
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode):
+
 2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: eliminate getters from HeapSnapshot.js

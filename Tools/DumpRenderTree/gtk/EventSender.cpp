@@ -705,6 +705,18 @@ static GdkEvent* createKeyPressEvent(JSContextRef context, size_t argumentCount,
             gdkKeySym = GDK_F11;
         else if (JSStringIsEqualToUTF8CString(character, "F12"))
             gdkKeySym = GDK_F12;
+        else if (JSStringIsEqualToUTF8CString(character, "leftAlt"))
+            gdkKeySym = GDK_Alt_L;
+        else if (JSStringIsEqualToUTF8CString(character, "leftControl"))
+            gdkKeySym = GDK_Control_L;
+        else if (JSStringIsEqualToUTF8CString(character, "leftShift"))
+            gdkKeySym = GDK_Shift_L;
+        else if (JSStringIsEqualToUTF8CString(character, "rightAlt"))
+            gdkKeySym = GDK_Alt_R;
+        else if (JSStringIsEqualToUTF8CString(character, "rightControl"))
+            gdkKeySym = GDK_Control_R;
+        else if (JSStringIsEqualToUTF8CString(character, "rightShift"))
+            gdkKeySym = GDK_Shift_R;
         else {
             int charCode = JSStringGetCharactersPtr(character)[0];
             if (charCode == '\n' || charCode == '\r')

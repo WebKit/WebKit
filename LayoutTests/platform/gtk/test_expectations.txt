@@ -1337,8 +1337,6 @@ BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 // This test makes the test that follows it crash/timeout
 BUGWK87208 SKIP : http/tests/cookies/js-get-and-set-http-only-cookie.php = FAIL
 
-BUGWK87221 : fast/events/keydown-leftright-keys.html = FAIL
-
 BUGWK87088 : fast/js/names.html = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
