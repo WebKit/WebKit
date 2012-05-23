@@ -11,7 +11,6 @@ BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-reall
 BUGCR24182 SLOW MAC DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
-BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
@@ -3777,3 +3776,11 @@ BUGWK87137 WIN DEBUG : fast/block/margin-collapse/103.html = CRASH
 
 BUGWK87160 XP VISTA WIN7 : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-canvas2d-layer.html = PASS CRASH
 BUGWK87160 XP VISTA : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH
+
+BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
+
+BUGWK87275 : html5lib/run-test26.html = PASS CRASH
+BUGWK87275 : html5lib/runner.html = PASS CRASH
+BUGWK87275 SLOW : html5lib/webkit-resumer.html = PASS CRASH
+// The above was previously marked as follows:
+//BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS

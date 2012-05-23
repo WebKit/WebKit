@@ -1,5 +1,11 @@
 2012-05-23  Joshua Bell  <jsbell@chromium.org>
 
+        Unreviewed gardening - add timeout and crash expectations for a few tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
         Add crashing expectation for more media/track tests:
         track-language-preference.html, track-load-from-element-readyState.html, and
         track-webvtt-tc019-cue-size.html - tracked in http://webkit.org/b/87258
