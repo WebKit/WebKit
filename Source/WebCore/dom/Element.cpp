@@ -2081,8 +2081,9 @@ void Element::setSavedLayerScrollOffset(const IntSize& size)
 
 PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
 {
-    if (!attributeData())
+    if (!hasAttrList())
         return 0;
+    ASSERT(attributeData());
     return attributeData()->attrIfExists(this, name);
 }
 

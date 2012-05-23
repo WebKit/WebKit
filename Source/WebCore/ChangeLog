@@ -1,5 +1,19 @@
 2012-05-22  Hayato Ito  <hayato@chromium.org>
 
+        Short-circuit Element::attrIfExists() when the Element has no Attr list.
+        <http://webkit.org/b/87214>
+
+        Reviewed by Ryosuke Niwa.
+
+        This function was lukewarm on Dromaeo/dom-attr (0.4% of samples.)
+        Added an early return if !hasAttrList() to avoid the function call overhead of
+        ElementAttributeData::attrIfExists().
+
+        * dom/Element.cpp:
+        (WebCore::Element::attrIfExists):
+
+2012-05-22  Andreas Kling  <kling@webkit.org>
+
         Remove an assertion since an event's target might be a shadow root if a text node is clicked.
         https://bugs.webkit.org/show_bug.cgi?id=87072
 
