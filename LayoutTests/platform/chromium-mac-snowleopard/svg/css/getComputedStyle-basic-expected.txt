@@ -382,8 +382,6 @@ rect: style.getPropertyValue(-webkit-mask-size) : auto
 rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-overflow-scrolling) : auto
-rect: style.getPropertyCSSValue(-webkit-overflow-scrolling) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective) : none
 rect: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
@@ -916,8 +914,6 @@ g: style.getPropertyValue(-webkit-mask-size) : auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-overflow-scrolling) : auto
-g: style.getPropertyCSSValue(-webkit-overflow-scrolling) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective) : none
 g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px

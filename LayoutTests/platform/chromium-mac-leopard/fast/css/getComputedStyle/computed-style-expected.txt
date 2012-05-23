@@ -192,7 +192,6 @@ zoom: 1;
 -webkit-mask-repeat: repeat;
 -webkit-mask-size: auto;
 -webkit-nbsp-mode: normal;
--webkit-overflow-scrolling: auto;
 -webkit-perspective: none;
 -webkit-perspective-origin: 392px 288px;
 -webkit-print-color-adjust: economy;
