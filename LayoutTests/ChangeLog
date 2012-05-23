@@ -1,3 +1,13 @@
+2012-05-23  Joshua Bell  <jsbell@chromium.org>
+
+        Add crashing expectation for more media/track tests:
+        track-language-preference.html, track-load-from-element-readyState.html, and
+        track-webvtt-tc019-cue-size.html - tracked in http://webkit.org/b/87258
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-23  Emil A Eklund  <eae@chromium.org>
 
         Unskip sub-pixel tests on chromium now that they flag has been turned on (in r 117815).
