@@ -1,3 +1,13 @@
+2012-05-22  Adam Barth  <abarth@webkit.org>
+
+        RenderInline::absoluteRects does some incorrect layout math
+        https://bugs.webkit.org/show_bug.cgi?id=87036
+
+        Reviewed by Eric Seidel.
+
+        * fast/inline/boundingBox-with-continuation-expected.txt: Added.
+        * fast/inline/boundingBox-with-continuation.html: Added.
+
 2012-05-22  Jessie Berlin  <jberlin@apple.com>
 
         Do some more clean up on the WK2 Skipped list.

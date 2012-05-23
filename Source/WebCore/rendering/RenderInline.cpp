@@ -611,7 +611,7 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accu
     if (continuation()) {
         if (continuation()->isBox()) {
             RenderBox* box = toRenderBox(continuation());
-            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->size()));
+            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->locationOffset()));
         } else
             continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }

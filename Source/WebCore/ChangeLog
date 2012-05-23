@@ -1,3 +1,20 @@
+2012-05-22  Adam Barth  <abarth@webkit.org>
+
+        RenderInline::absoluteRects does some incorrect layout math
+        https://bugs.webkit.org/show_bug.cgi?id=87036
+
+        Reviewed by Eric Seidel.
+
+        http://trac.webkit.org/changeset/88297/trunk/Source/WebCore/rendering/RenderInline.cpp
+        contained a typo.  We should accumulate offsets, not add sizes to
+        offsets.
+
+        Test: fast/inline/boundingBox-with-continuation.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore):
+
 2012-05-22  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't force the visibleLayerRect to be empty for animating layers whose front face is not visible
