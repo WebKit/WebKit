@@ -1,3 +1,38 @@
+2012-05-21  Shawn Singh  <shawnsingh@chromium.org>
+
+        Improve W3C conformance of backface-visibility
+        https://bugs.webkit.org/show_bug.cgi?id=84195
+
+        Reviewed by Adrienne Walker.
+
+        Tests: compositing/backface-visibility/backface-visibility-3d.html
+               compositing/backface-visibility/backface-visibility-hierarchical-transform.html
+               compositing/backface-visibility/backface-visibility-non3d.html
+               compositing/backface-visibility/backface-visibility-simple.html
+
+        Unit Tests: CCLayerTreeHostCommonTest::verifyBackFaceCullingWithoutPreserves3d
+                    CCLayerTreeHostCommonTest::verifyBackFaceCullingWithPreserves3d
+
+        Also updated a few other layout and unit tests.
+
+        This patch updates chromium to conform to the W3C spec on CSS
+        transforms, Section 12 about backface visibility. This patch also
+        updates layout tests to reflect the latest W3C spec. In
+        particular, rule #1 on section 12, http://dev.w3.org/csswg/css3-transforms/#backface-visibility-property
+        states which transforms should be used to determine backface-visibility.
+
+        Because chromium has an additional quirk of the concept of render
+        surfaces, unit tests needed to be updated as well.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::layerIsRootOfNewRenderingContext):
+        (WebCore):
+        (WebCore::isLayerBackFaceVisible):
+        (WebCore::isSurfaceBackFaceVisible):
+        (WebCore::calculateVisibleLayerRect):
+        (WebCore::layerShouldBeSkipped):
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+
 2012-05-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118095.

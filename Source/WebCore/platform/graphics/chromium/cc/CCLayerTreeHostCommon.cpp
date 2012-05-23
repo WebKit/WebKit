@@ -74,6 +74,48 @@ static inline bool layerIsInExisting3DRenderingContext(LayerType* layer)
 }
 
 template<typename LayerType>
+static bool layerIsRootOfNewRenderingContext(LayerType* layer)
+{
+    // According to current W3C spec on CSS transforms (Section 6.1), a layer is the
+    // beginning of 3d rendering context if its parent does not have transform-style:
+    // preserve-3d, but this layer itself does.
+    if (layer->parent())
+        return !layer->parent()->preserves3D() && layer->preserves3D();
+
+    return layer->preserves3D();
+}
+
+template<typename LayerType>
+static bool isLayerBackFaceVisible(LayerType* layer)
+{
+    // The current W3C spec on CSS transforms says that backface visibility should be
+    // determined differently depending on whether the layer is in a "3d rendering
+    // context" or not. For Chromium code, we can determine whether we are in a 3d
+    // rendering context by checking if the parent preserves 3d.
+
+    if (layerIsInExisting3DRenderingContext(layer))
+        return layer->drawTransform().isBackFaceVisible();
+
+    // In this case, either the layer establishes a new 3d rendering context, or is not in
+    // a 3d rendering context at all.
+    return layer->transform().isBackFaceVisible();
+}
+
+template<typename LayerType>
+static bool isSurfaceBackFaceVisible(LayerType* layer, const TransformationMatrix& drawTransform)
+{
+    if (layerIsInExisting3DRenderingContext(layer))
+        return drawTransform.isBackFaceVisible();
+
+    if (layerIsRootOfNewRenderingContext(layer))
+        return layer->transform().isBackFaceVisible();
+
+    // If the renderSurface is not part of a new or existing rendering context, then the
+    // layers that contribute to this surface will decide back-face visibility for themselves.
+    return false;
+}
+
+template<typename LayerType>
 static IntRect calculateVisibleLayerRect(LayerType* layer)
 {
     ASSERT(layer->targetRenderSurface());
@@ -163,7 +205,7 @@ static bool layerShouldBeSkipped(LayerType* layer)
         return true;
 
     // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is known to be facing the screen.
-    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && layer->screenSpaceTransform().isBackFaceVisible())
+    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && isLayerBackFaceVisible(layer))
         return true;
 
     return false;
@@ -385,12 +427,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     layer->setUsesLayerClipping(false);
 
     if (subtreeShouldRenderToSeparateSurface(layer, isScaleOrTranslation(combinedTransform))) {
-
-        // We need to check back-face visibility before continuing with this surface.
-        // We cannot early exit here, however, if the transform is animating and not known on the main thread.
-        // FIXME: Also compute back-face visibility for surfaces that are not in existing 3D rendering context, using
-        //        the layer's local transform. https://bugs.webkit.org/show_bug.cgi?id=84195
-        if (layerIsInExisting3DRenderingContext(layer) && transformToParentIsKnown(layer) && !layer->doubleSided() && combinedTransform.isBackFaceVisible())
+        // Check back-face visibility before continuing with this surface and its subtree
+        if (!layer->doubleSided() && transformToParentIsKnown(layer) && isSurfaceBackFaceVisible(layer, combinedTransform))
             return false;
 
         if (!layer->renderSurface())

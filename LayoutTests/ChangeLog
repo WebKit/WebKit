@@ -1,3 +1,25 @@
+2012-05-21  Shawn Singh  <shawnsingh@chromium.org>
+
+        Improve W3C conformance of backface-visibility
+        https://bugs.webkit.org/show_bug.cgi?id=84195
+
+        Reviewed by Adrienne Walker.
+
+        * compositing/backface-visibility-hierarchical-transform-expected.png: Removed.
+        * compositing/backface-visibility/backface-visibility-3d-expected.png: Added.
+        * compositing/backface-visibility/backface-visibility-3d-expected.txt: Copied from LayoutTests/compositing/backface-visibility-expected.txt.
+        * compositing/backface-visibility/backface-visibility-3d.html: Added.
+        * compositing/backface-visibility/backface-visibility-hierarchical-transform-expected.png: Added.
+        * compositing/backface-visibility/backface-visibility-hierarchical-transform-expected.txt: Renamed from LayoutTests/compositing/backface-visibility-hierarchical-transform-expected.txt.
+        * compositing/backface-visibility/backface-visibility-hierarchical-transform.html: Renamed from LayoutTests/compositing/backface-visibility-hierarchical-transform.html.
+        * compositing/backface-visibility/backface-visibility-non3d-expected.png: Added.
+        * compositing/backface-visibility/backface-visibility-non3d-expected.txt: Copied from LayoutTests/compositing/backface-visibility-expected.txt.
+        * compositing/backface-visibility/backface-visibility-non3d.html: Added.
+        * compositing/backface-visibility/backface-visibility-simple-expected.png: Renamed from LayoutTests/compositing/backface-visibility-expected.png.
+        * compositing/backface-visibility/backface-visibility-simple-expected.txt: Renamed from LayoutTests/compositing/backface-visibility-expected.txt.
+        * compositing/backface-visibility/backface-visibility-simple.html: Renamed from LayoutTests/compositing/backface-visibility.html.
+        * platform/mac/test_expectations.txt:
+
 2012-05-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118095.
