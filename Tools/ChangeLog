@@ -1,3 +1,8 @@
+2012-05-22  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket: Added property svn:ignore.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake: Added property svn:ignore.
+
 2012-05-22  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Run DumpRenderTree as an apk (C++ and gyp part)
