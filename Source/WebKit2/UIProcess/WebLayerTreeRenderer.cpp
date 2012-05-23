@@ -460,6 +460,8 @@ void WebLayerTreeRenderer::setActive(bool active)
     // and cannot be applied to the newly created instance.
     m_renderQueue.clear();
     m_isActive = active;
+    if (m_isActive)
+        renderNextFrame();
 }
 
 } // namespace WebKit

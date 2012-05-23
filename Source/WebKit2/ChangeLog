@@ -1,3 +1,33 @@
+2012-05-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Race condition in LayerTreeHost/Proxy can cause blank rendering
+        https://bugs.webkit.org/show_bug.cgi?id=87239
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        On the UI process side the WebLayerTreeRenderer/LayerTreeHostProxy pair is
+        created with m_active = false, which makes it ignore any incoming layer updates.
+        It remains inactive until the ContentsSGNode is created and setActive(true) is called.
+
+        On the web process side the LayerTreeHost is created with m_waitingForUIProcess = false.
+
+        Those two variables must be in sync, otherwise a race condition can
+        happen: The web process sends updates to the ui process before the
+        ContentsSGNode is created. This can happen for example when re-using an
+        existing WebProcess to create a QQuickWebView and load a page very fast
+        from the disk cache. The update arrives on the ui process side, but it
+        is discarded because setActive(true) hasn't been called yet. As a
+        result any updates that would for example create and populate the tiles
+        required for rendering are ignored.
+
+        This patch ensures that the variables are initialized with the same values and that calling
+        setActive(true) will trigger the rendering of the next frame.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::setActive):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+
 2012-05-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make QtWebError return the failing URL as a QString instead of QUrl
