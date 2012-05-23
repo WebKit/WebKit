@@ -251,7 +251,7 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     if (CSSStyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
-        styleSheet->internal()->addSubresourceStyleURLs(urls);
+        styleSheet->contents()->addSubresourceStyleURLs(urls);
 }
 
 bool HTMLStyleElement::disabled() const

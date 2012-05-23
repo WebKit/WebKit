@@ -1,3 +1,183 @@
+2012-05-23  Antti Koivisto  <antti@apple.com>
+
+        Rename StyleSheetInternal to StyleSheetContents
+        https://bugs.webkit.org/show_bug.cgi?id=87272
+
+        Reviewed by Andreas Kling.
+
+        The name is more descriptive and the code reads better.
+        
+        Plain "StyleSheet" would be good too but that is a CSSOM type and the name can't be used without
+        changing idl code generation and resolving bunch of other issues.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSImportRule.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/CSSImportRule.h:
+        (WebCore):
+        (WebCore::StyleRuleImport::parentStyleSheet):
+        (WebCore::StyleRuleImport::setParentStyleSheet):
+        (WebCore::StyleRuleImport::styleSheet):
+        (StyleRuleImport):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::insertRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseKeyframeRule):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::setStyleSheet):
+        (WebCore::CSSParser::parseFlowThread):
+        * css/CSSParser.h:
+        (WebCore):
+        (CSSParser):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs):
+        * css/CSSReflectValue.h:
+        (CSSReflectValue):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::parserContext):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::StyleSheetContents::estimatedSizeInBytes):
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::~StyleSheetContents):
+        (WebCore::StyleSheetContents::isCacheable):
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::StyleSheetContents::ruleAt):
+        (WebCore::StyleSheetContents::ruleCount):
+        (WebCore::StyleSheetContents::clearCharsetRule):
+        (WebCore::StyleSheetContents::clearRules):
+        (WebCore::StyleSheetContents::parserSetEncodingFromCharsetRule):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        (WebCore::StyleSheetContents::wrapperDeleteRule):
+        (WebCore::StyleSheetContents::parserAddNamespace):
+        (WebCore::StyleSheetContents::determineNamespace):
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseString):
+        (WebCore::StyleSheetContents::parseStringAtLine):
+        (WebCore::StyleSheetContents::isLoading):
+        (WebCore::StyleSheetContents::checkLoaded):
+        (WebCore::StyleSheetContents::notifyLoadedSheet):
+        (WebCore::StyleSheetContents::startLoadingDynamicSheet):
+        (WebCore::StyleSheetContents::rootStyleSheet):
+        (WebCore::StyleSheetContents::singleOwnerNode):
+        (WebCore::StyleSheetContents::singleOwnerDocument):
+        (WebCore::StyleSheetContents::completeURL):
+        (WebCore::StyleSheetContents::addSubresourceStyleURLs):
+        (WebCore::StyleSheetContents::parentStyleSheet):
+        (WebCore::StyleSheetContents::registerClient):
+        (WebCore::StyleSheetContents::unregisterClient):
+        (WebCore::StyleSheetContents::addedToMemoryCache):
+        (WebCore::StyleSheetContents::removedFromMemoryCache):
+        (WebCore::CSSStyleSheet::createInline):
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::~CSSStyleSheet):
+        (WebCore::CSSStyleSheet::willMutateRules):
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::reattachChildRuleCSSOMWrappers):
+        (WebCore::CSSStyleSheet::length):
+        (WebCore::CSSStyleSheet::item):
+        (WebCore::CSSStyleSheet::rules):
+        (WebCore::CSSStyleSheet::insertRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::cssRules):
+        * css/CSSStyleSheet.h:
+        (WebCore::StyleSheetContents::create):
+        (StyleSheetContents):
+        (WebCore::StyleSheetContents::copy):
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::contents):
+        (CSSStyleSheet):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        * css/CSSValue.h:
+        (WebCore):
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::addSubresourceStyleURLs):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::contextStyleSheet):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (WebCore):
+        (PropertySetCSSStyleDeclaration):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::parseDeclaration):
+        (WebCore::StylePropertySet::addSubresourceStyleURLs):
+        * css/StylePropertySet.h:
+        (WebCore):
+        (StylePropertySet):
+        * css/StyleResolver.cpp:
+        (RuleSet):
+        (WebCore):
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets):
+        (WebCore::StyleResolver::appendAuthorStylesheets):
+        (WebCore::parseUASheet):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::insertRule):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createCSSStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::pageUserSheet):
+        (WebCore::Document::pageGroupUserSheets):
+        (WebCore::Document::addUserSheet):
+        (WebCore::Document::testAddedStylesheetRequiresStyleRecalc):
+        (WebCore::Document::analyzeStylesheetChange):
+        (WebCore::styleSheetsUseRemUnits):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::updateInlineStyleAvoidingMutation):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::createSheet):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        (WebCore::StyledElement::addPropertyToAttributeStyle):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        (WebCore::HTMLLinkElement::styleSheetIsLoading):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyleSheet::styleSheetURL):
+        (WebCore::InspectorStyleSheet::reparseStyleSheet):
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        (WebCore::CachedCSSStyleSheet::saveParsedStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        (WebCore):
+        (CachedCSSStyleSheet):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+
 2012-05-23  Darin Adler  <darin@apple.com>
 
         Use ContainerNode instead of Node where possible

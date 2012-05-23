@@ -1725,7 +1725,7 @@ void Document::recalcStyle(StyleChange change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
-    if (m_elemSheet && m_elemSheet->internal()->usesRemUnits())
+    if (m_elemSheet && m_elemSheet->contents()->usesRemUnits())
         m_usesRemUnits = true;
 
     m_inStyleRecalc = true;
@@ -2646,11 +2646,11 @@ void Document::updateBaseURL()
 
     if (m_elemSheet) {
         // Element sheet is silly. It never contains anything.
-        ASSERT(!m_elemSheet->internal()->ruleCount());
-        bool usesRemUnits = m_elemSheet->internal()->usesRemUnits();
+        ASSERT(!m_elemSheet->contents()->ruleCount());
+        bool usesRemUnits = m_elemSheet->contents()->usesRemUnits();
         m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        m_elemSheet->internal()->parserSetUsesRemUnits(usesRemUnits);
+        m_elemSheet->contents()->parserSetUsesRemUnits(usesRemUnits);
     }
 
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
@@ -2802,8 +2802,8 @@ CSSStyleSheet* Document::pageUserSheet()
     
     // Parse the sheet and cache it.
     m_pageUserSheet = CSSStyleSheet::createInline(this, settings()->userStyleSheetLocation());
-    m_pageUserSheet->internal()->setIsUserStyleSheet(true);
-    m_pageUserSheet->internal()->parseString(userSheetText);
+    m_pageUserSheet->contents()->setIsUserStyleSheet(true);
+    m_pageUserSheet->contents()->parseString(userSheetText);
     return m_pageUserSheet.get();
 }
 
@@ -2851,8 +2851,8 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
             if (!m_pageGroupUserSheets)
                 m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
             m_pageGroupUserSheets->append(groupSheet);
-            groupSheet->internal()->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
-            groupSheet->internal()->parseString(sheet->source());
+            groupSheet->contents()->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
+            groupSheet->contents()->parseString(sheet->source());
         }
     }
 
@@ -2875,7 +2875,7 @@ void Document::updatePageGroupUserSheets()
         styleResolverChanged(RecalcStyleImmediately);
 }
 
-void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
+void Document::addUserSheet(PassRefPtr<StyleSheetContents> userSheet)
 {
     if (!m_userSheets)
         m_userSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
@@ -3428,7 +3428,7 @@ void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
     }
 }
 
-bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal* stylesheet)
+bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetContents* stylesheet)
 {
     // See if all rules on the sheet are scoped to some specific ids or classes.
     // Then test if we actually have any of those in the tree at the moment.
@@ -3496,7 +3496,7 @@ void Document::analyzeStylesheetChange(StyleResolverUpdateFlag updateFlag, const
             return;
         if (newStylesheets[i]->disabled())
             continue;
-        if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())->internal()))
+        if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())->contents()))
             return;
     }
     requiresFullStyleRecalc = false;
@@ -3507,7 +3507,7 @@ static bool styleSheetsUseRemUnits(const Vector<RefPtr<StyleSheet> >& sheets)
     for (unsigned i = 0; i < sheets.size(); ++i) {
         if (!sheets[i]->isCSSStyleSheet())
             continue;
-        if (static_cast<CSSStyleSheet*>(sheets[i].get())->internal()->usesRemUnits())
+        if (static_cast<CSSStyleSheet*>(sheets[i].get())->contents()->usesRemUnits())
             return true;
     }
     return false;

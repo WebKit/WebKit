@@ -37,7 +37,7 @@ class KURL;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 class StylePropertyShorthand;
-class StyleSheetInternal;
+class StyleSheetContents;
 
 typedef Vector<CSSProperty, 4> StylePropertyVector;
 
@@ -67,7 +67,7 @@ public:
     bool isPropertyImplicit(CSSPropertyID) const;
 
     // These expand shorthand properties into multiple properties.
-    bool setProperty(CSSPropertyID, const String& value, bool important = false, StyleSheetInternal* contextStyleSheet = 0);
+    bool setProperty(CSSPropertyID, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
     void setProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
@@ -76,7 +76,7 @@ public:
     
     bool removeProperty(CSSPropertyID, String* returnText = 0);
 
-    void parseDeclaration(const String& styleDeclaration, StyleSheetInternal* contextStyleSheet);
+    void parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet);
 
     void addParsedProperties(const Vector<CSSProperty>&);
     void addParsedProperty(const CSSProperty&);
@@ -90,7 +90,7 @@ public:
     void setCSSParserMode(CSSParserMode cssParserMode) { m_cssParserMode = cssParserMode; }
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetInternal* contextStyleSheet);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet);
 
     PassRefPtr<StylePropertySet> copy() const;
     // Used by StyledElement::copyNonAttributeProperties().

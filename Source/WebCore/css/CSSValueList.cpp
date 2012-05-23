@@ -136,7 +136,7 @@ String CSSValueList::customCssText() const
     return result.toString();
 }
 
-void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetInternal* styleSheet)
+void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet)
 {
     size_t size = m_values.size();
     for (size_t i = 0; i < size; ++i)

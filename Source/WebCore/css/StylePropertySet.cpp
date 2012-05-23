@@ -510,7 +510,7 @@ bool StylePropertySet::isPropertyImplicit(CSSPropertyID propertyID) const
     return property ? property->isImplicit() : false;
 }
 
-bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value, bool important, StyleSheetInternal* contextStyleSheet)
+bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value, bool important, StyleSheetContents* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -557,7 +557,7 @@ bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, boo
     return true;
 }
 
-void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleSheetInternal* contextStyleSheet)
+void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)
 {
     m_properties.clear();
 
@@ -817,7 +817,7 @@ void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnC
     }
 }
 
-void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetInternal* contextStyleSheet)
+void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet)
 {
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i)

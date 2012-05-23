@@ -59,7 +59,7 @@ String CSSReflectValue::customCssText() const
     return result;
 }
 
-void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetInternal* styleSheet)
+void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet)
 {
     if (m_mask)
         m_mask->addSubresourceStyleURLs(urls, styleSheet);

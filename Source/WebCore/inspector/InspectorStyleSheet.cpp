@@ -206,7 +206,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
             mediaList = 0;
 
         if (parentStyleSheet) {
-            sourceURL = parentStyleSheet->internal()->finalURL();
+            sourceURL = parentStyleSheet->contents()->finalURL();
             if (sourceURL.isEmpty())
                 sourceURL = InspectorDOMAgent::documentURLString(parentStyleSheet->ownerDocument());
         } else
@@ -225,8 +225,8 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
                     Document* doc = styleSheet->ownerDocument();
                     if (doc)
                         sourceURL = doc->url();
-                    else if (!styleSheet->internal()->finalURL().isEmpty())
-                        sourceURL = styleSheet->internal()->finalURL();
+                    else if (!styleSheet->contents()->finalURL().isEmpty())
+                        sourceURL = styleSheet->contents()->finalURL();
                     else
                         sourceURL = "";
                     mediaArray->addItem(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
@@ -314,7 +314,7 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
         RefPtr<StylePropertySet> tempMutableStyle = StylePropertySet::create();
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
         CSSParser p(CSSStrictMode);
-        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet()->internal());
+        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet()->contents());
         Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
         unsigned propertyCount = propertyData.size();
 
@@ -689,8 +689,8 @@ PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(const String& id, Pa
 // static
 String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
 {
-    if (pageStyleSheet && !pageStyleSheet->internal()->finalURL().isEmpty())
-        return pageStyleSheet->internal()->finalURL().string();
+    if (pageStyleSheet && !pageStyleSheet->contents()->finalURL().isEmpty())
+        return pageStyleSheet->contents()->finalURL().string();
     return emptyString();
 }
 
@@ -719,8 +719,8 @@ String InspectorStyleSheet::finalURL() const
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
-    m_pageStyleSheet->internal()->clearRules();
-    m_pageStyleSheet->internal()->parseString(text);
+    m_pageStyleSheet->contents()->clearRules();
+    m_pageStyleSheet->contents()->parseString(text);
     m_pageStyleSheet->clearChildRuleCSSOMWrappers();
     m_inspectorStyles.clear();
     fireStyleSheetChanged();
@@ -1088,7 +1088,7 @@ bool InspectorStyleSheet::ensureSourceData()
     if (!m_parsedStyleSheet->hasText())
         return false;
 
-    RefPtr<StyleSheetInternal> newStyleSheet = StyleSheetInternal::create();
+    RefPtr<StyleSheetContents> newStyleSheet = StyleSheetContents::create();
     CSSParser p(CSSStrictMode);
     StyleRuleRangeMap ruleRangeMap;
     p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, &ruleRangeMap);
@@ -1415,7 +1415,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
 
     RefPtr<StylePropertySet> tempDeclaration = StylePropertySet::create();
     CSSParser p(m_element->document());
-    p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet()->internal());
+    p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet()->contents());
     return true;
 }
 

@@ -156,7 +156,7 @@ void CSSRule::reattach(StyleRuleBase* rule)
 const CSSParserContext& CSSRule::parserContext() const
 {
     CSSStyleSheet* styleSheet = parentStyleSheet();
-    return styleSheet ? styleSheet->internal()->parserContext() : strictCSSParserContext();
+    return styleSheet ? styleSheet->contents()->parserContext() : strictCSSParserContext();
 }
 
 } // namespace WebCore

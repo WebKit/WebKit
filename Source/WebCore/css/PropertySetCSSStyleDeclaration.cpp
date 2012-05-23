@@ -305,10 +305,10 @@ CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* intern
     return clonedValue.get();
 }
 
-StyleSheetInternal* PropertySetCSSStyleDeclaration::contextStyleSheet() const
+StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const
 { 
     CSSStyleSheet* cssStyleSheet = parentStyleSheet();
-    return cssStyleSheet ? cssStyleSheet->internal() : 0;
+    return cssStyleSheet ? cssStyleSheet->contents() : 0;
 }
 
 PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::copy() const

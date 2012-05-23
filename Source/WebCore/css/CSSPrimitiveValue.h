@@ -283,7 +283,7 @@ public:
 
     bool isQuirkValue() { return m_isQuirkValue; }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*);
 
     Length viewportPercentageLength();
     

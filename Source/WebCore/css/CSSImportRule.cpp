@@ -70,7 +70,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     if (!baseURL.isNull())
         context.baseURL = baseURL;
 
-    m_styleSheet = StyleSheetInternal::create(this, href, baseURL, context);
+    m_styleSheet = StyleSheetContents::create(this, href, baseURL, context);
 
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : 0;
     m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
@@ -107,8 +107,8 @@ void StyleRuleImport::requestStyleSheet()
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    StyleSheetInternal* rootSheet = m_parentStyleSheet;
-    for (StyleSheetInternal* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
+    StyleSheetContents* rootSheet = m_parentStyleSheet;
+    for (StyleSheetContents* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
         if (absHref == sheet->finalURL().string() || absHref == sheet->originalURL())
             return;
         rootSheet = sheet;

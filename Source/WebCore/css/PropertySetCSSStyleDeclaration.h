@@ -34,7 +34,7 @@ class CSSRule;
 class CSSProperty;
 class CSSValue;
 class StylePropertySet;
-class StyleSheetInternal;
+class StyleSheetContents;
 class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
@@ -43,7 +43,7 @@ public:
     
     virtual StyledElement* parentElement() const { return 0; }
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
-    StyleSheetInternal* contextStyleSheet() const;
+    StyleSheetContents* contextStyleSheet() const;
     
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;

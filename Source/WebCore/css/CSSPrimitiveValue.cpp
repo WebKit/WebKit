@@ -1064,7 +1064,7 @@ String CSSPrimitiveValue::customCssText() const
     return text;
 }
 
-void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetInternal* styleSheet)
+void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet)
 {
     if (m_primitiveUnitType == CSS_URI)
         addSubresourceURL(urls, styleSheet->completeURL(m_value.string));

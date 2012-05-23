@@ -302,7 +302,7 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
     resetRuleBodyMarks();
 }
 
-void CSSParser::parseSheet(StyleSheetInternal* sheet, const String& string, int startLineNumber, StyleRuleRangeMap* ruleRangeMap)
+void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, int startLineNumber, StyleRuleRangeMap* ruleRangeMap)
 {
     setStyleSheet(sheet);
     m_defaultNamespace = starAtom; // Reset the default namespace.
@@ -320,7 +320,7 @@ void CSSParser::parseSheet(StyleSheetInternal* sheet, const String& string, int 
     m_rule = 0;
 }
 
-PassRefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetInternal* sheet, const String& string)
+PassRefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const String& string)
 {
     setStyleSheet(sheet);
     m_allowNamespaceDeclarations = false;
@@ -329,7 +329,7 @@ PassRefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetInternal* sheet, const 
     return m_rule.release();
 }
 
-PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetInternal* sheet, const String& string)
+PassRefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet, const String& string)
 {
     setStyleSheet(sheet);
     setupParser("@-webkit-keyframe-rule{ ", string, "} ");
@@ -988,7 +988,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
     return static_pointer_cast<CSSValueList>(dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily));
 }
 
-bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetInternal* contextStyleSheet)
+bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
     if (parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode))
@@ -1007,7 +1007,7 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
-bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetInternal* contextStyleSheet)
+bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1085,7 +1085,7 @@ bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* 
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
+    RefPtr<StyleSheetContents> dummyStyleSheet = StyleSheetContents::create();
     setStyleSheet(dummyStyleSheet.get());
     m_selectorListForParseSelector = &selectorList;
 
@@ -1099,7 +1099,7 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
     ASSERT(dummyStyleSheet->hasOneRef());
 }
 
-bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& string, RefPtr<CSSStyleSourceData>* styleSourceData, StyleSheetInternal* contextStyleSheet)
+bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& string, RefPtr<CSSStyleSourceData>* styleSourceData, StyleSheetContents* contextStyleSheet)
 {
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
@@ -1212,7 +1212,7 @@ void CSSParser::clearProperties()
     m_hasFontFaceOnlyValues = false;
 }
 
-void CSSParser::setStyleSheet(StyleSheetInternal* styleSheet)
+void CSSParser::setStyleSheet(StyleSheetContents* styleSheet)
 {
     m_styleSheet = styleSheet;
 }
@@ -7325,7 +7325,7 @@ bool CSSParser::cssGridLayoutEnabled() const
 
 bool CSSParser::parseFlowThread(const String& flowName)
 {
-    RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
+    RefPtr<StyleSheetContents> dummyStyleSheet = StyleSheetContents::create();
     setStyleSheet(dummyStyleSheet.get());
 
     setupParser("@-webkit-decls{-webkit-flow-into:", flowName, "}");

@@ -128,7 +128,7 @@ class SegmentedString;
 class Settings;
 class StyleResolver;
 class StyleSheet;
-class StyleSheetInternal;
+class StyleSheetContents;
 class StyleSheetList;
 class Text;
 class TextResourceDecoder;
@@ -655,7 +655,7 @@ public:
     void updatePageGroupUserSheets();
 
     const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets() const { return m_userSheets.get(); }
-    void addUserSheet(PassRefPtr<StyleSheetInternal> userSheet);
+    void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
 
     CSSStyleSheet* elementSheet();
     
@@ -1209,7 +1209,7 @@ private:
     
     bool updateActiveStylesheets(StyleResolverUpdateFlag);
     void collectActiveStylesheets(Vector<RefPtr<StyleSheet> >&);
-    bool testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal*);
+    bool testAddedStylesheetRequiresStyleRecalc(StyleSheetContents*);
     void analyzeStylesheetChange(StyleResolverUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleResolverReset, bool& requiresFullStyleRecalc);
 
     void seamlessParentUpdatedStylesheets();

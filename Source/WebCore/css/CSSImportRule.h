@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 class MediaQuerySet;
-class StyleSheetInternal;
+class StyleSheetContents;
 
 class StyleRuleImport : public StyleRuleBase {
 public:
@@ -41,12 +41,12 @@ public:
 
     ~StyleRuleImport();
     
-    StyleSheetInternal* parentStyleSheet() const { return m_parentStyleSheet; }
-    void setParentStyleSheet(StyleSheetInternal* sheet) { ASSERT(sheet); m_parentStyleSheet = sheet; }
+    StyleSheetContents* parentStyleSheet() const { return m_parentStyleSheet; }
+    void setParentStyleSheet(StyleSheetContents* sheet) { ASSERT(sheet); m_parentStyleSheet = sheet; }
     void clearParentStyleSheet() { m_parentStyleSheet = 0; }
 
     String href() const { return m_strHref; }
-    StyleSheetInternal* styleSheet() const { return m_styleSheet.get(); }
+    StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
     bool isLoading() const;
     MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
@@ -73,12 +73,12 @@ private:
 
     StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet>);
 
-    StyleSheetInternal* m_parentStyleSheet;
+    StyleSheetContents* m_parentStyleSheet;
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
     RefPtr<MediaQuerySet> m_mediaQueries;
-    RefPtr<StyleSheetInternal> m_styleSheet;
+    RefPtr<StyleSheetContents> m_styleSheet;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     bool m_loading;
 };

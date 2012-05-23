@@ -161,7 +161,7 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
         m_inlineStyleDecl = StylePropertySet::create();
         m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     }
-    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->internal());
+    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
 }
 
 void ElementAttributeData::destroyInlineStyle(StyledElement* element)
