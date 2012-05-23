@@ -134,8 +134,8 @@ Element::~Element()
 
     if (shadow())
         rareData()->m_shadow.clear();
-    if (m_attributeData)
-        m_attributeData->clearAttributes(this);
+    if (m_attributeData && hasAttrList())
+        m_attributeData->detachAttrObjectsFromElement(this);
 }
 
 inline ElementRareData* Element::rareData() const

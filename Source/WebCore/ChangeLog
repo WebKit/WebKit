@@ -1,3 +1,23 @@
+2012-05-23  Andreas Kling  <kling@webkit.org>
+
+        Streamline Element teardown for the no-Attr-objects case.
+        <http://webkit.org/b/87228>
+
+        Reviewed by Antti Koivisto.
+
+        Dodge one function call in ~Element() if the element has no Attr objects
+        associated (the typical case.)
+
+        Renamed detachAttributes to detachAttrObjectsFromElement to reduce ambiguity.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::clearAttributes):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
 2012-05-23  Jochen Eisinger  <jochen@chromium.org>
 
         Fix incomplete switch statement in CSSParser after r118082

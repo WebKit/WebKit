@@ -220,10 +220,9 @@ bool ElementAttributeData::isEquivalent(const ElementAttributeData* other) const
     return true;
 }
 
-void ElementAttributeData::detachAttributesFromElement(Element* element)
+void ElementAttributeData::detachAttrObjectsFromElement(Element* element)
 {
-    if (!element->hasAttrList())
-        return;
+    ASSERT(element->hasAttrList());
 
     for (unsigned i = 0; i < m_attributes.size(); ++i) {
         if (RefPtr<Attr> attr = attrIfExists(element, m_attributes[i].name()))
@@ -286,8 +285,10 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
 
 void ElementAttributeData::clearAttributes(Element* element)
 {
+    if (element->hasAttrList())
+        detachAttrObjectsFromElement(element);
+
     clearClass();
-    detachAttributesFromElement(element);
     m_attributes.clear();
 }
 
