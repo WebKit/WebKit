@@ -1,3 +1,14 @@
+2012-05-24  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [Gtk] Wrong cursor used for ne-resize
+        https://bugs.webkit.org/show_bug.cgi?id=87366
+
+        Reviewed by Eric Seidel.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::Cursor::ensurePlatformCursor): Use GDK_TOP_RIGHT_CORNER
+        for Cursor::NorthEastPanning.
+
 2012-05-24  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt]  Fix Webkit1 + V8 build.

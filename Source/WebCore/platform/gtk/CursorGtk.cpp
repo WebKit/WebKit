@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
- * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2010-2012 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,7 @@ void Cursor::ensurePlatformCursor() const
         break;
     case Cursor::NorthEastResize:
     case Cursor::NorthEastPanning:
-        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_LEFT_SIDE));
+        m_platformCursor = adoptGRef(gdk_cursor_new(GDK_TOP_RIGHT_CORNER));
         break;
     case Cursor::NorthWestResize:
     case Cursor::NorthWestPanning:
