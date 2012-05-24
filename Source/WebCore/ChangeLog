@@ -1,3 +1,35 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There are too many poorly named functions to create a fragment from markup
+        https://bugs.webkit.org/show_bug.cgi?id=87339
+
+        Reviewed by Eric Seidel.
+
+        Moved all functions that create a fragment from markup to markup.h/cpp.
+        There should be no behavioral change.
+
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+        * dom/Range.h: Removed createDocumentFragmentForElement.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+        (WebCore::createFragmentForInnerOuterHTML): Renamed from createFragmentFromSource.
+        (WebCore::createFragmentForTransformToFragment): Moved from XSLTProcessor.
+        (WebCore::removeElementPreservingChildren): Moved from Range.
+        (WebCore::createContextualFragment): Ditto.
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerHTML):
+        (WebCore::HTMLElement::setOuterHTML):
+        (WebCore::HTMLElement::insertAdjacentHTML):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchNode): Added a FIXME since this code should be using
+        one of the functions listed in markup.h
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToFragment):
+
 2012-05-24  Jer Noble  <jer.noble@apple.com>
 
         MediaControlTimelineElement is adjusting time 3 times per click

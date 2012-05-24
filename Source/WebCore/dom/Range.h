@@ -90,7 +90,6 @@ public:
     String text() const;
 
     PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&);
-    static PassRefPtr<DocumentFragment> createDocumentFragmentForElement(const String& markup, Element*,  FragmentScriptingPermission = AllowScriptingContent);
 
     void detach(ExceptionCode&);
     PassRefPtr<Range> cloneRange(ExceptionCode&) const;

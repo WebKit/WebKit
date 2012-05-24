@@ -51,6 +51,7 @@
 #include "ScriptState.h"
 #include "StaticNodeList.h"
 #include "StyleResolver.h"
+#include "markup.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #if USE(JSC)
@@ -1010,7 +1011,7 @@ void QWebElement::appendInside(const QString &markup)
     if (!m_element->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment =  createContextualFragment(markup, toHTMLElement(m_element), AllowScriptingContent);
 
     ExceptionCode exception = 0;
     m_element->appendChild(fragment, exception);
@@ -1055,7 +1056,7 @@ void QWebElement::prependInside(const QString &markup)
     if (!m_element->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment =  createContextualFragment(markup, toHTMLElement(m_element), AllowScriptingContent);
 
     ExceptionCode exception = 0;
 
@@ -1107,7 +1108,7 @@ void QWebElement::prependOutside(const QString &markup)
     if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
+    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, toHTMLElement(parent), AllowScriptingContent);
 
     ExceptionCode exception = 0;
     parent->insertBefore(fragment, m_element, exception);
@@ -1157,7 +1158,7 @@ void QWebElement::appendOutside(const QString &markup)
     if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
+    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, toHTMLElement(parent), AllowScriptingContent);
 
     ExceptionCode exception = 0;
     if (!m_element->nextSibling())
@@ -1303,7 +1304,7 @@ void QWebElement::encloseContentsWith(const QString &markup)
     if (!m_element->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment =  createContextualFragment(markup, toHTMLElement(m_element), AllowScriptingContent);
 
     if (!fragment || !fragment->firstChild())
         return;
@@ -1378,7 +1379,7 @@ void QWebElement::encloseWith(const QString &markup)
     if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
+    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, toHTMLElement(parent), AllowScriptingContent);
 
     if (!fragment || !fragment->firstChild())
         return;

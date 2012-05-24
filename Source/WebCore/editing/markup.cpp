@@ -665,7 +665,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, fakeBody.get(), scriptingPermission);
+    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, fakeBody.get(), scriptingPermission);
 
     if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);
@@ -992,7 +992,7 @@ String urlToMarkup(const KURL& url, const String& title)
     return markup.toString();
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromSource(const String& markup, Element* contextElement, ExceptionCode& ec)
+PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, ExceptionCode& ec)
 {
     Document* document = contextElement->document();
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
@@ -1006,6 +1006,82 @@ PassRefPtr<DocumentFragment> createFragmentFromSource(const String& markup, Elem
     if (!wasValid) {
         ec = INVALID_STATE_ERR;
         return 0;
+    }
+    return fragment.release();
+}
+
+PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& sourceString, const String& sourceMIMEType, Document* outputDoc)
+{
+    RefPtr<DocumentFragment> fragment = outputDoc->createDocumentFragment();
+    
+    if (sourceMIMEType == "text/html") {
+        // As far as I can tell, there isn't a spec for how transformToFragment is supposed to work.
+        // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
+        // Unfortunately, that's an implementation detail of the parser.
+        // We achieve that effect here by passing in a fake body element as context for the fragment.
+        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(outputDoc);
+        fragment->parseHTML(sourceString, fakeBody.get());
+    } else if (sourceMIMEType == "text/plain")
+        fragment->parserAddChild(Text::create(outputDoc, sourceString));
+    else {
+        bool successfulParse = fragment->parseXML(sourceString, 0);
+        if (!successfulParse)
+            return 0;
+    }
+    
+    // FIXME: Do we need to mess with URLs here?
+    
+    return fragment.release();
+}
+
+static inline void removeElementPreservingChildren(PassRefPtr<DocumentFragment> fragment, HTMLElement* element)
+{
+    ExceptionCode ignoredExceptionCode;
+
+    RefPtr<Node> nextChild;
+    for (RefPtr<Node> child = element->firstChild(); child; child = nextChild) {
+        nextChild = child->nextSibling();
+        element->removeChild(child.get(), ignoredExceptionCode);
+        ASSERT(!ignoredExceptionCode);
+        fragment->insertBefore(child, element, ignoredExceptionCode);
+        ASSERT(!ignoredExceptionCode);
+    }
+    fragment->removeChild(element, ignoredExceptionCode);
+    ASSERT(!ignoredExceptionCode);
+}
+
+PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, Element* element,  FragmentScriptingPermission scriptingPermission)
+{
+    ASSERT(element);
+    HTMLElement* htmlElement = toHTMLElement(element);
+    if (htmlElement->ieForbidsInsertHTML())
+        return 0;
+
+    if (htmlElement->hasLocalName(colTag) || htmlElement->hasLocalName(colgroupTag) || htmlElement->hasLocalName(framesetTag)
+        || htmlElement->hasLocalName(headTag) || htmlElement->hasLocalName(styleTag) || htmlElement->hasLocalName(titleTag))
+        return 0;
+
+    // FIXME: This code is almost identical to createFragmentForInnerOuterHTML except this code doesn't handle exceptions.
+    RefPtr<DocumentFragment> fragment = element->document()->createDocumentFragment();
+
+    if (element->document()->isHTMLDocument())
+        fragment->parseHTML(markup, element, scriptingPermission);
+    else if (!fragment->parseXML(markup, element, scriptingPermission))
+        return 0; // FIXME: We should propagate a syntax error exception out here.
+
+    // We need to pop <html> and <body> elements and remove <head> to
+    // accommodate folks passing complete HTML documents to make the
+    // child of an element.
+
+    RefPtr<Node> nextNode;
+    for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
+        nextNode = node->nextSibling();
+        if (node->hasTagName(htmlTag) || node->hasTagName(headTag) || node->hasTagName(bodyTag)) {
+            HTMLElement* element = toHTMLElement(node.get());
+            if (Node* firstChild = element->firstChild())
+                nextNode = firstChild;
+            removeElementPreservingChildren(fragment, element);
+        }
     }
     return fragment.release();
 }

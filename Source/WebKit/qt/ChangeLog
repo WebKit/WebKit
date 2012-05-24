@@ -1,3 +1,21 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There are too many poorly named functions to create a fragment from markup
+        https://bugs.webkit.org/show_bug.cgi?id=87339
+
+        Reviewed by Eric Seidel.
+
+        Replace calls to Range::createDocumentFragmentForElement by calls to
+        createContextualDocumentFragment.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::appendInside):
+        (QWebElement::prependInside):
+        (QWebElement::prependOutside):
+        (QWebElement::appendOutside):
+        (QWebElement::encloseContentsWith):
+        (QWebElement::encloseWith):
+
 2012-05-24  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt]  Fix Webkit1 + V8 build.

@@ -342,8 +342,7 @@ String HTMLElement::outerHTML() const
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, this, ec);
-    if (fragment)
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, ec))
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
@@ -374,7 +373,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
-    RefPtr<DocumentFragment> fragment = createFragmentFromSource(html, parent.get(), ec);
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), ec);
     if (ec)
         return;
       
@@ -576,19 +575,13 @@ static Element* contextElementForInsertion(const String& where, Element* element
 
 void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, ExceptionCode& ec)
 {
-    RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
     Element* contextElement = contextElementForInsertion(where, this, ec);
     if (!contextElement)
         return;
-
-    if (document()->isHTMLDocument())
-         fragment->parseHTML(markup, contextElement);
-    else {
-        if (!fragment->parseXML(markup, contextElement))
-            // FIXME: We should propagate a syntax error exception out here.
-            return;
-    }
-
+    ExceptionCode ignoredEc = 0; // FIXME: We should propagate a syntax error exception out here.
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, this, ignoredEc);
+    if (ignoredEc)
+        return;
     insertAdjacent(where, fragment.get(), ec);
 }
 
