@@ -263,7 +263,6 @@ UNSET(LIBS_PRIVATE)
 SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/EWebKit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth_soup.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_contextmenu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_cookies.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_frame.h

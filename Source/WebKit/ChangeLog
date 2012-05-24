@@ -1,3 +1,10 @@
+2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed, unbreak `make install' after r117046.
+
+        * PlatformEfl.cmake: Remove ewk_auth_soup.h from the list of
+        installed headers, since it has been made private and renamed.
+
 2012-05-22  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Implements the registerProtocolHandler method and option.
