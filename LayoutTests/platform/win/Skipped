@@ -1767,3 +1767,9 @@ tables/mozilla/bugs/bug10296-1.html
 # Causes crashes in the next test
 # https://bugs.webkit.org/show_bug.cgi?id=87416
 fast/dom/Window/Location/set-location-after-close.html
+
+# ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
+# https://bugs.webkit.org/show_bug.cgi?id=87426
+accessibility/menu-list-sends-change-notification.html
+accessibility/multiselect-list-reports-active-option.html
+platform/win/accessibility/detached-object-notification-crash.html

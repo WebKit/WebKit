@@ -1,3 +1,12 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
+        https://bugs.webkit.org/show_bug.cgi?id=87426
+
+        Add the affected tests to the Windows Skipped list in order to get the bots green.
+
+        * platform/win/Skipped:
+
 2012-05-24  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Update test expectation for fast/js/string-replace-2.html on debug
