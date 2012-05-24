@@ -525,6 +525,7 @@ SET(WebCore_SOURCES
     css/StylePropertyShorthand.cpp
     css/StyleResolver.cpp
     css/StyleRule.cpp
+    css/StyleRuleImport.cpp
     css/StyleSheet.cpp
     css/StyleSheetContents.cpp
     css/StyleSheetList.cpp

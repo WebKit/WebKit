@@ -30,6 +30,7 @@
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
+#include "StyleRuleImport.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {

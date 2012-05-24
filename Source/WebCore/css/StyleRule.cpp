@@ -28,6 +28,7 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
+#include "StyleRuleImport.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"

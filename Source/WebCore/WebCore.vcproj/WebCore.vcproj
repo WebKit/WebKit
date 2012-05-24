@@ -37306,6 +37306,14 @@
 				RelativePath="..\css\StyleRule.h"
 				>
 			</File>
+            <File
+				RelativePath="..\css\StyleRuleImport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleRuleImport.h"
+				>
+			</File>
 			<File
 				RelativePath="..\css\StyleSheet.cpp"
 				>

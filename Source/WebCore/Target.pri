@@ -497,6 +497,7 @@ SOURCES += \
     css/StylePropertyShorthand.cpp \
     css/StyleResolver.cpp \
     css/StyleRule.cpp \
+    css/StyleRuleImport.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetContents.cpp \
     css/StyleSheetList.cpp \
@@ -1664,6 +1665,7 @@ HEADERS += \
     css/StylePropertyShorthand.h \
     css/StyleResolver.h \
     css/StyleRule.h \
+    css/StyleRuleImport.h \
     css/StyleSheet.h \
     css/StyleSheetContents.h \
     css/StyleSheetList.h \

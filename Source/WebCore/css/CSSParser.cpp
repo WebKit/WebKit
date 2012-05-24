@@ -39,7 +39,6 @@
 #include "CSSImageSetValue.h"
 #endif
 #include "CSSImageValue.h"
-#include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -50,7 +49,6 @@
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
-#include "CSSStyleRule.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
@@ -76,6 +74,7 @@
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
+#include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "TextEncoding.h"
 #if ENABLE(CSS_FILTERS)

@@ -32,7 +32,6 @@ namespace WebCore {
 class CSSImportRule;
 class MediaList;
 class Node;
-class StyleRuleImport;
 class StyleSheet;
 
 class StyleSheet : public RefCounted<StyleSheet> {

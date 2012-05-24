@@ -2545,6 +2545,8 @@
             'css/StyleResolver.h',
             'css/StyleRule.cpp',
             'css/StyleRule.h',
+            'css/StyleRuleImport.cpp',
+            'css/StyleRuleImport.h',
             'css/StyleSheet.cpp',
             'css/StyleSheet.h',
             'css/StyleSheetContents.cpp',

@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,65 +23,13 @@
 #define CSSImportRule_h
 
 #include "CSSRule.h"
-#include "CachedResourceHandle.h"
-#include "CachedStyleSheetClient.h"
-#include "PlatformString.h"
-#include "StyleRule.h"
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
 class MediaList;
 class MediaQuerySet;
-class StyleSheetContents;
-
-class StyleRuleImport : public StyleRuleBase {
-public:
-    static PassRefPtr<StyleRuleImport> create(const String& href, PassRefPtr<MediaQuerySet>);
-
-    ~StyleRuleImport();
-    
-    StyleSheetContents* parentStyleSheet() const { return m_parentStyleSheet; }
-    void setParentStyleSheet(StyleSheetContents* sheet) { ASSERT(sheet); m_parentStyleSheet = sheet; }
-    void clearParentStyleSheet() { m_parentStyleSheet = 0; }
-
-    String href() const { return m_strHref; }
-    StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
-
-    bool isLoading() const;
-    MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
-
-    void requestStyleSheet();
-
-private:
-    // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it
-    // to avoid adding a vptr to StyleRuleImport.
-    class ImportedStyleSheetClient : public CachedStyleSheetClient {
-    public:
-        ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
-        virtual ~ImportedStyleSheetClient() { }
-        virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
-        {
-            m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
-        }
-    private:
-        StyleRuleImport* m_ownerRule;
-    };
-
-    void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);
-    friend class ImportedStyleSheetClient;
-
-    StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet>);
-
-    StyleSheetContents* m_parentStyleSheet;
-
-    ImportedStyleSheetClient m_styleSheetClient;
-    String m_strHref;
-    RefPtr<MediaQuerySet> m_mediaQueries;
-    RefPtr<StyleSheetContents> m_styleSheet;
-    CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
-    bool m_loading;
-};
+class StyleRuleImport;
 
 class CSSImportRule : public CSSRule {
 public:
@@ -89,7 +37,7 @@ public:
     
     ~CSSImportRule();
 
-    String href() const { return m_importRule->href(); }
+    String href() const;
     MediaList* media() const;
     CSSStyleSheet* styleSheet() const;
     
