@@ -2469,3 +2469,7 @@ editing/inserting/typing-space-to-trigger-smart-link.html
 # [Qt] new test fast/block/positioning/fixed-position-stacking-context.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=87367
 fast/block/positioning/fixed-position-stacking-context.html
+
+# [Qt] REGRESSION(r118291) fast/frames/flattening/iframe-tiny.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=87363
+fast/frames/flattening/iframe-tiny.html
