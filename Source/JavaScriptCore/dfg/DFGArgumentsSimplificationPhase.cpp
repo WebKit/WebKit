@@ -603,20 +603,30 @@ private:
             return;
         
         Node& child = m_graph[edge];
-        if (child.op() != GetLocal)
-            return;
-        
-        if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)) {
+        switch (child.op()) {
+        case CreateArguments: {
             m_createsArguments.add(child.codeOrigin.inlineCallFrame);
-            return;
+            break;
         }
-        
-        VariableAccessData* variableAccessData = child.variableAccessData();
-        if (variableAccessData->isCaptured())
-            return;
-        
-        ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
-        data.escapes = true;
+            
+        case GetLocal: {
+            if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)) {
+                m_createsArguments.add(child.codeOrigin.inlineCallFrame);
+                break;
+            }
+            
+            VariableAccessData* variableAccessData = child.variableAccessData();
+            if (variableAccessData->isCaptured())
+                break;
+            
+            ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
+            data.escapes = true;
+            break;
+        }
+            
+        default:
+            break;
+        }
     }
     
     void observeBadArgumentsUses(Node& node)

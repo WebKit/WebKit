@@ -1,3 +1,10 @@
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, merge the arguments fix in r118138 to get bots green.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUse):
+
 2012-05-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should record if a node can OSR exit
