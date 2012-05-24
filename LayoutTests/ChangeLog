@@ -1,5 +1,11 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Skip more CSS Regions related tests on the 536 branch.
+
+        * platform/mac/Skipped:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Fix typo in r118235.
 
         * http/tests/workers/worker-importScriptsOnError-expected.txt:

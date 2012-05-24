@@ -29,6 +29,8 @@
 # CSS Regions are disabled on the 536 branch
 # <rdar://problem/10887709>
 fast/regions
+fast/repaint/japanese-rl-selection-repaint-in-regions.html
+fast/repaint/line-flow-with-floats-in-regions.html
 
 # IFrame Seamless is disabled on the 536 branch
 # <rdar://problem/11401642>
