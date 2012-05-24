@@ -35,6 +35,18 @@ body {
 .flexbox :nth-child(7) {
     background-color: lime;
 }
+.flexbox :nth-child(8) {
+    background-color: lightblue;
+}
+.flexbox :nth-child(9) {
+    background-color: darkred;
+}
+.flexbox :nth-child(10) {
+    background-color: gold;
+}
+.flexbox :nth-child(11) {
+    background-color: salmon;
+}
 </style>
 <script>
 if (window.layoutTestController)
@@ -51,9 +63,11 @@ if (window.layoutTestController)
 </div>
 
 <div class="flexbox">
-  <div data-expected-height="60"  data-offset-y="0" style="-webkit-flex: 1 0 0; height: 60px; margin: auto 0;"></div>
-  <div data-expected-height="120" data-offset-y="0" style="-webkit-flex: 1 0 0; margin: auto 0 0;"></div>
-  <div data-expected-height="120" data-offset-y="0" style="-webkit-flex: 1 0 0; margin: auto 0;"></div>
+  <div data-expected-height="60"  data-offset-y="0" style="-webkit-flex: 1 0 0; height: 60px;"></div>
+  <div data-expected-height="120" data-offset-y="0" style="-webkit-flex: 1 0 0;"></div>
+  <div data-expected-height="60"  data-offset-y="30" style="-webkit-flex: 1 0 0; height: 60px; margin: auto 0;"></div>
+  <div data-expected-height="0" data-offset-y="120" style="-webkit-flex: 1 0 0; margin: auto 0 0;"></div>
+  <div data-expected-height="0" data-offset-y="60" style="-webkit-flex: 1 0 0; margin: auto 0;"></div>
   <div data-expected-height="100" data-offset-y="10" style="-webkit-flex: 1 0 0; height: 100px; margin: 10px 0;"></div>
   <div data-expected-height="50" data-offset-y="20" style="-webkit-flex: 1 0 0; height: 50px; margin: 20px 0 10px;"></div>
   <div data-expected-height="90" data-offset-y="20" style="-webkit-flex: 1 0 0; margin: 20px 0 10px;"></div>
@@ -96,6 +110,9 @@ if (window.layoutTestController)
     <div data-expected-height="0" data-offset-y="50" style="-webkit-flex-item-align: center; -webkit-flex: 1 0 0;"></div>
     <div data-offset-y="20" style="-webkit-flex-item-align: baseline; -webkit-flex: 1 0 0;"><div style="display:inline-block;"></div></div>
     <div data-offset-y="20" style="-webkit-flex-item-align: baseline; -webkit-flex: 1 0 0; margin: 20px;"><div style="display:inline-block;"></div></div>
+    <div data-offset-y="50" style="-webkit-flex-item-align: baseline; -webkit-flex: 1 0 0; margin: auto 0;"></div>
+    <div data-offset-y="30" style="-webkit-flex-item-align: baseline; -webkit-flex: 1 0 0; margin: 30px 0 auto;"><div style="display:inline-block;"></div></div>
+    <div data-offset-y="80" style="-webkit-flex-item-align: baseline; -webkit-flex: 1 0 0; margin: auto 0 20px;"></div>
     <div data-expected-height="100" data-offset-y="0" style="-webkit-flex-item-align: stretch; -webkit-flex: 1 0 0;"></div>
 </div>
 
@@ -157,7 +174,9 @@ if (window.layoutTestController)
 </div>
 
 <div class="flexbox">
-  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0 0;"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px;"></div>
+  <div data-expected-height="70" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 70px;"></div>
+  <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0 0;"></div>
   <div data-expected-height="70" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 70px; margin: 0 0 auto"></div>
   <div data-expected-height="70" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 70px;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px;"></div>
@@ -166,8 +185,9 @@ if (window.layoutTestController)
 <div class="flexbox">
   <div data-expected-height="0" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start;"></div>
   <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px;"></div>
-  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: auto 0"></div>
-  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: auto 0 0"></div>
+  <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: auto 0"></div>
+  <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: auto 0 0"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: 0 0 auto"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: 25px 0"></div>
   <div data-expected-height="50" data-offset-y="20" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; margin: 20px 0 10px;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px;"></div>
@@ -176,8 +196,9 @@ if (window.layoutTestController)
 <div class="flexbox">
   <div data-expected-height="0" data-offset-y="100" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end;"></div>
   <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px;"></div>
-  <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: auto 0"></div>
+  <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: auto 0"></div>
   <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: auto 0 0"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: 0 0 auto"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: 25px 0"></div>
   <div data-expected-height="50" data-offset-y="40" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; margin: 20px 0 10px;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px;"></div>
@@ -187,7 +208,9 @@ if (window.layoutTestController)
   <div data-expected-height="0" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center;"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px;"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: auto 0"></div>
-  <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: auto 0 0"></div>
+  <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: auto 0 0"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: 0 0 auto"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: 0 0 auto"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: 25px 0"></div>
   <div data-expected-height="50" data-offset-y="30" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; margin: 20px 0 10px;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px;"></div>
@@ -197,7 +220,8 @@ if (window.layoutTestController)
   <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px; -webkit-writing-mode: vertical-rl;"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px; -webkit-writing-mode: vertical-rl;"></div>
   <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px; -webkit-writing-mode: vertical-rl;"></div>
-  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0; -webkit-writing-mode: vertical-rl;"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px; -webkit-writing-mode: vertical-rl;"></div>
+  <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0; -webkit-writing-mode: vertical-rl;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px; -webkit-writing-mode: vertical-rl;"></div>
 </div>
 
@@ -205,7 +229,8 @@ if (window.layoutTestController)
   <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: start; height: 50px;"></div>
   <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: center; height: 50px;"></div>
   <div data-expected-height="50" data-offset-y="50" style="-webkit-flex: 1 0 0; -webkit-flex-item-align: end; height: 50px;"></div>
-  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0"></div>
+  <div data-expected-height="50" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 50px;"></div>
+  <div data-expected-height="50" data-offset-y="25" style="-webkit-flex: 1 0 0; height: 50px; margin: auto 0"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0;"></div>
   <div data-expected-height="100" data-offset-y="0" style="-webkit-flex: 1 0 0; height: 100px;"></div>
 </div>

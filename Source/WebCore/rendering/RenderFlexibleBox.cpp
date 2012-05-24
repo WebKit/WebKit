@@ -688,10 +688,51 @@ void RenderFlexibleBox::updateAutoMarginsInMainAxis(RenderBox* child, LayoutUnit
     }
 }
 
+bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(RenderBox* child)
+{
+    if (isHorizontalFlow())
+        return child->style()->marginTop().isAuto() || child->style()->marginBottom().isAuto();
+    return child->style()->marginLeft().isAuto() || child->style()->marginRight().isAuto();
+}
+
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox* child)
 {
     LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
     return lineCrossAxisExtent - childCrossExtent;
+}
+
+bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace)
+{
+    bool isHorizontal = isHorizontalFlow();
+    Length start = isHorizontal ? child->style()->marginTop() : child->style()->marginLeft();
+    Length end = isHorizontal ? child->style()->marginBottom() : child->style()->marginRight();
+    if (start.isAuto() && end.isAuto()) {
+        adjustAlignmentForChild(child, availableAlignmentSpace / 2);
+        if (isHorizontal) {
+            child->setMarginTop(availableAlignmentSpace / 2);
+            child->setMarginBottom(availableAlignmentSpace / 2);
+        } else {
+            child->setMarginLeft(availableAlignmentSpace / 2);
+            child->setMarginRight(availableAlignmentSpace / 2);
+        }
+        return true;
+    }
+    if (start.isAuto()) {
+        adjustAlignmentForChild(child, availableAlignmentSpace);
+        if (isHorizontal)
+            child->setMarginTop(availableAlignmentSpace);
+        else
+            child->setMarginLeft(availableAlignmentSpace);
+        return true;
+    }
+    if (end.isAuto()) {
+        if (isHorizontal)
+            child->setMarginBottom(availableAlignmentSpace);
+        else
+            child->setMarginRight(availableAlignmentSpace);
+        return true;
+    }
+    return false;
 }
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
@@ -952,7 +993,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
         LayoutUnit childCrossAxisMarginBoxExtent;
-        if (flexAlignForChild(child) == AlignBaseline) {
+        if (flexAlignForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
             LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
@@ -1096,6 +1137,9 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Ve
 
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next()) {
             ASSERT(child);
+            if (updateAutoMarginsInCrossAxis(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child)))
+                continue;
+
             switch (flexAlignForChild(child)) {
             case AlignAuto:
                 ASSERT_NOT_REACHED();
@@ -1139,7 +1183,7 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Ve
         LayoutUnit minMarginAfterBaseline = minMarginAfterBaselines[lineNumber];
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next()) {
             ASSERT(child);
-            if (flexAlignForChild(child) == AlignBaseline && minMarginAfterBaseline)
+            if (flexAlignForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child) && minMarginAfterBaseline)
                 adjustAlignmentForChild(child, minMarginAfterBaseline);
         }
     }
