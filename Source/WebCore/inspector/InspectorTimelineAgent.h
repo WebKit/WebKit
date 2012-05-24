@@ -99,6 +99,9 @@ public:
     void willPaint(const LayoutRect&);
     void didPaint();
 
+    void willComposite();
+    void didComposite();
+
     // FIXME: |length| should be passed in didWrite instead willWrite
     // as the parser can not know how much it will process until it tries.
     void willWriteHTML(unsigned int length, unsigned int startLine);

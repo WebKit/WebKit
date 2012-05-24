@@ -144,6 +144,8 @@ public:
     static void didLoadXHR(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaint(Frame*, GraphicsContext*, const LayoutRect&);
     static void didPaint(const InspectorInstrumentationCookie&);
+    static void willComposite(Page*);
+    static void didComposite(Page*);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document*);
@@ -305,6 +307,8 @@ private:
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
+    static void willCompositeImpl(InstrumentingAgents*);
+    static void didCompositeImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
@@ -824,6 +828,24 @@ inline void InspectorInstrumentation::didPaint(const InspectorInstrumentationCoo
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didPaintImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::willComposite(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        willCompositeImpl(instrumentingAgents);
+#endif
+}
+
+inline void InspectorInstrumentation::didComposite(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        didCompositeImpl(instrumentingAgents);
 #endif
 }
 

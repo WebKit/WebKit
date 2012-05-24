@@ -466,6 +466,18 @@ void InspectorInstrumentation::didPaintImpl(const InspectorInstrumentationCookie
         pageAgent->didPaint();
 }
 
+void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->willComposite();
+}
+
+void InspectorInstrumentation::didCompositeImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didComposite();
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyleImpl(InstrumentingAgents* instrumentingAgents)
 {
     int timelineAgentId = 0;

@@ -1,3 +1,35 @@
+2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add inspector instrumentation interface for compositing
+        https://bugs.webkit.org/show_bug.cgi?id=83842
+
+        Reviewed by Pavel Feldman.
+
+        - added instrumentation methods to mark start/end of layer compositing;
+        - added associated timeline record type (CompositeLayers);
+        - plumbed the calls from instrumentation up to the timeline panel;
+        - actual call-sites are platform-specific and will come as separate patches.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCompositeImpl):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didCompositeImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willComposite):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didComposite):
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        (WebCore::InspectorTimelineAgent::willComposite):
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::didComposite):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.recordStyle):
+
 2012-05-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed Web Inspector: remove obsolete isDetailedSnapshot method from HeapSnapshotView.

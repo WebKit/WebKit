@@ -50,6 +50,7 @@ WebInspector.TimelineModel.RecordType = {
     Layout: "Layout",
     RecalculateStyles: "RecalculateStyles",
     Paint: "Paint",
+    CompositeLayers: "CompositeLayers",
 
     ParseHTML: "ParseHTML",
 
