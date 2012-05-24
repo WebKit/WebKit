@@ -1,3 +1,13 @@
+2012-05-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        Test case for focusing readonly elements
+        https://bugs.webkit.org/show_bug.cgi?id=87429
+
+        Reviewed by Joseph Pecoraro.
+
+        * fast/forms/input-readonly-focus-expected.txt: Added.
+        * fast/forms/input-readonly-focus.html: Added.
+
 2012-05-24  Levi Weintraub  <leviw@chromium.org>
 
         Avoid creating InlineBoxes for floating and positioned objects in isolates.
