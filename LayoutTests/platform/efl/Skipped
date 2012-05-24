@@ -594,9 +594,6 @@ fast/dom/Window/window-screen-properties.html
 # BUG: wrong test result, window should not have been scrolled
 fast/events/attempt-scroll-with-no-scrollbars.html
 
-# Test expectation probably needs to be updated
-fast/events/click-focus-anchor.html
-
 # BUG: focus bugs
 fast/events/frame-tab-focus.html
 fast/forms/focus2.html

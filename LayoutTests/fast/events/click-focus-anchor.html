@@ -7,13 +7,13 @@
 <p>This test ensures that we can click to focus an a element.
 Click on the element below.
 
-<p>The expected result is platform specific. GTK and QT allows all links to be
+<p>The expected result is platform specific. GTK, QT and EFL allows all links to be
 mouse focusable.
 
 <div id=test-container>
 <p><a id=a1 tabindex=0 title="focusable">Anchor with tab index</a>
 <p><a id=a2 title="not focusable">Anchor without tab index</a>
-<p><a id=a3 href="#" title="focusable on GTK and QT">Link without tab index</a>
+<p><a id=a3 href="#" title="focusable on GTK, QT and EFL">Link without tab index</a>
 <p><a id=a4 href="#" tabindex=0 title="focusable">Link with tab index</a>
 <p><a id=a5 href="#" contentEditable title="focusable">Link with contentEditable</a>
 <p contentEditable><a id=a6 href="#" focusable="not focusable">Link inside contentEditable</a>
