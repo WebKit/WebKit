@@ -1,3 +1,25 @@
+2012-05-24  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 117471
+
+    2012-05-16  Andreas Kling  <kling@webkit.org>
+
+            Make PluginInfoStore properly thread-safe.
+            <http://webkit.org/b/86648>
+            <rdar://problem/11451178>
+
+            Reviewed by Darin Adler.
+
+            Deep copy the internal storage of PluginInfoStore after constructing it, as we can
+            be doing this from a secondary thread.
+
+            * Shared/Plugins/PluginModuleInfo.h:
+            (WebKit::PluginModuleInfo::isolatedCopy):
+            * UIProcess/Plugins/PluginInfoStore.cpp:
+            (WebKit::deepIsolatedCopyPluginInfoVector):
+            (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+            (WebKit::PluginInfoStore::plugins):
+
 2012-05-23  Lucas Forschler  <lforschler@apple.com>
 
     Merge 117698

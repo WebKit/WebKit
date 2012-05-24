@@ -42,7 +42,7 @@ struct PluginModuleInfo {
     uint64_t fileVersion;
 #endif
 
-    PluginModuleInfo isolatedCopy()
+    PluginModuleInfo isolatedCopy() const
     {
         PluginModuleInfo clone;
         clone.path = path.isolatedCopy();

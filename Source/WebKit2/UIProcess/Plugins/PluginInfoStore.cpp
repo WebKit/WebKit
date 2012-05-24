@@ -69,6 +69,16 @@ typedef ListHashSet<String, 32, CaseFoldingHash> PathHashSet;
 typedef ListHashSet<String, 32> PathHashSet;
 #endif
 
+static inline Vector<PluginModuleInfo> deepIsolatedCopyPluginInfoVector(const Vector<PluginModuleInfo>& vector)
+{
+    // Let the copy begin!
+    Vector<PluginModuleInfo> copy;
+    copy.reserveCapacity(vector.size());
+    for (unsigned i = 0; i < vector.size(); ++i)
+        copy.append(vector[i].isolatedCopy());
+    return copy;
+}
+
 void PluginInfoStore::loadPluginsIfNecessary()
 {
     if (m_pluginListIsUpToDate)
@@ -94,7 +104,8 @@ void PluginInfoStore::loadPluginsIfNecessary()
     for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
         loadPlugin(plugins, *it);
 
-    m_plugins.swap(plugins);
+    m_plugins = deepIsolatedCopyPluginInfoVector(plugins);
+
     m_pluginListIsUpToDate = true;
 }
 
@@ -115,13 +126,7 @@ Vector<PluginModuleInfo> PluginInfoStore::plugins()
 {
     MutexLocker locker(m_pluginsLock);
     loadPluginsIfNecessary();
-
-    // Let the copy begin!
-    Vector<PluginModuleInfo> infos;
-    for (unsigned i = 0; i < m_plugins.size(); ++i)
-        infos.append(m_plugins[i].isolatedCopy());
-
-    return infos;
+    return deepIsolatedCopyPluginInfoVector(m_plugins);
 }
 
 PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) const

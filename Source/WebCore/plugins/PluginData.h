@@ -34,7 +34,7 @@ struct MimeClassInfo {
     String desc;
     Vector<String> extensions;
 
-    MimeClassInfo isolatedCopy()
+    MimeClassInfo isolatedCopy() const
     {
         MimeClassInfo clone;
         clone.type = type.isolatedCopy();
@@ -56,7 +56,7 @@ struct PluginInfo {
     String desc;
     Vector<MimeClassInfo> mimes;
 
-    PluginInfo isolatedCopy()
+    PluginInfo isolatedCopy() const
     {
         PluginInfo clone;
         clone.name = name.isolatedCopy();
