@@ -1855,9 +1855,8 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     if (!inResizeMode() || !renderer()->hasOverflowClip() || !renderer()->node())
         return;
 
-    // Set the width and height of the shadow ancestor node if there is one.
-    // This is necessary for textarea elements since the resizable layer is in the shadow content.
-    Element* element = static_cast<Element*>(renderer()->node()->shadowAncestorNode());
+    ASSERT(renderer()->node()->isElementNode());
+    Element* element = static_cast<Element*>(renderer()->node());
     RenderBox* renderer = toRenderBox(element->renderer());
 
     EResize resize = renderer->style()->resize();

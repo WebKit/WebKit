@@ -1,0 +1,6 @@
+PASS box.offsetWidth is 114
+PASS box.offsetHeight is 114
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

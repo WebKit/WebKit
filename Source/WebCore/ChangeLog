@@ -1,3 +1,21 @@
+2012-05-24  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Elements in Shadow DOM are not resizable.
+        https://bugs.webkit.org/show_bug.cgi?id=87342
+
+        Reviewed by Ryosuke Niwa.
+
+        In RenderLayer::resize(), shadowAncestorNode() was used but if the ancestor node is used,
+        it is not possible to resize elements in Shadow DOM.
+
+        The comments said it is necessary for textarea, however actually it is not necessary now.
+        Existing test (fast/css/resize-corner-tracking) covers it.
+
+        Test: fast/dom/shadow/resize-in-shadow-dom.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+
 2012-05-24  Antti Koivisto  <antti@apple.com>
 
         Move StyleSheetContents to a separate file

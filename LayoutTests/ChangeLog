@@ -1,3 +1,13 @@
+2012-05-24  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Elements in Shadow DOM are not resizable.
+        https://bugs.webkit.org/show_bug.cgi?id=87342
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/shadow/resize-in-shadow-dom-expected.txt: Added.
+        * fast/dom/shadow/resize-in-shadow-dom.html: Added.
+
 2012-05-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, skipping failing tests on chromium.
