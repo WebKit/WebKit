@@ -1,3 +1,9 @@
+2012-05-24  Adam Barth  <abarth@webkit.org>
+
+        Fix the chromium-android build.
+
+        * features.gypi:
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting

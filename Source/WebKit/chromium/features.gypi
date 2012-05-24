@@ -52,7 +52,6 @@
       'ENABLE_ENCRYPTED_MEDIA=1',
       'ENABLE_FILE_SYSTEM=1',
       'ENABLE_FILTERS=1',
-      'ENABLE_FONT_BOOSTING=0',
       'ENABLE_FULLSCREEN_API=1',
       'ENABLE_GAMEPAD=1',
       'ENABLE_GEOLOCATION=1',
@@ -152,6 +151,7 @@
       }, {
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
+          'ENABLE_FONT_BOOSTING=0',
           'ENABLE_MEDIA_CAPTURE=0',
           'ENABLE_PAGE_POPUP=1',
           'ENABLE_WEB_AUDIO=1',
