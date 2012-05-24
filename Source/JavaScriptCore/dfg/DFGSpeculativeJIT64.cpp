@@ -964,8 +964,8 @@ void SpeculativeJIT::emitCall(Node& node)
     GPRReg calleeGPR = callee.gpr();
     use(calleeEdge);
     
-    // The call instruction's first child is either the function (normal call) or the
-    // receiver (method call). subsequent children are the arguments.
+    // The call instruction's first child is the function; the subsequent children are the
+    // arguments.
     int numPassedArgs = node.numChildren() - 1;
     
     m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs + dummyThisArgument), callFramePayloadSlot(RegisterFile::ArgumentCount));
@@ -3842,6 +3842,19 @@ void SpeculativeJIT::compile(Node& node)
                     created, this, operationTearOffArguments, NoResult, argumentsValueGPR));
         }
         
+        noResult(m_compileIndex);
+        break;
+    }
+        
+    case CheckArgumentsNotCreated: {
+        // FIXME: We should have a way to count such failures. This will be part of
+        // https://bugs.webkit.org/show_bug.cgi?id=86327
+        speculationCheck(
+            Uncountable, JSValueRegs(), NoNode,
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::addressFor(
+                    m_jit.argumentsRegisterFor(node.codeOrigin))));
         noResult(m_compileIndex);
         break;
     }

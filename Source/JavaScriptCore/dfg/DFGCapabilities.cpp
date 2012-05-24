@@ -34,33 +34,56 @@ namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
 
-static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID)
+static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, bool result)
 {
+    ASSERT_UNUSED(result, !result);
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("Cannot handle code block %p because of opcode %s.\n", codeBlock, opcodeNames[opcodeID]);
 #else
     UNUSED_PARAM(codeBlock);
     UNUSED_PARAM(opcodeID);
+    UNUSED_PARAM(result);
 #endif
 }
 
-template<bool (*canHandleOpcode)(OpcodeID)>
-bool canHandleOpcodes(CodeBlock* codeBlock)
+static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)
+{
+    ASSERT(result != CanCompile);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    if (result == CannotCompile)
+        dataLog("Cannot handle code block %p because of opcode %s.\n", codeBlock, opcodeNames[opcodeID]);
+    else {
+        ASSERT(result == ShouldProfile);
+        dataLog("Cannot compile code block %p because of opcode %s, but inlining might be possible.\n", codeBlock, opcodeNames[opcodeID]);
+    }
+#else
+    UNUSED_PARAM(codeBlock);
+    UNUSED_PARAM(opcodeID);
+    UNUSED_PARAM(result);
+#endif
+}
+
+template<typename ReturnType, ReturnType (*canHandleOpcode)(OpcodeID, CodeBlock*, Instruction*)>
+ReturnType canHandleOpcodes(CodeBlock* codeBlock, ReturnType initialValue)
 {
     Interpreter* interpreter = codeBlock->globalData()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
     unsigned instructionCount = codeBlock->instructions().size();
+    ReturnType result = initialValue;
     
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount; ) {
         switch (interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
-#define DEFINE_OP(opcode, length)               \
-        case opcode:                            \
-            if (!canHandleOpcode(opcode)) {     \
-                debugFail(codeBlock, opcode);   \
-                return false;                   \
-            }                                   \
-            bytecodeOffset += length;           \
-            break;
+#define DEFINE_OP(opcode, length) \
+        case opcode: { \
+            ReturnType current = canHandleOpcode( \
+                opcode, codeBlock, instructionsBegin + bytecodeOffset); \
+            if (current < result) { \
+                result = current; \
+                debugFail(codeBlock, opcode, current); \
+            } \
+            bytecodeOffset += length; \
+            break; \
+        }
             FOR_EACH_OPCODE_ID(DEFINE_OP)
 #undef DEFINE_OP
         default:
@@ -69,19 +92,19 @@ bool canHandleOpcodes(CodeBlock* codeBlock)
         }
     }
     
-    return true;
+    return result;
 }
 
-bool canCompileOpcodes(CodeBlock* codeBlock)
+CapabilityLevel canCompileOpcodes(CodeBlock* codeBlock)
 {
     if (!MacroAssembler::supportsFloatingPoint())
-        return false;
-    return canHandleOpcodes<canCompileOpcode>(codeBlock);
+        return CannotCompile;
+    return canHandleOpcodes<CapabilityLevel, canCompileOpcode>(codeBlock, CanCompile);
 }
 
 bool canInlineOpcodes(CodeBlock* codeBlock)
 {
-    return canHandleOpcodes<canInlineOpcode>(codeBlock);
+    return canHandleOpcodes<bool, canInlineOpcode>(codeBlock, true);
 }
 
 #endif

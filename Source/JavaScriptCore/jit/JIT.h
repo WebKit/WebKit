@@ -836,7 +836,7 @@ namespace JSC {
 
 #if ENABLE(DFG_JIT)
         bool canBeOptimized() { return m_canBeOptimized; }
-        bool shouldEmitProfiling() { return m_canBeOptimized; }
+        bool shouldEmitProfiling() { return m_shouldEmitProfiling; }
 #else
         bool canBeOptimized() { return false; }
         // Enables use of value profiler with tiered compilation turned off,
@@ -885,6 +885,7 @@ namespace JSC {
 
 #if ENABLE(VALUE_PROFILER)
         bool m_canBeOptimized;
+        bool m_shouldEmitProfiling;
 #endif
     } JIT_CLASS_ALIGNMENT;
 

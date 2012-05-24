@@ -441,6 +441,31 @@ private:
         return NoNode;
     }
     
+    NodeIndex getLocalLoadElimination(VariableAccessData* variableAccessData)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            switch (node.op()) {
+            case GetLocal:
+                if (node.variableAccessData() == variableAccessData)
+                    return index;
+                break;
+                
+            case SetLocal:
+                if (node.variableAccessData() == variableAccessData)
+                    return node.child1().index();
+                break;
+                
+            default:
+                if (m_graph.clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+        }
+        return NoNode;
+    }
+    
     void performSubstitution(Edge& child, bool addRef = true)
     {
         // Check if this operand is actually unused.
@@ -462,15 +487,15 @@ private:
             m_graph[child].ref();
     }
     
-    void setReplacement(NodeIndex replacement)
+    bool setReplacement(NodeIndex replacement)
     {
         if (replacement == NoNode)
-            return;
+            return false;
         
         // Be safe. Don't try to perform replacements if the predictions don't
         // agree.
         if (m_graph[m_compileIndex].prediction() != m_graph[replacement].prediction())
-            return;
+            return false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   Replacing @%u -> @%u", m_compileIndex, replacement);
@@ -482,6 +507,8 @@ private:
         
         // At this point we will eliminate all references to this node.
         m_replacements[m_compileIndex] = replacement;
+        
+        return true;
     }
     
     void eliminate()
@@ -568,6 +595,22 @@ private:
         case LogicalNot:
             setReplacement(pureCSE(node));
             break;
+            
+        case GetLocal: {
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            if (!variableAccessData->isCaptured())
+                break;
+            NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData);
+            if (!setReplacement(possibleReplacement))
+                break;
+            NodeIndex oldTailIndex = m_currentBlock->variablesAtTail.operand(
+                variableAccessData->local());
+            if (oldTailIndex == m_compileIndex) {
+                m_currentBlock->variablesAtTail.operand(variableAccessData->local()) =
+                    possibleReplacement;
+            }
+            break;
+        }
             
         case JSConstant:
             // This is strange, but necessary. Some phases will convert nodes to constants,

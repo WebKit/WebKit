@@ -663,6 +663,7 @@ private:
         case TearOffActivation:
         case TearOffArguments:
         case CheckNumber:
+        case CheckArgumentsNotCreated:
             changed |= mergeDefaultFlags(node);
             break;
             

@@ -197,6 +197,7 @@ namespace JSC { namespace DFG {
     macro(TearOffArguments, NodeMustGenerate) \
     macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(CheckArgumentsNotCreated, NodeMustGenerate) \
     \
     /* Nodes for creating functions. */\
     macro(NewFunctionNoCheck, NodeResultJS) \

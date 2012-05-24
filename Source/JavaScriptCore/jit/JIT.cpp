@@ -96,7 +96,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 #if ENABLE(DFG_JIT)
 void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 {
-    if (!shouldEmitProfiling())
+    if (!canBeOptimized())
         return;
     
     Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop : Options::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
@@ -417,7 +417,7 @@ void JIT::privateCompileSlowCases()
         
 #if ENABLE(VALUE_PROFILER)
         RareCaseProfile* rareCaseProfile = 0;
-        if (m_canBeOptimized)
+        if (shouldEmitProfiling())
             rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
 #endif
 
@@ -497,7 +497,7 @@ void JIT::privateCompileSlowCases()
         ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
         
 #if ENABLE(VALUE_PROFILER)
-        if (m_canBeOptimized)
+        if (shouldEmitProfiling())
             add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
 #endif
 
@@ -565,7 +565,24 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
 #endif
     
 #if ENABLE(VALUE_PROFILER)
-    m_canBeOptimized = m_codeBlock->canCompileWithDFG();
+    DFG::CapabilityLevel level = m_codeBlock->canCompileWithDFG();
+    switch (level) {
+    case DFG::CannotCompile:
+        m_canBeOptimized = false;
+        m_shouldEmitProfiling = false;
+        break;
+    case DFG::ShouldProfile:
+        m_canBeOptimized = false;
+        m_shouldEmitProfiling = true;
+        break;
+    case DFG::CanCompile:
+        m_canBeOptimized = true;
+        m_shouldEmitProfiling = true;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 #endif
 
     // Just add a little bit of randomness to the codegen
@@ -619,7 +636,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     Label functionBody = label();
     
 #if ENABLE(VALUE_PROFILER)
-    if (m_canBeOptimized)
+    if (canBeOptimized())
         add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
 #endif
 

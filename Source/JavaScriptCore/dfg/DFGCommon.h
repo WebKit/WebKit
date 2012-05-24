@@ -130,6 +130,8 @@ enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };
 
+enum CapabilityLevel { CannotCompile, ShouldProfile, CanCompile, CapabilityLevelNotSet };
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

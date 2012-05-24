@@ -2361,8 +2361,52 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             handleCall(interpreter, currentInstruction, Construct, CodeForConstruct);
             NEXT_OPCODE(op_construct);
             
+        case op_call_varargs: {
+            ASSERT(m_inlineStackTop->m_inlineCallFrame);
+            ASSERT(currentInstruction[3].u.operand == m_inlineStackTop->m_codeBlock->argumentsRegister());
+            // It would be cool to funnel this into handleCall() so that it can handle
+            // inlining. But currently that won't be profitable anyway, since none of the
+            // uses of call_varargs will be inlineable. So we set this up manually and
+            // without inline/intrinsic detection.
+            
+            Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call_varargs);
+            
+            PredictedType prediction = PredictNone;
+            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+                m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call_varargs);
+                prediction = getPrediction();
+            }
+            
+            addToGraph(CheckArgumentsNotCreated);
+            
+            unsigned argCount = m_inlineStackTop->m_inlineCallFrame->arguments.size();
+            if (RegisterFile::CallFrameHeaderSize + argCount > m_parameterSlots)
+                m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+            
+            addVarArgChild(get(currentInstruction[1].u.operand)); // callee
+            addVarArgChild(get(currentInstruction[2].u.operand)); // this
+            for (unsigned argument = 1; argument < argCount; ++argument)
+                addVarArgChild(get(argumentToOperand(argument)));
+            
+            NodeIndex call = addToGraph(Node::VarArg, Call, OpInfo(0), OpInfo(prediction));
+            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
+                set(putInstruction[1].u.operand, call);
+            
+            NEXT_OPCODE(op_call_varargs);
+        }
+            
         case op_call_put_result:
             NEXT_OPCODE(op_call_put_result);
+            
+        case op_jneq_ptr:
+            // Statically speculate for now. It makes sense to let speculate-only jneq_ptr
+            // support simmer for a while before making it more general, since it's
+            // already gnarly enough as it is.
+            addToGraph(
+                CheckFunction, OpInfo(currentInstruction[2].u.jsCell.get()),
+                get(currentInstruction[1].u.operand));
+            addToGraph(Jump, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr)));
+            LAST_OPCODE(op_jneq_ptr);
 
         case op_resolve: {
             PredictedType prediction = getPrediction();
@@ -2484,8 +2528,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ASSERT_NOT_REACHED();
             return false;
         }
-        
-        ASSERT(canCompileOpcode(opcodeID));
     }
 }
 
@@ -2497,6 +2539,9 @@ void ByteCodeParser::processPhiStack()
     while (!phiStack.isEmpty()) {
         PhiStackEntry entry = phiStack.last();
         phiStack.removeLast();
+        
+        if (!entry.m_block->isReachable)
+            continue;
         
         if (!entry.m_block->isReachable)
             continue;
@@ -2944,14 +2989,14 @@ bool ByteCodeParser::parse()
     dataLog("Processing argument phis.\n");
 #endif
     processPhiStack<ArgumentPhiStack>();
-    
+
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         ASSERT(block);
         if (!block->isReachable)
             m_graph.m_blocks[blockIndex].clear();
     }
-
+    
     fixVariableAccessPredictions();
     
     m_graph.m_preservedVars = m_preservedVars;

@@ -387,11 +387,13 @@ void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::
             dataLog(" llint(not set)");
 #endif
 #if ENABLE(JIT)
-        JSFunction* target = getCallLinkInfo(location).lastSeenCallee.get();
-        if (target)
-            dataLog(" jit(%p, exec %p)", target, target->executable());
-        else
-            dataLog(" jit(not set)");
+        if (numberOfCallLinkInfos()) {
+            JSFunction* target = getCallLinkInfo(location).lastSeenCallee.get();
+            if (target)
+                dataLog(" jit(%p, exec %p)", target, target->executable());
+            else
+                dataLog(" jit(not set)");
+        }
 #endif
     }
     dataLog("\n");
@@ -1574,7 +1576,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
 #if ENABLE(JIT)
-    , m_canCompileWithDFGState(CompileWithDFGUnset)
+    , m_canCompileWithDFGState(DFG::CapabilityLevelNotSet)
 #endif
 {
     setNumParameters(other.numParameters());
@@ -2469,17 +2471,17 @@ JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* s
     return error;
 }
 
-bool ProgramCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel ProgramCodeBlock::canCompileWithDFGInternal()
 {
     return DFG::canCompileProgram(this);
 }
 
-bool EvalCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel EvalCodeBlock::canCompileWithDFGInternal()
 {
     return DFG::canCompileEval(this);
 }
 
-bool FunctionCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel FunctionCodeBlock::canCompileWithDFGInternal()
 {
     if (m_isConstructor)
         return DFG::canCompileFunctionForConstruct(this);

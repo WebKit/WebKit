@@ -279,12 +279,23 @@ private:
         Node& child = m_graph[edge];
         if (child.op() != GetLocal)
             return;
-        if (child.variableAccessData()->isCaptured())
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("    Considering GetLocal at @%u.\n", edge.index());
+#endif
+        if (child.variableAccessData()->isCaptured()) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("        It's captured.\n");
+#endif
             return;
+        }
         NodeIndex originalNodeIndex = block->variablesAtTail.operand(child.local());
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("        Dealing with original @%u.\n", originalNodeIndex);
+#endif
         ASSERT(originalNodeIndex != NoNode);
         Node* originalNode = &m_graph[originalNodeIndex];
-        ASSERT(originalNode->shouldGenerate());
+        if (changeRef)
+            ASSERT(originalNode->shouldGenerate());
         // Possibilities:
         // SetLocal -> the secondBlock is getting the value of something that is immediately
         //     available in the first block with a known NodeIndex.
@@ -304,15 +315,24 @@ private:
         }
         switch (originalNode->op()) {
         case SetLocal: {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("        It's a SetLocal.\n");
+#endif
             m_graph.changeIndex(edge, originalNode->child1().index(), changeRef);
             break;
         }
         case GetLocal: {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("        It's a GetLocal.\n");
+#endif
             m_graph.changeIndex(edge, originalNodeIndex, changeRef);
             break;
         }
         case Phi:
         case SetArgument: {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("        It's Phi/SetArgument.\n");
+#endif
             // Keep the GetLocal!
             break;
         }
@@ -445,12 +465,6 @@ private:
 
         Node& secondNode = m_graph[atSecondTail];
         
-        if (secondNode.variableAccessData()->isCaptured()) {
-            // The second block did something to a variable that is captured, so reflect this.
-            firstBlock->variablesAtTail.operand(operand) = atSecondTail;
-            return;
-        }
-        
         switch (secondNode.op()) {
         case SetLocal:
         case Flush: {
@@ -470,13 +484,35 @@ private:
         }
 
         case GetLocal: {
-            // Keep what was in the first block, and adjust the substitution to account for
-            // the fact that successors will refer to the child of the GetLocal.
-            ASSERT(firstBlock->variablesAtTail.operand(operand) != NoNode);
-            substitutions.operand(operand) =
-                OperandSubstitution(
-                    secondNode.child1().index(),
-                    skipGetLocal(firstBlock->variablesAtTail.operand(operand)));
+            // If it's a GetLocal on a captured var, then definitely keep what was
+            // in the second block. In particular, it's possible that the first
+            // block doesn't even know about this variable.
+            if (secondNode.variableAccessData()->isCaptured()) {
+                firstBlock->variablesAtTail.operand(operand) = atSecondTail;
+                break;
+            }
+            
+            // It's possible that the second block had a GetLocal and the first block
+            // had a SetArgument or a Phi. Then update the tail. Otherwise keep what was in the
+            // first block.
+            NodeIndex atFirstTail = firstBlock->variablesAtTail.operand(operand);
+            ASSERT(atFirstTail != NoNode);
+            switch (m_graph[atFirstTail].op()) {
+            case SetArgument:
+            case Phi:
+                firstBlock->variablesAtTail.operand(operand) = atSecondTail;
+                break;
+
+            default:
+                // Keep what was in the first block, and adjust the substitution to account for
+                // the fact that successors will refer to the child of the GetLocal.
+                ASSERT(firstBlock->variablesAtTail.operand(operand) != NoNode);
+                substitutions.operand(operand) =
+                    OperandSubstitution(
+                        secondNode.child1().index(),
+                        skipGetLocal(firstBlock->variablesAtTail.operand(operand)));
+                break;
+            }
             break;
         }
             
@@ -524,7 +560,11 @@ private:
             NodeIndex nodeIndex = secondBlock->at(i);
             Node& node = m_graph[nodeIndex];
             
-            if (node.op() == Phantom && !!node.child1()) {
+            switch (node.op()) {
+            case Phantom: {
+                if (!node.child1())
+                    break;
+                
                 ASSERT(node.shouldGenerate());
                 Node& possibleLocalOp = m_graph[node.child1()];
                 if (possibleLocalOp.hasLocal()) {
@@ -534,6 +574,25 @@ private:
                     if (setLocal.op() == SetLocal)
                         m_graph.changeEdge(node.children.child1(), setLocal.child1());
                 }
+                break;
+            }
+                
+            case Flush: {
+                // The flush could use a GetLocal, SetLocal, SetArgument, or a Phi.
+                // If it uses a GetLocal, it'll be taken care of below. If it uses a
+                // SetLocal or SetArgument, then it must be using a node from the
+                // same block. But if it uses a Phi, then we should redirect it to
+                // use whatever the first block advertised as a tail operand.
+                if (m_graph[node.child1()].op() != Phi)
+                    break;
+                
+                NodeIndex atFirstIndex = firstBlock->variablesAtTail.operand(node.local());
+                m_graph.changeEdge(node.children.child1(), Edge(atFirstIndex));
+                break;
+            }
+                
+            default:
+                break;
             }
             
             bool changeRef = node.shouldGenerate();

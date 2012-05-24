@@ -169,7 +169,8 @@ void Graph::dump(NodeIndex nodeIndex)
             dataLog("%s@%u%s",
                     useKindToString(m_varArgChildren[childIdx].useKind()),
                     m_varArgChildren[childIdx].index(),
-                    predictionToAbbreviatedString(at(childIdx).prediction()));
+                    predictionToAbbreviatedString(
+                        at(m_varArgChildren[childIdx]).prediction()));
         }
     } else {
         if (!!node.child1()) {

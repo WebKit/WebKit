@@ -818,7 +818,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
     else {
         ASSERT(opcodeID == op_mul);
 #if ENABLE(VALUE_PROFILER)
-        if (m_canBeOptimized) {
+        if (shouldEmitProfiling()) {
             // We want to be able to measure if this is taking the slow case just
             // because of negative zero. If this produces positive zero, then we
             // don't want the slow case to be taken because that will throw off

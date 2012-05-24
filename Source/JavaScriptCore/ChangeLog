@@ -1,3 +1,94 @@
+2012-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to optimize foo.apply(bar, arguments)
+        https://bugs.webkit.org/show_bug.cgi?id=86306
+
+        Reviewed by Gavin Barraclough.
+        
+        Merge r116912 from dfgopt.
+        
+        Enables compilation of op_jneq_ptr and some forms of op_call_varargs.
+        
+        Also includes a bunch of bug fixes that were made necessary by the increased
+        pressure on the CFG simplifier.
+        
+        This is a 1-2% win on V8.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::canCompileWithDFGInternal):
+        (JSC::EvalCodeBlock::canCompileWithDFGInternal):
+        (JSC::FunctionCodeBlock::canCompileWithDFGInternal):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::canCompileWithDFG):
+        (JSC::CodeBlock::canCompileWithDFGState):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::fixTailOperand):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::debugFail):
+        (DFG):
+        (JSC::DFG::canHandleOpcodes):
+        (JSC::DFG::canCompileOpcodes):
+        (JSC::DFG::canInlineOpcodes):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        (DFG):
+        (JSC::DFG::canCompileOpcodes):
+        (JSC::DFG::canCompileEval):
+        (JSC::DFG::canCompileProgram):
+        (JSC::DFG::canCompileFunctionForCall):
+        (JSC::DFG::canCompileFunctionForConstruct):
+        * dfg/DFGCommon.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (Validate):
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::checkOperand):
+        (JSC::DFG::Validate::reportValidationContext):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+
 2012-05-23  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored WeakBlock to use malloc, clarify behavior

@@ -382,20 +382,14 @@ namespace JSC {
         }
         virtual CodeBlock* replacement() = 0;
 
-        enum CompileWithDFGState {
-            CompileWithDFGFalse,
-            CompileWithDFGTrue,
-            CompileWithDFGUnset
-        };
-
-        virtual bool canCompileWithDFGInternal() = 0;
-        bool canCompileWithDFG()
+        virtual DFG::CapabilityLevel canCompileWithDFGInternal() = 0;
+        DFG::CapabilityLevel canCompileWithDFG()
         {
-            bool result = canCompileWithDFGInternal();
-            m_canCompileWithDFGState = result ? CompileWithDFGTrue : CompileWithDFGFalse;
+            DFG::CapabilityLevel result = canCompileWithDFGInternal();
+            m_canCompileWithDFGState = result;
             return result;
         }
-        CompileWithDFGState canCompileWithDFGState() { return m_canCompileWithDFGState; }
+        DFG::CapabilityLevel canCompileWithDFGState() { return m_canCompileWithDFGState; }
 
         bool hasOptimizedReplacement()
         {
@@ -1309,7 +1303,7 @@ namespace JSC {
 #endif
         OwnPtr<RareData> m_rareData;
 #if ENABLE(JIT)
-        CompileWithDFGState m_canCompileWithDFGState;
+        DFG::CapabilityLevel m_canCompileWithDFGState;
 #endif
     };
 
@@ -1351,7 +1345,7 @@ namespace JSC {
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFGInternal();
+        virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif
     };
 
@@ -1386,7 +1380,7 @@ namespace JSC {
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFGInternal();
+        virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif
 
     private:
@@ -1424,7 +1418,7 @@ namespace JSC {
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFGInternal();
+        virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif
     };
 

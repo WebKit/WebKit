@@ -69,6 +69,8 @@ public:
         } \
     } while (0)
 
+    #define notSet (static_cast<size_t>(-1))
+
     void validate()
     {
         // NB. This code is not written for performance, since it is not intended to run
@@ -202,6 +204,22 @@ public:
                 }
             }
             
+            Operands<size_t> getLocalPositions(
+                block->variablesAtHead.numberOfArguments(),
+                block->variablesAtHead.numberOfLocals());
+            Operands<size_t> setLocalPositions(
+                block->variablesAtHead.numberOfArguments(),
+                block->variablesAtHead.numberOfLocals());
+            
+            for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
+                getLocalPositions.argument(i) = notSet;
+                setLocalPositions.argument(i) = notSet;
+            }
+            for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
+                getLocalPositions.local(i) = notSet;
+                setLocalPositions.local(i) = notSet;
+            }
+            
             for (size_t i = 0; i < block->size(); ++i) {
                 NodeIndex nodeIndex = block->at(i);
                 Node& node = m_graph[nodeIndex];
@@ -213,6 +231,37 @@ public:
                         continue;
                     VALIDATE((nodeIndex, edge), nodesInThisBlock.get(nodeIndex));
                 }
+                
+                if (!node.shouldGenerate())
+                    continue;
+                switch (node.op()) {
+                case GetLocal:
+                    if (node.variableAccessData()->isCaptured())
+                        break;
+                    VALIDATE((nodeIndex, blockIndex), getLocalPositions.operand(node.local()) == notSet);
+                    getLocalPositions.operand(node.local()) = i;
+                    break;
+                case SetLocal:
+                    if (node.variableAccessData()->isCaptured())
+                        break;
+                    // Only record the first SetLocal. There may be multiple SetLocals
+                    // because of flushing.
+                    if (setLocalPositions.operand(node.local()) != notSet)
+                        break;
+                    setLocalPositions.operand(node.local()) = i;
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+            for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
+                checkOperand(
+                    blockIndex, getLocalPositions, setLocalPositions, argumentToOperand(i));
+            }
+            for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
+                checkOperand(
+                    blockIndex, getLocalPositions, setLocalPositions, i);
             }
         }
     }
@@ -220,6 +269,24 @@ public:
 private:
     Graph& m_graph;
     GraphDumpMode m_graphDumpMode;
+    
+    void checkOperand(
+        BlockIndex blockIndex, Operands<size_t>& getLocalPositions,
+        Operands<size_t>& setLocalPositions, int operand)
+    {
+        if (getLocalPositions.operand(operand) == notSet)
+            return;
+        if (setLocalPositions.operand(operand) == notSet)
+            return;
+        
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        
+        VALIDATE(
+            (block->at(getLocalPositions.operand(operand)),
+             block->at(setLocalPositions.operand(operand)),
+             blockIndex),
+            getLocalPositions.operand(operand) < setLocalPositions.operand(operand));
+    }
     
     void reportValidationContext(NodeIndex nodeIndex)
     {
@@ -253,6 +320,12 @@ private:
         NodeIndex nodeIndex, BlockIndex blockIndex)
     {
         dataLog("@%u in Block #%u", nodeIndex, blockIndex);
+    }
+    
+    void reportValidationContext(
+        NodeIndex nodeIndex, NodeIndex nodeIndex2, BlockIndex blockIndex)
+    {
+        dataLog("@%u and @%u in Block #%u", nodeIndex, nodeIndex2, blockIndex);
     }
     
     void reportValidationContext(

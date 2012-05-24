@@ -107,7 +107,7 @@ void CodeProfile::sample(void* pc, void** framePointer)
             CodeBlock* codeBlock = static_cast<CodeBlock*>(ownerUID);
             if (codeBlock->getJITType() == JITCode::DFGJIT)
                 type = DFGJIT;
-            else if (codeBlock->canCompileWithDFGState() == CodeBlock::CompileWithDFGFalse)
+            else if (codeBlock->canCompileWithDFGState() != DFG::CanCompile)
                 type = BaselineOnly;
             else if (codeBlock->replacement())
                 type = BaselineOSR;

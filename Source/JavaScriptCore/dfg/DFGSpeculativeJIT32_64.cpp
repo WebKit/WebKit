@@ -3830,6 +3830,19 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case CheckArgumentsNotCreated: {
+        // FIXME: We should have a way to count such failures. This will be part of
+        // https://bugs.webkit.org/show_bug.cgi?id=86327
+        speculationCheck(
+            Uncountable, JSValueRegs(), NoNode,
+            m_jit.branch32(
+                JITCompiler::NotEqual,
+                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                TrustedImm32(JSValue::EmptyValueTag)));
+        noResult(m_compileIndex);
+        break;
+    }
+        
     case GetMyArgumentsLength: {
         GPRTemporary resultPayload(this);
         GPRTemporary resultTag(this);
