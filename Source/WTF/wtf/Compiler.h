@@ -251,6 +251,16 @@
 #define FINAL
 #endif
 
+/* REFERENCED_FROM_ASM */
+
+#ifndef REFERENCED_FROM_ASM
+#if COMPILER(GCC)
+#define REFERENCED_FROM_ASM __attribute__((used))
+#else
+#define REFERENCED_FROM_ASM
+#endif
+#endif
+
 /* OBJC_CLASS */
 
 #ifndef OBJC_CLASS

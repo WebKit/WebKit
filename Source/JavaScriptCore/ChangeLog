@@ -1,3 +1,17 @@
+2012-05-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        cti_vm_throw gets kicked out by gcc 4.6 -flto
+        https://bugs.webkit.org/show_bug.cgi?id=56088
+
+        Reviewed by Darin Adler.
+
+        Add REFERENCED_FROM_ASM to functions only referenced from assembler.
+
+        * dfg/DFGOperations.cpp:
+        * jit/HostCallReturnValue.h:
+        * jit/JITStubs.h:
+        * jit/ThunkGenerators.cpp:
+
 2012-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect merge of r117542 from dfg opt branch in r118323 is leading to fast/js/dfg-arguments-osr-exit.html failing

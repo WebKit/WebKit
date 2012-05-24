@@ -1,3 +1,14 @@
+2012-05-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        cti_vm_throw gets kicked out by gcc 4.6 -flto
+        https://bugs.webkit.org/show_bug.cgi?id=56088
+
+        Reviewed by Darin Adler.
+
+        Define REFERENCED_FROM_ASM to __attribute__((used)) on GCC.
+
+        * wtf/Compiler.h:
+
 2012-05-23  Darin Adler  <darin@apple.com>
 
         Optimize iteration of empty hash tables

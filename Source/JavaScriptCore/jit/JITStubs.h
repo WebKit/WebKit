@@ -463,7 +463,7 @@ extern "C" {
     void* JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_vm_lazyLinkConstruct(STUB_ARGS_DECLARATION);
-    void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM;
 } // extern "C"
 
 #endif // ENABLE(JIT)
