@@ -130,11 +130,17 @@ enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };
 
-enum CapabilityLevel { CannotCompile, ShouldProfile, CanCompile, CapabilityLevelNotSet };
-
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+namespace JSC { namespace DFG {
+
+// Put things here that must be defined even if ENABLE(DFG_JIT) is false.
+
+enum CapabilityLevel { CannotCompile, ShouldProfile, CanCompile, CapabilityLevelNotSet };
+
+} } // namespace JSC::DFG
 
 #endif // DFGCommon_h
 

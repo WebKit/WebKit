@@ -37,6 +37,7 @@
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
 #include "DFGCodeBlocks.h"
+#include "DFGCommon.h"
 #include "DFGExitProfile.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"

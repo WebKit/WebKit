@@ -227,9 +227,9 @@ inline bool mightCompileFunctionForConstruct(CodeBlock*) { return false; }
 inline bool mightInlineFunctionForCall(CodeBlock*) { return false; }
 inline bool mightInlineFunctionForConstruct(CodeBlock*) { return false; }
 
-inline CapabilityLevel canCompileOpcode(OpcodeID, CodeBlock*, Instruction*) { return false; }
+inline CapabilityLevel canCompileOpcode(OpcodeID, CodeBlock*, Instruction*) { return CannotCompile; }
 inline bool canInlineOpcode(OpcodeID, CodeBlock*, Instruction*) { return false; }
-inline CapabilityLevel canCompileOpcodes(CodeBlock*) { return false; }
+inline CapabilityLevel canCompileOpcodes(CodeBlock*) { return CannotCompile; }
 inline bool canInlineOpcodes(CodeBlock*) { return false; }
 #endif // ENABLE(DFG_JIT)
 
