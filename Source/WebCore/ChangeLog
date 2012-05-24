@@ -1,3 +1,15 @@
+2012-05-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Buildfix for the minimal build because the r118197 broke it.
+        https://bugs.webkit.org/show_bug.cgi?id=87096
+
+        Reviewed by Csaba Osztrogonác.
+
+        * plugins/PluginData.cpp:
+        (WebCore):
+        (WebCore::PluginData::refresh):
+        (WebCore::PluginData::initPlugins):
+
 2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: Web Inspector single line fix for r118162.

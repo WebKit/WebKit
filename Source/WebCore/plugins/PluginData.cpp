@@ -64,17 +64,21 @@ String PluginData::pluginNameForMimeType(const String& mimeType) const
     return String();
 }
 
-#if USE(PLATFORM_STRATEGIES) && ENABLE(NETSCAPE_PLUGIN_API)
+#if USE(PLATFORM_STRATEGIES)
 void PluginData::refresh()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     platformStrategies()->pluginStrategy()->refreshPlugins();
+#endif
 }
 
 void PluginData::initPlugins(const Page* page)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     ASSERT(m_plugins.isEmpty());
     
     platformStrategies()->pluginStrategy()->getPluginInfo(page, m_plugins);
+#endif
 }
 #endif
 
