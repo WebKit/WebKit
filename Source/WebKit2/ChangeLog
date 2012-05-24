@@ -1,3 +1,22 @@
+2012-05-24  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Reorder arguments to compare() in the QML WebView tests
+        https://bugs.webkit.org/show_bug.cgi?id=87374
+
+        Reviewed by Simon Hausmann.
+
+        Based on patch by Kenneth Rohde Christiansen.
+
+        The reordering is necessary to get correct information printed when
+        the tests fails. Without this, the test suite will display the bogus
+        value and not the expected value.
+
+        This patch also removes the delayed windowShown since this is not
+        needed anymore, due to us using the touch events instead of mouse
+        events.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_doubleTapToZoom.qml:
+
 2012-05-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tiles not painted after wheel or keyboard scroll.

@@ -46,15 +46,6 @@ Item {
 
         property variant test: webView.experimental.test
 
-        // Delayed windowShown to workaround problems with Qt5 in debug mode.
-        when: false
-        Timer {
-            running: parent.windowShown
-            repeat: false
-            interval: 1
-            onTriggered: parent.when = true
-        }
-
         function init() {
             resultSpy.clear()
             scaleSpy.clear()
@@ -92,15 +83,15 @@ Item {
             webView.url = webView.content
             verify(webView.waitForLoadSucceeded())
 
-            compare("480x720", documentSize())
+            compare(documentSize(), "480x720")
 
-            compare(1.0, test.contentsScale)
+            compare(test.contentsScale, 1.0)
 
             var rect = elementRect("target");
             var newScale = webView.width / (rect.width + 2 * 10) // inflated by 10px
             doubleTapAtPoint(rect.left + rect.height / 2, rect.top + rect.width / 2)
 
-            compare(newScale, test.contentsScale)
+            compare(test.contentsScale, newScale)
         }
     }
 }
