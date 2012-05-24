@@ -1,3 +1,21 @@
+2012-05-24  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Possible deadlock in the WebGL code path
+        https://bugs.webkit.org/show_bug.cgi?id=87375
+
+        Reviewed by Rob Buis.
+
+        Fix a deadlock happening in the WebGL code path. The mutex is locked
+        but is not unlocked afterword. Also fix a possible double delete,
+        the mutex m_frontBufferLock will be destroyed in the base class.
+
+        Covered by tests in fast/canvas/webgl.
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::releaseTextureResources):
+        * platform/graphics/blackberry/WebGLLayerWebKitThread.cpp:
+        (WebCore::WebGLLayerWebKitThread::~WebGLLayerWebKitThread):
+
 2012-05-24  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Forcibly sync running animations in the waiting state when synchronized start times are needed.

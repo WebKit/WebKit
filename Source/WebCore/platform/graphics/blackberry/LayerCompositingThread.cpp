@@ -305,7 +305,7 @@ void LayerCompositingThread::releaseTextureResources()
         m_pluginBuffer = 0;
         m_pluginView->unlockFrontBuffer();
     }
-    if (m_texID && m_frontBufferLock)
+    if (m_frontBufferLock && (m_texID || layerType() == LayerData::WebGLLayer))
         pthread_mutex_unlock(m_frontBufferLock);
 }
 

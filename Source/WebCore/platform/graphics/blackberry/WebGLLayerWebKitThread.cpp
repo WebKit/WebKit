@@ -36,8 +36,6 @@ WebGLLayerWebKitThread::WebGLLayerWebKitThread()
 
 WebGLLayerWebKitThread::~WebGLLayerWebKitThread()
 {
-    if (m_frontBufferLock)
-        pthread_mutex_destroy(m_frontBufferLock);
 }
 
 void WebGLLayerWebKitThread::setNeedsDisplay()
