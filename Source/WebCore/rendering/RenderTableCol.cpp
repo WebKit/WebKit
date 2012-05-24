@@ -71,7 +71,7 @@ void RenderTableCol::updateFromElement()
 
 bool RenderTableCol::isChildAllowed(RenderObject* child, RenderStyle* style) const
 {
-    return !child->isText() && style && (style->display() == TABLE_COLUMN);
+    return child->isTableCol() && style->display() == TABLE_COLUMN;
 }
 
 bool RenderTableCol::canHaveChildren() const

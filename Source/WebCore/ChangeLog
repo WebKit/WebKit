@@ -1,3 +1,25 @@
+2012-05-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTableCol::nextColumn
+        https://bugs.webkit.org/show_bug.cgi?id=87314
+
+        Reviewed by Abhishek Arya.
+
+        Tests: fast/table/canvas-column-in-column-group.html
+               fast/table/columngroup-inside-columngroup.html
+
+        The issue comes from elements not abiding by the display property (e.g. canvas). This means
+        that any renderer with display: table-column would pass the current isChildAllowed check and
+        would confuse our algorithm to iterate.
+
+        We were getting away with allowing those children as table columns or column groups don't
+        paint themselves but it's better to just not allow such children in the first place.
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::isChildAllowed):
+        Fixed the logic to only accept proper column renderer (RenderTableCol with display: column
+        to ignore column-groups). Also removed an unneeded NULL-check.
+
 2012-05-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: compositing/video/video-poster.html fails on Mac

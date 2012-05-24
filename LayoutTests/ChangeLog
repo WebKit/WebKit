@@ -1,3 +1,15 @@
+2012-05-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTableCol::nextColumn
+        https://bugs.webkit.org/show_bug.cgi?id=87314
+
+        Reviewed by Abhishek Arya.
+
+        * fast/table/canvas-column-in-column-group-expected.txt: Added.
+        * fast/table/canvas-column-in-column-group.html: Added.
+        * fast/table/columngroup-inside-columngroup-expected.txt: Added.
+        * fast/table/columngroup-inside-columngroup.html: Added.
+
 2012-05-23  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening after r118203 and r118171.
