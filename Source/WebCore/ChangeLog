@@ -1,3 +1,75 @@
+2012-05-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce virtual resource for inspector stylesheet.
+        https://bugs.webkit.org/show_bug.cgi?id=87357
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change introduces virtual resource that represents inspector stylesheet (that is added for styles added via inspector).
+        New resource has url of form "inspector://<page url folder>/inspector-stylesheet. It enables live editing and revision
+        history of the inspector stylesheet.
+
+        Test: inspector/styles/edit-inspector-stylesheet.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::bindStyleSheet):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::pageAgent):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore):
+        (InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::canBind):
+        (InspectorStyleSheetForInlineStyle):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype._undoRedoCompleted):
+        (WebInspector.CSSStyleModel.prototype.getViaInspectorResourceForRule):
+        (WebInspector.CSSStyleModelResourceBinding):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._inspectedURLChanged):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._loadStyleSheetHeaders):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._innerStyleSheetChanged):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._getViaInspectorResource.hadersLoaded):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._getViaInspectorResource):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._viaInspectorResource.overrideRequestContent.callbackWrapper):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._viaInspectorResource.overrideRequestContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._viaInspectorResource):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._viaInspectorResourceURL):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.isHidden):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._onRequestUpdateDropped):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        (WebInspector.ResourceTreeFrame.prototype._navigate):
+        (WebInspector.ResourceTreeFrame.prototype.addResource):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameTreeElement.prototype.appendResource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.InspectorStyleSource):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._createRuleOriginNode.callback):
+        (WebInspector.StylePropertiesSection.prototype._createRuleOriginNode):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.successCallback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+
 2012-05-24  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Possible deadlock in the WebGL code path

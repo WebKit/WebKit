@@ -37,8 +37,9 @@
  * @param {NetworkAgent.LoaderId} loaderId
  * @param {WebInspector.ResourceType} type
  * @param {string} mimeType
+ * @param {boolean=} isHidden
  */
-WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, type, mimeType)
+WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, type, mimeType, isHidden)
 {
     this._request = request;
     if (this._request)
@@ -50,6 +51,7 @@ WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, t
     this._type = type || WebInspector.resourceTypes.Other;
     this._mimeType = mimeType;
     this.history = [];
+    this._isHidden = isHidden;
 
     /** @type {?string} */ this._content;
     /** @type {boolean} */ this._contentEncoded;
@@ -119,6 +121,9 @@ WebInspector.Resource.restoreRevisions = function()
 WebInspector.Resource.persistRevision = function(revision)
 {
     if (!window.localStorage)
+        return;
+
+    if (revision.resource.url.startsWith("inspector://"))
         return;
 
     var resource = revision.resource;
@@ -464,6 +469,14 @@ WebInspector.Resource.prototype = {
             this.setContent(content, true, function() {});
         }
         this.requestContent(revert.bind(this));
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isHidden: function()
+    {
+        return !!this._isHidden; 
     }
 }
 

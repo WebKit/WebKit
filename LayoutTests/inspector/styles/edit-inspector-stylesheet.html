@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function test()
+{
+    var inspectorResource;
+
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    function step1(node)
+    {
+        WebInspector.panels.scripts._uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, sourceCodeAdded);
+        WebInspector.cssModel.addRule(node.id, "#inspected", successCallback, failureCallback);
+
+        function successCallback() { }
+        function failureCallback()
+        {
+            InspectorTest.addResult("Failed to add rule.");
+            InspectorTest.completeTest();
+        }
+
+        function sourceCodeAdded(event)
+        {
+            if (event.data.parsedURL.scheme === "inspector")
+                InspectorTest.showScriptSource("inspector-stylesheet", step2.bind(this, event.data));
+        }
+    }
+
+    function step2(styleSource, sourceFrame)
+    {
+        InspectorTest.addResult("Inspector stylesheet URL: " + styleSource.parsedURL.displayName);
+        styleSource.requestContent(printContent());
+
+        InspectorTest.addResult("\nSetting new content");
+        styleSource.setWorkingCopy("#inspected { background-color: green; }");
+        styleSource.commitWorkingCopy(step3.bind(this, styleSource));
+    }
+
+    function step3(styleSource)
+    {
+        styleSource.requestContent(printContent(selectNode));
+        function selectNode()
+        {
+            InspectorTest.selectNodeAndWaitForStyles("inspected", dumpStyles);
+        }
+
+        function dumpStyles()
+        {
+            InspectorTest.dumpSelectedElementStyles(true, false, true);
+            InspectorTest.completeTest();
+        }
+    }
+
+    function printContent(next)
+    {
+        function result(content)
+        {
+            InspectorTest.addResult("Inspector stylesheet content:");
+            InspectorTest.addResult(content);
+            if (next)
+                next();
+        }
+        return result;
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a new rule creates inspector stylesheet resource and allows its live editing.
+</p>
+
+<div id="inspected">Text</div>
+
+</body>
+</html>

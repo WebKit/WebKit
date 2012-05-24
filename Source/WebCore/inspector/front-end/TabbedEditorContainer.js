@@ -117,7 +117,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         if (this._currentFile === uiSourceCode)
             return;
         this._currentFile = uiSourceCode;
-        
+
         var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode, userGesture);
         
         this._tabbedPane.selectTab(tabId, userGesture);

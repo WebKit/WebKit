@@ -37,7 +37,7 @@ WebInspector.CSSStyleModel = function()
     this._pendingCommandsMajorState = [];
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
-    new WebInspector.CSSStyleModelResourceBinding(this);
+    this._resourceBinding = new WebInspector.CSSStyleModelResourceBinding(this);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
     CSSAgent.enable();
 }
@@ -322,6 +322,19 @@ WebInspector.CSSStyleModel.prototype = {
     _undoRedoCompleted: function()
     {
         this._pendingCommandsMajorState.pop();
+    },
+
+    /**
+     * @param {WebInspector.CSSRule} rule
+     * @param {function(?WebInspector.Resource)} callback
+     */
+    getViaInspectorResourceForRule: function(rule, callback)
+    {
+        if (!rule.id) {
+            callback(null);
+            return;
+        }
+        this._resourceBinding._requestViaInspectorResource(rule.id.styleSheetId, callback);
     }
 }
 
@@ -918,8 +931,8 @@ WebInspector.CSSStyleSheet.prototype = {
 WebInspector.CSSStyleModelResourceBinding = function(cssModel)
 {
     this._cssModel = cssModel;
-    this._urlToStyleSheetId = {};
-    this._styleSheetIdToURL = {};
+    this._frameAndURLToStyleSheetId = {};
+    this._styleSheetIdToHeader = {};
     this._cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
     WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Stylesheet, this);
@@ -937,11 +950,11 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
         if (majorChange && resource.type === WebInspector.resourceTypes.Stylesheet)
             resource.addRevision(content);
 
-        if (this._urlToStyleSheetId[resource.url]) {
-            this._innerSetContent(resource.url, content, majorChange, userCallback, null);
+        if (this._styleSheetIdForResource(resource)) {
+            this._innerSetContent(resource, content, majorChange, userCallback, null);
             return;
         }
-        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource.url, content, majorChange, userCallback));
+        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource, content, majorChange, userCallback));
     },
 
     /**
@@ -953,32 +966,41 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
     },
 
     /**
+     * @param {WebInspector.Resource} resource
+     * @return {CSSAgent.StyleSheetId}
+     */
+    _styleSheetIdForResource: function(resource)
+    {
+        return this._frameAndURLToStyleSheetId[resource.frameId + ":" + resource.url];
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _inspectedURLChanged: function(event)
     {
         // Main frame navigation - clear history.
-        this._urlToStyleSheetId = {};
-        this._styleSheetIdToURL = {};
+        this._frameAndURLToStyleSheetId = {};
+        this._styleSheetIdToHeader = {};
     },
 
     /**
-     * @param {string} url
+     * @param {WebInspector.Resource} resource
      * @param {string} content
      * @param {boolean} majorChange
      * @param {function(?string)} userCallback
      * @param {?string} error
      */
-    _innerSetContent: function(url, content, majorChange, userCallback, error)
+    _innerSetContent: function(resource, content, majorChange, userCallback, error)
     {
         if (error) {
             userCallback(error);
             return;
         }
 
-        var styleSheetId = this._urlToStyleSheetId[url];
+        var styleSheetId = this._styleSheetIdForResource(resource);
         if (!styleSheetId) {
-            userCallback("No stylesheet found: " + url);
+            userCallback("No stylesheet found: " + resource.frameId + ":" + resource.url);
             return;
         }
 
@@ -1009,8 +1031,12 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
 
             for (var i = 0; i < infos.length; ++i) {
                 var info = infos[i];
-                this._urlToStyleSheetId[info.sourceURL] = info.styleSheetId;
-                this._styleSheetIdToURL[info.styleSheetId] = info.sourceURL;
+                if (info.origin === "inspector") {
+                    this._getOrCreateInspectorResource(info);
+                    continue;
+                }
+                this._frameAndURLToStyleSheetId[info.frameId + ":" + info.sourceURL] = info.styleSheetId;
+                this._styleSheetIdToHeader[info.styleSheetId] = info;
             }
             callback(null);
         }
@@ -1048,20 +1074,103 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
     {
         function setContent()
         {
-            var url = this._styleSheetIdToURL[styleSheetId];
-            if (!url)
+            var header = this._styleSheetIdToHeader[styleSheetId];
+            if (!header)
                 return;
 
-            var resource = WebInspector.resourceForURL(url);
-            if (resource && resource.type === WebInspector.resourceTypes.Stylesheet)
+            var frame = WebInspector.resourceTreeModel.frameForId(header.frameId);
+            if (!frame)
+                return;
+
+            var styleSheetURL = header.origin === "inspector" ? this._viaInspectorResourceURL(header.sourceURL) : header.sourceURL;
+            var resource = frame.resourceForURL(styleSheetURL);
+            if (!resource)
+                return;
+
+            if (resource.type === WebInspector.resourceTypes.Stylesheet)
                 resource.addRevision(content);
         }
 
-        if (!this._styleSheetIdToURL[styleSheetId]) {
+        if (!this._styleSheetIdToHeader[styleSheetId]) {
             this._loadStyleSheetHeaders(setContent.bind(this));
             return;
         }
         setContent.call(this);
+    },
+
+    /**
+     * @param {CSSAgent.StyleSheetId} styleSheetId
+     * @param {function(?WebInspector.Resource)} callback
+     */
+    _requestViaInspectorResource: function(styleSheetId, callback)
+    {
+        var header = this._styleSheetIdToHeader[styleSheetId];
+        if (header) {
+            callback(this._getOrCreateInspectorResource(header));
+            return;
+        }
+
+        function headersLoaded()
+        {
+            var header = this._styleSheetIdToHeader[styleSheetId];
+            if (header)
+                callback(this._getOrCreateInspectorResource(header));
+            else
+                callback(null);
+        }
+        this._loadStyleSheetHeaders(headersLoaded.bind(this));
+    },
+
+    /**
+     * @param {CSSAgent.CSSStyleSheetHeader} header
+     * @return {?WebInspector.Resource}
+     */
+    _getOrCreateInspectorResource: function(header)
+    {
+        var frame = WebInspector.resourceTreeModel.frameForId(header.frameId);
+        if (!frame)
+            return null;
+
+        var viaInspectorURL = this._viaInspectorResourceURL(header.sourceURL);    
+        var inspectorResource = frame.resourceForURL(viaInspectorURL);
+        if (inspectorResource)
+            return inspectorResource;
+
+        var resource = frame.resourceForURL(header.sourceURL);
+        if (!resource)
+            return null;
+
+        this._frameAndURLToStyleSheetId[header.frameId + ":" + viaInspectorURL] = header.styleSheetId;
+        this._styleSheetIdToHeader[header.styleSheetId] = header;
+        inspectorResource = new WebInspector.Resource(null, viaInspectorURL, resource.documentURL, resource.frameId, resource.loaderId, WebInspector.resourceTypes.Stylesheet, "text/css", true);
+        /**
+         * @param {function(?string, boolean, string)} callback
+         */
+        function overrideRequestContent(callback)
+        {
+            function callbackWrapper(error, content)
+            {
+                callback(error ? "" : content, false, "text/css");
+            }
+            CSSAgent.getStyleSheetText(header.styleSheetId, callbackWrapper);
+        }
+        inspectorResource.requestContent = overrideRequestContent;
+        frame.addResource(inspectorResource);
+        return inspectorResource;
+    },
+
+    /**
+     * @param {string} documentURL
+     * @return {string}
+     */
+    _viaInspectorResourceURL: function(documentURL)
+    {
+        var parsedURL = new WebInspector.ParsedURL(documentURL);
+        var fakeURL = "inspector://" + parsedURL.host + parsedURL.folderPathComponents;
+        if (!fakeURL.endsWith("/"))
+            fakeURL += "/";
+        fakeURL += "inspector-stylesheet";
+        return fakeURL;
     }
 }
 

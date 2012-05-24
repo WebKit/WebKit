@@ -53,7 +53,7 @@ WebInspector.SourceFrame = function(contentProvider)
     this._rowMessages = {};
     this._messageBubbles = {};
 
-    this._textViewer.readOnly = !this.canEditSource();
+    this._textViewer.setReadOnly(!this.canEditSource());
 }
 
 WebInspector.SourceFrame.createSearchRegex = function(query)

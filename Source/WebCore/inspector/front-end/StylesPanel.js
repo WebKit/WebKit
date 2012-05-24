@@ -121,6 +121,23 @@ WebInspector.StyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototy
 
 /**
  * @constructor
+ * @extends {WebInspector.UISourceCode}
+ * @param {CSSAgent.StyleSheetId} styleSheetId
+ * @param {string} url
+ * @param {string} content
+ */
+WebInspector.InspectorStyleSource = function(styleSheetId, url, content)
+{
+    WebInspector.UISourceCode.call(this, "<inspector style>", null, new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content));
+}
+
+WebInspector.InspectorStyleSource.prototype = {
+}
+
+WebInspector.InspectorStyleSource.prototype.__proto__ = WebInspector.UISourceCode.prototype;
+
+/**
+ * @constructor
  * @extends {WebInspector.SourceFrame}
  * @param {WebInspector.StyleSource} styleSource
  */

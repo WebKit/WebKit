@@ -2,7 +2,7 @@ var initialize_LiveEditTest = function() {
 
 InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callback)
 {
-    sourceFrame._textViewer._mainPanel.readOnly = false;
+    sourceFrame._textViewer._mainPanel.setReadOnly(false);
     sourceFrame.beforeTextChanged();
     var oldRange, newRange;
     var lines = sourceFrame._textModel._lines;

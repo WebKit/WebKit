@@ -80,17 +80,20 @@ WebInspector.TextViewer.prototype = {
         this._mainPanel.mimeType = mimeType;
     },
 
-    set readOnly(readOnly)
+    /**
+     * @param {boolean} readOnly
+     */
+    setReadOnly: function(readOnly)
     {
-        if (this._mainPanel.readOnly === readOnly)
+        if (this._mainPanel.readOnly() === readOnly)
             return;
-        this._mainPanel.readOnly = readOnly;
+        this._mainPanel.setReadOnly(readOnly, this.isShowing());
         WebInspector.markBeingEdited(this.element, !readOnly);
     },
 
-    get readOnly()
+    readOnly: function()
     {
-        return this._mainPanel.readOnly;
+        return this._mainPanel.readOnly();
     },
 
     get textModel()
@@ -271,7 +274,7 @@ WebInspector.TextViewer.prototype = {
 
     _handleKeyDown: function(e)
     {
-        if (this.readOnly)
+        if (this.readOnly())
             return;
 
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
@@ -295,7 +298,7 @@ WebInspector.TextViewer.prototype = {
 
     _commitEditing: function()
     {
-        if (this.readOnly)
+        if (this.readOnly())
             return false;
 
         this._delegate.commitEditing();
@@ -306,13 +309,13 @@ WebInspector.TextViewer.prototype = {
 
     wasShown: function()
     {
-        if (!this.readOnly)
+        if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, true);
     },
 
     willHide: function()
     {
-        if (!this.readOnly)
+        if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, false);
     }
 }
@@ -927,7 +930,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._highlighter.mimeType = mimeType;
     },
 
-    set readOnly(readOnly)
+    setReadOnly: function(readOnly, requestFocus)
     {
         if (this._readOnly === readOnly)
             return;
@@ -938,12 +941,13 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._container.removeStyleClass("text-editor-editable");
         else {
             this._container.addStyleClass("text-editor-editable");
-            this._updateSelectionOnStartEditing();
+            if (requestFocus)
+                this._updateSelectionOnStartEditing();
         }
         this.endDomUpdates();
     },
 
-    get readOnly()
+    readOnly: function()
     {
         return this._readOnly;
     },

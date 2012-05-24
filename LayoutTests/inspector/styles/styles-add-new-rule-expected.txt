@@ -1,6 +1,7 @@
 Tests that adding a new rule works after switching nodes.
 
 Text
+Revision added: inspector-stylesheet
 After adding new rule (inspected):
 [expanded] 
 element.style  { ()
@@ -8,7 +9,7 @@ font-size: 12px;
 
 ======== Matched CSS Rules ========
 [expanded] 
-#inspected  { (via inspector)
+#inspected  { (inspector-stylesheet:1)
 color: maroon;
 
 [expanded] 
@@ -23,7 +24,7 @@ color: red;
 
 ======== Matched CSS Rules ========
 [expanded] 
-#other  { (via inspector)
+#other  { (inspector-stylesheet:1)
 
 [expanded] 
 div  { (user agent stylesheet)

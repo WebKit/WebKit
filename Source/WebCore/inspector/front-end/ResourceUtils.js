@@ -169,7 +169,7 @@ WebInspector.displayNameForURL = function(url)
         return url.trimURL("");
 
     var parsedURL = WebInspector.inspectedPageURL.asParsedURL();
-    var lastPathComponent = parsedURL.lastPathComponent;
+    var lastPathComponent = parsedURL ? parsedURL.lastPathComponent : parsedURL;
     var index = WebInspector.inspectedPageURL.indexOf(lastPathComponent);
     if (index !== -1 && index + lastPathComponent.length === WebInspector.inspectedPageURL.length) {
         var baseURL = WebInspector.inspectedPageURL.substring(0, index);
@@ -177,7 +177,7 @@ WebInspector.displayNameForURL = function(url)
             return url.substring(index);
     }
 
-    return url.trimURL(parsedURL.host);
+    return parsedURL ? url.trimURL(parsedURL.host) : url;
 }
 
 /**

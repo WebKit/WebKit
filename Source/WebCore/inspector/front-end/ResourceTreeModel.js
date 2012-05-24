@@ -227,11 +227,12 @@ WebInspector.ResourceTreeModel.prototype = {
             return;
 
         var resource = new WebInspector.Resource(null, url, frame.url, frameId, event.data.loaderId, WebInspector.resourceTypes[event.data.resourceType], event.data.mimeType);
-        frame._addResource(resource);
+        frame.addResource(resource);
     },
 
     /**
      * @param {NetworkAgent.FrameId} frameId
+     * @return {WebInspector.ResourceTreeFrame}
      */
     frameForId: function(frameId)
     {
@@ -341,7 +342,7 @@ WebInspector.ResourceTreeModel.prototype = {
             WebInspector.inspectedPageURL = frameResource.url;
 
         this._addFrame(frame);
-        frame._addResource(frameResource);
+        frame.addResource(frameResource);
 
         for (var i = 0; frameTreePayload.childFrames && i < frameTreePayload.childFrames.length; ++i)
             this._addFramesRecursively(frame, frameTreePayload.childFrames[i]);
@@ -353,7 +354,7 @@ WebInspector.ResourceTreeModel.prototype = {
         for (var i = 0; i < frameTreePayload.resources.length; ++i) {
             var subresource = frameTreePayload.resources[i];
             var resource = this._createResourceFromFramePayload(framePayload, subresource.url, WebInspector.resourceTypes[subresource.type], subresource.mimeType);
-            frame._addResource(resource);
+            frame.addResource(resource);
         }
     },
 
@@ -484,7 +485,7 @@ WebInspector.ResourceTreeFrame.prototype = {
         this._resourcesMap = {};
         this._removeChildFrames();
         if (mainResource && mainResource.loaderId === this._loaderId)
-            this._addResource(mainResource);
+            this.addResource(mainResource);
     },
 
     /**
@@ -521,7 +522,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     /**
      * @param {WebInspector.Resource} resource
      */
-    _addResource: function(resource)
+    addResource: function(resource)
     {
         if (this._resourcesMap[resource.url] === resource) {
             // Already in the tree, we just got an extra update.

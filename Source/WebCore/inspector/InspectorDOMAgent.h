@@ -201,6 +201,9 @@ public:
 
     Node* assertNode(ErrorString*, int nodeId);
 
+    // Methods called from other agents.
+    InspectorPageAgent* pageAgent() { return m_pageAgent; }
+
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 

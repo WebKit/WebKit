@@ -52,14 +52,12 @@ function test()
     {
         InspectorTest.addResult("After adding new rule (other):");
         InspectorTest.dumpSelectedElementStyles(true, false, true);
-        if (hasResourceChanged)
-            InspectorTest.addResult("Error: main resource content changed");
         InspectorTest.completeTest();
     }
 
-    function revisionAdded()
+    function revisionAdded(revision)
     {
-        hasResourceChanged = true;
+        InspectorTest.addResult("Revision added: " + this.parsedURL.displayName);
     }
 }
 

@@ -8,10 +8,10 @@ font-size: 12px;
 
 ======== Matched CSS Rules ========
 [expanded] 
-div.foo  { (via inspector)
+div.foo  { (inspector-stylesheet:1)
 
 [expanded] 
-div.foo  { (via inspector)
+div.foo  { (inspector-stylesheet:1)
 
 [expanded] 
 div  { (user agent stylesheet)
@@ -29,7 +29,7 @@ color: red;
 
 ======== Matched CSS Rules ========
 [expanded] 
-div.foo  { (via inspector)
+div.foo  { (inspector-stylesheet:1)
 
 [expanded] 
 div  { (user agent stylesheet)
@@ -47,10 +47,10 @@ font-size: 12px;
 
 ======== Matched CSS Rules ========
 [expanded] 
-div.foo  { (via inspector)
+div.foo  { (inspector-stylesheet:1)
 
 [expanded] 
-div.foo  { (via inspector)
+div.foo  { (inspector-stylesheet:1)
 
 [expanded] 
 div  { (user agent stylesheet)
