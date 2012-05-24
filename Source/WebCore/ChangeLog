@@ -1,3 +1,15 @@
+2012-05-24  Darin Adler  <darin@apple.com>
+
+        SVGElement::addEventListener has peculiar RefPtr usage
+        https://bugs.webkit.org/show_bug.cgi?id=86497
+
+        Reviewed by Andy Estes.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::addEventListener): Switch to a more-standard style of RefPtr usage,
+        getting rid of some unneeded reference count churn; also removed an unneeded special case
+        for zero listeners.
+
 2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Modify keycode conversion functions to return keycodes with location information after r118001.

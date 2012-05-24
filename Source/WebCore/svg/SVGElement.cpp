@@ -362,28 +362,23 @@ static inline void collectInstancesForSVGElement(SVGElement* element, HashSet<SV
     instances = styledElement->instancesForElement();
 }
 
-bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> prpListener, bool useCapture)
 {
-    HashSet<SVGElementInstance*> instances;
-    collectInstancesForSVGElement(this, instances);
-    if (instances.isEmpty())
-        return Node::addEventListener(eventType, listener, useCapture);
-
-    RefPtr<EventListener> listenerForRegularTree = listener;
-    RefPtr<EventListener> listenerForShadowTree = listenerForRegularTree;
-
+    RefPtr<EventListener> listener = prpListener;
+    
     // Add event listener to regular DOM element
-    if (!Node::addEventListener(eventType, listenerForRegularTree.release(), useCapture))
+    if (!Node::addEventListener(eventType, listener, useCapture))
         return false;
 
     // Add event listener to all shadow tree DOM element instances
+    HashSet<SVGElementInstance*> instances;
+    collectInstancesForSVGElement(this, instances);    
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         ASSERT((*it)->shadowTreeElement());
         ASSERT((*it)->correspondingElement() == this);
 
-        RefPtr<EventListener> listenerForCurrentShadowTreeElement = listenerForShadowTree;
-        bool result = (*it)->shadowTreeElement()->Node::addEventListener(eventType, listenerForCurrentShadowTreeElement.release(), useCapture);
+        bool result = (*it)->shadowTreeElement()->Node::addEventListener(eventType, listener, useCapture);
         ASSERT_UNUSED(result, result);
     }
 
