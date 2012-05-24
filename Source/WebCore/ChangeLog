@@ -1,3 +1,15 @@
+2012-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118297.
+        http://trac.webkit.org/changeset/118297
+        https://bugs.webkit.org/show_bug.cgi?id=87338
+
+        It caused several layout failures on Mac (Requested by
+        sundiamonde on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+
 2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         Document.caretRangeFromPoint exposes inner elemnet of Shadow DOM.

@@ -5523,7 +5523,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     child->setPreferredLogicalWidthsDirty(false);
                 } else {
                     // Inline replaced elts add in their margins to their min/max values.
-                    LayoutUnit margins = 0;
+                    float margins = 0;
                     Length startMargin = childStyle->marginStart();
                     Length endMargin = childStyle->marginEnd();
                     if (startMargin.isFixed())
