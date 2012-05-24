@@ -1,3 +1,25 @@
+2012-05-24  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10090764> and https://bugs.webkit.org/show_bug.cgi?id=87417
+        (Unrepro) Crashes saving session state in WebBackForwardList
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem): Null check the proposed item and also m_page, to make
+          sure the page hasn't been closed making this list inactive. Be more aggressive about
+          clearing the current entries out if there is no current item index.
+        (WebKit::WebBackForwardList::itemAtIndex): Early null return if there is no current index.
+        (WebKit::WebBackForwardList::clear): Don't put the current item back in the array if there was
+          no current item.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): Don't create a meaningless WebURL.
+          Don't successfully return a dictionary if any of the entries were null. Be more aggressive about
+          validating the current index we plan to return in the dictionary.
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): More aggressively validate the
+          current index read from disk. Replace a meaningless sanity check with our typical ASSERT.
+
 2012-05-24  Anders Carlsson  <andersca@apple.com>
 
         Make sure that the layer hosting mode is up-to-date when reconnecting to a new web process

@@ -39,7 +39,7 @@ WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     , m_closed(true)
     , m_enabled(true)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(m_page);
 }
 
 WebBackForwardList::~WebBackForwardList()
@@ -61,40 +61,51 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 {
     ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 
-    if (m_capacity == 0 || !m_enabled)
+    if (!m_capacity || !m_enabled || !newItem || !m_page)
         return;
 
     Vector<RefPtr<APIObject> > removedItems;
     
-    // Toss anything in the forward list    
     if (m_current != NoCurrentItemIndex) {
+        // Toss everything in the forward list.
         unsigned targetSize = m_current + 1;
         removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
-            if (m_page)
-                m_page->backForwardRemovedItem(m_entries.last()->itemID());
+            m_page->backForwardRemovedItem(m_entries.last()->itemID());
             removedItems.append(m_entries.last().release());
             m_entries.removeLast();
         }
-    }
 
-    // Toss the first item if the list is getting too big, as long as we're not using it
-    // (or even if we are, if we only want 1 entry).
-    if (m_entries.size() == m_capacity && (m_current != 0 || m_capacity == 1)) {
-        if (m_page)
+        // Toss the first item if the list is getting too big, as long as we're not using it
+        // (or even if we are, if we only want 1 entry).
+        if (m_entries.size() == m_capacity && (m_current || m_capacity == 1)) {
             m_page->backForwardRemovedItem(m_entries[0]->itemID());
-        removedItems.append(m_entries[0].release());
-        m_entries.remove(0);
-        m_current--;
+            removedItems.append(m_entries[0].release());
+            m_entries.remove(0);
+            m_current--;
+        }
+    } else {
+        // If we have no current item index, we should have no other entries before adding this new item.
+        size_t size = m_entries.size();
+        for (size_t i = 0; i < size; ++i) {
+            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+            removedItems.append(m_entries[i].release());
+        }
+        m_entries.clear();
     }
+    
+    if (m_current == NoCurrentItemIndex)
+        m_current = 0;
+    else
+        m_current++;
 
-    m_entries.insert(m_current + 1, newItem);
-    m_current++;
+    // m_current never be pointing more than 1 past the end of the entries Vector.
+    // If it is, something has gone wrong and we should not try to insert the new item.
+    ASSERT(m_current <= m_entries.size());
+    if (m_current <= m_entries.size())
+        m_entries.insert(m_current, newItem);
 
-    if (m_page)
-        m_page->didChangeBackForwardList(newItem, &removedItems);
-
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    m_page->didChangeBackForwardList(newItem, &removedItems);
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
@@ -147,8 +158,11 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
 {
     ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 
+    if (m_current == NoCurrentItemIndex)
+        return 0;
+    
     // Do range checks without doing math on index to avoid overflow.
-    if (index < -static_cast<int>(m_current))
+    if (index < -backListCount())
         return 0;
     
     if (index > forwardListCount())
@@ -232,11 +246,16 @@ void WebBackForwardList::clear()
         if (i != m_current)
             removedItems.append(m_entries[i].release());
     }
-    
-    m_entries.shrink(1);
-    m_entries[0] = currentItem.release();
 
     m_current = 0;
+
+    if (currentItem) {
+        m_entries.shrink(1);
+        m_entries[0] = currentItem.release();
+    } else {
+        m_entries.clear();
+        m_current = NoCurrentItemIndex;
+    }
 
     if (m_page)
         m_page->didChangeBackForwardList(0, &removedItems);
