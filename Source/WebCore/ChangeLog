@@ -1,3 +1,29 @@
+2012-05-24  Levi Weintraub  <leviw@chromium.org>
+
+        Avoid creating InlineBoxes for floating and positioned objects in isolates.
+        https://bugs.webkit.org/show_bug.cgi?id=87277
+
+        Reviewed by Eric Seidel.
+
+        We currently will create a placeholder run for the first object we encounter inside an isolate. Then
+        in RenderBlockLineLayout's constructBidiRuns, we replace that run with the contents of the Isolate.
+        We run into problems when there are no valid contents in the Isolate. We can't simply remove the
+        placeholder if there's nothing to replace it with since it may be the logically last run, which we
+        track but can't rebuild by the time we're handling isolates (we've already shuffled the BidiRuns around).
+
+        With this change, we avoid creating a placeholder altogether until we hit contents in the isolate
+        that would warrant a BidiRun in the first place.
+
+        Test: fast/text/international/float-as-only-child-of-isolate-crash.html
+
+        * rendering/InlineIterator.h:
+        (WebCore::IsolateTracker::addFakeRunIfNecessary):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::shouldSkipCreatingRunsForObject):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendRunsForObject):
+
 2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         There are too many poorly named functions to create a fragment from markup
