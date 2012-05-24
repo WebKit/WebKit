@@ -1,3 +1,16 @@
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG operationTearOffActivation should return after handling the null activation case
+        https://bugs.webkit.org/show_bug.cgi?id=87348
+        <rdar://problem/11522295>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-tear-off-arguments-not-activation-expected.txt: Added.
+        * fast/js/dfg-tear-off-arguments-not-activation.html: Added.
+        * fast/js/script-tests/dfg-tear-off-arguments-not-activation.js: Added.
+        (bar):
+
 2012-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize aliased uses of the Arguments object of the current call frame

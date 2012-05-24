@@ -1,5 +1,15 @@
 2012-05-23  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG operationTearOffActivation should return after handling the null activation case
+        https://bugs.webkit.org/show_bug.cgi?id=87348
+        <rdar://problem/11522295>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGOperations.cpp:
+
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, merge the arguments fix in r118138 to get bots green.
 
         * dfg/DFGArgumentsSimplificationPhase.cpp:

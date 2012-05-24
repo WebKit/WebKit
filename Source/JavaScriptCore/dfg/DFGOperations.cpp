@@ -1066,6 +1066,7 @@ void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
             if (!exec->codeBlock()->isStrictMode())
                 asArguments(v)->tearOff(exec);
         }
+        return;
     }
     JSActivation* activation = jsCast<JSActivation*>(activationCell);
     activation->tearOff(exec->globalData());
