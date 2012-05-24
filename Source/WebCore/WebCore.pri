@@ -12,7 +12,8 @@ SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WebCore
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
 CONFIG += texmap
 
-QT *= network sql gui-private
+QT *= network sql
+haveQt(5): QT *= gui-private
 
 WEBCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebCore/$${GENERATED_SOURCES_DESTDIR}
 

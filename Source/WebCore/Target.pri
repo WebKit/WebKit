@@ -1710,7 +1710,7 @@ HEADERS += \
     dom/DocumentMarkerController.h \
     dom/DocumentOrderedMap.h \
     dom/DocumentType.h \
-    dom/DOMEvent.h \
+    dom/DOMError.h \
     dom/DOMImplementation.h \
     dom/DOMStringList.h \
     dom/DOMStringMap.h \

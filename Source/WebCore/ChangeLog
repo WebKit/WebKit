@@ -1,3 +1,10 @@
+2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trvial fixes.
+
+        * Target.pri: Typo fix after r118226.
+        * WebCore.pri: Warning fix after r117291.
+
 2012-05-24  Antti Koivisto  <antti@apple.com>
 
         Move StyleRuleImport to a file of its own
