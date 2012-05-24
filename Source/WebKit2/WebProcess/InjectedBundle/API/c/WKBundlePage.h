@@ -108,6 +108,7 @@ typedef void (*WKBundlePageGlobalObjectIsAvailableForFrameCallback)(WKBundlePage
 typedef void (*WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
+typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -145,6 +146,7 @@ struct WKBundlePageLoaderClient {
     
     // Version 2
     WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 

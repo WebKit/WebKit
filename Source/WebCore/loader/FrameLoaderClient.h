@@ -322,6 +322,9 @@ namespace WebCore {
         // This callback is similar, but for plugins.
         virtual void didNotAllowPlugins() { }
 
+        // Clients that generally disallow universal access can make exceptions for particular URLs.
+        virtual bool shouldForceUniversalAccessFromLocalURL(const KURL&) { return false; }
+
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
 
         virtual bool shouldPaintBrokenImage(const KURL&) const { return true; }

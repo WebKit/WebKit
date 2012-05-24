@@ -220,6 +220,8 @@ private:
 
     virtual void didChangeScrollOffset() OVERRIDE;
 
+    virtual bool shouldForceUniversalAccessFromLocalURL(const WebCore::KURL&) OVERRIDE;
+
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() OVERRIDE;
 
     WebFrame* m_frame;

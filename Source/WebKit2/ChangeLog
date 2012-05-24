@@ -1,3 +1,22 @@
+2012-05-24  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Let the client give local files universal access on a case by case basis
+        https://bugs.webkit.org/show_bug.cgi?id=87174
+        <rdar://problem/11024330>
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+        Added glue code to call bundle client.
+
 2012-05-24  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         Reorder arguments to compare() in the QML WebView tests

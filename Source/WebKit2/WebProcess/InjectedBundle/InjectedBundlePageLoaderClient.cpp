@@ -296,4 +296,12 @@ void InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtensio
     m_client.willDestroyGlobalObjectForDOMWindowExtension(toAPI(page), toAPI(extension.get()), m_client.clientInfo);
 }
 
+bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebPage* page, const String& url)
+{
+    if (!m_client.shouldForceUniversalAccessFromLocalURL)
+        return false;
+
+    return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(page), toAPI(url.impl()), m_client.clientInfo);
+}
+
 } // namespace WebKit

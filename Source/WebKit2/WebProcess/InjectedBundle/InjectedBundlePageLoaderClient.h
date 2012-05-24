@@ -79,6 +79,8 @@ public:
     void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void didReconnectDOMWindowExtensionToGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);
+
+    bool shouldForceUniversalAccessFromLocalURL(WebPage*, const String& url);
 };
 
 } // namespace WebKit

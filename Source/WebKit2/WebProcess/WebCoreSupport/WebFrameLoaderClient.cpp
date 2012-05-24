@@ -1538,6 +1538,15 @@ void WebFrameLoaderClient::didChangeScrollOffset()
     webPage->didChangeScrollOffsetForMainFrame();
 }
 
+bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore::KURL& url)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return false;
+
+    return webPage->injectedBundleLoaderClient().shouldForceUniversalAccessFromLocalURL(webPage, url.string());
+}
+
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
     RefPtr<WebFrameNetworkingContext> context = WebFrameNetworkingContext::create(m_frame);

@@ -241,6 +241,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // didReconnectDOMWindowExtensionToGlobalObject
         0, // willDestroyGlobalObjectForDOMWindowExtension
         didFinishProgress, // didFinishProgress
+        0 // shouldForceUniversalAccessFromLocalURL
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 
