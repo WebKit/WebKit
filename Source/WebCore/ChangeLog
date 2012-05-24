@@ -1,3 +1,18 @@
+2012-05-23  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Unbreak popup menus.
+        https://bugs.webkit.org/show_bug.cgi?id=87325
+
+        Reviewed by David Levin.
+
+        http://svn.webkit.org/repository/webkit/trunk@117607 added this function, but the
+        Chromium/Mac build doesn't use the file added in that change and hence didn't have
+        the category method.. Adding it doesn't help, as the category calls a
+        10.7-only function. Just don't use the category for chromium/mac. Fixes
+        http://crbug.com/129418
+
+        * platform/mac/WebCoreNSCellExtras.h:
+
 2012-05-23  Ojan Vafai  <ojan@chromium.org>
 
         add back the ability to disable flexbox
