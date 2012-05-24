@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Test that WebKitMutationObserver.disconnect cancels pending delivery');
+
+window.jsTestIsAsync = true;
+var mutations;
+var observer;
+
+function start() {
+    mutations = null;
+    div = document.createElement('div');
+
+    observer = new WebKitMutationObserver(function(m) {
+        mutations = m;
+    });
+
+    observer.observe(div, { attributes: true });
+    div.setAttribute('foo', 'bar');
+    observer.disconnect();
+    setTimeout(next, 0);
+}
+
+function next() {
+    debug('Disconnecting should cancel any pending delivery...');
+    shouldBeNull('mutations');
+    observer.observe(div, { attributes: true });
+    div.setAttribute('bar', 'baz');
+    setTimeout(finish, 0);
+}
+
+function finish() {
+    debug('...and re-observing should not see any of the previously-generated records.');
+    shouldBe('mutations.length', '1');
+    shouldBe('mutations[0].attributeName', '"bar"');
+    finishJSTest();
+}
+
+if (!window.WebKitMutationObserver)
+    testFailed('This test requires ENABLE(MUTATION_OBSERVERS)');
+else
+    start();
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>

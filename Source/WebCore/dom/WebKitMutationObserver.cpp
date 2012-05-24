@@ -89,6 +89,7 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
 
 void WebKitMutationObserver::disconnect()
 {
+    m_records.clear();
     HashSet<MutationObserverRegistration*> registrations(m_registrations);
     for (HashSet<MutationObserverRegistration*>::iterator iter = registrations.begin(); iter != registrations.end(); ++iter)
         (*iter)->unregister();
@@ -123,6 +124,9 @@ void WebKitMutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mu
 
 void WebKitMutationObserver::deliver()
 {
+    if (m_records.isEmpty())
+        return;
+
     MutationRecordArray records;
     records.swap(m_records);
 
