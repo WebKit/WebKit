@@ -1,3 +1,14 @@
+2012-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118256.
+        http://trac.webkit.org/changeset/118256
+        https://bugs.webkit.org/show_bug.cgi?id=87388
+
+        It still fails on Qt5-WK2 (Requested by Ossy on #webkit).
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0/Skipped:
+
 2012-05-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Add baselines for execCommand tests which are missing expected results

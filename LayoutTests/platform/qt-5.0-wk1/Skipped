@@ -33,9 +33,6 @@ fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=77380
-fast/url/path.html
-
 # [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=85631
 css1/basic/class_as_selector.html
