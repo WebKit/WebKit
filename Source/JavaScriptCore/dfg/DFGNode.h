@@ -144,6 +144,7 @@ struct Node {
     
     bool mergeFlags(NodeFlags flags)
     {
+        ASSERT(!(flags & NodeDoesNotExit));
         NodeFlags newFlags = m_flags | flags;
         if (newFlags == m_flags)
             return false;
@@ -153,6 +154,7 @@ struct Node {
     
     bool filterFlags(NodeFlags flags)
     {
+        ASSERT(flags & NodeDoesNotExit);
         NodeFlags newFlags = m_flags & flags;
         if (newFlags == m_flags)
             return false;
@@ -175,7 +177,20 @@ struct Node {
     {
         return m_flags & NodeMustGenerate;
     }
-
+    
+    void setCanExit(bool exits)
+    {
+        if (exits)
+            m_flags &= ~NodeDoesNotExit;
+        else
+            m_flags |= NodeDoesNotExit;
+    }
+    
+    bool canExit()
+    {
+        return !(m_flags & NodeDoesNotExit);
+    }
+    
     bool isConstant()
     {
         return op() == JSConstant;

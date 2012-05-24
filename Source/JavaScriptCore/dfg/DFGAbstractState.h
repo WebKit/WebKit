@@ -214,6 +214,50 @@ private:
     
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, NodeIndex destinationNodeIndex, NodeIndex sourceNodeIndex);
     
+    void speculateInt32Unary(Node& node, bool forceCanExit = false)
+    {
+        AbstractValue& childValue = forNode(node.child1());
+        node.setCanExit(forceCanExit || !isInt32Prediction(childValue.m_type));
+        childValue.filter(PredictInt32);
+    }
+    
+    void speculateNumberUnary(Node& node)
+    {
+        AbstractValue& childValue = forNode(node.child1());
+        node.setCanExit(!isNumberPrediction(childValue.m_type));
+        childValue.filter(PredictNumber);
+    }
+    
+    void speculateBooleanUnary(Node& node)
+    {
+        AbstractValue& childValue = forNode(node.child1());
+        node.setCanExit(!isBooleanPrediction(childValue.m_type));
+        childValue.filter(PredictBoolean);
+    }
+    
+    void speculateInt32Binary(Node& node, bool forceCanExit = false)
+    {
+        AbstractValue& childValue1 = forNode(node.child1());
+        AbstractValue& childValue2 = forNode(node.child2());
+        node.setCanExit(
+            forceCanExit
+            || !isInt32Prediction(childValue1.m_type)
+            || !isInt32Prediction(childValue2.m_type));
+        childValue1.filter(PredictInt32);
+        childValue2.filter(PredictInt32);
+    }
+    
+    void speculateNumberBinary(Node& node)
+    {
+        AbstractValue& childValue1 = forNode(node.child1());
+        AbstractValue& childValue2 = forNode(node.child2());
+        node.setCanExit(
+            !isNumberPrediction(childValue1.m_type)
+            || !isNumberPrediction(childValue2.m_type));
+        childValue1.filter(PredictNumber);
+        childValue2.filter(PredictNumber);
+    }
+    
     CodeBlock* m_codeBlock;
     Graph& m_graph;
     

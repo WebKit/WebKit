@@ -264,39 +264,54 @@ bool AbstractState::execute(unsigned indexInBlock)
     case JSConstant:
     case WeakJSConstant: {
         forNode(nodeIndex).set(m_graph.valueOfJSConstant(nodeIndex));
+        node.setCanExit(false);
         break;
     }
             
     case GetLocal: {
-        if (node.variableAccessData()->isCaptured())
+        VariableAccessData* variableAccessData = node.variableAccessData();
+        bool canExit = false;
+        canExit |= variableAccessData->prediction() == PredictNone;
+        if (variableAccessData->isCaptured())
             forNode(nodeIndex).makeTop();
-        else
-            forNode(nodeIndex) = m_variables.operand(node.local());
+        else {
+            AbstractValue value = m_variables.operand(variableAccessData->local());
+            if (value.isClear())
+                canExit |= true;
+            forNode(nodeIndex) = value;
+        }
+        node.setCanExit(canExit);
         break;
     }
         
     case GetLocalUnlinked: {
         forNode(nodeIndex).makeTop();
+        node.setCanExit(false);
         break;
     }
         
     case SetLocal: {
-        if (node.variableAccessData()->isCaptured())
+        if (node.variableAccessData()->isCaptured()) {
+            node.setCanExit(false);
             break;
+        }
         
         if (node.variableAccessData()->shouldUseDoubleFormat()) {
-            forNode(node.child1()).filter(PredictNumber);
+            speculateNumberUnary(node);
             m_variables.operand(node.local()).set(PredictDouble);
             break;
         }
         
         PredictedType predictedType = node.variableAccessData()->argumentAwarePrediction();
         if (isInt32Prediction(predictedType))
-            forNode(node.child1()).filter(PredictInt32);
-        else if (isArrayPrediction(predictedType))
+            speculateInt32Unary(node);
+        else if (isArrayPrediction(predictedType)) {
+            node.setCanExit(!isArrayPrediction(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(PredictArray);
-        else if (isBooleanPrediction(predictedType))
-            forNode(node.child1()).filter(PredictBoolean);
+        } else if (isBooleanPrediction(predictedType))
+            speculateBooleanUnary(node);
+        else
+            node.setCanExit(false);
         
         m_variables.operand(node.local()) = forNode(node.child1());
         break;
@@ -305,6 +320,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case SetArgument:
         // Assert that the state of arguments has been set.
         ASSERT(!m_block->valuesAtHead.operand(node.local()).isClear());
+        node.setCanExit(false);
         break;
             
     case BitAnd:
@@ -341,10 +357,10 @@ bool AbstractState::execute(unsigned indexInBlock)
                 ASSERT_NOT_REACHED();
             }
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        forNode(node.child1()).filter(PredictInt32);
-        forNode(node.child2()).filter(PredictInt32);
+        speculateInt32Binary(node);
         forNode(nodeIndex).set(PredictInt32);
         break;
     }
@@ -355,12 +371,16 @@ bool AbstractState::execute(unsigned indexInBlock)
             ASSERT(child.isInt32());
             forNode(nodeIndex).set(JSValue(child.asUInt32()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        if (!node.canSpeculateInteger())
+        if (!node.canSpeculateInteger()) {
             forNode(nodeIndex).set(PredictDouble);
-        else
+            node.setCanExit(false);
+        } else {
             forNode(nodeIndex).set(PredictInt32);
+            node.setCanExit(true);
+        }
         break;
     }
               
@@ -376,6 +396,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
         }
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictNumber);
         forNode(nodeIndex).set(PredictInt32);
         break;
@@ -389,14 +410,17 @@ bool AbstractState::execute(unsigned indexInBlock)
             else
                 forNode(nodeIndex).set(JSValue(JSC::toInt32(child.asDouble())));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateInteger())
-            forNode(node.child1()).filter(PredictInt32);
+            speculateInt32Unary(node);
         else if (m_graph[node.child1()].shouldSpeculateNumber())
-            forNode(node.child1()).filter(PredictNumber);
+            speculateNumberUnary(node);
         else if (m_graph[node.child1()].shouldSpeculateBoolean())
-            forNode(node.child1()).filter(PredictBoolean);
+            speculateBooleanUnary(node);
+        else
+            node.setCanExit(false);
         
         forNode(nodeIndex).set(PredictInt32);
         break;
@@ -407,9 +431,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (child && child.isNumber()) {
             forNode(nodeIndex).set(JSValue(JSValue::EncodeAsDouble, child.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
+        speculateNumberUnary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -425,27 +450,29 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isNumber() && right.isNumber()) {
             forNode(nodeIndex).set(JSValue(left.asNumber() + right.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         if (m_graph.addShouldSpeculateInteger(node)) {
-            forNode(node.child1()).filter(PredictInt32);
-            forNode(node.child2()).filter(PredictInt32);
+            speculateInt32Binary(
+                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
         if (Node::shouldSpeculateNumber(m_graph[node.child1()], m_graph[node.child2()])) {
-            forNode(node.child1()).filter(PredictNumber);
-            forNode(node.child2()).filter(PredictNumber);
+            speculateNumberBinary(node);
             forNode(nodeIndex).set(PredictDouble);
             break;
         }
         if (node.op() == ValueAdd) {
             clobberStructures(indexInBlock);
             forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
+            node.setCanExit(false);
             break;
         }
         // We don't handle this yet. :-(
         m_isValid = false;
+        node.setCanExit(true);
         break;
     }
             
@@ -455,16 +482,16 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isNumber() && right.isNumber()) {
             forNode(nodeIndex).set(JSValue(left.asNumber() - right.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         if (m_graph.addShouldSpeculateInteger(node)) {
-            forNode(node.child1()).filter(PredictInt32);
-            forNode(node.child2()).filter(PredictInt32);
+            speculateInt32Binary(
+                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
-        forNode(node.child2()).filter(PredictNumber);
+        speculateNumberBinary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -474,14 +501,16 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (child && child.isNumber()) {
             forNode(nodeIndex).set(JSValue(-child.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         if (m_graph.negateShouldSpeculateInteger(node)) {
-            forNode(node.child1()).filter(PredictInt32);
+            speculateInt32Unary(
+                node, !nodeCanTruncateInteger(node.arithNodeFlags()));
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
+        speculateNumberUnary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -492,16 +521,18 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isNumber() && right.isNumber()) {
             forNode(nodeIndex).set(JSValue(left.asNumber() * right.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         if (m_graph.mulShouldSpeculateInteger(node)) {
-            forNode(node.child1()).filter(PredictInt32);
-            forNode(node.child2()).filter(PredictInt32);
+            speculateInt32Binary(
+                node,
+                !nodeCanTruncateInteger(node.arithNodeFlags())
+                || !nodeCanIgnoreNegativeZero(node.arithNodeFlags()));
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
-        forNode(node.child2()).filter(PredictNumber);
+        speculateNumberBinary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -533,16 +564,17 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()]) && node.canSpeculateInteger()) {
-            forNode(node.child1()).filter(PredictInt32);
-            forNode(node.child2()).filter(PredictInt32);
+        if (Node::shouldSpeculateInteger(
+                m_graph[node.child1()], m_graph[node.child2()])
+            && node.canSpeculateInteger()) {
+            speculateInt32Binary(node, true); // forcing can-exit, which is a bit on the conservative side.
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
-        forNode(node.child2()).filter(PredictNumber);
+        speculateNumberBinary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -552,14 +584,16 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (child && child.isNumber()) {
             forNode(nodeIndex).set(JSValue(fabs(child.asNumber())));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateInteger() && node.canSpeculateInteger()) {
-            forNode(node.child1()).filter(PredictInt32);
+        if (m_graph[node.child1()].shouldSpeculateInteger()
+            && node.canSpeculateInteger()) {
+            speculateInt32Unary(node, true);
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
+        speculateNumberUnary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -569,9 +603,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (child && child.isNumber()) {
             forNode(nodeIndex).set(JSValue(sqrt(child.asNumber())));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
-        forNode(node.child1()).filter(PredictNumber);
+        speculateNumberUnary(node);
         forNode(nodeIndex).set(PredictDouble);
         break;
     }
@@ -580,19 +615,26 @@ bool AbstractState::execute(unsigned indexInBlock)
         JSValue childConst = forNode(node.child1()).value();
         if (childConst) {
             forNode(nodeIndex).set(jsBoolean(!childConst.toBoolean()));
+            node.setCanExit(false);
             break;
         }
         Node& child = m_graph[node.child1()];
         if (isBooleanPrediction(child.prediction()))
-            forNode(node.child1()).filter(PredictBoolean);
-        else if (child.shouldSpeculateFinalObjectOrOther())
+            speculateBooleanUnary(node);
+        else if (child.shouldSpeculateFinalObjectOrOther()) {
+            node.setCanExit(
+                !isFinalObjectOrOtherPrediction(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(PredictFinalObject | PredictOther);
-        else if (child.shouldSpeculateArrayOrOther())
+        } else if (child.shouldSpeculateArrayOrOther()) {
+            node.setCanExit(
+                !isArrayOrOtherPrediction(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(PredictArray | PredictOther);
-        else if (child.shouldSpeculateInteger())
-            forNode(node.child1()).filter(PredictInt32);
+        } else if (child.shouldSpeculateInteger())
+            speculateInt32Unary(node);
         else if (child.shouldSpeculateNumber())
-            forNode(node.child1()).filter(PredictNumber);
+            speculateNumberUnary(node);
+        else
+            node.setCanExit(false);
         forNode(nodeIndex).set(PredictBoolean);
         break;
     }
@@ -603,6 +645,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case IsString:
     case IsObject:
     case IsFunction: {
+        node.setCanExit(false);
         JSValue child = forNode(node.child1()).value();
         if (child) {
             bool foundConstant = true;
@@ -665,6 +708,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         
@@ -673,47 +717,70 @@ bool AbstractState::execute(unsigned indexInBlock)
         Node& left = m_graph[node.child1()];
         Node& right = m_graph[node.child2()];
         PredictedType filter;
-        if (Node::shouldSpeculateInteger(left, right))
+        PredictionChecker checker;
+        if (Node::shouldSpeculateInteger(left, right)) {
             filter = PredictInt32;
-        else if (Node::shouldSpeculateNumber(left, right))
+            checker = isInt32Prediction;
+        } else if (Node::shouldSpeculateNumber(left, right)) {
             filter = PredictNumber;
-        else if (node.op() == CompareEq) {
+            checker = isNumberPrediction;
+        } else if (node.op() == CompareEq) {
             if ((m_graph.isConstant(node.child1().index())
                  && m_graph.valueOfJSConstant(node.child1().index()).isNull())
                 || (m_graph.isConstant(node.child2().index())
                     && m_graph.valueOfJSConstant(node.child2().index()).isNull())) {
                 // We know that this won't clobber the world. But that's all we know.
+                node.setCanExit(false);
                 break;
             }
             
-            if (Node::shouldSpeculateFinalObject(left, right))
+            if (Node::shouldSpeculateFinalObject(left, right)) {
                 filter = PredictFinalObject;
-            else if (Node::shouldSpeculateArray(left, right))
+                checker = isFinalObjectPrediction;
+            } else if (Node::shouldSpeculateArray(left, right)) {
                 filter = PredictArray;
-            else if (left.shouldSpeculateFinalObject() && right.shouldSpeculateFinalObjectOrOther()) {
+                checker = isArrayPrediction;
+            } else if (left.shouldSpeculateFinalObject() && right.shouldSpeculateFinalObjectOrOther()) {
+                node.setCanExit(
+                    !isFinalObjectPrediction(forNode(node.child1()).m_type)
+                    || !isFinalObjectOrOtherPrediction(forNode(node.child2()).m_type));
                 forNode(node.child1()).filter(PredictFinalObject);
                 forNode(node.child2()).filter(PredictFinalObject | PredictOther);
                 break;
             } else if (right.shouldSpeculateFinalObject() && left.shouldSpeculateFinalObjectOrOther()) {
+                node.setCanExit(
+                    !isFinalObjectOrOtherPrediction(forNode(node.child1()).m_type)
+                    || !isFinalObjectPrediction(forNode(node.child2()).m_type));
                 forNode(node.child1()).filter(PredictFinalObject | PredictOther);
                 forNode(node.child2()).filter(PredictFinalObject);
                 break;
             } else if (left.shouldSpeculateArray() && right.shouldSpeculateArrayOrOther()) {
-                forNode(node.child1()).filter(PredictFinalObject);
-                forNode(node.child2()).filter(PredictFinalObject | PredictOther);
+                node.setCanExit(
+                    !isArrayPrediction(forNode(node.child1()).m_type)
+                    || !isArrayOrOtherPrediction(forNode(node.child2()).m_type));
+                forNode(node.child1()).filter(PredictArray);
+                forNode(node.child2()).filter(PredictArray | PredictOther);
                 break;
             } else if (right.shouldSpeculateArray() && left.shouldSpeculateArrayOrOther()) {
-                forNode(node.child1()).filter(PredictFinalObject | PredictOther);
-                forNode(node.child2()).filter(PredictFinalObject);
+                node.setCanExit(
+                    !isArrayOrOtherPrediction(forNode(node.child1()).m_type)
+                    || !isArrayPrediction(forNode(node.child2()).m_type));
+                forNode(node.child1()).filter(PredictArray | PredictOther);
+                forNode(node.child2()).filter(PredictArray);
                 break;
             } else {
                 filter = PredictTop;
+                checker = isAnyPrediction;
                 clobberStructures(indexInBlock);
             }
         } else {
             filter = PredictTop;
+            checker = isAnyPrediction;
             clobberStructures(indexInBlock);
         }
+        node.setCanExit(
+            !checker(forNode(node.child1()).m_type)
+            || !checker(forNode(node.child2()).m_type));
         forNode(node.child1()).filter(filter);
         forNode(node.child2()).filter(filter);
         break;
@@ -725,25 +792,72 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isNumber() && right.isNumber()) {
             forNode(nodeIndex).set(jsBoolean(left.asNumber() == right.asNumber()));
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         forNode(nodeIndex).set(PredictBoolean);
+        if (m_graph.isJSConstant(node.child1().index())) {
+            JSValue value = m_graph.valueOfJSConstant(node.child1().index());
+            if (!value.isNumber() && !value.isString()) {
+                node.setCanExit(false);
+                break;
+            }
+        }
+        if (m_graph.isJSConstant(node.child2().index())) {
+            JSValue value = m_graph.valueOfJSConstant(node.child2().index());
+            if (!value.isNumber() && !value.isString()) {
+                node.setCanExit(false);
+                break;
+            }
+        }
+        if (Node::shouldSpeculateInteger(
+                m_graph[node.child1()], m_graph[node.child2()])) {
+            speculateInt32Binary(node);
+            break;
+        }
+        if (Node::shouldSpeculateNumber(
+                m_graph[node.child1()], m_graph[node.child2()])) {
+            speculateNumberBinary(node);
+            break;
+        }
+        if (Node::shouldSpeculateFinalObject(
+                m_graph[node.child1()], m_graph[node.child2()])) {
+            node.setCanExit(
+                !isFinalObjectPrediction(forNode(node.child1()).m_type)
+                || !isFinalObjectPrediction(forNode(node.child2()).m_type));
+            forNode(node.child1()).filter(PredictFinalObject);
+            forNode(node.child2()).filter(PredictFinalObject);
+            break;
+        }
+        if (Node::shouldSpeculateArray(
+                m_graph[node.child1()], m_graph[node.child2()])) {
+            node.setCanExit(
+                !isArrayPrediction(forNode(node.child1()).m_type)
+                || !isArrayPrediction(forNode(node.child2()).m_type));
+            forNode(node.child1()).filter(PredictArray);
+            forNode(node.child2()).filter(PredictArray);
+            break;
+        }
+        node.setCanExit(false);
         break;
     }
         
     case StringCharCodeAt:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictString);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).set(PredictInt32);
         break;
         
     case StringCharAt:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictString);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).set(PredictString);
         break;
             
     case GetByVal: {
+        node.setCanExit(true);
         if (!node.prediction() || !m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction()) {
             m_isValid = false;
             break;
@@ -832,6 +946,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case PutByVal:
     case PutByValAlias: {
+        node.setCanExit(true);
         if (!m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction()) {
             m_isValid = false;
             break;
@@ -934,23 +1049,29 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case ArrayPush:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictArray);
         forNode(nodeIndex).set(PredictNumber);
         break;
             
     case ArrayPop:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictArray);
         forNode(nodeIndex).makeTop();
         break;
             
     case RegExpExec:
     case RegExpTest:
+        node.setCanExit(
+            !isCellPrediction(forNode(node.child1()).m_type)
+            || !isCellPrediction(forNode(node.child2()).m_type));
         forNode(node.child1()).filter(PredictCell);
         forNode(node.child2()).filter(PredictCell);
         forNode(nodeIndex).makeTop();
         break;
             
     case Jump:
+        node.setCanExit(false);
         break;
             
     case Branch: {
@@ -961,6 +1082,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 m_branchDirection = TakeTrue;
             else
                 m_branchDirection = TakeFalse;
+            node.setCanExit(false);
             break;
         }
         // FIXME: The above handles the trivial cases of sparse conditional
@@ -972,23 +1094,34 @@ bool AbstractState::execute(unsigned indexInBlock)
         //    the branch.
         Node& child = m_graph[node.child1()];
         if (child.shouldSpeculateBoolean())
-            forNode(node.child1()).filter(PredictBoolean);
-        else if (child.shouldSpeculateFinalObjectOrOther())
+            speculateBooleanUnary(node);
+        else if (child.shouldSpeculateFinalObjectOrOther()) {
+            node.setCanExit(
+                !isFinalObjectOrOtherPrediction(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(PredictFinalObject | PredictOther);
-        else if (child.shouldSpeculateArrayOrOther())
+        } else if (child.shouldSpeculateArrayOrOther()) {
+            node.setCanExit(
+                !isArrayOrOtherPrediction(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(PredictArray | PredictOther);
-        else if (child.shouldSpeculateInteger())
-            forNode(node.child1()).filter(PredictInt32);
+        } else if (child.shouldSpeculateInteger())
+            speculateInt32Unary(node);
         else if (child.shouldSpeculateNumber())
-            forNode(node.child1()).filter(PredictNumber);
+            speculateNumberUnary(node);
+        else
+            node.setCanExit(false);
         m_branchDirection = TakeBoth;
         break;
     }
             
     case Return:
+        m_isValid = false;
+        node.setCanExit(false);
+        break;
+        
     case Throw:
     case ThrowReferenceError:
         m_isValid = false;
+        node.setCanExit(true);
         break;
             
     case ToPrimitive: {
@@ -996,12 +1129,13 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (childConst && childConst.isNumber()) {
             forNode(nodeIndex).set(childConst);
             m_foundConstants = true;
+            node.setCanExit(false);
             break;
         }
         
         Node& child = m_graph[node.child1()];
         if (child.shouldSpeculateInteger()) {
-            forNode(node.child1()).filter(PredictInt32);
+            speculateInt32Unary(node);
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
@@ -1015,20 +1149,24 @@ bool AbstractState::execute(unsigned indexInBlock)
             type |= PredictString;
         }
         destination.set(type);
+        node.setCanExit(false);
         break;
     }
             
     case StrCat:
+        node.setCanExit(false);
         forNode(nodeIndex).set(PredictString);
         break;
             
     case NewArray:
     case NewArrayBuffer:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_codeBlock->globalObject()->arrayStructure());
         m_haveStructures = true;
         break;
             
     case NewRegexp:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_codeBlock->globalObject()->regExpStructure());
         m_haveStructures = true;
         break;
@@ -1043,8 +1181,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             // object, so there's nothing to do. I don't think this case will
             // be hit, but then again, you never know.
             destination = source;
+            node.setCanExit(false);
             break;
         }
+        
+        node.setCanExit(true);
         
         if (isOtherPrediction(child.prediction())) {
             source.filter(PredictOther);
@@ -1066,6 +1207,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CreateThis: {
         AbstractValue& source = forNode(node.child1());
         AbstractValue& destination = forNode(nodeIndex);
+        
+        node.setCanExit(!isCellPrediction(source.m_type));
             
         source.filter(PredictFunction);
         destination.set(PredictFinalObject);
@@ -1073,24 +1216,31 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
 
     case NewObject:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->emptyObjectStructure());
         m_haveStructures = true;
         break;
         
     case CreateActivation:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_graph.m_globalData.activationStructure.get());
         m_haveStructures = true;
         break;
         
     case CreateArguments:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->argumentsStructure());
         m_haveStructures = true;
         break;
         
     case TearOffActivation:
     case TearOffArguments:
-    case CheckArgumentsNotCreated:
+        node.setCanExit(false);
         // Does nothing that is user-visible.
+        break;
+
+    case CheckArgumentsNotCreated:
+        node.setCanExit(true);
         break;
         
     case GetMyArgumentsLength:
@@ -1100,12 +1250,15 @@ bool AbstractState::execute(unsigned indexInBlock)
         // We perform further optimizations on this later on.
         if (node.codeOrigin.inlineCallFrame) {
             forNode(nodeIndex).set(jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1));
+            node.setCanExit(false);
             break;
         }
+        node.setCanExit(true);
         forNode(nodeIndex).set(PredictInt32);
         break;
         
     case GetMyArgumentsLengthSafe:
+        node.setCanExit(false);
         // This potentially clobbers all structures if the arguments object had a getter
         // installed on the length property.
         clobberStructures(indexInBlock);
@@ -1115,6 +1268,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case GetMyArgumentByVal:
+        node.setCanExit(true);
         // We know that this executable does not escape its arguments, so we can optimize
         // the arguments a bit. Note that this ends up being further optimized by the
         // ArgumentsSimplificationPhase.
@@ -1123,6 +1277,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case GetMyArgumentByValSafe:
+        node.setCanExit(false);
         // This potentially clobbers all structures if the property we're accessing has
         // a getter. We don't speculate against this.
         clobberStructures(indexInBlock);
@@ -1135,27 +1290,33 @@ bool AbstractState::execute(unsigned indexInBlock)
     case NewFunction:
     case NewFunctionExpression:
     case NewFunctionNoCheck:
+        node.setCanExit(false);
         forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->functionStructure());
         break;
         
     case GetCallee:
+        node.setCanExit(false);
         forNode(nodeIndex).set(PredictFunction);
         break;
             
     case GetScopeChain:
+        node.setCanExit(false);
         forNode(nodeIndex).set(PredictCellOther);
         break;
             
     case GetScopedVar:
+        node.setCanExit(false);
         forNode(nodeIndex).makeTop();
         break;
             
     case PutScopedVar:
+        node.setCanExit(false);
         clobberStructures(indexInBlock);
         break;
             
     case GetById:
     case GetByIdFlush:
+        node.setCanExit(true);
         if (!node.prediction()) {
             m_isValid = false;
             break;
@@ -1167,73 +1328,92 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case GetArrayLength:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictArray);
         forNode(nodeIndex).set(PredictInt32);
         break;
 
     case GetArgumentsLength:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictArguments);
         forNode(nodeIndex).set(PredictInt32);
         break;
 
     case GetStringLength:
+        node.setCanExit(!isStringPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictString);
         forNode(nodeIndex).set(PredictInt32);
         break;
         
     case GetInt8ArrayLength:
+        node.setCanExit(!isInt8ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictInt8Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetInt16ArrayLength:
+        node.setCanExit(!isInt16ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictInt16Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetInt32ArrayLength:
+        node.setCanExit(!isInt32ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictInt32Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetUint8ArrayLength:
+        node.setCanExit(!isUint8ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictUint8Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetUint8ClampedArrayLength:
+        node.setCanExit(!isUint8ClampedArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictUint8ClampedArray);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetUint16ArrayLength:
+        node.setCanExit(!isUint16ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictUint16Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetUint32ArrayLength:
+        node.setCanExit(!isUint32ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictUint32Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetFloat32ArrayLength:
+        node.setCanExit(!isFloat32ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictFloat32Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
     case GetFloat64ArrayLength:
+        node.setCanExit(!isFloat64ArrayPrediction(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(PredictFloat64Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
             
-    case CheckStructure:
+    case CheckStructure: {
+        AbstractValue value = forNode(node.child1());
+        value.filter(node.structureSet());
+        node.setCanExit(value != forNode(node.child1()));
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
-        forNode(node.child1()).filter(node.structureSet());
+        forNode(node.child1()) = value;
         m_haveStructures = true;
         break;
+    }
             
     case PutStructure:
+        node.setCanExit(false);
         clobberStructures(indexInBlock);
         forNode(node.child1()).set(node.structureTransitionData().newStructure);
         m_haveStructures = true;
         break;
     case GetPropertyStorage:
+        node.setCanExit(false);
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
     case GetIndexedPropertyStorage: {
+        node.setCanExit(true); // Lies, but this is (almost) always followed by GetByVal, which does exit. So no point in trying to be more precise.
         PredictedType basePrediction = m_graph[node.child2()].prediction();
         if (!(basePrediction & PredictInt32) && basePrediction) {
             forNode(nodeIndex).clear();
@@ -1299,38 +1479,46 @@ bool AbstractState::execute(unsigned indexInBlock)
         break; 
     }
     case GetByOffset:
+        node.setCanExit(false);
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).makeTop();
         break;
             
     case PutByOffset:
+        node.setCanExit(false);
         forNode(node.child1()).filter(PredictCell);
         break;
             
     case CheckFunction:
+        node.setCanExit(true); // Lies! We can do better.
         forNode(node.child1()).filter(PredictFunction);
         // FIXME: Should be able to propagate the fact that we know what the function is.
         break;
             
     case PutById:
     case PutByIdDirect:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictCell);
         clobberStructures(indexInBlock);
         break;
             
     case GetGlobalVar:
+        node.setCanExit(false);
         forNode(nodeIndex).makeTop();
         break;
             
     case PutGlobalVar:
+        node.setCanExit(false);
         break;
             
     case CheckHasInstance:
+        node.setCanExit(true);
         forNode(node.child1()).filter(PredictCell);
         // Sadly, we don't propagate the fact that we've done CheckHasInstance
         break;
             
     case InstanceOf:
+        node.setCanExit(true);
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
         if (!(m_graph[node.child1()].prediction() & ~PredictCell) && !(forNode(node.child1()).m_type & ~PredictCell))
             forNode(node.child1()).filter(PredictCell);
@@ -1340,9 +1528,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case Phi:
     case Flush:
+        node.setCanExit(false);
         break;
             
     case Breakpoint:
+        node.setCanExit(false);
         break;
             
     case Call:
@@ -1351,17 +1541,20 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ResolveBase:
     case ResolveBaseStrictPut:
     case ResolveGlobal:
+        node.setCanExit(true);
         clobberStructures(indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             
     case ForceOSRExit:
+        node.setCanExit(true);
         m_isValid = false;
         break;
             
     case Phantom:
     case InlineStart:
     case Nop:
+        node.setCanExit(false);
         break;
         
     case LastNodeType:

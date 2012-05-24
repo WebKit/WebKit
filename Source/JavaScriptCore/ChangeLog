@@ -1,5 +1,70 @@
 2012-05-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CFA should record if a node can OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=86905
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r117931 from dfgopt.
+        
+        Adds a NodeFlag that denotes nodes that are known to not have OSR exits.
+        This ought to aid any backwards analyses that need to know when a
+        backward flow merge might happen due to a side exit.
+        
+        Also added assertions into speculationCheck() that ensure that we did not
+        mark a node as non-exiting and then promptly compile in an exit. This
+        helped catch some minor bugs where we were doing unnecessary speculation
+        checks.
+        
+        This is a perf-neutral change. The speculation checks that this removes
+        were not on hot paths of major benchmarks.
+
+        * bytecode/PredictedType.h:
+        (JSC):
+        (JSC::isAnyPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::speculateInt32Unary):
+        (AbstractState):
+        (JSC::DFG::AbstractState::speculateNumberUnary):
+        (JSC::DFG::AbstractState::speculateBooleanUnary):
+        (JSC::DFG::AbstractState::speculateInt32Binary):
+        (JSC::DFG::AbstractState::speculateNumberBinary):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::mergeFlags):
+        (JSC::DFG::Node::filterFlags):
+        (Node):
+        (JSC::DFG::Node::setCanExit):
+        (JSC::DFG::Node::canExit):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::nodeFlagsAsString):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-05-20  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not do unnecessary indirections when storing to objects
         https://bugs.webkit.org/show_bug.cgi?id=86959
 

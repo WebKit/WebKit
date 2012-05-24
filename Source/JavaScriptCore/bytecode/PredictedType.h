@@ -71,6 +71,12 @@ static const PredictedType FixedIndexedStorageMask = PredictInt8Array | PredictI
 
 typedef bool (*PredictionChecker)(PredictedType);
 
+// Dummy prediction checker, only useful if someone insists on requiring a prediction checker.
+inline bool isAnyPrediction(PredictedType)
+{
+    return true;
+}
+
 inline bool isCellPrediction(PredictedType value)
 {
     return !!(value & PredictCell) && !(value & ~PredictCell);

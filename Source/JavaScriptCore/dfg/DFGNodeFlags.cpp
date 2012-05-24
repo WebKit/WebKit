@@ -130,6 +130,13 @@ const char* nodeFlagsAsString(NodeFlags flags)
         hasPrinted = true;
     }
     
+    if (!(flags & NodeDoesNotExit)) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("CanExit");
+        hasPrinted = true;
+    }
+    
     *ptr++ = 0;
     
     return description;

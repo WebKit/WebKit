@@ -1028,6 +1028,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("SpecInt@%d   ", nodeIndex);
 #endif
+    PredictedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1085,7 +1086,8 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         // Check the value is an integer.
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchPtr(MacroAssembler::Below, gpr, GPRInfo::tagTypeNumberRegister));
+        if (!isInt32Prediction(type))
+            speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchPtr(MacroAssembler::Below, gpr, GPRInfo::tagTypeNumberRegister));
         info.fillJSValue(gpr, DataFormatJSInteger);
         // If !strict we're done, return.
         if (!strict) {
@@ -1173,6 +1175,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("SpecDouble@%d   ", nodeIndex);
 #endif
+    PredictedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1257,7 +1260,8 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 
         JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
 
-        speculationCheck(BadType, JSValueRegs(jsValueGpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister));
+        if (!isNumberPrediction(type))
+            speculationCheck(BadType, JSValueRegs(jsValueGpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister));
 
         // First, if we get here we have a double encoded as a JSValue
         m_jit.move(jsValueGpr, tempGpr);
@@ -1324,6 +1328,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("SpecCell@%d   ", nodeIndex);
 #endif
+    PredictedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1353,7 +1358,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
 
         info.fillJSValue(gpr, DataFormatJS);
-        if (info.spillFormat() != DataFormatJSCell)
+        if (!isCellPrediction(type))
             speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagMaskRegister));
         info.fillJSValue(gpr, DataFormatJSCell);
         return gpr;
@@ -1369,7 +1374,8 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
     case DataFormatJS: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagMaskRegister));
+        if (!isCellPrediction(type))
+            speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagMaskRegister));
         info.fillJSValue(gpr, DataFormatJSCell);
         return gpr;
     }
@@ -1397,6 +1403,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("SpecBool@%d   ", nodeIndex);
 #endif
+    PredictedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1426,7 +1433,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
         m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
 
         info.fillJSValue(gpr, DataFormatJS);
-        if (info.spillFormat() != DataFormatJSBoolean) {
+        if (!isBooleanPrediction(type)) {
             m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
             speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
             m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
@@ -1445,9 +1452,11 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
     case DataFormatJS: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
-        speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+        if (!isBooleanPrediction(type)) {
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+            speculationCheck(BadType, JSValueRegs(gpr), nodeIndex, m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+        }
         info.fillJSValue(gpr, DataFormatJSBoolean);
         return gpr;
     }
@@ -3422,7 +3431,9 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
     case CheckStructure: {
-        if (m_state.forNode(node.child1()).m_structure.isSubsetOf(node.structureSet())) {
+        AbstractValue value = m_state.forNode(node.child1());
+        value.filter(node.structureSet());
+        if (value == m_state.forNode(node.child1())) {
             noResult(m_compileIndex);
             break;
         }

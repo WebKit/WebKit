@@ -2148,21 +2148,25 @@ public:
     {
         if (!m_compileOkay)
             return;
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail);
     }
     // Add a set of speculation checks without additional recovery.
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
         for (unsigned i = 0; i < jumpVector.size(); ++i)
             speculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i]);
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::JumpList& jumpsToFail)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpsToFail);
     }
     // Add a speculation check with additional recovery.
@@ -2170,15 +2174,18 @@ public:
     {
         if (!m_compileOkay)
             return;
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
     }
     void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
         
         unsigned setLocalIndexInBlock = m_indexInBlock + 1;
@@ -2210,6 +2217,7 @@ public:
     }
     void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
         for (unsigned i = 0; i < jumpVector.size(); ++i)
             forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
@@ -2218,6 +2226,7 @@ public:
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("SpeculativeJIT was terminated.\n");
 #endif
@@ -2228,6 +2237,7 @@ public:
     }
     void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Edge nodeUse)
     {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
     }
     
@@ -2302,6 +2312,8 @@ public:
     CodeOrigin m_codeOriginForOSR;
     
     AbstractState m_state;
+    
+    bool m_isCheckingArgumentTypes;
     
     Vector<SlowPathGenerator*, 8> m_slowPathGenerators; // doesn't use OwnPtr<> because I don't want to include DFGSlowPathGenerator.h
     Vector<SilentRegisterSavePlan> m_plans;

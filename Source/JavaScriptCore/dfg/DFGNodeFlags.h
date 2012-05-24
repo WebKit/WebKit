@@ -59,6 +59,8 @@ namespace JSC { namespace DFG {
 #define NodeUsedAsValue           (NodeUsedAsNumber | NodeNeedsNegZero)
 #define NodeUsedAsInt            0x1000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
 
+#define NodeDoesNotExit          0x2000 // This flag is negated to make it natural for the default to be that a node does exit.
+
 typedef uint16_t NodeFlags;
 
 static inline bool nodeUsedAsNumber(NodeFlags flags)

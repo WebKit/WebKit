@@ -45,6 +45,7 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_state(m_jit.graph())
+    , m_isCheckingArgumentTypes(false)
 {
 }
 
@@ -1124,6 +1125,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_compileIndex);
+    m_isCheckingArgumentTypes = true;
     m_codeOriginForOSR = CodeOrigin(0);
 
     for (size_t i = 0; i < m_arguments.size(); ++i)
@@ -1273,6 +1275,7 @@ void SpeculativeJIT::checkArgumentTypes()
         } 
 #endif
     }
+    m_isCheckingArgumentTypes = false;
 }
 
 bool SpeculativeJIT::compile()
@@ -1665,7 +1668,8 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
 
             JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, gpr, GPRInfo::tagTypeNumberRegister);
 
-            speculationCheck(BadType, JSValueRegs(gpr), node.child1().index(), m_jit.branchTestPtr(MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
+            if (!isNumberPrediction(m_state.forNode(node.child1()).m_type))
+                speculationCheck(BadType, JSValueRegs(gpr), node.child1().index(), m_jit.branchTestPtr(MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
 
             // First, if we get here we have a double encoded as a JSValue
             m_jit.move(gpr, resultGpr);
@@ -1701,7 +1705,8 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
 
                 JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
 
-                speculationCheck(BadType, JSValueRegs(tagGPR, payloadGPR), node.child1().index(), m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
+                if (!isNumberPrediction(m_state.forNode(node.child1()).m_type))
+                    speculationCheck(BadType, JSValueRegs(tagGPR, payloadGPR), node.child1().index(), m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
 
                 unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
 
