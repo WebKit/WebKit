@@ -1,3 +1,15 @@
+2012-05-24  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Forcibly sync running animations in the waiting state when synchronized start times are needed.
+        https://bugs.webkit.org/show_bug.cgi?id=87153
+
+        Reviewed by James Robinson.
+
+        Unit test: CCLayerAnimationControllerTest.ForceSyncWhenSynchronizedStartTimeNeeded
+
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        (WebCore::CCLayerAnimationController::replaceImplThreadAnimations):
+
 2012-05-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: convert HeapSnapshotGridNode._provider into getter.

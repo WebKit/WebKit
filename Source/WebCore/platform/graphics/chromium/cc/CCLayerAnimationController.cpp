@@ -451,8 +451,16 @@ void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, C
 void CCLayerAnimationController::replaceImplThreadAnimations(CCLayerAnimationController* controllerImpl) const
 {
     controllerImpl->m_activeAnimations.clear();
-    for (size_t i = 0; i < m_activeAnimations.size(); ++i)
-        controllerImpl->add(m_activeAnimations[i]->cloneForImplThread());
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneForImplThread());
+        if (m_activeAnimations[i]->needsSynchronizedStartTime()) {
+            // We haven't received an animation started notification yet, so it
+            // is important that we add it in a 'waiting' and not 'running' state.
+            toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
+            toAdd->setStartTime(0);
+        }
+        controllerImpl->add(toAdd.release());
+    }
 }
 
 void CCLayerAnimationController::tickAnimations(double monotonicTime)

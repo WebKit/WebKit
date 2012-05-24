@@ -747,4 +747,32 @@ TEST(CCLayerAnimationControllerTest, AbortAGroupedAnimation)
     EXPECT_EQ(0.75, dummy.opacity());
 }
 
+TEST(CCLayerAnimationControllerTest, ForceSyncWhenSynchronizedStartTimeNeeded)
+{
+    FakeLayerAnimationControllerClient dummyImpl;
+    OwnPtr<CCLayerAnimationController> controllerImpl(CCLayerAnimationController::create(&dummyImpl));
+    OwnPtr<CCAnimationEventsVector> events(adoptPtr(new CCAnimationEventsVector));
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(
+        CCLayerAnimationController::create(&dummy));
+
+    OwnPtr<CCActiveAnimation> toAdd(createActiveAnimation(adoptPtr(new FakeFloatTransition(2, 0, 1)), 0, CCActiveAnimation::Opacity));
+    toAdd->setNeedsSynchronizedStartTime(true);
+    controller->add(toAdd.release());
+
+    controller->animate(0, 0);
+    EXPECT_TRUE(controller->hasActiveAnimation());
+    CCActiveAnimation* activeAnimation = controller->getActiveAnimation(0, CCActiveAnimation::Opacity);
+    EXPECT_TRUE(activeAnimation);
+    EXPECT_TRUE(activeAnimation->needsSynchronizedStartTime());
+
+    controller->setForceSync();
+
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+
+    activeAnimation = controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity);
+    EXPECT_TRUE(activeAnimation);
+    EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, activeAnimation->runState());
+}
+
 } // namespace
