@@ -134,7 +134,6 @@ public:
 
     // For conversion to mouse events.
     void touchEventCancel();
-    void touchEventCancelAndClearFocusedNode();
     bool touchPointAsMouseEvent(const Platform::TouchPoint&);
 
     // Returns true if the key stroke was handled by WebKit.

@@ -37,7 +37,6 @@ public:
 
     bool handleTouchPoint(Platform::TouchPoint&);
     void touchEventCancel();
-    void touchEventCancelAndClearFocusedNode();
     void touchHoldEvent();
 
     bool shouldSuppressMouseDownOnTouchDown() const;

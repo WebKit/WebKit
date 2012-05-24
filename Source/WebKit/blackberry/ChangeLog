@@ -1,3 +1,20 @@
+2012-05-24  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Remove unused API function touchEventCancelAndClearFocusedNode.
+        https://bugs.webkit.org/show_bug.cgi?id=87379
+
+        Reviewed by Antonio Gomes.
+
+        Remove unused API, touchEventCancelAndClearFocusedNode.
+
+        Reviewed Internally by Gen Mak.
+
+        * Api/WebPage.cpp:
+        * Api/WebPage.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        * WebKitSupport/TouchEventHandler.h:
+        (TouchEventHandler):
+
 2012-05-23  Genevieve Mak  <gmak@rim.com>
 
         Remove minimum and maximum scroll position as they are no

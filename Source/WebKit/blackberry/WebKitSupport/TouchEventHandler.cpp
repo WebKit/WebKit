@@ -155,12 +155,6 @@ void TouchEventHandler::touchEventCancel()
     m_lastFatFingersResult.reset();
 }
 
-void TouchEventHandler::touchEventCancelAndClearFocusedNode()
-{
-    touchEventCancel();
-    m_webPage->clearFocusNode();
-}
-
 void TouchEventHandler::touchHoldEvent()
 {
     // This is a hack for our hack that converts the touch pressed event that we've delayed because the user has focused a input field

@@ -4098,13 +4098,6 @@ void WebPage::touchEventCancel()
     d->m_touchEventHandler->touchEventCancel();
 }
 
-void WebPage::touchEventCancelAndClearFocusedNode()
-{
-    if (d->m_page->defersLoading())
-        return;
-    d->m_touchEventHandler->touchEventCancelAndClearFocusedNode();
-}
-
 Frame* WebPagePrivate::focusedOrMainFrame() const
 {
     return m_page->focusController()->focusedOrMainFrame();
