@@ -1,3 +1,20 @@
+2012-05-24  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: fix baseline search path for official chrome builders
+        https://bugs.webkit.org/show_bug.cgi?id=87432
+
+        Reviewed by Tony Chang.
+
+        The official chrome builders need to use the win7 and SL
+        baseline paths, not the XP and Leopard paths. Linux is correct.
+
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        (GoogleChromeMacPort.determine_full_port_name):
+        (GoogleChromeWinPort.determine_full_port_name):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (TestGoogleChromePort._verify_baseline_search_path_startswith):
+        (TestGoogleChromePort.test_get_google_chrome_port):
+
 2012-05-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [NRWT] REGRESSION(r116021): Assertion when running with --no-http

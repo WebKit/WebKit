@@ -92,7 +92,7 @@ class GoogleChromeMacPort(chromium_mac.ChromiumMacPort):
     # FIXME: Make google-chrome-XXX work as a port name.
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
-        return 'chromium-mac-leopard'
+        return 'chromium-mac-snowleopard'
 
     def baseline_search_path(self):
         paths = chromium_mac.ChromiumMacPort.baseline_search_path(self)
@@ -109,7 +109,7 @@ class GoogleChromeWinPort(chromium_win.ChromiumWinPort):
     # FIXME: Make google-chrome-XXX work as a port name.
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
-        return 'chromium-win-xp'
+        return 'chromium-win-win7'
 
     def baseline_search_path(self):
         paths = chromium_win.ChromiumWinPort.baseline_search_path(self)

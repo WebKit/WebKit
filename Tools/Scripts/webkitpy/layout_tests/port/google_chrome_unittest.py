@@ -31,10 +31,10 @@ from webkitpy.layout_tests.port.factory import PortFactory
 
 
 class TestGoogleChromePort(unittest.TestCase):
-    def _verify_baseline_path(self, expected_path, port_name):
+    def _verify_baseline_search_path_startswith(self, port_name, expected_platform_dirs):
         port = PortFactory(MockSystemHost()).get(port_name=port_name)
-        path = port.baseline_search_path()[0]
-        self.assertEqual(expected_path, port._filesystem.basename(path))
+        actual_platform_dirs = [port._filesystem.basename(path) for path in port.baseline_search_path()]
+        self.assertEqual(expected_platform_dirs, actual_platform_dirs[0:len(expected_platform_dirs)])
 
     def _verify_expectations_overrides(self, port_name):
         host = MockSystemHost()
@@ -57,13 +57,13 @@ class TestGoogleChromePort(unittest.TestCase):
         self.assertEqual(actual_chrome_overrides, expected_chromium_overrides + expected_chrome_overrides)
 
     def test_get_google_chrome_port(self):
-        self._verify_baseline_path('google-chrome-linux32', 'google-chrome-linux32')
-        self._verify_baseline_path('google-chrome-linux64', 'google-chrome-linux64')
-        self._verify_baseline_path('google-chrome-mac', 'google-chrome-mac-leopard')
-        self._verify_baseline_path('google-chrome-win', 'google-chrome-win-xp')
+        self._verify_baseline_search_path_startswith('google-chrome-linux32', ['google-chrome-linux32', 'chromium-linux-x86'])
+        self._verify_baseline_search_path_startswith('google-chrome-linux64', ['google-chrome-linux64', 'chromium-linux'])
+        self._verify_baseline_search_path_startswith('google-chrome-mac', ['google-chrome-mac', 'chromium-mac-snowleopard'])
+        self._verify_baseline_search_path_startswith('google-chrome-win', ['google-chrome-win', 'chromium-win'])
 
-        self._verify_expectations_overrides('google-chrome-mac-leopard')
-        self._verify_expectations_overrides('google-chrome-win-xp')
+        self._verify_expectations_overrides('google-chrome-mac')
+        self._verify_expectations_overrides('google-chrome-win')
         self._verify_expectations_overrides('google-chrome-linux32')
         self._verify_expectations_overrides('google-chrome-linux64')
 
