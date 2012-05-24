@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.postMessage");
     Worker* worker = V8Worker::toNative(args.Holder());
@@ -61,7 +61,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     RefPtr<SerializedScriptValue> message =
         SerializedScriptValue::create(args[0],
                                       &ports,
-                                      extendedTransfer ? &arrayBuffers : 0,
+                                      &arrayBuffers,
                                       didThrow,
                                       args.GetIsolate());
     if (didThrow)
@@ -74,13 +74,13 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8Worker::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.postMessage");
-    return handlePostMessageCallback(args, false);
+    return handlePostMessageCallback(args);
 }
 
 v8::Handle<v8::Value> V8Worker::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.webkitPostMessage");
-    return handlePostMessageCallback(args, true);
+    return handlePostMessageCallback(args);
 }
 
 

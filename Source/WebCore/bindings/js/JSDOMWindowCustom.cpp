@@ -542,7 +542,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
     return handler.returnValue();
 }
 
-static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransfer)
+static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec)
 {
     MessagePortArray messagePorts;
     ArrayBufferArray arrayBuffers;
@@ -566,8 +566,8 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
         return jsUndefined();
 
     RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0),
-                                                                         doTransfer ? &messagePorts : 0,
-                                                                         doTransfer ? &arrayBuffers : 0);
+                                                                         &messagePorts,
+                                                                         &arrayBuffers);
 
     if (exec->hadException())
         return jsUndefined();
@@ -585,12 +585,12 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
 
 JSValue JSDOMWindow::postMessage(ExecState* exec)
 {
-    return handlePostMessage(impl(), exec, false);
+    return handlePostMessage(impl(), exec);
 }
 
 JSValue JSDOMWindow::webkitPostMessage(ExecState* exec)
 {
-    return handlePostMessage(impl(), exec, true);
+    return handlePostMessage(impl(), exec);
 }
 
 JSValue JSDOMWindow::setTimeout(ExecState* exec)

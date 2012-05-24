@@ -297,7 +297,7 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 }
 
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
 {
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
@@ -336,7 +336,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     RefPtr<SerializedScriptValue> message =
         SerializedScriptValue::create(args[0],
                                       &portArray,
-                                      extendedTransfer ? &arrayBufferArray : 0,
+                                      &arrayBufferArray,
                                       didThrow,
                                       args.GetIsolate());
     if (didThrow)
@@ -350,13 +350,13 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.postMessage()");
-    return handlePostMessageCallback(args, false);
+    return handlePostMessageCallback(args);
 }
 
 v8::Handle<v8::Value> V8DOMWindow::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.webkitPostMessage()");
-    return handlePostMessageCallback(args, true);
+    return handlePostMessageCallback(args);
 }
 
 // FIXME(fqian): returning string is cheating, and we should

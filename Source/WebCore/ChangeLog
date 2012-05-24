@@ -1,3 +1,37 @@
+2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        postMessage and webkitPostMessage should behave the same way
+        https://bugs.webkit.org/show_bug.cgi?id=87384
+
+        Reviewed by Adam Barth.
+
+        Make postMessage behave the same way as webkitPostMessage, meaning
+        that it supports transfer of MessagePorts and ArrayBuffers as per
+        the spec. Both V8 and JSC implementations have been updated.
+
+        Test: fast/dom/Window/window-postmessage-args.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+        (WebCore::JSDOMWindow::postMessage):
+        (WebCore::JSDOMWindow::webkitPostMessage):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DOMWindow::postMessageCallback):
+        (WebCore::V8DOMWindow::webkitPostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::postMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::webkitPostMessageCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8MessagePort::postMessageCallback):
+        (WebCore::V8MessagePort::webkitPostMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8Worker::postMessageCallback):
+        (WebCore::V8Worker::webkitPostMessageCallback):
+
 2012-05-24  Pablo Flouret  <pablof@motorola.com>
 
         Submit button doesn't submit the form if the form is wrapped by an anchor tag

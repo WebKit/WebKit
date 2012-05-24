@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
 {
     DedicatedWorkerContext* workerContext = V8DedicatedWorkerContext::toNative(args.Holder());
     MessagePortArray ports;
@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     RefPtr<SerializedScriptValue> message =
         SerializedScriptValue::create(args[0],
                                       &ports,
-                                      extendedTransfer ? &arrayBuffers : 0,
+                                      &arrayBuffers,
                                       didThrow,
                                       args.GetIsolate());
     if (didThrow)
@@ -69,13 +69,13 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DedicatedWorkerContext.postMessage");
-    return handlePostMessageCallback(args, false);
+    return handlePostMessageCallback(args);
 }
 
 v8::Handle<v8::Value> V8DedicatedWorkerContext::webkitPostMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DedicatedWorkerContext.postMessage");
-    return handlePostMessageCallback(args, true);
+    return handlePostMessageCallback(args);
 }
 
 } // namespace WebCore
