@@ -3717,34 +3717,33 @@ sub RequiresCustomSignature
 }
 
 
-# FIXME: Sort this array.
 my %non_wrapper_types = (
-    'float' => 1,
-    'double' => 1,
-    'int' => 1,
-    'unsigned int' => 1,
-    'short' => 1,
-    'unsigned short' => 1,
-    'long' => 1,
-    'unsigned long' => 1,
-    'boolean' => 1,
-    'long long' => 1,
-    'unsigned long long' => 1,
-    'float[]' => 1,
-    'double[]' => 1,
-    'DOMString' => 1,
     'CompareHow' => 1,
-    'SerializedScriptValue' => 1,
-    'DOMTimeStamp' => 1,
-    'JSObject' => 1,
     'DOMObject' => 1,
-    'EventTarget' => 1,
-    'NodeFilter' => 1,
-    'EventListener' => 1,
-    'IDBKey' => 1,
-    'Dictionary' => 1,
+    'DOMString' => 1,
+    'DOMTimeStamp' => 1,
     'Date' => 1,
-    'MediaQueryListListener' => 1
+    'Dictionary' => 1,
+    'EventListener' => 1,
+    'EventTarget' => 1,
+    'IDBKey' => 1,
+    'JSObject' => 1,
+    'MediaQueryListListener' => 1,
+    'NodeFilter' => 1,
+    'SerializedScriptValue' => 1,
+    'boolean' => 1,
+    'double' => 1,
+    'double[]' => 1,
+    'float' => 1,
+    'float[]' => 1,
+    'int' => 1,
+    'long long' => 1,
+    'long' => 1,
+    'short' => 1,
+    'unsigned int' => 1,
+    'unsigned long long' => 1,
+    'unsigned long' => 1,
+    'unsigned short' => 1
 );
 
 
