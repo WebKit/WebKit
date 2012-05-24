@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedShadowTreeWalker.h"
 #include "Cursor.h"
 #include "CursorList.h"
 #include "Document.h"
@@ -2111,8 +2112,11 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         result = m_capturingMouseEventsNode.get();
     else {
         // If the target node is a text node, dispatch on the parent node - rdar://4196646
-        if (result && result->isTextNode())
-            result = result->parentNode();
+        if (result && result->isTextNode()) {
+            ComposedShadowTreeWalker walker(result);
+            walker.parentIncludingInsertionPointAndShadowRoot();
+            result = walker.get();
+        }
     }
     m_nodeUnderMouse = result;
 #if ENABLE(SVG)

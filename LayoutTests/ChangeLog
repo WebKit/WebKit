@@ -1,3 +1,13 @@
+2012-05-23  Hayato Ito  <hayato@chromium.org>
+
+        Adjust a target node of a mouse event correctly when a distributed text node is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=86999
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching-expected.txt:
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+
 2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] drop event is not fired on nodes in Shadow DOM
