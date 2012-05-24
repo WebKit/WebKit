@@ -1,3 +1,12 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        Clean up the Windows Skipped list a bit.
+
+        Update it for the renames in r108832 and the test removed in r113532.
+        Also, replace "//" with "#" in a couple comments.
+
+        * platform/win/Skipped:
+
 2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Modify keycode conversion functions to return keycodes with location information after r118001.

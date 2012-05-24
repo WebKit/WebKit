@@ -52,11 +52,11 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 
 # No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
-svg/custom/svg-disallowed-in-dashboard-object.html
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html
+svg/custom/embedded-svg-allowed-in-dashboard.xml
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
+svg/custom/svg-allowed-in-dashboard-object.html
 
 # Apache 1.3 doesn't support SSL <rdar://problem/5345985>
 http/tests/navigation/ping-cross-origin-from-https.html
@@ -653,7 +653,7 @@ http/tests/xmlhttprequest/upload-onloadstart-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 
-// LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+# LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 editing/inserting/typing-space-to-trigger-smart-link.html
 
 ################################################################################
@@ -853,9 +853,6 @@ http/tests/security/mixedContent
 
 # <https://bugs.webkit.org/show_bug.cgi?id=29057>
 editing/pasteboard/files-during-page-drags.html
-
-# <https://bugs.webkit.org/show_bug.cgi?id=29286>
-fast/forms/input-selectedoption.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=29287>
 http/tests/local/fileapi
@@ -1682,7 +1679,7 @@ fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
 fast/repaint/table-section-repaint.html
 
-// Need rebaselining after bug 69210.
+# Need rebaselining after bug 69210.
 fast/encoding/utf-16-big-endian.html
 fast/encoding/utf-16-little-endian.html
 fast/inline/continuation-outlines-with-layers-2.html
