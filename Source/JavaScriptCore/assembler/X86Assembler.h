@@ -1816,6 +1816,9 @@ public:
         m_formatter.oneByteOp(OP_NOP);
     }
 
+    // This is a no-op on x86
+    ALWAYS_INLINE static void cacheFlush(void*, size_t) { }
+
 private:
 
     static void setPointer(void* where, void* value)

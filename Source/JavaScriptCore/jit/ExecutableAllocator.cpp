@@ -261,23 +261,6 @@ void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSe
 
 #endif
 
-#if CPU(ARM_TRADITIONAL) && OS(LINUX) && COMPILER(RVCT)
-
-__asm void ExecutableAllocator::cacheFlush(void* code, size_t size)
-{
-    ARM
-    push {r7}
-    add r1, r1, r0
-    mov r7, #0xf0000
-    add r7, r7, #0x2
-    mov r2, #0x0
-    svc #0x0
-    pop {r7}
-    bx lr
-}
-
-#endif
-
 }
 
 #endif // HAVE(ASSEMBLER)

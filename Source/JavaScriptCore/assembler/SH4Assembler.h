@@ -1401,7 +1401,7 @@ public:
         ASSERT(value >= 0);
         ASSERT(value <= 60);
         *reinterpret_cast<uint16_t*>(where) = ((*reinterpret_cast<uint16_t*>(where) & 0xfff0) | (value >> 2));
-        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(where), sizeof(uint16_t));
+        cacheFlush(reinterpret_cast<uint16_t*>(where), sizeof(uint16_t));
     }
 
     static void relinkCall(void* from, void* to)
@@ -1544,6 +1544,17 @@ public:
     PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
     {
         return m_buffer.executableCopy(globalData, ownerUID, effort);
+    }
+
+    static void cacheFlush(void* code, size_t size)
+    {
+#if !OS(LINUX)
+#error "The cacheFlush support is missing on this platform."
+#elif defined CACHEFLUSH_D_L2
+        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);
+#else
+        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I);
+#endif
     }
 
     void prefix(uint16_t pre)

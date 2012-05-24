@@ -375,6 +375,23 @@ PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& gl
     return result;
 }
 
+#if OS(LINUX) && COMPILER(RVCT)
+
+__asm void ARMAssembler::cacheFlush(void* code, size_t size)
+{
+    ARM
+    push {r7}
+    add r1, r1, r0
+    mov r7, #0xf0000
+    add r7, r7, #0x2
+    mov r2, #0x0
+    svc #0x0
+    pop {r7}
+    bx lr
+}
+
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)

@@ -578,6 +578,10 @@ public:
 
     unsigned debugOffset() { return m_assembler.debugOffset(); }
 
+    ALWAYS_INLINE static void cacheFlush(void* code, size_t size)
+    {
+        AssemblerType::cacheFlush(code, size);
+    }
 protected:
     AbstractMacroAssembler()
         : m_randomSource(cryptographicallyRandomNumber())

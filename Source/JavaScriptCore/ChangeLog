@@ -1,3 +1,46 @@
+2012-05-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Move cacheFlush from ExecutableAllocator to Assembler classes
+        https://bugs.webkit.org/show_bug.cgi?id=87420
+
+        Reviewed by Oliver Hunt.
+
+        Makes more sense there, & remove a pile of #ifdefs.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC):
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/ARMAssembler.h:
+        (ARMAssembler):
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::relinkJump):
+        (JSC::ARMv7Assembler::cacheFlush):
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::setInt32):
+        (JSC::ARMv7Assembler::setUInt7ForLoad):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::cacheFlush):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::relinkJump):
+        (JSC::MIPSAssembler::relinkCall):
+        (JSC::MIPSAssembler::repatchInt32):
+        (JSC::MIPSAssembler::cacheFlush):
+        (MIPSAssembler):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::repatchCompact):
+        (JSC::SH4Assembler::cacheFlush):
+        (SH4Assembler):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::cacheFlush):
+        * jit/ExecutableAllocator.cpp:
+        (JSC):
+        * jit/ExecutableAllocator.h:
+        (ExecutableAllocator):
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting

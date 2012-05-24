@@ -329,7 +329,7 @@ private:
 #else
         ExecutableAllocator::makeExecutable(code(), m_size);
 #endif
-        ExecutableAllocator::cacheFlush(code(), m_size);
+        MacroAssembler::cacheFlush(code(), m_size);
     }
 
 #if DUMP_LINK_STATISTICS

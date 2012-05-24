@@ -864,6 +864,42 @@ namespace JSC {
             return AL | B | (offset & BRANCH_MASK);
         }
 
+#if OS(LINUX) && COMPILER(RVCT)
+        static __asm void cacheFlush(void* code, size_t);
+#else
+        static void cacheFlush(void* code, size_t size)
+        {
+#if OS(LINUX) && COMPILER(GCC)
+            uintptr_t currentPage = reinterpret_cast<uintptr_t>(code) & ~(pageSize() - 1);
+            uintptr_t lastPage = (reinterpret_cast<uintptr_t>(code) + size) & ~(pageSize() - 1);
+            do {
+                asm volatile(
+                    "push    {r7}\n"
+                    "mov     r0, %0\n"
+                    "mov     r1, %1\n"
+                    "mov     r7, #0xf0000\n"
+                    "add     r7, r7, #0x2\n"
+                    "mov     r2, #0x0\n"
+                    "svc     0x0\n"
+                    "pop     {r7}\n"
+                    :
+                    : "r" (currentPage), "r" (currentPage + pageSize())
+                    : "r0", "r1", "r2");
+                currentPage += pageSize();
+            } while (lastPage >= currentPage);
+#elif OS(WINCE)
+            CacheRangeFlush(code, size, CACHE_SYNC_ALL);
+#elif OS(QNX) && ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+            UNUSED_PARAM(code);
+            UNUSED_PARAM(size);
+#elif OS(QNX)
+            msync(code, size, MS_INVALIDATE_ICACHE);
+#else
+#error "The cacheFlush support is missing on this platform."
+#endif
+        }
+#endif
+
     private:
         ARMWord RM(int reg)
         {
