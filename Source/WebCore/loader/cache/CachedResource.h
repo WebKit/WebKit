@@ -170,7 +170,6 @@ public:
     void setInCache(bool inCache) { m_inCache = inCache; }
     bool inCache() const { return m_inCache; }
     
-    void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
     bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
     
     void stopLoading();

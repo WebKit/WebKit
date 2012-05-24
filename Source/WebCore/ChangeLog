@@ -1,3 +1,15 @@
+2012-05-23  Huang Dongsung  <luxtella@company100.net>
+
+        Remove an unused setter in CachedResource.h.
+        https://bugs.webkit.org/show_bug.cgi?id=87324
+
+        CachedResource::setInLiveDecodedResourcesList was defined in r24925, but it has
+        been unused.
+
+        Reviewed by Darin Adler.
+
+        * loader/cache/CachedResource.h:
+
 2012-05-23  Hayato Ito  <hayato@chromium.org>
 
         Adjust a target node of a mouse event correctly when a distributed text node is clicked.
