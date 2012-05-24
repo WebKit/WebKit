@@ -58,6 +58,12 @@ public:
         return adoptPtr(new EventDispatcherTask(event, eventQueue));
     }
 
+    virtual ~EventDispatcherTask()
+    {
+        if (m_event)
+            m_eventQueue->removeEvent(m_event.get());
+    }
+
     void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
     {
         event->target()->dispatchEvent(event);
@@ -69,6 +75,7 @@ public:
             return;
         m_eventQueue->removeEvent(m_event.get());
         dispatchEvent(context, m_event);
+        m_event.clear();
     }
 
     void cancel()
