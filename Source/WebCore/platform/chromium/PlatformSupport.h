@@ -213,6 +213,10 @@ public:
     static void setSharedTimerFiredFunction(void (*func)());
     static void setSharedTimerFireInterval(double);
 
+    // Returns private and shared usage, in bytes. Private bytes is the amount of
+    // memory currently allocated to this process that cannot be shared. Returns
+    // false on platform specific error conditions.
+    static bool getProcessMemorySize(size_t* privateBytes, size_t* sharedBytes);
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)
     static void paintButton(

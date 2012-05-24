@@ -1,3 +1,19 @@
+2012-05-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add a command to InspectorMemoryAgent for getting process memory break down
+        https://bugs.webkit.org/show_bug.cgi?id=87263
+
+        Reviewed by Pavel Feldman.
+
+        Added an API for retrieving render process private and shared memory in bytes.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::getProcessMemorySize):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::getProcessMemorySize):
+        (WebCore):
+
 2012-05-24  Hironori Bono  <hbono@chromium.org>
 
         Enable grammar checking on Chromium when we paste text.

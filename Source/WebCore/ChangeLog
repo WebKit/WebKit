@@ -1,3 +1,24 @@
+2012-05-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add a command to InspectorMemoryAgent for getting process memory break down
+        https://bugs.webkit.org/show_bug.cgi?id=87263
+
+        Reviewed by Pavel Feldman.
+
+        Introduced new protocol command Memory.getProcessMemoryDistribution which returns
+        memory distribution for the inspected process. Currently only JS allocated and used
+        heap size is included.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::jsHeapInfo):
+        (WebCore):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/InspectorMemoryAgent.h:
+        (InspectorMemoryAgent):
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+
 2012-05-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVGZoomAndPan constants are missing from window object

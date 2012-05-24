@@ -56,10 +56,11 @@ public:
     {
         return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page, domAgent));
     }
+    virtual ~InspectorMemoryAgent();
 
-    void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
+    virtual void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
+    virtual void getProcessMemoryDistribution(ErrorString*, RefPtr<TypeBuilder::Memory::MemoryBlock>& processMemory);
 
-    ~InspectorMemoryAgent();
 
 private:
     InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*, InspectorDOMAgent* domAgent);

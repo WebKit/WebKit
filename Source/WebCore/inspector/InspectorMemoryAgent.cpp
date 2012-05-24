@@ -45,6 +45,10 @@
 #include "InstrumentingAgents.h"
 #include "Node.h"
 #include "Page.h"
+#if PLATFORM(CHROMIUM)
+#include "PlatformSupport.h"
+#endif
+#include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
 #include <wtf/HashSet.h>
@@ -52,10 +56,17 @@
 
 using WebCore::TypeBuilder::Memory::DOMGroup;
 using WebCore::TypeBuilder::Memory::ListenerCount;
+using WebCore::TypeBuilder::Memory::MemoryBlock;
 using WebCore::TypeBuilder::Memory::NodeCount;
 using WebCore::TypeBuilder::Memory::StringStatistics;
 
 namespace WebCore {
+
+namespace MemoryBlockName {
+static const char totalJsHeap[] = "TotalJSHeap";
+static const char processPrivateMemory[] = "ProcessPrivateMemory";
+static const char usedJsHeap[] = "UsedJSHeap";
+}
 
 namespace {
 
@@ -305,6 +316,40 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Arr
 
     domGroups = counterVisitor.domGroups();
     strings = counterVisitor.strings();
+}
+
+static PassRefPtr<MemoryBlock> jsHeapInfo()
+{
+    size_t usedJSHeapSize;
+    size_t totalJSHeapSize;
+    size_t jsHeapSizeLimit;
+    ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
+
+    RefPtr<MemoryBlock> totalJsHeap = MemoryBlock::create().setName(MemoryBlockName::totalJsHeap);
+    totalJsHeap->setSize(totalJSHeapSize);
+
+    RefPtr<TypeBuilder::Array<MemoryBlock> > children = TypeBuilder::Array<MemoryBlock>::create();
+    RefPtr<MemoryBlock> usedJsHeap = MemoryBlock::create().setName(MemoryBlockName::usedJsHeap);
+    usedJsHeap->setSize(usedJSHeapSize);
+    children->addItem(usedJsHeap);
+
+    totalJsHeap->setChildren(children);
+    return totalJsHeap.release();
+}
+
+void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<MemoryBlock>& processMemory)
+{
+    size_t privateBytes = 0;
+#if PLATFORM(CHROMIUM)
+    size_t sharedBytes = 0;
+    PlatformSupport::getProcessMemorySize(&privateBytes, &sharedBytes);
+#endif
+    processMemory = MemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
+    processMemory->setSize(privateBytes);
+
+    RefPtr<TypeBuilder::Array<MemoryBlock> > children = TypeBuilder::Array<MemoryBlock>::create();
+    children->addItem(jsHeapInfo());
+    processMemory->setChildren(children);
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)

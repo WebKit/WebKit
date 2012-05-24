@@ -56,7 +56,7 @@ static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
 static const char includeMemoryDetails[] = "includeMemoryDetails";
 }
 
-// Must be kept in sync with TimelineAgent.js
+// Must be kept in sync with WebInspector.TimelineModel.RecordType in TimelineModel.js
 namespace TimelineRecordType {
 static const char EventDispatch[] = "EventDispatch";
 static const char BeginFrame[] = "BeginFrame";

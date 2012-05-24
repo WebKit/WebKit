@@ -87,6 +87,15 @@
                     { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }},
                     { "name": "listenerCount", "type": "array", "items": { "$ref": "ListenerCount" }}
                 ]
+            },
+            {
+                "id": "MemoryBlock",
+                "type": "object",
+                "properties": [
+                    { "name": "size", "type": "integer", "optional":true, "description": "Size of the block in bytes if available" },
+                    { "name": "name", "type": "string", "description": "Unique name used to identify the component that allocated this block" },
+                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "MemoryBlock" }}
+                ]
             }
         ],
         "commands": [
@@ -95,6 +104,12 @@
                 "returns": [
                     { "name": "domGroups", "type": "array", "items": { "$ref": "DOMGroup" }},
                     { "name": "strings", "$ref": "StringStatistics" }
+                ]
+            },
+            {
+                "name": "getProcessMemoryDistribution",
+                "returns": [
+                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"}
                 ]
             }
         ]
