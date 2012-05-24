@@ -1,3 +1,14 @@
+2012-05-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove some leftover references to LayerTilerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=87405
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/SolidColorLayerChromium.h:
+
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION(r109663) All the the dom/html/level2/html/HTMLFrameElement* tests crash on Windows

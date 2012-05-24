@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class LayerTilerChromium;
-
 // A Layer that renders a solid color. The color is specified by using
 // setBackgroundColor() on the base class.
 class SolidColorLayerChromium : public LayerChromium {

@@ -255,7 +255,6 @@ public:
 
 protected:
     friend class CCLayerImpl;
-    friend class LayerTilerChromium;
     friend class TreeSynchronizer;
 
     LayerChromium();
