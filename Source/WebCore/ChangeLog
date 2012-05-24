@@ -1,3 +1,25 @@
+2012-05-24  John Mellor  <johnme@chromium.org>
+
+        Font Boosting: Add compile flag and runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=87394
+
+        Reviewed by Adam Barth.
+
+        Add ENABLE_FONT_BOOSTING compile flag and fontBoostingEnabled runtime setting.
+
+        No functionality yet, so no new tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * Target.pri:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFontBoostingEnabled):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::fontBoostingEnabled):
+
 2012-05-24  Greg Spencer  <gspencer@chromium.org>
 
         MHTML files should be loadable from all schemes considered local,

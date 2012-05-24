@@ -1084,6 +1084,14 @@ AC_ARG_ENABLE(device_orientation,
               [],[enable_device_orientation="no"])
 AC_MSG_RESULT([$enable_device_orientation])
 
+# check whether to enable Font Boosting support
+AC_MSG_CHECKING([whether to enable Font Boosting])
+AC_ARG_ENABLE(font_boosting,
+              AC_HELP_STRING([--enable-font-boosting],
+                             [enable support for Font Boosting (incomplete) [default=no]]),
+              [],[enable_font_boosting="no"])
+AC_MSG_RESULT([$enable_font_boosting])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1407,6 +1415,7 @@ AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protoc
 AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
 AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
 AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
+AM_CONDITIONAL([ENABLE_FONT_BOOSTING],[test "$enable_font_boosting" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1461,6 +1470,7 @@ Features:
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
+ Font Boosting support                                    : $enable_font_boosting
  JIT compilation                                          : $enable_jit
  Filters support                                          : $enable_filters
  Geolocation support                                      : $enable_geolocation

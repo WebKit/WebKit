@@ -3457,6 +3457,10 @@ contains(DEFINES, HAVE_QRAWFONT=1) {
         platform/graphics/qt/FontQt4.cpp
 }
 
+contains(DEFINES, ENABLE_FONT_BOOSTING=1) {
+    SOURCES += # FIXME!
+}
+
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     HEADERS += \
         platform/qt/DeviceMotionClientQt.h \

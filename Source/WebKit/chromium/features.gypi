@@ -52,6 +52,7 @@
       'ENABLE_ENCRYPTED_MEDIA=1',
       'ENABLE_FILE_SYSTEM=1',
       'ENABLE_FILTERS=1',
+      'ENABLE_FONT_BOOSTING=0',
       'ENABLE_FULLSCREEN_API=1',
       'ENABLE_GAMEPAD=1',
       'ENABLE_GEOLOCATION=1',
@@ -142,6 +143,7 @@
       ['OS=="android"', {
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=0',
+          'ENABLE_FONT_BOOSTING=1',
           'ENABLE_MEDIA_CAPTURE=1',
           'ENABLE_PAGE_POPUP=0',
           'ENABLE_WEB_AUDIO=0',

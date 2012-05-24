@@ -140,6 +140,7 @@ Settings::Settings(Page* page)
     , m_sessionStorageQuota(StorageMap::noQuota)
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
+    , m_fontBoostingEnabled(true)
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
@@ -400,6 +401,15 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
 void Settings::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
 {
     m_defaultDeviceScaleFactor = defaultDeviceScaleFactor;
+}
+
+void Settings::setFontBoostingEnabled(bool fontBoostingEnabled)
+{
+    if (m_fontBoostingEnabled == fontBoostingEnabled)
+        return;
+
+    m_fontBoostingEnabled = fontBoostingEnabled;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)

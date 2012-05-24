@@ -106,6 +106,9 @@ namespace WebCore {
         void setDefaultDeviceScaleFactor(int);
         int defaultDeviceScaleFactor() const { return m_defaultDeviceScaleFactor; }
 
+        void setFontBoostingEnabled(bool);
+        bool fontBoostingEnabled() const { return m_fontBoostingEnabled; }
+
         // Unlike areImagesEnabled, this only suppresses the network load of
         // the image URL.  A cached image will still be rendered if requested.
         void setLoadsImagesAutomatically(bool);
@@ -614,6 +617,7 @@ namespace WebCore {
         unsigned m_sessionStorageQuota;
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
+        bool m_fontBoostingEnabled : 1;
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;

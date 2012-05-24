@@ -60,6 +60,7 @@ my (
     $downloadAttributeSupport,
     $fileSystemSupport,
     $filtersSupport,
+    $fontBoostingSupport,
     $ftpDirSupport,
     $fullscreenAPISupport,
     $gamepadSupport,
@@ -177,6 +178,9 @@ my @features = (
 
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
+
+    { option => "font-boosting", desc => "Toggle Font Boosting support",
+      define => "ENABLE_FONT_BOOSTING", default => 0, value => \$fontBoostingSupport },
 
     { option => "ftpdir", desc => "Toggle FTP Directory support",
       define => "ENABLE_FTPDIR", default => !isWinCE(), value => \$ftpDirSupport },

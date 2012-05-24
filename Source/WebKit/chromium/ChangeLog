@@ -1,3 +1,20 @@
+2012-05-24  John Mellor  <johnme@chromium.org>
+
+        Font Boosting: Add compile flag and runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=87394
+
+        Reviewed by Adam Barth.
+
+        Expose fontBoostingEnabled runtime setting via WebSettings.
+
+        * features.gypi:
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setFontBoostingEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-05-24  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: introduce toFile() to reduce static cast from Blob to File

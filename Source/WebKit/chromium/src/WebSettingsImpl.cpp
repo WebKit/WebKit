@@ -123,6 +123,11 @@ void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDef
     m_applyDefaultDeviceScaleFactorInCompositor = applyDefaultDeviceScaleFactorInCompositor;
 }
 
+void WebSettingsImpl::setFontBoostingEnabled(bool enabled)
+{
+    m_settings->setFontBoostingEnabled(enabled);
+}
+
 void WebSettingsImpl::setDefaultTextEncodingName(const WebString& encoding)
 {
     m_settings->setDefaultTextEncodingName((String)encoding);
