@@ -78,7 +78,16 @@ bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, Code
     if (static_cast<double>(m_count) / dfgCodeBlock->speculativeFailCounter() <= Options::osrExitProminenceForFrequentExitSite)
         return false;
     
-    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind));
+    FrequentExitSite exitSite;
+    
+    if (m_kind == ArgumentsEscaped) {
+        // Count this one globally. It doesn't matter where in the code block the arguments excaped;
+        // the fact that they did is not associated with any particular instruction.
+        exitSite = FrequentExitSite(m_kind);
+    } else
+        exitSite = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind);
+    
+    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOrigin, profiledCodeBlock)->addFrequentExitSite(exitSite);
 }
 
 } } // namespace JSC::DFG

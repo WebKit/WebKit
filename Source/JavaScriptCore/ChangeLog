@@ -1,3 +1,74 @@
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize inlined uses of arguments.length and arguments[i]
+        https://bugs.webkit.org/show_bug.cgi?id=86327
+
+        Reviewed by Gavin Barraclough.
+        
+        Merged r117017 from dfgopt.
+        
+        Turns inlined uses of arguments.length into a constant.
+        
+        Turns inlined uses of arguments[constant] into a direct reference to the
+        argument.
+        
+        Big win on micro-benchmarks. Not yet a win on V8 because the hot uses of
+        arguments.length and arguments[i] are aliased. I'll leave the aliasing
+        optimizations to a later patch.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/DFGExitProfile.h:
+        (FrequentExitSite):
+        (JSC::DFG::FrequentExitSite::FrequentExitSite):
+        (JSC::DFG::QueryableExitProfile::hasExitSite):
+        (QueryableExitProfile):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArgumentsSimplificationPhase.cpp: Added.
+        (DFG):
+        (ArgumentsSimplificationPhase):
+        (JSC::DFG::ArgumentsSimplificationPhase::ArgumentsSimplificationPhase):
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::performArgumentsSimplification):
+        * dfg/DFGArgumentsSimplificationPhase.h: Added.
+        (DFG):
+        * dfg/DFGAssemblyHelpers.cpp:
+        (JSC::DFG::AssemblyHelpers::executableFor):
+        (DFG):
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::executableFor):
+        (Graph):
+        (JSC::DFG::Graph::clobbersWorld):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::convertToGetLocalUnlinked):
+        (Node):
+        (JSC::DFG::Node::unlinkedLocal):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to optimize foo.apply(bar, arguments)

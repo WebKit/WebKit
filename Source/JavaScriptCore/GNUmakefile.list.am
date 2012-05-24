@@ -141,6 +141,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGAbstractValue.h \
 	Source/JavaScriptCore/dfg/DFGArgumentPosition.h \
+	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.h \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \

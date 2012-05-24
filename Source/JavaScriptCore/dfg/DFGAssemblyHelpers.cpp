@@ -32,6 +32,14 @@ namespace JSC { namespace DFG {
 
 const double AssemblyHelpers::twoToThe32 = (double)0x100000000ull;
 
+ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
+{
+    if (!codeOrigin.inlineCallFrame)
+        return m_codeBlock->ownerExecutable();
+    
+    return codeOrigin.inlineCallFrame->executable.get();
+}
+
 Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock == codeBlock->baselineVersion());

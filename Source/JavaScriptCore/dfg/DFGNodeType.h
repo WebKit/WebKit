@@ -48,13 +48,20 @@ namespace JSC { namespace DFG {
     macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
     macro(GetCallee, NodeResultJS) \
     \
-    /* Nodes for local variable access. */\
+    /* Nodes for local variable access. These nodes are linked together using Phi nodes. */\
+    /* Any two nodes that are part of the same Phi graph will share the same */\
+    /* VariableAccessData, and thus will share predictions. */\
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
     macro(Phantom, NodeMustGenerate) \
     macro(Nop, 0) \
     macro(Phi, 0) \
     macro(Flush, NodeMustGenerate) \
+    \
+    /* Get the value of a local variable, without linking into the VariableAccessData */\
+    /* network. This is only valid for variable accesses whose predictions originated */\
+    /* as something other than a local access, and thus had their own profiling. */\
+    macro(GetLocalUnlinked, NodeResultJS) \
     \
     /* Marker for arguments being set. */\
     macro(SetArgument, 0) \
@@ -196,7 +203,7 @@ namespace JSC { namespace DFG {
     macro(CreateArguments, NodeResultJS) \
     macro(TearOffArguments, NodeMustGenerate) \
     macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     macro(CheckArgumentsNotCreated, NodeMustGenerate) \
     \
     /* Nodes for creating functions. */\

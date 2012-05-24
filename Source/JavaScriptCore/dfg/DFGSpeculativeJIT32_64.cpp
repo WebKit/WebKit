@@ -1934,6 +1934,15 @@ void SpeculativeJIT::compile(Node& node)
         m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), tag.gpr(), result.gpr(), format);
         break;
     }
+        
+    case GetLocalUnlinked: {
+        GPRTemporary payload(this);
+        GPRTemporary tag(this);
+        m_jit.load32(JITCompiler::payloadFor(node.unlinkedLocal()), payload.gpr());
+        m_jit.load32(JITCompiler::tagFor(node.unlinkedLocal()), tag.gpr());
+        jsValueResult(tag.gpr(), payload.gpr(), m_compileIndex);
+        break;
+    }
 
     case SetLocal: {
         // SetLocal doubles as a hint as to where a node will be stored and
@@ -3831,8 +3840,6 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckArgumentsNotCreated: {
-        // FIXME: We should have a way to count such failures. This will be part of
-        // https://bugs.webkit.org/show_bug.cgi?id=86327
         speculationCheck(
             Uncountable, JSValueRegs(), NoNode,
             m_jit.branch32(
@@ -3844,6 +3851,25 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case GetMyArgumentsLength: {
+        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
+                m_jit.graph().executableFor(node.codeOrigin))) {
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+            
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::NotEqual,
+                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                    TrustedImm32(JSValue::EmptyValueTag)));
+            
+            ASSERT(!node.codeOrigin.inlineCallFrame);
+            m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
+            m_jit.sub32(TrustedImm32(1), resultGPR);
+            integerResult(resultGPR, m_compileIndex);
+            break;
+        }
+        
         GPRTemporary resultPayload(this);
         GPRTemporary resultTag(this);
         GPRReg resultPayloadGPR = resultPayload.gpr();
@@ -3885,6 +3911,54 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg indexGPR = index.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg resultTagGPR = resultTag.gpr();
+        
+        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
+                m_jit.graph().executableFor(node.codeOrigin))) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::NotEqual,
+                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                    TrustedImm32(JSValue::EmptyValueTag)));
+            
+            m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
+            
+            if (node.codeOrigin.inlineCallFrame) {
+                speculationCheck(
+                    Uncountable, JSValueRegs(), NoNode,
+                    m_jit.branch32(
+                        JITCompiler::AboveOrEqual,
+                        resultPayloadGPR,
+                        Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
+            } else {
+                speculationCheck(
+                    Uncountable, JSValueRegs(), NoNode,
+                    m_jit.branch32(
+                        JITCompiler::AboveOrEqual,
+                        resultPayloadGPR,
+                        JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+            }
+        
+            m_jit.neg32(resultPayloadGPR);
+        
+            size_t baseOffset =
+                ((node.codeOrigin.inlineCallFrame
+                  ? node.codeOrigin.inlineCallFrame->stackOffset
+                  : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
+            m_jit.load32(
+                JITCompiler::BaseIndex(
+                    GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                    baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+                resultTagGPR);
+            m_jit.load32(
+                JITCompiler::BaseIndex(
+                    GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                    baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+                resultPayloadGPR);
+            
+            jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
+            break;
+        }
         
         JITCompiler::JumpList slowPath;
         slowPath.append(

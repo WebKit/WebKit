@@ -331,6 +331,8 @@ public:
         return codeOrigin.inlineCallFrame->callee->jsExecutable()->isStrictMode();
     }
     
+    ExecutableBase* executableFor(const CodeOrigin& codeOrigin);
+    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock());

@@ -2473,6 +2473,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_create_arguments: {
+            m_graph.m_hasArguments = true;
+            m_graph.m_executablesWhoseArgumentsEscaped.add(m_inlineStackTop->executable());
             NodeIndex createArguments = addToGraph(CreateArguments, get(currentInstruction[1].u.operand));
             set(currentInstruction[1].u.operand, createArguments);
             set(unmodifiedArgumentsRegister(currentInstruction[1].u.operand), createArguments);
@@ -2485,16 +2487,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_tear_off_arguments: {
+            m_graph.m_hasArguments = true;
             addToGraph(TearOffArguments, get(unmodifiedArgumentsRegister(currentInstruction[1].u.operand)));
             NEXT_OPCODE(op_tear_off_arguments);
         }
             
         case op_get_arguments_length: {
+            m_graph.m_hasArguments = true;
             set(currentInstruction[1].u.operand, addToGraph(GetMyArgumentsLength));
             NEXT_OPCODE(op_get_arguments_length);
         }
             
         case op_get_argument_by_val: {
+            m_graph.m_hasArguments = true;
             set(currentInstruction[1].u.operand,
                 addToGraph(
                     GetMyArgumentByVal, OpInfo(0), OpInfo(getPrediction()),
@@ -2781,6 +2786,12 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
         ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
         m_argumentPositions[i] = argumentPosition;
+    }
+    
+    // Track the code-block-global exit sites.
+    if (m_exitProfile.hasExitSite(ArgumentsEscaped)) {
+        byteCodeParser->m_graph.m_executablesWhoseArgumentsEscaped.add(
+            codeBlock->ownerExecutable());
     }
         
     if (m_caller) {

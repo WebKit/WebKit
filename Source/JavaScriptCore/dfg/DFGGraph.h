@@ -80,6 +80,7 @@ public:
         : m_globalData(globalData)
         , m_codeBlock(codeBlock)
         , m_profiledBlock(codeBlock->alternative())
+        , m_hasArguments(false)
     {
         ASSERT(m_profiledBlock);
     }
@@ -301,6 +302,14 @@ public:
         return &m_structureTransitionData.last();
     }
     
+    ExecutableBase* executableFor(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return m_codeBlock->ownerExecutable();
+        
+        return codeOrigin.inlineCallFrame->executable.get();
+    }
+    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
@@ -401,6 +410,9 @@ public:
             return !isPredictedNumerical(node);
         case GetByVal:
             return !byValIsPure(node);
+        case GetMyArgumentByVal:
+            return m_executablesWhoseArgumentsEscaped.contains(
+                executableFor(node.codeOrigin));
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
@@ -442,6 +454,8 @@ public:
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
+    bool m_hasArguments;
+    HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_preservedVars;
     Dominators m_dominators;
     unsigned m_localVars;

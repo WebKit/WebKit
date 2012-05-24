@@ -265,6 +265,11 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
         
+    case GetLocalUnlinked: {
+        forNode(nodeIndex).makeTop();
+        break;
+    }
+        
     case SetLocal: {
         if (node.variableAccessData()->isCaptured())
             break;
@@ -1073,6 +1078,19 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case GetMyArgumentsLength:
+        if (!m_graph.m_executablesWhoseArgumentsEscaped.contains(
+                m_graph.executableFor(node.codeOrigin))) {
+            // We know that this executable does not escape its arguments, so we can optimize
+            // the arguments a bit. Note that this is not sufficient to force constant folding
+            // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
+            // We perform further optimizations on this later on.
+            if (node.codeOrigin.inlineCallFrame) {
+                forNode(nodeIndex).set(jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1));
+                break;
+            }
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
         // This potentially clobbers all structures if the arguments object had a getter
         // installed on the length property.
         clobberStructures(indexInBlock);
@@ -1082,6 +1100,15 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case GetMyArgumentByVal:
+        if (!m_graph.m_executablesWhoseArgumentsEscaped.contains(
+                m_graph.executableFor(node.codeOrigin))) {
+            // We know that this executable does not escape its arguments, so we can optimize
+            // the arguments a bit. Note that this ends up being further optimized by the
+            // ArgumentsSimplificationPhase.
+            forNode(node.child1()).filter(PredictInt32);
+            forNode(nodeIndex).makeTop();
+            break;
+        }
         // This potentially clobbers all structures if the property we're accessing has
         // a getter. We don't speculate against this.
         clobberStructures(indexInBlock);

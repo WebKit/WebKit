@@ -39,6 +39,7 @@ enum ExitKind {
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
     InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
+    ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
 };
 
@@ -91,6 +92,15 @@ public:
     
     explicit FrequentExitSite(unsigned bytecodeOffset, ExitKind kind)
         : m_bytecodeOffset(bytecodeOffset)
+        , m_kind(kind)
+    {
+        ASSERT(exitKindIsCountable(kind));
+    }
+    
+    // Use this constructor if you wish for the exit site to be counted globally within its
+    // code block.
+    explicit FrequentExitSite(ExitKind kind)
+        : m_bytecodeOffset(0)
         , m_kind(kind)
     {
         ASSERT(exitKindIsCountable(kind));
@@ -176,6 +186,11 @@ public:
     bool hasExitSite(const FrequentExitSite& site) const
     {
         return m_frequentExitSites.find(site) != m_frequentExitSites.end();
+    }
+    
+    bool hasExitSite(ExitKind kind) const
+    {
+        return hasExitSite(FrequentExitSite(kind));
     }
     
     bool hasExitSite(unsigned bytecodeIndex, ExitKind kind) const

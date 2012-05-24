@@ -78,6 +78,8 @@
 		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F16015D156198C900C2587C /* DFGArgumentsSimplificationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */; };
+		0F16015E156198C900C2587C /* DFGArgumentsSimplificationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -766,6 +768,8 @@
 		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
 		0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntCallLinkInfo.h; sourceTree = "<group>"; };
 		0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPaths.h; sourceTree = "<group>"; };
+		0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsSimplificationPhase.cpp; path = dfg/DFGArgumentsSimplificationPhase.cpp; sourceTree = "<group>"; };
+		0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsSimplificationPhase.h; path = dfg/DFGArgumentsSimplificationPhase.h; sourceTree = "<group>"; };
 		0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentPosition.h; path = dfg/DFGArgumentPosition.h; sourceTree = "<group>"; };
 		0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDoubleFormatState.h; path = dfg/DFGDoubleFormatState.h; sourceTree = "<group>"; };
 		0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSlowPathGenerator.h; path = dfg/DFGSlowPathGenerator.h; sourceTree = "<group>"; };
@@ -2078,6 +2082,8 @@
 			isa = PBXGroup;
 			children = (
 				0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */,
+				0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */,
+				0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
 				0F62016E143FCD2F0068B77C /* DFGAbstractState.h */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
@@ -2643,6 +2649,7 @@
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0FD81AD3154FB4F000983E72 /* DFGDominators.h in Headers */,
+				0F16015E156198C900C2587C /* DFGArgumentsSimplificationPhase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3213,6 +3220,7 @@
 				0F3B3A271544C995003ED0FF /* DFGCFGSimplificationPhase.cpp in Sources */,
 				0F3B3A2B15475000003ED0FF /* DFGValidate.cpp in Sources */,
 				0FD81AD2154FB4EE00983E72 /* DFGDominators.cpp in Sources */,
+				0F16015D156198C900C2587C /* DFGArgumentsSimplificationPhase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

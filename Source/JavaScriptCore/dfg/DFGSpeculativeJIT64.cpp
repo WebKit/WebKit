@@ -1985,6 +1985,15 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case GetLocalUnlinked: {
+        GPRTemporary result(this);
+        
+        m_jit.loadPtr(JITCompiler::addressFor(node.unlinkedLocal()), result.gpr());
+        
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
     case SetLocal: {
         // SetLocal doubles as a hint as to where a node will be stored and
         // as a speculation point. So before we speculate make sure that we
@@ -3846,22 +3855,25 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case CheckArgumentsNotCreated: {
-        // FIXME: We should have a way to count such failures. This will be part of
-        // https://bugs.webkit.org/show_bug.cgi?id=86327
-        speculationCheck(
-            Uncountable, JSValueRegs(), NoNode,
-            m_jit.branchTestPtr(
-                JITCompiler::NonZero,
-                JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node.codeOrigin))));
-        noResult(m_compileIndex);
-        break;
-    }
-        
     case GetMyArgumentsLength: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
+        
+        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
+                m_jit.graph().executableFor(node.codeOrigin))) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branchTestPtr(
+                    JITCompiler::NonZero,
+                    JITCompiler::addressFor(
+                        m_jit.argumentsRegisterFor(node.codeOrigin))));
+            
+            ASSERT(!node.codeOrigin.inlineCallFrame);
+            m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
+            m_jit.sub32(TrustedImm32(1), resultGPR);
+            integerResult(resultGPR, m_compileIndex);
+            break;
+        }
         
         JITCompiler::Jump created = m_jit.branchTestPtr(
             JITCompiler::NonZero,
@@ -3899,6 +3911,47 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRReg indexGPR = index.gpr();
         GPRReg resultGPR = result.gpr();
+        
+        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
+                m_jit.graph().executableFor(node.codeOrigin))) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branchTestPtr(
+                    JITCompiler::NonZero,
+                    JITCompiler::addressFor(
+                        m_jit.argumentsRegisterFor(node.codeOrigin))));
+
+            m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
+            if (node.codeOrigin.inlineCallFrame) {
+                speculationCheck(
+                    Uncountable, JSValueRegs(), NoNode,
+                    m_jit.branch32(
+                        JITCompiler::AboveOrEqual,
+                        resultGPR,
+                        Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
+            } else {
+                speculationCheck(
+                    Uncountable, JSValueRegs(), NoNode,
+                    m_jit.branch32(
+                        JITCompiler::AboveOrEqual,
+                        resultGPR,
+                        JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
+            }
+            
+            m_jit.neg32(resultGPR);
+            m_jit.signExtend32ToPtr(resultGPR, resultGPR);
+            
+            m_jit.loadPtr(
+                JITCompiler::BaseIndex(
+                    GPRInfo::callFrameRegister, resultGPR, JITCompiler::TimesEight,
+                    ((node.codeOrigin.inlineCallFrame
+                      ? node.codeOrigin.inlineCallFrame->stackOffset
+                      : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register)),
+                resultGPR);
+
+            jsValueResult(resultGPR, m_compileIndex);
+            break;
+        }
         
         JITCompiler::JumpList slowPath;
         slowPath.append(
@@ -3940,6 +3993,17 @@ void SpeculativeJIT::compile(Node& node)
                 indexGPR));
         
         jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case CheckArgumentsNotCreated: {
+        speculationCheck(
+            ArgumentsEscaped, JSValueRegs(), NoNode,
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::addressFor(
+                    m_jit.argumentsRegisterFor(node.codeOrigin))));
+        noResult(m_compileIndex);
         break;
     }
         

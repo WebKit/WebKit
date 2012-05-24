@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGArgumentsSimplificationPhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCFGSimplificationPhase.h"
@@ -79,6 +80,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         bool changed = false;
         performCFA(dfg);
         changed |= performConstantFolding(dfg);
+        changed |= performArgumentsSimplification(dfg);
         changed |= performCFGSimplification(dfg);
         performCSE(dfg);
         if (!changed)

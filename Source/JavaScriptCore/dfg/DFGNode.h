@@ -202,9 +202,18 @@ struct Node {
         m_op = JSConstant;
         if (m_flags & NodeMustGenerate)
             m_refCount--;
-        ASSERT(!(m_flags & NodeClobbersWorld));
-        m_flags &= ~(NodeMustGenerate | NodeMightClobber);
+        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = constantNumber;
+        children.reset();
+    }
+    
+    void convertToGetLocalUnlinked(VirtualRegister local)
+    {
+        m_op = GetLocalUnlinked;
+        if (m_flags & NodeMustGenerate)
+            m_refCount--;
+        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
+        m_opInfo = local;
         children.reset();
     }
     
@@ -278,6 +287,12 @@ struct Node {
     VirtualRegister unmodifiedArgumentsRegister()
     {
         ASSERT(op() == TearOffActivation);
+        return static_cast<VirtualRegister>(m_opInfo);
+    }
+    
+    VirtualRegister unlinkedLocal()
+    {
+        ASSERT(op() == GetLocalUnlinked);
         return static_cast<VirtualRegister>(m_opInfo);
     }
     

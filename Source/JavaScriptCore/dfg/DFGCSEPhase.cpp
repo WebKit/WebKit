@@ -441,20 +441,33 @@ private:
         return NoNode;
     }
     
-    NodeIndex getLocalLoadElimination(VariableAccessData* variableAccessData)
+    NodeIndex getLocalLoadElimination(VirtualRegister local, NodeIndex& relevantLocalOp)
     {
+        relevantLocalOp = NoNode;
+        
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             switch (node.op()) {
             case GetLocal:
-                if (node.variableAccessData() == variableAccessData)
+                if (node.local() == local) {
+                    relevantLocalOp = index;
                     return index;
+                }
+                break;
+                
+            case GetLocalUnlinked:
+                if (node.unlinkedLocal() == local) {
+                    relevantLocalOp = index;
+                    return index;
+                }
                 break;
                 
             case SetLocal:
-                if (node.variableAccessData() == variableAccessData)
+                if (node.local() == local) {
+                    relevantLocalOp = index;
                     return node.child1().index();
+                }
                 break;
                 
             default:
@@ -600,15 +613,34 @@ private:
             VariableAccessData* variableAccessData = node.variableAccessData();
             if (!variableAccessData->isCaptured())
                 break;
-            NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData);
+            NodeIndex relevantLocalOp;
+            NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData->local(), relevantLocalOp);
+            ASSERT(relevantLocalOp == NoNode
+                   || m_graph[relevantLocalOp].op() == GetLocalUnlinked
+                   || m_graph[relevantLocalOp].variableAccessData() == variableAccessData);
+            NodeIndex phiIndex = node.child1().index();
             if (!setReplacement(possibleReplacement))
                 break;
             NodeIndex oldTailIndex = m_currentBlock->variablesAtTail.operand(
                 variableAccessData->local());
             if (oldTailIndex == m_compileIndex) {
                 m_currentBlock->variablesAtTail.operand(variableAccessData->local()) =
-                    possibleReplacement;
+                    relevantLocalOp;
+                
+                // Maintain graph integrity: since we're replacing a GetLocal with a GetLocalUnlinked,
+                // make sure that the GetLocalUnlinked is now linked.
+                if (m_graph[relevantLocalOp].op() == GetLocalUnlinked) {
+                    m_graph[relevantLocalOp].setOp(GetLocal);
+                    m_graph[relevantLocalOp].children.child1() = Edge(phiIndex);
+                    m_graph.ref(phiIndex);
+                }
             }
+            break;
+        }
+            
+        case GetLocalUnlinked: {
+            NodeIndex relevantLocalOpIgnored;
+            setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored));
             break;
         }
             
