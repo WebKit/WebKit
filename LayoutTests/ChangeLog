@@ -1,5 +1,11 @@
 2012-05-23  Jessie Berlin  <jberlin@apple.com>
 
+        Merge r116524 onto the 536 branch, since r116473 was merged onto the branch in r117121.
+
+        * platform/mac/Skipped:
+
+2012-05-23  Jessie Berlin  <jberlin@apple.com>
+
         Merge r117163 onto the 536 branch, since r116960 was merged onto the branch in 117157.
 
         * platform/mac-lion/Skipped:
