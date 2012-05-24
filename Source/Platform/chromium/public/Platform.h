@@ -36,6 +36,7 @@
 #include "WebData.h"
 #include "WebGamepads.h"
 #include "WebGraphicsContext3D.h"
+#include "WebLocalizedString.h"
 #include "WebString.h"
 
 namespace WebKit {
@@ -59,6 +60,7 @@ class WebSocketStreamHandle;
 class WebThemeEngine;
 class WebThread;
 class WebWorkerRunLoop;
+struct WebLocalizedString;
 
 class Platform {
 public:
@@ -163,6 +165,14 @@ public:
 
     // A suggestion to cache this metadata in association with this URL.
     virtual void cacheMetadata(const WebURL&, double responseTime, const char* data, size_t dataSize) { }
+
+
+    // Resources -----------------------------------------------------------
+
+    // Returns a localized string resource (with substitution parameters).
+    virtual WebString queryLocalizedString(WebLocalizedString::Name) { return WebString(); }
+    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter) { return WebString(); }
+    virtual WebString queryLocalizedString(WebLocalizedString::Name, const WebString& parameter1, const WebString& parameter2) { return WebString(); }
 
 
     // Threads -------------------------------------------------------
