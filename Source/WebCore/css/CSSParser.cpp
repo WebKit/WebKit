@@ -51,7 +51,6 @@
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
-#include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
@@ -77,6 +76,7 @@
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 #include "TextEncoding.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"

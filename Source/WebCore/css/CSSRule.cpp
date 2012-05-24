@@ -35,6 +35,7 @@
 #include "WebKitCSSRegionRule.h"
 #include "NotImplemented.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 

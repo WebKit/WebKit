@@ -37258,6 +37258,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\StyleSheetContents.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleSheetContents.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\StyleSheetList.cpp"
 				>
 			</File>

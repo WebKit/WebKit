@@ -104,6 +104,7 @@
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "Text.h"
 #include "TransformationMatrix.h"

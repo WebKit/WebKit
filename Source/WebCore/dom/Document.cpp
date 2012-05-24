@@ -144,6 +144,7 @@
 #include "ShadowRoot.h"
 #include "StaticHashSetNodeList.h"
 #include "StyleResolver.h"
+#include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"

@@ -29,6 +29,7 @@
 #include "MediaList.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StyleSheetContents.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 

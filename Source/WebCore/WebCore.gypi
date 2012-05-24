@@ -2547,6 +2547,8 @@
             'css/StyleRule.h',
             'css/StyleSheet.cpp',
             'css/StyleSheet.h',
+            'css/StyleSheetContents.cpp',
+            'css/StyleSheetContents.h',
             'css/StyleSheetList.cpp',
             'css/StyleSheetList.h',
             'css/WebKitCSSFilterValue.cpp',

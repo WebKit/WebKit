@@ -1,3 +1,50 @@
+2012-05-24  Antti Koivisto  <antti@apple.com>
+
+        Move StyleSheetContents to a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=87354
+
+        Reviewed by Eric Seidel.
+
+        Move StyleSheetContents class to StyleSheetContents.h/cpp.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSrcValue.cpp:
+        * css/CSSGrammar.y:
+        * css/CSSImportRule.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSRule.cpp:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::href):
+        (WebCore):
+        (WebCore::CSSStyleSheet::baseURL):
+        (WebCore::CSSStyleSheet::isLoading):
+        * css/CSSStyleSheet.h:
+        (WebCore):
+        (CSSStyleSheet):
+        * css/StylePropertySet.cpp:
+        * css/StyleResolver.cpp:
+        * css/StyleSheetContents.cpp: Copied from css/CSSStyleSheet.cpp.
+        (WebCore):
+        * css/StyleSheetContents.h: Copied from css/CSSStyleSheet.h.
+        (WebCore):
+        * dom/DOMImplementation.cpp:
+        (WebCore::XMLMIMETypeRegExp::XMLMIMETypeRegExp):
+        * dom/Document.cpp:
+        * dom/ProcessingInstruction.cpp:
+        * dom/StyleElement.cpp:
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLStyleElement.cpp:
+        * inspector/InspectorStyleSheet.cpp:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        * page/PageSerializer.cpp:
+
 2012-05-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Buildfix for the minimal build because the r118197 broke it.

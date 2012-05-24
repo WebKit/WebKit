@@ -1734,6 +1734,8 @@ webcore_sources += \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleSheet.cpp \
 	Source/WebCore/css/StyleSheet.h \
+	Source/WebCore/css/StyleSheetContents.cpp \
+	Source/WebCore/css/StyleSheetContents.h \
 	Source/WebCore/css/StyleSheetList.cpp \
 	Source/WebCore/css/StyleSheetList.h \
 	Source/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \

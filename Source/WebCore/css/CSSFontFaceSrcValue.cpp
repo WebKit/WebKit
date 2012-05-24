@@ -25,12 +25,12 @@
 
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
-#include "CSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "FontCustomPlatformData.h"
 #include "Node.h"
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 

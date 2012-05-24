@@ -50,6 +50,7 @@
 #include "SVGNames.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "WebKitCSSKeyframesRule.h"
 

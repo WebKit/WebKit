@@ -526,6 +526,7 @@ SET(WebCore_SOURCES
     css/StyleResolver.cpp
     css/StyleRule.cpp
     css/StyleSheet.cpp
+    css/StyleSheetContents.cpp
     css/StyleSheetList.cpp
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSKeyframeRule.cpp

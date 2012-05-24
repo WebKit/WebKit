@@ -498,6 +498,7 @@ SOURCES += \
     css/StyleResolver.cpp \
     css/StyleRule.cpp \
     css/StyleSheet.cpp \
+    css/StyleSheetContents.cpp \
     css/StyleSheetList.cpp \
     css/WebKitCSSFilterValue.cpp \
     css/WebKitCSSKeyframeRule.cpp \
@@ -1664,6 +1665,7 @@ HEADERS += \
     css/StyleResolver.h \
     css/StyleRule.h \
     css/StyleSheet.h \
+    css/StyleSheetContents.h \
     css/StyleSheetList.h \
     css/WebKitCSSFilterValue.h \
     css/WebKitCSSKeyframeRule.h \

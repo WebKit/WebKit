@@ -45,6 +45,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleSheetContents.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

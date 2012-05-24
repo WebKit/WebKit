@@ -32,6 +32,7 @@
 #include "XSLStyleSheet.h"
 #include "XMLDocumentParser.h" // for parseAttributes()
 #include "MediaList.h"
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 

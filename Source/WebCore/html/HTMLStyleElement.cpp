@@ -32,7 +32,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
-
+#include "StyleSheetContents.h"
 
 namespace WebCore {
 

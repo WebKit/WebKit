@@ -37,153 +37,17 @@ class CSSRule;
 class CSSRuleList;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
-class CachedResourceLoader;
 class Document;
 class MediaQuerySet;
 class SecurityOrigin;
-class StyleRuleBase;
-class StyleRuleImport;
+class StyleSheetContents;
 
 typedef int ExceptionCode;
 
-class StyleSheetContents : public RefCounted<StyleSheetContents> {
-public:
-    static PassRefPtr<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
-    {
-        return adoptRef(new StyleSheetContents(0, String(), KURL(), context));
-    }
-    static PassRefPtr<StyleSheetContents> create(const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
-    {
-        return adoptRef(new StyleSheetContents(0, originalURL, finalURL, context));
-    }
-    static PassRefPtr<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
-    {
-        return adoptRef(new StyleSheetContents(ownerRule, originalURL, finalURL, context));
-    }
-
-    ~StyleSheetContents();
-    
-    const CSSParserContext& parserContext() const { return m_parserContext; }
-
-    const AtomicString& determineNamespace(const AtomicString& prefix);
-
-    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
-    bool parseString(const String&);
-    bool parseStringAtLine(const String&, int startLineNumber);
-
-    bool isCacheable() const;
-
-    bool isLoading() const;
-
-    void checkLoaded();
-    void startLoadingDynamicSheet();
-
-    StyleSheetContents* rootStyleSheet() const;
-    Node* singleOwnerNode() const;
-    Document* singleOwnerDocument() const;
-
-    const String& charset() const { return m_parserContext.charset; }
-
-    bool loadCompleted() const { return m_loadCompleted; }
-
-    KURL completeURL(const String& url) const;
-    void addSubresourceStyleURLs(ListHashSet<KURL>&);
-
-    void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
-    bool isUserStyleSheet() const { return m_isUserStyleSheet; }
-    void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
-    bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
-
-    void parserAddNamespace(const AtomicString& prefix, const AtomicString& uri);
-    void parserAppendRule(PassRefPtr<StyleRuleBase>);
-    void parserSetEncodingFromCharsetRule(const String& encoding); 
-    void parserSetUsesRemUnits(bool b) { m_usesRemUnits = b; }
-
-    void clearRules();
-
-    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
-    String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
-    // Rules other than @charset and @import.
-    const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
-    const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
-
-    void notifyLoadedSheet(const CachedCSSStyleSheet*);
-    
-    StyleSheetContents* parentStyleSheet() const;
-    StyleRuleImport* ownerRule() const { return m_ownerRule; }
-    void clearOwnerRule() { m_ownerRule = 0; }
-    
-    // Note that href is the URL that started the redirect chain that led to
-    // this style sheet. This property probably isn't useful for much except
-    // the JavaScript binding (which needs to use this value for security).
-    String originalURL() const { return m_originalURL; }
-    
-    const KURL& finalURL() const { return m_finalURL; }
-    const KURL& baseURL() const { return m_parserContext.baseURL; }
-
-    unsigned ruleCount() const;
-    StyleRuleBase* ruleAt(unsigned index) const;
-
-    bool usesRemUnits() const { return m_usesRemUnits; }
-
-    unsigned estimatedSizeInBytes() const;
-    
-    bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
-    void wrapperDeleteRule(unsigned index);
-
-    PassRefPtr<StyleSheetContents> copy() const { return adoptRef(new StyleSheetContents(*this)); }
-
-    void registerClient(CSSStyleSheet*);
-    void unregisterClient(CSSStyleSheet*);
-    bool hasOneClient() { return m_clients.size() == 1; }
-
-    bool isMutable() const { return m_isMutable; }
-    void setMutable() { m_isMutable = true; }
-
-    bool isInMemoryCache() const { return m_isInMemoryCache; }
-    void addedToMemoryCache();
-    void removedFromMemoryCache();
-
-private:
-    StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const KURL& baseURL, const CSSParserContext&);
-    StyleSheetContents(const StyleSheetContents&);
-
-    void clearCharsetRule();
-
-    StyleRuleImport* m_ownerRule;
-
-    String m_originalURL;
-    KURL m_finalURL;
-
-    String m_encodingFromCharsetRule;
-    Vector<RefPtr<StyleRuleImport> > m_importRules;
-    Vector<RefPtr<StyleRuleBase> > m_childRules;
-    typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
-    PrefixNamespaceURIMap m_namespaces;
-
-    bool m_loadCompleted : 1;
-    bool m_isUserStyleSheet : 1;
-    bool m_hasSyntacticallyValidCSSHeader : 1;
-    bool m_didLoadErrorOccur : 1;
-    bool m_usesRemUnits : 1;
-    bool m_isMutable : 1;
-    bool m_isInMemoryCache : 1;
-    
-    CSSParserContext m_parserContext;
-
-    Vector<CSSStyleSheet*> m_clients;
-};
-
 class CSSStyleSheet : public StyleSheet {
 public:
-    static RefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents> sheet, CSSImportRule* ownerRule = 0) 
-    { 
-        return adoptRef(new CSSStyleSheet(sheet, ownerRule));
-    }
-    static RefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents> sheet, Node* ownerNode)
-    { 
-        return adoptRef(new CSSStyleSheet(sheet, ownerNode));
-    }
+    static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule = 0);
+    static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, Node* ownerNode);
     static PassRefPtr<CSSStyleSheet> createInline(Node*, const KURL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
@@ -191,7 +55,7 @@ public:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
     virtual MediaList* media() const OVERRIDE;
-    virtual String href() const OVERRIDE { return m_contents->originalURL(); }
+    virtual String href() const OVERRIDE;
     virtual String title() const OVERRIDE { return m_title; }
     virtual bool disabled() const OVERRIDE { return m_isDisabled; }
     virtual void setDisabled(bool) OVERRIDE;
@@ -212,8 +76,8 @@ public:
 
     virtual void clearOwnerNode() OVERRIDE { m_ownerNode = 0; }
     virtual CSSImportRule* ownerRule() const OVERRIDE { return m_ownerRule; }
-    virtual KURL baseURL() const OVERRIDE { return m_contents->baseURL(); }
-    virtual bool isLoading() const OVERRIDE { return m_contents->isLoading(); }
+    virtual KURL baseURL() const OVERRIDE;
+    virtual bool isLoading() const OVERRIDE;
     
     void clearOwnerRule() { m_ownerRule = 0; }
     Document* ownerDocument() const;

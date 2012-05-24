@@ -30,12 +30,12 @@
 #include "CSSPropertyNames.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
-#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "MediaQueryExp.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/FastMalloc.h>

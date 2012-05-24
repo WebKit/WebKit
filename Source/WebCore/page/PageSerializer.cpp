@@ -53,6 +53,7 @@
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
 #include "StyleRule.h"
+#include "StyleSheetContents.h"
 #include "Text.h"
 #include "TextEncoding.h"
 #include <wtf/text/CString.h>

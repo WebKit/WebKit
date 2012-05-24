@@ -33,7 +33,6 @@
 
 #include "AXObjectCache.h"
 #include "CSSParserMode.h"
-#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -46,6 +45,7 @@
 #include "HTMLHeadElement.h"
 #include "NodeList.h"
 #include "SecurityOrigin.h"
+#include "StyleSheetContents.h"
 #include "WebAccessibilityObject.h"
 #include "WebDOMEvent.h"
 #include "WebDocumentType.h"
