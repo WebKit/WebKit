@@ -1414,7 +1414,7 @@ Element* Document::elementFromPoint(int x, int y) const
     while (node && !node->isElementNode())
         node = node->parentNode();
     if (node)
-        node = node->shadowAncestorNode();
+        node = ancestorInThisScope(node);
     return static_cast<Element*>(node);
 }
 

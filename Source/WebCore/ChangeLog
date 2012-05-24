@@ -1,3 +1,18 @@
+2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Document.elementFromPoint exposes inner element of Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87235
+
+        Reviewed by Dimitri Glazkov.
+
+        Document::elementFromPoint didn't consider nested Shadow DOM.
+        The container node should be adjusted up to document TreeScope beyond ShadowRoot TreeScope.
+
+        Test: fast/dom/shadow/element-from-point-in-nested-shadow.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+
 2012-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118297.

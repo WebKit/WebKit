@@ -1,0 +1,5 @@
+PASS internals.treeScopeRootNode(element) is document
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
