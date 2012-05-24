@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+            function appendUntilMetadataLoaded(videoTag, doneCallback)
+            {
+                segmentHelper.appendMediaSegment(0);
+                segmentHelper.appendMediaSegment(1);
+
+                var eventHandler = function(event)
+                {
+                    videoTag.removeEventListener('loadedmetadata', eventHandler);
+                    doneCallback();
+                };
+                videoTag.addEventListener('loadedmetadata', eventHandler);
+            }
+
+            function didNotSendInitSegmentFirst(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test appending a media segment before sending the initialization segment.");
+                segmentHelper.addSourceId();
+                segmentHelper.appendMediaSegment(0);
+            }
+
+            function immediateDecodeErrorViaEndOfStream(runNextTestCase, videoTag)
+            {
+                 consoleWrite("Test signalling a decode error with webkitSourceEndOfStream.");
+                 var videoTag = event.target;
+                 videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+            }
+
+            function immediateNetworkErrorViaEndOfStream(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test signalling a network error with webkitSourceEndOfStream.");
+                var videoTag = event.target;
+                videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+            }
+
+            function decodeErrorAfterHaveMetadata(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test signalling a decode error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
+                var videoTag = event.target;
+                segmentHelper.addSourceId();
+                segmentHelper.appendInitSegment();
+
+                appendUntilMetadataLoaded(videoTag, function()
+                {
+                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+                });
+            }
+
+            function networkErrorAfterHaveMetadata(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test signalling a network error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
+                var videoTag = event.target;
+                segmentHelper.addSourceId();
+                segmentHelper.appendInitSegment();
+                appendUntilMetadataLoaded(videoTag, function()
+                {
+                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+                });
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEvent('loadstart');
+                waitForEvent('loadedmetadata');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('playing');
+                waitForEvent('webkitsourceended');
+                waitForEvent('ended');
+                waitForEvent('emptied');
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    var testCases = [
+                        didNotSendInitSegmentFirst,
+                        immediateDecodeErrorViaEndOfStream,
+                        immediateNetworkErrorViaEndOfStream,
+                        decodeErrorAfterHaveMetadata,
+                        networkErrorAfterHaveMetadata
+                    ];
+
+                    MediaSourceTest.startSourceOpenTesting(video, testCases);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests error cases with MediaSource API</p>
+    </body>
+</html>

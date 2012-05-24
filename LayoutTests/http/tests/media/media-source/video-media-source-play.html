@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="../../../media-resources/video-test.js"></script>
-        <script src="webm-media-source.js"></script>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
         <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
             function onSourceOpen(event) 
             {
-                var videoTag = event.target;
-                addSourceId(videoTag);
-                appendHeaders(videoTag);
-                appendUntilEndOfStream(videoTag, 0);
+                segmentHelper.addSourceId();
+                segmentHelper.appendInitSegment();
+                segmentHelper.appendUntilEndOfStream(0);
             }
 
             function onLoad() 
@@ -25,13 +27,14 @@
 
                 video.addEventListener('webkitsourceopen', onSourceOpen);
 
-                loadWebMData(function(success)
+                segmentHelper.init(video, function(success)
                 {
                     if (!success) {
-                        failTest("Failed to load WebM data");
+                        failTest("Failed to load segment data");
                         return;
                     }
-                    setSrcToMediaSourceURL(video);
+
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
                 });
             }
         </script>

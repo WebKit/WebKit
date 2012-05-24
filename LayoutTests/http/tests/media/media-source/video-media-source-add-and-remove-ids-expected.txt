@@ -1,8 +1,9 @@
 Tests webkitSourceAddId() & webkitSourceRemoveId() methods
 
+Test adding an ID while closed.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 
 running testAddIdFailureCases
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 EVENT(loadstart)
 EVENT(webkitsourceopen)
 Test empty ID case
@@ -16,6 +17,7 @@ Got expected exception Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Test a supported type with an unsupported codec.
 Got expected exception Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Test reaching sourceID limit.
+Test that SourceIDs can't be added while in the ended state.
 Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 
 running testRemoveIdFailureCases

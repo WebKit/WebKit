@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+            function abortDuringInitSegment(runNextTestCase, videoTag)
+            {
+                segmentHelper.addSourceId();
+
+                consoleWrite("Test aborting during initialization segment.");
+                try {
+                    var initSegment = segmentHelper.initSegment;
+                    var partialInitSegment = initSegment.subarray(0, initSegment.length / 2);
+
+                    consoleWrite("Appending partial initialization segment.");
+                    videoTag.webkitSourceAppend(segmentHelper.SourceID, partialInitSegment);
+
+                    consoleWrite("Aborting append.");
+                    videoTag.webkitSourceAbort(segmentHelper.SourceID);
+
+                    consoleWrite("Appending full initialization segment.");
+                    segmentHelper.appendInitSegment();
+
+                    consoleWrite("Appending enough media segments to trigger loadeddata.");
+                    segmentHelper.appendMediaSegment(0);
+                    segmentHelper.appendMediaSegment(1);
+
+                    var eventHandler = function(event)
+                    {
+                        event.target.removeEventListener('loadeddata', eventHandler);
+                        runNextTestCase();
+                    };
+                    videoTag.addEventListener('loadeddata', eventHandler);
+                } catch (e) {
+                    consoleWrite("Unexpected exception " + e);
+                }
+            }
+
+            function abortDuringMediaSegment(runNextTestCase, videoTag)
+            {
+                segmentHelper.addSourceId();
+
+                consoleWrite("Test aborting in the middle of a media segment.");
+                try {
+                    segmentHelper.appendInitSegment();
+                    var mediaSegment = segmentHelper.mediaSegments[0];
+                    var partialMediaSegment = mediaSegment.subarray(0, mediaSegment.length / 2);
+
+                    consoleWrite("Appending partial media segment.");
+                    videoTag.webkitSourceAppend(segmentHelper.SourceID, partialMediaSegment);
+
+                    consoleWrite("Aborting append.");
+                    videoTag.webkitSourceAbort(segmentHelper.SourceID);
+
+                    consoleWrite("Appending full media segment.");
+                    segmentHelper.appendMediaSegment(0);
+
+                    consoleWrite("Appending enough media segments to trigger loadeddata.");
+                    segmentHelper.appendMediaSegment(1);
+
+                    var eventHandler = function(event)
+                    {
+                        event.target.removeEventListener('loadedmetadata', eventHandler);
+                        runNextTestCase();
+                    };
+                    videoTag.addEventListener('loadedmetadata', eventHandler);
+                } catch (e) {
+                    consoleWrite("Unexpected exception " + e);
+                }
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEvent('loadstart');
+                waitForEvent('loadeddata');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('playing');
+                waitForEvent('webkitsourceended');
+                waitForEvent('ended');
+                waitForEvent('emptied');
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    var testCases = [
+                        abortDuringInitSegment,
+                        abortDuringMediaSegment,
+                    ];
+
+                    MediaSourceTest.startSourceOpenTesting(video, testCases);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests webkitSourceAbort() functionality</p>
+    </body>
+</html>

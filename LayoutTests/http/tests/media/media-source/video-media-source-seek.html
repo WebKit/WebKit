@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="../../../media-resources/video-test.js"></script>
-        <script src="webm-media-source.js"></script>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
         <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
             var firstOpen = true;
             var doSeek = true;
-            var seekTime = getClusterTimeForIndex(3);
+            var seekTime;
 
-            function onSourceOpen(event) 
+            function onSourceOpen(event)
             {
-                var videoTag = event.target;
-
                 if (firstOpen) {
                     firstOpen = false;
 
-                    addSourceId(videoTag);
-                    appendHeaders(videoTag);
-                    appendUntilEndOfStream(videoTag, 0);
+                    segmentHelper.addSourceId();
+                    segmentHelper.appendInitSegment();
+                    segmentHelper.appendUntilEndOfStream(0);
                 }
             }
 
-            function onTimeUpdate(event) 
+            function onTimeUpdate(event)
             {
                 var videoTag = event.target;
                 if (videoTag.currentTime > 2 && doSeek) {
@@ -32,11 +33,11 @@
                 }
             }
 
-            function onSeeking(event) 
+            function onSeeking(event)
             {
                 var videoTag = event.target;
-                var startIndex = getClusterIndexForTimestamp(videoTag.currentTime);
-                appendUntilEndOfStream(videoTag, startIndex);
+                var startIndex = segmentHelper.getMediaSegmentIndexForTimestamp(videoTag.currentTime);
+                segmentHelper.appendUntilEndOfStream(startIndex);
             }
 
             function onSeeked(event) 
@@ -44,8 +45,8 @@
                 var videoTag = event.target;
                 var currentTime = videoTag.currentTime;
 
-                if (currentTime != seekTime ) {
-                    failTest("Seeked to " + currentTime.toFixed(2) + " instead of " + seekTime.toFixed(2));
+                if (Math.abs(currentTime - seekTime) > 0.001 ) {
+                    failTest("Seeked to " + currentTime.toFixed(3) + " instead of " + seekTime.toFixed(3));
                     return;
                 }
                 videoTag.play();
@@ -69,13 +70,15 @@
                 video.addEventListener('seeking', onSeeking);
                 video.addEventListener('seeked', onSeeked);
 
-                loadWebMData(function(success)
+                segmentHelper.init(video, function(success)
                 {
                     if (!success) {
-                        failTest("Failed to load WebM data");
+                        failTest("Failed to load segment data");
                         return;
                     }
-                    setSrcToMediaSourceURL(video);
+
+                    seekTime = segmentHelper.getTimeForMediaSegment(3);
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
                 });
             }
          </script>

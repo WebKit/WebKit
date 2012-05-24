@@ -1,3 +1,79 @@
+2012-05-24  Aaron Colwell  <acolwell@chromium.org>
+
+        Move format independent Media Source tests to http/tests/media/media-source
+        https://bugs.webkit.org/show_bug.cgi?id=86688
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-source/media-source.js: Added. Replaces webm/webm-media-source.js.
+        (MediaSourceTest.SegmentHelper): Helper class for loading & managing segment data.
+        (MediaSourceTest.SegmentHelper.prototype.init.getDataCallback):
+        (MediaSourceTest.SegmentHelper.prototype.init): Initializes helper and starts loading segment data into memory.
+        (MediaSourceTest.SegmentHelper.prototype.getInitSegmentDone_): Called when the initialization segment has been loaded.
+        (MediaSourceTest.SegmentHelper.prototype.downloadMediaSegment_.getDataCallback):
+        (MediaSourceTest.SegmentHelper.prototype.downloadMediaSegment_): Downloads the i'th media segment.
+        (MediaSourceTest.SegmentHelper.prototype.downloadMediaSegmentDone_): Called when the media segment is download. Initiates downloading of the next segment if we don't have them all yet.
+        (MediaSourceTest.SegmentHelper.prototype.getData_.request.onload):
+        (MediaSourceTest.SegmentHelper.prototype.getData_): Private helper function that downloads data with XHR.
+        (MediaSourceTest.SegmentHelper.prototype.addSourceId): Helper function that adds a SourceID using the type specified in the segmentInfo.
+        (MediaSourceTest.SegmentHelper.prototype.appendInitSegment): Append the initialization segment using webkitSourceAppend().
+        (MediaSourceTest.SegmentHelper.prototype.appendMediaSegment): Appends the i'th media segment using webkitSourceAppend().
+        (MediaSourceTest.SegmentHelper.prototype.appendUntilEndOfStream): Starts appending at the i'th media segment and continues appending segments until it has appended the last one.
+        (MediaSourceTest.SegmentHelper.prototype.getTimeForMediaSegment): Gets the starting timestamp for the i'th media segment.
+        (MediaSourceTest.SegmentHelper.prototype.getMediaSegmentIndexForTimestamp): Gets the media segment index number for the specified timestamp.
+        (MediaSourceTest.setSrcToMediaSourceTestURL): Helper function that sets src to webkitMediaSourceURL.
+        (MediaSourceTest.mediaErrorString): Helper function that converts a MediaError code to a string.
+        (MediaSourceTest.defaultOnErrorChecks): Default event handler for error events. 
+        (MediaSourceTest.runNext_.runNextFunction): Function passed to a test case to trigger moving on to the next test.
+        (MediaSourceTest.runNext_.errorEventHandler): Error event handler to use for a test case. This allows moving on to the next test if we get an unexpected error.
+        (MediaSourceTest.runNext_): Private helper function for running a single test case.
+        (MediaSourceTest.startTesting): Runs the test case harness.
+        (MediaSourceTest.startSourceOpenTesting.testWrapperFunction): Wraps test case functions so that they will get called when webkitsourceopen event fires.
+        (MediaSourceTest.startSourceOpenTesting): Runs the test case harness where test case functions are run from the webkitsourceopen event handler.
+        (MediaSourceTest.runOnSourceOpen.eventHandlerFunction): 
+        (MediaSourceTest.runOnSourceOpen): Helper function that enable Media Source and calls a function when the webkitsourceopen fires.
+        (MediaSourceTest.logSourceState): Logs the current webkitSourceState to the console.
+        (MediaSourceTest.expectSourceState): Helper function that verifies a webkitSourceState expectatation.
+        (MediaSourceTest.getSourceStateName): Converts a sourcestate value into a string.
+        (MediaSourceTest.expectReadyState): Helper function that verifies a readyState expectation.
+        (MediaSourceTest.getReadyStateName): Converts a readyState value into a string.
+        * http/tests/media/media-source/video-media-source-abort-expected.txt: Added.
+        * http/tests/media/media-source/video-media-source-abort.html: Added.
+        * http/tests/media/media-source/video-media-source-add-and-remove-ids-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-add-and-remove-ids-expected.txt.
+        * http/tests/media/media-source/video-media-source-add-and-remove-ids.html: Added.
+        * http/tests/media/media-source/video-media-source-errors-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-errors-expected.txt.
+        * http/tests/media/media-source/video-media-source-errors.html: Added.
+        * http/tests/media/media-source/video-media-source-event-attributes.html:
+        * http/tests/media/media-source/video-media-source-play-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-play-expected.txt.
+        * http/tests/media/media-source/video-media-source-play.html: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-play.html.
+        * http/tests/media/media-source/video-media-source-seek-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-seek-expected.txt.
+        * http/tests/media/media-source/video-media-source-seek.html: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-seek.html.
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-state-changes-expected.txt.
+        * http/tests/media/media-source/video-media-source-state-changes.html: Renamed from LayoutTests/http/tests/media/media-source/webm/video-media-source-state-changes.html.
+        * http/tests/media/media-source/webm/video-media-source-abort-expected.txt: Removed.
+        * http/tests/media/media-source/webm/video-media-source-abort.html: Removed.
+        * http/tests/media/media-source/webm/video-media-source-add-and-remove-ids.html: Removed.
+        * http/tests/media/media-source/webm/video-media-source-errors.html: Removed.
+        * http/tests/media/media-source/webm/webm-media-source.js: Removed.
+        * http/tests/media/resources/media-source/webm/segment-info.js: Added. Contains segment information for test.webm.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-0: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-1: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-10: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-11: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-12: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-13: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-14: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-15: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-2: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-3: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-4: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-5: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-6: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-7: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-8: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-9: Removed.
+        * http/tests/media/resources/media-source/webm/test.webm.headers: Removed.
+
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
         [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener

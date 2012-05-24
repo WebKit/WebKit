@@ -1,0 +1,24 @@
+Tests webkitSourceAbort() functionality
+
+
+running abortDuringInitSegment
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+Test aborting during initialization segment.
+Appending partial initialization segment.
+Aborting append.
+Appending full initialization segment.
+Appending enough media segments to trigger loadeddata.
+EVENT(loadeddata)
+
+running abortDuringMediaSegment
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+Test aborting in the middle of a media segment.
+Appending partial media segment.
+Aborting append.
+Appending full media segment.
+Appending enough media segments to trigger loadeddata.
+END OF TEST
+
