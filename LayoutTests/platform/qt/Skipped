@@ -2477,3 +2477,8 @@ fast/frames/flattening/iframe-tiny.html
 # new test fast/js/dfg-arguments-mixed-alias.html fail on 32 bit linux
 # https://bugs.webkit.org/show_bug.cgi?id=87378
 fast/js/dfg-arguments-mixed-alias.html
+
+# [Qt] r118325 made two inspector tests to fail
+# https://bugs.webkit.org/show_bug.cgi?id=87385
+inspector/console/console-format.html
+inspector/extensions/extensions-console.html
