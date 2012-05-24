@@ -439,6 +439,7 @@
 #include "JSSVGUseElement.cpp"
 #include "JSSVGViewElement.cpp"
 #include "JSSVGVKernElement.cpp"
+#include "JSSVGZoomAndPan.cpp"
 #include "JSSVGZoomEvent.cpp"
 #include "JSText.cpp"
 #include "JSTextEvent.cpp"

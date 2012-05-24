@@ -1,3 +1,102 @@
+2012-05-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVGZoomAndPan constants are missing from window object
+        https://bugs.webkit.org/show_bug.cgi?id=15494
+
+        Reviewed by Rob Buis.
+
+        Generate the SVGZoomAndPanConstructor, so that the constants defined in the IDL
+        can be reached from the bindings. Provide a stub-implementation of ref/deref
+        that's never used, as we don't actually use JSSVGZoomAndPan which needs this, but
+        only the JSSVGZoomAndPanConstructor.
+
+        Add a new IDL flag "SuppressToJSObject" which disables generation of toJS/toV8
+        methods for classes that are only used in SVGs interfaces via multiple inheritance.
+        This affects: SVGFitToViewBox, SVGTests, SVGLangSapce, SVGExternalResourcesRequired, etc.
+
+        Unlike those classes SVGZoomAndPan defines constants, and thus needs a generated Constructor.
+        That requires us to build JSSVGZoomAndPan.* (JSSVGFitToViewBox/etc. is generated, but not built!).
+        Unfortunately this causes compilation problems on Windows, as it builds all sources in a single-file.
+        MSVC can't decide whether it should call toJS(Node*) or toJS(SVGZoomAndPan*) for a SVGSVGElement.
+        To avoid these problems stop generating toJS/toV8 completely for all SVG MI types. They were
+        never used before, so there's no point in actually generating them, as it's now causing problems.
+
+        This is a preparation towards bug 15495, which covers implementing
+        SVGSVGElement.currentView and the SVGViewSpec interface.
+
+        No new tests. The SVGZoomAndPan constructor is covered by existing tests, now that its enabled.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        (ShouldGenerateToJSImplementation):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        * bindings/scripts/IDLAttributes.txt:
+        * gyp/WebCore.gyp:
+        * page/DOMWindow.idl:
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::zoomAndPanEnabled):
+        * svg/SVGExternalResourcesRequired.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGLangSpace.idl:
+        * svg/SVGLocatable.idl:
+        * svg/SVGRenderingIntent.idl:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        (WebCore::SVGSVGElement::setupInitialView):
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * svg/SVGSVGElement.h:
+        (SVGSVGElement):
+        (WebCore::SVGSVGElement::useCurrentView):
+        (WebCore::SVGSVGElement::setUseCurrentView):
+        (WebCore::SVGSVGElement::zoomAndPan):
+        (WebCore::SVGSVGElement::setZoomAndPan):
+        * svg/SVGStylable.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGURIReference.idl:
+        * svg/SVGUnitTypes.idl:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        (SVGViewElement):
+        (WebCore::SVGViewElement::zoomAndPan):
+        (WebCore::SVGViewElement::setZoomAndPan):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::setTransformString):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGViewSpec.h:
+        (SVGViewSpec):
+        (WebCore::SVGViewSpec::transformBaseValue):
+        (WebCore::SVGViewSpec::zoomAndPan):
+        (WebCore::SVGViewSpec::setZoomAndPanBaseValue):
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::isKnownAttribute):
+        (WebCore::SVGZoomAndPan::addSupportedAttributes):
+        (WebCore):
+        (WebCore::SVGZoomAndPan::parseZoomAndPan):
+        (WebCore::SVGZoomAndPan::ref):
+        (WebCore::SVGZoomAndPan::deref):
+        (WebCore::SVGZoomAndPan::setZoomAndPan):
+        * svg/SVGZoomAndPan.h:
+        (SVGZoomAndPan):
+        (WebCore::SVGZoomAndPan::parseFromNumber):
+        (WebCore::SVGZoomAndPan::parseAttribute):
+        (WebCore::SVGZoomAndPan::zoomAndPan):
+        * svg/SVGZoomAndPan.idl:
+
 2012-05-24  Hironori Bono  <hbono@chromium.org>
 
         Enable grammar checking on Chromium when we paste text.

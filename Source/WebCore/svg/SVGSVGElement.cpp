@@ -52,6 +52,7 @@
 #include "SVGTransformList.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
+#include "SVGZoomAndPan.h"
 #include "SVGZoomEvent.h"
 #include "ScriptEventListener.h"
 #include "StaticNodeList.h"
@@ -87,6 +88,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_width(LengthModeWidth, "100%")
     , m_height(LengthModeHeight, "100%") 
     , m_useCurrentView(false)
+    , m_zoomAndPan(SVGZoomAndPanMagnify)
     , m_timeContainer(SMILTimeContainer::create(this))
 {
     ASSERT(hasTagName(SVGNames::svgTag));
@@ -166,16 +168,6 @@ float SVGSVGElement::screenPixelToMillimeterX() const
 float SVGSVGElement::screenPixelToMillimeterY() const
 {
     return pixelUnitToMillimeterY();
-}
-
-bool SVGSVGElement::useCurrentView() const
-{
-    return m_useCurrentView;
-}
-
-void SVGSVGElement::setUseCurrentView(bool currentView)
-{
-    m_useCurrentView = currentView;
 }
 
 SVGViewSpec* SVGSVGElement::currentView() const
@@ -278,7 +270,7 @@ void SVGSVGElement::parseAttribute(const Attribute& attribute)
                || SVGLangSpace::parseAttribute(attribute)
                || SVGExternalResourcesRequired::parseAttribute(attribute)
                || SVGFitToViewBox::parseAttribute(document(), attribute)
-               || SVGZoomAndPan::parseAttribute(attribute)) {
+               || SVGZoomAndPan::parseAttribute(this, attribute)) {
     } else
         SVGStyledLocatableElement::parseAttribute(attribute);
 
@@ -657,7 +649,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     AffineTransform ctm = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), preserveAspectRatio(), viewWidth, viewHeight);
     if (useCurrentView() && currentView()) {
         AffineTransform transform;
-        if (currentView()->transform().concatenate(transform))
+        if (currentView()->transformBaseValue().concatenate(transform))
             ctm *= transform;
     }
 
@@ -688,7 +680,7 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
         if (!m_useCurrentView)
             return;
     } else if (!m_useCurrentView)
-        currentView()->setTransform(emptyString());
+        currentView()->setTransformString(emptyString());
 
     // Force a layout, otherwise RenderSVGRoots localToBorderBoxTransform won't be rebuild.
     if (RenderObject* object = renderer())
@@ -713,7 +705,7 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
     currentView()->setPreserveAspectRatioBaseValue(aspectRatio);
 
     if (viewElement->hasAttribute(SVGNames::zoomAndPanAttr))
-        currentView()->setZoomAndPan(viewElement->zoomAndPan());
+        currentView()->setZoomAndPanBaseValue(viewElement->zoomAndPan());
     
     if (RenderObject* object = renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);

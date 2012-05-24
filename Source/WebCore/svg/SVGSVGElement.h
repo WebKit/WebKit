@@ -51,6 +51,9 @@ class SVGSVGElement : public SVGStyledLocatableElement,
 public:
     static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
+    using SVGStyledLocatableElement::ref;
+    using SVGStyledLocatableElement::deref;
+
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
 
@@ -68,8 +71,8 @@ public:
     float screenPixelToMillimeterX() const;
     float screenPixelToMillimeterY() const;
 
-    bool useCurrentView() const;
-    void setUseCurrentView(bool currentView);
+    bool useCurrentView() const { return m_useCurrentView; }
+    void setUseCurrentView(bool currentView) { m_useCurrentView = currentView; }
 
     SVGViewSpec* currentView() const;
 
@@ -131,6 +134,9 @@ public:
     bool widthAttributeEstablishesViewport() const;
     bool heightAttributeEstablishesViewport() const;
 
+    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
+    void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
+
 protected:
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
@@ -182,6 +188,7 @@ private:
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
     bool m_useCurrentView;
+    SVGZoomAndPanType m_zoomAndPan;
     RefPtr<SMILTimeContainer> m_timeContainer;
     FloatPoint m_translation;
     mutable OwnPtr<SVGViewSpec> m_viewSpec;

@@ -93,9 +93,9 @@
       }
 
       if (window.SVGFEMorphologyElement) {
-          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_UNKNOWN", 0);
-          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE", 1);
-          expect_failure("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE", 2);
+          expect("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_UNKNOWN", 0);
+          expect("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE", 1);
+          expect("SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE", 2);
       }
 
       if (window.SVGFETurbulenceElement) {
@@ -208,9 +208,9 @@
       expect("SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE", 1);
       expect("SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX", 2);
 
-      expect_failure("SVGZoomAndPan.SVG_ZOOMANDPAN_UNKNOWN", 0);
-      expect_failure("SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE", 1);
-      expect_failure("SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY", 2);
+      expect("SVGZoomAndPan.SVG_ZOOMANDPAN_UNKNOWN", 0);
+      expect("SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE", 1);
+      expect("SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY", 2);
     }
   ]]></script>  
 </svg>

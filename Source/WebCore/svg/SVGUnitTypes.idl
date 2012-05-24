@@ -26,7 +26,8 @@
 module svg {
 
     interface [
-        Conditional=SVG
+        Conditional=SVG,
+        SuppressToJSObject
     ] SVGUnitTypes {
         // Unit Types
         const unsigned short SVG_UNIT_TYPE_UNKNOWN           = 0;

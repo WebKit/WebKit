@@ -30,6 +30,7 @@ module svg {
     interface [
         Conditional=SVG,
         ObjCProtocol,
+        SuppressToJSObject,
         OmitConstructor
     ] SVGStylable {
         readonly attribute SVGAnimatedString className;

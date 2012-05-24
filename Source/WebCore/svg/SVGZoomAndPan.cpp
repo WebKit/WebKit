@@ -23,28 +23,9 @@
 #if ENABLE(SVG)
 #include "SVGZoomAndPan.h"
 
-#include "Attribute.h"
-#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
-
-void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
-{
-    m_zoomAndPan = zoomAndPan;
-}
-
-bool SVGZoomAndPan::parseAttribute(const Attribute& attribute)
-{
-    if (attribute.name() == SVGNames::zoomAndPanAttr) {
-        const UChar* start = attribute.value().characters();
-        const UChar* end = start + attribute.value().length();
-        parseZoomAndPan(start, end);
-        return true;
-    }
-
-    return false;
-}
 
 bool SVGZoomAndPan::isKnownAttribute(const QualifiedName& attrName)
 {
@@ -59,16 +40,32 @@ void SVGZoomAndPan::addSupportedAttributes(HashSet<QualifiedName>& supportedAttr
 static const UChar disable[] =  {'d', 'i', 's', 'a', 'b', 'l', 'e'};
 static const UChar magnify[] =  {'m', 'a', 'g', 'n', 'i', 'f', 'y'};
 
-bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end)
+bool SVGZoomAndPan::parseZoomAndPan(const UChar*& start, const UChar* end, SVGZoomAndPanType& zoomAndPan)
 {
-    if (skipString(start, end, disable, WTF_ARRAY_LENGTH(disable)))
-        setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);
-    else if (skipString(start, end, magnify, WTF_ARRAY_LENGTH(magnify)))
-        setZoomAndPan(SVG_ZOOMANDPAN_MAGNIFY);
-    else
-        return false;
+    if (skipString(start, end, disable, WTF_ARRAY_LENGTH(disable))) {
+        zoomAndPan = SVGZoomAndPanDisable;
+        return true;
+    }
+    if (skipString(start, end, magnify, WTF_ARRAY_LENGTH(magnify))) {
+        zoomAndPan = SVGZoomAndPanMagnify;
+        return true;
+    }
+    return false;
+}
 
-    return true;
+NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::ref()
+{
+    ASSERT_NOT_REACHED();
+}
+
+NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::deref()
+{
+    ASSERT_NOT_REACHED();
+}
+
+NO_RETURN_DUE_TO_ASSERT void SVGZoomAndPan::setZoomAndPan(unsigned short)
+{
+    ASSERT_NOT_REACHED();
 }
 
 }

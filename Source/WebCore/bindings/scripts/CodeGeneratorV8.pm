@@ -447,7 +447,7 @@ END
 }
 END
 
-    if ($interfaceName eq 'Element') {
+    if ($interfaceName eq 'Element' or $dataNode->extendedAttributes->{"SuppressToJSObject"}) {
         # Do not generate toV8() for performance optimization.
     } elsif (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
         push(@headerContent, <<END);

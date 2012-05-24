@@ -709,6 +709,7 @@ module window {
         attribute SVGUseElementConstructor SVGUseElement;
         attribute SVGViewElementConstructor SVGViewElement;
 //      attribute SVGViewSpecConstructor SVGViewSpec;
+        attribute SVGZoomAndPanConstructor SVGZoomAndPan;
 
         attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
         attribute SVGAnimateElementConstructor SVGAnimateElement;

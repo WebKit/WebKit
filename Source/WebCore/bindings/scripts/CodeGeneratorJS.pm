@@ -606,6 +606,22 @@ my %usesToJSNewlyCreated = (
     "TouchList" => 1
 );
 
+sub ShouldGenerateToJSDeclaration
+{
+    my ($hasParent, $dataNode) = @_;
+    return 0 if ($dataNode->extendedAttributes->{"SuppressToJSObject"});
+    return 1 if (!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJSObject"} or ($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"}));
+    return 0;
+}
+
+sub ShouldGenerateToJSImplementation
+{
+    my ($hasParent, $dataNode) = @_;
+    return 0 if ($dataNode->extendedAttributes->{"SuppressToJSObject"});
+    return 1 if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJSObject"}) and !($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"}));
+    return 0;
+}
+
 sub GetFunctionName
 {
     my ($className, $function) = @_;
@@ -994,8 +1010,7 @@ sub GenerateHeader
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
     }
-
-    if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToJSObject"} || ($dataNode->extendedAttributes->{"CustomToJSObject"} || $dataNode->extendedAttributes->{"JSCustomToJSObject"})) {
+    if (ShouldGenerateToJSDeclaration($hasParent, $dataNode)) {
         push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
@@ -2340,7 +2355,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJSObject"}) and !($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"})) {
+    if (ShouldGenerateToJSImplementation($hasParent, $dataNode)) {
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {

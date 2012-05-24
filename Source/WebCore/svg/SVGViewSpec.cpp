@@ -41,12 +41,13 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
     : m_contextElement(contextElement)
+    , m_zoomAndPan(SVGZoomAndPanMagnify)
 {
     ASSERT(m_contextElement);
     registerAnimatedPropertiesForSVGViewSpec();
 }
 
-void SVGViewSpec::setTransform(const String& transform)
+void SVGViewSpec::setTransformString(const String& transform)
 {
     m_transform.parse(transform);
 }
@@ -131,7 +132,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
             if (currViewSpec >= end || *currViewSpec != '(')
                 return false;
             currViewSpec++;
-            if (!parseZoomAndPan(currViewSpec, end))
+            if (!parseZoomAndPan(currViewSpec, end, m_zoomAndPan))
                 return false;
             if (currViewSpec >= end || *currViewSpec != ')')
                 return false;

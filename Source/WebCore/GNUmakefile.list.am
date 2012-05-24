@@ -5392,6 +5392,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGViewSpec.h \
 	DerivedSources/WebCore/JSSVGVKernElement.cpp \
 	DerivedSources/WebCore/JSSVGVKernElement.h \
+	DerivedSources/WebCore/JSSVGZoomAndPan.cpp \
 	DerivedSources/WebCore/JSSVGZoomAndPan.h \
 	DerivedSources/WebCore/JSSVGZoomEvent.cpp \
 	DerivedSources/WebCore/JSSVGZoomEvent.h
@@ -5537,6 +5538,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGUseElement.idl \
 	$(WebCore)/svg/SVGVKernElement.idl \
 	$(WebCore)/svg/SVGViewElement.idl \
+	$(WebCore)/svg/SVGZoomAndPan.idl \
 	$(WebCore)/svg/SVGZoomEvent.idl
 endif # END ENABLE_SVG
 

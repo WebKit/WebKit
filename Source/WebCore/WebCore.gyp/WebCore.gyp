@@ -174,7 +174,6 @@
       '../svg/SVGTests.idl',
       '../svg/SVGTransformable.idl',
       '../svg/SVGViewSpec.idl',
-      '../svg/SVGZoomAndPan.idl',
 
       # FIXME: I don't know why these are excluded, either.
       # Someone (me?) should figure it out and add appropriate comments.

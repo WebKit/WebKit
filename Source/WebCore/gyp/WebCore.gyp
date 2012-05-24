@@ -123,7 +123,6 @@
         ['exclude', 'JSSVGTests\\.(cpp|h)'],
         ['exclude', 'JSSVGTransformable\\.(cpp|h)'],
         ['exclude', 'JSSVGURIReference\\.(cpp|h)'],
-        ['exclude', 'JSSVGZoomAndPan\\.(cpp|h)'],
         ['exclude', 'tokenizer\\.cpp'],
 
         ['exclude', 'AllInOne\\.cpp$'],

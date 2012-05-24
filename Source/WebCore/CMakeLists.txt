@@ -2134,6 +2134,7 @@ IF (ENABLE_SVG)
         svg/SVGUseElement.idl
         svg/SVGViewElement.idl
         svg/SVGVKernElement.idl
+        svg/SVGZoomAndPan.idl
         svg/SVGZoomEvent.idl
     )
 

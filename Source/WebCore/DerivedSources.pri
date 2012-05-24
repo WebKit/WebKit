@@ -466,7 +466,6 @@ v8 {
 
 contains(DEFINES, ENABLE_SVG=1) {
   IDL_BINDINGS += \
-    $$PWD/svg/SVGZoomEvent.idl \
     $$PWD/svg/SVGAElement.idl \
     $$PWD/svg/SVGAltGlyphDefElement.idl \
     $$PWD/svg/SVGAltGlyphElement.idl \
@@ -606,7 +605,9 @@ contains(DEFINES, ENABLE_SVG=1) {
     $$PWD/svg/SVGUnitTypes.idl \
     $$PWD/svg/SVGUseElement.idl \
     $$PWD/svg/SVGViewElement.idl \
-    $$PWD/svg/SVGVKernElement.idl
+    $$PWD/svg/SVGVKernElement.idl \
+    $$PWD/svg/SVGZoomAndPan.idl \
+    $$PWD/svg/SVGZoomEvent.idl
 }
 
 contains(DEFINES, ENABLE_VIDEO_TRACK=1) {

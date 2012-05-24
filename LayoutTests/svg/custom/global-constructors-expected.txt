@@ -31,7 +31,7 @@ FAIL SVGTests.toString() should be [object SVGTestsConstructor]. Threw exception
 FAIL SVGLangSpace.toString() should be [object SVGLangSpaceConstructor]. Threw exception ReferenceError: Can't find variable: SVGLangSpace
 FAIL SVGExternalResourcesRequired.toString() should be [object SVGExternalResourcesRequiredConstructor]. Threw exception ReferenceError: Can't find variable: SVGExternalResourcesRequired
 FAIL SVGFitToViewBox.toString() should be [object SVGFitToViewBoxConstructor]. Threw exception ReferenceError: Can't find variable: SVGFitToViewBox
-FAIL SVGZoomAndPan.toString() should be [object SVGZoomAndPanConstructor]. Threw exception ReferenceError: Can't find variable: SVGZoomAndPan
+PASS SVGZoomAndPan.toString() is '[object SVGZoomAndPanConstructor]'
 FAIL SVGViewSpec.toString() should be [object SVGViewSpecConstructor]. Threw exception ReferenceError: Can't find variable: SVGViewSpec
 FAIL SVGURIReference.toString() should be [object SVGURIReferenceConstructor]. Threw exception ReferenceError: Can't find variable: SVGURIReference
 FAIL SVGCSSRule.toString() should be [object SVGCSSRuleConstructor]. Threw exception ReferenceError: Can't find variable: SVGCSSRule

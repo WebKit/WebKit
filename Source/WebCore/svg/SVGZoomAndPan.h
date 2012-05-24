@@ -22,40 +22,69 @@
 #define SVGZoomAndPan_h
 
 #if ENABLE(SVG)
+#include "Attribute.h"
 #include "QualifiedName.h"
+#include "SVGNames.h"
 #include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-class Attribute;
+enum SVGZoomAndPanType {
+    SVGZoomAndPanUnknown = 0,
+    SVGZoomAndPanDisable,
+    SVGZoomAndPanMagnify
+};
 
 class SVGZoomAndPan {
 public:
-    enum SVGZoomAndPanType {
-        SVG_ZOOMANDPAN_UNKNOWN = 0,
-        SVG_ZOOMANDPAN_DISABLE = 1,
-        SVG_ZOOMANDPAN_MAGNIFY = 2
+    // Forward declare enumerations in the W3C naming scheme, for IDL generation.
+    enum {
+        SVG_ZOOMANDPAN_UNKNOWN = SVGZoomAndPanUnknown,
+        SVG_ZOOMANDPAN_DISABLE = SVGZoomAndPanDisable,
+        SVG_ZOOMANDPAN_MAGNIFY = SVGZoomAndPanMagnify
     };
 
-    SVGZoomAndPan() : m_zoomAndPan(SVG_ZOOMANDPAN_MAGNIFY) { }
-    virtual ~SVGZoomAndPan() { }
+    static bool isKnownAttribute(const QualifiedName&);
+    static void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    unsigned short zoomAndPan() const { return m_zoomAndPan; }
-    virtual void setZoomAndPan(unsigned short zoomAndPan);
+    static SVGZoomAndPanType parseFromNumber(unsigned short number)
+    {
+        if (!number || number > SVGZoomAndPanMagnify)
+            return SVGZoomAndPanUnknown;
+        return static_cast<SVGZoomAndPanType>(number);
+    }
 
-    bool parseAttribute(const Attribute&);
-    bool isKnownAttribute(const QualifiedName&);
-    void addSupportedAttributes(HashSet<QualifiedName>&);
+    static bool parseZoomAndPan(const UChar*& start, const UChar* end, SVGZoomAndPanType&);
 
-    bool parseZoomAndPan(const UChar*& start, const UChar* end);
+    template<class SVGElementTarget>
+    static bool parseAttribute(SVGElementTarget* target, const Attribute& attribute)
+    {
+        ASSERT(target);
+        ASSERT(target->document());
+        if (attribute.name() == SVGNames::zoomAndPanAttr) {
+            const UChar* start = attribute.value().characters();
+            const UChar* end = start + attribute.value().length();
+            SVGZoomAndPanType zoomAndPan = SVGZoomAndPanUnknown;
+            parseZoomAndPan(start, end, zoomAndPan);
+            target->setZoomAndPan(zoomAndPan);
+            return true;
+        }
 
-private:
-    unsigned short m_zoomAndPan;
+        return false;
+    }
+
+    SVGZoomAndPanType zoomAndPan() const { return SVGZoomAndPanUnknown; }
+
+    // These methods only exist to allow us to compile V8/JSSVGZoomAndPan.*.
+    // These are never called, and thus ASSERT_NOT_REACHED.
+    void ref();
+    void deref();
+    void setZoomAndPan(unsigned short);
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-
 #endif // SVGZoomAndPan_h

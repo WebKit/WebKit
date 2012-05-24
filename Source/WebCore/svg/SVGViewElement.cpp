@@ -45,6 +45,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
+    , m_zoomAndPan(SVGZoomAndPanMagnify)
     , m_viewTarget(SVGNames::viewTargetAttr)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
@@ -84,7 +85,7 @@ void SVGViewElement::parseAttribute(const Attribute& attribute)
         return;
     if (SVGFitToViewBox::parseAttribute(document(), attribute))
         return;
-    if (SVGZoomAndPan::parseAttribute(attribute))
+    if (SVGZoomAndPan::parseAttribute(this, attribute))
         return;
 
     ASSERT_NOT_REACHED();

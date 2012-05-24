@@ -1810,6 +1810,8 @@
 		71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */; };
+		71DCB7011568197600862271 /* JSSVGZoomAndPan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */; };
+		71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DCB7001568197600862271 /* JSSVGZoomAndPan.h */; };
 		71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */; };
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
@@ -8856,6 +8858,8 @@
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
+		71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomAndPan.cpp; sourceTree = "<group>"; };
+		71DCB7001568197600862271 /* JSSVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomAndPan.h; sourceTree = "<group>"; };
 		71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedIntegerOptionalInteger.cpp; sourceTree = "<group>"; };
 		71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedIntegerOptionalInteger.h; sourceTree = "<group>"; };
 		71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumerationPropertyTearOff.h; sourceTree = "<group>"; };
@@ -18374,6 +18378,8 @@
 				B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */,
 				848522791190162C006EDC7F /* JSSVGVKernElement.cpp */,
 				8485227A1190162C006EDC7F /* JSSVGVKernElement.h */,
+				71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */,
+				71DCB7001568197600862271 /* JSSVGZoomAndPan.h */,
 				B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */,
 				B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */,
 			);
@@ -24940,6 +24946,7 @@
 				1482E0C7156C36DE00965065 /* FractionalLayoutBoxExtent.h in Headers */,
 				E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */,
 				BC1BDF25156C18C7001C1243 /* DOMError.h in Headers */,
+				71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27969,6 +27976,7 @@
 				1482E0C6156C36DE00965065 /* FractionalLayoutBoxExtent.cpp in Sources */,
 				E4F9EEF2156D9FFA00D23E7E /* StyleSheetContents.cpp in Sources */,
 				BC1BDF24156C1883001C1243 /* DOMError.cpp in Sources */,
+				71DCB7011568197600862271 /* JSSVGZoomAndPan.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

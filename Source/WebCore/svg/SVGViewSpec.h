@@ -31,16 +31,17 @@ namespace WebCore {
 
 class SVGElement;
 
-class SVGViewSpec : public SVGFitToViewBox,
-                    public SVGZoomAndPan {
+class SVGViewSpec : public SVGZoomAndPan,
+                    public SVGFitToViewBox {
     WTF_MAKE_NONCOPYABLE(SVGViewSpec);
 public:
     SVGViewSpec(SVGElement*);
 
     bool parseViewSpec(const String&);
 
-    void setTransform(const String&);
+    void setTransformString(const String&);
     SVGTransformList transform() const { return m_transform; }
+    SVGTransformList transformBaseValue() const { return m_transform; }
 
     void setViewBoxString(const String&);
 
@@ -49,6 +50,10 @@ public:
     void setViewTargetString(const String&);
     String viewTargetString() const { return m_viewTargetString; }
     SVGElement* viewTarget() const;
+
+    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
+    void setZoomAndPan(unsigned short, ExceptionCode&);
+    void setZoomAndPanBaseValue(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
 private:
     SVGElement* m_contextElement;
@@ -60,6 +65,7 @@ private:
 
     SVGTransformList m_transform;
     String m_viewTargetString;
+    SVGZoomAndPanType m_zoomAndPan;
 };
 
 } // namespace WebCore

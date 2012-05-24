@@ -73,9 +73,9 @@ bool SVGDocument::zoomAndPanEnabled() const
     if (rootElement()) {
         if (rootElement()->useCurrentView()) {
             if (rootElement()->currentView())
-                return rootElement()->currentView()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+                return rootElement()->currentView()->zoomAndPan() == SVGZoomAndPanMagnify;
         } else
-            return rootElement()->zoomAndPan() == SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY;
+            return rootElement()->zoomAndPan() == SVGZoomAndPanMagnify;
     }
 
     return false;
