@@ -1,3 +1,19 @@
+2012-05-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [regression] search in formatted scripts is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=87377
+
+        Reviewed by Vsevolod Vlasov.
+
+        Using formatted content in search.
+
+        Test: inspector/debugger/script-formatter-search.html
+
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource.prototype.workingCopyCommitted):
+        (WebInspector.JavaScriptSource.prototype.searchInContent.callbackWrapper):
+        (WebInspector.JavaScriptSource.prototype.searchInContent):
+
 2012-05-24  Philip Rogers  <pdr@google.com>
 
         Refactor SVGAnimateTransformElement to avoid expensive determineAnimatedPropertyType call

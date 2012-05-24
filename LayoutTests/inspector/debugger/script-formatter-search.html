@@ -1,0 +1,66 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/search/search-test.js"></script>
+
+<script>
+
+var test = function()
+{
+    var scriptSource;
+    var shouldRequestContent = false;
+
+    InspectorTest.startDebuggerTest(started);
+
+    function started()
+    {
+        InspectorTest.showScriptSource("script-formatter-search.html", didShowScriptSource);
+    }
+
+    function didShowScriptSource(frame)
+    {
+        scriptSource = frame._javaScriptSource;
+        InspectorTest.addSniffer(scriptSource._contentProvider, "requestContent", requestContentSniffer);
+        scriptSource.searchInContent("margic-string", true, false, dump1);
+    }
+
+    function dump1(matches)
+    {
+        InspectorTest.addResult("Pre-format search results:");
+        InspectorTest.dumpSearchMatches(matches);
+        shouldRequestContent = true;
+        scriptSource.setFormatted(true, didFormat);
+    }
+
+    function didFormat()
+    {
+        scriptSource.searchInContent("margic-string", true, false, dump2);
+    }
+
+    function dump2(matches)
+    {
+        InspectorTest.addResult("Post-format search results:");
+        InspectorTest.dumpSearchMatches(matches);
+        InspectorTest.completeTest();
+    }
+
+    function requestContentSniffer()
+    {
+        if (shouldRequestContent)
+            InspectorTest.addResult("Original content was requested.");
+        else
+            InspectorTest.addResult("Failure: original content should not be requested.");
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that search across files works with formatted scripts.
+</p>
+
+</body>
+</html>

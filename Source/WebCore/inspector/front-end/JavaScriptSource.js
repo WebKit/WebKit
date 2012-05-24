@@ -183,6 +183,19 @@ WebInspector.JavaScriptSource.prototype = {
     workingCopyCommitted: function(callback)
     {  
         WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), callback);
+    },
+
+    /**
+     * @param {string} query
+     * @param {boolean} caseSensitive
+     * @param {boolean} isRegex
+     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
+     */
+    searchInContent: function(query, caseSensitive, isRegex, callback)
+    {
+        var content = this.content();
+        var provider = content ? new WebInspector.StaticContentProvider(this._contentProvider.contentType(), content) : this._contentProvider;
+        provider.searchInContent(query, caseSensitive, isRegex, callback);
     }
 }
 
