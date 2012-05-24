@@ -366,6 +366,7 @@ http/tests/media/video-buffered.html
 editing/pasteboard/drop-text-events.html
 editing/selection/drag-in-iframe.html
 fast/events/dragging-mouse-moves.html
+fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html
 
 # Causes next test to time out http://webkit.org/b/46975
 http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
