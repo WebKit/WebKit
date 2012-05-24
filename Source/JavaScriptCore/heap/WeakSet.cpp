@@ -40,24 +40,6 @@ WeakSet::~WeakSet()
     m_blocks.clear();
 }
 
-void WeakSet::lastChanceToFinalize()
-{
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->lastChanceToFinalize();
-}
-
-void WeakSet::visit(HeapRootVisitor& visitor)
-{
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->visit(visitor);
-}
-
-void WeakSet::reap()
-{
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->reap();
-}
-
 void WeakSet::sweep()
 {
     WeakBlock* next;
@@ -71,23 +53,6 @@ void WeakSet::sweep()
         block->takeSweepResult(); // Force a new sweep by discarding the last sweep.
         block->sweep();
     }
-}
-
-void WeakSet::shrink()
-{
-    WeakBlock* next;
-    for (WeakBlock* block = m_blocks.head(); block; block = next) {
-        next = block->next();
-
-        if (block->isEmpty())
-            removeAllocator(block);
-    }
-}
-
-void WeakSet::resetAllocator()
-{
-    m_allocator = 0;
-    m_nextAllocator = m_blocks.head();
 }
 
 WeakBlock::FreeCell* WeakSet::findAllocator()

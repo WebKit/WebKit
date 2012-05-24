@@ -32,7 +32,6 @@
 #include "MarkedSpace.h"
 #include "SlotVisitor.h"
 #include "WeakHandleOwner.h"
-#include "WeakSet.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -148,7 +147,6 @@ namespace JSC {
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
 
-        WeakSet* weakSet() { return &m_weakSet; }
         HandleSet* handleSet() { return &m_handleSet; }
         HandleStack* handleStack() { return &m_handleStack; }
 
@@ -225,7 +223,6 @@ namespace JSC {
         MarkStackThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
 
-        WeakSet m_weakSet;
         HandleSet m_handleSet;
         HandleStack m_handleStack;
         DFGCodeBlocks m_dfgCodeBlocks;

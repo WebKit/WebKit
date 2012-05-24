@@ -42,13 +42,15 @@ public:
     ~WeakSet();
     void lastChanceToFinalize();
 
+    Heap* heap() const;
+
+    bool isEmpty() const;
+
     void visit(HeapRootVisitor&);
     void reap();
-
     void sweep();
-    void resetAllocator();
-
     void shrink();
+    void resetAllocator();
 
 private:
     JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator();
@@ -69,9 +71,59 @@ inline WeakSet::WeakSet(Heap* heap)
 {
 }
 
+inline Heap* WeakSet::heap() const
+{
+    return m_heap;
+}
+
+inline bool WeakSet::isEmpty() const
+{
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+        if (!block->isEmpty())
+            return false;
+    }
+
+    return true;
+}
+
 inline void WeakSet::deallocate(WeakImpl* weakImpl)
 {
     weakImpl->setState(WeakImpl::Deallocated);
+}
+
+inline void WeakSet::lastChanceToFinalize()
+{
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+        block->lastChanceToFinalize();
+}
+
+inline void WeakSet::visit(HeapRootVisitor& visitor)
+{
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+        block->visit(visitor);
+}
+
+inline void WeakSet::reap()
+{
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+        block->reap();
+}
+
+inline void WeakSet::shrink()
+{
+    WeakBlock* next;
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
+
+        if (block->isEmpty())
+            removeAllocator(block);
+    }
+}
+
+inline void WeakSet::resetAllocator()
+{
+    m_allocator = 0;
+    m_nextAllocator = m_blocks.head();
 }
 
 } // namespace JSC

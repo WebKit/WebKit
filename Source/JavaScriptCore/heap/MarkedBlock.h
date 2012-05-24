@@ -25,6 +25,7 @@
 #include "CardSet.h"
 #include "HeapBlock.h"
 
+#include "WeakSet.h"
 #include <wtf/Bitmap.h>
 #include <wtf/DataLog.h>
 #include <wtf/DoublyLinkedList.h>
@@ -119,12 +120,20 @@ namespace JSC {
         static MarkedBlock* blockFor(const void*);
         static size_t firstAtom();
         
-        Heap* heap() const;
-        
-        void* allocate();
+        void lastChanceToFinalize();
 
+        Heap* heap() const;
+        WeakSet& weakSet();
+        
         enum SweepMode { SweepOnly, SweepToFreeList };
         FreeList sweep(SweepMode = SweepOnly);
+
+        void shrink();
+        void resetAllocator();
+
+        void visitWeakSet(HeapRootVisitor&);
+        void reapWeakSet();
+        void sweepWeakSet();
 
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
@@ -205,7 +214,7 @@ namespace JSC {
 #endif
         bool m_cellsNeedDestruction;
         BlockState m_state;
-        Heap* m_heap;
+        WeakSet m_weakSet;
     };
 
     inline MarkedBlock::FreeList::FreeList()
@@ -240,9 +249,47 @@ namespace JSC {
         return reinterpret_cast<MarkedBlock*>(reinterpret_cast<Bits>(p) & blockMask);
     }
 
+    inline void MarkedBlock::lastChanceToFinalize()
+    {
+        m_weakSet.lastChanceToFinalize();
+
+        clearMarks();
+        sweep();
+    }
+
     inline Heap* MarkedBlock::heap() const
     {
-        return m_heap;
+        return m_weakSet.heap();
+    }
+
+    inline WeakSet& MarkedBlock::weakSet()
+    {
+        return m_weakSet;
+    }
+
+    inline void MarkedBlock::shrink()
+    {
+        m_weakSet.shrink();
+    }
+
+    inline void MarkedBlock::resetAllocator()
+    {
+        m_weakSet.resetAllocator();
+    }
+
+    inline void MarkedBlock::visitWeakSet(HeapRootVisitor& heapRootVisitor)
+    {
+        m_weakSet.visit(heapRootVisitor);
+    }
+
+    inline void MarkedBlock::reapWeakSet()
+    {
+        m_weakSet.reap();
+    }
+
+    inline void MarkedBlock::sweepWeakSet()
+    {
+        m_weakSet.sweep();
     }
 
     inline void MarkedBlock::didConsumeFreeList()
@@ -272,7 +319,7 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        return m_marks.isEmpty();
+        return m_marks.isEmpty() && m_weakSet.isEmpty();
     }
 
     inline size_t MarkedBlock::cellSize()

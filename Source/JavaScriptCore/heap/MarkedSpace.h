@@ -83,6 +83,10 @@ public:
     
     void resetAllocators();
 
+    void visitWeakSets(HeapRootVisitor&);
+    void reapWeakSets();
+    void sweepWeakSets();
+
     MarkedBlockSet& blocks() { return m_blocks; }
     
     void canonicalizeCellLivenessData();

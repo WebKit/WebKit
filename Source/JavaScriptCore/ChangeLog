@@ -1,3 +1,84 @@
+2012-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Made WeakSet per-block instead of per-heap
+        https://bugs.webkit.org/show_bug.cgi?id=87401
+
+        Reviewed by Oliver Hunt.
+
+        This allows us fast access to the set of all weak pointers for a block,
+        which is a step toward lazy finalization.
+
+        No performance change.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize): Removed the per-heap weak set, since
+        it's per-block now.
+
+        (JSC::Heap::markRoots): Delegate weak set visiting to the marked space,
+        since it knows how to iterate all blocks.
+
+        (JSC::Heap::collect): Moved the reaping outside of markRoots, since it
+        doesn't mark anything.
+
+        Make sure to reset allocators after shrinking, since shrinking may
+        deallocate the current allocator.
+
+        * heap/Heap.h:
+        (Heap): No more per-heap weak set, since it's per-block now.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::lastChanceToFinalize): Migrated finalization logic
+        here from the heap, so the heap doesn't need to know about our internal
+        data structures like our weak set.
+
+        (JSC::MarkedBlock::heap):
+        (JSC::MarkedBlock::weakSet):
+        (JSC::MarkedBlock::shrink):
+        (JSC::MarkedBlock::resetAllocator):
+        (JSC::MarkedBlock::visitWeakSet):
+        (JSC::MarkedBlock::reapWeakSet):
+        (JSC::MarkedBlock::sweepWeakSet):
+        * heap/MarkedSpace.cpp:
+        (JSC::VisitWeakSet::VisitWeakSet):
+        (JSC::VisitWeakSet::operator()):
+        (VisitWeakSet):
+        (JSC):
+        (JSC::ReapWeakSet::operator()):
+        (JSC::SweepWeakSet::operator()):
+        (JSC::LastChanceToFinalize::operator()):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::ResetAllocator::operator()):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::sweepWeakSets):
+        (JSC::Shrink::operator()):
+        (JSC::MarkedSpace::shrink):
+        * heap/MarkedSpace.h:
+        (MarkedSpace): Make sure to account for our weak sets when sweeping,
+        shrinking, etc.
+
+        * heap/WeakSet.cpp:
+        (JSC):
+        * heap/WeakSet.h:
+        (WeakSet):
+        (JSC::WeakSet::heap):
+        (JSC):
+        (JSC::WeakSet::lastChanceToFinalize):
+        (JSC::WeakSet::visit):
+        (JSC::WeakSet::reap):
+        (JSC::WeakSet::shrink):
+        (JSC::WeakSet::resetAllocator): Inlined some things since they're called
+        once per block now instead of once per heap.
+
+        * heap/WeakSetInlines.h:
+        (JSC::WeakSet::allocate): Use the per-block weak set since there is no
+        per-heap weak set anymore.
+
 2012-05-24  Gavin Barraclough  <barraclough@apple.com>
 
         Fix arm build

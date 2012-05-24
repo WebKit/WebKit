@@ -66,6 +66,21 @@ inline Take::ReturnType Take::returnValue()
     return m_blocks.head();
 }
 
+struct VisitWeakSet : MarkedBlock::VoidFunctor {
+    VisitWeakSet(HeapRootVisitor& heapRootVisitor) : m_heapRootVisitor(heapRootVisitor) { }
+    void operator()(MarkedBlock* block) { block->visitWeakSet(m_heapRootVisitor); }
+private:
+    HeapRootVisitor& m_heapRootVisitor;
+};
+
+struct ReapWeakSet : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->reapWeakSet(); }
+};
+
+struct SweepWeakSet : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->sweepWeakSet(); }
+};
+
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_heap(heap)
 {
@@ -87,12 +102,19 @@ MarkedSpace::~MarkedSpace()
     freeBlocks(forEachBlock(take));
 }
 
+struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->lastChanceToFinalize(); }
+};
+
 void MarkedSpace::lastChanceToFinalize()
 {
     canonicalizeCellLivenessData();
-    clearMarks();
-    sweep();
+    forEachBlock<LastChanceToFinalize>();
 }
+
+struct ResetAllocator : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->resetAllocator(); }
+};
 
 void MarkedSpace::resetAllocators()
 {
@@ -105,6 +127,24 @@ void MarkedSpace::resetAllocators()
         allocatorFor(cellSize).reset();
         destructorAllocatorFor(cellSize).reset();
     }
+
+    forEachBlock<ResetAllocator>();
+}
+
+void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
+{
+    VisitWeakSet visitWeakSet(heapRootVisitor);
+    forEachBlock(visitWeakSet);
+}
+
+void MarkedSpace::reapWeakSets()
+{
+    forEachBlock<ReapWeakSet>();
+}
+
+void MarkedSpace::sweepWeakSets()
+{
+    forEachBlock<SweepWeakSet>();
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()
@@ -148,11 +188,17 @@ void MarkedSpace::freeBlocks(MarkedBlock* head)
     }
 }
 
+struct Shrink : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->shrink(); }
+};
+
 void MarkedSpace::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
     Take takeIfEmpty(Take::TakeIfEmpty, this);
     freeBlocks(forEachBlock(takeIfEmpty));
+
+    forEachBlock<Shrink>();
 }
 
 #if ENABLE(GGC)

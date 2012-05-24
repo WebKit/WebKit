@@ -248,7 +248,6 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
-    , m_weakSet(this)
     , m_handleSet(globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
@@ -278,7 +277,6 @@ void Heap::lastChanceToFinalize()
     if (size_t size = m_protectedValues.size())
         WTFLogAlways("ERROR: JavaScriptCore heap deallocated while %ld values were still protected", static_cast<unsigned long>(size));
 
-    m_weakSet.lastChanceToFinalize();
     m_objectSpace.lastChanceToFinalize();
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
@@ -561,7 +559,7 @@ void Heap::markRoots(bool fullGC)
     {
         GCPHASE(VisitingLiveWeakHandles);
         while (true) {
-            m_weakSet.visit(heapRootVisitor);
+            m_objectSpace.visitWeakSets(heapRootVisitor);
             harvestWeakReferences();
             if (visitor.isEmpty())
                 break;
@@ -573,11 +571,6 @@ void Heap::markRoots(bool fullGC)
 #endif
             }
         }
-    }
-
-    {
-        GCPHASE(ReapingWeakHandles);
-        m_weakSet.reap();
     }
 
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
@@ -683,24 +676,23 @@ void Heap::collect(SweepToggle sweepToggle)
     markRoots(fullGC);
     
     {
+        GCPHASE(ReapingWeakHandles);
+        m_objectSpace.reapWeakSets();
+    }
+
+    {
         GCPHASE(FinalizeUnconditionalFinalizers);
         finalizeUnconditionalFinalizers();
     }
-        
+
     {
         GCPHASE(FinalizeWeakHandles);
-        m_weakSet.sweep();
+        m_objectSpace.sweepWeakSets();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
     
     JAVASCRIPTCORE_GC_MARKED();
 
-    {
-        GCPHASE(ResetAllocators);
-        m_objectSpace.resetAllocators();
-        m_weakSet.resetAllocator();
-    }
-    
     {
         GCPHASE(DeleteCodeBlocks);
         m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
@@ -711,10 +703,14 @@ void Heap::collect(SweepToggle sweepToggle)
         GCPHASE(Sweeping);
         m_objectSpace.sweep();
         m_objectSpace.shrink();
-        m_weakSet.shrink();
         m_bytesAbandoned = 0;
     }
 
+    {
+        GCPHASE(ResetAllocators);
+        m_objectSpace.resetAllocators();
+    }
+    
     size_t currentHeapSize = size();
     if (fullGC) {
         m_sizeAfterLastCollect = currentHeapSize;
