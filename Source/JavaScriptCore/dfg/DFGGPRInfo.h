@@ -414,8 +414,8 @@ public:
     // between the arguments being set up, and the call being made. That said,
     // any change introducing a problem here is likely to be immediately apparent!
     static const GPRReg argumentGPR3 = ARMRegisters::r3; // FIXME!
-    static const GPRReg nonArgGPR0 = X86Registers::r4; // regT3
-    static const GPRReg nonArgGPR1 = X86Registers::r8; // regT4
+    static const GPRReg nonArgGPR0 = ARMRegisters::r4; // regT3
+    static const GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
     static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r2;
