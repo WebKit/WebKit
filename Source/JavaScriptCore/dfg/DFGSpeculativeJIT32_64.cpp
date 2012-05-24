@@ -1070,7 +1070,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         }
 
         DataFormat spillFormat = info.spillFormat();
-        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
+        ASSERT_UNUSED(spillFormat, (spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
 
         // If we know this was spilled as an integer we can fill without checking.
         if (!isInt32Prediction(type))

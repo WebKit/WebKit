@@ -1,3 +1,10 @@
+2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed 32 bit buildfix after r118325.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal): Use ASSERT_UNUSED instead ASSERT.
+
 2012-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG operationTearOffActivation should return after handling the null activation case
