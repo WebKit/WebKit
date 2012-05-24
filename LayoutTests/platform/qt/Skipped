@@ -177,6 +177,8 @@ fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/content-element-in-media-element.html
 fast/dom/shadow/content-element-in-meter-element.html
+fast/dom/shadow/drop-event-for-input-in-shadow.html
+fast/dom/shadow/drop-event-in-shadow.html
 fast/dom/shadow/focus-navigation.html
 fast/dom/shadow/form-in-shadow.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html

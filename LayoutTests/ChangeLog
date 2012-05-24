@@ -1,3 +1,9 @@
+2012-05-24  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip tests because ENABLE(SHADOW_DOM) is disabled.
+
+        * platform/qt/Skipped:
+
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Several canvas/philip test cases can be unskipped
