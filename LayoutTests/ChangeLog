@@ -1,3 +1,15 @@
+2012-05-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] Stop using the flag FIXED_POSITION_CREATES_STACKING_CONTEXT
+        https://bugs.webkit.org/show_bug.cgi?id=87392
+
+        Reviewed by Antonio Gomes.
+
+        Update test expectations, since now don't turn on the setting when running layout tests.
+        
+        * platform/qt/fast/block/positioning/016-expected.txt:
+        * platform/qt/fast/block/positioning/025-expected.txt:
+
 2012-05-24  Robert Hogan  <robert@webkit.org>
 
         Negative margin block doesn't properly clear a float enclosed by a previous sibling

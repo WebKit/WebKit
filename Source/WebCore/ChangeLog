@@ -1,3 +1,16 @@
+2012-05-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] Stop using the flag FIXED_POSITION_CREATES_STACKING_CONTEXT
+        https://bugs.webkit.org/show_bug.cgi?id=87392
+
+        Reviewed by Antonio Gomes.
+
+        Remove our dependency on a build flag and use the new setting.
+
+        No new tests.
+
+        * css/StyleResolver.cpp:
+
 2012-05-24  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Let the client give local files universal access on a case by case basis

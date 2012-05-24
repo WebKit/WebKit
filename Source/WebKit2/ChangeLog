@@ -1,3 +1,15 @@
+2012-05-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] Stop using the flag FIXED_POSITION_CREATES_STACKING_CONTEXT
+        https://bugs.webkit.org/show_bug.cgi?id=87392
+
+        Reviewed by Antonio Gomes.
+
+        Turn on the setting setFixedPositionCreatesStackingContext.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
 2012-05-24  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Let the client give local files universal access on a case by case basis

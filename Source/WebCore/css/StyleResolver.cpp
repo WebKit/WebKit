@@ -150,7 +150,7 @@
 #include "StyleCachedImageSet.h"
 #endif
 
-#if PLATFORM(QT) || PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY)
 #define FIXED_POSITION_CREATES_STACKING_CONTEXT 1
 #endif
 
