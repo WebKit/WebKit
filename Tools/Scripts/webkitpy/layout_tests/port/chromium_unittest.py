@@ -330,6 +330,16 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         self.assertEquals(port.test_expectations_overrides(),
                           SKIA_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
+    def test_driver_name_option(self):
+        self.assertTrue(ChromiumPortTest.TestLinuxPort()._path_to_driver().endswith('/out/default/DumpRenderTree'))
+        self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_driver().endswith('/xcodebuild/default/DumpRenderTree.app/Contents/MacOS/DumpRenderTree'))
+        self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_driver().endswith('/default/DumpRenderTree.exe'))
+
+        options = MockOptions(driver_name='OtherDriver')
+        self.assertTrue(ChromiumPortTest.TestLinuxPort(options)._path_to_driver().endswith('/out/default/OtherDriver'))
+        self.assertTrue(ChromiumPortTest.TestMacPort(options)._path_to_driver().endswith('/xcodebuild/default/OtherDriver.app/Contents/MacOS/OtherDriver'))
+        self.assertTrue(ChromiumPortTest.TestWinPort(options)._path_to_driver().endswith('/default/OtherDriver.exe'))
+
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
     def test_check_sys_deps(self):
