@@ -1,3 +1,13 @@
+2012-05-24  Lu Guanqun  <guanqun.lu@intel.com>
+
+        use built-in data type DashArray
+        https://bugs.webkit.org/show_bug.cgi?id=87344
+
+        Reviewed by Eric Seidel.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+
 2012-05-24  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move queryLocalizedString to Platform.h

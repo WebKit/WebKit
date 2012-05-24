@@ -724,7 +724,7 @@ TEST(PlatformContextSkiaTest, UnboundedDrawsAreClipped)
     context.setStrokeStyle(SolidStroke);
 
     // Make skia unable to compute fast bounds for our paths.
-    Vector<float> dashArray;
+    DashArray dashArray;
     dashArray.append(1);
     dashArray.append(0);
     context.setLineDash(dashArray, 0);
@@ -771,7 +771,7 @@ TEST(PlatformContextSkiaTest, PreserveOpaqueOnlyMattersForFirstLayer)
     context.setStrokeStyle(SolidStroke);
 
     // Make skia unable to compute fast bounds for our paths.
-    Vector<float> dashArray;
+    DashArray dashArray;
     dashArray.append(1);
     dashArray.append(0);
     context.setLineDash(dashArray, 0);
