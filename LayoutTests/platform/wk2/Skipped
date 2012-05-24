@@ -1048,6 +1048,7 @@ fast/block/lineboxcontain/font.html
 
 # [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled.
 # https://bugs.webkit.org/show_bug.cgi?id=81042
+editing/spelling/grammar-markers.html
 editing/spelling/grammar-paste.html
 editing/spelling/spellcheck-async-mutation.html
 editing/spelling/spellcheck-async-remove-frame.html
