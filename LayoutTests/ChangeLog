@@ -1,3 +1,17 @@
+2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] drop event is not fired on nodes in Shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=85774
+
+        Reviewed by Dimitri Glazkov.
+
+        Confirms drop event is fired on div and input in Shadow DOM.
+
+        * fast/dom/shadow/drop-event-for-input-in-shadow-expected.txt: Added.
+        * fast/dom/shadow/drop-event-for-input-in-shadow.html: Added.
+        * fast/dom/shadow/drop-event-in-shadow-expected.txt: Added.
+        * fast/dom/shadow/drop-event-in-shadow.html: Added.
+
 2012-05-23  Emil A Eklund  <eae@chromium.org>
 
         REGRESSION (115573): Incorrect rounding of margins for floats

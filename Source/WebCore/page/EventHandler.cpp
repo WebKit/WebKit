@@ -1977,8 +1977,6 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     RefPtr<Node> newTarget = targetNode(mev);
     if (newTarget && newTarget->isTextNode())
         newTarget = newTarget->parentNode();
-    if (newTarget)
-        newTarget = newTarget->shadowAncestorNode();
 
     if (m_dragTarget != newTarget) {
         // FIXME: this ordering was explicitly chosen to match WinIE. However,
