@@ -1,3 +1,9 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        Fix the Mac tests after r118353.
+
+        * platform/mac/fast/js/global-constructors-expected.txt:
+
 2012-05-24  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt5][WK2] Gardening. Skip failing test after r118058.
