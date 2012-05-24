@@ -128,10 +128,12 @@ public:
         edge.setIndex(newIndex);
     }
     
-    void changeEdge(Edge& edge, Edge newEdge)
+    void changeEdge(Edge& edge, Edge newEdge, bool changeRef = true)
     {
-        ref(newEdge);
-        deref(edge);
+        if (changeRef) {
+            ref(newEdge);
+            deref(edge);
+        }
         edge = newEdge;
     }
     

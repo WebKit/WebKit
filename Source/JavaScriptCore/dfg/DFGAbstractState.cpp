@@ -92,6 +92,7 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_block = basicBlock;
     m_isValid = true;
     m_foundConstants = false;
+    m_branchDirection = InvalidBranchDirection;
 }
 
 void AbstractState::initialize(Graph& graph)
@@ -174,7 +175,7 @@ void AbstractState::initialize(Graph& graph)
     }
 }
 
-bool AbstractState::endBasicBlock(MergeMode mergeMode)
+bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDirectionPtr)
 {
     PROFILE(FLAG_FOR_BLOCK_END);
     ASSERT(m_block);
@@ -224,18 +225,27 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     
     ASSERT(mergeMode != DontMerge || !changed);
     
+    BranchDirection branchDirection = m_branchDirection;
+    if (branchDirectionPtr)
+        *branchDirectionPtr = branchDirection;
+    
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    dataLog("        Branch direction = %s\n", branchDirectionToString(branchDirection));
+#endif
+    
     reset();
     
     if (mergeMode != MergeToSuccessors)
         return changed;
     
-    return mergeToSuccessors(m_graph, block);
+    return mergeToSuccessors(m_graph, block, branchDirection);
 }
 
 void AbstractState::reset()
 {
     m_block = 0;
     m_isValid = false;
+    m_branchDirection = InvalidBranchDirection;
 }
 
 bool AbstractState::execute(unsigned indexInBlock)
@@ -569,16 +579,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case LogicalNot: {
         JSValue childConst = forNode(node.child1()).value();
         if (childConst) {
-            if (childConst.isNumber()) {
-                forNode(nodeIndex).set(jsBoolean(!childConst.asNumber()));
-                m_foundConstants = true;
-                break;
-            }
-            if (childConst.isBoolean()) {
-                forNode(nodeIndex).set(jsBoolean(!childConst.asBoolean()));
-                m_foundConstants = true;
-                break;
-            }
+            forNode(nodeIndex).set(jsBoolean(!childConst.toBoolean()));
+            break;
         }
         Node& child = m_graph[node.child1()];
         if (isBooleanPrediction(child.prediction()))
@@ -952,9 +954,22 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case Branch: {
-        // There is probably profit to be found in doing sparse conditional constant
-        // propagation, and to take it one step further, where a variable's value
-        // is specialized on each direction of a branch. For now, we don't do this.
+        JSValue value = forNode(node.child1()).value();
+        if (value) {
+            bool booleanValue = value.toBoolean();
+            if (booleanValue)
+                m_branchDirection = TakeTrue;
+            else
+                m_branchDirection = TakeFalse;
+            break;
+        }
+        // FIXME: The above handles the trivial cases of sparse conditional
+        // constant propagation, but we can do better:
+        // 1) If the abstract value does not have a concrete value but describes
+        //    something that is known to evaluate true (or false) then we ought
+        //    to sparse conditional that.
+        // 2) We can specialize the source variable's value on each direction of
+        //    the branch.
         Node& child = m_graph[node.child1()];
         if (child.shouldSpeculateBoolean())
             forNode(node.child1()).filter(PredictBoolean);
@@ -966,6 +981,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child1()).filter(PredictInt32);
         else if (child.shouldSpeculateNumber())
             forNode(node.child1()).filter(PredictNumber);
+        m_branchDirection = TakeBoth;
         break;
     }
             
@@ -1489,7 +1505,8 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     return changed;
 }
 
-inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBlock)
+inline bool AbstractState::mergeToSuccessors(
+    Graph& graph, BasicBlock* basicBlock, BranchDirection branchDirection)
 {
     PROFILE(FLAG_FOR_MERGE_TO_SUCCESSORS);
 
@@ -1499,6 +1516,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     
     switch (terminal.op()) {
     case Jump: {
+        ASSERT(branchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
@@ -1506,21 +1524,25 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     }
         
     case Branch: {
+        ASSERT(branchDirection != InvalidBranchDirection);
         bool changed = false;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
-        changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
+        if (branchDirection != TakeFalse)
+            changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
 #endif
-        changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
+        if (branchDirection != TakeTrue)
+            changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
         return changed;
     }
         
     case Return:
     case Throw:
     case ThrowReferenceError:
+        ASSERT(branchDirection == InvalidBranchDirection);
         return false;
         
     default:

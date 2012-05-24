@@ -92,6 +92,36 @@ public:
         MergeToSuccessors
     };
     
+    enum BranchDirection {
+        // This is not a branch and so there is no branch direction, or
+        // the branch direction has yet to be set.
+        InvalidBranchDirection,
+        
+        // The branch takes the true case.
+        TakeTrue,
+        
+        // The branch takes the false case.
+        TakeFalse,
+        
+        // For all we know, the branch could go either direction, so we
+        // have to assume the worst.
+        TakeBoth
+    };
+    
+    static const char* branchDirectionToString(BranchDirection branchDirection)
+    {
+        switch (branchDirection) {
+        case InvalidBranchDirection:
+            return "Invalid";
+        case TakeTrue:
+            return "TakeTrue";
+        case TakeFalse:
+            return "TakeFalse";
+        case TakeBoth:
+            return "TakeBoth";
+        }
+    }
+
     AbstractState(Graph&);
     
     ~AbstractState();
@@ -139,7 +169,11 @@ public:
     //    A true return means that you must revisit (at least) the successor
     //    blocks. This also sets cfaShouldRevisit to true for basic blocks
     //    that must be visited next.
-    bool endBasicBlock(MergeMode);
+    //
+    // If you'd like to know what direction the branch at the end of the
+    // basic block is thought to have taken, you can pass a non-0 pointer
+    // for BranchDirection.
+    bool endBasicBlock(MergeMode, BranchDirection* = 0);
     
     // Reset the AbstractState. This throws away any results, and at this point
     // you can safely call beginBasicBlock() on any basic block.
@@ -169,7 +203,7 @@ public:
     // successors. Returns true if any of the successors' states changed. Note
     // that this is automatically called in endBasicBlock() if MergeMode is
     // MergeToSuccessors.
-    bool mergeToSuccessors(Graph&, BasicBlock*);
+    bool mergeToSuccessors(Graph&, BasicBlock*, BranchDirection);
 
     void dump(FILE* out);
     
@@ -190,6 +224,8 @@ private:
     bool m_foundConstants;
     
     bool m_isValid;
+    
+    BranchDirection m_branchDirection; // This is only set for blocks that end in Branch and that execute to completion (i.e. m_isValid == true).
 };
 
 } } // namespace JSC::DFG

@@ -1,3 +1,61 @@
+2012-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have sparse conditional constant propagation
+        https://bugs.webkit.org/show_bug.cgi?id=86580
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r117370 from dfgopt.
+        
+        This enhances CFA so that if it suspects at any point during the fixpoint that a
+        branch will only go one way, then it only propagates in that one way.
+        
+        This vastly increases the opportunities for CFG simplification. For example, it
+        enables us to evaporate this loop:
+        
+        for (var i = 0; i < 1; ++i) doThings(i);
+        
+        As a result, it uncovered loads of bugs in the CFG simplifier. In particular:
+        
+        - Phi fixup was assuming that all Phis worth fixing up are shouldGenerate().
+          That's not true; we also fixup Phis that are dead.
+          
+        - GetLocal fixup was assuming that it's only necessary to rewire links to a
+          GetLocal, and that the GetLocal's own links don't need to be rewired. Untrue,
+          because the GetLocal may not be rewirable (first block has no GetLocal for r42
+          but second block does have a GetLocal), in which case it will refer to a Phi
+          in the second block. We need it to refer to a Phi from the first block to
+          ensure that subsequent transformations work.
+          
+        - Tail operand fixup was ignoring the fact that Phis in successors may contain
+          references to the children of our tail variables. Hence, successor Phi child
+          substitution needs to use the original second block variable table as its
+          prior, rather than trying to reconstruct the prior later (since by that point
+          the children of the second block's tail variables will have been fixed up, so
+          we will not know what the prior would have been).
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::reset):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::branchDirectionToString):
+        (AbstractState):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::removePotentiallyDeadPhiReference):
+        (JSC::DFG::CFGSimplificationPhase::OperandSubstitution::OperandSubstitution):
+        (OperandSubstitution):
+        (JSC::DFG::CFGSimplificationPhase::skipGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::recordPossibleIncomingReference):
+        (CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::fixTailOperand):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::changeEdge):
+
 2012-05-23  Ojan Vafai  <ojan@chromium.org>
 
         add back the ability to disable flexbox
