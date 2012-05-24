@@ -1763,3 +1763,7 @@ tables/mozilla/bugs/bug2479-2.html
 
 # Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
 tables/mozilla/bugs/bug10296-1.html
+
+# Causes crashes in the next test
+# https://bugs.webkit.org/show_bug.cgi?id=87416
+fast/dom/Window/Location/set-location-after-close.html

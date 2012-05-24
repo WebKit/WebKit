@@ -1,3 +1,13 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] Crash under DocumentLoader::didTellClientAboutLoad when running
+        fast/dom/Window/Location/window-override-location-using-defineGetter.html
+        fast/dom/Window/Location/set-location-after-close.html
+
+        Skip set-location-after-close.html on Windows.
+
+        * platform/win/Skipped:
+
 2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] [DRT] keyboard-related tests do not pass
