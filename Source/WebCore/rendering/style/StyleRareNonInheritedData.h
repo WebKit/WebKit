@@ -170,10 +170,10 @@ public:
     unsigned m_wrapFlow: 3; // WrapFlow
     unsigned m_wrapThrough: 1; // WrapThrough
 
-    bool m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
 #if USE(ACCELERATED_COMPOSITING)
-    bool m_runningAcceleratedAnimation : 1;
+    unsigned m_runningAcceleratedAnimation : 1;
 #endif
+    unsigned m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
 
 private:
     StyleRareNonInheritedData();

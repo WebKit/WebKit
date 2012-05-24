@@ -69,10 +69,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_textCombine(RenderStyle::initialTextCombine())
     , m_wrapFlow(RenderStyle::initialWrapFlow())
     , m_wrapThrough(RenderStyle::initialWrapThrough())
-    , m_hasAspectRatio(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(false)
 #endif
+    , m_hasAspectRatio(false)
 {
     m_maskBoxImage.setMaskDefaults();
 }
@@ -136,10 +136,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_textCombine(o.m_textCombine)
     , m_wrapFlow(o.m_wrapFlow)
     , m_wrapThrough(o.m_wrapThrough)
-    , m_hasAspectRatio(o.m_hasAspectRatio)
 #if USE(ACCELERATED_COMPOSITING)
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
+    , m_hasAspectRatio(o.m_hasAspectRatio)
 {
 }
 
@@ -149,11 +149,18 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData()
 
 bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) const
 {
-    return lineClamp == o.lineClamp
+    return opacity == o.opacity
+        && m_aspectRatioDenominator == o.m_aspectRatioDenominator
+        && m_aspectRatioNumerator == o.m_aspectRatioNumerator
+        && m_counterIncrement == o.m_counterIncrement
+        && m_counterReset == o.m_counterReset
+        && m_perspective == o.m_perspective
+        && m_perspectiveOriginX == o.m_perspectiveOriginX
+        && m_perspectiveOriginY == o.m_perspectiveOriginY
+        && lineClamp == o.lineClamp
 #if ENABLE(DASHBOARD_SUPPORT)
         && m_dashboardRegions == o.m_dashboardRegions
 #endif
-        && opacity == o.opacity
         && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox
         && m_flexibleBox == o.m_flexibleBox
         && m_marquee == o.m_marquee
@@ -166,6 +173,32 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_gridItem == o.m_gridItem
         && contentDataEquivalent(o)
         && counterDataEquivalent(o)
+        && shadowDataEquivalent(o)
+        && reflectionDataEquivalent(o)
+        && animationDataEquivalent(o)
+        && transitionDataEquivalent(o)
+        && m_mask == o.m_mask
+        && m_maskBoxImage == o.m_maskBoxImage
+        && m_pageSize == o.m_pageSize
+        && m_wrapShapeInside == o.m_wrapShapeInside
+        && m_wrapShapeOutside == o.m_wrapShapeOutside
+        && m_wrapMargin == o.m_wrapMargin
+        && m_wrapPadding == o.m_wrapPadding
+        && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
+        && m_visitedLinkOutlineColor == o.m_visitedLinkOutlineColor
+        && m_visitedLinkBorderLeftColor == o.m_visitedLinkBorderLeftColor
+        && m_visitedLinkBorderRightColor == o.m_visitedLinkBorderRightColor
+        && m_visitedLinkBorderTopColor == o.m_visitedLinkBorderTopColor
+        && m_visitedLinkBorderBottomColor == o.m_visitedLinkBorderBottomColor
+        && m_flowThread == o.m_flowThread
+        && m_regionThread == o.m_regionThread
+        && m_regionOverflow == o.m_regionOverflow
+        && m_regionBreakAfter == o.m_regionBreakAfter
+        && m_regionBreakBefore == o.m_regionBreakBefore
+        && m_regionBreakInside == o.m_regionBreakInside
+        && m_pageSizeType == o.m_pageSizeType
+        && m_transformStyle3D == o.m_transformStyle3D
+        && m_backfaceVisibility == o.m_backfaceVisibility
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
         && marginBeforeCollapse == o.marginBeforeCollapse
@@ -174,45 +207,12 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_appearance == o.m_appearance
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine
-        && m_aspectRatioDenominator == o.m_aspectRatioDenominator
-        && m_aspectRatioNumerator == o.m_aspectRatioNumerator
-        && m_counterIncrement == o.m_counterIncrement
-        && m_counterReset == o.m_counterReset
-        && m_hasAspectRatio == o.m_hasAspectRatio
+        && m_wrapFlow == o.m_wrapFlow
+        && m_wrapThrough == o.m_wrapThrough
 #if USE(ACCELERATED_COMPOSITING)
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
 #endif
-        && shadowDataEquivalent(o)
-        && reflectionDataEquivalent(o)
-        && animationDataEquivalent(o)
-        && transitionDataEquivalent(o)
-        && m_mask == o.m_mask
-        && m_maskBoxImage == o.m_maskBoxImage
-        && (m_transformStyle3D == o.m_transformStyle3D)
-        && (m_backfaceVisibility == o.m_backfaceVisibility)
-        && (m_perspective == o.m_perspective)
-        && (m_perspectiveOriginX == o.m_perspectiveOriginX)
-        && (m_perspectiveOriginY == o.m_perspectiveOriginY)
-        && (m_pageSize == o.m_pageSize)
-        && (m_pageSizeType == o.m_pageSizeType)
-        && (m_flowThread == o.m_flowThread)
-        && (m_regionThread == o.m_regionThread)
-        && (m_regionOverflow == o.m_regionOverflow)
-        && (m_wrapShapeInside == o.m_wrapShapeInside)
-        && (m_wrapShapeOutside == o.m_wrapShapeOutside)
-        && (m_wrapFlow == o.m_wrapFlow)
-        && (m_wrapThrough == o.m_wrapThrough)
-        && (m_wrapMargin == o.m_wrapMargin)
-        && (m_wrapPadding == o.m_wrapPadding)
-        && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
-        && m_visitedLinkOutlineColor == o.m_visitedLinkOutlineColor
-        && m_visitedLinkBorderLeftColor == o.m_visitedLinkBorderLeftColor
-        && m_visitedLinkBorderRightColor == o.m_visitedLinkBorderRightColor
-        && m_visitedLinkBorderTopColor == o.m_visitedLinkBorderTopColor
-        && m_visitedLinkBorderBottomColor == o.m_visitedLinkBorderBottomColor
-        && (m_regionBreakAfter == o.m_regionBreakAfter)
-        && (m_regionBreakBefore == o.m_regionBreakBefore)
-        && (m_regionBreakInside == o.m_regionBreakInside);
+        && m_hasAspectRatio == o.m_hasAspectRatio;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const
