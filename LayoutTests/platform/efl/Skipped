@@ -598,7 +598,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/click-focus-anchor.html
 
 # BUG: focus bugs
-fast/events/click-focus-control.html
 fast/events/frame-tab-focus.html
 fast/forms/focus2.html
 

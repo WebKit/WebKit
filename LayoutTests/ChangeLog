@@ -1,3 +1,15 @@
+2012-05-24  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Update test expectations for layout test fast/events/click-focus-control.html
+        https://bugs.webkit.org/show_bug.cgi?id=87295
+
+        Reviewed by Eric Seidel.
+
+        HTMLFormControlElement is not mouse focusable in EFL port.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/events/click-focus-control-expected.txt: Added.
+
 2012-05-24  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unskip and rebase now passing tests from qt-5.0/Skipped list.
