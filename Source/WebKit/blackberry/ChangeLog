@@ -1,3 +1,31 @@
+2012-05-24  Antonio Gomes  <agomes@rim.com>
+
+        Possible missing layout in Iris browser after hiding VKB
+        https://bugs.webkit.org/show_bug.cgi?id=87408
+        PR #153056 / MKS_3674963
+
+        Reviewed by Adam Treat.
+
+        Also informally reviewed by Mike Fenton.
+
+        If we are not rotating and we've started a viewport resize with
+        the Render tree in dirty state (i.e. it needs layout), lets
+        reset the needsLayout flag for now but set our own 'needsLayout'.
+
+        Reason: calls like ScrollView::setFixedLayoutSize can trigger a layout
+        if the render tree needs it. We want to avoid it till the viewport resize
+        is actually done (i.e. ScrollView::setViewportSize gets called
+        further down the method) so we do not get render artifacts.
+
+        Since our WebPage::setViewportSize calls rely on async Virtual
+        Keyboard responses, we were getting it called with the render
+        tree sometimes in a dirty state, sometimes not. It was flaky!
+        Patch ensures a clear render tree state, and sets it as dirty
+        afterwards as needed, so layout happens at the proper time.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-05-24  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Padding adjustment for determining the relative distance for a point was backwards.
