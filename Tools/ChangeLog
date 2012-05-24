@@ -1,3 +1,15 @@
+2012-05-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change EFL debug build name with more detail one
+        https://bugs.webkit.org/show_bug.cgi?id=87254
+
+        Reviewed by Ryosuke Niwa.
+
+        EFL Linux Debug buildbot name needs to be consistent with other EFL buildbot name.
+        In addition, remove efl-linux-debug triggerable since nobody uses it.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-05-23  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Fix WebCore library path and rebaseline result
