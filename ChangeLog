@@ -1,3 +1,10 @@
+2012-05-23  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Unreviewed, add ENABLE_CSS3_FLEXBOX after r118304.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-05-23  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Reset JS state for each test
