@@ -50,6 +50,7 @@ static const int32_t DefaultTimeScale = 1000;
 
 PlatformClockCM::PlatformClockCM()
     : m_timebase(0)
+    , m_rate(1)
     , m_running(false)
 {
     CMClockRef rawClockPtr = 0;

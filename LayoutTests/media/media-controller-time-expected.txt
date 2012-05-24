@@ -1,0 +1,8 @@
+RUN(controller = video.controller)
+EVENT(canplaythrough)
+RUN(video.play())
+RUN(controller.play())
+EVENT(playing)
+EXPECTED (controller.currentTime > '0') OK
+END OF TEST
+
