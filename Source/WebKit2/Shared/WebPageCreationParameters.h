@@ -82,6 +82,7 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;
+    LayerHostingMode layerHostingMode;
 #endif
 
 #if PLATFORM(WIN)

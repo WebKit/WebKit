@@ -3463,6 +3463,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
+    parameters.layerHostingMode = m_layerHostingMode;
 #endif
 
 #if PLATFORM(WIN)

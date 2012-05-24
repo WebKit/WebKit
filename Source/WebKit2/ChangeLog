@@ -1,3 +1,31 @@
+2012-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Make sure that the layer hosting mode is up-to-date when reconnecting to a new web process
+        https://bugs.webkit.org/show_bug.cgi?id=87421
+        <rdar://problem/11510337>
+
+        Reviewed by Beth Dakin.
+
+        Send over the layer hosting mode as part of the web page creation parameters and create the right
+        layer hosting context based on the mode.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerHostingMode):
+        (WebKit):
+        (WebKit::TiledCoreAnimationDrawingArea::updateLayerHostingContext):
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting
