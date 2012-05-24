@@ -178,6 +178,9 @@ BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
 
 // Missing execCommand('copy') and execCommand('paste').
 BUGWK84338 : editing/deleting/paste-with-transparent-background-color.html = TEXT
+BUGWK84338 : editing/execCommand/find-after-replace.html = TEXT MISSING
+BUGWK84338 : editing/execCommand/paste-1.html = TEXT MISSING
+BUGWK84338 : editing/execCommand/paste-2.html = TEXT MISSING
 BUGWK84338 : editing/input/paste-text-ending-with-interchange-newline.html = TEXT
 BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEXT
 BUGWK84338 : editing/inserting/insert-3786362-fix.html = TEXT
@@ -503,48 +506,6 @@ BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
 BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
-
-// Needs baselines
-BUGWK84839 : editing/execCommand/4580583-1.html = MISSING
-BUGWK84839 : editing/execCommand/4580583-2.html = MISSING
-BUGWK84839 : editing/execCommand/4641880-1.html = MISSING
-BUGWK84839 : editing/execCommand/4641880-2.html = MISSING
-BUGWK84839 : editing/execCommand/4747450.html = MISSING
-BUGWK84839 : editing/execCommand/4916402.html = MISSING
-BUGWK84839 : editing/execCommand/4916541.html = MISSING
-BUGWK84839 : editing/execCommand/4924441.html = MISSING
-BUGWK84839 : editing/execCommand/5080333-1.html = MISSING
-BUGWK84839 : editing/execCommand/5080333-2.html = MISSING
-BUGWK84839 : editing/execCommand/5136770.html = MISSING
-BUGWK84839 : editing/execCommand/5138441.html = MISSING
-BUGWK84839 : editing/execCommand/5142012-1.html = MISSING
-BUGWK84839 : editing/execCommand/5142012-2.html = MISSING
-BUGWK84839 : editing/execCommand/5190926.html = MISSING
-BUGWK84839 : editing/execCommand/5481523.html = MISSING
-BUGWK84839 : editing/execCommand/5482023.html = MISSING
-BUGWK84839 : editing/execCommand/5569741.html = MISSING
-BUGWK84839 : editing/execCommand/create-list-with-hr.html = MISSING
-BUGWK84839 : editing/execCommand/find-after-replace.html = MISSING
-BUGWK84839 : editing/execCommand/findString-2.html = MISSING
-BUGWK84839 : editing/execCommand/findString.html = MISSING
-BUGWK84839 : editing/execCommand/indent-empty-root.html = MISSING
-BUGWK84839 : editing/execCommand/indent-list-item.html = MISSING
-BUGWK84839 : editing/execCommand/indent-selection.html = MISSING
-BUGWK84839 : editing/execCommand/insert-list-and-stitch.html = MISSING
-BUGWK84839 : editing/execCommand/insertHorizontalRule.html = MISSING
-BUGWK84839 : editing/execCommand/insertImage.html = MISSING
-BUGWK84839 : editing/execCommand/nsresponder-indent.html = MISSING
-BUGWK84839 : editing/execCommand/nsresponder-outdent.html = MISSING
-BUGWK84839 : editing/execCommand/outdent-blockquote-test1.html = MISSING
-BUGWK84839 : editing/execCommand/outdent-blockquote-test2.html = MISSING
-BUGWK84839 : editing/execCommand/outdent-blockquote-test3.html = MISSING
-BUGWK84839 : editing/execCommand/outdent-blockquote-test4.html = MISSING
-BUGWK84839 : editing/execCommand/paste-1.html = MISSING
-BUGWK84839 : editing/execCommand/paste-2.html = MISSING
-BUGWK84839 : editing/execCommand/print.html = MISSING
-BUGWK84839 : editing/execCommand/remove-list-from-range-selection.html = MISSING
-BUGWK84839 : editing/execCommand/remove-list-item-1.html = MISSING
-BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 
 // DRT doesn't check for isPrinting().
 BUGWK87226 : printing/iframe-print.html = TEXT

@@ -1,3 +1,84 @@
+2012-05-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Add baselines for execCommand tests which are missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=84839
+
+        Unreviewed gardening, add EFL baselines for execCommand tests and move a
+        few tests which rely on copy & paste functionality to test_expectations.txt.
+
+        * platform/efl/editing/execCommand/4580583-1-expected.png: Added.
+        * platform/efl/editing/execCommand/4580583-1-expected.txt: Added.
+        * platform/efl/editing/execCommand/4580583-2-expected.png: Added.
+        * platform/efl/editing/execCommand/4580583-2-expected.txt: Added.
+        * platform/efl/editing/execCommand/4641880-1-expected.png: Added.
+        * platform/efl/editing/execCommand/4641880-1-expected.txt: Added.
+        * platform/efl/editing/execCommand/4641880-2-expected.png: Added.
+        * platform/efl/editing/execCommand/4641880-2-expected.txt: Added.
+        * platform/efl/editing/execCommand/4747450-expected.png: Added.
+        * platform/efl/editing/execCommand/4747450-expected.txt: Added.
+        * platform/efl/editing/execCommand/4916402-expected.png: Added.
+        * platform/efl/editing/execCommand/4916402-expected.txt: Added.
+        * platform/efl/editing/execCommand/4916541-expected.png: Added.
+        * platform/efl/editing/execCommand/4916541-expected.txt: Added.
+        * platform/efl/editing/execCommand/4924441-expected.png: Added.
+        * platform/efl/editing/execCommand/4924441-expected.txt: Added.
+        * platform/efl/editing/execCommand/5080333-1-expected.png: Added.
+        * platform/efl/editing/execCommand/5080333-1-expected.txt: Added.
+        * platform/efl/editing/execCommand/5080333-2-expected.png: Added.
+        * platform/efl/editing/execCommand/5080333-2-expected.txt: Added.
+        * platform/efl/editing/execCommand/5136770-expected.png: Added.
+        * platform/efl/editing/execCommand/5136770-expected.txt: Added.
+        * platform/efl/editing/execCommand/5138441-expected.png: Added.
+        * platform/efl/editing/execCommand/5138441-expected.txt: Added.
+        * platform/efl/editing/execCommand/5142012-1-expected.png: Added.
+        * platform/efl/editing/execCommand/5142012-1-expected.txt: Added.
+        * platform/efl/editing/execCommand/5142012-2-expected.png: Added.
+        * platform/efl/editing/execCommand/5142012-2-expected.txt: Added.
+        * platform/efl/editing/execCommand/5190926-expected.png: Added.
+        * platform/efl/editing/execCommand/5190926-expected.txt: Added.
+        * platform/efl/editing/execCommand/5481523-expected.png: Added.
+        * platform/efl/editing/execCommand/5481523-expected.txt: Added.
+        * platform/efl/editing/execCommand/5482023-expected.png: Added.
+        * platform/efl/editing/execCommand/5482023-expected.txt: Added.
+        * platform/efl/editing/execCommand/5569741-expected.png: Added.
+        * platform/efl/editing/execCommand/5569741-expected.txt: Added.
+        * platform/efl/editing/execCommand/create-list-with-hr-expected.png: Added.
+        * platform/efl/editing/execCommand/create-list-with-hr-expected.txt: Added.
+        * platform/efl/editing/execCommand/findString-2-expected.png: Added.
+        * platform/efl/editing/execCommand/findString-2-expected.txt: Added.
+        * platform/efl/editing/execCommand/findString-expected.png: Added.
+        * platform/efl/editing/execCommand/findString-expected.txt: Added.
+        * platform/efl/editing/execCommand/format-block-with-trailing-br-expected.png: Added.
+        * platform/efl/editing/execCommand/indent-empty-root-expected.png: Added.
+        * platform/efl/editing/execCommand/indent-empty-root-expected.txt: Added.
+        * platform/efl/editing/execCommand/indent-list-item-expected.png: Added.
+        * platform/efl/editing/execCommand/indent-list-item-expected.txt: Added.
+        * platform/efl/editing/execCommand/indent-selection-expected.png: Added.
+        * platform/efl/editing/execCommand/indent-selection-expected.txt: Added.
+        * platform/efl/editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * platform/efl/editing/execCommand/insert-list-and-stitch-expected.txt: Added.
+        * platform/efl/editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * platform/efl/editing/execCommand/insertHorizontalRule-expected.txt: Added.
+        * platform/efl/editing/execCommand/insertImage-expected.png: Added.
+        * platform/efl/editing/execCommand/insertImage-expected.txt: Added.
+        * platform/efl/editing/execCommand/nsresponder-indent-expected.png: Added.
+        * platform/efl/editing/execCommand/nsresponder-indent-expected.txt: Added.
+        * platform/efl/editing/execCommand/nsresponder-outdent-expected.png: Added.
+        * platform/efl/editing/execCommand/nsresponder-outdent-expected.txt: Added.
+        * platform/efl/editing/execCommand/outdent-blockquote-test1-expected.txt: Added.
+        * platform/efl/editing/execCommand/outdent-blockquote-test2-expected.txt: Added.
+        * platform/efl/editing/execCommand/outdent-blockquote-test3-expected.txt: Added.
+        * platform/efl/editing/execCommand/outdent-blockquote-test4-expected.txt: Added.
+        * platform/efl/editing/execCommand/print-expected.png: Added.
+        * platform/efl/editing/execCommand/print-expected.txt: Added.
+        * platform/efl/editing/execCommand/remove-list-from-range-selection-expected.png: Added.
+        * platform/efl/editing/execCommand/remove-list-from-range-selection-expected.txt: Added.
+        * platform/efl/editing/execCommand/remove-list-item-1-expected.png: Added.
+        * platform/efl/editing/execCommand/remove-list-item-1-expected.txt: Added.
+        * platform/efl/editing/execCommand/selectAll-expected.png: Added.
+        * platform/efl/editing/execCommand/selectAll-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce virtual resource for inspector stylesheet.

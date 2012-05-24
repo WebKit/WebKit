@@ -1,0 +1,24 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 765x37
+          text run at (0,0) width 765: "This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected with a double"
+          text run at (0,18) width 34: "click."
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 25x19
+          text run at (0,0) width 25: "foo "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderText {#text} at (25,0) size 20x19
+            text run at (25,0) width 20: "bar"
+        RenderText {#text} at (45,0) size 101x19
+          text run at (45,0) width 101: " baz foo bar baz"
+selection start: position 9 of child 2 {#text} of child 2 {DIV} of body
+selection end:   position 12 of child 2 {#text} of child 2 {DIV} of body
