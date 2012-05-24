@@ -487,6 +487,9 @@ static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifier
     if (charCode == '\x1B')
         return new KeyEventInfo("Escape", "Escape", modifiers);
 
+    if ((character->length() == 1) && (charCode >= 'A' && charCode <= 'Z'))
+        modifiers |= EvasKeyModifierShift;
+
     return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
 }
 

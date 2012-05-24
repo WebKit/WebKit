@@ -1,3 +1,12 @@
+2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] [DRT] keyboard-related tests do not pass
+        https://bugs.webkit.org/show_bug.cgi?id=85369
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/efl/Skipped: Unskipped keyboard-related tests.
+
 2012-05-24  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Widen test suppressions to include linux crash.

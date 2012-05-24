@@ -1,3 +1,17 @@
+2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] [DRT] keyboard-related tests do not pass
+        https://bugs.webkit.org/show_bug.cgi?id=85369
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add SHIFT modifier for capital letters as VK_ 
+        codes do not distinguish between lows and caps and also to be consistent
+        with other ports which send caps as lowercase letters with the shift key down.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyNameFromJSValue): 
+
 2012-05-24  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Let the client give local files universal access on a case by case basis
