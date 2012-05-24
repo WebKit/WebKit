@@ -1404,7 +1404,7 @@ const char* ewk_view_uri_get(const Evas_Object* ewkView)
     return ewk_frame_uri_get(smartData->main_frame);
 }
 
-const char* ewk_view_title_get(const Evas_Object* ewkView)
+const Ewk_Text_With_Direction* ewk_view_title_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     return ewk_frame_title_get(smartData->main_frame);
@@ -2953,9 +2953,9 @@ void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active)
  *
  * Emits signal: "title,changed" with pointer to new title string.
  */
-void ewk_view_title_set(Evas_Object* ewkView, const char* title)
+void ewk_view_title_set(Evas_Object* ewkView, const Ewk_Text_With_Direction* title)
 {
-    DBG("ewkView=%p, title=%s", ewkView, title ? title : "(null)");
+    DBG("ewkView=%p, title=%s", ewkView, (title && title->string) ? title->string : "(null)");
     evas_object_smart_callback_call(ewkView, "title,changed", (void*)title);
 }
 

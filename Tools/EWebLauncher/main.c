@@ -229,22 +229,22 @@ on_ecore_evas_resize(Ecore_Evas *ee)
 }
 
 static void
-title_set(Ecore_Evas *ee, const char *title, int progress)
+title_set(Ecore_Evas *ee, const Ewk_Text_With_Direction *title, int progress)
 {
     const char *appname = "EFL Test Launcher";
     const char *separator = " - ";
     char label[4096];
     int size;
 
-    if (!title || !strcmp(title, "")) {
+    if (!title || !title->string || !strcmp(title->string, "")) {
         ecore_evas_title_set(ee, appname);
         return;
     }
 
     if (progress < 100)
-        size = snprintf(label, sizeof(label), "%s (%d%%)%s%s", title, progress, separator, appname);
+        size = snprintf(label, sizeof(label), "%s (%d%%)%s%s", title->string, progress, separator, appname);
     else
-        size = snprintf(label, sizeof(label), "%s %s%s", title, separator, appname);
+        size = snprintf(label, sizeof(label), "%s %s%s", title->string, separator, appname);
 
     if (size >= (int)sizeof(label))
         return;
@@ -256,7 +256,7 @@ static void
 on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
     ELauncher *app = (ELauncher *)user_data;
-    const char *title = (const char *)event_info;
+    const Ewk_Text_With_Direction *title = (const Ewk_Text_With_Direction *)event_info;
 
     title_set(app->ee, title, 100);
 }
@@ -492,7 +492,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
                    x, y,
                    ht->x, ht->y,
                    ht->bounding_box.x, ht->bounding_box.y, ht->bounding_box.w, ht->bounding_box.h,
-                   ht->title,
+                   ht->title.string,
                    ht->alternate_text,
                    ht->frame, evas_object_name_get(ht->frame),
                    ht->link.text,

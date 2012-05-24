@@ -1,3 +1,21 @@
+2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] The EFL port has no support for title directionality
+        https://bugs.webkit.org/show_bug.cgi?id=86462
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update "title,changed" signal handlers in DRT and EWebLauncher to
+        reflect the change from const char* to Ewk_Text_With_Direction* type
+        for the title.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onTitleChanged):
+        * EWebLauncher/main.c:
+        (title_set):
+        (on_title_changed):
+        (on_key_down):
+
 2012-05-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change EFL debug build name with more detail one

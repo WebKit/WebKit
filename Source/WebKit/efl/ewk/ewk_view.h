@@ -86,7 +86,7 @@
  *  - "statusbar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if statusbar is
  *    visible; @c EINA_FALSE, otherwise.
  *  - "statusbar,visible,set", Eina_Bool: sets statusbar visibility.
- *  - "title,changed", const char*: title of the main frame was changed.
+ *  - "title,changed", Ewk_Text_With_Direction*: title of the main frame was changed.
  *  - "toolbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if toolbar
  *    is visible; @c EINA_FALSE, otherwise.
  *  - "toolbars,visible,set", Eina_Bool: sets toolbar visibility.
@@ -751,7 +751,7 @@ EAPI const char  *ewk_view_uri_get(const Evas_Object *o);
  *
  * @return current title on success or @c 0 on failure
  */
-EAPI const char  *ewk_view_title_get(const Evas_Object *o);
+EAPI const Ewk_Text_With_Direction  *ewk_view_title_get(const Evas_Object *o);
 
 /**
  * Queries if the main frame is editable.

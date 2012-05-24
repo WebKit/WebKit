@@ -616,13 +616,15 @@ void FrameLoaderClientEfl::dispatchDidStartProvisionalLoad()
 
 void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
-    // FIXME: use direction of title.
+    Ewk_Text_With_Direction ewkTitle;
     CString cs = title.string().utf8();
-    ewk_frame_title_set(m_frame, cs.data());
+    ewkTitle.string = cs.data();
+    ewkTitle.direction = (title.direction() == LTR) ? EWK_TEXT_DIRECTION_LEFT_TO_RIGHT : EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
+    ewk_frame_title_set(m_frame, &ewkTitle);
 
     if (ewk_view_frame_main_get(m_view) != m_frame)
         return;
-    ewk_view_title_set(m_view, cs.data());
+    ewk_view_title_set(m_view, &ewkTitle);
 }
 
 void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType iconType)

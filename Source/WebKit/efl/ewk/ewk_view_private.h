@@ -49,7 +49,7 @@ const char ewkViewSingleName[] = "Ewk_View_Single";
 
 void ewk_view_ready(Evas_Object* ewkView);
 void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active);
-void ewk_view_title_set(Evas_Object* ewkView, const char* title);
+void ewk_view_title_set(Evas_Object* ewkView, const Ewk_Text_With_Direction* title);
 void ewk_view_uri_changed(Evas_Object* ewkView);
 void ewk_view_load_document_finished(Evas_Object* ewkView, Evas_Object* frame);
 void ewk_view_load_started(Evas_Object* ewkView, Evas_Object* ewkFrame);

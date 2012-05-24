@@ -73,7 +73,7 @@
  *  - "resource,response,received", Ewk_Frame_Resource_Response*: reports that a response
  *    to a resource request was received.
  *  - "state,save", void: frame's state will be saved as a history item.
- *  - "title,changed", const char*: title of the main frame was changed.
+ *  - "title,changed", Ewk_Text_With_Direction*: title of the main frame was changed.
  *  - "uri,changed", const char*: uri of the main frame was changed.
  *  - "xss,detected", Ewk_Frame_Xss_Notification*: reflected XSS is encountered in the page and suppressed.
  */
@@ -152,6 +152,21 @@ struct _Ewk_Frame_Resource_Messages {
     Ewk_Frame_Resource_Response *redirect_response; /**< redirect response, can not be changed */
 };
 
+/// Enum containing text directionality values.
+typedef enum {
+    EWK_TEXT_DIRECTION_DEFAULT, /**< Natural writing direction ("inherit") */
+    EWK_TEXT_DIRECTION_LEFT_TO_RIGHT,
+    EWK_TEXT_DIRECTION_RIGHT_TO_LEFT
+} Ewk_Text_Direction;
+
+/// Creates a type name for Ewk_Text_With_Direction.
+typedef struct _Ewk_Text_With_Direction Ewk_Text_With_Direction;
+
+struct _Ewk_Text_With_Direction {
+    const char *string;
+    Ewk_Text_Direction direction;
+};
+
 /// Creates a type name for Ewk_Frame_Xss_Notification.
 typedef struct _Ewk_Frame_Xss_Notification Ewk_Frame_Xss_Notification;
 
@@ -196,7 +211,7 @@ struct _Ewk_Hit_Test {
     struct {
         int x, y, w, h;
     } bounding_box; /**< DEPRECATED, see ewk_frame_hit_test_new() */
-    const char *title; /**< title of the element */
+    Ewk_Text_With_Direction title; /**< title of the element */
     const char *alternate_text; /**< the alternate text for image, area, input and applet */
     Evas_Object *frame; /**< the pointer to frame where hit test was requested */
     struct {
@@ -351,7 +366,7 @@ EAPI const char  *ewk_frame_uri_get(const Evas_Object *o);
  *
  * @return frame title on success or @c 0 on failure
  */
-EAPI const char  *ewk_frame_title_get(const Evas_Object *o);
+EAPI const Ewk_Text_With_Direction  *ewk_frame_title_get(const Evas_Object *o);
 
 /**
  * Gets the name of this frame.

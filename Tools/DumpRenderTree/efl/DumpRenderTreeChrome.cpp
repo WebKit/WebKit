@@ -431,15 +431,15 @@ void DumpRenderTreeChrome::onFrameIconChanged(void*, Evas_Object* frame, void*)
 
 void DumpRenderTreeChrome::onFrameTitleChanged(void*, Evas_Object* frame, void* eventInfo)
 {
-    const char* titleText = static_cast<const char*>(eventInfo);
+    const Ewk_Text_With_Direction* titleText = static_cast<const Ewk_Text_With_Direction*>(eventInfo);
 
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
-        printf("%s - didReceiveTitle: %s\n", frameName.utf8().data(), titleText);
+        printf("%s - didReceiveTitle: %s\n", frameName.utf8().data(), (titleText && titleText->string) ? titleText->string : "");
     }
 
     if (!done && gLayoutTestController->dumpTitleChanges())
-        printf("TITLE CHANGED: %s\n", titleText);
+        printf("TITLE CHANGED: %s\n", (titleText && titleText->string) ? titleText->string : "");
 }
 
 void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eventInfo)
