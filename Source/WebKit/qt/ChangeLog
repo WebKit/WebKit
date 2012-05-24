@@ -1,3 +1,13 @@
+2012-05-24  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt]  Fix Webkit1 + V8 build.
+        https://bugs.webkit.org/show_bug.cgi?id=87368
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+
 2012-05-24  Steffen Imhof  <steffen.imhof@basyskom.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67093

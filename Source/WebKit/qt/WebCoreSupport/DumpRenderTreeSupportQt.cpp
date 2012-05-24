@@ -918,7 +918,8 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, in
     ScriptSourceCode source(script);
     Vector<ScriptSourceCode> sources;
     sources.append(source);
-    proxy->evaluateInIsolatedWorld(0, sources, true);
+    Vector<ScriptValue> result;
+    proxy->evaluateInIsolatedWorld(0, sources, &result);
 #endif
 }
 

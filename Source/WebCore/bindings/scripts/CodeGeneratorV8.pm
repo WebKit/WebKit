@@ -2848,6 +2848,8 @@ END
 void ${className}::installPerContextProperties(v8::Handle<v8::Object> instance, ${implClassName}* impl)
 {
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
+    // When building QtWebkit with V8 this variable is unused when none of the features are enabled.
+    UNUSED_PARAM(proto);
 END
         # Setup the enable-by-settings attrs if we have them
         foreach my $runtimeAttr (@enabledPerContext) {

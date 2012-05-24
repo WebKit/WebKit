@@ -1,3 +1,17 @@
+2012-05-24  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt]  Fix Webkit1 + V8 build.
+        https://bugs.webkit.org/show_bug.cgi?id=87368
+
+        Reviewed by Eric Seidel.
+
+        No new tests, because this is a buildfix.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+        * bindings/v8/npruntime_impl.h:
+        * bindings/v8/npruntime_priv.h:
+
 2012-05-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Only display frames created with memory allocations meant to be displayed

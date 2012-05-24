@@ -34,7 +34,7 @@
 #if PLATFORM(CHROMIUM)
 #include <bindings/npruntime.h>
 #else
-#include "npruntime.h"
+#include "npruntime_internal.h"
 #endif
 
 // This file exists to support WebCore, which expects to be able to call upon
