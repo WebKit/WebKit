@@ -1,11 +1,11 @@
 Test that inline seamless iframes 'shrink-wrap' their contents like inline-blocks do.
-FAIL window.getComputedStyle(iframe1).display should be inline-block. Was inline.
-FAIL window.getComputedStyle(iframe2).display should be inline-block. Was inline.
-FAIL window.getComputedStyle(iframe1).width should be 150px. Was 300px.
-FAIL window.getComputedStyle(iframe1).height should be 50px. Was 150px.
-FAIL window.getComputedStyle(parent1).height should be 50px. Was 200px.
-FAIL window.getComputedStyle(iframe2).width should be 100px. Was 300px.
-FAIL window.getComputedStyle(iframe2).height should be 100px. Was 150px.
-FAIL window.getComputedStyle(parent2).height should be 150px. Was 200px.
+PASS window.getComputedStyle(iframe1).display is "inline-block"
+PASS window.getComputedStyle(iframe2).display is "inline-block"
+PASS window.getComputedStyle(iframe1).width is "150px"
+FAIL window.getComputedStyle(iframe1).height should be 50px. Was 100px.
+FAIL window.getComputedStyle(parent1).height should be 50px. Was 100px.
+PASS window.getComputedStyle(iframe2).width is "100px"
+PASS window.getComputedStyle(iframe2).height is "100px"
+PASS window.getComputedStyle(parent2).height is "150px"
 
 

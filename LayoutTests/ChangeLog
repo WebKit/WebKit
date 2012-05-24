@@ -1,3 +1,29 @@
+2012-05-23  Eric Seidel  <eric@webkit.org>
+
+        Add seamless layout code (and pass most of the remaining seamless tests)
+        https://bugs.webkit.org/show_bug.cgi?id=86608
+
+        Reviewed by Ojan Vafai.
+
+        Add a test for percent height in child documents, as well as
+        disabling the expand-to-fill-viewport quirk of html/body elements
+        in quirks mode.
+        Also update all the expectations now that we pass almost all the tests.
+
+        * fast/frames/seamless/resources/percent-square.html: Added.
+        * fast/frames/seamless/resources/two-inline-blocks.html:
+        * fast/frames/seamless/seamless-basic-expected.txt:
+        * fast/frames/seamless/seamless-float-expected.txt:
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt:
+        * fast/frames/seamless/seamless-inherited-origin.html:
+        * fast/frames/seamless/seamless-inline-expected.txt:
+        * fast/frames/seamless/seamless-nested-expected.txt:
+        * fast/frames/seamless/seamless-percent-height-expected.txt: Added.
+        * fast/frames/seamless/seamless-percent-height.html: Added.
+        * fast/frames/seamless/seamless-quirks-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-flag-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-srcdoc-expected.txt:
+
 2012-05-23  Tony Chang  <tony@chromium.org>
 
         auto margins on flexbox should allocate space in the cross direction

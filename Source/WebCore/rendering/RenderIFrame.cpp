@@ -63,6 +63,10 @@ void RenderIFrame::computeLogicalHeight()
 
 void RenderIFrame::computeLogicalWidth()
 {
+    // When we're seamless, we behave like a block. Thankfully RenderBox has all the right logic for this.
+    if (isSeamless())
+        return RenderBox::computeLogicalWidth();
+
     RenderPart::computeLogicalWidth();
     if (!flattenFrame())
         return;
@@ -79,13 +83,64 @@ void RenderIFrame::computeLogicalWidth()
     }
 }
 
-bool RenderIFrame::flattenFrame()
+bool RenderIFrame::shouldComputeSizeAsReplaced() const
+{
+    // When we're seamless, we use normal block/box sizing code except when inline.
+    return !isSeamless();
+}
+
+bool RenderIFrame::isInlineBlockOrInlineTable() const
+{
+    return isSeamless() && isInline();
+}
+
+LayoutUnit RenderIFrame::minPreferredLogicalWidth() const
+{
+    if (!isSeamless())
+        return RenderFrameBase::minPreferredLogicalWidth();
+
+    RenderView* childRoot = contentRootRenderer();
+    if (!childRoot)
+        return 0;
+
+    return childRoot->minPreferredLogicalWidth();
+}
+
+LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
+{
+    if (!isSeamless())
+        return RenderFrameBase::maxPreferredLogicalWidth();
+
+    RenderView* childRoot = contentRootRenderer();
+    if (!childRoot)
+        return 0;
+
+    return childRoot->maxPreferredLogicalWidth();
+}
+
+bool RenderIFrame::isSeamless() const
+{
+    return node() && node()->hasTagName(iframeTag) && static_cast<HTMLIFrameElement*>(node())->shouldDisplaySeamlessly();
+}
+
+RenderView* RenderIFrame::contentRootRenderer() const
+{
+    // FIXME: Is this always a valid cast? What about plugins?
+    ASSERT(!widget() || widget()->isFrameView());
+    FrameView* childFrameView = static_cast<FrameView*>(widget());
+    return childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
+}
+
+bool RenderIFrame::flattenFrame() const
 {
     if (!node() || !node()->hasTagName(iframeTag))
         return false;
 
     HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
     Frame* frame = element->document()->frame();
+
+    if (isSeamless())
+        return false; // Seamless iframes are already "flat", don't try to flatten them.
 
     bool enabled = frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
 
@@ -105,19 +160,49 @@ bool RenderIFrame::flattenFrame()
     return boundingRect.maxX() > 0 && boundingRect.maxY() > 0;
 }
 
+void RenderIFrame::layoutSeamlessly()
+{
+    computeLogicalWidth();
+    // FIXME: Containers set their height to 0 before laying out their kids (as we're doing here)
+    // however, this causes FrameView::layout() to add vertical scrollbars, incorrectly inflating
+    // the resulting contentHeight(). We'll need to make FrameView::layout() smarter.
+    setLogicalHeight(0);
+    updateWidgetPosition(); // Tell the Widget about our new width/height (it will also layout the child document).
+
+    // Laying out our kids is normally responsible for adjusting our height, so we set it here.
+    // Replaced elements do not respect padding, so we just add border to the child's height.
+    // FIXME: It's possible that seamless iframes (since they act like divs) *should* respect padding.
+    FrameView* childFrameView = static_cast<FrameView*>(widget());
+    if (childFrameView) // Widget should never be null during layout(), but just in case.
+        setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom());
+    computeLogicalHeight();
+
+    updateWidgetPosition(); // Notify the Widget of our final height.
+
+    // Assert that the child document did a complete layout.
+    RenderView* childRoot = childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
+    ASSERT(!childFrameView || !childFrameView->layoutPending());
+    ASSERT_UNUSED(childRoot, !childRoot || !childRoot->needsLayout());
+}
+
 void RenderIFrame::layout()
 {
     ASSERT(needsLayout());
 
-    RenderPart::computeLogicalWidth();
-    RenderPart::computeLogicalHeight();
-
     if (flattenFrame()) {
+        RenderPart::computeLogicalWidth();
+        RenderPart::computeLogicalHeight();
         layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
+        // FIXME: Is early return really OK here? What about transform/overflow code below?
         return;
+    } else if (isSeamless()) {
+        layoutSeamlessly();
+        // Do not return so as to share the layer and overflow updates below.
+    } else {
+        computeLogicalWidth();
+        // No kids to layout as a replaced element.
+        computeLogicalHeight();
     }
-
-    RenderPart::layout();
 
     m_overflow.clear();
     addVisualEffectOverflow();

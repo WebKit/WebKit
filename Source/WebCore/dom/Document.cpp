@@ -1660,8 +1660,12 @@ void Document::scheduleForcedStyleRecalc()
 
 void Document::scheduleStyleRecalc()
 {
-    // FIXME: In the seamless case, we should likely schedule a style recalc
-    // on our parent and instead return early here.
+    if (shouldDisplaySeamlesslyWithParent()) {
+        // When we're seamless, our parent document manages our style recalcs.
+        ownerElement()->setNeedsStyleRecalc();
+        ownerElement()->document()->scheduleStyleRecalc();
+        return;
+    }
 
     if (m_styleRecalcTimer.isActive() || inPageCache())
         return;
@@ -1717,8 +1721,12 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
-    // FIXME: In the seamless case, we may wish to exit early in the child after recalcing our parent chain.
-    // I have not yet found a test which requires such.
+    // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
+    // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
+    // before setting the DOMWindow on the Frame, or the SecurityOrigin on the document. The attach, in turn
+    // resolves style (here) and then when we resolve style on the parent chain, we may end up
+    // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
+    // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
     if (m_hasDirtyStyleResolver)
         updateActiveStylesheets(RecalcStyleImmediately);

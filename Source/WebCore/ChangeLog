@@ -1,3 +1,60 @@
+2012-05-23  Eric Seidel  <eric@webkit.org>
+
+        Add seamless layout code (and pass most of the remaining seamless tests)
+        https://bugs.webkit.org/show_bug.cgi?id=86608
+
+        Reviewed by Ojan Vafai.
+
+        This patch contains almost all the layout changes needed for seamless iframes.
+        I removed the scroll-bar avoiding code at the last moment, as it didn't
+        work for platforms other than mac-lion.  I'll add that, as well as the
+        HTMLIFrameElement.seamless idl attribute in a follow-up patch.
+
+        Seamless iframes piggy-back a bit on the existing frame-flattening
+        logic, however seamless is different from frame-flattening in a few ways:
+        - Frame flattening can only ever make an iframe larger (seamless just behaves like a normal div).
+        - Frame flattening disables scrollbars (seamless frames behave like normal overflow: auto divs).
+        - Seamless only has to work with iframes (flattening works with frame/frameset as well).
+        - Seamless support shrink-wrap size negotiation when the iframe is inline.
+
+        Test: fast/frames/seamless/seamless-percent-height.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): map inline -> inline-block for seamless iframes.
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+         - Seamless iframes don't manage their own style recalc.
+        (WebCore::Document::recalcStyle):
+         - We should make sure our parent is resolved before we are, but currently that causes some tests to crash
+           I don't have a test to demonstrate this need yet, as presumably it's fulfilled through other codepaths atm.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayout): Do the cheaper check first.
+        (WebCore::FrameView::isInChildFrameWithFrameFlattening): Make frameview layout abort child layouts like how frame flattening does.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToViewport): Disable the stretch-to-viewport quirk for seamless iframes (it makes no sense and breaks the layout code).
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::computeLogicalHeight):
+         - This function is needed for the child document to participate in the normal block shrink-wrap algorithm.
+           Thankfully all the shrink-wrap logic is in RenderBox instead of RenderBlock. In the future we may make
+           RenderIframe a RenderBlock for the seamless case. We may just split RenderIframe into two renderers.
+        (WebCore::RenderIFrame::computeLogicalWidth):
+        (WebCore::RenderIFrame::shouldComputeSizeAsReplaced):
+         - seamless iframes behave like blocks, not inline replaced elements.
+        (WebCore):
+        (WebCore::RenderIFrame::isInlineBlockOrInlineTable):
+         - Behave like an inline-block when marked inline.
+        (WebCore::RenderIFrame::minPreferredLogicalWidth):
+         - When asked for our pref widths, return those of our child document.
+        (WebCore::RenderIFrame::maxPreferredLogicalWidth):
+        (WebCore::RenderIFrame::isSeamless): helper function
+        (WebCore::RenderIFrame::contentRootRenderer): helper function
+        (WebCore::RenderIFrame::flattenFrame): seamless iframes never use the frame-flattening feature.
+        (WebCore::RenderIFrame::layoutSeamlessly): The guts of seamless layout.
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderIFrame.h:
+        (WebCore):
+        (RenderIFrame):
+
 2012-05-23  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] GraphicsContext should avoid converting rotation angle to degrees

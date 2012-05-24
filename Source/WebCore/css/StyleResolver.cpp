@@ -2128,6 +2128,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->hasFilter()))
         style->setTransformStyle3D(TransformStyle3DFlat);
 
+    // Seamless iframes behave like blocks. Map their display to inline-block when marked inline.
+    if (e && e->hasTagName(iframeTag) && style->display() == INLINE && static_cast<HTMLIFrameElement*>(e)->shouldDisplaySeamlessly())
+        style->setDisplay(INLINE_BLOCK);
+
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
