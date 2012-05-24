@@ -102,9 +102,9 @@ void WebKitBlobBuilder::append(Blob* blob)
     if (!blob)
         return;
     if (blob->isFile()) {
+        File* file = toFile(blob);
         // If the blob is file that is not snapshoted, capture the snapshot now.
         // FIXME: This involves synchronous file operation. We need to figure out how to make it asynchronous.
-        File* file = static_cast<File*>(blob);
         long long snapshotSize;
         double snapshotModificationTime;
         file->captureSnapshot(snapshotSize, snapshotModificationTime);

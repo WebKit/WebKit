@@ -111,6 +111,18 @@ private:
 #endif
 };
 
+inline File* toFile(Blob* blob)
+{
+    ASSERT(!blob || blob->isFile());
+    return static_cast<File*>(blob);
+}
+
+inline const File* toFile(const Blob* blob)
+{
+    ASSERT(!blob || blob->isFile());
+    return static_cast<const File*>(blob);
+}
+
 } // namespace WebCore
 
 #endif // File_h

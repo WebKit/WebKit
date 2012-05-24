@@ -1,3 +1,35 @@
+2012-05-24  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: introduce toFile() to reduce static cast from Blob to File
+        https://bugs.webkit.org/show_bug.cgi?id=87234
+
+        Reviewed by Eric Seidel.
+
+        No new tests as this must have no side effect.
+
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::toV8):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::webkitSlice):
+        * fileapi/Blob.h:
+        (Blob):
+        * fileapi/File.h:
+        (WebCore::toFile): Added.
+        (WebCore):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readAsArrayBuffer):
+        (WebCore::FileReader::readAsBinaryString):
+        (WebCore::FileReader::readAsText):
+        (WebCore::FileReader::readAsDataURL):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::append):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::files):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendKeyValuePairItems):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2012-05-24  Darin Adler  <darin@apple.com>
 
         SVGElement::addEventListener has peculiar RefPtr usage

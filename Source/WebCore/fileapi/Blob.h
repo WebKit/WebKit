@@ -82,7 +82,7 @@ protected:
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
     KURL m_internalURL;
-    
+
     String m_type;
     long long m_size;
 };

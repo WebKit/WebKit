@@ -313,7 +313,7 @@ PassRefPtr<FileList> ClipboardChromium::files() const
         if (m_dataObject->item(i)->kind() == DataTransferItem::kindFile) {
             RefPtr<Blob> blob = m_dataObject->item(i)->getAsFile();
             if (blob && blob->isFile())
-                files->append(static_cast<File*>(blob.get()));
+                files->append(toFile(blob.get()));
         }
     }
 

@@ -50,7 +50,7 @@ v8::Handle<v8::Value> toV8(Blob* impl, v8::Isolate* isolate)
         return v8::Null();
 
     if (impl->isFile())
-        return toV8(static_cast<File*>(impl), isolate);
+        return toV8(toFile(impl), isolate);
 
     return V8Blob::wrap(impl, isolate);
 }

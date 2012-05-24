@@ -205,8 +205,8 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             if (value.blob()) {
                 String name;
                 if (value.blob()->isFile()) {
+                    File* file = toFile(value.blob());
                     // For file blob, use the filename (or relative path if it is present) as the name.
-                    File* file = static_cast<File*>(value.blob());
 #if ENABLE(DIRECTORY_UPLOAD)                
                     name = file->webkitRelativePath().isEmpty() ? file->name() : file->webkitRelativePath();
 #else
@@ -248,9 +248,10 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
             appendData(header.data(), header.size());
             if (value.blob()) {
                 if (value.blob()->isFile()) {
+                    File* file = toFile(value.blob());
                     // Do not add the file if the path is empty.
-                    if (!static_cast<File*>(value.blob())->path().isEmpty())
-                        appendFile(static_cast<File*>(value.blob())->path(), shouldGenerateFile);
+                    if (!file->path().isEmpty())
+                        appendFile(file->path(), shouldGenerateFile);
                 }
 #if ENABLE(BLOB)
                 else
