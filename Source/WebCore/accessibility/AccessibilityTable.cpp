@@ -506,7 +506,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
                 for (int testRow = sectionSpecificRow - 1; testRow >= 0; --testRow) {
                     cell = tableSection->primaryCellAt(testRow, column);
                     // cell overlapped. use this one
-                    ASSERT(cell->rowSpan() >= 1);
+                    ASSERT(!cell || cell->rowSpan() >= 1);
                     if (cell && ((cell->rowIndex() + (cell->rowSpan() - 1)) >= sectionSpecificRow))
                         break;
                     cell = 0;
@@ -517,7 +517,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
                     for (int testCol = column - 1; testCol >= 0; --testCol) {
                         cell = tableSection->primaryCellAt(sectionSpecificRow, testCol);
                         // cell overlapped. use this one
-                        ASSERT(cell->rowSpan() >= 1);
+                        ASSERT(!cell || cell->rowSpan() >= 1);
                         if (cell && ((cell->col() + (cell->colSpan() - 1)) >= column))
                             break;
                         cell = 0;
