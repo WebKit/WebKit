@@ -95,6 +95,15 @@ http/tests/inspector-enabled
 http/tests/inspector
 inspector
 
+# Missing layoutTestController.setMockDeviceOrientation() implementation
+fast/dom/DeviceOrientation/add-listener-from-callback.html
+fast/dom/DeviceOrientation/basic-operation.html
+fast/dom/DeviceOrientation/event-after-navigation.html
+fast/dom/DeviceOrientation/multiple-frames.html
+fast/dom/DeviceOrientation/no-synchronous-events.html
+fast/dom/DeviceOrientation/null-values.html
+fast/dom/DeviceOrientation/updates.html
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS

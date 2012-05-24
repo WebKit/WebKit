@@ -1,28 +1,11 @@
 # Still failing tests after refactored Qt5 and after WEBKIT_TESTFONTS fix.
-editing/pasteboard/4944770-1.html
-editing/pasteboard/4944770-2.html
-editing/selection/select-box.html
-editing/selection/select-element-paragraph-boundary.html
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-fast/dom/Orientation/create-event-orientationchange.html
 fast/dom/Window/Plug-ins.html
-fast/dom/Window/window-properties-device-orientation.html
-fast/forms/HTMLOptionElement_label06.html
-fast/forms/HTMLOptionElement_label07.html
-fast/forms/menulist-separator-painting.html
-fast/forms/select-background-none.html
-fast/forms/select-baseline.html
-fast/forms/selectlist-minsize.html
 fast/frames/sandboxed-iframe-about-blank.html
 fast/frames/sandboxed-iframe-navigation-allowed.html
 fast/images/object-image.html
 fast/js/global-constructors.html
 fast/replaced/invalid-object-with-fallback.html
-fast/replaced/object-with-embed-url-param.html
-fast/replaced/three-selects-break.html
 fast/text/international/arabic-justify.html
-http/tests/inspector/network/network-content-replacement-embed.html
 http/tests/inspector/network/network-embed.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
@@ -35,12 +18,6 @@ fast/forms/textfield-drag-into-disabled.html
 # nrwt pixel test crash
 # https://bugs.webkit.org/show_bug.cgi?id=71688
 editing/pasteboard/data-transfer-items-image-png.html
-
-# [Qt] failures in http/tests/security/contentSecurityPolicy with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=71906
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
 
 # [Qt] fast/events/clear-edit-drag-state.html fails with timeout with Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=76897
@@ -64,16 +41,6 @@ fast/events/remove-target-with-shadow-in-drag.html
 editing/selection/vertical-rl-rtl-extend-line-forward-br.html
 editing/selection/vertical-rl-rtl-extend-line-forward-p.html
 
-# [Qt] New tests introduced in r109104 fails with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=79888
-fast/repaint/percent-minheight-resize.html
-svg/custom/svg-percent-scale-vonly.html
-svg/custom/svg-percent-scale.html
-
-# [Qt] fast/selectors/selection-window-inactive.html fails with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=79890
-fast/selectors/selection-window-inactive.html
-
 # [Qt] tests to be rebaselined after r113968 seem suspicious
 # https://bugs.webkit.org/show_bug.cgi?id=83785
 fast/dom/52776.html
@@ -90,7 +57,6 @@ fast/parser/innerhtml-with-prefixed-elements.xhtml
 fast/parser/xml-colon-entity.html
 fast/parser/xml-declaration-missing-ending-mark.html
 fast/parser/xslt-with-html.xml
-fast/xsl/document-function.xml
 fast/xsl/subframe-location.html
 fast/xsl/transform-to-html.xml
 fast/xsl/utf8-chunks.xml
@@ -136,24 +102,9 @@ http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html
 
 # Unskipped by http://trac.webkit.org/changeset/116409
 # These tests pass on Qt 4.8, but fail on Qt 5. The needs more investigation.
-fast/dom/HTMLTextAreaElement/reset-textarea.html
-fast/dynamic/008.html
-fast/forms/box-shadow-override.html
-fast/forms/form-element-geometry.html
-fast/forms/input-disabled-color.html
-fast/forms/placeholder-pseudo-style.html
-fast/forms/textarea-align.html
-fast/forms/textarea-setinnerhtml.html
-fast/parser/entity-comment-in-textarea.html
-fast/parser/open-comment-in-textarea.html
-fast/table/003.html
-fast/text/basic/003.html
 fast/text/complex-text-opacity.html
-fast/text/large-text-composed-char.html
-fast/text/letter-spacing-negative-opacity.html
 fast/text/whitespace/pre-wrap-overflow-selection.html
 fast/text/word-break.html
-fast/xsl/xslt-entity.xml
 
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452

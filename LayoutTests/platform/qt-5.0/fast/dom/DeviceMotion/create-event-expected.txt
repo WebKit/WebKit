@@ -1,0 +1,24 @@
+Tests that document.createEvent() works with DeviceMotinEvent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof event == 'object' is true
+PASS 'type' in event is true
+PASS 'bubbles' in event is true
+PASS 'cancelable' in event is true
+PASS 'acceleration' in event is true
+PASS 'accelerationIncludingGravity' in event is true
+PASS 'rotationRate' in event is true
+PASS 'interval' in event is true
+PASS typeof event.type == 'string' is true
+PASS typeof event.bubbles == 'boolean' is true
+PASS typeof event.cancelable == 'boolean' is true
+PASS typeof event.acceleration == 'object' is true
+PASS typeof event.accelerationIncludingGravity == 'object' is true
+PASS typeof event.rotationRate == 'object' is true
+PASS typeof event.interval == 'object' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

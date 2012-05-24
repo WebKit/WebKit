@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (204,34) size 279x21
+        text run at (204,34) width 279: " --> This should be outside the textarea."
+layer at (10,10) size 200x46
+  RenderTextControl {TEXTAREA} at (2,2) size 200x46
+    RenderBlock {DIV} at (2,2) size 196x21
+      RenderText {#text} at (0,0) size 27x21
+        text run at (0,0) width 23: "<!--"
+        text run at (23,0) width 4: " "

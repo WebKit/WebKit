@@ -1,0 +1,20 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 783x42
+          text run at (0,0) width 368: "This tests paragraphBoundary selection navigation. "
+          text run at (368,0) width 415: "The caret should be at the end of the paragraph below, just"
+          text run at (0,21) width 137: "after the select box."
+      RenderBlock {DIV} at (0,58) size 784x30
+        RenderMenuList {SELECT} at (2,2) size 37x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 9x21
+            RenderText at (0,0) size 9x21
+              text run at (0,0) width 9: "1"
+caret: position 1 of child 0 {SELECT} of child 2 {DIV} of body
