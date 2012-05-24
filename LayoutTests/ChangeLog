@@ -1,3 +1,9 @@
+2012-05-24  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Add platform specific expectation.
+
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.txt: Added after r117672.
+
 2012-05-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] r118325 made two inspector tests to fail
