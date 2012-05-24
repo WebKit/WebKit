@@ -73,6 +73,7 @@ public:
     WebCore::RenderBoxModelObject* renderer() const;
 
     void pageScaleFactorDidChange();
+    void webPageDestroyed();
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);

@@ -303,10 +303,10 @@ public:
     void exitAcceleratedCompositingMode();
 #endif
 
-#if PLATFORM(MAC)
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
 
+#if PLATFORM(MAC)
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(LayerHostingMode);
 
@@ -701,6 +701,9 @@ private:
 
     WebCore::IntSize m_viewSize;
     OwnPtr<DrawingArea> m_drawingArea;
+
+    HashSet<PluginView*> m_pluginViews;
+
     bool m_useFixedLayout;
 
     bool m_drawsBackground;
@@ -727,9 +730,6 @@ private:
     // The accessibility position of the view.
     WebCore::IntPoint m_accessibilityPosition;
     
-    // All plug-in views on this web page.
-    HashSet<PluginView*> m_pluginViews;
-
     // The layer hosting mode.
     LayerHostingMode m_layerHostingMode;
 

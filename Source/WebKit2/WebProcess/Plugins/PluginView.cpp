@@ -265,16 +265,13 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_npRuntimeObjectMap(this)
     , m_manualStreamState(StreamStateInitial)
 {
-#if PLATFORM(MAC)
     m_webPage->addPluginView(this);
-#endif
 }
 
 PluginView::~PluginView()
 {
-#if PLATFORM(MAC)
-    m_webPage->removePluginView(this);
-#endif
+    if (m_webPage)
+        m_webPage->removePluginView(this);
 
     ASSERT(!m_isBeingDestroyed);
 
@@ -290,7 +287,8 @@ PluginView::~PluginView()
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
 #if PLATFORM(MAC)
-        pluginFocusOrWindowFocusChanged(false);
+        if (m_webPage)
+            pluginFocusOrWindowFocusChanged(false);
 #endif
     }
 
@@ -393,6 +391,11 @@ RenderBoxModelObject* PluginView::renderer() const
 void PluginView::pageScaleFactorDidChange()
 {
     viewGeometryDidChange();
+}
+
+void PluginView::webPageDestroyed()
+{
+    m_webPage = 0;
 }
 
 #if PLATFORM(MAC)    

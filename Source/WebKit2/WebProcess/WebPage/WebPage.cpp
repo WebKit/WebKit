@@ -321,9 +321,8 @@ WebPage::~WebPage()
 
     m_sandboxExtensionTracker.invalidate();
 
-#if PLATFORM(MAC)
-    ASSERT(m_pluginViews.isEmpty());
-#endif
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->webPageDestroyed();
 
 #ifndef NDEBUG
     webPageCounter.decrement();
@@ -1007,10 +1006,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     m_page->setPageScaleFactor(scale, origin);
 
-#if PLATFORM(MAC)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->pageScaleFactorDidChange();
-#endif
 
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
@@ -2483,8 +2480,6 @@ void WebPage::mainFrameDidLayout()
     }
 }
 
-#if PLATFORM(MAC)
-
 void WebPage::addPluginView(PluginView* pluginView)
 {
     ASSERT(!m_pluginViews.contains(pluginView));
@@ -2499,6 +2494,7 @@ void WebPage::removePluginView(PluginView* pluginView)
     m_pluginViews.remove(pluginView);
 }
 
+#if PLATFORM(MAC)
 void WebPage::setWindowIsVisible(bool windowIsVisible)
 {
     m_windowIsVisible = windowIsVisible;
