@@ -1,3 +1,13 @@
+2012-05-24  Robert Hogan  <robert@webkit.org>
+
+        Negative margin block doesn't properly clear a float enclosed by a previous sibling
+        https://bugs.webkit.org/show_bug.cgi?id=10900
+
+        Reviewed by David Hyatt.
+
+        * fast/css/clear-float-sibling-expected.html: Added.
+        * fast/css/clear-float-sibling.html: Added.
+
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
         Clean up the Windows Skipped list a bit.

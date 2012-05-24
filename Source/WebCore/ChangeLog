@@ -1,3 +1,24 @@
+2012-05-24  Robert Hogan  <robert@webkit.org>
+
+        Negative margin block doesn't properly clear a float enclosed by a previous sibling
+        https://bugs.webkit.org/show_bug.cgi?id=10900
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/css/clear-float-sibling.html
+
+        Parent blocks keep a list of child floats that extend out of the parent block and
+        by implication overhang into the parent's siblings. But this doesn't work if the
+        sibling has collapsing margins - it will not find the float in the previous block's
+        list so will ignore the float and fail to clear it.
+
+        RenderBlock:collapseMargins() needs to check if a child's collapsing margin has 
+        reduced the height of the parent up past the bottom of its previous sibling's lowest float
+        and add the now overhanging float to the parent's float list if appropriate.
+        
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+
 2012-05-24  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: introduce toFile() to reduce static cast from Blob to File
