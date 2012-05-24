@@ -2385,6 +2385,9 @@ void WebPagePrivate::clearDocumentData(const Document* documentGoingAway)
     if (m_inRegionScrollStartingNode && m_inRegionScrollStartingNode->document() == documentGoingAway)
         m_inRegionScrollStartingNode = 0;
 
+    if (documentGoingAway->frame())
+        m_inputHandler->frameUnloaded(documentGoingAway->frame());
+
     Node* nodeUnderFatFinger = m_touchEventHandler->lastFatFingersResult().node();
     if (nodeUnderFatFinger && nodeUnderFatFinger->document() == documentGoingAway)
         m_touchEventHandler->resetLastFatFingersResult();

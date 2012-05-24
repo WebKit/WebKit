@@ -1,3 +1,20 @@
+2012-05-24  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] InputHandler can hold a ref on an object when document is cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=87412
+
+        Reviewed by Rob Buis.
+
+        PR 145234.
+
+        When the document data is cleared, notify the InputHandler
+        of the associated frame being unloaded.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData):
+
 2012-05-24  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Implement select popup and remove old hook to air popup
