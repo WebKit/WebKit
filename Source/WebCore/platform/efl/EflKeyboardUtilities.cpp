@@ -114,13 +114,14 @@ static void createWindowsKeyMap()
 {
     windowsKeyMap().set("Return", VK_RETURN);
     windowsKeyMap().set("KP_Return", VK_RETURN);
-    windowsKeyMap().set("Alt_L", VK_MENU);
+    windowsKeyMap().set("Alt_L", VK_LMENU);
+    windowsKeyMap().set("Alt_R", VK_RMENU);
     windowsKeyMap().set("ISO_Level3_Shift", VK_MENU);
     windowsKeyMap().set("Menu", VK_MENU);
-    windowsKeyMap().set("Shift_L", VK_SHIFT);
-    windowsKeyMap().set("Shift_R", VK_SHIFT);
-    windowsKeyMap().set("Control_L", VK_CONTROL);
-    windowsKeyMap().set("Control_R", VK_CONTROL);
+    windowsKeyMap().set("Shift_L", VK_LSHIFT);
+    windowsKeyMap().set("Shift_R", VK_RSHIFT);
+    windowsKeyMap().set("Control_L", VK_LCONTROL);
+    windowsKeyMap().set("Control_R", VK_RCONTROL);
     windowsKeyMap().set("Pause", VK_PAUSE);
     windowsKeyMap().set("Break", VK_PAUSE);
     windowsKeyMap().set("Caps_Lock", VK_CAPITAL);

@@ -438,6 +438,18 @@ static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifier
         return new KeyEventInfo("Print", "", modifiers);
     if (equals(character, "menu"))
         return new KeyEventInfo("Menu", "", modifiers);
+    if (equals(character, "leftControl"))
+        return new KeyEventInfo("Control_L", "", modifiers);
+    if (equals(character, "rightControl"))
+        return new KeyEventInfo("Control_R", "", modifiers);
+    if (equals(character, "leftShift"))
+        return new KeyEventInfo("Shift_L", "", modifiers);
+    if (equals(character, "rightShift"))
+        return new KeyEventInfo("Shift_R", "", modifiers);
+    if (equals(character, "leftAlt"))
+        return new KeyEventInfo("Alt_L", "", modifiers);
+    if (equals(character, "rightAlt"))
+        return new KeyEventInfo("Alt_R", "", modifiers);
     if (equals(character, "F1"))
         return new KeyEventInfo("F1", "", modifiers);
     if (equals(character, "F2"))

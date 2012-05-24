@@ -1,3 +1,12 @@
+2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Modify keycode conversion functions to return keycodes with location information after r118001.
+        https://bugs.webkit.org/show_bug.cgi?id=87203
+
+        Reviewed by Andreas Kling.
+
+        * platform/efl/test_expectations.txt: Unskip fast/events/keydown-leftright-keys.html.
+
 2012-05-24  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Update test expectations for layout test fast/events/click-focus-anchor.html

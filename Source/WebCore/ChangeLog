@@ -1,3 +1,18 @@
+2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Modify keycode conversion functions to return keycodes with location information after r118001.
+        https://bugs.webkit.org/show_bug.cgi?id=87203
+
+        Reviewed by Andreas Kling.
+
+        Add the required changes to make
+        fast/events/keydown-leftright-keys.html pass after r118001.
+
+        * platform/efl/EflKeyboardUtilities.cpp:
+        (WebCore::createWindowsKeyMap): Translate the keycodes for
+        "{left,right}{Shift,Alt,Control}" into the right windows keyboard
+        definitions.
+
 2012-05-24  Claudio Saavedra  <csaavedra@igalia.com>
 
         [Gtk] Wrong cursor used for ne-resize
