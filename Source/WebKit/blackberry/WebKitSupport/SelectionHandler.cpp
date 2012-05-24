@@ -177,7 +177,7 @@ static unsigned short directionOfPointRelativeToRect(const WebCore::IntPoint& po
 
     // Do height movement check first but add padding. We may be off on both x & y axis and only
     // want to move in one direction at a time.
-    if (point.y() + (useTopPadding ? verticalPadding : 0) < rect.y())
+    if (point.y() - (useTopPadding ? verticalPadding : 0) < rect.y())
         return KEYCODE_UP;
     if (point.y() > rect.maxY() + (useBottomPadding ? verticalPadding : 0))
         return KEYCODE_DOWN;
