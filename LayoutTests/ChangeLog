@@ -1,3 +1,9 @@
+2012-05-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, updating chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] compositing/repaint/opacity-between-absolute.html does not pass
