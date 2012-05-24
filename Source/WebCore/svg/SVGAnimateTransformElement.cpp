@@ -45,9 +45,11 @@ PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const 
 
 bool SVGAnimateTransformElement::hasValidAttributeType()
 {
-    if (SVGElement* targetElement = this->targetElement())
-        return determineAnimatedPropertyType(targetElement) == AnimatedTransformList;
-    return false;
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return false;
+
+    return m_animatedPropertyType == AnimatedTransformList;
 }
 
 bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrName)

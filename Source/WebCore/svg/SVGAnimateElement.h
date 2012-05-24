@@ -55,11 +55,12 @@ protected:
 
     virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* oldTarget) OVERRIDE;
 
+    AnimatedPropertyType m_animatedPropertyType;
+
 private:
     SVGAnimatedTypeAnimator* ensureAnimator();
 
     virtual bool hasValidAttributeType();
-    AnimatedPropertyType m_animatedPropertyType;
 
     OwnPtr<SVGAnimatedType> m_fromType;
     OwnPtr<SVGAnimatedType> m_toType;

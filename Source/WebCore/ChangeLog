@@ -1,3 +1,20 @@
+2012-05-24  Philip Rogers  <pdr@google.com>
+
+        Refactor SVGAnimateTransformElement to avoid expensive determineAnimatedPropertyType call
+        https://bugs.webkit.org/show_bug.cgi?id=87309
+
+        Reviewed by Nikolas Zimmermann.
+
+        This is a simple refactor that matches the work done in
+        https://bugs.webkit.org/show_bug.cgi?id=87309 to avoid an expensive call.
+
+        No new tests, no actual effects beyond performance improvement.
+
+        * svg/SVGAnimateElement.h:
+        (SVGAnimateElement):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType):
+
 2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trvial fixes.
