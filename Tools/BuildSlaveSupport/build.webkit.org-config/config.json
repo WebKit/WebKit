@@ -60,7 +60,6 @@
                     { "name": "google-linux-2", "platform": "chromium-linux" },
                     { "name": "google-linux-perf", "platform": "chromium-linux" },
                     { "name": "google-linux-android", "platform": "chromium-android" },
-                    { "name": "google-linux-flexbox", "platform": "chromium-linux" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -275,11 +274,6 @@
                       "slavenames": ["google-linux-perf"]
                     },
                     {
-                      "name": "Chromium Linux Release (Grid Layout)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
-                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-linux-flexbox"]
-                    },
-                    {
                       "name": "Chromium Android Release", "type": "Build", "builddir": "chromium-linux-android",
                       "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-android"]
@@ -318,7 +312,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
-                                       "Chromium Linux Release (Grid Layout)", "Chromium Android Release",
+                                       "Chromium Android Release",
                                        "EFL Linux 64-bit Release", "EFL Linux Debug", "EFL Linux 32-bit Release (Build)",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
