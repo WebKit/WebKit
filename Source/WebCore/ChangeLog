@@ -1,3 +1,18 @@
+2012-05-24  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: Breakpoints Pane should not show context menu with no breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=87340
+
+        Reviewed by Pavel Feldman.
+
+        Removed the method _contextMenu as this would be redundant call
+        because _breakpointContextMenu would take care of showing the remove
+        all breakpoints option.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointContextMenu):
+
 2012-05-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium Mac build fix after r118357.
