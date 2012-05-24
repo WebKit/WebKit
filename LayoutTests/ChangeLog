@@ -1,3 +1,14 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        DOM ClipboardData.setData does not allow writes during clipboard events
+        https://bugs.webkit.org/show_bug.cgi?id=17645
+
+        Add the more affected tests to the Windows Skipped list in order to get the bots green and
+        clean up the entry in the Skipped list to reference the bugs.webkit.org URL instead of the
+        Radar URL.
+
+        * platform/win/Skipped:
+
 2012-05-24  Aaron Colwell  <acolwell@chromium.org>
 
         Move format independent Media Source tests to http/tests/media/media-source

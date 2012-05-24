@@ -140,8 +140,11 @@ svg/hixie/text/003.html
 svg/hixie/text/003a.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
 
-# ASSERT in ClipboardWin::setData <rdar://problem/5015941>
+# DOM ClipboardData.setData does not allow writes during clipboard events
+# https://bugs.webkit.org/show_bug.cgi?id=17645
 editing/execCommand/copy-without-selection.html
+editing/pasteboard/copy-two-pasteboard-types-both-work.html
+editing/pasteboard/pasting-empty-html-falls-back-to-text.html
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
