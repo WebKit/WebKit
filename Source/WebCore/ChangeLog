@@ -1,3 +1,9 @@
+2012-05-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed Web Inspector: remove obsolete isDetailedSnapshot method from HeapSnapshotView.
+
+        * inspector/front-end/HeapSnapshotView.js:
+
 2012-05-24  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: localStorage items are not updated when the storage changes

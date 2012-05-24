@@ -410,15 +410,6 @@ WebInspector.HeapSnapshotView.prototype = {
         return WebInspector.panels.profiles.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
     },
 
-    isDetailedSnapshot: function(snapshot)
-    {
-        var s = new WebInspector.HeapSnapshot(snapshot);
-        for (var iter = s.rootNode.edges; iter.hasNext(); iter.next())
-            if (iter.edge.node.name === "(GC roots)")
-                return true;
-        return false;
-    },
-
     processLoadedSnapshot: function(profile, snapshot)
     {
         profile.nodes = snapshot.nodes;
