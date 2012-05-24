@@ -72,6 +72,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(PassRefPtr<Node
         return;
 
     node->registerTransientMutationObserver(this);
+    m_observer->setHasTransientRegistration();
 
     if (!m_transientRegistrationNodes) {
         m_transientRegistrationNodes = adoptPtr(new NodeHashSet);

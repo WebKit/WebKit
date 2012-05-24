@@ -1,3 +1,34 @@
+2012-04-05  Adam Klein  <adamk@chromium.org>
+
+        Crash in MutationObservers due to an invalid HashSet iterator
+        https://bugs.webkit.org/show_bug.cgi?id=83304
+
+        Reviewed by Ojan Vafai.
+
+        If the observed node has been GCed when we clear transient observers
+        from it, the HashSet iterator in WebKitMutationObserver::deliver would
+        be invalidated. This patch fixes that behavior by copying the relevant
+        registrations into a seperate vector first and operating on the copy.
+
+        This patch also fixes a bug: transient observers should be cleared
+        after every microtask, not just when delivering.
+
+        Tests: fast/mutation/clear-transient-without-delivery.html
+               fast/mutation/transient-gc-crash.html
+
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        Notify the observer that it has a transient registration so it can be properly cleared.
+        * dom/MutationObserverRegistration.h:
+        (WebCore::MutationObserverRegistration::hasTransientRegistrations):
+        Add an accessor for use when deliver() creates its vector of registrations.
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::setHasTransientRegistration): Add this to the active observer set
+        to allow transient registrations to be cleared appropriately.
+        (WebCore::WebKitMutationObserver::deliver): Avoid modifying m_registrations while iterating over it.
+        Clear registrations before checking for a lack of records to deliver.
+        * dom/WebKitMutationObserver.h:
+
 2012-02-27  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Clear pending mutation records on disconnect()

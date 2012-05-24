@@ -50,6 +50,7 @@ public:
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     void observedSubtreeNodeWillDetach(PassRefPtr<Node>);
     void clearTransientRegistrations();
+    bool hasTransientRegistrations() { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
     void unregister();
 
     bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType, const AtomicString& attributeName);
