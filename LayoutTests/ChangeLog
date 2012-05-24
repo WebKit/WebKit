@@ -1,3 +1,9 @@
+2012-05-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, skipping failing tests on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-23  Stephanie Lewis  <slewis@apple.com>
 
         See https://bugs.webkit.org/show_bug.cgi?id=87347

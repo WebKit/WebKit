@@ -3176,8 +3176,6 @@ BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = 
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
 BUGWK79540 : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
-BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
-BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 BUGWK79540 LEOPARD DEBUG : fast/files/workers/worker-read-file-async.html = PASS CRASH
 
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
@@ -3792,3 +3790,11 @@ BUGWK87275 SLOW : html5lib/webkit-resumer.html = PASS CRASH
 
 BUGWK87321 XP : fast/history/history-subframe-with-name.html = TEXT PASS
 BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
+
+// File blob tests failing after chromium r138702
+BUGWK87356 : fast/files/read-blob-async.html = TEXT
+BUGWK87356 : fast/files/workers/worker-read-blob-async.html = TEXT
+BUGWK87356 : fast/files/workers/worker-read-blob-sync.html = TEXT
+// The above tests were previously marked as follows:
+// BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
+// BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
