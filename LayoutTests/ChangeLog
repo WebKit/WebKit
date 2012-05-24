@@ -1,3 +1,14 @@
+2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Several canvas/philip test cases can be unskipped
+        https://bugs.webkit.org/show_bug.cgi?id=87362
+
+        Unreviewed EFL gardening. Unskip several canvas/philip that are now
+        passing.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, updating chromium test expectations.

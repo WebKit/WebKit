@@ -425,13 +425,6 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 # Tests that fail across all platforms. Even though some platforms don't skip these tests, there are platform-specific results generated that make these tests 'pass' (via GTK+).
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.composite.uncovered.fill.copy.html
-canvas/philip/tests/2d.composite.uncovered.image.copy.html
-canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html
-canvas/philip/tests/2d.composite.uncovered.image.destination-in.html
-canvas/philip/tests/2d.composite.uncovered.image.source-in.html
-canvas/philip/tests/2d.composite.uncovered.image.source-out.html
-canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
 canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
@@ -439,7 +432,6 @@ canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
-canvas/philip/tests/2d.imageData.put.wrongtype.html
 canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.pattern.image.broken.html
@@ -450,7 +442,6 @@ canvas/philip/tests/2d.text.draw.baseline.hanging.html
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
 canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
-canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html
 canvas/philip/tests/2d.text.draw.space.collapse.end.html
 canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
 canvas/philip/tests/2d.text.draw.space.collapse.other.html
@@ -463,7 +454,6 @@ canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
 canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
-canvas/philip/tests/toDataURL.jpeg.alpha.html
 canvas/philip/tests/type.prototype.html
 
 # Test takes too long in a debug build
@@ -497,11 +487,6 @@ canvas/philip/tests/2d.drawImage.self.2.html
 # https://bugs.webkit.org/show_bug.cgi?id=54471
 canvas/philip/tests/2d.path.arc.selfintersect.1.html
 canvas/philip/tests/2d.path.arc.shape.3.html
-
-# This test already passes with cairo trunk, but we're waiting for a new release.
-# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=e46dc9e17a6f6737d5624dbcdd3c42c2353a72f1
-# Cairo test http://cgit.freedesktop.org/cairo/commit/?id=7386960d063e4a3642fb281aaae071404d837bdb
-canvas/philip/tests/2d.path.arc.zeroradius.html
 
 # A testcase for this failure is already in cairo tree, but has not yet been fixed.
 # Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
@@ -592,23 +577,6 @@ fast/loader/willSendRequest-null-for-preload.html
 
 # No suitable baselines found on other ports
 fast/dom/Window/window-property-descriptors.html
-
-# EFL-specific failing canvas/philip tests.
-canvas/philip/tests/2d.path.closePath.nextpoint.html
-canvas/philip/tests/2d.text.draw.align.center.html
-canvas/philip/tests/2d.text.draw.align.end.ltr.html
-canvas/philip/tests/2d.text.draw.align.end.rtl.html
-canvas/philip/tests/2d.text.draw.align.left.html
-canvas/philip/tests/2d.text.draw.align.right.html
-canvas/philip/tests/2d.text.draw.align.start.ltr.html
-canvas/philip/tests/2d.text.draw.align.start.rtl.html
-canvas/philip/tests/2d.text.draw.baseline.alphabetic.html
-canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html
-canvas/philip/tests/2d.text.draw.fontface.html
-canvas/philip/tests/2d.text.draw.fontface.notinpage.html
-canvas/philip/tests/2d.text.draw.fontface.repeat.html
-canvas/philip/tests/2d.text.draw.space.basic.html
-canvas/philip/tests/2d.text.measure.width.basic.html
 
 # BUG: onresize event is not being emitted for iframes
 fast/dynamic/paused-event-dispatch.html
@@ -1436,8 +1404,6 @@ animations/additive-transform-animations.html
 animations/animation-border-overflow.html
 animations/animation-add-events-in-handler.html
 animations/cross-fade-webkit-mask-box-image.html
-canvas/philip/tests/2d.canvas.readonly.html
-canvas/philip/tests/2d.canvas.reference.html
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-no-alpha.html
 compositing/webgl/webgl-nonpremultiplied-blend.html
