@@ -1,3 +1,74 @@
+2012-05-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Support hierarchical context menus
+        https://bugs.webkit.org/show_bug.cgi?id=86847
+
+        Reviewed by Pavel Feldman.
+
+        This patch makes use of the WebMenuItemInfo SubMenu type to expose the capability of building submenu items
+        in the Web Inspector's context menu. ContextMenuItems are also passed/stored by reference/value rather than pointer
+        in order to be consistent with the PlatformMenuDescription typedef.
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems): Enable submenu item population.
+        (WebCore):
+        (WebCore::JSInspectorFrontendHost::showContextMenu): Extract the menu population part into populateContextMenuItems().
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems): Enable submenu item population.
+        (WebCore):
+        (WebCore::V8InspectorFrontendHost::showContextMenuCallback): Extract the menu population part into populateContextMenuItems().
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::create): Use reference instead of pointer for ContextMenuItems.
+        (WebCore::FrontendMenuProvider::FrontendMenuProvider): Use reference instead of pointer for ContextMenuItems.
+        (WebCore::FrontendMenuProvider::populateContextMenu): Use reference instead of pointer for ContextMenuItems.
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+        (FrontendMenuProvider):
+        (WebCore::InspectorFrontendHost::showContextMenu): Use reference instead of pointer for ContextMenuItems.
+        * inspector/InspectorFrontendHost.h:
+        (InspectorFrontendHost):
+        * inspector/front-end/ContextMenu.js: Support the tree-like structure of context menus.
+        (WebInspector.ContextMenuItem):
+        (WebInspector.ContextMenuItem.prototype.id):
+        (WebInspector.ContextMenuItem.prototype.type):
+        (WebInspector.ContextMenuItem.prototype._buildDescriptor):
+        (WebInspector.ContextSubMenuItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendSubMenuItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendCheckboxItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendSeparator):
+        (WebInspector.ContextSubMenuItem.prototype._buildDescriptor):
+        (WebInspector.ContextMenu):
+        (WebInspector.ContextMenu.prototype.nextId):
+        (WebInspector.ContextMenu.prototype.show):
+        (WebInspector.ContextMenu.prototype._setHandler):
+        (WebInspector.ContextMenu.prototype._buildDescriptor):
+        * inspector/front-end/SoftContextMenu.js:
+        (.WebInspector.SoftContextMenu): Support sub-menus.
+        (.WebInspector.SoftContextMenu.prototype.show):
+        (.WebInspector.SoftContextMenu.prototype._parentGlassPaneElement):
+        (.WebInspector.SoftContextMenu.prototype._createMenuItem):
+        (.WebInspector.SoftContextMenu.prototype._createSubMenu):
+        (.WebInspector.SoftContextMenu.prototype._createSeparator):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseUp):
+        (.WebInspector.SoftContextMenu.prototype._focus):
+        (.WebInspector.SoftContextMenu.prototype._triggerAction):
+        (.WebInspector.SoftContextMenu.prototype._showSubMenu):
+        (.WebInspector.SoftContextMenu.prototype._buildMouseEventForSubMenu):
+        (.WebInspector.SoftContextMenu.prototype._hideSubMenu):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseOut):
+        (.WebInspector.SoftContextMenu.prototype._highlightMenuItem):
+        (.WebInspector.SoftContextMenu.prototype._menuKeyDown):
+        (.WebInspector.SoftContextMenu.prototype._glassPaneMouseUp):
+        (.WebInspector.SoftContextMenu.prototype._discardMenu):
+        (.WebInspector.SoftContextMenu.prototype._discardSubMenus):
+        * inspector/front-end/inspector.css: Support for sub-menus, separator improvement.
+        (.soft-context-menu-separator):
+        (.soft-context-menu-separator > .separator-line):
+        (.soft-context-menu-item-submenu-arrow):
+        * platform/chromium/ContextMenuChromium.cpp:
+        (WebCore::contextMenuItemVector): Implemented.
+        (WebCore):
+
 2012-05-24  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Breakpoints Pane should not show context menu with no breakpoints

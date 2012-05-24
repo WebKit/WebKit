@@ -2345,8 +2345,15 @@ a.worker-item:hover {
 }
 
 .soft-context-menu-separator {
-    margin: 5px 1px 6px 1px;
+    height: 10px;
+    margin: 0 1px;
+}
+
+.soft-context-menu-separator > .separator-line {
+    margin: 0;
+    height: 5px;
     border-bottom: 1px solid rgb(227, 227, 227);
+    pointer-events: none;
 }
 
 .soft-context-menu-item-mouse-over {
@@ -2364,6 +2371,12 @@ body.platform-mac .soft-context-menu-item-mouse-over {
 
 .soft-context-menu-item-checkmark {
     color: rgb(108, 108, 108);
+    pointer-events: none;
+}
+
+.soft-context-menu-item-submenu-arrow {
+    color: black;
+    float: right;
     pointer-events: none;
 }
 

@@ -99,4 +99,9 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
     return 0;
 }
 
+Vector<ContextMenuItem> contextMenuItemVector(const PlatformMenuDescription menuDescription)
+{
+    return *menuDescription;
+}
+
 } // namespace WebCore

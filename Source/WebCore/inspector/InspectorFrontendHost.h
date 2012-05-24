@@ -80,7 +80,7 @@ public:
     void append(const String& url, const String& content);
 
     // Called from [Custom] implementations.
-    void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
+    void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
     void sendMessageToBackend(const String& message);
 
     String loadResourceSynchronously(const String& url);
