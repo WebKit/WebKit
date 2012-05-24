@@ -423,9 +423,7 @@ private:
 #endif
         if (phiNode.shouldGenerate())
             m_graph.deref(myNodeIndex);
-        for (unsigned i = edgeIndex; i < AdjacencyList::Size - 1; ++i)
-            phiNode.children.setChild(i, phiNode.children.child(i + 1));
-        phiNode.children.setChild(AdjacencyList::Size - 1, Edge());
+        phiNode.children.removeEdgeFromBag(edgeIndex);
     }
     
     struct OperandSubstitution {

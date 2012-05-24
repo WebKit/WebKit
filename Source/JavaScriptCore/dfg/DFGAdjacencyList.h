@@ -128,6 +128,15 @@ public:
 #endif
         initialize();
     }
+    
+    // Call this if you wish to remove an edge and the node treats the list of children
+    // as a "bag" - an unordered set where the index of the edge does not matter.
+    void removeEdgeFromBag(unsigned edgeIndex)
+    {
+        for (unsigned i = edgeIndex; i < Size - 1; ++i)
+            setChild(i, child(i + 1));
+        setChild(Size - 1, Edge());
+    }
 
     unsigned firstChild() const
     {

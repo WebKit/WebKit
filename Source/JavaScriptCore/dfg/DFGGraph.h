@@ -161,6 +161,12 @@ public:
         node.children.child3() = Edge();
     }
     
+    // Call this if you've modified the reference counts of nodes that deal with
+    // local variables. This is necessary because local variable references can form
+    // cycles, and hence reference counting is not enough. This will reset the
+    // reference counts according to reachability.
+    void collectGarbage();
+    
     void convertToConstant(NodeIndex nodeIndex, unsigned constantNumber)
     {
         at(nodeIndex).convertToConstant(constantNumber);
@@ -304,17 +310,46 @@ public:
         return &m_structureTransitionData.last();
     }
     
-    ExecutableBase* executableFor(const CodeOrigin& codeOrigin)
+    ExecutableBase* executableFor(InlineCallFrame* inlineCallFrame)
     {
-        if (!codeOrigin.inlineCallFrame)
+        if (!inlineCallFrame)
             return m_codeBlock->ownerExecutable();
         
-        return codeOrigin.inlineCallFrame->executable.get();
+        return inlineCallFrame->executable.get();
+    }
+    
+    ExecutableBase* executableFor(const CodeOrigin& codeOrigin)
+    {
+        return executableFor(codeOrigin.inlineCallFrame);
     }
     
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
+    }
+    
+    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return m_codeBlock->argumentsRegister();
+        
+        return baselineCodeBlockForInlineCallFrame(
+            codeOrigin.inlineCallFrame)->argumentsRegister() +
+            codeOrigin.inlineCallFrame->stackOffset;
+    }
+    
+    int uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        if (!codeOrigin.inlineCallFrame)
+            return m_codeBlock->uncheckedArgumentsRegister();
+        
+        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(
+            codeOrigin.inlineCallFrame);
+        if (!codeBlock->usesArguments())
+            return InvalidVirtualRegister;
+        
+        return codeBlock->argumentsRegister() +
+            codeOrigin.inlineCallFrame->stackOffset;
     }
     
     ValueProfile* valueProfileFor(NodeIndex nodeIndex)
@@ -412,9 +447,6 @@ public:
             return !isPredictedNumerical(node);
         case GetByVal:
             return !byValIsPure(node);
-        case GetMyArgumentByVal:
-            return m_executablesWhoseArgumentsEscaped.contains(
-                executableFor(node.codeOrigin));
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.

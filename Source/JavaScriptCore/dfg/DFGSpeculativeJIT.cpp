@@ -803,6 +803,9 @@ void ValueSource::dump(FILE* out) const
     case DoubleInRegisterFile:
         fprintf(out, "Double");
         break;
+    case ArgumentsSource:
+        fprintf(out, "Arguments");
+        break;
     case HaveNode:
         fprintf(out, "Node(%d)", m_nodeIndex);
         break;
@@ -994,6 +997,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
             m_variables[i] = ValueSource(SourceIsDead);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
             m_variables[i] = ValueSource(DoubleInRegisterFile);
+        else if (at(nodeIndex).variableAccessData()->isArgumentsAlias())
+            m_variables[i] = ValueSource(ArgumentsSource);
         else
             m_variables[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }
@@ -1345,13 +1350,18 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         
     case DoubleInRegisterFile:
         return ValueRecovery::alreadyInRegisterFileAsUnboxedDouble();
+        
+    case ArgumentsSource:
+        return ValueRecovery::argumentsThatWereNotCreated();
 
     case HaveNode: {
         if (isConstant(valueSource.nodeIndex()))
             return ValueRecovery::constant(valueOfJSConstant(valueSource.nodeIndex()));
-    
+        
         Node* nodePtr = &at(valueSource.nodeIndex());
         if (!nodePtr->shouldGenerate()) {
+            if (nodePtr->op() == CreateArguments)
+                return ValueRecovery::argumentsThatWereNotCreated();
             // It's legitimately dead. As in, nobody will ever use this node, or operand,
             // ever. Set it to Undefined to make the GC happy after the OSR.
             return ValueRecovery::constant(jsUndefined());

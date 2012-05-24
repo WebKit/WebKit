@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAssemblyHelpers.h"
+#include "DFGCCallHelpers.h"
 #include "DFGOSRExit.h"
 #include "DFGOperations.h"
 
@@ -42,7 +43,7 @@ namespace DFG {
 
 class OSRExitCompiler {
 public:
-    OSRExitCompiler(AssemblyHelpers& jit)
+    OSRExitCompiler(CCallHelpers& jit)
         : m_jit(jit)
     {
     }
@@ -72,7 +73,7 @@ private:
     
     void handleExitCounts(const OSRExit&);
     
-    AssemblyHelpers& m_jit;
+    CCallHelpers& m_jit;
     Vector<unsigned> m_poisonScratchIndices;
 };
 

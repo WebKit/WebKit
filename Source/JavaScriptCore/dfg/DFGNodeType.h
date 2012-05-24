@@ -63,7 +63,7 @@ namespace JSC { namespace DFG {
     /* as something other than a local access, and thus had their own profiling. */\
     macro(GetLocalUnlinked, NodeResultJS) \
     \
-    /* Marker for arguments being set. */\
+    /* Marker for an argument being set at the prologue of a function. */\
     macro(SetArgument, 0) \
     \
     /* Hint that inlining begins here. No code is generated for this node. It's only */\
@@ -202,8 +202,10 @@ namespace JSC { namespace DFG {
     /* sense. */\
     macro(CreateArguments, NodeResultJS) \
     macro(TearOffArguments, NodeMustGenerate) \
-    macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(GetMyArgumentsLength, NodeResultJS | NodeMustGenerate) \
+    macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \
+    macro(GetMyArgumentsLengthSafe, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetMyArgumentByValSafe, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckArgumentsNotCreated, NodeMustGenerate) \
     \
     /* Nodes for creating functions. */\

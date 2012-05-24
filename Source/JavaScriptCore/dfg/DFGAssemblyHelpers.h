@@ -343,14 +343,18 @@ public:
         return m_baselineCodeBlock;
     }
     
-    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    int argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
     {
-        if (!codeOrigin.inlineCallFrame)
+        if (!inlineCallFrame)
             return codeBlock()->argumentsRegister();
         
         return baselineCodeBlockForInlineCallFrame(
-            codeOrigin.inlineCallFrame)->argumentsRegister() +
-            codeOrigin.inlineCallFrame->stackOffset;
+            inlineCallFrame)->argumentsRegister() + inlineCallFrame->stackOffset;
+    }
+    
+    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        return argumentsRegisterFor(codeOrigin.inlineCallFrame);
     }
     
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);

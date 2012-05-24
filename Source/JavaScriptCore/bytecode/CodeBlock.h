@@ -434,6 +434,12 @@ namespace JSC {
             ASSERT(usesArguments());
             return m_argumentsRegister;
         }
+        int uncheckedArgumentsRegister()
+        {
+            if (!usesArguments())
+                return InvalidVirtualRegister;
+            return argumentsRegister();
+        }
         void setActivationRegister(int activationRegister)
         {
             m_activationRegister = activationRegister;

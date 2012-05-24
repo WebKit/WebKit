@@ -64,6 +64,12 @@ fast/js/debugger
 fast/js/declaration-in-block
 fast/js/delete-getters-setters
 fast/js/delete-then-put
+fast/js/dfg-arguments-osr-exit
+fast/js/dfg-arguments-mixed-alias
+fast/js/dfg-arguments-cross-code-origin
+fast/js/dfg-arguments-unexpected-escape
+fast/js/dfg-arguments-alias
+fast/js/dfg-arguments-alias-escape
 fast/js/dfg-array-length-dead
 fast/js/dfg-convert-this-dom-window
 fast/js/dfg-double-vote-fuzz

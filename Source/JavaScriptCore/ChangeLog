@@ -1,3 +1,87 @@
+2012-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize aliased uses of the Arguments object of the current call frame
+        https://bugs.webkit.org/show_bug.cgi?id=86552
+
+        Reviewed by Geoff Garen.
+        
+        Merged r117542 and r117543 from dfgopt.
+        
+        Performs must-alias and escape analysis on uses of CreateArguments, and if
+        a variable is must-aliased to CreateArguments and does not escape, then we
+        turn all uses of that variable into direct arguments accesses.
+        
+        36% speed-up on V8/earley leading to a 2.3% speed-up overall in V8.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::uncheckedArgumentsRegister):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::argumentsThatWereNotCreated):
+        (ValueRecovery):
+        (JSC::ValueRecovery::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAdjacencyList.h:
+        (AdjacencyList):
+        (JSC::DFG::AdjacencyList::removeEdgeFromBag):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (ArgumentsSimplificationPhase):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUses):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeProperArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::isOKToOptimize):
+        (JSC::DFG::ArgumentsSimplificationPhase::removeArgumentsReferencingPhantomChild):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::argumentsRegisterFor):
+        (AssemblyHelpers):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::removePotentiallyDeadPhiReference):
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::collectGarbage):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        (JSC::DFG::Graph::executableFor):
+        (JSC::DFG::Graph::argumentsRegisterFor):
+        (JSC::DFG::Graph::uncheckedArgumentsRegisterFor):
+        (JSC::DFG::Graph::clobbersWorld):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler.h:
+        (JSC::DFG::OSRExitCompiler::OSRExitCompiler):
+        (OSRExitCompiler):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsArgumentsAlias):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::isArgumentsAlias):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+
 2012-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFGCapabilities should not try to get an arguments register from code blocks that don't have one

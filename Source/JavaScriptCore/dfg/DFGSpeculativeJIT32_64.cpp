@@ -3851,25 +3851,24 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case GetMyArgumentsLength: {
-        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
-                m_jit.graph().executableFor(node.codeOrigin))) {
-            GPRTemporary result(this);
-            GPRReg resultGPR = result.gpr();
-            
-            speculationCheck(
-                ArgumentsEscaped, JSValueRegs(), NoNode,
-                m_jit.branch32(
-                    JITCompiler::NotEqual,
-                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                    TrustedImm32(JSValue::EmptyValueTag)));
-            
-            ASSERT(!node.codeOrigin.inlineCallFrame);
-            m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
-            m_jit.sub32(TrustedImm32(1), resultGPR);
-            integerResult(resultGPR, m_compileIndex);
-            break;
-        }
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
         
+        speculationCheck(
+            ArgumentsEscaped, JSValueRegs(), NoNode,
+            m_jit.branch32(
+                JITCompiler::NotEqual,
+                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                TrustedImm32(JSValue::EmptyValueTag)));
+        
+        ASSERT(!node.codeOrigin.inlineCallFrame);
+        m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
+        m_jit.sub32(TrustedImm32(1), resultGPR);
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case GetMyArgumentsLengthSafe: {
         GPRTemporary resultPayload(this);
         GPRTemporary resultTag(this);
         GPRReg resultPayloadGPR = resultPayload.gpr();
@@ -3912,53 +3911,58 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg resultTagGPR = resultTag.gpr();
         
-        if (!m_jit.graph().m_executablesWhoseArgumentsEscaped.contains(
-                m_jit.graph().executableFor(node.codeOrigin))) {
+        speculationCheck(
+            ArgumentsEscaped, JSValueRegs(), NoNode,
+            m_jit.branch32(
+                JITCompiler::NotEqual,
+                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                TrustedImm32(JSValue::EmptyValueTag)));
+            
+        m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
+            
+        if (node.codeOrigin.inlineCallFrame) {
             speculationCheck(
-                ArgumentsEscaped, JSValueRegs(), NoNode,
+                Uncountable, JSValueRegs(), NoNode,
                 m_jit.branch32(
-                    JITCompiler::NotEqual,
-                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                    TrustedImm32(JSValue::EmptyValueTag)));
-            
-            m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
-            
-            if (node.codeOrigin.inlineCallFrame) {
-                speculationCheck(
-                    Uncountable, JSValueRegs(), NoNode,
-                    m_jit.branch32(
-                        JITCompiler::AboveOrEqual,
-                        resultPayloadGPR,
-                        Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
-            } else {
-                speculationCheck(
-                    Uncountable, JSValueRegs(), NoNode,
-                    m_jit.branch32(
-                        JITCompiler::AboveOrEqual,
-                        resultPayloadGPR,
-                        JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
-            }
-        
-            m_jit.neg32(resultPayloadGPR);
-        
-            size_t baseOffset =
-                ((node.codeOrigin.inlineCallFrame
-                  ? node.codeOrigin.inlineCallFrame->stackOffset
-                  : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
-            m_jit.load32(
-                JITCompiler::BaseIndex(
-                    GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                    baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
-                resultTagGPR);
-            m_jit.load32(
-                JITCompiler::BaseIndex(
-                    GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
-                    baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
-                resultPayloadGPR);
-            
-            jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
-            break;
+                    JITCompiler::AboveOrEqual,
+                    resultPayloadGPR,
+                    Imm32(node.codeOrigin.inlineCallFrame->arguments.size())));
+        } else {
+            speculationCheck(
+                Uncountable, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::AboveOrEqual,
+                    resultPayloadGPR,
+                    JITCompiler::payloadFor(RegisterFile::ArgumentCount)));
         }
+        
+        m_jit.neg32(resultPayloadGPR);
+        
+        size_t baseOffset =
+            ((node.codeOrigin.inlineCallFrame
+              ? node.codeOrigin.inlineCallFrame->stackOffset
+              : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
+        m_jit.load32(
+            JITCompiler::BaseIndex(
+                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+            resultTagGPR);
+        m_jit.load32(
+            JITCompiler::BaseIndex(
+                GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
+                baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
+            resultPayloadGPR);
+            
+        jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
+        break;
+    }
+    case GetMyArgumentByValSafe: {
+        SpeculateStrictInt32Operand index(this, node.child1());
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
+        GPRReg indexGPR = index.gpr();
+        GPRReg resultPayloadGPR = resultPayload.gpr();
+        GPRReg resultTagGPR = resultTag.gpr();
         
         JITCompiler::JumpList slowPath;
         slowPath.append(

@@ -2474,7 +2474,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_create_arguments: {
             m_graph.m_hasArguments = true;
-            m_graph.m_executablesWhoseArgumentsEscaped.add(m_inlineStackTop->executable());
             NodeIndex createArguments = addToGraph(CreateArguments, get(currentInstruction[1].u.operand));
             set(currentInstruction[1].u.operand, createArguments);
             set(unmodifiedArgumentsRegister(currentInstruction[1].u.operand), createArguments);
@@ -2494,7 +2493,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_get_arguments_length: {
             m_graph.m_hasArguments = true;
-            set(currentInstruction[1].u.operand, addToGraph(GetMyArgumentsLength));
+            set(currentInstruction[1].u.operand, addToGraph(GetMyArgumentsLengthSafe));
             NEXT_OPCODE(op_get_arguments_length);
         }
             
@@ -2502,7 +2501,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_graph.m_hasArguments = true;
             set(currentInstruction[1].u.operand,
                 addToGraph(
-                    GetMyArgumentByVal, OpInfo(0), OpInfo(getPrediction()),
+                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getPrediction()),
                     get(currentInstruction[3].u.operand)));
             NEXT_OPCODE(op_get_argument_by_val);
         }

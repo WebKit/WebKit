@@ -1,3 +1,50 @@
+2012-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize aliased uses of the Arguments object of the current call frame
+        https://bugs.webkit.org/show_bug.cgi?id=86552
+
+        Rubber stamped by Geoff Garen.
+        
+        Merged r117542 from dfgopt.
+        
+        Added a bunch of tests that check that our optimizations for aliased uses of the
+        'arguments' object are robust against various forms of JavaScript crazy.
+        
+        * fast/js/dfg-arguments-alias-escape-expected.txt: Added.
+        * fast/js/dfg-arguments-alias-escape.html: Added.
+        * fast/js/dfg-arguments-alias-expected.txt: Added.
+        * fast/js/dfg-arguments-alias.html: Added.
+        * fast/js/dfg-arguments-cross-code-origin-expected.txt: Added.
+        * fast/js/dfg-arguments-cross-code-origin.html: Added.
+        * fast/js/dfg-arguments-mixed-alias-expected.txt: Added.
+        * fast/js/dfg-arguments-mixed-alias.html: Added.
+        * fast/js/dfg-arguments-osr-exit-expected.txt: Added.
+        * fast/js/dfg-arguments-osr-exit.html: Added.
+        * fast/js/dfg-arguments-unexpected-escape-expected.txt: Added.
+        * fast/js/dfg-arguments-unexpected-escape.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-arguments-alias-escape.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-arguments-alias.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-arguments-cross-code-origin.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * fast/js/script-tests/dfg-arguments-mixed-alias.js: Added.
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-arguments-osr-exit.js: Added.
+        (baz):
+        (foo):
+        (bar):
+        * fast/js/script-tests/dfg-arguments-unexpected-escape.js: Added.
+        (baz):
+        (foo):
+        (bar):
+
 2012-05-23  Hayato Ito  <hayato@chromium.org>
 
         Add a test case of event dispatching which uses inactive insertion points.

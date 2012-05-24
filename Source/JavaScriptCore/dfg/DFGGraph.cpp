@@ -402,6 +402,58 @@ void Graph::handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIn
     successor->m_predecessors.append(blockIndex);
 }
 
+void Graph::collectGarbage()
+{
+    // First reset the counts to 0 for all nodes.
+    for (unsigned i = size(); i--;)
+        at(i).setRefCount(0);
+    
+    // Now find the roots: the nodes that are must-generate. Set their ref counts to
+    // 1 and put them on the worklist.
+    Vector<NodeIndex, 128> worklist;
+    for (BlockIndex blockIndex = 0; blockIndex < m_blocks.size(); ++blockIndex) {
+        BasicBlock* block = m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        for (unsigned indexInBlock = block->size(); indexInBlock--;) {
+            NodeIndex nodeIndex = block->at(indexInBlock);
+            Node& node = at(nodeIndex);
+            if (!(node.flags() & NodeMustGenerate))
+                continue;
+            node.setRefCount(1);
+            worklist.append(nodeIndex);
+        }
+    }
+    
+    while (!worklist.isEmpty()) {
+        NodeIndex nodeIndex = worklist.last();
+        worklist.removeLast();
+        Node& node = at(nodeIndex);
+        ASSERT(node.shouldGenerate()); // It should not be on the worklist unless it's ref'ed.
+        if (node.flags() & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild();
+                 childIdx < node.firstChild() + node.numChildren();
+                 ++childIdx) {
+                NodeIndex childNodeIndex = m_varArgChildren[childIdx].index();
+                if (!at(childNodeIndex).ref())
+                    continue;
+                worklist.append(childNodeIndex);
+            }
+        } else if (node.child1()) {
+            if (at(node.child1()).ref())
+                worklist.append(node.child1().index());
+            if (node.child2()) {
+                if (at(node.child2()).ref())
+                    worklist.append(node.child2().index());
+                if (node.child3()) {
+                    if (at(node.child3()).ref())
+                        worklist.append(node.child3().index());
+                }
+            }
+        }
+    }
+}
+
 void Graph::determineReachability()
 {
     Vector<BlockIndex, 16> worklist;

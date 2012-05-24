@@ -131,6 +131,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     bool haveFPRs = false;
     bool haveConstants = false;
     bool haveUndefined = false;
+    bool haveArguments = false;
     
     for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
         const ValueRecovery& recovery = exit.valueRecovery(index);
@@ -192,6 +193,10 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             haveConstants = true;
             if (recovery.constant().isUndefined())
                 haveUndefined = true;
+            break;
+            
+        case ArgumentsThatWereNotCreated:
+            haveArguments = true;
             break;
             
         default:
@@ -528,7 +533,71 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    // 11) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    // 11) Create arguments if necessary and place them into the appropriate aliased
+    //     registers.
+    
+    if (haveArguments) {
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() != ArgumentsThatWereNotCreated)
+                continue;
+            int operand = exit.operandForIndex(index);
+            // Find the right inline call frame.
+            InlineCallFrame* inlineCallFrame = 0;
+            for (InlineCallFrame* current = exit.m_codeOrigin.inlineCallFrame;
+                 current;
+                 current = current->caller.inlineCallFrame) {
+                if (current->stackOffset <= operand) {
+                    inlineCallFrame = current;
+                    break;
+                }
+            }
+            int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
+            
+            m_jit.load32(AssemblyHelpers::payloadFor(argumentsRegister), GPRInfo::regT0);
+            AssemblyHelpers::Jump haveArguments = m_jit.branch32(
+                AssemblyHelpers::NotEqual,
+                AssemblyHelpers::tagFor(argumentsRegister),
+                AssemblyHelpers::TrustedImm32(JSValue::EmptyValueTag));
+            
+            if (inlineCallFrame) {
+                m_jit.setupArgumentsWithExecState(
+                    AssemblyHelpers::TrustedImmPtr(inlineCallFrame));
+                m_jit.move(
+                    AssemblyHelpers::TrustedImmPtr(
+                        bitwise_cast<void*>(operationCreateInlinedArguments)),
+                    GPRInfo::nonArgGPR0);
+            } else {
+                m_jit.setupArgumentsExecState();
+                m_jit.move(
+                    AssemblyHelpers::TrustedImmPtr(
+                        bitwise_cast<void*>(operationCreateArguments)),
+                    GPRInfo::nonArgGPR0);
+            }
+            m_jit.call(GPRInfo::nonArgGPR0);
+            m_jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+                AssemblyHelpers::tagFor(argumentsRegister));
+            m_jit.store32(
+                GPRInfo::returnValueGPR,
+                AssemblyHelpers::payloadFor(argumentsRegister));
+            m_jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+                AssemblyHelpers::tagFor(unmodifiedArgumentsRegister(argumentsRegister)));
+            m_jit.store32(
+                GPRInfo::returnValueGPR,
+                AssemblyHelpers::payloadFor(unmodifiedArgumentsRegister(argumentsRegister)));
+            m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
+            
+            haveArguments.link(&m_jit);
+            m_jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+                AssemblyHelpers::tagFor(operand));
+            m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(operand));
+        }
+    }
+    
+    // 12) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
     //     that all new calls into this code will go to the new JIT, so the execute
     //     counter only affects call frames that performed OSR exit and call frames
     //     that were still executing the old JIT at the time of another call frame's
@@ -566,14 +635,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     
     handleExitCounts(exit);
     
-    // 12) Load the result of the last bytecode operation into regT0.
+    // 13) Load the result of the last bytecode operation into regT0.
     
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max()) {
         m_jit.load32(AssemblyHelpers::payloadFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
         m_jit.load32(AssemblyHelpers::tagFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister2);
     }
     
-    // 13) Fix call frame (s).
+    // 14) Fix call frame (s).
     
     ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
     m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
@@ -612,7 +681,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     if (exit.m_codeOrigin.inlineCallFrame)
         m_jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
-    // 14) Jump into the corresponding baseline JIT code.
+    // 15) Jump into the corresponding baseline JIT code.
     
     CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlock);

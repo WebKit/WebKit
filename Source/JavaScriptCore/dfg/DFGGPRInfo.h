@@ -271,6 +271,8 @@ public:
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
+    static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
+    static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
@@ -340,6 +342,8 @@ public:
     static const GPRReg argumentGPR3 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR4 = X86Registers::r8;  // regT6
     static const GPRReg argumentGPR5 = X86Registers::r9;  // regT7
+    static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
+    static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::esi;
@@ -410,6 +414,8 @@ public:
     // between the arguments being set up, and the call being made. That said,
     // any change introducing a problem here is likely to be immediately apparent!
     static const GPRReg argumentGPR3 = ARMRegisters::r3; // FIXME!
+    static const GPRReg nonArgGPR0 = X86Registers::r4; // regT3
+    static const GPRReg nonArgGPR1 = X86Registers::r8; // regT4
     static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r2;

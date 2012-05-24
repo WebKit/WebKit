@@ -47,6 +47,8 @@ public:
         , m_argumentAwarePrediction(PredictNone)
         , m_flags(0)
         , m_doubleFormatState(EmptyDoubleFormatState)
+        , m_isCaptured(false)
+        , m_isArgumentsAlias(false)
     {
         clearVotes();
     }
@@ -58,6 +60,7 @@ public:
         , m_flags(0)
         , m_doubleFormatState(EmptyDoubleFormatState)
         , m_isCaptured(isCaptured)
+        , m_isArgumentsAlias(false)
     {
         clearVotes();
     }
@@ -85,6 +88,20 @@ public:
     bool isCaptured()
     {
         return m_isCaptured;
+    }
+    
+    bool mergeIsArgumentsAlias(bool isArgumentsAlias)
+    {
+        bool newIsArgumentsAlias = m_isArgumentsAlias | isArgumentsAlias;
+        if (newIsArgumentsAlias == m_isArgumentsAlias)
+            return false;
+        m_isArgumentsAlias = newIsArgumentsAlias;
+        return true;
+    }
+    
+    bool isArgumentsAlias()
+    {
+        return m_isArgumentsAlias;
     }
     
     bool predict(PredictedType prediction)
@@ -237,6 +254,7 @@ private:
     DoubleFormatState m_doubleFormatState;
     
     bool m_isCaptured;
+    bool m_isArgumentsAlias;
 };
 
 } } // namespace JSC::DFG

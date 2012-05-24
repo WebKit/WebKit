@@ -61,6 +61,8 @@ enum ValueRecoveryTechnique {
     DoubleDisplacedInRegisterFile,
     CellDisplacedInRegisterFile,
     BooleanDisplacedInRegisterFile,
+    // It's an Arguments object.
+    ArgumentsThatWereNotCreated,
     // It's a constant.
     Constant,
     // Don't know how to recover it.
@@ -190,6 +192,13 @@ public:
         return result;
     }
     
+    static ValueRecovery argumentsThatWereNotCreated()
+    {
+        ValueRecovery result;
+        result.m_technique = ArgumentsThatWereNotCreated;
+        return result;
+    }
+    
     ValueRecoveryTechnique technique() const { return m_technique; }
     
     bool isConstant() const { return m_technique == Constant; }
@@ -314,6 +323,9 @@ public:
             break;
         case BooleanDisplacedInRegisterFile:
             fprintf(out, "*bool(%d)", virtualRegister());
+            break;
+        case ArgumentsThatWereNotCreated:
+            fprintf(out, "arguments");
             break;
         case Constant:
             fprintf(out, "[%s]", constant().description());

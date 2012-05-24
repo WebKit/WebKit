@@ -72,7 +72,7 @@ void compileOSRExit(ExecState* exec)
 #endif
 
     {
-        AssemblyHelpers jit(globalData, codeBlock);
+        CCallHelpers jit(globalData, codeBlock);
         OSRExitCompiler exitCompiler(jit);
 
         jit.jitAssertHasValidCallFrame();

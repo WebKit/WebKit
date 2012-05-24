@@ -437,13 +437,13 @@ private:
             break;
         }
             
-        case GetMyArgumentByVal: {
+        case GetMyArgumentByValSafe: {
             changed |= mergePrediction(node.getHeapPrediction());
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
             break;
         }
             
-        case GetMyArgumentsLength: {
+        case GetMyArgumentsLengthSafe: {
             changed |= setPrediction(PredictInt32);
             break;
         }
@@ -616,7 +616,9 @@ private:
         case GetStringLength:
         case Int32ToDouble:
         case DoubleAsInt32:
-        case GetLocalUnlinked: {
+        case GetLocalUnlinked:
+        case GetMyArgumentsLength:
+        case GetMyArgumentByVal: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             ASSERT_NOT_REACHED();

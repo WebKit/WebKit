@@ -1040,13 +1040,21 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
 
 JSCell* DFG_OPERATION operationCreateArguments(ExecState* exec)
 {
-    return Arguments::create(exec->globalData(), exec);
+    // NB: This needs to be exceedingly careful with top call frame tracking, since it
+    // may be called from OSR exit, while the state of the call stack is bizarre.
+    Arguments* result = Arguments::create(exec->globalData(), exec);
+    ASSERT(!exec->globalData().exception);
+    return result;
 }
 
 JSCell* DFG_OPERATION operationCreateInlinedArguments(
     ExecState* exec, InlineCallFrame* inlineCallFrame)
 {
-    return Arguments::create(exec->globalData(), exec, inlineCallFrame);
+    // NB: This needs to be exceedingly careful with top call frame tracking, since it
+    // may be called from OSR exit, while the state of the call stack is bizarre.
+    Arguments* result = Arguments::create(exec->globalData(), exec, inlineCallFrame);
+    ASSERT(!exec->globalData().exception);
+    return result;
 }
 
 void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell, int32_t unmodifiedArgumentsRegister)
