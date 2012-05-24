@@ -96,7 +96,7 @@ bool RadioNodeList::nodeMatches(Element* testElement) const
             return false;
     }
 
-    return equalIgnoringCase(testElement->getIdAttribute(), m_name) || equalIgnoringCase(testElement->getNameAttribute(), m_name);
+    return testElement->getIdAttribute() ==  m_name || testElement->getNameAttribute() == m_name;
 }
 
 } // namspace
