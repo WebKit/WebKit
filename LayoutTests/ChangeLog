@@ -1,3 +1,19 @@
+2012-05-24  Hironori Bono  <hbono@chromium.org>
+
+        Enable grammar checking on Chromium when we paste text.
+        https://bugs.webkit.org/show_bug.cgi?id=74393
+
+        Reviewed by Hajime Morita.
+
+        This change enables grammar checking on Chromium and implements a mock grammar
+        checker to fix a failing test.
+
+        * editing/spelling/grammar-markers-expected.txt: Added.
+        * editing/spelling/grammar-markers.html: Added.
+        * platform/chromium-linux/editing/spelling/grammar-markers-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/spelling/grammar-markers-expected.png: Added.
+
 2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add inspector instrumentation interface for compositing

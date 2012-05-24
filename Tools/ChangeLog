@@ -1,3 +1,22 @@
+2012-05-24  Hironori Bono  <hbono@chromium.org>
+
+        Enable grammar checking on Chromium when we paste text.
+        https://bugs.webkit.org/show_bug.cgi?id=74393
+
+        Reviewed by Hajime Morita.
+
+        This change enables grammar checking on Chromium and implements a mock grammar
+        checker to fix a failing test.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockGrammarCheck.cpp: Added.
+        (MockGrammarCheck::checkGrammarOfString):
+        * DumpRenderTree/chromium/MockGrammarCheck.h: Added.
+        (WebKit):
+        (MockGrammarCheck):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::finishLastTextCheck): Call MockGrammarCheck::checkGrammarOfString to check grammatical errors.
+
 2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix, add ENABLE_CSS3_FLEXBOX after r118304.

@@ -32,6 +32,7 @@
 #include "WebViewHost.h"
 
 #include "LayoutTestController.h"
+#include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
@@ -471,7 +472,6 @@ void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCo
 void WebViewHost::finishLastTextCheck()
 {
     Vector<WebTextCheckingResult> results;
-    // FIXME: Do the grammar check.
     int offset = 0;
     String text(m_lastRequestedTextCheckString.data(), m_lastRequestedTextCheckString.length());
     while (text.length()) {
@@ -487,7 +487,7 @@ void WebViewHost::finishLastTextCheck()
         text = text.substring(misspelledPosition + misspelledLength);
         offset += misspelledPosition + misspelledLength;
     }
-
+    MockGrammarCheck::checkGrammarOfString(m_lastRequestedTextCheckString, &results);
     m_lastRequestedTextCheckingCompletion->didFinishCheckingText(results);
     m_lastRequestedTextCheckingCompletion = 0;
 }
