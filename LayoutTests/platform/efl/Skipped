@@ -200,9 +200,6 @@ editing/spelling
 editing/style
 editing/undo
 
-# EFL's LayoutTestController does not implement setCacheModel
-fast/dom/HTMLScriptElement/nested-execution.html
-
 # EFL's LayoutTestController does not implement setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 

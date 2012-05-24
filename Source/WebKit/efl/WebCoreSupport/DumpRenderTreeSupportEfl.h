@@ -86,6 +86,8 @@ public:
     static size_t javaScriptObjectsCount();
     static unsigned workerThreadCount();
 
+    static void setDeadDecodedDataDeletionInterval(double);
+
     static HistoryItemChildrenVector childHistoryItems(const Ewk_History_Item*);
     static String historyItemTarget(const Ewk_History_Item*);
     static bool isTargetItem(const Ewk_History_Item*);

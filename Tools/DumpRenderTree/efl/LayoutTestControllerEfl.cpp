@@ -523,9 +523,45 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     return DumpRenderTreeSupportEfl::isCommandEnabled(browser->mainView(), name->ustring().utf8().data());
 }
 
-void LayoutTestController::setCacheModel(int)
+void LayoutTestController::setCacheModel(int cacheModel)
 {
-    notImplemented();
+    unsigned int cacheTotalCapacity;
+    unsigned int cacheMinDeadCapacity;
+    unsigned int cacheMaxDeadCapacity;
+    double deadDecodedDataDeletionInterval;
+    unsigned int pageCacheCapacity;
+
+    // These constants are derived from the Mac cache model enum in Source/WebKit/mac/WebView/WebPreferences.h.
+    switch (cacheModel) {
+    case 0: // WebCacheModelDocumentViewer
+        pageCacheCapacity = 0;
+        cacheTotalCapacity = 0;
+        cacheMinDeadCapacity = 0;
+        cacheMaxDeadCapacity = 0;
+        deadDecodedDataDeletionInterval = 0;
+        break;
+    case 1: // WebCacheModelDocumentBrowser
+        pageCacheCapacity = 2;
+        cacheTotalCapacity = 16 * 1024 * 1024;
+        cacheMinDeadCapacity = cacheTotalCapacity / 8;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 4;
+        deadDecodedDataDeletionInterval = 0;
+        break;
+    case 3: // WebCacheModelPrimaryWebBrowser
+        pageCacheCapacity = 3;
+        cacheTotalCapacity = 32 * 1024 * 1024;
+        cacheMinDeadCapacity = cacheTotalCapacity / 4;
+        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
+        deadDecodedDataDeletionInterval = 60;
+        break;
+    default:
+        fprintf(stderr, "trying to set an invalid value %d for the Cache model.", cacheModel);
+        return;
+    }
+
+    ewk_settings_object_cache_capacity_set(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
+    DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
+    ewk_settings_page_cache_capacity_set(pageCacheCapacity);
 }
 
 void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef)

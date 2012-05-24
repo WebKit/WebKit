@@ -269,6 +269,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
     DumpRenderTreeSupportEfl::setSerializeHTTPLoads(false);
+    DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(0);
 
     if (m_currentIntentRequest) {
         ewk_intent_request_unref(m_currentIntentRequest);

@@ -43,6 +43,7 @@
 #include <IntRect.h>
 #include <JSCSSStyleDeclaration.h>
 #include <JSElement.h>
+#include <MemoryCache.h>
 #include <PageGroup.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
@@ -502,6 +503,11 @@ unsigned DumpRenderTreeSupportEfl::workerThreadCount()
 #else
     return 0;
 #endif
+}
+
+void DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(double interval)
+{
+    WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(interval);
 }
 
 HistoryItemChildrenVector DumpRenderTreeSupportEfl::childHistoryItems(const Ewk_History_Item* ewkHistoryItem)

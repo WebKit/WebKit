@@ -1,3 +1,15 @@
+2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] LayoutTestController's setCacheModel() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=86840
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): Reset dead decoded data deletion interval.
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setCacheModel): Implementation added.
+
 2012-05-24  Hironori Bono  <hbono@chromium.org>
 
         Enable grammar checking on Chromium when we paste text.
