@@ -210,7 +210,7 @@ inline bool canInlineOpcode(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction
     // Inlining supports op_call_varargs if it's a call that just forwards the caller's
     // arguments.
     case op_call_varargs:
-        return pc[3].u.operand == codeBlock->argumentsRegister();
+        return codeBlock->usesArguments() && pc[3].u.operand == codeBlock->argumentsRegister();
         
     default:
         return canCompileOpcode(opcodeID, codeBlock, pc) == CanCompile;
