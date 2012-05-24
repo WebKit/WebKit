@@ -994,12 +994,14 @@ void SpeculativeJIT::compile(BasicBlock& block)
         // https://bugs.webkit.org/show_bug.cgi?id=87205
         if (m_jit.codeBlock()->localIsCaptured(at(block[0]).codeOrigin.inlineCallFrame, i))
             m_variables[i] = ValueSource(ValueInRegisterFile);
-        else if (nodeIndex == NoNode || !at(nodeIndex).refCount())
+        else if (nodeIndex == NoNode)
+            m_variables[i] = ValueSource(SourceIsDead);
+        else if (at(nodeIndex).variableAccessData()->isArgumentsAlias())
+            m_variables[i] = ValueSource(ArgumentsSource);
+        else if (!at(nodeIndex).refCount())
             m_variables[i] = ValueSource(SourceIsDead);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
             m_variables[i] = ValueSource(DoubleInRegisterFile);
-        else if (at(nodeIndex).variableAccessData()->isArgumentsAlias())
-            m_variables[i] = ValueSource(ArgumentsSource);
         else
             m_variables[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }

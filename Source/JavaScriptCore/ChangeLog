@@ -1,3 +1,29 @@
+2012-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Incorrect merge of r117542 from dfg opt branch in r118323 is leading to fast/js/dfg-arguments-osr-exit.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=87350
+
+        Reviewed by Maciej Stachowiak.
+        
+        The dfgopt branch introduced the notion of a local variable being killed because it was aliased
+        to the Arguments object as in cases like:
+        
+        var a = arguments;
+        return a.length;
+        
+        This required changes to OSR exit handling - if the variable is dead but aliased to arguments, then
+        OSR exit should reify the arguments. But meanwhile, in tip of tree we introduced special handling for
+        dead variables on OSR exit. When the two were merged in r118323, the structure of the if/else branches
+        ended up being such that we would treat dead arguments variables as totally dead as opposed to treating
+        them as variables that need arguments reification.
+        
+        This fixes the structure of the relevant if/else block so that variables that are dead-but-arguments
+        end up being treated as reified arguments objects, while variables that are dead but not aliased to
+        arguments are treated as tip of tree would have treated them (initialize to Undefined).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed 32 bit buildfix after r118325.
