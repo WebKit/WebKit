@@ -1,3 +1,19 @@
+2012-05-24  Greg Spencer  <gspencer@chromium.org>
+
+        MHTML files should be loadable from all schemes considered local,
+        not just "file:"
+
+        https://bugs.webkit.org/show_bug.cgi?id=86540
+
+        Reviewed by Adam Barth.
+
+        Existing tests should verify correct function.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::create):
+
 2012-05-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove some leftover references to LayerTilerChromium
