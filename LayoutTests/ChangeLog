@@ -1,3 +1,12 @@
+2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] compositing/repaint/opacity-between-absolute.html does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=87353
+
+        Unreviewed. Gardening of compositing/repaint/opacity-between-absolute.html test.
+
+        * platform/efl/compositing/repaint/opacity-between-absolute-expected.txt:
+
 2012-05-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         Elements in Shadow DOM are not resizable.
