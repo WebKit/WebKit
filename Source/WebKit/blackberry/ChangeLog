@@ -1,3 +1,38 @@
+2012-05-24  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Implement select popup and remove old hook to air popup
+        https://bugs.webkit.org/show_bug.cgi?id=87419
+
+        Reviewed by Rob Buis.
+
+        Introduce new html select popup client, remove the old hook to air popup.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/SelectPopupClient.cpp: Added.
+        (WebCore):
+        (WebCore::SelectPopupClient::SelectPopupClient):
+        (WebCore::SelectPopupClient::~SelectPopupClient):
+        (WebCore::SelectPopupClient::update):
+        (WebCore::SelectPopupClient::generateHTML):
+        (WebCore::SelectPopupClient::closePopup):
+        (WebCore::SelectPopupClient::contentSize):
+        (WebCore::SelectPopupClient::htmlSource):
+        (WebCore::SelectPopupClient::setValueAndClosePopup):
+        (WebCore::SelectPopupClient::didClosePopup):
+        (WebCore::SelectPopupClient::writeDocument):
+        * WebCoreSupport/SelectPopupClient.h: Added.
+        (WebKit):
+        (WebCore):
+        (SelectPopupClient):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openSelectPopup):
+        * WebKitSupport/InputHandler.h:
+        (WebCore):
+        (InputHandler):
+        * WebKitSupport/WebPopupType.h: Added.
+        (BlackBerry):
+        (WebKit):
+
 2012-05-24  Antonio Gomes  <agomes@rim.com>
 
         Possible missing layout in Iris browser after hiding VKB

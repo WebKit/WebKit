@@ -1,3 +1,14 @@
+2012-05-24  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Implement select popup and remove old hook to air popup
+        https://bugs.webkit.org/show_bug.cgi?id=87419
+
+        Reviewed by Rob Buis.
+
+        Add new files to make file.
+
+        * PlatformBlackBerry.cmake:
+
 2012-05-24  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, unbreak `make install' after r117046.

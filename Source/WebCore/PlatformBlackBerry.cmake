@@ -106,6 +106,7 @@ LIST(APPEND WebCore_SOURCES
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsBlackBerry.css
     ${WEBCORE_DIR}/css/themeBlackBerry.css
+    ${WEBCORE_DIR}/Resources/blackberry/popupControlBlackBerry.css
 )
 
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES

@@ -49,6 +49,7 @@
 #include "RenderTextControl.h"
 #include "RenderWidget.h"
 #include "ScopePointer.h"
+#include "SelectPopupClient.h"
 #include "SelectionHandler.h"
 #include "TextIterator.h"
 #include "WebPageClient.h"
@@ -1122,51 +1123,61 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     if (!select || select->disabled())
         return false;
 
+    // If there's no view, do nothing and return.
+    if (!select->document()->view())
+        return false;
+
     if (isActiveTextEdit())
         clearCurrentFocusElement();
 
     m_currentFocusElement = select;
     m_currentFocusElementType = SelectPopup;
+
     const WTF::Vector<HTMLElement*>& listItems = select->listItems();
     int size = listItems.size();
-    if (!size) {
-        ScopeArray<WebString> labels;
-        bool* enableds = 0;
-        int* itemTypes = 0;
-        bool* selecteds = 0;
-        m_webPage->m_client->openPopupList(false, size, labels, enableds, itemTypes, selecteds);
-        return true;
-    }
 
     bool multiple = select->multiple();
-
     ScopeArray<WebString> labels;
     labels.reset(new WebString[size]);
-    bool* enableds = new bool[size];
-    int* itemTypes = new int[size];
-    bool* selecteds = new bool[size];
 
-    for (int i = 0; i < size; i++) {
-        if (listItems[i]->hasTagName(HTMLNames::optionTag)) {
-            HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems[i]);
-            labels[i] = option->textIndentedToRespectGroupLabel();
-            enableds[i] = option->disabled() ? 0 : 1;
-            selecteds[i] = option->selected();
-            itemTypes[i] = TypeOption;
-        } else if (listItems[i]->hasTagName(HTMLNames::optgroupTag)) {
-            HTMLOptGroupElement* optGroup = static_cast<HTMLOptGroupElement*>(listItems[i]);
-            labels[i] = optGroup->groupLabelText();
-            enableds[i] = optGroup->disabled() ? 0 : 1;
-            selecteds[i] = false;
-            itemTypes[i] = TypeGroup;
-        } else if (listItems[i]->hasTagName(HTMLNames::hrTag)) {
-            enableds[i] = false;
-            selecteds[i] = false;
-            itemTypes[i] = TypeSeparator;
+    if (!size) {
+        if (!m_selectClient)
+            m_selectClient = new SelectPopupClient(multiple, size, labels, 0, 0, 0, m_webPage, select);
+        else
+            m_selectClient->update(multiple, size, labels, enableds, itemTypes, selecteds, m_webPage, select);
+    } else {
+        bool* enableds = new bool[size];
+        int* itemTypes = new int[size];
+        bool* selecteds = new bool[size];
+
+        for (int i = 0; i < size; i++) {
+            if (listItems[i]->hasTagName(HTMLNames::optionTag)) {
+                HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems[i]);
+                labels[i] = option->textIndentedToRespectGroupLabel();
+                enableds[i] = option->disabled() ? 0 : 1;
+                selecteds[i] = option->selected();
+                itemTypes[i] = TypeOption;
+            } else if (listItems[i]->hasTagName(HTMLNames::optgroupTag)) {
+                HTMLOptGroupElement* optGroup = static_cast<HTMLOptGroupElement*>(listItems[i]);
+                labels[i] = optGroup->groupLabelText();
+                enableds[i] = optGroup->disabled() ? 0 : 1;
+                selecteds[i] = false;
+                itemTypes[i] = TypeGroup;
+            } else if (listItems[i]->hasTagName(HTMLNames::hrTag)) {
+                enableds[i] = false;
+                selecteds[i] = false;
+                itemTypes[i] = TypeSeparator;
+            }
         }
+
+        if (!m_selectClient)
+            m_selectClient = new SelectPopupClient(multiple, size, labels, enableds, itemTypes, selecteds, m_webPage, select);
+        else
+            m_selectClient->update(multiple, size, labels, enableds, itemTypes, selecteds, m_webPage, select);
     }
 
-    m_webPage->m_client->openPopupList(multiple, size, labels, enableds, itemTypes, selecteds);
+    WebCore::IntRect elementRectInRootView = select->document()->view()->contentsToRootView(select->getRect());
+    m_webPage->m_page->chrome()->client()->openPagePopup(m_selectClient, elementRectInRootView);
     return true;
 }
 

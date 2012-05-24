@@ -1,0 +1,66 @@
+html {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: "Myriad Pro", "Arial", "Helvetica", sans-serif;
+}
+
+.bottombuttonOK {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-style: oblique;
+    color: rgba(16, 16, 16, 0.6);
+    background-color: rgba(6, 6, 6, 0.6);
+    text-align: center;
+    vertical-align: middle;
+    display: block;
+    height: 30px;
+    width: 70px;
+    border: 1px solid #000;
+    position: fixed;
+    bottom: auto;
+}
+
+.bottombuttonCancel {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-style: oblique;
+    color: rgba(16, 16, 16, 0.6);
+    background-color: rgba(6, 6, 6, 0.6);
+    text-align: center;
+    vertical-align: middle;
+    display: block;
+    height: 30px;
+    width: 70px;
+    border: 1px solid #000;
+    position: fixed;
+    bottom: auto;
+    left: 80px;
+}
+
+.tablebutton {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #E2E4E3;
+    height: 100%;
+    width: 100%;
+    border-top-style: none;
+    border-right-style: none;
+    border-left-style: none;
+    border-bottom-style: none;
+    margin: 0 auto;
+    position:relative;
+    top:0%;
+    left:0%;
+    bottom:0%;
+    right:0%;
+}

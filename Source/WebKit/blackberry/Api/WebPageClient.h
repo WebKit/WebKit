@@ -162,7 +162,6 @@ public:
 
     virtual void resetBackForwardList(unsigned listSize, unsigned currentIndex) = 0;
 
-    virtual void openPopupList(bool multiple, int size, const ScopeArray<WebString>& labels, bool* enableds, const int* itemType, bool* selecteds) = 0;
     virtual void openDateTimePopup(int type, const WebString& value, const WebString& min, const WebString& max, double step) = 0;
     virtual void openColorPopup(const WebString& value) = 0;
 
