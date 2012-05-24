@@ -558,6 +558,9 @@ namespace WebCore {
         void setIncrementalRenderingSuppressionTimeoutInSeconds(double timeout) { m_incrementalRenderingSuppressionTimeoutInSeconds = timeout; }
         double incrementalRenderingSuppressionTimeoutInSeconds() const { return m_incrementalRenderingSuppressionTimeoutInSeconds; }
         
+        void setNeedsDidFinishLoadOrderQuirk(bool needsQuirk) { m_needsDidFinishLoadOrderQuirk = needsQuirk; }
+        bool needsDidFinishLoadOrderQuirk() const { return m_needsDidFinishLoadOrderQuirk; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -721,6 +724,7 @@ namespace WebCore {
         bool m_threadedAnimationEnabled : 1;
         bool m_shouldRespectImageOrientation : 1;
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
+        bool m_needsDidFinishLoadOrderQuirk : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

@@ -1352,6 +1352,12 @@ static bool fastDocumentTeardownEnabled()
     return needsQuirk;
 }
 
+static bool needsDidFinishLoadOrderQuirk()
+{
+    static bool needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CORRECT_DID_FINISH_LOAD_ORDER) && applicationIsAppleMail();
+    return needsQuirk;
+}
+
 static bool needsSelfRetainWhileLoadingQuirk()
 {
     static bool needsQuirk = applicationIsAperture();
@@ -1532,6 +1538,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings->setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
     settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
+    settings->setNeedsDidFinishLoadOrderQuirk(needsDidFinishLoadOrderQuirk());
     
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
