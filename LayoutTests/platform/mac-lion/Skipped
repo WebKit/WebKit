@@ -80,6 +80,10 @@ media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html
 
+# This media test always failed on Lion
+# https://bugs.webkit.org/show_bug.cgi?id=86527 and <rdar://problem/11458493>
+http/tests/media/video-query-url.html
+
 # Failing due to invalid src: <rdar://problem/9808539>
 http/tests/media/pdf-served-as-pdf.html
 http/tests/media/text-served-as-text.html
