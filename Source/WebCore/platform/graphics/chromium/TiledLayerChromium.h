@@ -100,8 +100,6 @@ protected:
 
     bool skipsDraw() const { return m_skipsDraw; }
 
-    virtual void protectVisibleTileTextures() OVERRIDE;
-
     // Virtual for testing
     virtual TextureManager* textureManager() const;
 

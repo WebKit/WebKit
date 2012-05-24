@@ -3660,8 +3660,6 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_layerTreeView.isNull()) {
         bool visible = visibilityState == WebPageVisibilityStateVisible;
-        if (!visible && isAcceleratedCompositingActive())
-            m_nonCompositedContentHost->protectVisibleTileTextures();
         m_layerTreeView.setVisible(visible);
     }
 #endif

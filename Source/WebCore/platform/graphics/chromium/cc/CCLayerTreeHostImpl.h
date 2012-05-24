@@ -144,6 +144,9 @@ public:
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
+    bool sourceFrameCanBeDrawn() const { return m_sourceFrameCanBeDrawn; }
+    void setSourceFrameCanBeDrawn(bool sourceFrameCanBeDrawn) { m_sourceFrameCanBeDrawn = sourceFrameCanBeDrawn; }
+
     const IntSize& viewportSize() const { return m_viewportSize; }
     void setViewportSize(const IntSize&);
 
@@ -214,6 +217,7 @@ private:
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
     bool m_visible;
+    bool m_sourceFrameCanBeDrawn;
 
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 

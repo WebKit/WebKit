@@ -58,7 +58,6 @@ public:
     void setBackgroundColor(const WebCore::Color&);
     void setScrollLayer(WebCore::GraphicsLayer*);
     void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float deviceScale, int layerAdjustX);
-    void protectVisibleTileTextures();
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
     void setShowDebugBorders(bool);

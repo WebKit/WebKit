@@ -158,7 +158,6 @@ public:
     void commitComplete();
     PassRefPtr<GraphicsContext3D> createContext();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
-    void didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl*);
     void didLoseContext();
     enum RecreateResult {
         RecreateSucceeded,
@@ -179,6 +178,7 @@ public:
 
     // Only used when compositing on the main thread.
     void composite();
+    void scheduleComposite();
 
     // NOTE: The returned value can only be used to make GL calls or make the
     // context current on the thread the compositor is running on!
@@ -201,6 +201,7 @@ public:
     void setNeedsAnimate();
     // virtual for testing
     virtual void setNeedsCommit();
+    void setNeedsForcedCommit();
     void setNeedsRedraw();
     bool commitRequested() const;
 
@@ -273,6 +274,7 @@ private:
     CCLayerTreeHostClient* m_client;
 
     int m_frameNumber;
+    bool m_frameIsForDisplay;
 
     OwnPtr<CCProxy> m_proxy;
     bool m_layerRendererInitialized;
@@ -287,7 +289,12 @@ private:
 
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
+
     bool m_visible;
+
+    size_t m_memoryAllocationBytes;
+    bool m_memoryAllocationIsForDisplay;
+
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
 

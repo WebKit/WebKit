@@ -116,6 +116,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_scrollLayerImpl(0)
     , m_settings(settings)
     , m_visible(true)
+    , m_sourceFrameCanBeDrawn(true)
     , m_headsUpDisplay(CCHeadsUpDisplay::create())
     , m_pageScale(1)
     , m_pageScaleDelta(1)
@@ -158,6 +159,8 @@ bool CCLayerTreeHostImpl::canDraw()
     if (viewportSize().isEmpty())
         return false;
     if (!m_layerRenderer)
+        return false;
+    if (!m_sourceFrameCanBeDrawn)
         return false;
     return true;
 }

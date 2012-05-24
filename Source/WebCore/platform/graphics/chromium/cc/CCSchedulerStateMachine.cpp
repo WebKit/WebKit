@@ -57,6 +57,8 @@ bool CCSchedulerStateMachine::drawSuspendedUntilCommit() const
 {
     if (!m_canDraw)
         return true;
+    if (!m_visible)
+        return true;
     if (m_textureState == LAYER_TEXTURE_STATE_ACQUIRED_BY_MAIN_THREAD)
         return true;
     return false;
@@ -65,8 +67,6 @@ bool CCSchedulerStateMachine::drawSuspendedUntilCommit() const
 bool CCSchedulerStateMachine::scheduledToDraw() const
 {
     if (!m_needsRedraw)
-        return false;
-    if (!m_visible)
         return false;
     if (drawSuspendedUntilCommit())
         return false;
@@ -190,10 +190,8 @@ void CCSchedulerStateMachine::updateState(Action action)
         m_drawIfPossibleFailed = false;
         if (m_insideVSync)
             m_lastFrameNumberWhereDrawWasCalled = m_currentFrameNumber;
-        if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW) {
-            ASSERT(m_needsCommit || !m_visible);
+        if (m_commitState == COMMIT_STATE_WAITING_FOR_FIRST_DRAW)
             m_commitState = COMMIT_STATE_IDLE;
-        }
         if (m_textureState == LAYER_TEXTURE_STATE_ACQUIRED_BY_IMPL_THREAD)
             m_textureState = LAYER_TEXTURE_STATE_UNLOCKED;
         return;

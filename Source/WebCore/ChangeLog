@@ -1,3 +1,83 @@
+2012-05-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Only display frames created with memory allocations meant to be displayed
+        https://bugs.webkit.org/show_bug.cgi?id=85108
+
+        Reviewed by Adrienne Walker.
+
+        In this patch we remove the setVisible() code paths from CCProxy, and
+        instead commit visiblity state along with a frame. We also commit a
+        flag with a frame that indicates if the frame is one that can be drawn.
+
+        The impl host is set to visible during commit instead of using a
+        special channel through the proxy, and the scheduler allows
+        commits when we are waiting to draw our first frame but blocked on
+        being non-visible.
+
+        canDraw is gated on a new flag that indicates if the frame is one meant
+        for display. A frame is meant for display if the frame was generated
+        with a memory allocation meant for display. At this time, any non-zero
+        memory allocation is considered meant for display.
+
+        We prevent races by not changing the memory allocation at any time
+        except during a commit. So we force a commit when the memory
+        allocation needs to be adjusted and we are not visible. Similarly,
+        we force a commit when visibility changes so that we are able to
+        commit the visibility change to the impl tree.
+
+        In order to prevent drawing frames that are not meant for display
+        with a single thread, we prevent compositing when the impl tree
+        is not visible, with an early out in CCSingleThreadProxy.
+
+        Unit tests: CCLayerTreeHostTestVisibilityAndAllocationControlDrawing
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setNeedsCommit):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::setNeedsForcedCommit):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::setContentsMemoryAllocationLimitBytes):
+        (WebCore::CCLayerTreeHost::scheduleComposite):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::canDraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore::CCLayerTreeHostImpl::sourceFrameCanBeDrawn):
+        (WebCore::CCLayerTreeHostImpl::setSourceFrameCanBeDrawn):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::drawSuspendedUntilCommit):
+        (WebCore::CCSchedulerStateMachine::scheduledToDraw):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::doCommit):
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore):
+        (WebCore::CCSingleThreadProxy::setNeedsForcedCommit):
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::setNeedsForcedCommit):
+        (WebCore):
+        (WebCore::CCThreadProxy::setNeedsForcedCommitOnImplThread):
+        (WebCore::CCThreadProxy::forceBeginFrameOnImplThread):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::scheduledActionCommit):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-05-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [regression] search in formatted scripts is broken.

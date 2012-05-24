@@ -181,7 +181,6 @@ public:
     virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) { }
     virtual void setIsMask(bool) { }
     virtual void bindContentsTexture() { }
-    virtual void protectVisibleTileTextures() { }
     virtual bool needsContentsScale() const { return false; }
 
     void setDebugBorderColor(const Color&);

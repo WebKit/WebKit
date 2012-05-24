@@ -309,11 +309,6 @@ void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
     }
 }
 
-void TiledLayerChromium::protectVisibleTileTextures()
-{
-    protectTileTextures(visibleLayerRect());
-}
-
 void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
 {
     if (m_tiler->isEmpty() || layerRect.isEmpty())

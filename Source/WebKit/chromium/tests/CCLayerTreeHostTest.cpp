@@ -381,13 +381,15 @@ protected:
         , m_endWhenBeginReturns(false)
         , m_timedOut(false)
         , m_finished(false)
-        , m_scheduled(false) { }
+        , m_scheduled(false)
+        , m_started(false)
+    { }
 
     void doBeginTest();
 
     virtual void scheduleComposite()
     {
-        if (m_scheduled || m_finished)
+        if (!m_started || m_scheduled || m_finished)
             return;
         m_scheduled = true;
         callOnMainThread(&CCLayerTreeHostTest::dispatchComposite, this);
@@ -521,6 +523,8 @@ protected:
     static void dispatchComposite(void* self)
     {
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+        ASSERT(isMainThread());
+        ASSERT(test);
         test->m_scheduled = false;
         if (test->m_layerTreeHost && !test->m_finished)
             test->m_layerTreeHost->composite();
@@ -615,6 +619,7 @@ private:
     bool m_timedOut;
     bool m_finished;
     bool m_scheduled;
+    bool m_started;
 
     OwnPtr<WebThread> m_webThread;
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
@@ -633,6 +638,7 @@ void CCLayerTreeHostTest::doBeginTest()
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
     m_layerTreeHost->setSurfaceReady();
 
+    m_started = true;
     m_beginning = true;
     beginTest();
     m_beginning = false;
@@ -935,6 +941,7 @@ public:
 
     virtual void beginTest()
     {
+        postSetNeedsCommitToMainThread();
     }
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
@@ -1213,7 +1220,10 @@ public:
         postAddAnimationToMainThread();
     }
 
-    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
+    // Use willAnimateLayers to set visible false before the animation runs and
+    // causes a commit, so we block the second visible animate in single-thread
+    // mode.
+    virtual void willAnimateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
     {
         if (m_numAnimates < 2) {
             if (!m_numAnimates) {
@@ -1567,6 +1577,113 @@ TEST_F(CCLayerTreeHostTestCommit, runTest)
     runTest(true);
 }
 
+class CCLayerTreeHostTestVisibilityAndAllocationControlDrawing : public CCLayerTreeHostTest {
+public:
+
+    CCLayerTreeHostTestVisibilityAndAllocationControlDrawing() { }
+
+    virtual void beginTest()
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
+
+        // These frames should draw.
+        switch (lastFrame) {
+        case 0:
+            // Set the tree invisible, this should not draw.
+            m_layerTreeHost->setVisible(false);
+            break;
+        case 2:
+            // Set the tree invisible and give a non-visible allocation, this
+            // should not draw.
+            m_layerTreeHost->setVisible(false);
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(0);
+            break;
+        case 5:
+            // Give a memory allocation not for display, but while we are
+            // visible. This should not be used and we should remain
+            // ready for display and it should draw.
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(0);
+            break;
+        case 6:
+            endTest();
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    virtual void didCommit()
+    {
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
+
+        // These frames should not draw.
+        switch (lastFrame) {
+        case 1:
+            // Set the tree visible, this should draw.
+            m_layerTreeHost->setVisible(true);
+            break;
+        case 3:
+            // Set visible without giving a visible memory allocation, this
+            // shouldn't make the impl side ready for display, so it should
+            // not draw.
+            m_layerTreeHost->setVisible(true);
+            break;
+        case 4:
+            // Now give a memory allocation for display, this should draw.
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(1);
+            break;
+        }
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        switch (impl->sourceFrameNumber()) {
+        case 0:
+            // The host starts out visible and able to display before we do any commit.
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 1:
+            // We still have a memory allocation for display.
+            EXPECT_FALSE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 2:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 3:
+            EXPECT_FALSE(impl->visible());
+            EXPECT_FALSE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 4:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_FALSE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 5:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 6:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        }
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestVisibilityAndAllocationControlDrawing)
+
 // Verifies that startPageScaleAnimation events propagate correctly from CCLayerTreeHost to
 // CCLayerTreeHostImpl in the MT compositor.
 class CCLayerTreeHostTestStartPageScaleAnimation : public CCLayerTreeHostTest {
@@ -1768,53 +1885,6 @@ private:
 TEST_F(CCLayerTreeHostTestOpacityChange, runMultiThread)
 {
     runTest(true);
-}
-
-class CCLayerTreeHostTestSetViewportSize : public CCLayerTreeHostTest {
-public:
-
-    CCLayerTreeHostTestSetViewportSize()
-        : m_numCommits(0)
-        , m_numDraws(0)
-    {
-    }
-
-    virtual void beginTest()
-    {
-        IntSize viewportSize(10, 10);
-        layerTreeHost()->setViewportSize(viewportSize);
-
-        CCTextureUpdater updater;
-        layerTreeHost()->updateLayers(updater);
-
-        EXPECT_EQ(viewportSize, layerTreeHost()->viewportSize());
-        EXPECT_EQ(TextureManager::highLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
-        EXPECT_EQ(TextureManager::reclaimLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->preferredMemoryLimitBytes());
-
-        // setViewportSize() should not call TextureManager::setMaxMemoryLimitBytes() or TextureManager::setPreferredMemoryLimitBytes()
-        // if the viewport size is not changed.
-        IntSize fakeSize(5, 5);
-        layerTreeHost()->contentsTextureManager()->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(fakeSize));
-        layerTreeHost()->contentsTextureManager()->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(fakeSize));
-        layerTreeHost()->setViewportSize(viewportSize);
-        EXPECT_EQ(TextureManager::highLimitBytes(fakeSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
-        EXPECT_EQ(TextureManager::reclaimLimitBytes(fakeSize), layerTreeHost()->contentsTextureManager()->preferredMemoryLimitBytes());
-
-        endTest();
-    }
-
-    virtual void afterTest()
-    {
-    }
-
-private:
-    int m_numCommits;
-    int m_numDraws;
-};
-
-TEST_F(CCLayerTreeHostTestSetViewportSize, runSingleThread)
-{
-    runTest(false);
 }
 
 class MockContentLayerDelegate : public ContentLayerDelegate {

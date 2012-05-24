@@ -136,11 +136,6 @@ WebCore::LayerChromium* NonCompositedContentHost::scrollLayer()
     return m_graphicsLayer->parent()->platformLayer();
 }
 
-void NonCompositedContentHost::protectVisibleTileTextures()
-{
-    m_graphicsLayer->platformLayer()->protectVisibleTileTextures();
-}
-
 void NonCompositedContentHost::invalidateRect(const WebCore::IntRect& rect)
 {
     m_graphicsLayer->setNeedsDisplayInRect(WebCore::FloatRect(rect));

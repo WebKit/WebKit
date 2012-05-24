@@ -236,7 +236,6 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
         while (updater.hasMoreUpdates())
             updater.update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), maxPartialTextureUpdates());
 
-        m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 
         m_layerTreeHostImpl->commitComplete();
@@ -255,7 +254,13 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
 void CCSingleThreadProxy::setNeedsCommit()
 {
     ASSERT(CCProxy::isMainThread());
-    m_layerTreeHost->setNeedsCommit();
+    m_layerTreeHost->scheduleComposite();
+}
+
+void CCSingleThreadProxy::setNeedsForcedCommit()
+{
+    // This proxy doesn't block commits when not visible so use a normal commit.
+    setNeedsCommit();
 }
 
 void CCSingleThreadProxy::setNeedsRedraw()
@@ -269,23 +274,6 @@ void CCSingleThreadProxy::setNeedsRedraw()
 bool CCSingleThreadProxy::commitRequested() const
 {
     return false;
-}
-
-void CCSingleThreadProxy::setVisible(bool visible)
-{
-    DebugScopedSetImplThread impl;
-    m_layerTreeHostImpl->setVisible(visible);
-
-    if (!visible) {
-
-        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
-        return;
-    }
-
-    {
-        DebugScopedSetMainThread main;
-        setNeedsCommit();
-    }
 }
 
 void CCSingleThreadProxy::didAddAnimation()
@@ -365,9 +353,12 @@ bool CCSingleThreadProxy::doComposite()
     ASSERT(!m_contextLost);
     {
         DebugScopedSetImplThread impl;
+
+        if (!m_layerTreeHostImpl->visible())
+            return false;
+
         double monotonicTime = monotonicallyIncreasingTime();
         double wallClockTime = currentTime();
-
         m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
 
         // We guard prepareToDraw() with canDraw() because it always returns a valid frame, so can only

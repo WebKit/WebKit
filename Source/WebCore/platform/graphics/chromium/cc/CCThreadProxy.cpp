@@ -72,6 +72,7 @@ PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_animateRequested(false)
     , m_commitRequested(false)
+    , m_forcedCommitRequested(false)
     , m_contextLost(false)
     , m_layerTreeHost(layerTreeHost)
     , m_compositorIdentifier(-1)
@@ -298,6 +299,18 @@ void CCThreadProxy::setNeedsCommit()
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsCommitOnImplThread));
 }
 
+void CCThreadProxy::setNeedsForcedCommit()
+{
+    ASSERT(isMainThread());
+    if (m_forcedCommitRequested)
+        return;
+
+    TRACE_EVENT("CCThreadProxy::setNeedsForcedCommit", this, 0);
+    m_commitRequested = true;
+    m_forcedCommitRequested = true;
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsForcedCommitOnImplThread));
+}
+
 void CCThreadProxy::didLoseContextOnImplThread()
 {
     ASSERT(isImplThread());
@@ -318,6 +331,14 @@ void CCThreadProxy::setNeedsCommitOnImplThread()
     ASSERT(isImplThread());
     TRACE_EVENT("CCThreadProxy::setNeedsCommitOnImplThread", this, 0);
     m_schedulerOnImplThread->setNeedsCommit();
+}
+
+void CCThreadProxy::setNeedsForcedCommitOnImplThread()
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT("CCThreadProxy::setNeedsForcedCommitOnImplThread", this, 0);
+    m_schedulerOnImplThread->setNeedsCommit();
+    m_schedulerOnImplThread->setNeedsForcedCommit();
 }
 
 void CCThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
@@ -345,29 +366,6 @@ bool CCThreadProxy::commitRequested() const
 {
     ASSERT(isMainThread());
     return m_commitRequested;
-}
-
-void CCThreadProxy::setVisible(bool visible)
-{
-    ASSERT(isMainThread());
-    CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setVisibleOnImplThread, AllowCrossThreadAccess(&completion), visible));
-    completion.wait();
-}
-
-void CCThreadProxy::setVisibleOnImplThread(CCCompletionEvent* completion, bool visible)
-{
-    ASSERT(isImplThread());
-    m_schedulerOnImplThread->setVisible(visible);
-    m_layerTreeHostImpl->setVisible(visible);
-    if (!visible) {
-        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
-        // as partial or all the textures may be evicted in didBecomeInvisibleOnImplThread,
-        // schedule a commit which will be executed when it goes to visible again.
-        m_schedulerOnImplThread->setNeedsCommit();
-    } else
-        m_schedulerOnImplThread->setNeedsRedraw();
-    completion->signal();
 }
 
 void CCThreadProxy::setNeedsRedrawOnImplThread()
@@ -445,8 +443,7 @@ void CCThreadProxy::forceBeginFrameOnImplThread(CCCompletionEvent* completion)
     }
 
     m_beginFrameCompletionEventOnImplThread = completion;
-    m_schedulerOnImplThread->setNeedsCommit();
-    m_schedulerOnImplThread->setNeedsForcedCommit();
+    setNeedsForcedCommitOnImplThread();
 }
 
 void CCThreadProxy::scheduledActionBeginFrame()
@@ -510,6 +507,7 @@ void CCThreadProxy::beginFrame()
     // layout when painted will trigger another setNeedsCommit inside
     // updateLayers.
     m_commitRequested = false;
+    m_forcedCommitRequested = false;
 
     if (!m_layerTreeHost->updateLayers(*request->updater))
         return;
@@ -594,6 +592,7 @@ void CCThreadProxy::scheduledActionCommit()
 
     m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
     m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
+    m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 
     m_layerTreeHostImpl->commitComplete();
 

@@ -71,12 +71,15 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_needsAnimateLayers(false)
     , m_client(client)
     , m_frameNumber(0)
+    , m_frameIsForDisplay(false)
     , m_layerRendererInitialized(false)
     , m_contextLost(false)
     , m_numTimesRecreateShouldFail(0)
     , m_numFailedRecreateAttempts(0)
     , m_settings(settings)
     , m_visible(true)
+    , m_memoryAllocationBytes(0)
+    , m_memoryAllocationIsForDisplay(false)
     , m_pageScaleFactor(1)
     , m_minPageScaleFactor(1)
     , m_maxPageScaleFactor(1)
@@ -143,9 +146,12 @@ void CCLayerTreeHost::initializeLayerRenderer()
     // Update m_settings based on partial update capability.
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
-    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(deviceViewportSize()),
-                                                      TextureManager::reclaimLimitBytes(deviceViewportSize()),
-                                                      m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_contentsTextureManager = TextureManager::create(0, 0, m_proxy->layerRendererCapabilities().maxTextureSize);
+
+    // FIXME: This is the same as setContentsMemoryAllocationLimitBytes, but
+    // we're in the middle of a commit here and don't want to force another.
+    m_memoryAllocationBytes = TextureManager::highLimitBytes(deviceViewportSize());
+    m_memoryAllocationIsForDisplay = true;
 
     m_layerRendererInitialized = true;
 
@@ -245,6 +251,8 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setViewportSize(viewportSize());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
     hostImpl->setBackgroundColor(m_backgroundColor);
+    hostImpl->setVisible(m_visible);
+    hostImpl->setSourceFrameCanBeDrawn(m_frameIsForDisplay);
 
     m_frameNumber++;
 }
@@ -318,10 +326,12 @@ void CCLayerTreeHost::setNeedsAnimate()
 
 void CCLayerTreeHost::setNeedsCommit()
 {
-    if (CCThreadProxy::implThread())
-        m_proxy->setNeedsCommit();
-    else
-        m_client->scheduleComposite();
+    m_proxy->setNeedsCommit();
+}
+
+void CCLayerTreeHost::setNeedsForcedCommit()
+{
+    m_proxy->setNeedsForcedCommit();
 }
 
 void CCLayerTreeHost::setNeedsRedraw()
@@ -392,48 +402,33 @@ void CCLayerTreeHost::setVisible(bool visible)
 
     m_visible = visible;
 
-    // Tells the proxy that visibility state has changed. This will in turn call
-    // CCLayerTreeHost::didBecomeInvisibleOnImplThread on the appropriate thread, for
-    // the case where !visible.
-    m_proxy->setVisible(visible);
-}
-
-void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostImpl)
-{
-    ASSERT(CCProxy::isImplThread());
-    if (!m_layerRendererInitialized)
-        return;
-
-    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer) {
-        // Unprotect and delete all textures.
-        m_contentsTextureManager->unprotectAllTextures();
-        m_contentsTextureManager->reduceMemoryToLimit(0);
-    } else {
-        // Delete all unprotected textures, and only save textures that fit in the preferred memory limit.
-        m_contentsTextureManager->reduceMemoryToLimit(0);
-        m_contentsTextureManager->unprotectAllTextures();
-        m_contentsTextureManager->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
+    // FIXME: Remove this stuff, it is here just for the m20 merge.
+    if (!m_visible && m_layerRendererInitialized) {
+        if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
+            setContentsMemoryAllocationLimitBytes(0);
+        else
+            setContentsMemoryAllocationLimitBytes(m_contentsTextureManager->preferredMemoryLimitBytes());
     }
-    m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
 
-    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
-
-    // We may have added an animation during the tree sync. This will cause both layer tree hosts
-    // to visit their controllers.
-    if (rootLayer() && m_needsAnimateLayers)
-        hostImpl->setNeedsAnimateLayers();
+    setNeedsForcedCommit();
 }
 
 void CCLayerTreeHost::setContentsMemoryAllocationLimitBytes(size_t bytes)
 {
     ASSERT(CCProxy::isMainThread());
-    if (!m_layerRendererInitialized)
+    if (m_memoryAllocationBytes == bytes)
         return;
 
-    m_contentsTextureManager->setMemoryAllocationLimitBytes(bytes);
-    setNeedsCommit();
-}
+    m_memoryAllocationBytes = bytes;
+    m_memoryAllocationIsForDisplay = bytes;
 
+    // When not visible, force a commit so that we change our memory allocation
+    // and evict/delete any textures if we are being requested to.
+    if (!m_visible)
+        setNeedsForcedCommit();
+    else
+        setNeedsCommit();
+}
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
 {
@@ -458,6 +453,11 @@ void CCLayerTreeHost::composite()
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 
+void CCLayerTreeHost::scheduleComposite()
+{
+    m_client->scheduleComposite();
+}
+
 bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
 {
     if (!m_layerRendererInitialized) {
@@ -469,6 +469,17 @@ bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
     if (m_contextLost) {
         if (recreateContext() != RecreateSucceeded)
             return false;
+    }
+
+    // The visible state and memory allocation are set independently and in
+    // arbitrary order, so do not change the memory allocation used for the
+    // current commit until both values match intentions.
+    // FIXME: These two states should be combined into a single action so we
+    // need a single commit to change visible state, and this can be removed.
+    bool memoryAllocationStateMatchesVisibility = m_visible == m_memoryAllocationIsForDisplay;
+    if (memoryAllocationStateMatchesVisibility) {
+        m_contentsTextureManager->setMemoryAllocationLimitBytes(m_memoryAllocationBytes);
+        m_frameIsForDisplay = m_memoryAllocationIsForDisplay;
     }
 
     if (!rootLayer())
