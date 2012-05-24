@@ -1,3 +1,33 @@
+2012-05-24  Pablo Flouret  <pablof@motorola.com>
+
+        Submit button doesn't submit the form if the form is wrapped by an anchor tag
+        https://bugs.webkit.org/show_bug.cgi?id=86719
+
+        Reviewed by Ryosuke Niwa.
+
+        When a form's button is clicked or activated with the keyboard a
+        DOMActivate event is dispatched internally and the default handler for
+        it takes care of processing the form submission, but the underlying
+        event that prompted it is not set as handled and so it ends up
+        navigating the anchor, thereby cancelling the form submission.
+
+        This patch sets the original click event as handled if the DOMActivate
+        event was handled. This matches the rest of the browsers for form
+        controls that submit a form (input type=submit, button type=submit,
+        input type=image, etc), and matches IE for the rest of the controls
+        (basically, IE never activates the anchor when clicking on form
+        controls, Presto and Gecko mostly don't either, except in a few cases.
+
+        Test: fast/forms/form-in-anchor-controls-activation.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchDOMActivateEvent):
+        (WebCore::Node::defaultEventHandler):
+        * dom/Node.h:
+        (Node):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+
 2012-05-24  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Implement select popup and remove old hook to air popup

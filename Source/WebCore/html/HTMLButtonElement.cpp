@@ -110,10 +110,13 @@ void HTMLButtonElement::defaultEventHandler(Event* event)
         if (form() && m_type == SUBMIT) {
             m_isActivatedSubmit = true;
             form()->prepareForSubmission(event);
+            event->setDefaultHandled();
             m_isActivatedSubmit = false; // Do this in case submission was canceled.
         }
-        if (form() && m_type == RESET)
+        if (form() && m_type == RESET) {
             form()->reset();
+            event->setDefaultHandled();
+        }
     }
 
     if (event->isKeyboardEvent()) {
