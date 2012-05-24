@@ -1,3 +1,16 @@
+2012-05-23  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] GraphicsContext should avoid converting rotation angle to degrees
+        https://bugs.webkit.org/show_bug.cgi?id=87317
+
+        Reviewed by Noam Rosenthal.
+
+        The angle for rotate is already in radians, so we should take advantage of it
+        by using QTransform::rotateRadians, rather than converting it back internally.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::rotate):
+
 2012-05-23  David Tseng  <dtseng@google.com>
 
         AX: Prevents assertion from potentially dereferencing null pointer.

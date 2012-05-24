@@ -1269,7 +1269,8 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    m_data->p()->rotate(rad2deg(qreal(radians)));
+    QTransform rotation = QTransform().rotateRadians(radians);
+    m_data->p()->setTransform(rotation, true);
 }
 
 void GraphicsContext::scale(const FloatSize& s)
