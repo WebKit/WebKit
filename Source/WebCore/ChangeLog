@@ -1,3 +1,15 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        REGRESSION(r109663) All the the dom/html/level2/html/HTMLFrameElement* tests crash on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=87410
+
+        Reviewed by Anders Carlsson.
+
+        Do not pass a reference type to va_start (see r75435).
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formatLocalizedString):
+
 2012-05-24  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt] Stop using the flag FIXED_POSITION_CREATES_STACKING_CONTEXT
