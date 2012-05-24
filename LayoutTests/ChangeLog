@@ -1,3 +1,10 @@
+2012-05-24  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Update test expectation for fast/js/string-replace-2.html on debug
+        https://bugs.webkit.org/show_bug.cgi?id=87423
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
         [Win] Crash under DocumentLoader::didTellClientAboutLoad when running
