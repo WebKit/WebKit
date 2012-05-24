@@ -1,3 +1,11 @@
+2012-05-23  Stephanie Lewis  <slewis@apple.com>
+
+        See https://bugs.webkit.org/show_bug.cgi?id=87347
+
+        Unreviewed, skipping newly flaky test.
+
+        * platform/mac/Skipped:
+
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController needs to implement sendWebIntentResponse
