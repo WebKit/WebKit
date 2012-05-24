@@ -1,3 +1,15 @@
+2012-05-23  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Fix WebCore library path and rebaseline result
+        https://bugs.webkit.org/show_bug.cgi?id=86355
+
+        Reviewed by Dirk Pranke.
+
+        Currently EFL DRT uses wrong WebCore library path when running DRT.
+        Therefore, this patch adjusted the path correctly.
+
+        * platform/efl/test_expectations.txt: Added some cases to skipped list since we don't support those at this stage
+
 2012-05-23  Stephanie Lewis  <slewis@apple.com>
 
         See https://bugs.webkit.org/show_bug.cgi?id=87208

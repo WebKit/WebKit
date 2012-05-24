@@ -335,12 +335,11 @@ BUGWK82294 : compositing/iframes/iframe-size-to-zero.html = TEXT
 BUGWK82294 : compositing/iframes/iframe-src-change.html = TEXT
 BUGWK82294 : compositing/iframes/invisible-nested-iframe-hide.html = TEXT
 BUGWK82294 : compositing/iframes/invisible-nested-iframe-show.html = TEXT
-BUGWK82294 : compositing/iframes/leave-compositing-iframe.html = TEXT
 BUGWK82294 : compositing/iframes/overlapped-iframe-iframe.html = TEXT
 BUGWK82294 : compositing/iframes/overlapped-iframe.html = TEXT
 BUGWK82294 : compositing/iframes/overlapped-nested-iframes.html = TEXT
 BUGWK82294 : compositing/iframes/page-cache-layer-tree.html = TEXT
-BUGWK82294 : compositing/iframes/resizer.html = TEXT
+BUGWK82294 : compositing/iframes/resizer.html = MISSING
 BUGWK82294 : compositing/iframes/scrolling-iframe.html = TEXT
 BUGWK82294 : compositing/images/clip-on-directly-composited-image.html = TEXT
 BUGWK82294 : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
@@ -356,8 +355,6 @@ BUGWK82294 : compositing/overflow/content-gains-scrollbars.html = TEXT
 BUGWK82294 : compositing/overflow/content-loses-scrollbars.html = TEXT
 BUGWK82294 : compositing/overflow/overflow-scrollbar-layers.html = TEXT
 BUGWK82294 : compositing/overflow/resize-painting.html = TEXT
-BUGWK82294 : compositing/plugins/1x1-composited-plugin.html = TEXT
-BUGWK82294 : compositing/plugins/large-to-small-composited-plugin.html = TEXT
 BUGWK82294 : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 BUGWK82294 : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
 BUGWK82294 : compositing/rtl/rtl-absolute-overflow.html = TEXT
@@ -381,6 +378,31 @@ BUGWK82294 : compositing/tiling/huge-layer-with-layer-children-resize.html = TEX
 BUGWK82294 : compositing/tiling/huge-layer-with-layer-children.html = TEXT
 BUGWK82294 : compositing/tiling/huge-layer.html = TEXT
 BUGWK82294 : compositing/video/video-poster.html = TEXT
+BUGWK82294 : compositing/backing/no-backing-for-clip-overlap.html = TEXT
+BUGWK82294 : compositing/backing/no-backing-for-clip.html = TEXT
+BUGWK82294 : compositing/backing/no-backing-for-perspective.html = TEXT
+BUGWK82294 : compositing/clip-child-by-non-stacking-ancestor.html = TEXT
+BUGWK82294 : compositing/geometry/bounds-clipped-composited-child.html = TEXT
+BUGWK82294 : compositing/geometry/fixed-position-composited-switch.html = TEXT
+BUGWK82294 : compositing/layer-creation/fixed-position-out-of-view.html = TEXT
+BUGWK82294 : compositing/layer-creation/overlap-animation.html = TEXT
+BUGWK82294 : compositing/layer-creation/overlap-transformed-and-clipped.html = TEXT
+BUGWK82294 : compositing/layer-creation/overlap-transforms.html = TEXT
+BUGWK82294 : compositing/layer-creation/stacking-context-overlap-nested.html = TEXT
+BUGWK82294 : compositing/layer-creation/stacking-context-overlap.html = TEXT
+BUGWK82294 : compositing/overflow-trumps-transform-style.html = TEXT
+BUGWK82294 : compositing/tiled-layers-hidpi.html = TEXT
+BUGWK82294 : compositing/visibility/layer-visible-content.html = TEXT
+BUGWK82294 : compositing/visibility/visibility-image-layers-dynamic.html = TEXT
+
+// EFL's LayoutTestController does not implement displayInvalidatedRegion
+BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT
+
+// EFL's LayoutTestController does not implement display
+BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = TEXT
+
+// EFL does not support WebGL
+BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE

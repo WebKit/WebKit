@@ -1,3 +1,16 @@
+2012-05-23  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Fix WebCore library path and rebaseline result
+        https://bugs.webkit.org/show_bug.cgi?id=86355
+
+        Reviewed by Dirk Pranke.
+
+        Currently EFL DRT uses wrong WebCore library path when running DRT.
+        Therefore, this patch adjusted the path correctly.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._path_to_webcore_library):
+
 2012-05-23  Ojan Vafai  <ojan@chromium.org>
 
         add back the ability to disable flexbox
