@@ -1514,3 +1514,8 @@ void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::sendWebIntentResponse(JSStringRef)
+{
+    // FIXME: Implement this.
+}

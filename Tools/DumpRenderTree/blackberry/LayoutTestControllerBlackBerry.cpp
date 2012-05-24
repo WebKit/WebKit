@@ -877,3 +877,8 @@ void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
 {
     notImplemented();
 }
+
+void LayoutTestController::sendWebIntentResponse(JSStringRef)
+{
+    notImplemented();
+}

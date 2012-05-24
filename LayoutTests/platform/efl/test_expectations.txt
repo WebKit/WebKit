@@ -635,10 +635,8 @@ BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 // Incomplete Web Intents support
 BUGWK86866 SKIP : webintents/intent-tag.html = TEXT
 BUGWK86865 SKIP : webintents/web-intents-delivery.html = TEXT
-BUGWK86867 SKIP : webintents/web-intents-failure.html = TEXT
 BUGWK86841 SKIP : webintents/web-intents-invoke-port.html = TEXT
 BUGWK86873 SKIP : webintents/web-intents-obj-constructor.html = TEXT
-BUGWK86867 SKIP : webintents/web-intents-reply.html = TEXT
 
 // EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL

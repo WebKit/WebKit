@@ -96,7 +96,7 @@ void ewk_intent_request_failure_post(Ewk_Intent_Request* request, const char* fa
     EWK_INTENT_REQUEST_CORE_GET_OR_RETURN(request, core);
 
     RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::create(String::fromUTF8(failure));
-    core->postResult(value.release().leakRef());
+    core->postFailure(value.release().leakRef());
 #endif
 }
 

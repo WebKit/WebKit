@@ -53,6 +53,7 @@ using namespace WebCore;
 
 HashMap<unsigned long, CString> DumpRenderTreeChrome::m_dumpAssignedUrls;
 Evas_Object* DumpRenderTreeChrome::m_provisionalLoadFailedFrame = 0;
+Ewk_Intent_Request* DumpRenderTreeChrome::m_currentIntentRequest = 0;
 
 PassOwnPtr<DumpRenderTreeChrome> DumpRenderTreeChrome::create(Evas* evas)
 {
@@ -196,6 +197,11 @@ Evas_Object* DumpRenderTreeChrome::mainView() const
     return m_mainView;
 }
 
+Ewk_Intent_Request* DumpRenderTreeChrome::currentIntentRequest() const
+{
+    return m_currentIntentRequest;
+}
+
 void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 {
     ewk_settings_icon_database_clear();
@@ -263,6 +269,11 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
     DumpRenderTreeSupportEfl::setSerializeHTTPLoads(false);
+
+    if (m_currentIntentRequest) {
+        ewk_intent_request_unref(m_currentIntentRequest);
+        m_currentIntentRequest = 0;
+    }
 }
 
 static CString pathSuitableForTestResult(const char* uriString)
@@ -680,6 +691,11 @@ void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo
     Ewk_Intent* intent = ewk_intent_request_intent_get(request);
     if (!intent)
         return;
+
+    ewk_intent_request_ref(request);
+    if (m_currentIntentRequest)
+        ewk_intent_request_unref(m_currentIntentRequest);
+    m_currentIntentRequest = request;
 
     printf("Received Web Intent: action=%s type=%s\n",
            ewk_intent_action_get(intent),

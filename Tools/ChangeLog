@@ -1,5 +1,39 @@
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's LayoutTestController needs to implement sendWebIntentResponse
+        https://bugs.webkit.org/show_bug.cgi?id=86867
+
+        Reviewed by Adam Barth.
+
+        Add implementation for sendWebIntentResponse() in EFL's
+        LayoutTestController and add empty implementation for other ports.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (sendWebIntentResponseCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::currentIntentRequest):
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        (DumpRenderTreeChrome::onFrameIntentNew):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+
+2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] The EFL port has no support for title directionality
         https://bugs.webkit.org/show_bug.cgi?id=86462
 

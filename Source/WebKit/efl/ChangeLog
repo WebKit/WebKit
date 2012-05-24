@@ -1,5 +1,19 @@
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's LayoutTestController needs to implement sendWebIntentResponse
+        https://bugs.webkit.org/show_bug.cgi?id=86867
+
+        Reviewed by Adam Barth.
+
+        ewk_intent_request_failure_post() should call
+        WebCore::IntentRequest::postFailure(), not
+        WebCore::IntentRequest::postResult().
+
+        * ewk/ewk_intent_request.cpp:
+        (ewk_intent_request_failure_post):
+
+2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] The EFL port has no support for title directionality
         https://bugs.webkit.org/show_bug.cgi?id=86462
 

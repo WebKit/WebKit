@@ -86,6 +86,7 @@ public:
     void queueNonLoadingScript(JSStringRef script);
     void queueReload();
     void removeAllVisitedLinks();
+    void sendWebIntentResponse(JSStringRef response);
     void setAcceptsEditing(bool acceptsEditing);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);

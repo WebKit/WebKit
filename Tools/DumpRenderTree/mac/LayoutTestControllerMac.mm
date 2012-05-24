@@ -1213,3 +1213,8 @@ void LayoutTestController::setPageVisibility(const char*)
 {
     // FIXME: Implement.
 }
+
+void LayoutTestController::sendWebIntentResponse(JSStringRef)
+{
+    // FIXME: Implement.
+}
