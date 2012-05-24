@@ -287,6 +287,9 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
     QRectF endVisibleContentRect(endPosition / endItemScale, m_viewport->boundingRect().size() / endItemScale);
 
     setItemRectVisible(endVisibleContentRect);
+
+    // Make sure that tiles all around the viewport will be requested.
+    emit contentViewportChanged(QPointF());
 }
 
 void QtViewportInteractionEngine::touchBegin()
