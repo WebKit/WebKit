@@ -1,3 +1,13 @@
+2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Document.caretRangeFromPoint exposes inner elemnet of Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87231
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/caret-range-from-point-in-nested-shadow-expected.txt: Added.
+        * fast/dom/shadow/caret-range-from-point-in-nested-shadow.html: Added.
+
 2012-05-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableCol::nextColumn
