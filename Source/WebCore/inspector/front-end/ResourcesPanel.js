@@ -521,7 +521,7 @@ WebInspector.ResourcesPanel.prototype = {
         database.getTableNames(tableNamesCallback);
     },
 
-    updateDOMStorage: function(storageId)
+    domStorageUpdated: function(storageId)
     {
         var domStorage = this._domStorageForId(storageId);
         if (!domStorage)

@@ -1,0 +1,150 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function addItem(key,value)
+{
+    localStorage.setItem(key,value);
+}
+
+function removeItem(key)
+{
+    localStorage.removeItem(key);
+}
+
+function clear()
+{
+    localStorage.clear();
+}
+
+function test()
+{
+    var storage = null;
+    var rootNode = null;
+    var count = 1;
+
+    // Resources panel must be visible
+    WebInspector.showPanel("resources");
+
+    function dumpDataGrid()
+    {
+        var nodes = rootNode.children;
+        var rows = [];
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
+            if (node._data[0].length)
+                rows.push(node._data[0] + node._data[1]);
+        }
+        rows.sort();
+        InspectorTest.addResult("KeyValue pairs: [" + rows.join() + "]");
+    }
+
+    InspectorTest.runTestSuite([
+        function initialize(next)
+        {
+            function initialized(result)
+            {
+                InspectorTest.addResult("Initialized localStorage by clearing entries");
+                next();
+            }
+            InspectorTest.evaluateInPage("clear()", initialized );
+        },
+
+        function updateLocalStorageView(next)
+        {
+            function localStorageViewUpdated()
+            {
+                rootNode = storage._domStorageView._dataGrid.rootNode();
+                InspectorTest.addResult("Resource Panel with localStorage view updated");
+                next();
+            }
+            var storages = WebInspector.panels.resources._domStorage;
+
+            for (var i = 0; i < storages.length; ++i) {
+                storage = storages[i];
+                if (storage.isLocalStorage) {
+                    WebInspector.inspectorView.currentPanel().showDOMStorage(storage);
+                    InspectorTest.runAfterPendingDispatches(localStorageViewUpdated);
+                    break;
+                }
+            }
+        },
+
+        function addItemTest(next)
+        {
+            function viewUpdatedAfterAddition()
+            {
+                InspectorTest.runAfterPendingDispatches(function() {
+                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                    dumpDataGrid();
+                    if (count < 6)
+                        addItemTest(next);
+                    else
+                        next();
+                });
+            }
+
+            function itemAdded(result)
+            {
+                viewUpdatedAfterAddition();
+            }
+
+            InspectorTest.addResult("addItem('a"+count+"','=value"+count+"')");
+            InspectorTest.evaluateInPage("addItem('a"+count+"','=value"+count+"')", itemAdded );
+            count++;
+        },
+
+        function removeItemTest(next)
+        {
+            function viewUpdatedAfterRemoval()
+            {
+                InspectorTest.runAfterPendingDispatches(function() {
+                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                    dumpDataGrid();
+                    if (count > 4)
+                        removeItemTest(next);
+                    else
+                        next();
+                });
+            }
+
+            function itemRemoved(result)
+            {
+                setTimeout(viewUpdatedAfterRemoval, 0 );
+            }
+
+            --count;
+            InspectorTest.addResult("removeItem('a"+count+"')");
+            InspectorTest.evaluateInPage("removeItem('a"+count+"')", itemRemoved );
+        },
+
+        function clearTest(next)
+        {
+            function viewUpdatedAfterClear()
+            {
+                InspectorTest.runAfterPendingDispatches(function() {
+                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                    dumpDataGrid();
+                    next();
+                });
+            }
+
+            function cleared(result)
+            {
+                setTimeout(viewUpdatedAfterClear, 0 );
+            }
+
+            InspectorTest.addResult("clear()");
+            InspectorTest.evaluateInPage("clear()", cleared );
+        }
+    ]);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>Test that storage panel is present and that it contains correct data whenever localStorage is updated.</p>
+</body>
+</html>
+

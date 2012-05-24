@@ -926,6 +926,12 @@ void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrum
         domStorageAgent->didUseDOMStorage(storageArea, isLocalStorage, frame);
 }
 
+void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents* instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
+{
+    if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
+        domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin, page);
+}
+
 #if ENABLE(WORKERS)
 bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents* instrumentingAgents)
 {

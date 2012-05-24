@@ -38,7 +38,6 @@ namespace WebCore {
         enum Type {
             JSEventListenerType, 
             ImageEventListenerType, 
-            InspectorDOMStorageResourceType,
             ObjCEventListenerType,
             CPPEventListenerType,
             ConditionEventListenerType,

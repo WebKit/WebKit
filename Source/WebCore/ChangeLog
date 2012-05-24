@@ -1,3 +1,53 @@
+2012-05-24  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: localStorage items are not updated when the storage changes
+        https://bugs.webkit.org/show_bug.cgi?id=83012
+
+        Reviewed by Pavel Feldman.
+
+        Renamed the inspector protocol UpdateDOMStorage to domStorageUpdated.
+        Instrumented StorageEventDispatcher to send the update event to the
+        front-end. Also removed the way DOM Storage Agent used to listen for
+        the storage events. Added new test to verify the update notifications.
+
+        Test: inspector/storage-panel-dom-storage-update.html
+
+        * dom/EventListener.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageEntries):
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::didUseDOMStorage):
+        (WebCore::InspectorDOMStorageAgent::didDispatchDOMStorageEvent):
+        * inspector/InspectorDOMStorageAgent.h:
+        (InspectorDOMStorageAgent):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        (WebCore::InspectorDOMStorageResource::isSameHostAndType):
+        (WebCore::InspectorDOMStorageResource::unbind):
+        * inspector/InspectorDOMStorageResource.h:
+        (WebCore):
+        (InspectorDOMStorageResource):
+        (WebCore::InspectorDOMStorageResource::create):
+        (WebCore::InspectorDOMStorageResource::id):
+        (WebCore::InspectorDOMStorageResource::storageArea):
+        (WebCore::InspectorDOMStorageResource::frame):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEventImpl):
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didUseDOMStorage):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEvent):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorageDispatcher.prototype.domStorageUpdated):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.domStorageUpdated):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: introduce console proxy object for HeapSnapshot worker.

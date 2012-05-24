@@ -34,6 +34,7 @@
 
 #include "Database.h"
 #include "DOMWindow.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "InspectorDOMStorageResource.h"
@@ -52,8 +53,6 @@ namespace WebCore {
 namespace DOMStorageAgentState {
 static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
 };
-
-typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents, state)
@@ -120,7 +119,6 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& 
     if (!frame)
         return;
         
-    storageResource->startReportingChangesToFrontend();
     StorageArea* storageArea = storageResource->storageArea();
     for (unsigned i = 0; i < storageArea->length(frame); ++i) {
         String name(storageArea->key(i, frame));
@@ -161,7 +159,18 @@ String InspectorDOMStorageAgent::storageId(Storage* storage)
     bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
     DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
-        if (it->second->isSameHostAndType(frame, isLocalStorage))
+        if (it->second->isSameHostAndType(frame->document()->securityOrigin(), isLocalStorage))
+            return it->first;
+    }
+    return String();
+}
+
+String InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
+{
+    ASSERT(securityOrigin);
+    DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
+    for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
+        if (it->second->isSameHostAndType(securityOrigin, isLocalStorage))
             return it->first;
     }
     return String();
@@ -179,7 +188,7 @@ void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool i
 {
     DOMStorageResourcesMap::iterator domStorageEnd = m_resources.end();
     for (DOMStorageResourcesMap::iterator it = m_resources.begin(); it != domStorageEnd; ++it) {
-        if (it->second->isSameHostAndType(frame, isLocalStorage))
+        if (it->second->isSameHostAndType(frame->document()->securityOrigin(), isLocalStorage))
             return;
     }
 
@@ -190,6 +199,19 @@ void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool i
     // Resources are only bound while visible.
     if (m_enabled)
         resource->bind(m_frontend);
+}
+
+void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String&, const String&, const String&, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
+{
+    if (!m_frontend || !m_enabled)
+        return;
+
+    String id = storageId(securityOrigin, storageType == LocalStorage);
+
+    if (id.isEmpty())
+        return;
+
+    m_frontend->domstorage()->domStorageUpdated(id);
 }
 
 void InspectorDOMStorageAgent::clearResources()

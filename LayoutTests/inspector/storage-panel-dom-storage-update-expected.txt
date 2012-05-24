@@ -1,0 +1,31 @@
+Test that storage panel is present and that it contains correct data whenever localStorage is updated.
+
+
+Running: initialize
+Initialized localStorage by clearing entries
+
+Running: updateLocalStorageView
+Resource Panel with localStorage view updated
+
+Running: addItemTest
+addItem('a1','=value1')
+KeyValue pairs: [a1=value1]
+addItem('a2','=value2')
+KeyValue pairs: [a1=value1,a2=value2]
+addItem('a3','=value3')
+KeyValue pairs: [a1=value1,a2=value2,a3=value3]
+addItem('a4','=value4')
+KeyValue pairs: [a1=value1,a2=value2,a3=value3,a4=value4]
+addItem('a5','=value5')
+KeyValue pairs: [a1=value1,a2=value2,a3=value3,a4=value4,a5=value5]
+
+Running: removeItemTest
+removeItem('a5')
+KeyValue pairs: [a1=value1,a2=value2,a3=value3,a4=value4]
+removeItem('a4')
+KeyValue pairs: [a1=value1,a2=value2,a3=value3]
+
+Running: clearTest
+clear()
+KeyValue pairs: []
+

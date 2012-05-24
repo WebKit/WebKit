@@ -31,6 +31,7 @@
 
 #include "InspectorBaseAgent.h"
 #include "PlatformString.h"
+#include "StorageArea.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -42,6 +43,7 @@ class InspectorDOMStorageResource;
 class InspectorFrontend;
 class InspectorState;
 class InstrumentingAgents;
+class Page;
 class Storage;
 class StorageArea;
 
@@ -70,9 +72,11 @@ public:
 
     // Called from the injected script.
     String storageId(Storage*);
+    String storageId(SecurityOrigin*, bool isLocalStorage);
 
     // Called from InspectorInstrumentation
     void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
+    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
 private:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorState*);

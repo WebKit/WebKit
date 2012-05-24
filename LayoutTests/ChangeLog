@@ -1,3 +1,16 @@
+2012-05-24  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: localStorage items are not updated when the storage changes
+        https://bugs.webkit.org/show_bug.cgi?id=83012
+
+        Reviewed by Pavel Feldman.
+
+        Test to verify the storage list is updated in the inspector frontend
+        whenever there is any modifications to dom storage.
+
+        * inspector/storage-panel-dom-storage-update-expected.txt: Added.
+        * inspector/storage-panel-dom-storage-update.html: Added.
+
 2012-05-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] REGRESSION(r118291) fast/frames/flattening/iframe-tiny.html fails

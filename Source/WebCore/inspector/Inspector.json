@@ -1281,7 +1281,7 @@
                 ]
             },
             {
-                "name": "updateDOMStorage",
+                "name": "domStorageUpdated",
                 "parameters": [
                     { "name": "storageId",  "$ref": "StorageId" }
                 ]

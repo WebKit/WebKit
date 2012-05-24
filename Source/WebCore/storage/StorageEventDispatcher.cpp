@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
@@ -52,6 +53,7 @@ void StorageEventDispatcher::dispatch(const String& key, const String& oldValue,
             if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
                 frames.append(frame);
         }
+        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin, page);
 
         for (unsigned i = 0; i < frames.size(); ++i) {
             ExceptionCode ec = 0;
@@ -68,6 +70,7 @@ void StorageEventDispatcher::dispatch(const String& key, const String& oldValue,
                 if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
                     frames.append(frame);
             }
+            InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin, *it);
         }
 
         for (unsigned i = 0; i < frames.size(); ++i) {
