@@ -740,7 +740,7 @@ class Manager(object):
 
         all_shards = locked_shards + unlocked_shards
         self._remaining_locked_shards = locked_shards
-        if locked_shards:
+        if locked_shards and self._options.http:
             self.start_servers_with_lock()
 
         num_workers = min(num_workers, len(all_shards))

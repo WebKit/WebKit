@@ -1,3 +1,16 @@
+2012-05-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [NRWT] REGRESSION(r116021): Assertion when running with --no-http
+        https://bugs.webkit.org/show_bug.cgi?id=86800
+
+        Reviewed by Dirk Pranke.
+
+        Don't launch a HTTP server with lock based only on the existence of
+        locked shards since we now run perf on locked shards too.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+
 2012-05-24  Jochen Eisinger  <jochen@chromium.org>
 
         Add --driver-name option to run_webkit_tests.py to allow for selecting alternative DRT binaries
