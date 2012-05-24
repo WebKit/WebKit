@@ -1,3 +1,16 @@
+2012-05-23  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (115573): Incorrect rounding of margins for floats
+        https://bugs.webkit.org/show_bug.cgi?id=87319
+
+        Reviewed by Eric Seidel.
+
+        Add new test ensuring that using margins with floats doesn't cause
+        undesired wrapping.
+
+        * fast/block/float/floats-with-margin-should-not-wrap-expected.html: Added.
+        * fast/block/float/floats-with-margin-should-not-wrap.html: Added.
+
 2012-05-23  Eric Seidel  <eric@webkit.org>
 
         Add seamless layout code (and pass most of the remaining seamless tests)
