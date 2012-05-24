@@ -1,3 +1,14 @@
+2012-05-23  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening after r118203 and r118171.
+
+        Remove wrong expectations added in r118171 and unskip passing
+        tests after r118203.
+
+        * platform/efl/compositing/layer-creation/fixed-position-scroll-expected.png: Removed.
+        * platform/efl/compositing/layer-creation/fixed-position-scroll-expected.txt: Removed.
+        * platform/efl/test_expectations.txt:
+
 2012-05-23  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Fix WebCore library path and rebaseline result

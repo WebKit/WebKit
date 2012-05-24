@@ -116,14 +116,6 @@ BUGWK87088 : fast/js/names.html = TEXT
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK87253 : http/tests/messaging/cross-domain-message-event-dispatch.html = CRASH
-BUGWK87253 : http/tests/security/view-source-no-javascript-url.html = CRASH
-BUGWK87253 : http/tests/security/local-video-src-from-remote.html = CRASH
-BUGWK87253 : media/track/track-kind.html = CRASH
-BUGWK87253 : media/track/text-track-is-reachable.html = CRASH
-BUGWK87253 : media/video-source-none-supported.html = CRASH
-BUGWK87253 : media/video-source-inserted.html = CRASH
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
