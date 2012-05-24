@@ -60,7 +60,20 @@ WebInspector.HeapSnapshotRealWorker = function()
 WebInspector.HeapSnapshotRealWorker.prototype = {
     _messageReceived: function(event)
     {
-        this.dispatchEventToListeners("message", event.data);
+        var message = event.data;
+        if ("callId" in message)
+            this.dispatchEventToListeners("message", message);
+        else {
+            if (message.object !== "console") {
+                console.log(WebInspector.UIString("Worker asks to call a method '%s' on unsupported object '%s'.", message.method, message.object));
+                return;
+            }
+            if (message.method !== "log" && message.method !== "info" && message.method !== "error") {
+                console.log(WebInspector.UIString("Worker asks to call unsuported method '%s' on console object.", message.method));
+                return;
+            }
+            console[message.method].apply(window[message.object], message.arguments);
+        }
     },
 
     postMessage: function(message)

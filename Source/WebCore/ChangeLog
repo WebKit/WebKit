@@ -1,3 +1,24 @@
+2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: introduce console proxy object for HeapSnapshot worker.
+        https://bugs.webkit.org/show_bug.cgi?id=87346
+
+        There is no console object in html5 workers at the moment.
+        This makes me sad when I'm troubleshooting the HeapSnapshot stuff.
+        I wrote a simplest proxy object which sends the log, info and error messages
+        to the WebInspector window.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotRealWorker.prototype._messageReceived):
+        * inspector/front-end/HeapSnapshotWorker.js:
+        (WebInspector.WorkerConsole):
+        (WebInspector.WorkerConsole.prototype.log):
+        (WebInspector.WorkerConsole.prototype.error):
+        (WebInspector.WorkerConsole.prototype.info):
+        (WebInspector.WorkerConsole.prototype._postMessage):
+
 2012-05-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         Elements in Shadow DOM are not resizable.
