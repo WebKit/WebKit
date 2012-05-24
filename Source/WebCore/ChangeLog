@@ -1,3 +1,18 @@
+2012-05-24  Jer Noble  <jer.noble@apple.com>
+
+        MediaControlTimelineElement is adjusting time 3 times per click
+        https://bugs.webkit.org/show_bug.cgi?id=58160
+
+        Reviewed by Eric Carlson.
+
+        No new tests; we intentionally throttle timeupdate events for the same
+        movie time, so there is no way to write a layout test for this case.
+
+        Only call setCurrentTime() on mousedown or mousemove events.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting

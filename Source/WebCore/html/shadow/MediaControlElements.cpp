@@ -869,8 +869,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
         return;
 
     float time = narrowPrecisionToFloat(value().toDouble());
-    if (time != mediaController()->currentTime()) {
-        // FIXME: This is fired 3 times on every click. We should not be doing that <http:/webkit.org/b/58160>.
+    if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime()) {
         ExceptionCode ec;
         mediaController()->setCurrentTime(time, ec);
     }
