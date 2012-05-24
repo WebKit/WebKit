@@ -1,3 +1,37 @@
+2012-05-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: convert HeapSnapshotGridNode._provider into getter.
+        https://bugs.webkit.org/show_bug.cgi?id=87382
+
+        I found that we create a provider for child nodes for the each DataGrid node in advance.
+        It cost us one async call to the HeapSnapshot's worker per each such the node.
+        I converted the property into the getter which is initializing the provider lazily.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        * inspector/front-end/HeapSnapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode):
+        (WebInspector.HeapSnapshotGridNode.prototype.createProvider):
+        (WebInspector.HeapSnapshotGridNode.prototype._provider):
+        (WebInspector.HeapSnapshotGridNode.prototype.dispose):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.expandWithoutPopulate):
+        (WebInspector.HeapSnapshotGridNode.prototype._populateChildren.serializeNextChunk):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.updateHasChildren):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotInstanceNode):
+        (WebInspector.HeapSnapshotConstructorNode):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.createProvider):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.revealNodeBySnapshotObjectId):
+        (WebInspector.HeapSnapshotDiffNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype.createProvider):
+        (WebInspector.HeapSnapshotDominatorObjectNode):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype.createProvider):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype.retrieveChildBySnapshotObjectId):
+
 2012-05-24  Rakesh KN  <rakesh.kn@motorola.com>
 
         Filter for RadioNodeList should be case sensitive.

@@ -846,7 +846,9 @@ WebInspector.HeapSnapshot.prototype = {
     },
 
     /**
-     * @param {String=} filterString
+     * @param {boolean} sortedIndexes
+     * @param {string} key
+     * @param {string=} filterString
      */
     aggregates: function(sortedIndexes, key, filterString)
     {
