@@ -1,3 +1,11 @@
+2012-05-23  Stephanie Lewis  <slewis@apple.com>
+
+        See https://bugs.webkit.org/show_bug.cgi?id=87208
+
+        Unreviewed, skipping new test that can have side effects.
+
+        * platform/mac/Skipped:
+
 2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] mousewheel event isn't fired on nodes in Shadow DOM.
