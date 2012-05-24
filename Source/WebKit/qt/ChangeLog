@@ -1,3 +1,21 @@
+2012-05-24  Steffen Imhof  <steffen.imhof@basyskom.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67093
+        [Qt] Default window.alert shows HTML entities in certain cases
+
+        Instead of HTML escaping the text of JS alerts (which does not work
+        consistently because of Qt's automatisms), build message boxes
+        explicitly to be able set the text format to plain text.
+        QInputDialog is a bit hacky, because there is no way to access or
+        control the contained QLabel.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move setEditingBehavior() from layoutTestController to window.internals

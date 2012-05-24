@@ -130,6 +130,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
 #include <QNetworkProxy>
@@ -2082,7 +2083,12 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
     Q_UNUSED(frame)
 #ifndef QT_NO_MESSAGEBOX
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    QMessageBox::information(parent, tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QMessageBox::Ok);
+    QMessageBox box(parent);
+    box.setWindowTitle(tr("JavaScript Alert - %1").arg(mainFrame()->url().host()));
+    box.setTextFormat(Qt::PlainText);
+    box.setText(msg);
+    box.setStandardButtons(QMessageBox::Ok);
+    box.exec();
 #endif
 }
 
@@ -2099,7 +2105,12 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
     return true;
 #else
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    return QMessageBox::Yes == QMessageBox::information(parent, tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QMessageBox::Yes, QMessageBox::No);
+    QMessageBox box(parent);
+    box.setWindowTitle(tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()));
+    box.setTextFormat(Qt::PlainText);
+    box.setText(msg);
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    return QMessageBox::Yes == box.exec();
 #endif
 }
 
@@ -2118,10 +2129,30 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     Q_UNUSED(frame)
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
+
     QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
-    QString x = QInputDialog::getText(parent, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), escapeHtml(msg), QLineEdit::Normal, defaultValue, &ok);
+    QInputDialog dlg(parent);
+    dlg.setWindowTitle(tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()));
+
+    // Hack to force the dialog's QLabel into plain text mode
+    // prevents https://bugs.webkit.org/show_bug.cgi?id=34429
+    QLabel* label = dlg.findChild<QLabel*>();
+    if (label)
+        label->setTextFormat(Qt::PlainText);
+
+    // double the &'s because single & will underline the following character
+    // (Accelerator mnemonics)
+    QString escMsg(msg);
+    escMsg.replace(QChar::fromAscii('&'), QString::fromAscii("&&"));
+    dlg.setLabelText(escMsg);
+
+    dlg.setTextEchoMode(QLineEdit::Normal);
+    dlg.setTextValue(defaultValue);
+
+    ok = !!dlg.exec();
+
     if (ok && result)
-        *result = x;
+        *result = dlg.textValue();
 #endif
     return ok;
 }
