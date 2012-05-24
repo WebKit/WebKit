@@ -82,6 +82,7 @@ public:
     virtual void updateAnimations(double monotonicTime) { }
     virtual void layout() { }
     virtual void didRecreateContext(bool succeded) { }
+    virtual void didCommit() { }
     virtual void didCommitAndDrawFrame() { }
     virtual void scheduleComposite() { }
 
@@ -275,6 +276,7 @@ public:
 
     virtual void didCommit() OVERRIDE
     {
+        m_testHooks->didCommit();
     }
 
     virtual void didCommitAndDrawFrame() OVERRIDE
@@ -924,7 +926,6 @@ TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
 }
 
 // If the layerTreeHost says it can't draw, then we should not try to draw.
-// FIXME: Make this run in single threaded mode too. http://crbug.com/127481
 class CCLayerTreeHostTestCanDrawBlocksDrawing : public CCLayerTreeHostTestThreadOnly {
 public:
     CCLayerTreeHostTestCanDrawBlocksDrawing()
@@ -951,7 +952,7 @@ public:
         }
     }
 
-    virtual void didCommitAndDrawFrame()
+    virtual void didCommit()
     {
         m_numCommits++;
         if (m_numCommits == 1) {
@@ -961,10 +962,10 @@ public:
             OwnArrayPtr<char> pixels(adoptArrayPtr(new char[4]));
             m_layerTreeHost->compositeAndReadback(static_cast<void*>(pixels.get()), IntRect(0, 0, 1, 1));
         } else if (m_numCommits == 2) {
+            m_layerTreeHost->setNeedsRedraw();
             m_layerTreeHost->setNeedsCommit();
-            m_layerTreeHost->finishAllRendering();
+        } else
             endTest();
-        }
     }
 
     virtual void afterTest()
@@ -975,10 +976,7 @@ private:
     int m_numCommits;
 };
 
-TEST_F(CCLayerTreeHostTestCanDrawBlocksDrawing, runMultiThread)
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestCanDrawBlocksDrawing)
 
 // beginLayerWrite should prevent draws from executing until a commit occurs
 class CCLayerTreeHostTestWriteLayersRedraw : public CCLayerTreeHostTestThreadOnly {
