@@ -1,3 +1,15 @@
+2012-05-24  Peter Beverloo  <peter@chromium.org>
+
+        Add John Mellor as a contributor
+        https://bugs.webkit.org/show_bug.cgi?id=87389
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        John will be working on Font Boosting and is very involved with various
+        web-facing subjects of Chrome for Android, such as viewport.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] LayoutTestController's setCacheModel() implementation
