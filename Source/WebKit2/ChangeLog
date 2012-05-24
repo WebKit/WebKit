@@ -1,3 +1,12 @@
+2012-05-23  Ojan Vafai  <ojan@chromium.org>
+
+        add back the ability to disable flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=87147
+
+        Reviewed by Tony Chang.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-05-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (117623) - Entering/exiting fullscreen HTML5 videos, there is a quick animated fade
