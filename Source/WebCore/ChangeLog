@@ -1,3 +1,23 @@
+2012-05-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: compositing/video/video-poster.html fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=87199
+
+        Reviewed by Maciej Stachowiak.
+
+        No new tests; fixes failing compositing/video/video-poster.html test.
+
+        Instead of creating the video layer directly, simply allow the layer
+        to be created in updateStates() by changing the definition of
+        isReadyForVideoSetup() to bypass the m_isAllowedToRender check if
+        the player reports a video track is present.  This causes the video layer
+        to be created and for future calls to prepareForRendering() to result
+        in calls to mediaPlayerRenderingModeChanged().
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::isReadyForVideoSetup):
+        (WebCore::MediaPlayerPrivateAVFoundation::metadataLoaded):
+
 2012-05-23  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Unbreak popup menus.
