@@ -1,3 +1,12 @@
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] LayoutTests/editing/selection/selection-plugin-clear-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=87431
+
+        Add it to the Windows Skipped list to get the bots green.
+
+        * platform/win/Skipped:
+
 2012-05-24  Jeffrey Pfau  <jpfau@apple.com>
 
         Test case for focusing readonly elements
