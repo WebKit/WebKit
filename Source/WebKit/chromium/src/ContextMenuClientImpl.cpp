@@ -280,7 +280,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         if (selectedFrame->settings() && selectedFrame->settings()->asynchronousSpellCheckingEnabled()) {
             RefPtr<Range> range = selectedFrame->selection()->toNormalizedRange();
             if (range.get()) {
-                Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling | DocumentMarker::Grammar);
+                Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling);
                 if (!markers.isEmpty()) {
                     Vector<String> suggestions;
                     for (size_t i = 0; i < markers.size(); ++i) {

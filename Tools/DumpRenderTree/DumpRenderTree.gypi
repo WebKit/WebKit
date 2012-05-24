@@ -20,8 +20,6 @@
             'chromium/GamepadController.h',
             'chromium/LayoutTestController.cpp',
             'chromium/LayoutTestController.h',
-            'chromium/MockGrammarCheck.cpp',
-            'chromium/MockGrammarCheck.h',
             'chromium/MockSpellCheck.cpp',
             'chromium/MockSpellCheck.h',
             'chromium/MockWebSpeechInputController.cpp',

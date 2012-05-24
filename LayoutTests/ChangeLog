@@ -1,5 +1,20 @@
 2012-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r118352.
+        http://trac.webkit.org/changeset/118352
+        https://bugs.webkit.org/show_bug.cgi?id=87390
+
+        Caused 6 editing/spelling tests crash/fail on chromium in
+        debug. (Requested by vsevik on #webkit).
+
+        * editing/spelling/grammar-markers-expected.txt: Removed.
+        * editing/spelling/grammar-markers.html: Removed.
+        * platform/chromium-linux/editing/spelling/grammar-markers-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/spelling/grammar-markers-expected.png: Removed.
+
+2012-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r118256.
         http://trac.webkit.org/changeset/118256
         https://bugs.webkit.org/show_bug.cgi?id=87388

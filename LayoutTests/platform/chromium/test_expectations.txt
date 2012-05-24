@@ -1015,12 +1015,11 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 // New test added in r82159
 BUGCR77706 LINUX XP WIN7 SNOWLEOPARD LION : editing/spelling/grammar.html = TEXT
 BUGCR77706 VISTA SLOW : editing/spelling/grammar.html = TEXT
+// Chromium does not have a grammar checker.
+BUGWK74393 : editing/spelling/grammar-paste.html = FAIL TIMEOUT
 
 // Needs grammar checking.
 BUGWK71792 : editing/spelling/markers.html = FAIL MISSING
-
-// Needs rebaselined images.
-BUGWK74393 MAC WIN : editing/spelling/grammar-markers.html = MISSING
 
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
