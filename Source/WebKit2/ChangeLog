@@ -1,5 +1,14 @@
 2012-05-24  Brady Eidson  <beidson@apple.com>
 
+        Fix the build after http://trac.webkit.org/changeset/118441
+        Also fix a glaring bug with the new code, will run it by original reviewer retroactively.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): Fix up the types of the ? operands
+          to appease super-strict compilers. Don't allow negative indexes (besides the -1 "No index" index).
+
+2012-05-24  Brady Eidson  <beidson@apple.com>
+
         <rdar://problem/10090764> and https://bugs.webkit.org/show_bug.cgi?id=87417
         (Unrepro) Crashes saving session state in WebBackForwardList
 
