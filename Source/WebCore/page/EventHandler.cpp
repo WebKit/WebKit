@@ -2347,7 +2347,6 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
                 return true;
         }
 
-        node = node->shadowAncestorNode();
         if (node && !node->dispatchWheelEvent(event))
             return true;
     }

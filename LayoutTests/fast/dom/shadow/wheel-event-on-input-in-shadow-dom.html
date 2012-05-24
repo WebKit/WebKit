@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<script src="../resources/event-sender-util.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="host"></div>
+<pre id="console"></pre>
+
+<script>
+function createInput(name) {
+    var div = document.createElement('input');
+    div.style.width = '100px';
+    div.style.height = '100px';
+
+    div.addEventListener('mousewheel', function(e) {
+        debug('PASS: mousewheel event is fired.');
+    });
+
+    return div;
+}
+
+var shadowRoot = new WebKitShadowRoot(host);
+var shadowDiv = createInput('shadow');
+shadowRoot.appendChild(shadowDiv);
+
+mouseMoveToElem(shadowDiv);
+eventSender.mouseScrollBy(0, 1);
+
+var successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

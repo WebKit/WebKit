@@ -1,3 +1,15 @@
+2012-05-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] mousewheel event isn't fired on nodes in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87218
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/wheel-event-in-shadow-dom-expected.txt: Added.
+        * fast/dom/shadow/wheel-event-in-shadow-dom.html: Added.
+        * fast/dom/shadow/wheel-event-on-input-in-shadow-dom-expected.txt: Added.
+        * fast/dom/shadow/wheel-event-on-input-in-shadow-dom.html: Added.
+
 2012-05-23  Hayato Ito  <hayato@chromium.org>
 
         Adjust a target node of a mouse event correctly when a distributed text node is clicked.
