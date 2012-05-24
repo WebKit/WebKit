@@ -1,3 +1,10 @@
+2012-05-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: Web Inspector single line fix for r118162.
+
+        * inspector/front-end/HeapSnapshotDataGrids.js:
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._populateChildren):
+
 2012-05-23  Lu Guanqun  <guanqun.lu@intel.com>
 
         sort the array 'non_wrapper_types'

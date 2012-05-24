@@ -572,7 +572,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this.resetSortingCache();
 
         var key = this._profileIndex === -1 ? "allObjects" : this._minNodeId + ".." + this._maxNodeId;
-        var filter = this._profileIndex === -1 ? null : "function(node) { var id = node.id; return id > " + this._minNodeId + " && id <= " + this._maxNodeId + "; }";
+        var filter = this._profileIndex === -1 ? null : "function(node) { var id = node.id(); return id > " + this._minNodeId + " && id <= " + this._maxNodeId + "; }";
 
         this.snapshot.aggregates(false, key, filter, aggregatesReceived.bind(this, key));
     },
