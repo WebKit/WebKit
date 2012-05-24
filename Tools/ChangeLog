@@ -1,3 +1,9 @@
+2012-05-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed fix, add ENABLE_CSS3_FLEXBOX after r118304.
+
+        * qmake/mkspecs/features/features.pri:
+
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController needs to implement sendWebIntentResponse
