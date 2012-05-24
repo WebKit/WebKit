@@ -2070,10 +2070,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             if (!hasExitSite && putByIdStatus.isSimpleReplace()) {
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
-                addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), base, addToGraph(GetPropertyStorage, base), value);
+                size_t offsetOffset;
+                NodeIndex propertyStorage;
+                if (putByIdStatus.oldStructure()->isUsingInlineStorage()) {
+                    propertyStorage = base;
+                    ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+                    offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+                } else {
+                    propertyStorage = addToGraph(GetPropertyStorage, base);
+                    offsetOffset = 0;
+                }
+                addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = putByIdStatus.offset();
+                storageAccessData.offset = putByIdStatus.offset() + offsetOffset;
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else if (!hasExitSite
@@ -2112,15 +2122,25 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                                 putByIdStatus.newStructure()))),
                     base);
                 
+                size_t offsetOffset;
+                NodeIndex propertyStorage;
+                if (putByIdStatus.newStructure()->isUsingInlineStorage()) {
+                    propertyStorage = base;
+                    ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+                    offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+                } else {
+                    propertyStorage = addToGraph(GetPropertyStorage, base);
+                    offsetOffset = 0;
+                }
                 addToGraph(
                     PutByOffset,
                     OpInfo(m_graph.m_storageAccessData.size()),
+                    propertyStorage,
                     base,
-                    addToGraph(GetPropertyStorage, base),
                     value);
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = putByIdStatus.offset();
+                storageAccessData.offset = putByIdStatus.offset() + offsetOffset;
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else {

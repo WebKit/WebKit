@@ -307,7 +307,7 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
-            if (index == child1) 
+            if (index == child1)
                 break;
 
             Node& node = m_graph[index];
@@ -320,7 +320,7 @@ private:
                 
             case PutByOffset:
                 if (m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber) {
-                    if (node.child2() == child1)
+                    if (node.child1() == child1) // Must be same property storage.
                         return node.child3().index();
                     return NoNode;
                 }

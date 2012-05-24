@@ -3507,9 +3507,9 @@ void SpeculativeJIT::compile(Node& node)
         
     case PutByOffset: {
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
-        SpeculateCellOperand base(this, node.child1());
+        SpeculateCellOperand base(this, node.child2());
 #endif
-        StorageOperand storage(this, node.child2());
+        StorageOperand storage(this, node.child1());
         JSValueOperand value(this, node.child3());
 
         GPRReg storageGPR = storage.gpr();

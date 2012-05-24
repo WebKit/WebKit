@@ -1,3 +1,21 @@
+2012-05-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not do unnecessary indirections when storing to objects
+        https://bugs.webkit.org/show_bug.cgi?id=86959
+
+        Reviewed by Oliver Hunt.
+        
+        Merged r117819 from dfgopt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize aliased uses of the Arguments object of the current call frame
