@@ -262,7 +262,7 @@ private:
     String platformDefaultLocalStorageDirectory() const;
 
     void handleGetPlugins(uint64_t requestID, bool refresh);
-    void sendDidGetPlugins(uint64_t requestID, const Vector<WebCore::PluginInfo>&);
+    void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
 
     ProcessModel m_processModel;
     
