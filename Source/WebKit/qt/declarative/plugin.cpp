@@ -44,7 +44,11 @@
 
 QT_BEGIN_NAMESPACE
 
+#if QT_VERSION >= 0x050000
+class WebKitQmlPlugin : public QQmlExtensionPlugin {
+#else
 class WebKitQmlPlugin : public QDeclarativeExtensionPlugin {
+#endif
     Q_OBJECT
 public:
 #if defined(HAVE_WEBKIT2)

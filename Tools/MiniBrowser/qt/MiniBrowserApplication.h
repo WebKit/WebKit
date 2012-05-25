@@ -32,7 +32,7 @@
 #include <QHash>
 #include <QObject>
 #include <QStringList>
-#include <QtDeclarative>
+#include <QtQml>
 #include <QGuiApplication>
 #include <QTouchEvent>
 #include <QUrl>

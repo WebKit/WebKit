@@ -1,5 +1,14 @@
 2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Buildfix for newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=87257
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.h: QtDeclarative -> QtQml renaming.
+
+2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed fix after r118484.
 
         Enable CSS_EXCLUSIONS and CSS_REGIONS.

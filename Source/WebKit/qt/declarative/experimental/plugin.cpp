@@ -43,7 +43,7 @@ public:
     QQuickWebViewExperimental* experimental() { return static_cast<QQuickWebView*>(parent())->experimental(); }
 };
 
-class WebKitQmlExperimentalExtensionPlugin: public QDeclarativeExtensionPlugin {
+class WebKitQmlExperimentalExtensionPlugin: public QQmlExtensionPlugin {
     Q_OBJECT
 public:
     virtual void registerTypes(const char* uri)
