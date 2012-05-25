@@ -51,6 +51,7 @@ protected:
 
 private:
     RadioNodeList(const AtomicString& name, Element*);
+    bool checkElementMatchesRadioNodeListFilter(Element*) const;
 
     AtomicString m_name;
     RefPtr<Element> m_formElement;

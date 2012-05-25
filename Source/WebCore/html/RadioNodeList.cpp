@@ -30,6 +30,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 
 namespace WebCore {
 
@@ -82,13 +83,23 @@ void RadioNodeList::setValue(const String& value)
     }
 }
 
-bool RadioNodeList::nodeMatches(Element* testElement) const
+bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement) const
 {
-    if (!testElement->isFormControlElement())
+    ASSERT(testElement->hasTagName(objectTag) || testElement->isFormControlElement());
+    HTMLFormElement* formElement = 0;
+    if (testElement->hasTagName(objectTag))
+        formElement = static_cast<HTMLObjectElement*>(testElement)->form();
+    else
+        formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
+    if (!formElement || formElement != m_formElement)
         return false;
 
-    HTMLFormElement* formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
-    if (!formElement || formElement != m_formElement)
+    return testElement->getIdAttribute() == m_name || testElement->getNameAttribute() == m_name;
+}
+
+bool RadioNodeList::nodeMatches(Element* testElement) const
+{
+    if (!testElement->hasTagName(objectTag) && !testElement->isFormControlElement())
         return false;
 
     if (HTMLInputElement* inputElement = testElement->toInputElement()) {
@@ -96,7 +107,7 @@ bool RadioNodeList::nodeMatches(Element* testElement) const
             return false;
     }
 
-    return testElement->getIdAttribute() ==  m_name || testElement->getNameAttribute() == m_name;
+    return checkElementMatchesRadioNodeListFilter(testElement);
 }
 
 } // namspace

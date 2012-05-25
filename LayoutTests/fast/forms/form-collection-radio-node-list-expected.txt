@@ -51,6 +51,11 @@ PASS radioNodeList2[2].type is 'reset'
 After changing the id
 PASS radioNodeList2.length is 2
 
+Check that object element also reflects in RadioNodeList.
+PASS radioNodeList.length is 5
+
+Check that object element does not reflect in RadioNodeList if its owner form is not present.
+PASS container.appendChild(nonSubtreeObjectElement); radioNodeList.length is 5
 PASS successfullyParsed is true
 
 TEST COMPLETE

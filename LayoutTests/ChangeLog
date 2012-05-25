@@ -1,3 +1,14 @@
+2012-05-25  Rakesh KN  <rakesh.kn@motorola.com>
+
+        RadioNodeList does not include a object element
+        https://bugs.webkit.org/show_bug.cgi?id=87371
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/form-collection-radio-node-list-expected.txt:
+        * fast/forms/form-collection-radio-node-list.html:
+        Updated test to include test for object element.
+
 2012-05-25  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Resource object has no methods getContent and setContent

@@ -123,6 +123,16 @@ debug("After changing the id");
 shouldBe('radioNodeList2.length', '2');
 debug("");
 
+debug("Check that object element also reflects in RadioNodeList.");
+document.getElementById("object1").id = "inputcommon";
+shouldBe('radioNodeList.length', '5');
+
+debug("");
+debug("Check that object element does not reflect in RadioNodeList if its owner form is not present.");
+var nonSubtreeObjectElement = document.createElement("object");
+nonSubtreeObjectElement.setAttribute("id", "inputcommon");
+shouldBe('container.appendChild(nonSubtreeObjectElement); radioNodeList.length', '5');
+
 container.parentNode.removeChild(container);
 </script>
 <script src="../js/resources/js-test-post.js"></script>
