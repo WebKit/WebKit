@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'none'".
+
+CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'none'".
+
+PASS 1/2
+PASS 2/2
+0

@@ -22,6 +22,7 @@
 #define StyleElement_h
 
 #include "CSSStyleSheet.h"
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -52,13 +53,13 @@ protected:
     RefPtr<CSSStyleSheet> m_sheet;
 
 private:
-    void createSheet(Element*, int startLineNumber, const String& text = String());
+    void createSheet(Element*, WTF::OrdinalNumber startLineNumber, const String& text = String());
     void process(Element*);
     void clearSheet();
 
     bool m_createdByParser;
     bool m_loading;
-    int m_startLineNumber;
+    WTF::OrdinalNumber m_startLineNumber;
 };
 
 }

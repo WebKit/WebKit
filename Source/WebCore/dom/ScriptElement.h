@@ -93,6 +93,7 @@ private:
 
     Element* m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
+    WTF::OrdinalNumber m_startLineNumber;
     bool m_parserInserted : 1;
     bool m_isExternalScript : 1;
     bool m_alreadyStarted : 1;

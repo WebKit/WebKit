@@ -80,7 +80,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     if (!document->frame())
         return 0;
 
-    if (!document->contentSecurityPolicy()->allowInlineEventHandlers())
+    if (!document->contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
         return 0;
 
     ScriptController* script = document->frame()->script();

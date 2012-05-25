@@ -105,7 +105,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (hasExistingListenerObject())
         return;
 
-    if (context->isDocument() && !static_cast<Document*>(context)->contentSecurityPolicy()->allowInlineEventHandlers())
+    if (context->isDocument() && !static_cast<Document*>(context)->contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
         return;
 
     v8::HandleScope handleScope;

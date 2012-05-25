@@ -1,3 +1,65 @@
+2012-05-25  Mike West  <mkwst@chromium.org>
+
+        Inline script and style blocked by Content Security Policy should provide more detailed console errors.
+        https://bugs.webkit.org/show_bug.cgi?id=86848
+
+        Reviewed by Adam Barth.
+
+        This change adds a URL and line number for context to each call to
+        `ContentSecurityPolicy::allowInline*`, and pipes it through to the
+        console message generation in `CSPDirectiveList::reportViolation`.
+
+        Line numbers are not added for injected scripts (`document.write(...)`,
+        `document.body.appendChild`, and etc.).
+
+        Tests: http/tests/security/contentSecurityPolicy/injected-inline-script-allowed.html
+               http/tests/security/contentSecurityPolicy/injected-inline-script-blocked.html
+               http/tests/security/contentSecurityPolicy/injected-inline-style-allowed.html
+               http/tests/security/contentSecurityPolicy/injected-inline-style-blocked.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::executeScript):
+        * dom/ScriptElement.h:
+        (ScriptElement):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::StyleElement):
+        (WebCore::StyleElement::createSheet):
+        * dom/StyleElement.h:
+        (StyleElement):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::StyledElement):
+        (WebCore):
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::styleAttributeChanged):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::reportViolation):
+        (WebCore::CSPDirectiveList::checkInlineAndReportViolation):
+        (WebCore::CSPDirectiveList::checkEvalAndReportViolation):
+        (WebCore::CSPDirectiveList::allowJavaScriptURLs):
+        (WebCore::CSPDirectiveList::allowInlineEventHandlers):
+        (WebCore::CSPDirectiveList::allowInlineScript):
+        (WebCore::CSPDirectiveList::allowInlineStyle):
+        (WebCore::CSPDirectiveList::allowEval):
+        (WebCore):
+        (WebCore::isAllowedByAllWithCallStack):
+        (WebCore::isAllowedByAllWithContext):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        (WebCore::ContentSecurityPolicy::allowInlineScript):
+        (WebCore::ContentSecurityPolicy::allowInlineStyle):
+        * page/ContentSecurityPolicy.h:
+        (WTF):
+
 2012-05-25  Tim Horton  <timothy_horton@apple.com>
 
         ENABLE_CSS3_FLEXBOX is insufficient to disable all web-facing bits of the feature

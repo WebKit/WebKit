@@ -32,6 +32,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -75,7 +76,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
 
     if (!m_frame->page()
         || !m_frame->page()->javaScriptURLsAreAllowed()
-        || !m_frame->document()->contentSecurityPolicy()->allowJavaScriptURLs()
+        || !m_frame->document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame->document()->url(), eventHandlerPosition().m_line)
         || m_frame->inViewSourceMode())
         return true;
 

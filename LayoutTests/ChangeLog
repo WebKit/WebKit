@@ -1,3 +1,36 @@
+2012-05-25  Mike West  <mkwst@chromium.org>
+
+        Inline script and style blocked by Content Security Policy should provide more detailed console errors.
+        https://bugs.webkit.org/show_bug.cgi?id=86848
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/combine-multiple-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/default-src-inline-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-blocked-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/inline-script-blocked-expected.txt.
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/resources/inject-script.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/inject-style.js: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-none-inline-event-expected.txt:
+        * http/tests/security/contentSecurityPolicy/srcdoc-doesnt-bypass-script-src-expected.txt:
+
 2012-05-25  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Add missing expectations needed after http://trac.webkit.org/changeset/118577/

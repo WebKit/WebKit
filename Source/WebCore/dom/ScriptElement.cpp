@@ -41,12 +41,14 @@
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "ScriptableDocumentParser.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/TextPosition.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -58,6 +60,7 @@ namespace WebCore {
 ScriptElement::ScriptElement(Element* element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
     , m_cachedScript(0)
+    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
     , m_parserInserted(parserInserted)
     , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
@@ -70,6 +73,8 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
     , m_requestUsesAccessControl(false)
 {
     ASSERT(m_element);
+    if (parserInserted && m_element->document()->scriptableDocumentParser() && !m_element->document()->isInDocumentWrite())
+        m_startLineNumber = m_element->document()->scriptableDocumentParser()->lineNumber();
 }
 
 ScriptElement::~ScriptElement()
@@ -276,7 +281,7 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     if (sourceCode.isEmpty())
         return;
 
-    if (!m_isExternalScript && !m_element->document()->contentSecurityPolicy()->allowInlineScript())
+    if (!m_isExternalScript && !m_element->document()->contentSecurityPolicy()->allowInlineScript(m_element->document()->url(), m_startLineNumber))
         return;
 
     RefPtr<Document> document = m_element->document();

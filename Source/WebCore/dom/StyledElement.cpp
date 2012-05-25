@@ -37,9 +37,11 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "ScriptableDocumentParser.h"
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/text/TextPosition.h>
 
 using namespace std;
 
@@ -126,13 +128,21 @@ void StyledElement::updateStyleAttribute() const
         const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText(), InUpdateStyleAttribute);
 }
 
+StyledElement::StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
+    : Element(name, document, type)
+    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
+{
+    if (document && document->scriptableDocumentParser() && !document->isInDocumentWrite())
+        m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
+}
+
 StyledElement::~StyledElement()
 {
     destroyInlineStyle();
 }
 
-CSSStyleDeclaration* StyledElement::style() 
-{ 
+CSSStyleDeclaration* StyledElement::style()
+{
     return ensureAttributeData()->ensureMutableInlineStyle(this)->ensureInlineCSSStyleDeclaration(this); 
 }
 
@@ -173,7 +183,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, Sh
     if (shouldReparse) {
         if (newStyleString.isNull())
             destroyInlineStyle();
-        else if (document()->contentSecurityPolicy()->allowInlineStyle())
+        else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), m_startLineNumber))
             ensureAttributeData()->updateInlineStyleAvoidingMutation(this, newStyleString);
         setIsStyleAttributeValid();
     }

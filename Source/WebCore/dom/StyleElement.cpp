@@ -30,6 +30,7 @@
 #include "ScriptableDocumentParser.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -48,10 +49,10 @@ static bool isCSS(Element* element, const AtomicString& type)
 StyleElement::StyleElement(Document* document, bool createdByParser)
     : m_createdByParser(createdByParser)
     , m_loading(false)
-    , m_startLineNumber(0)
+    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
 {
-    if (createdByParser && document && document->scriptableDocumentParser())
-        m_startLineNumber = document->scriptableDocumentParser()->lineNumber().zeroBasedInt();
+    if (createdByParser && document && document->scriptableDocumentParser() && !document->isInDocumentWrite())
+        m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
 }
 
 StyleElement::~StyleElement()
@@ -144,7 +145,7 @@ void StyleElement::clearSheet()
     m_sheet = 0;
 }
 
-void StyleElement::createSheet(Element* e, int startLineNumber, const String& text)
+void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, const String& text)
 {
     ASSERT(e);
     ASSERT(e->inDocument());
@@ -157,7 +158,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
 
     // If type is empty or CSS, this is a CSS style sheet.
     const AtomicString& type = this->type();
-    if (document->contentSecurityPolicy()->allowInlineStyle() && isCSS(e, type)) {
+    if (document->contentSecurityPolicy()->allowInlineStyle(e->document()->url(), startLineNumber) && isCSS(e, type)) {
         RefPtr<MediaQuerySet> mediaQueries;
         if (e->isHTMLElement())
             mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(media());
@@ -173,8 +174,7 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
             m_sheet = CSSStyleSheet::createInline(e, KURL(), document->inputEncoding());
             m_sheet->setMediaQueries(mediaQueries.release());
             m_sheet->setTitle(e->title());
-    
-            m_sheet->contents()->parseStringAtLine(text, startLineNumber);
+            m_sheet->contents()->parseStringAtLine(text, startLineNumber.zeroBasedInt());
 
             m_loading = false;
         }
