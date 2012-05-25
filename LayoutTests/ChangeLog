@@ -1,3 +1,13 @@
+2012-05-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Gardening. fast/events/option-tab.html does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=87471
+
+        Unreviewed. fast/events/option-tab.html should not pass as the 
+        EFL port uses different keyboard accelerators than Safari (via Chromium).
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-25  Keishi Hattori  <keishi@webkit.org>
 
         Bad checkValidity result on recently "enabled" form fields
