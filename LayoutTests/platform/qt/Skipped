@@ -2469,8 +2469,3 @@ fast/block/positioning/fixed-position-stacking-context.html
 # [Qt] REGRESSION(r118291) fast/frames/flattening/iframe-tiny.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=87363
 fast/frames/flattening/iframe-tiny.html
-
-# [Qt] r118325 made two inspector tests to fail
-# https://bugs.webkit.org/show_bug.cgi?id=87385
-inspector/console/console-format.html
-inspector/extensions/extensions-console.html

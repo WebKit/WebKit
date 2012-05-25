@@ -1,3 +1,9 @@
+2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt/Skipped:
+
 2012-05-25  Tony Payne  <tpayne@chromium.org>
 
         Add tests for JPEG and PNG images with a non-generic RGB color profile
