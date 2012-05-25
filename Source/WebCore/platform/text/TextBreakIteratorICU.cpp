@@ -87,16 +87,30 @@ void releaseLineBreakIterator(TextBreakIterator* iterator)
 
 static TextBreakIterator* nonSharedCharacterBreakIterator;
 
+static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterator* expected, TextBreakIterator* newValue)
+{
+#if ENABLE(COMPARE_AND_SWAP)
+    return weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), expected, newValue);
+#else
+    DEFINE_STATIC_LOCAL(Mutex, nonSharedCharacterBreakIteratorMutex, ());
+    MutexLocker locker(nonSharedCharacterBreakIteratorMutex);
+    if (nonSharedCharacterBreakIterator != expected)
+        return false;
+    nonSharedCharacterBreakIterator = newValue;
+    return true;
+#endif
+}
+
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* buffer, int length)
 {
     m_iterator = nonSharedCharacterBreakIterator;
-    bool createdIterator = m_iterator && weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), m_iterator, 0);
+    bool createdIterator = m_iterator && compareAndSwapNonSharedCharacterBreakIterator(m_iterator, 0);
     m_iterator = setUpIterator(createdIterator, m_iterator, UBRK_CHARACTER, buffer, length);
 }
 
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 {
-    if (!weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), 0, m_iterator))
+    if (!compareAndSwapNonSharedCharacterBreakIterator(0, m_iterator))
         ubrk_close(reinterpret_cast<UBreakIterator*>(m_iterator));
 }
 

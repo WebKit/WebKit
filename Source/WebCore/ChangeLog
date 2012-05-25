@@ -1,3 +1,18 @@
+2012-05-25  Dan Bernstein  <mitz@apple.com>
+
+        Make the ICU-based implementation of NonSharedCharacterBreakIterator work in configurations
+        that do not have COMPARE_AND_SWAP enabled.
+
+        Reviewed by Jessie Berlin.
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::compareAndSwapNonSharedCharacterBreakIterator): Added this helper. It uses
+        weakCompareAndSwap when COMPARE_AND_SWAP is enabled, and uses a mutex to do the atomic
+        compare and swap otherwise.
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Changed to use
+        compareAndSwapNonSharedCharacterBreakIterator().
+        (WebCore::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator): Ditto.
+
 2012-05-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make sure IceCallback is valid for PeerConnection00
