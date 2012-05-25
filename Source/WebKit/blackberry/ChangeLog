@@ -1,3 +1,20 @@
+2012-05-25  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Pass http headers to loader in download request
+        https://bugs.webkit.org/show_bug.cgi?id=87449
+
+        Reviewed by Rob Buis.
+
+        PR# 149283
+
+        This is to support byte-range download and we could pass http headers like
+        "Range" in download request to loader.
+
+        Reviewed internally by Lyon Chen.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::download):
+
 2012-05-24  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] InputHandler can hold a ref on an object when document is cleared.
