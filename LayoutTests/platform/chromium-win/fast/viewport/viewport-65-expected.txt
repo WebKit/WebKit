@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 3: Viewport argument value "100;initial-scale" for key "width" was truncated to its numeric prefix.
-CONSOLE MESSAGE: line 3: Viewport argument key "1" not recognized and ignored.
-CONSOLE MESSAGE: line 8: Uncaught TypeError: Object [object Object] has no method 'dumpConfigurationForViewport'
-

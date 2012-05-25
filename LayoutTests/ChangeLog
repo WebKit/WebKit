@@ -1,3 +1,16 @@
+2012-05-25  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Remove 6 incorrect baselines from http://trac.webkit.org/changeset/117821/
+
+        Unreviewed gardening.
+
+        * platform/chromium-win/fast/viewport/viewport-126-expected.txt: Removed.
+        * platform/chromium-win/fast/viewport/viewport-127-expected.txt: Removed.
+        * platform/chromium-win/fast/viewport/viewport-65-expected.txt: Removed.
+        * platform/chromium-win/fast/viewport/viewport-82-expected.txt: Removed.
+        * platform/chromium-win/fast/viewport/viewport-84-expected.txt: Removed.
+        * platform/chromium-win/fast/viewport/viewport-87-expected.txt: Removed.
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         Web Timing is not enabled on Windows

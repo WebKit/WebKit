@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 3: Viewport argument value "400%" for key "width" was truncated to its numeric prefix.
-CONSOLE MESSAGE: line 8: Uncaught TypeError: Object [object Object] has no method 'dumpConfigurationForViewport'
-
