@@ -85,8 +85,6 @@ WebInspector.NativeMemoryProfileType.prototype = {
         var profilesPanel = WebInspector.panels.profiles;
         var profileHeader = new WebInspector.NativeMemoryProfileHeader(this, WebInspector.UIString("Snapshot %d", this._profileIndex++), -1);
         profilesPanel.addProfileHeader(profileHeader);
-        profilesPanel.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileStarted);
-        profilesPanel.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileFinished);
         return false;
     },
 
@@ -150,7 +148,7 @@ WebInspector.NativeMemoryProfileHeader.prototype = {
      */
     createView: function()
     {
-        return new WebInspector.NativeMemorySnapshotView();
+        return new WebInspector.NativeMemorySnapshotView(this);
     }
 }
 

@@ -1,3 +1,11 @@
+2012-05-25  Yury Semikhatsky  <yurys@google.com>
+
+        Unreviewed. Fixed closure compiler warnings.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+        (WebInspector.NativeMemoryProfileHeader.prototype.createView):
+
 2012-05-25  Lu Guanqun  <guanqun.lu@intel.com>
 
         [GTK] fix compilation warning in GtkInputMethodFilter.cpp
