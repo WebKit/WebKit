@@ -219,7 +219,7 @@ RenderObject::RenderObject(Node* node)
 
 RenderObject::~RenderObject()
 {
-    ASSERT(!node() || documentBeingDestroyed() || !frame()->view() || frame()->view()->layoutRoot() != this);
+    ASSERT(documentBeingDestroyed() || !frame()->view() || frame()->view()->layoutRoot() != this);
 #ifndef NDEBUG
     ASSERT(!m_hasAXObject);
     renderObjectCounter.decrement();
@@ -2260,7 +2260,7 @@ bool RenderObject::isSelectionBorder() const
 
 inline void RenderObject::clearLayoutRootIfNeeded() const
 {
-    if (node() && !documentBeingDestroyed() && frame()) {
+    if (!documentBeingDestroyed() && frame()) {
         if (FrameView* view = frame()->view()) {
             if (view->layoutRoot() == this) {
                 ASSERT_NOT_REACHED();
