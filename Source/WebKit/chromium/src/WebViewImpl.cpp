@@ -1326,27 +1326,7 @@ void WebViewImpl::resize(const WebSize& newSize)
 {
     if (m_shouldAutoResize || m_size == newSize)
         return;
-
-    FrameView* view = mainFrameImpl()->frameView();
-    if (!view)
-        return;
-
-    WebSize oldSize = m_size;
-    float oldPageScaleFactor = pageScaleFactor();
-    IntSize oldScrollOffset = view->scrollOffset();
-    int oldFixedLayoutWidth = fixedLayoutSize().width;
-
     m_size = newSize;
-
-    if (isFixedLayoutModeEnabled()) {
-        // Fallback width is used to layout sites designed for desktop. The
-        // conventional size used by all mobile browsers is 980. When a mobile
-        // device has a particularly wide screen (such as a 10" tablet held in
-        // landscape), it can be larger.
-        const int standardFallbackWidth = 980;
-        int dpiIndependentViewportWidth = newSize.width / page()->settings()->defaultDeviceScaleFactor();
-        settings()->setLayoutFallbackWidth(std::max(standardFallbackWidth, dpiIndependentViewportWidth));
-    }
 
 #if ENABLE(VIEWPORT)
     if (settings()->viewportEnabled()) {
@@ -1362,31 +1342,6 @@ void WebViewImpl::resize(const WebSize& newSize)
         WebFrameImpl* webFrame = mainFrameImpl();
         if (webFrame->frameView())
             webFrame->frameView()->resize(newSize.width, newSize.height);
-    }
-
-    if (isFixedLayoutModeEnabled()) {
-        // Relayout immediately to obtain the new content width, which is needed
-        // to calculate the minimum scale limit.
-        view->layout();
-        computePageScaleFactorLimits();
-        // When the device rotates:
-        // - If the page width is unchanged, then zoom by new width/old width
-        //   such as to keep the same content horizontally onscreen.
-        // - If the page width stretches proportionally to the change in
-        //   screen width, then don't zoom at all (assuming the content has
-        //   scaled uniformly, then the same content will be horizontally
-        //   onscreen).
-        //   - If the page width partially stretches, then zoom partially to
-        //   make up the difference.
-        // In all cases try to keep the same content at the top of the screen.
-        float viewportWidthRatio = !oldSize.width ? 1 : newSize.width / (float) oldSize.width;
-        float fixedLayoutWidthRatio = !oldFixedLayoutWidth ? 1 : fixedLayoutSize().width / (float) oldFixedLayoutWidth;
-        float scaleMultiplier = viewportWidthRatio / fixedLayoutWidthRatio;
-        if (scaleMultiplier != 1) {
-            IntSize scrollOffsetAtNewScale = oldScrollOffset;
-            scrollOffsetAtNewScale.scale(scaleMultiplier);
-            setPageScaleFactor(oldPageScaleFactor * scaleMultiplier, IntPoint(scrollOffsetAtNewScale));
-        }
     }
 
     sendResizeEventAndRepaint();

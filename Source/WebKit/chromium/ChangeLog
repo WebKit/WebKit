@@ -1,3 +1,15 @@
+2012-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118461.
+        http://trac.webkit.org/changeset/118461
+        https://bugs.webkit.org/show_bug.cgi?id=87468
+
+        Breaks two chromium browser_tests. (Requested by vsevik on
+        #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2012-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions
