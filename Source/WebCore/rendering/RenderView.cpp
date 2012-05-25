@@ -755,10 +755,10 @@ LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const
 
 IntRect RenderView::documentRect() const
 {
-    IntRect overflowRect(unscaledDocumentRect());
+    FloatRect overflowRect(unscaledDocumentRect());
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect;
+    return IntRect(overflowRect);
 }
 
 int RenderView::viewHeight() const

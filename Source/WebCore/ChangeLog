@@ -1,3 +1,31 @@
+2012-05-25  John Knottenbelt  <jknotten@chromium.org>
+
+        Body scrollWidth() and scrollHeight() should be page scale-invariant
+        https://bugs.webkit.org/show_bug.cgi?id=87494
+
+        RenderView::documentRect() is calculating the "scaled" document rect by applying
+        the current transformation matrix to the unscaledDocumentRect() and then
+        returning the rounded-out IntRect result.
+
+        This rounding out is incorrect because it allows the scaled rectangle to
+        represent an area that is not actually covered by the document.
+
+        We fix this by applying the current transform to the document rect
+        as a FloatRect and then explicitly converting to IntRect, which
+        takes the floor of the resulting rectangle coordinates instead of
+        rounding them out.
+
+        This is evidenced by the document.body.scrollWidth() and
+        document.body.scrollHeight() changing under page scale factor when
+        they are expected to remain invariant.
+
+        Reviewed by James Robinson.
+
+        Test: fast/dom/window-scroll-scaling.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::documentRect):
+
 2012-05-25  Dan Bernstein  <mitz@apple.com>
 
         characterBreakIterator() is not safe to use reentrantly or from multiple threads
