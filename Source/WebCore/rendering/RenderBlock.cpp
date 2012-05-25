@@ -2015,16 +2015,6 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
         logicalTop = min(logicalTop, nextPageLogicalTop(beforeCollapseLogicalTop));
         setLogicalHeight(logicalHeight() + (logicalTop - oldLogicalTop));
     }
-
-    // If we have collapsed into a previous sibling and so reduced the height of the parent, ensure any floats that now
-    // overhang from the previous sibling are added to our parent
-    RenderObject* prev = child->previousSibling();
-    if (prev && prev->isRenderBlock()) {
-        RenderBlock* block = toRenderBlock(prev);
-        if (block->m_floatingObjects && block->lowestFloatLogicalBottom() > logicalTop) 
-            addOverhangingFloats(block, false);
-    }
-
     return logicalTop;
 }
 
