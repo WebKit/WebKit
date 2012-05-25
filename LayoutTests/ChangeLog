@@ -1,3 +1,9 @@
+2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-25  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Speed up edges iteration in heap profiler

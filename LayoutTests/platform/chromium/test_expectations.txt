@@ -1019,9 +1019,6 @@ BUGCR77706 VISTA SLOW : editing/spelling/grammar.html = TEXT
 // Needs grammar checking.
 BUGWK71792 : editing/spelling/markers.html = FAIL MISSING
 
-// Needs rebaselined images.
-BUGWK74393 MAC WIN : editing/spelling/grammar-markers.html = MISSING
-
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
@@ -3739,7 +3736,8 @@ BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSIN
 
 BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = TIMEOUT PASS
 
-BUGWK86683 WIN LINUX SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
+BUGWK86683 DEBUG WIN LINUX SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
+BUGWK86683 RELEASE WIN LINUX SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT PASS
 
 BUGWK86907 WIN : http/tests/inspector/compiler-script-mapping.html = PASS TEXT
 
