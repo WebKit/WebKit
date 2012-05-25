@@ -344,8 +344,11 @@ bool CCSingleThreadProxy::commitAndComposite()
     if (!m_layerTreeHost->updateLayers(updater))
         return false;
 
+    m_layerTreeHost->willCommit();
     doCommit(updater);
-    return doComposite();
+    bool result = doComposite();
+    m_layerTreeHost->didBeginFrame();
+    return result;
 }
 
 bool CCSingleThreadProxy::doComposite()

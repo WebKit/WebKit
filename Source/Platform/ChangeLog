@@ -1,3 +1,15 @@
+2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        [chromium] add instrumentation for compositing
+        https://bugs.webkit.org/show_bug.cgi?id=83928
+
+        Reviewed by James Robinson.
+
+        - added willCommit() and didBeginFrame() methods for instrumentation of compositing.
+
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebLayerTreeViewClient):
+
 2012-05-21  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: add a file system call which captures the file metadata at once.

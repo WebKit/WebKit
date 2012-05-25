@@ -65,6 +65,11 @@ void WebLayerTreeViewImpl::willBeginFrame()
     m_client->willBeginFrame();
 }
 
+void WebLayerTreeViewImpl::didBeginFrame()
+{
+    m_client->didBeginFrame();
+}
+
 void WebLayerTreeViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
     m_client->updateAnimations(monotonicFrameBeginTime);
@@ -92,6 +97,11 @@ PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createContext()
 void WebLayerTreeViewImpl::didRecreateContext(bool success)
 {
     m_client->didRebindGraphicsContext(success);
+}
+
+void WebLayerTreeViewImpl::willCommit()
+{
+    m_client->willCommit();
 }
 
 void WebLayerTreeViewImpl::didCommit()

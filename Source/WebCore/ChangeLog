@@ -1,3 +1,22 @@
+2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        [chromium] add instrumentation for compositing
+        https://bugs.webkit.org/show_bug.cgi?id=83928
+
+        Reviewed by James Robinson.
+
+        - plumb willCommit() and didBeginFrame() from CCSingleThreadProxy and CCThreadProxy to inspector instrumentation;
+        - note for threaded case, didBeginFrame() is invoked upon unblocking of main thread;
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHostClient):
+        (WebCore::CCLayerTreeHost::didBeginFrame):
+        (WebCore::CCLayerTreeHost::willCommit):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrame):
+
 2012-05-25  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Drop InspectorFileSystemInstrumentation

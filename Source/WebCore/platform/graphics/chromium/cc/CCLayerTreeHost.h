@@ -55,11 +55,14 @@ class TextureManager;
 class CCLayerTreeHostClient {
 public:
     virtual void willBeginFrame() = 0;
+    // Marks finishing compositing-related tasks on the main thread. In threaded mode, this corresponds to didCommit().
+    virtual void didBeginFrame() = 0;
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassRefPtr<GraphicsContext3D> createContext() = 0;
     virtual void didRecreateContext(bool success) = 0;
+    virtual void willCommit() = 0;
     virtual void didCommit() = 0;
     virtual void didCommitAndDrawFrame() = 0;
     virtual void didCompleteSwapBuffers() = 0;
@@ -151,6 +154,7 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void willBeginFrame() { m_client->willBeginFrame(); }
+    void didBeginFrame() { m_client->didBeginFrame(); }
     void updateAnimations(double monotonicFrameBeginTime);
     void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
@@ -165,6 +169,7 @@ public:
         RecreateFailedAndGaveUp,
     };
     RecreateResult recreateContext();
+    void willCommit() { m_client->willCommit(); }
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);

@@ -516,6 +516,7 @@ void CCThreadProxy::beginFrame()
     // they are drawn by the impl thread.
     m_texturesAcquired = false;
 
+    m_layerTreeHost->willCommit();
     // Before applying scrolls and calling animate, we set m_animateRequested to false.
     // If it is true now, it means setNeedAnimate was called again. Call setNeedsCommit
     // now so that we get begin frame when this one is done.
@@ -536,6 +537,7 @@ void CCThreadProxy::beginFrame()
     }
 
     m_layerTreeHost->commitComplete();
+    m_layerTreeHost->didBeginFrame();
 }
 
 void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion)

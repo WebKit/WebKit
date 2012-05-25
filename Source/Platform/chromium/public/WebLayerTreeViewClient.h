@@ -40,6 +40,10 @@ public:
     // tasks.  FIXME: make pure virtual once upstream deps are satisfied.
     virtual void willBeginFrame() { }
 
+    // Indicates that main thread tasks associated with frame rendering have completed.
+    // Issued unconditionally, even if the context was lost in the process.
+    virtual void didBeginFrame() { }
+
     // Updates animation and layout. These are called before the compositing
     // pass so that layers can be updated at the given frame time.
     virtual void updateAnimations(double monotonicFrameBeginTime) = 0;
@@ -58,6 +62,10 @@ public:
     // Signals a successful rebinding of the 3D context (e.g. after a lost
     // context event).
     virtual void didRebindGraphicsContext(bool success) = 0;
+
+    // Indicates that a frame will be committed to the impl side of the compositor
+    // for rendering.
+    virtual void willCommit() { }
 
     // Indicates that a frame was committed to the impl side of the compositor
     // for rendering.

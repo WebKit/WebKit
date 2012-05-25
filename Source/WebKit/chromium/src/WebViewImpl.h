@@ -291,10 +291,12 @@ public:
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();
+    virtual void didBeginFrame();
     virtual void updateAnimations(double monotonicFrameBeginTime);
     virtual void applyScrollAndScale(const WebSize&, float);
     virtual WebGraphicsContext3D* createContext3D();
     virtual void didRebindGraphicsContext(bool);
+    virtual void willCommit();
     virtual void didCommit();
     virtual void didCommitAndDrawFrame();
     virtual void didCompleteSwapBuffers();

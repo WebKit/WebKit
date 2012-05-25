@@ -1467,6 +1467,11 @@ void WebViewImpl::willBeginFrame()
     m_client->willBeginCompositorFrame();
 }
 
+void WebViewImpl::didBeginFrame()
+{
+    InspectorInstrumentation::didComposite(m_page.get());
+}
+
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -3544,6 +3549,11 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
                                     scrollOffset.height * pageScaleDelta);
         setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
     }
+}
+
+void WebViewImpl::willCommit()
+{
+    InspectorInstrumentation::willComposite(m_page.get());
 }
 
 void WebViewImpl::didCommit()

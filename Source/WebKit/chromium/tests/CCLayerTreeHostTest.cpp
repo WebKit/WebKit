@@ -249,6 +249,10 @@ public:
     {
     }
 
+    virtual void didBeginFrame() OVERRIDE
+    {
+    }
+
     virtual void updateAnimations(double monotonicTime) OVERRIDE
     {
         m_testHooks->updateAnimations(monotonicTime);
@@ -272,6 +276,10 @@ public:
 
         OwnPtr<WebGraphicsContext3D> webContext = CompositorFakeWebGraphicsContext3DWithTextureTracking::create(webAttrs);
         return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+
+    virtual void willCommit() OVERRIDE
+    {
     }
 
     virtual void didCommit() OVERRIDE

@@ -40,11 +40,13 @@ public:
     virtual ~WebLayerTreeViewImpl();
 
     virtual void willBeginFrame() OVERRIDE;
+    virtual void didBeginFrame() OVERRIDE;
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE;
     virtual void layout() OVERRIDE;
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE;
     virtual PassRefPtr<WebCore::GraphicsContext3D> createContext() OVERRIDE;
     virtual void didRecreateContext(bool success) OVERRIDE;
+    virtual void willCommit() OVERRIDE;
     virtual void didCommit() OVERRIDE;
     virtual void didCommitAndDrawFrame() OVERRIDE;
     virtual void didCompleteSwapBuffers() OVERRIDE;
