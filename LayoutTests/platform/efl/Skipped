@@ -801,9 +801,6 @@ media/video-size-intrinsic-scale.html
 # BUG: the theme probably has a different thumb value
 fast/forms/range/slider-zoomed.html
 
-# BUG: <input type="color"> values are not being sanitized
-fast/forms/color/input-value-sanitization-color.html
-
 # BUG: wrong textarea sizes
 fast/forms/textarea-metrics.html
 

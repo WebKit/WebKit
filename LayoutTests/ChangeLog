@@ -1,3 +1,15 @@
+2012-05-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] fast/forms/color/input-value-sanitization-color.html can be unskipped
+        https://bugs.webkit.org/show_bug.cgi?id=87487
+
+        Unreviewed EFL gardening. Unskip
+        fast/forms/color/input-value-sanitization-color.html now that
+        INPUT_TYPE_COLOR flag has been enabled by default for EFL port in
+        r114113.
+
+        * platform/efl/Skipped:
+
 2012-05-25  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Gardening of failing tests and missing results
