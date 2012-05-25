@@ -1,5 +1,13 @@
 2012-05-25  Adam Klein  <adamk@chromium.org>
 
+        Mark some "flaky" TypedArray tests more appropriately as DEBUG SLOW
+
+        Unreviewed test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-25  Adam Klein  <adamk@chromium.org>
+
         Rebaseline Chromium expectations for fast/box-shadow/shadow-buffer-partial.html
 
         Unreviewed rebaselining.
