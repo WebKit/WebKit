@@ -25,11 +25,11 @@
 #include "HTMLStyleElement.h"
 
 #include "Attribute.h"
+#include "ContextEnabledFeatures.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventSender.h"
 #include "HTMLNames.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
 #include "StyleSheetContents.h"
@@ -105,7 +105,7 @@ void HTMLStyleElement::registerWithScopingNode()
     ASSERT(inDocument());
     if (m_isRegisteredWithScopingNode)
         return;
-    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
         return;
 
     ContainerNode* scope = parentNode();
@@ -130,10 +130,10 @@ void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
     // Note: We cannot rely on the 'scoped' element still being present when this method is invoked.
     // Therefore we cannot rely on scoped()!
-    ASSERT(m_isRegisteredWithScopingNode || !RuntimeEnabledFeatures::styleScopedEnabled());
+    ASSERT(m_isRegisteredWithScopingNode || !ContextEnabledFeatures::styleScopedEnabled(document()));
     if (!m_isRegisteredWithScopingNode)
         return;
-    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
         return;
 
     ASSERT(scope);

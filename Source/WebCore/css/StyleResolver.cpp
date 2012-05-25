@@ -52,6 +52,7 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ContentData.h"
+#include "ContextEnabledFeatures.h"
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
@@ -89,7 +90,6 @@
 #include "RenderStyleConstants.h"
 #include "RenderTheme.h"
 #include "RotateTransformOperation.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGFontFaceElement.h"
 #include "ScaleTransformOperation.h"
@@ -490,7 +490,7 @@ const ContainerNode* StyleResolver::determineScope(const CSSStyleSheet* sheet)
 {
     ASSERT(sheet);
 
-    if (!RuntimeEnabledFeatures::styleScopedEnabled())
+    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
         return 0;
 
     Node* ownerNode = sheet->ownerNode();

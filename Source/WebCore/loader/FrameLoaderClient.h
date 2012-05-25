@@ -312,6 +312,7 @@ namespace WebCore {
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
 
         virtual bool shadowDOMAllowed(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
+        virtual bool allowStyleScoped(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
 
         // This callback notifies the client that the frame was about to run
         // JavaScript but did not because allowScript returned false. We

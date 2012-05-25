@@ -32,6 +32,7 @@
 #include "ContextEnabledFeatures.h"
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -47,6 +48,18 @@ bool ContextEnabledFeatures::shadowDOMEnabled(DOMWindow* window)
     if (Frame* frame = window->frame())
         return frame->loader()->client()->shadowDOMAllowed(RuntimeEnabledFeatures::shadowDOMEnabled());
     return false;
+}
+#endif
+
+#if ENABLE(STYLE_SCOPED)
+bool ContextEnabledFeatures::styleScopedEnabled(Document* document)
+{
+    if (!document)
+        return false;
+    if (Frame* frame = document->frame())
+        return frame->loader()->client()->allowStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled());
+    return false;
+   
 }
 #endif
 

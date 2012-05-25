@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class DOMWindow;
+class Document;
 
 // A class that stores static enablers for all experimental features. Note that
 // the method names must line up with the JavaScript method they enable for code
@@ -43,6 +44,9 @@ class ContextEnabledFeatures {
 public:
 #if ENABLE(SHADOW_DOM)
     static bool shadowDOMEnabled(DOMWindow*);
+#endif
+#if ENABLE(STYLE_SCOPED)
+    static bool styleScopedEnabled(Document*);
 #endif
 };
 

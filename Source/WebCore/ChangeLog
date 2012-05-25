@@ -1,3 +1,32 @@
+2012-05-24  MORITA Hajime  <morrita@google.com>
+
+        Scoped stylesheet should be per-document-configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=86985
+
+        Reviewed by Kent Tamura.
+
+        This change replaced RuntimeEnabledFeatures::styleScopedEnabled() callsites
+        with newly introduced ContextEnabledFeatures::styleScopedEnabled().
+        Clients can override the decision by implementing FrameLoaderClient::allowStyleScoped().
+
+        No new tests. This isn't testable on DRT.
+
+        * bindings/generic/ContextEnabledFeatures.cpp:
+        (WebCore):
+        (WebCore::ContextEnabledFeatures::styleScopedEnabled):
+        * bindings/generic/ContextEnabledFeatures.h:
+        (WebCore):
+        (ContextEnabledFeatures):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::determineScope):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowStyleScoped):
+
 2012-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118452.
