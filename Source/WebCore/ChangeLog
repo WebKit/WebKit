@@ -1,3 +1,16 @@
+2012-05-24  Andreas Kling  <kling@webkit.org>
+
+        Dodge style recalc when id attribute is overwritten with same value.
+        <http://webkit.org/b/87211>
+
+        Reviewed by Eric Seidel.
+
+        Don't force style recalc when the id attribute is set to the same value it already had.
+        ~3.5% improvement on Dromaeo's "dom-attr" locally.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
 2012-05-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add profile type for native memory snapshots

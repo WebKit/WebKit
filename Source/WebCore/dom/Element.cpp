@@ -702,13 +702,15 @@ void Element::attributeChanged(const Attribute& attribute)
     document()->incDOMTreeVersion();
 
     if (isIdAttributeName(attribute.name())) {
-        if (attribute.isNull())
-            attributeData()->setIdForStyleResolution(nullAtom);
-        else if (document()->inQuirksMode())
-            attributeData()->setIdForStyleResolution(attribute.value().lower());
-        else
-            attributeData()->setIdForStyleResolution(attribute.value());
-        setNeedsStyleRecalc();
+        if (attribute.value() != attributeData()->idForStyleResolution()) {
+            if (attribute.isNull())
+                attributeData()->setIdForStyleResolution(nullAtom);
+            else if (document()->inQuirksMode())
+                attributeData()->setIdForStyleResolution(attribute.value().lower());
+            else
+                attributeData()->setIdForStyleResolution(attribute.value());
+            setNeedsStyleRecalc();
+        }
     } else if (attribute.name() == HTMLNames::nameAttr)
         setHasName(!attribute.isNull());
 
