@@ -30,35 +30,6 @@
 
 /**
  * @constructor
- * @param {number=} size
- */
-WebInspector.Uint32Array = function(size)
-{
-    const preallocateSize = 1000;
-    size = size || preallocateSize;
-    this._usedSize = 0;
-    this._array = new Uint32Array(preallocateSize);
-}
-
-WebInspector.Uint32Array.prototype = {
-    push: function(value)
-    {
-        if (this._usedSize + 1 > this._array.length) {
-            var tempArray = new Uint32Array(this._array.length * 2);
-            tempArray.set(this._array);
-            this._array = tempArray;
-        }
-        this._array[this._usedSize++] = value;
-    },
-
-    get array()
-    {
-        return this._array.subarray(0, this._usedSize);
-    }
-}
-
-/**
- * @constructor
  */
 WebInspector.HeapSnapshotArraySlice = function(array, start, end)
 {

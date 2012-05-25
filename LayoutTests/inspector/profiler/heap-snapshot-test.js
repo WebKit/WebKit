@@ -536,6 +536,10 @@ InspectorTest.HeapSnapshotBuilder.prototype = {
 
         rawSnapshot.strings = this._strings.slice();
 
+        var meta = rawSnapshot.snapshot.meta;
+        rawSnapshot.snapshot.edge_count = rawSnapshot.edges.length / meta.edge_fields.length;
+        rawSnapshot.snapshot.node_count = rawSnapshot.nodes.length / meta.node_fields.length;
+
         return rawSnapshot;
     },
 

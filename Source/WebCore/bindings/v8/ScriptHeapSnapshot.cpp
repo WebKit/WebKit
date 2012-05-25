@@ -68,7 +68,7 @@ public:
     OutputStreamAdapter(ScriptHeapSnapshot::OutputStream* output)
         : m_output(output) { }
     void EndOfStream() { m_output->Close(); }
-    int GetChunkSize() { return 10240; }
+    int GetChunkSize() { return 102400; }
     WriteResult WriteAsciiChunk(char* data, int size)
     {
         m_output->Write(String(data, size));
