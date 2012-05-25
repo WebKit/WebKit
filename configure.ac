@@ -707,7 +707,7 @@ AC_ARG_ENABLE(iframe-seamless,
               AC_HELP_STRING([--enable-iframe-seamless],
                              [enable HTML5 iframe seamless attribute support [default=yes]]),
               [],[enable_iframe_seamless="yes"])
-AC_MSG_RESULT([$enable_sandbox])
+AC_MSG_RESULT([$enable_iframe_seamless])
 
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])

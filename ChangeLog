@@ -1,5 +1,17 @@
 2012-05-25  Zan Dobersek  <zandobersek@gmail.com>
 
+        configure.ac has duplicated AC_MSG_RESULT([$enable_sandbox]) and nothing for seamless iframes
+        https://bugs.webkit.org/show_bug.cgi?id=87453
+
+        Reviewed by Eric Seidel.
+
+        Report the value of $enable_iframe_seamless rather than $enable_sandbox
+        after checking whether to enable the iframe seamless option.
+
+        * configure.ac:
+
+2012-05-25  Zan Dobersek  <zandobersek@gmail.com>
+
         [Gtk] Remove configuration options that do not apply anymore
         https://bugs.webkit.org/show_bug.cgi?id=87509
 
