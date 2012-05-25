@@ -62,12 +62,6 @@ WebInspector.ProfileLauncherView.EventTypes = {
 }
 
 WebInspector.ProfileLauncherView.prototype = {
-    setUpEventListeners: function()
-    {
-        this._panel.addEventListener(WebInspector.ProfilesPanel.EventTypes.ProfileStarted, this._onProfileStarted, this);
-        this._panel.addEventListener(WebInspector.ProfilesPanel.EventTypes.ProfileFinished, this._onProfileFinished, this);
-    },
-
     /**
      * @param {WebInspector.ProfileType} profileType
      */
@@ -115,13 +109,13 @@ WebInspector.ProfileLauncherView.prototype = {
         this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
     },
 
-    _onProfileStarted: function(event)
+    profileStarted: function()
     {
         this._isProfiling = true;
         this._updateControls();
     },
 
-    _onProfileFinished: function(event)
+    profileFinished: function()
     {
         this._isProfiling = false;
         this._updateControls();

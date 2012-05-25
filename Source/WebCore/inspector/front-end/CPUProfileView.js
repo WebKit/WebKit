@@ -112,16 +112,6 @@ WebInspector.CPUProfileView.prototype = {
         return [this.viewSelectElement, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
     },
 
-    get profile()
-    {
-        return this._profile;
-    },
-
-    set profile(profile)
-    {
-        this._profile = profile;
-    },
-
     get bottomUpProfileDataGridTree()
     {
         if (!this._bottomUpProfileDataGridTree) {

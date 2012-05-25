@@ -291,10 +291,10 @@ WebInspector.CSSSelectorProfileType.prototype = {
     buttonClicked: function()
     {
         if (this._recording) {
-            this.stopRecordingProfile();
+            this._stopRecordingProfile();
             return false;
         } else {
-            this.startRecordingProfile();
+            this._startRecordingProfile();
             return true;
         }
     },
@@ -314,24 +314,19 @@ WebInspector.CSSSelectorProfileType.prototype = {
         this._profileUid = 1;
     },
 
-    isRecordingProfile: function()
-    {
-        return this._recording;
-    },
-
     setRecordingProfile: function(isProfiling)
     {
         this._recording = isProfiling;
     },
 
-    startRecordingProfile: function()
+    _startRecordingProfile: function()
     {
         this._recording = true;
         CSSAgent.startSelectorProfiler();
         WebInspector.panels.profiles.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, true);
     },
 
-    stopRecordingProfile: function()
+    _stopRecordingProfile: function()
     {
         /**
          * @param {?Protocol.Error} error
@@ -362,16 +357,6 @@ WebInspector.CSSSelectorProfileType.prototype = {
     {
         title = title || WebInspector.UIString("Recording\u2026");
         return new WebInspector.CSSProfileHeader(this, title);
-    },
-
-    /**
-     * @override
-     * @param {CSSAgent.SelectorProfile} profile
-     * @return {WebInspector.ProfileHeader}
-     */
-    createProfile: function(profile)
-    {
-        throw new Error("Unreachable");
     }
 }
 

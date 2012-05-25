@@ -1,3 +1,34 @@
+2012-05-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: make some profiler methods private
+        https://bugs.webkit.org/show_bug.cgi?id=87479
+
+        Reviewed by Vsevolod Vlasov.
+
+        - Removed unused methods.
+        - Renamed private methods so that their names start with underscore. 
+        - ProfileLauncherView methods are called directly from ProfilesPanel instead
+          of sending events.
+
+        * inspector/front-end/CPUProfileView.js:
+        * inspector/front-end/CSSSelectorProfileView.js:
+        (WebInspector.CSSSelectorProfileType.prototype.buttonClicked):
+        (WebInspector.CSSSelectorProfileType.prototype._startRecordingProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.createTemporaryProfile):
+        * inspector/front-end/ProfileLauncherView.js:
+        (WebInspector.ProfileLauncherView.prototype.profileStarted):
+        (WebInspector.ProfileLauncherView.prototype.profileFinished):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType.prototype.createProfile):
+        (WebInspector.ProfilesPanel.prototype.toggleRecordButton):
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype._populateProfiles.populateCallback.var):
+        (WebInspector.ProfilesPanel.prototype._populateProfiles.populateCallback):
+        (WebInspector.ProfilesPanel.prototype._populateProfiles):
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot.done):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+
 2012-05-25  Keishi Hattori  <keishi@webkit.org>
 
         Bad checkValidity result on recently "enabled" form fields
