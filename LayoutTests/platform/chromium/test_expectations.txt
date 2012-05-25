@@ -3283,7 +3283,7 @@ BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
 
-BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
+BUGWK81638 LEOPARD SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
 
 BUGWK81276 WIN LINUX : fast/inline/continuation-outlines-with-layers.html = IMAGE
 
@@ -3319,7 +3319,7 @@ BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html 
 BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
 BUGWK81857 SNOWLEOPARD LEOPARD : fast/frames/valid.html = PASS IMAGE TIMEOUT
 BUGWK81857 SNOWLEOPARD DEBUG : fast/frames/calculate-order.html = PASS TIMEOUT
-BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
+BUGWK81931 SNOWLEOPARD LEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
