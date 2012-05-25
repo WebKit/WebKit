@@ -45,7 +45,6 @@
 #include "FileWriter.h"
 #include "FileWriterBaseCallback.h"
 #include "FileWriterCallback.h"
-#include "InspectorFileSystemInstrumentation.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/OwnPtr.h>
@@ -57,7 +56,6 @@ PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context,
 {
     RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, type, rootURL, asyncFileSystem)));
     fileSystem->suspendIfNeeded();
-    InspectorInstrumentation::didOpenFileSystem(fileSystem.get());
     return fileSystem.release();
 }
 

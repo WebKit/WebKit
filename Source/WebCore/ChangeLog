@@ -1,3 +1,30 @@
+2012-05-25  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Drop InspectorFileSystemInstrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=87460
+
+        Inspector does not need to track DOMFileSystem object now. So we can
+        drop InspectorFileSystemInstrumentation.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * GNUmakefile.list.am:
+        * Modules/filesystem/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::create):
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore::InspectorFileSystemAgent::enable):
+        * inspector/InspectorFileSystemAgent.h:
+        (InspectorFileSystemAgent):
+        * inspector/InspectorFileSystemInstrumentation.h: Removed.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: HeapProfiler: speed-up _calculateClassesRetainedSize and _buildAggregates.

@@ -73495,10 +73495,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorFileSystemInstrumentation.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorFrontendChannel.h"
 				>
 			</File>

@@ -50,9 +50,6 @@ public:
     static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorState*);
     virtual ~InspectorFileSystemAgent();
 
-    void didOpenFileSystem(PassRefPtr<DOMFileSystem>);
-    void fileSystemInvalidated(PassRefPtr<DOMFileSystem>);
-
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
 

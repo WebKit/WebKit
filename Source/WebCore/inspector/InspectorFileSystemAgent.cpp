@@ -55,30 +55,12 @@ InspectorFileSystemAgent::~InspectorFileSystemAgent()
     m_instrumentingAgents->setInspectorFileSystemAgent(0);
 }
 
-void InspectorFileSystemAgent::didOpenFileSystem(PassRefPtr<DOMFileSystem> fileSystem)
-{
-    // TODO(tzik):
-    // Store fileSystem and notify the frontend using fileSystemAdded event.
-    // fileSystem should be associated with its name.
-}
-
-void InspectorFileSystemAgent::fileSystemInvalidated(PassRefPtr<DOMFileSystem> fileSystem)
-{
-    // TODO(tzik):
-    // Discard fileSystem if we have.
-    // If there is no other fileSystem who has same name with fileSystem,
-    // notify the frontend using fileSystemInvalidated event.
-}
-
 void InspectorFileSystemAgent::enable(ErrorString*)
 {
     if (m_enabled)
         return;
     m_enabled = true;
     m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
-
-    // TODO(tzik):
-    // Pass all available FileSystem to the frontend, using fileSystemAdded event.
 }
 
 void InspectorFileSystemAgent::disable(ErrorString*)

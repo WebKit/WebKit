@@ -2789,7 +2789,6 @@
             'inspector/InspectorDebuggerAgent.h',
             'inspector/InspectorFileSystemAgent.cpp',
             'inspector/InspectorFileSystemAgent.h',
-            'inspector/InspectorFileSystemInstrumentation.h',
             'inspector/InspectorFrontendChannel.h',
             'inspector/InspectorFrontendClientLocal.cpp',
             'inspector/InspectorFrontendHost.cpp',
