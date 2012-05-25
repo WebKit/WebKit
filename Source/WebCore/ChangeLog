@@ -1,3 +1,13 @@
+2012-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: add TransformationMatrix ctor from an AffineTransform.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::TransformationMatrix):
+        (WebCore):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (TransformationMatrix):
+
 2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         createContextualFragment and insertAdjacentHTML should throw syntax error

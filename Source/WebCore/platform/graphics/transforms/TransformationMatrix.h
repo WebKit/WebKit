@@ -73,6 +73,7 @@ public:
     typedef double Matrix4[4][4];
 
     TransformationMatrix() { makeIdentity(); }
+    TransformationMatrix(const AffineTransform& t);
     TransformationMatrix(const TransformationMatrix& t) { *this = t; }
     TransformationMatrix(double a, double b, double c, double d, double e, double f) { setMatrix(a, b, c, d, e, f); }
     TransformationMatrix(double m11, double m12, double m13, double m14,

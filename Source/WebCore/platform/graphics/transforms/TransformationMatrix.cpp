@@ -515,6 +515,11 @@ static void slerp(double qa[4], const double qb[4], double t)
 
 // End of Supporting Math Functions
 
+TransformationMatrix::TransformationMatrix(const AffineTransform& t)
+{
+    setMatrix(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
+}
+
 TransformationMatrix& TransformationMatrix::scale(double s)
 {
     return scaleNonUniform(s, s);
