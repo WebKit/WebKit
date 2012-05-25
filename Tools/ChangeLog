@@ -1,5 +1,26 @@
 2012-05-24  Dirk Pranke  <dpranke@chromium.org>
 
+        garden-o-matic should not fetch from debug bots if it also knows about the release bots
+        https://bugs.webkit.org/show_bug.cgi?id=86916
+
+        Reviewed by Adam Barth.
+
+        Note that if release and debug are failing differently, debug
+        will be ignored ...
+
+        Note: also change the use of a fake port name from
+        "mock-port-name" to "test-mac-leopard" to make it more friendly
+        to the port factory ("mock" actually is a real port).
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler._builders_to_fetch_from):
+        (GardeningHTTPRequestHandler.rebaselineall):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaselineall):
+        (GardeningServerTest.test_rebaseline_new_port):
+
+2012-05-24  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: fix baseline search path for official chrome builders
         https://bugs.webkit.org/show_bug.cgi?id=87432
 

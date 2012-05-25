@@ -150,13 +150,36 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._run_webkit_patch(command)
         self._serve_text('success')
 
+    def _builders_to_fetch_from(self, builders):
+        # This routine returns the subset of builders that will cover all of the baseline search paths
+        # used in the input list. In particular, if the input list contains both Release and Debug
+        # versions of a configuration, we *only* return the Release version (since we don't save
+        # debug versions of baselines).
+        release_builders = set()
+        debug_builders = set()
+        builders_to_fallback_paths = {}
+        for builder in builders:
+            port = self.server.tool.port_factory.get_from_builder_name(builder)
+            if port.test_configuration().build_type == 'Release':
+                release_builders.add(builder)
+            else:
+                debug_builders.add(builder)
+        for builder in list(release_builders) + list(debug_builders):
+            port = self.server.tool.port_factory.get_from_builder_name(builder)
+            fallback_path = port.baseline_search_path()
+            if fallback_path not in builders_to_fallback_paths.values():
+                builders_to_fallback_paths[builder] = fallback_path
+        return builders_to_fallback_paths.keys()
+
     def rebaselineall(self):
-        # FIXME: Optimize this to de-dup bot results, run in parallel, cache zips, etc.
+        # FIXME: Optimize this to run in parallel, cache zips, etc.
         test_list = self._read_entity_body_as_json()
         for test in test_list:
             all_suffixes = set()
-            for builder, suffixes in test_list[test].iteritems():
-                all_suffixes.update(set(suffixes))
+            builders = self._builders_to_fetch_from(test_list[test])
+            for builder in builders:
+                suffixes = test_list[test][builder]
+                all_suffixes.update(suffixes)
                 self._run_webkit_patch(['rebaseline-test', '--suffixes', ','.join(suffixes), builder, test])
             self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
         self._serve_text('success')
