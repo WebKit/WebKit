@@ -1,3 +1,26 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] ~1/2 of all the iframe seamless tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=87543
+
+        Add failing expected results for Windows in order to get the bots green.
+
+        * platform/win/fast/frames: Added.
+        * platform/win/fast/frames/seamless: Added.
+        * platform/win/fast/frames/seamless/seamless-basic-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-css-cascade-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-form-get-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-form-get-named-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-form-post-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-form-post-named-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-hyperlink-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-hyperlink-named-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-inherited-document-style-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-window-location-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-window-location-href-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-window-location-sandbox-expected.txt: Added.
+        * platform/win/fast/frames/seamless/seamless-window-open-expected.txt: Added.
+
 2012-05-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make sure IceCallback is valid for PeerConnection00

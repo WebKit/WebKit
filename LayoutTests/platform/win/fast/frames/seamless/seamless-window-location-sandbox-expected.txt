@@ -1,0 +1,11 @@
+This test should not cause any navigation. 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS 
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+
