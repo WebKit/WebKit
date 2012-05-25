@@ -1,3 +1,12 @@
+2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed fix after r118484.
+
+        Enable CSS_EXCLUSIONS and CSS_REGIONS.
+        They were enabled uncoditinally before r118484.
+
+        * qmake/mkspecs/features/features.pri:
+
 2012-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions
