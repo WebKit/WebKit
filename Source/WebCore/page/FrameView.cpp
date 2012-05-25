@@ -1522,7 +1522,14 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
     if (contentsInCompositedLayer()) {
         RenderView* root = rootRenderer(this);
         ASSERT(root);
-        root->layer()->setBackingNeedsRepaintInRect(visibleContentRect());
+
+        IntRect updateRect = visibleContentRect();
+
+        // Make sure to "apply" the scale factor here since we're converting from frame view
+        // coordinates to layer backing coordinates.
+        updateRect.scale(1 / m_frame->frameScaleFactor());
+
+        root->layer()->setBackingNeedsRepaintInRect(updateRect);
     }
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
         if (isEnclosedInCompositingLayer()) {

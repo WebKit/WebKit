@@ -1,3 +1,17 @@
+2012-05-24  Anders Carlsson  <andersca@apple.com>
+
+        Corrupted pages rendering when images are zoomed on Google+
+        https://bugs.webkit.org/show_bug.cgi?id=87439
+        <rdar://problem/11503078>
+
+        Reviewed by Beth Dakin.
+
+        The rect that's given to scrollContentsSlowPath is in frame view coordinates, but if we end up
+        passing them to RenderLayer::setBackingNeedsRepaintInRect we need to account for the frame scale factor.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsSlowPath):
+
 2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r112399): insertHTML doesn't respect current selection range and inserts HTML to incorrect position
