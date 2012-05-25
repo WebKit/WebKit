@@ -49,9 +49,9 @@ namespace WebCore {
 class ContentLayerPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
 public:
-    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate* delegate)
+    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate* delegate, TiledLayerChromium* layer)
     {
-        return adoptPtr(new ContentLayerPainter(delegate));
+        return adoptPtr(new ContentLayerPainter(delegate, layer));
     }
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
@@ -59,19 +59,27 @@ public:
         double paintStart = currentTime();
         context.clearRect(contentRect);
         context.clip(contentRect);
-        m_delegate->paintContents(context, contentRect);
-        double paintEnd = currentTime();
-        double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+        {
+            GraphicsContextStateSaver stateSaver(context, m_layer->layerTreeHost()->settings().debugShowTileInfo);
+
+            m_delegate->paintContents(context, contentRect);
+            double paintEnd = currentTime();
+            double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
+            WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
+            WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+        }
+        if (m_layer->layerTreeHost()->settings().debugShowTileInfo)
+            m_layer->paintDebugTileInfo(context, contentRect);
     }
 private:
-    explicit ContentLayerPainter(ContentLayerDelegate* delegate)
+    explicit ContentLayerPainter(ContentLayerDelegate* delegate, TiledLayerChromium* layer)
         : m_delegate(delegate)
+        , m_layer(layer)
     {
     }
 
     ContentLayerDelegate* m_delegate;
+    TiledLayerChromium* m_layer;
 };
 
 PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(ContentLayerDelegate* delegate)
@@ -126,11 +134,11 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     if (m_textureUpdater)
         return;
     if (layerTreeHost()->settings().acceleratePainting)
-        m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
+        m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate, this));
     else if (layerTreeHost()->settings().perTilePainting)
-        m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);
+        m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate, this), layerTreeHost()->layerRendererCapabilities().usingMapSub);
     else
-        m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);
+        m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate, this), layerTreeHost()->layerRendererCapabilities().usingMapSub);
     m_textureUpdater->setOpaque(opaque());
 
     GC3Denum textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;

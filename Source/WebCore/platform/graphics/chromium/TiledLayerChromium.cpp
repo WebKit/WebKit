@@ -29,10 +29,13 @@
 
 #include "TiledLayerChromium.h"
 
+#include "FontCache.h"
+#include "FontDescription.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "Region.h"
+#include "TextRun.h"
 #include "TextStream.h"
 #include "TraceEvent.h"
 
@@ -73,11 +76,15 @@ public:
     bool partialUpdate;
     bool updated;
     bool isInUseOnImpl;
+    int lastUpdateFrame;
+    int totalPaintCount;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
         : partialUpdate(false)
         , updated(false)
         , isInUseOnImpl(false)
+        , lastUpdateFrame(0)
+        , totalPaintCount(0)
         , m_texture(texture)
     {
     }
@@ -409,6 +416,13 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
                 return;
             }
 
+            if (tile->isDirty() && layerTreeHost()->settings().debugShowTileInfo) {
+                // Invalidate the entire tile so that text updates.
+                tile->dirtyRect = m_tiler->tileRect(tile);
+                tile->lastUpdateFrame = layerTreeHost()->frameNumber();
+                tile->totalPaintCount++;
+            }
+
             paintRect.unite(tile->dirtyRect);
         }
     }
@@ -710,6 +724,72 @@ IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleLayerRect)
     prepaintRect.inflateY(m_tiler->tileSize().height());
     prepaintRect.intersect(IntRect(IntPoint::zero(), contentBounds()));
     return prepaintRect;
+}
+
+void TiledLayerChromium::paintDebugTileInfo(GraphicsContext& context, const IntRect& layerRect)
+{
+    FontCachePurgePreventer fontCachePurgePreventer;
+
+    // Don't bother writing info onto small tiles.
+    const int minDimension = 200;
+    if (m_tiler->tileSize().width() < minDimension || m_tiler->tileSize().height() < minDimension)
+        return;
+
+    if (!m_debugInfoFont) {
+        FontDescription fontDesc;
+        fontDesc.setGenericFamily(FontDescription::MonospaceFamily);
+        fontDesc.setComputedSize(10);
+        m_debugInfoFont = adoptPtr(new Font(fontDesc, 0, 0));
+        m_debugInfoFont->update(0);
+    }
+
+    int fontHeight = m_debugInfoFont->fontMetrics().floatHeight() + 2;
+
+    int left, top, right, bottom;
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            if (!tile)
+                continue;
+
+            IntRect tileRect = m_tiler->tileRect(tile);
+            String info[] = {
+                String::format("LayerId(%d)", id()),
+                String::format("Index(%d, %d)", i, j),
+                String::format("Tile(%d, %d, %d, %d)", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height()),
+                String::format("Frame(%d)", tile->lastUpdateFrame),
+                String::format("Count(%d)", tile->totalPaintCount),
+                String::format("Layer(%d, %d)", contentBounds().width(), contentBounds().height()),
+            };
+            const size_t lines = sizeof(info) / sizeof(info[0]);
+            int width[lines];
+
+            IntPoint center = m_tiler->tileRect(tile).center();
+            int currentY = center.y() - fontHeight * lines / 2;
+
+            int maxWidth = 0;
+            for (size_t i = 0; i < lines; ++i) {
+                width[i] = m_debugInfoFont->width(TextRun(info[i]));
+                maxWidth = max(width[i], maxWidth);
+            }
+
+            IntRect textRect(IntPoint(center.x() - maxWidth / 2, currentY - fontHeight / 2), IntSize(maxWidth, fontHeight * lines + fontHeight / 2));
+
+            context.setFillColor(Color(192, 192, 192, 192), ColorSpaceDeviceRGB);
+            context.fillRect(FloatRect(textRect));
+
+            context.setFillColor(Color(64, 64, 64), ColorSpaceDeviceRGB);
+
+            for (size_t i = 0; i < lines; ++i) {
+                TextRun run(info[i]);
+                int textWidth = m_debugInfoFont->width(run);
+                IntPoint textStart(center.x() - textWidth / 2, currentY + fontHeight / 2);
+                context.drawText(*m_debugInfoFont, run, textStart);
+                currentY += fontHeight;
+            }
+        }
+    }
 }
 
 }

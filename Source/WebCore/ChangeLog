@@ -1,3 +1,32 @@
+2012-05-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add setting for painting debug info onto tiles
+        https://bugs.webkit.org/show_bug.cgi?id=75763
+
+        Reviewed by James Robinson.
+
+        Add a compile-time CCSetting to paint debug information onto tiles. This
+        can help to understand paint counts and layer indices. This setting is
+        off by default.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::paint):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::UpdatableTile::setUpdateFrame):
+        (WebCore::UpdatableTile::incrementPaintCount):
+        (WebCore::UpdatableTile::updateFrame):
+        (WebCore::UpdatableTile::paintCount):
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        (WebCore::TiledLayerChromium::paintDebugTileInfo):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+
 2012-05-25  Ami Fischman  <fischman@chromium.org>
 
         [chromium] Default media controls should render only the currentTime-containing buffered range
