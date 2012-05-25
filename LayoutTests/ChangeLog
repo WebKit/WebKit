@@ -1,5 +1,13 @@
 2012-05-25  Anna Cavender <annacc@chromium.org>
 
+        [Chromium] Removing tests from test_expectations.txt that are no longer crashing.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-25  Anna Cavender <annacc@chromium.org>
+
         [Chromium] Removing media/video-volume-slider.html from test_expectations.txt
 
         Unreviewed gardening.
