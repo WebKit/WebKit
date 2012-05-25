@@ -1,3 +1,10 @@
+2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Unskip a passing test and mark it as SLOW.
+
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
 2012-05-24  Kent Tamura  <tkent@chromium.org>
 
         PAGE_POPUP: window.setValueAndClosePopup should be moved to a

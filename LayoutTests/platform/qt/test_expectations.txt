@@ -11,6 +11,7 @@ BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
 BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
 BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUG_QT_SLOW SLOW DEBUG: fast/js/dfg-inline-function-dot-caller.html = PASS
+BUGWK69511 SLOW : svg/as-image/svg-nested.html = PASS
 
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 

@@ -1357,10 +1357,6 @@ svg/carto.net/combobox.svg
 # https://bugs.webkit.org/show_bug.cgi?id=71766
 svg/custom/getBBox-path.svg
 
-# [Qt] REGRESSION(r96779): It made svg/as-image/svg-nested.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=69511
-svg/as-image/svg-nested.html
-
 #[Qt] New svg/hittest tests introduced in r106882 fail
 #https://bugs.webkit.org/show_bug.cgi?id=77964
 svg/hittest/zero-length-round-cap-path.xhtml
