@@ -843,7 +843,7 @@ WebInspector.TimelineCategoryStrips.prototype = {
         var timeSpan = this._model.maximumRecordTime() - timeOffset;
         var scale = this.element.width / timeSpan;
 
-        var barsByCategory = {};
+        var lastBarByGroup = [];
 
         this._context.fillStyle = "rgba(0, 0, 0, 0.05)";
         for (var i = 1; i < WebInspector.TimelineCategoryStrips._numberOfStrips; i += 2)
@@ -854,23 +854,27 @@ WebInspector.TimelineCategoryStrips.prototype = {
             var isLong = WebInspector.TimelineModel.durationInSeconds(record) > WebInspector.TimelinePresentationModel.shortRecordThreshold;
             if (!(this._showShortEvents || isLong))
                 return;
-            var recordStart = Math.floor((WebInspector.TimelineModel.startTimeInSeconds(record) - timeOffset)* scale);
+            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
+                return;
+            var recordStart = Math.floor((WebInspector.TimelineModel.startTimeInSeconds(record) - timeOffset) * scale);
             var recordEnd = Math.ceil((WebInspector.TimelineModel.endTimeInSeconds(record) - timeOffset) * scale);
             var category = WebInspector.TimelinePresentationModel.categoryForRecord(record);
-            var bar = barsByCategory[category.name];
+            var bar = lastBarByGroup[category.overviewStripGroupIndex];
             // This bar may be merged with previous -- so just adjust the previous bar.
             const barsMergeThreshold = 2;
-            if (bar && bar.end + barsMergeThreshold >= recordStart) {
+            if (bar && bar.category === category && bar.end + barsMergeThreshold >= recordStart) {
                 bar.end = recordEnd;
                 return;
             }
             if (bar)
-                this._renderBar(bar.start, bar.end, category);
-            barsByCategory[category.name] = { start: recordStart, end: recordEnd };
+                this._renderBar(bar.start, bar.end, bar.category);
+            lastBarByGroup[category.overviewStripGroupIndex] = { start: recordStart, end: recordEnd, category: category };
         }
         WebInspector.TimelinePresentationModel.forAllRecords(this._model.records, appendRecord.bind(this));
-        for (var category in barsByCategory)
-            this._renderBar(barsByCategory[category].start, barsByCategory[category].end, WebInspector.TimelinePresentationModel.categories()[category]);
+        for (var i = 0; i < lastBarByGroup.length; ++i) {
+            if (lastBarByGroup[i])
+                this._renderBar(lastBarByGroup[i].start, lastBarByGroup[i].end, lastBarByGroup[i].category);
+        }
     },
 
     /**

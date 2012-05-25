@@ -200,6 +200,10 @@
     background-position-y: -11px;
 }
 
+.timeline-category-statusbar-item.timeline-category-painting .timeline-category-checkbox {
+    background-position-y: -77px;
+}
+
 .timeline-tree-item {
     height: 18px;
     line-height: 15px;
@@ -287,7 +291,6 @@
     top: 5px;
 }
 
-
 #timeline-graphs {
     position: absolute;
     left: 0;
@@ -354,6 +357,10 @@
     -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
 }
 
+.timeline-category-painting .timeline-graph-bar {
+    -webkit-border-image: url(Images/timelineBarLightPurple.png) 4 4 5 4;
+}
+
 .timeline-aggregated-category {
     display: inline-block;
     height: 11px;
@@ -376,6 +383,10 @@
     -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
 }
 
+.popover .timeline-painting {
+    -webkit-border-image: url(Images/timelineBarLightPurple.png) 4 4 5 4;
+}
+
 .popover .timeline-aggregated-category.timeline-loading {
     margin-left: 0px;
 }
@@ -385,11 +396,15 @@
 }
 
 .timeline-category-scripting .timeline-tree-icon {
-    background-position-y: 48px;
+    background-position-y: -36px;
 }
 
 .timeline-category-rendering .timeline-tree-icon {
-    background-position-y: 72px;
+    background-position-y: -12px;
+}
+
+.timeline-category-painting .timeline-tree-icon {
+    background-position-y: -84px;
 }
 
 .timeline-details {

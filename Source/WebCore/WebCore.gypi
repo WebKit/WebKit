@@ -6679,6 +6679,7 @@
             'inspector/front-end/Images/timelineBarBlue.png',
             'inspector/front-end/Images/timelineBarGray.png',
             'inspector/front-end/Images/timelineBarGreen.png',
+            'inspector/front-end/Images/timelineBarLightPurple.png',
             'inspector/front-end/Images/timelineBarOrange.png',
             'inspector/front-end/Images/timelineBarPurple.png',
             'inspector/front-end/Images/timelineBarRed.png',

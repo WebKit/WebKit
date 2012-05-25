@@ -49,7 +49,8 @@ WebInspector.TimelinePresentationModel.categories = function()
     WebInspector.TimelinePresentationModel._categories = {
         loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), 0, "rgb(80, 135, 207)", "rgb(191, 214, 243)", "rgb(112, 162, 227)"),
         scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), 1, "rgb(220, 163, 49)", "rgb(253, 217, 144)", "rgb(253, 191, 68)"),
-        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "rgb(148, 88, 199)", "rgb(219, 195, 239)", "rgb(175, 120, 221)")
+        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "rgb(148, 88, 199)", "rgb(219, 195, 239)", "rgb(175, 120, 221)"),
+        painting: new WebInspector.TimelineCategory("painting", WebInspector.UIString("Painting"), 2, "rgb(165, 113, 208)", "rgb(224, 204, 241)", "rgb(187, 140, 227)")
     };
     return WebInspector.TimelinePresentationModel._categories;
 };
@@ -71,8 +72,8 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
     recordStyles[recordTypes.BeginFrame] = { title: WebInspector.UIString("Frame Start"), category: categories["rendering"] };
     recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
     recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: categories["rendering"] };
-    recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: categories["rendering"] };
-    recordStyles[recordTypes.CompositeLayers] = { title: WebInspector.UIString("Composite Layers"), category: categories["rendering"] };
+    recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: categories["painting"] };
+    recordStyles[recordTypes.CompositeLayers] = { title: WebInspector.UIString("Composite Layers"), category: categories["painting"] };
     recordStyles[recordTypes.ParseHTML] = { title: WebInspector.UIString("Parse"), category: categories["loading"] };
     recordStyles[recordTypes.TimerInstall] = { title: WebInspector.UIString("Install Timer"), category: categories["scripting"] };
     recordStyles[recordTypes.TimerRemove] = { title: WebInspector.UIString("Remove Timer"), category: categories["scripting"] };
