@@ -154,9 +154,15 @@ class SCM:
         self._subclass_must_implement()
 
     def add(self, path, return_exit_code=False):
+        self.add_list([path], return_exit_code)
+
+    def add_list(self, paths, return_exit_code=False):
         self._subclass_must_implement()
 
     def delete(self, path):
+        self.delete_list([path])
+
+    def delete_list(self, paths):
         self._subclass_must_implement()
 
     def exists(self, path):

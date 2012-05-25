@@ -315,6 +315,10 @@ class SCMTest(unittest.TestCase):
         write_into_file_at_path("added_file", "new stuff")
         self.scm.add("added_file")
 
+        write_into_file_at_path("added_file3", "more new stuff")
+        write_into_file_at_path("added_file4", "more new stuff")
+        self.scm.add_list(["added_file3", "added_file4"])
+
         os.mkdir("added_dir")
         write_into_file_at_path("added_dir/added_file2", "new stuff")
         self.scm.add("added_dir")
@@ -323,12 +327,14 @@ class SCMTest(unittest.TestCase):
         added_files = self.scm.added_files()
         if "added_dir" in added_files:
             added_files.remove("added_dir")
-        self.assertEqual(added_files, ["added_dir/added_file2", "added_file"])
+        self.assertEqual(added_files, ["added_dir/added_file2", "added_file", "added_file3", "added_file4"])
 
         # Test also to make sure clean_working_directory removes added files
         self.scm.clean_working_directory()
         self.assertEqual(self.scm.added_files(), [])
         self.assertFalse(os.path.exists("added_file"))
+        self.assertFalse(os.path.exists("added_file3"))
+        self.assertFalse(os.path.exists("added_file4"))
         self.assertFalse(os.path.exists("added_dir"))
 
     def _shared_test_changed_files_for_revision(self):
@@ -820,6 +826,12 @@ END
         self.scm.delete("test_file")
         self.assertTrue("test_file" in self.scm.deleted_files())
 
+    def test_delete_list(self):
+        os.chdir(self.svn_checkout_path)
+        self.scm.delete_list(["test_file", "test_file2"])
+        self.assertTrue("test_file" in self.scm.deleted_files())
+        self.assertTrue("test_file2" in self.scm.deleted_files())
+
     def test_delete_recursively(self):
         self._shared_test_delete_recursively()
 
@@ -1172,7 +1184,7 @@ class GitSVNTest(SCMTest):
 
     def _two_local_commits(self):
         self._one_local_commit()
-        self._second_local_commt()
+        self._second_local_commit()
 
     def _three_local_commits(self):
         self._local_commit('test_file_commit0', 'more test content', 'another test commit')
@@ -1516,6 +1528,12 @@ class GitSVNTest(SCMTest):
         self._two_local_commits()
         self.scm.delete('test_file_commit1')
         self.assertTrue("test_file_commit1" in self.scm.deleted_files())
+
+    def test_delete_list(self):
+        self._two_local_commits()
+        self.scm.delete_list(["test_file_commit1", "test_file_commit2"])
+        self.assertTrue("test_file_commit1" in self.scm.deleted_files())
+        self.assertTrue("test_file_commit2" in self.scm.deleted_files())
 
     def test_delete_recursively(self):
         self._shared_test_delete_recursively()

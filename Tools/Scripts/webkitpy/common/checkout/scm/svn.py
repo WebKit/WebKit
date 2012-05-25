@@ -178,9 +178,10 @@ class SVN(SCM, SVNRepository):
             self._add_parent_directories(dirname)
         self.add(path)
 
-    def add(self, path, return_exit_code=False):
-        self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
-        return self._run_svn(["add", path], return_exit_code=return_exit_code)
+    def add_list(self, paths, return_exit_code=False):
+        for path in paths:
+            self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
+        return self._run_svn(["add"] + paths, return_exit_code=return_exit_code)
 
     def _delete_parent_directories(self, path):
         if not self.in_working_directory(path):
@@ -192,11 +193,12 @@ class SVN(SCM, SVNRepository):
         if dirname != path:
             self._delete_parent_directories(dirname)
 
-    def delete(self, path):
-        abs_path = os.path.abspath(path)
-        parent, base = os.path.split(abs_path)
-        result = self._run_svn(["delete", "--force", base], cwd=parent)
-        self._delete_parent_directories(os.path.dirname(abs_path))
+    def delete_list(self, paths):
+        for path in paths:
+            abs_path = os.path.abspath(path)
+            parent, base = os.path.split(abs_path)
+            result = self._run_svn(["delete", "--force", base], cwd=parent)
+            self._delete_parent_directories(os.path.dirname(abs_path))
         return result
 
     def exists(self, path):

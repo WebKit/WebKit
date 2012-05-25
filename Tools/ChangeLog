@@ -1,3 +1,37 @@
+2012-05-25  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: change scm.add(), scm.delete() to accept multiple paths
+        https://bugs.webkit.org/show_bug.cgi?id=87528
+
+        Reviewed by Ojan Vafai.
+
+        launching git or svn for individual files can be slow; this
+        change will hand multiple paths at once to git and svn so they
+        can be added in a batch.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.add_list):
+        (Git.delete_list):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.add):
+        (SCM):
+        (SCM.add_list):
+        (SCM.delete):
+        (SCM.delete_list):
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.add):
+        (MockSCM):
+        (MockSCM.add_list):
+        (MockSCM.delete):
+        (MockSCM.delete_list):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (_shared_test_exists):
+        (_shared_test_added_files):
+        (_test_delete_list):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.add_list):
+        (SVN.delete_list):
+
 2012-05-25  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [NRWT] Add unit testing for perf tests on locked shards

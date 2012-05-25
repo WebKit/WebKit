@@ -38,7 +38,10 @@ class MockSCM(object):
         self._executive = executive or MockExecutive()
 
     def add(self, destination_path, return_exit_code=False):
-        self.added_paths.add(destination_path)
+        self.add_list([destination_path], return_exit_code)
+
+    def add_list(self, destination_paths, return_exit_code=False):
+        self.added_paths.update(set(destination_paths))
         if return_exit_code:
             return 0
 
@@ -111,7 +114,11 @@ class MockSCM(object):
         return "49824"
 
     def delete(self, path):
+        return self.delete_list([path])
+
+    def delete_list(self, paths):
         if not self._filesystem:
             return
-        if self._filesystem.exists(path):
-            self._filesystem.remove(path)
+        for path in paths:
+            if self._filesystem.exists(path):
+                self._filesystem.remove(path)
