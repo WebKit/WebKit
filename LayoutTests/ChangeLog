@@ -1,3 +1,9 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        Skip the Network Information tests on Windows.
+
+        * platform/win/Skipped:
+
 2012-05-25  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Remove 2 incorrect rebaselines from http://trac.webkit.org/changeset/117818/
