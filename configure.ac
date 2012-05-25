@@ -629,14 +629,6 @@ AC_ARG_ENABLE(gamepad,
               [],[enable_gamepad="no"])
 AC_MSG_RESULT([$enable_gamepad])
 
-# check whether to build with datagrid support
-AC_MSG_CHECKING([whether to enable HTML5 datagrid support])
-AC_ARG_ENABLE(datagrid,
-              AC_HELP_STRING([--enable-datagrid],
-                             [enable HTML5 datagrid support [default=no]]),
-              [],[enable_datagrid="no"])
-AC_MSG_RESULT([$enable_datagrid])
-
 # check whether to build with data transfer items support
 AC_MSG_CHECKING([whether to enable HTML5 data transfer items support])
 AC_ARG_ENABLE(data_transfer_items,
@@ -652,14 +644,6 @@ AC_ARG_ENABLE(mutation_observers,
                              [enable DOM mutation observer support [default=no]]),
               [],[enable_mutation_observers="no"])
 AC_MSG_RESULT([$enable_mutation_observers])
-
-# check whether to enable HTML5 client-side session and persitent storage support
-AC_MSG_CHECKING([whether to enable HTML5 client-side session and persistent storage support])
-AC_ARG_ENABLE(dom_storage,
-              AC_HELP_STRING([--enable-dom-storage],
-                             [enable HTML5 client-side session and persistent storage support [default=yes]]),
-              [],[enable_dom_storage="yes"])
-AC_MSG_RESULT([$enable_dom_storage])
 
 # check whether to enable the indexed database API
 AC_MSG_CHECKING([whether to enable the indexed database API])
@@ -709,14 +693,6 @@ AC_ARG_ENABLE(icon_database,
               [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
 
-# check whether to build with image resizer API support
-AC_MSG_CHECKING([whether to enable image resizer API support])
-AC_ARG_ENABLE(image_resizer,
-              AC_HELP_STRING([--enable-image-resizer],
-                             [enable image resizer [default=no]]),
-              [],[enable_image_resizer="no"])
-AC_MSG_RESULT([$enable_image_resizer])
-
 # check whether to enable HTML5 datalist support
 AC_MSG_CHECKING([whether to enable HTML5 datalist support])
 AC_ARG_ENABLE(datalist,
@@ -724,14 +700,6 @@ AC_ARG_ENABLE(datalist,
                              [enable HTML5 datalist support [default=yes]]),
               [],[enable_datalist="yes"])
 AC_MSG_RESULT([$enable_datalist])
-
-# check whether to enable HTML5 sandbox iframe support
-AC_MSG_CHECKING([whether to enable HTML5 sandboxed iframe support])
-AC_ARG_ENABLE(sandbox,
-              AC_HELP_STRING([--enable-sandbox],
-                             [enable HTML5 sandboxed iframe support [default=yes]]),
-              [],[enable_sandbox="yes"])
-AC_MSG_RESULT([$enable_sandbox])
 
 # check whether to enable HTML5 iframe seamless attribute support
 AC_MSG_CHECKING([whether to enable HTML5 iframe seamless attribute support])
@@ -1388,7 +1356,6 @@ AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "y
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
 AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
-AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
 AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
@@ -1398,7 +1365,6 @@ AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
 AM_CONDITIONAL([ENABLE_STYLE_SCOPED],[test "$enable_style_scoped" = "yes"])
 AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
-AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_TYPE_COLOR],[test "$enable_input_type_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])
@@ -1515,20 +1481,16 @@ Features:
  HTML5 microdata support                                  : $enable_microdata
  Page Visibility API support                              : $enable_page_visibility_api
  HTML5 progress element support                           : $enable_progress_tag
- HTML5 client-side session and persistent storage support : $enable_dom_storage
  SQL client-side database storage support                 : $enable_sql_database
- HTML5 datagrid support                                   : $enable_datagrid
  HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 FileSystem API support                             : $enable_file_system
  Quota API support                                        : $enable_quota
- HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 iframe seamless attribute support                  : $enable_iframe_seamless
  HTML5 video element support                              : $enable_video
  HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api
  Media stream support                                     : $enable_media_stream
  Icon database support                                    : $enable_icon_database
- Image resizer support                                    : $enable_image_resizer
  Link prefetch support                                    : $enable_link_prefetch
  Opcode stats                                             : $enable_opcode_stats
  Shadow DOM support                                       : $enable_shadow_dom

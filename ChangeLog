@@ -1,3 +1,17 @@
+2012-05-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Remove configuration options that do not apply anymore
+        https://bugs.webkit.org/show_bug.cgi?id=87509
+
+        Reviewed by Martin Robinson.
+
+        Remove configuration options for enabling or disabling HTML5 datagrid,
+        DOM storage, image resizer API and sandboxed iframe support. These
+        features were either turned on by default with the feature defines
+        removed from the code or removed from the source.
+
+        * configure.ac:
+
 2012-05-25  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt] Broken controls rendering when transform is applied.
