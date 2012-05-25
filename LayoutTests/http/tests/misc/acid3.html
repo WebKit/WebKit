@@ -2,8 +2,10 @@
 <html>
  <title>The Acid3 Test</title>
  <script type="text/javascript">
-  if (window.layoutTestController)
+  if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
+    layoutTestController.keepWebHistory();
+  }
 
   var startTime = new Date();
  </script>

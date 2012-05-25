@@ -1,3 +1,28 @@
+2012-05-25  Andras Becsi  <andras.becsi@nokia.com>
+
+        Acid3 fails in WebKit2 regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=87187
+
+        Reviewed by Alexey Proskuryakov.
+
+        Since the link test in the acid3.html relies on visited link tracking
+        it should call layoutTestController.keepWebHistory() because visited
+        link tracking is disabled by default to avoid interdependencies between
+        test.
+
+        Update expected files and png's now that the result does not show the
+        "YOU SHOULD NOT SEE THIS AT ALL" text in red in the top left corner.
+
+        * http/tests/misc/acid3-expected.png:
+        * http/tests/misc/acid3-expected.txt:
+        * http/tests/misc/acid3.html: Fix test.
+        * platform/chromium-mac-leopard/http/tests/misc/acid3-expected.png:
+        * platform/chromium-mac-snowleopard/http/tests/misc/acid3-expected.png:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.png:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt:
+        * platform/mac-wk2/http/tests/misc/acid3-expected.png: Same as the platform independent result. Removed.
+        * platform/mac-wk2/http/tests/misc/acid3-expected.txt: Same as the platform independent result. Removed.
+
 2012-05-25  Kenneth Russell  <kbr@google.com>
 
         Incorporate new tex-image-and-sub-image-2d-with-video*.html tests
