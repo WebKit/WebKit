@@ -1162,6 +1162,10 @@ BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremen
 // test_shell, DRT do not correctly schedule paints when invalidating.
 BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
+// Implement color profile support.
+BUGCR143 : fast/images/jpeg-with-color-profile.html = MISSING
+BUGCR143 : fast/images/png-with-color-profile.html = MISSING
+
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------

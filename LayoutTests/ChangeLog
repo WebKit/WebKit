@@ -1,3 +1,29 @@
+2012-05-25  Tony Payne  <tpayne@chromium.org>
+
+        Add tests for JPEG and PNG images with a non-generic RGB color profile
+        https://bugs.webkit.org/show_bug.cgi?id=87437
+
+        No layout test currently covers a color transform except for the no-op case of a
+        Generic RGB profile (image) -> Generic RGB profile (screen) color transform. Add
+        tests for JPEG and PNG images with a non-identity color correction transform, in
+        particular, use test images with a (non-generic) RGB color profile.
+
+        Reviewed by Kent Tamura.
+
+        * fast/images/jpeg-with-color-profile-expected.txt: Added.
+        * fast/images/jpeg-with-color-profile.html: Added.
+        * fast/images/png-with-color-profile-expected.txt: Added.
+        * fast/images/png-with-color-profile.html: Added.
+        * fast/images/resources/red-at-12-oclock-with-color-profile.jpg: Added. The image
+        has an RGB color profile (non-generic). If color correction is correctly applied,
+        the image red sector appears at the 12 o'clock position. If color correction fails,
+        the red sector appears at 4 o'clock.
+        * fast/images/resources/red-at-12-oclock-with-color-profile.png: Added, and ditto
+        for the expected image red sector position and image color profile type.
+        * platform/chromium/test_expectations.txt: Add MISSING expectations.
+        * platform/mac-snowleopard/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/mac-snowleopard/fast/images/png-with-color-profile-expected.png: Added.
+
 2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip a now passing test.
