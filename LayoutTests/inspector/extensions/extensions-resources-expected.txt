@@ -74,6 +74,8 @@ handleOpenResource() invoked [this should only appear once!]:
     0 : {
         url : .../extensions-resources.html
         type : "document"
+        getContent : <function>
+        setContent : <function>
     }
     1 : 11
 }

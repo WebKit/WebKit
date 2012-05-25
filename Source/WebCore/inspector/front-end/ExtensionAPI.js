@@ -305,7 +305,7 @@ Panels.prototype = {
         else {
             function callbackWrapper(message)
             {
-                callback.call(null, message.resource, message.lineNumber);
+                callback.call(null, new Resource(message.resource), message.lineNumber);
             }
             extensionServer.registerHandler(events.OpenResource, callbackWrapper);
         }

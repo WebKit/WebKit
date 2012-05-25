@@ -1,3 +1,21 @@
+2012-05-25  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Resource object has no methods getContent and setContent
+        https://bugs.webkit.org/show_bug.cgi?id=87424
+
+        This fixes the extension API so that it uses the `new Resource()`
+        constructor, which adds the missing `getContent` and `setContent`
+        methods to a `Resource` object.
+
+        Reviewed by Vsevolod Vlasov.
+
+        The tests were fixed accordingly in:
+        LayoutTests/inspector/extensions/extensions-resources-expected.txt
+
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.Panels.prototype.setOpenResourceHandler.else.callbackWrapper):
+        (injectedExtensionAPI.Panels.prototype.setOpenResourceHandler):
+
 2012-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions
