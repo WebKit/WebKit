@@ -1,5 +1,11 @@
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
+        Disable all the shadow dom tests on Windows, since the feature isn't enabled there.
+
+        * platform/win/Skipped:
+
+2012-05-24  Jessie Berlin  <jberlin@apple.com>
+
         [Win] LayoutTests/editing/selection/selection-plugin-clear-crash.html crashes in
         ScrollView::delegatesScrolling
         https://bugs.webkit.org/show_bug.cgi?id=87431

@@ -1010,7 +1010,6 @@ fast/multicol/hit-test-above-or-below.html
 # https://bugs.webkit.org/show_bug.cgi?id=49769
 fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html
 fast/dom/HTMLProgressElement
-fast/dom/shadow/tree-scope-crash.html
 fast/forms/form-attribute.html
 
 
@@ -1483,26 +1482,7 @@ fast/regions/style-scoped-in-flow.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
-fast/dom/shadow/content-element-api.html
-fast/dom/shadow/content-element-outside-shadow.html
-fast/dom/shadow/content-element-outside-shadow-style.html
-fast/dom/shadow/content-element-in-media-element.html
-fast/dom/shadow/content-element-in-meter-element.html
-fast/dom/shadow/get-element-by-id-in-shadow-root.html
-fast/dom/shadow/shadow-root-js-api.html
-fast/dom/shadow/shadow-disable.html
-fast/dom/shadow/shadow-dom-event-dispatching.html
-fast/dom/shadow/shadow-root-activeElement.html
-fast/dom/shadow/shadow-root-attached.html
-fast/dom/shadow/shadow-root-innerHTML.html
-fast/dom/shadow/shadow-root-new.html
-fast/dom/shadow/shadow-ul-li.html
-fast/dom/shadow/shadow-root-append.html
-fast/dom/shadow/shadow-element-rendering-single.html
-fast/dom/shadow/shadow-element-rendering-multiple.html
-fast/dom/shadow/multiple-shadowroot.html
-fast/dom/shadow/multiple-shadowroot-rendering.html
-fast/dom/shadow/multiple-shadowroot-adopt.html
+fast/dom/shadow
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
