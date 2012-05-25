@@ -1,3 +1,24 @@
+2012-05-25  Adam Klein  <adamk@chromium.org>
+
+        Rebaseline Chromium expectations for fast/box-shadow/shadow-buffer-partial.html
+
+        Unreviewed rebaselining.
+
+        The same rebaseline was made in r112582, but only got the Linux expectations.
+
+        * fast/box-shadow/shadow-buffer-partial-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/box-shadow/shadow-buffer-partial-expected.txt.
+        * platform/chromium-linux-x86/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-mac/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/gtk/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+        * platform/mac/fast/box-shadow/shadow-buffer-partial-expected.txt: Removed.
+
 2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         createContextualFragment and insertAdjacentHTML should throw syntax error

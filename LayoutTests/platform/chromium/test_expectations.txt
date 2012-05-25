@@ -3499,8 +3499,6 @@ BUG_OJAN SKIP : fast/js/function-names.html = FAIL
 BUG_OJAN SKIP : fast/js/global-constructors.html = FAIL
 
 // This should only be a layer change.
-BUGWK82129 MAC WIN : fast/box-shadow/shadow-buffer-partial.html = TEXT
-BUGWK82129 LINUX X86 : fast/box-shadow/shadow-buffer-partial.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
 BUGWK82669 LINUX WIN LEOPARD : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
