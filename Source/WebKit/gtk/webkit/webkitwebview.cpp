@@ -968,8 +968,6 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
 
 static void webkit_web_view_realize(GtkWidget* widget)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
-
     gtk_widget_set_realized(widget, TRUE);
 
     GtkAllocation allocation;
@@ -1010,6 +1008,7 @@ static void webkit_web_view_realize(GtkWidget* widget)
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributes_mask);
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
     priv->hasNativeWindow = gdk_window_ensure_native(window);
 #endif
     gtk_widget_set_window(widget, window);

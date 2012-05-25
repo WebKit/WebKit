@@ -1,1 +1,17 @@
+2012-05-25  Lu Guanqun  <guanqun.lu@intel.com>
+
+        [GTK] fix compilation for webkitwebview.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87473
+
+        Reviewed by Martin Robinson.
+
+        When ACCELERATED_COMPOSITING and TEXTURE_MAPPER_GL is not set,
+        the local variable 'priv' won't be used. Therefore the following warning:
+
+        ../../../Source/WebKit/gtk/webkit/webkitwebview.cpp: In function ‘void webkit_web_view_realize(GtkWidget*)’:
+        ../../../Source/WebKit/gtk/webkit/webkitwebview.cpp:971:27: warning: unused variable ‘priv’ [-Wunused-variable]
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_realize):
+
 == Rolled over to ChangeLog-2012-05-22 ==
