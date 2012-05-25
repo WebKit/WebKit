@@ -1,3 +1,12 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        Implement LayoutTest's eventSender.beginDragWithFiles interface in windows platform
+        https://bugs.webkit.org/show_bug.cgi?id=86296
+
+        Add more affected tests to the Windows Skipped list.
+
+        * platform/win/Skipped:
+
 2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Hangup when continuously changing a css width value in Inspector
