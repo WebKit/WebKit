@@ -1392,11 +1392,12 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case CheckStructure: {
-        AbstractValue value = forNode(node.child1());
-        value.filter(node.structureSet());
-        node.setCanExit(value != forNode(node.child1()));
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
-        forNode(node.child1()) = value;
+        AbstractValue& value = forNode(node.child1());
+        node.setCanExit(
+            !value.m_structure.isSubsetOf(node.structureSet())
+            || !isCellPrediction(value.m_type));
+        value.filter(node.structureSet());
         m_haveStructures = true;
         break;
     }

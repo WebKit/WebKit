@@ -3397,9 +3397,9 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case CheckStructure: {
-        AbstractValue value = m_state.forNode(node.child1());
-        value.filter(node.structureSet());
-        if (value == m_state.forNode(node.child1())) {
+        AbstractValue& value = m_state.forNode(node.child1());
+        if (value.m_structure.isSubsetOf(node.structureSet())
+            && isCellPrediction(value.m_type)) {
             noResult(m_compileIndex);
             break;
         }

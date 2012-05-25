@@ -1,5 +1,28 @@
 2012-05-24  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION (r118013-r118031): Loops/Reloads under www.yahoo.com, quits after three tries with error
+        https://bugs.webkit.org/show_bug.cgi?id=87327
+
+        Reviewed by Geoffrey Garen.
+        
+        If you use AbstractValue::filter(StructureSet) to test subset relationships between TOP and a
+        set containing >=2 elements, you're going to have a bad time.
+        
+        That's because AbstractValue considers a set with >=2 elements to be equivalent to TOP, in order
+        to save space and speed up convergence. So filtering has no effect in this case, which made
+        the code think that the abstract value was proving that the structure check was unnecessary.
+        The correct thing to do is to use isSubsetOf() on the StructureAbstractValue, which does the
+        right thingies for TOP and >=2 elements.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-05-24  Filip Pizlo  <fpizlo@apple.com>
+
         new test fast/js/dfg-arguments-mixed-alias.html fails on JSVALUE32_64
         https://bugs.webkit.org/show_bug.cgi?id=87378
 

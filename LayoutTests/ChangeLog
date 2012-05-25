@@ -1,3 +1,15 @@
+2012-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r118013-r118031): Loops/Reloads under www.yahoo.com, quits after three tries with error
+        https://bugs.webkit.org/show_bug.cgi?id=87327
+
+        Reviewed by Geoffrey Garen.
+        
+        * fast/js/dfg-check-two-structures-expected.txt: Added.
+        * fast/js/dfg-check-two-structures.html: Added.
+        * fast/js/script-tests/dfg-check-two-structures.js: Added.
+        (foo):
+
 2012-05-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Add support for WebKitOfflineWebApplicationCacheEnabled preference
