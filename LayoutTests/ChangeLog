@@ -1,3 +1,13 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        Remove the Windows platform-specific results for window-domurl-crash.
+
+        r115582 changed this test to use Blob instead of WebKitBlobBuilder, so the fact that Windows
+        doesn't support WebKitBlobBuilder no longer affects this test.
+
+        * platform/chromium-win/fast/dom/window-domurl-crash-expected.txt: Removed.
+        * platform/win/fast/dom/window-domurl-crash-expected.txt: Removed.
+
 2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium test expectations update.
