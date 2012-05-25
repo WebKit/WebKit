@@ -467,6 +467,8 @@ LLINT_SLOW_PATH_DECL(slow_path_convert_this)
     LLINT_BEGIN();
     JSValue v1 = LLINT_OP(1).jsValue();
     ASSERT(v1.isPrimitive());
+    pc[OPCODE_LENGTH(op_convert_this) - 1].u.profile->m_buckets[0] =
+        JSValue::encode(v1.structureOrUndefined());
     LLINT_RETURN(v1.toThisObject(exec));
 }
 

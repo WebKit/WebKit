@@ -239,6 +239,8 @@ namespace JSC {
         bool isCell() const;
         JSCell* asCell() const;
         JS_EXPORT_PRIVATE bool isValidCallee();
+        
+        JSValue structureOrUndefined() const;
 
         char* description() const;
 

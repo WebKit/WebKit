@@ -155,7 +155,7 @@ public:
     CompressedLazyOperandValueProfileHolder();
     ~CompressedLazyOperandValueProfileHolder();
     
-    void computeUpdatedPredictions();
+    void computeUpdatedPredictions(OperationInProgress);
     
     LazyOperandValueProfile* add(const LazyOperandValueProfileKey& key);
     

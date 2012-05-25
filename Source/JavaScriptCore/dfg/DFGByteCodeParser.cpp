@@ -350,8 +350,9 @@ private:
         stack->m_argumentPositions[argument]->addVariable(variableAccessData);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
-        // Always flush arguments.
-        addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
+        // Always flush arguments, except for 'this'.
+        if (argument)
+            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
     
     VariableAccessData* flushArgument(int operand)
@@ -1582,10 +1583,27 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_convert_this: {
             NodeIndex op1 = getThis();
-            if (m_graph[op1].op() == ConvertThis)
-                setThis(op1);
-            else
-                setThis(addToGraph(ConvertThis, op1));
+            if (m_graph[op1].op() != ConvertThis) {
+                ValueProfile* profile =
+                    m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
+                profile->computeUpdatedPrediction();
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                dataLog("[@%lu bc#%u]: profile %p: ", m_graph.size(), m_currentProfilingIndex, profile);
+                profile->dump(WTF::dataFile());
+                dataLog("\n");
+#endif
+                if (profile->m_singletonValueIsTop
+                    || !profile->m_singletonValue
+                    || !profile->m_singletonValue.isCell()
+                    || profile->m_singletonValue.asCell()->classInfo() != &Structure::s_info)
+                    setThis(addToGraph(ConvertThis, op1));
+                else {
+                    addToGraph(
+                        CheckStructure,
+                        OpInfo(m_graph.addStructureSet(jsCast<Structure*>(profile->m_singletonValue.asCell()))),
+                        op1);
+                }
+            }
             NEXT_OPCODE(op_convert_this);
         }
 

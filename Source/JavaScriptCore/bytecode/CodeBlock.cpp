@@ -670,6 +670,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_convert_this: {
             int r0 = (++it)->u.operand;
             dataLog("[%4d] convert_this\t %s\n", location, registerName(exec, r0).data());
+            ++it; // Skip value profile.
             break;
         }
         case op_new_object: {
@@ -2085,14 +2086,14 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         }
     }
     
-    m_lazyOperandValueProfiles.computeUpdatedPredictions();
+    m_lazyOperandValueProfiles.computeUpdatedPredictions(Collection);
 #endif
 
 #if ENABLE(VALUE_PROFILER)
     for (unsigned profileIndex = 0; profileIndex < numberOfArgumentValueProfiles(); ++profileIndex)
-        valueProfileForArgument(profileIndex)->computeUpdatedPrediction();
+        valueProfileForArgument(profileIndex)->computeUpdatedPrediction(Collection);
     for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
-        valueProfile(profileIndex)->computeUpdatedPrediction();
+        valueProfile(profileIndex)->computeUpdatedPrediction(Collection);
 #endif
 }
 

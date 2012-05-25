@@ -1,3 +1,61 @@
+2012-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ConvertThis should just be a CheckStructure if the structure is known
+        https://bugs.webkit.org/show_bug.cgi?id=87057
+
+        Reviewed by Gavin Barraclough.
+        
+        Merged r118021 from dfgopt.
+        
+        This gives ValueProfile the ability to track singleton values - i.e. profiling
+        sites that always see the same value.
+        
+        That is then used to profile the structure in op_convert_this.
+        
+        This is then used to optimize op_convert_this into a CheckStructure if the
+        structure is always the same.
+        
+        That then results in better CSE in inlined code that uses 'this', since
+        previously we couldn't CSE accesses on 'this' from different inline call frames.
+        
+        Also fixed a bug where we were unnecessarily flushing 'this'.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        * bytecode/LazyOperandValueProfile.h:
+        (CompressedLazyOperandValueProfileHolder):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::dump):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        (ValueProfileBase):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSValue.h:
+        (JSValue):
+        * runtime/Structure.h:
+        (JSC::JSValue::structureOrUndefined):
+        (JSC):
+
 2012-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions

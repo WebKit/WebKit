@@ -33,6 +33,7 @@
 
 #if ENABLE(VALUE_PROFILER)
 
+#include "Heap.h"
 #include "JSArray.h"
 #include "PredictedType.h"
 #include "Structure.h"
@@ -51,6 +52,7 @@ struct ValueProfileBase {
         : m_bytecodeOffset(-1)
         , m_prediction(PredictNone)
         , m_numberOfSamplesInPrediction(0)
+        , m_singletonValueIsTop(false)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -60,6 +62,7 @@ struct ValueProfileBase {
         : m_bytecodeOffset(bytecodeOffset)
         , m_prediction(PredictNone)
         , m_numberOfSamplesInPrediction(0)
+        , m_singletonValueIsTop(false)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -112,6 +115,11 @@ struct ValueProfileBase {
                 "samples = %u, prediction = %s",
                 totalNumberOfSamples(),
                 predictionToString(m_prediction));
+        fprintf(out, ", value = ");
+        if (m_singletonValueIsTop)
+            fprintf(out, "TOP");
+        else
+            fprintf(out, "%s", m_singletonValue.description());
         bool first = true;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
@@ -127,7 +135,7 @@ struct ValueProfileBase {
     }
     
     // Updates the prediction and returns the new one.
-    PredictedType computeUpdatedPrediction()
+    PredictedType computeUpdatedPrediction(OperationInProgress operation = NoOperation)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
@@ -137,9 +145,23 @@ struct ValueProfileBase {
             m_numberOfSamplesInPrediction++;
             mergePrediction(m_prediction, predictionFromValue(value));
             
+            if (!m_singletonValueIsTop && !!value) {
+                if (!m_singletonValue)
+                    m_singletonValue = value;
+                else if (m_singletonValue != value)
+                    m_singletonValueIsTop = true;
+            }
+            
             m_buckets[i] = JSValue::encode(JSValue());
         }
         
+        if (operation == Collection
+            && !m_singletonValueIsTop
+            && !!m_singletonValue
+            && m_singletonValue.isCell()
+            && !Heap::isMarked(m_singletonValue.asCell()))
+            m_singletonValueIsTop = true;
+            
         return m_prediction;
     }
     
@@ -148,6 +170,9 @@ struct ValueProfileBase {
     PredictedType m_prediction;
     unsigned m_numberOfSamplesInPrediction;
     
+    bool m_singletonValueIsTop;
+    JSValue m_singletonValue;
+
     EncodedJSValue m_buckets[totalNumberOfBuckets];
 };
 

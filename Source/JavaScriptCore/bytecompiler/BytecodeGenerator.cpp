@@ -445,8 +445,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         emitOpcode(op_create_this);
         instructions().append(m_thisRegister.index());
     } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
-        emitOpcode(op_convert_this);
+        ValueProfile* profile = emitProfiledOpcode(op_convert_this);
         instructions().append(m_thisRegister.index());
+        instructions().append(profile);
     }
 }
 

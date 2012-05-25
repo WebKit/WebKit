@@ -332,6 +332,13 @@ namespace JSC {
         return entry ? entry->offset : notFound;
     }
     
+    inline JSValue JSValue::structureOrUndefined() const
+    {
+        if (isCell())
+            return JSValue(asCell()->structure());
+        return jsUndefined();
+    }
+
     inline bool JSCell::isObject() const
     {
         return m_structure->isObject();
