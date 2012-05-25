@@ -58,9 +58,7 @@ public:
     RenderBoxModelObject(Node*);
     virtual ~RenderBoxModelObject();
     
-    LayoutUnit relativePositionOffsetX() const;
-    LayoutUnit relativePositionOffsetY() const;
-    LayoutSize relativePositionOffset() const { return LayoutSize(relativePositionOffsetX(), relativePositionOffsetY()); }
+    LayoutSize relativePositionOffset() const;
     LayoutSize relativePositionLogicalOffset() const { return style()->isHorizontalWritingMode() ? relativePositionOffset() : relativePositionOffset().transposedSize(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)

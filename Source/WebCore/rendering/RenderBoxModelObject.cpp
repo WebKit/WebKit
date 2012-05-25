@@ -463,48 +463,41 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 
-enum RelPosAxis { RelPosX, RelPosY };
-
-static LayoutUnit accumulateRelativePositionOffsets(const RenderObject* child, RelPosAxis axis)
+static LayoutSize accumulateRelativePositionOffsets(const RenderObject* child)
 {
     if (!child->isAnonymousBlock() || !child->isRelPositioned())
-        return 0;
-    LayoutUnit offset = ZERO_LAYOUT_UNIT;
+        return LayoutSize();
+    LayoutSize offset;
     RenderObject* p = toRenderBlock(child)->inlineElementContinuation();
     while (p && p->isRenderInline()) {
-        if (p->isRelPositioned())
-            offset += (axis == RelPosX) ? toRenderInline(p)->relativePositionOffsetX() : toRenderInline(p)->relativePositionOffsetY();
+        if (p->isRelPositioned()) {
+            RenderInline* renderInline = toRenderInline(p);
+            offset += renderInline->relativePositionOffset();
+        }
         p = p->parent();
     }
     return offset;
 }
 
-LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
+LayoutSize RenderBoxModelObject::relativePositionOffset() const
 {
-    LayoutUnit offset = accumulateRelativePositionOffsets(this, RelPosX);
+    LayoutSize offset = accumulateRelativePositionOffsets(this);
+
+    RenderBlock* containingBlock = this->containingBlock();
 
     // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
     // available width of the containing block.  Therefore we don't use containingBlockLogicalWidthForContent() here, but instead explicitly
     // call availableWidth on our containing block.
     if (!style()->left().isAuto()) {
-        RenderBlock* cb = containingBlock();
-        if (!style()->right().isAuto() && !cb->style()->isLeftToRightDirection())
-            return -valueForLength(style()->right(), cb->availableWidth(), view());
-        return offset + valueForLength(style()->left(), cb->availableWidth(), view());
+        if (!style()->right().isAuto() && !containingBlock->style()->isLeftToRightDirection())
+            offset.setWidth(-valueForLength(style()->right(), containingBlock->availableWidth(), view()));
+        else
+            offset.expand(valueForLength(style()->left(), containingBlock->availableWidth(), view()), 0);
+    } else if (!style()->right().isAuto()) {
+        offset.expand(-valueForLength(style()->right(), containingBlock->availableWidth(), view()), 0);
     }
-    if (!style()->right().isAuto()) {
-        RenderBlock* cb = containingBlock();
-        return offset + -valueForLength(style()->right(), cb->availableWidth(), view());
-    }
-    return offset;
-}
 
-LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
-{
-    LayoutUnit offset = accumulateRelativePositionOffsets(this, RelPosY);
-    
-    RenderBlock* containingBlock = this->containingBlock();
     // If the containing block of a relatively positioned element does not
     // specify a height, a percentage top or bottom offset should be resolved as
     // auto. An exception to this is if the containing block has the WinIE quirk
@@ -515,13 +508,13 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
         && (!containingBlock->style()->height().isAuto()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + valueForLength(style()->top(), containingBlock->availableHeight(), view());
+        offset.expand(0, valueForLength(style()->top(), containingBlock->availableHeight(), view()));
 
-    if (!style()->bottom().isAuto()
+    else if (!style()->bottom().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + -valueForLength(style()->bottom(), containingBlock->availableHeight(), view());
+        offset.expand(0, -valueForLength(style()->bottom(), containingBlock->availableHeight(), view()));
 
     return offset;
 }

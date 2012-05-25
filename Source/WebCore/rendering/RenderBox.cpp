@@ -3766,7 +3766,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
             rect = layer()->currentTransform().mapRect(rect);
 
         if (isRelPositioned())
-            rect.move(relativePositionOffsetX(), relativePositionOffsetY());
+            rect.move(relativePositionOffset());
         
         // Now we need to flip back.
         flipForWritingMode(rect);

@@ -1,3 +1,27 @@
+2012-05-25  Emil A Eklund  <eae@chromium.org>
+
+        Change RenderBoxModelObject to compute relativePositionOffset as size
+        https://bugs.webkit.org/show_bug.cgi?id=87447
+
+        Reviewed by Eric Seidel.
+
+        Compute relativePositionOffset as size instead of doing one axis at a
+        time as all call sites uses the size version of the method. This avoids
+        having to walk the DOM twice to accumulate the offsets.
+
+        Also remove the relativePositionOffsetX and Y methods as they are no
+        longer used.
+
+        No new tests, covered by existing tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::accumulateRelativePositionOffsets):
+        (WebCore::RenderBoxModelObject::relativePositionOffset):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+
 2012-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118395.
