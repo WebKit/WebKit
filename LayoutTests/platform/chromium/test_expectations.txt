@@ -48,6 +48,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS CR
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
 BUGCR24182 SLOW DEBUG : svg/as-background-image/svg-as-background-5.html = PASS
+BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 
 // V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
 BUGCR119915 MAC RELEASE SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
@@ -3778,12 +3779,6 @@ BUGWK87160 XP VISTA : platform/chromium/virtual/threaded/compositing/visibility/
 BUGWK85771 BUGWK87160 LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH TIMEOUT
 
 BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
-
-BUGWK87275 : html5lib/run-test26.html = PASS CRASH
-BUGWK87275 : html5lib/runner.html = PASS CRASH
-BUGWK87275 SLOW : html5lib/webkit-resumer.html = PASS CRASH
-// The above was previously marked as follows:
-//BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 
 BUGWK87321 XP : fast/history/history-subframe-with-name.html = TEXT PASS
 BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
