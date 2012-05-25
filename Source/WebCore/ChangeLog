@@ -1,3 +1,25 @@
+2012-05-24  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (115573): Incorrect rounding of margins for floats
+        https://bugs.webkit.org/show_bug.cgi?id=87319
+
+        Reviewed by Eric Seidel.
+
+        In RenderBlock::computeInlinePreferredLogicalWidths we used a float to
+        accumulate margins for floating children while the children themselves
+        represent their margins as LayoutUnits. Due to lack of rounding this can
+        cause the block to be too small at certain certain zoom levels, causing
+        unwanted wrapping. 
+
+        This patch changes computeInlinePreferredLogicalWidths to use a
+        LayoutUnit to accumulate the margins and thus ensures that the margin
+        values are rounded the same way.
+
+        Test: fast/block/float/floats-with-margin-should-not-wrap.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         postMessage and webkitPostMessage should behave the same way

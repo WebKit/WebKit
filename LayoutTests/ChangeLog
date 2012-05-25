@@ -1,3 +1,23 @@
+2012-05-24  Emil A Eklund  <eae@chromium.org>
+
+        REGRESSION (115573): Incorrect rounding of margins for floats
+        https://bugs.webkit.org/show_bug.cgi?id=87319
+
+        Reviewed by Eric Seidel.
+
+        Add new test ensuring that using margins with floats doesn't cause
+        undesired wrapping.
+
+        * fast/block/float/floats-with-margin-should-not-wrap-expected.txt: Added.
+        * fast/block/float/floats-with-margin-should-not-wrap.html: Added.
+        * platform/mac/fast/forms/001-expected.txt:
+        * platform/mac/fast/html/details-position-expected.txt:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+
 2012-05-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         postMessage and webkitPostMessage should behave the same way
