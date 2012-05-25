@@ -1,3 +1,17 @@
+2012-05-24  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Support mobile device rotation resizing
+        https://bugs.webkit.org/show_bug.cgi?id=86819
+
+        Reviewed by Adam Barth.
+
+        Resizes on a mobile device are caused either by rotation or
+        on-screen-keyboard bringup, and need different treatment to remain
+        naturally laid out, scaled and scrolled without disorienting the user.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+
 2012-05-24  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add a setForceRenderSurface to WebLayer for test/bench purpose
