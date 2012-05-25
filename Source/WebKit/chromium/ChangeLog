@@ -1,3 +1,9 @@
+2012-05-25  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; rolling chromium deps.
+
+        * DEPS:
+
 2012-05-25  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] LayerChromium should recognise existing layer active animations when the layer is added.
