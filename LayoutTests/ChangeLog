@@ -1,3 +1,12 @@
+2012-05-25  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip a new test: fast/events/domactivate-sets-underlying-click-event-as-handled.html
+        because it times out on Qt and GTK platforms.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-05-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Gardening. fast/events/option-tab.html does not pass

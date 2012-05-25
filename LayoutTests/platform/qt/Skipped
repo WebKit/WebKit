@@ -1882,6 +1882,10 @@ fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
 # https://bugs.webkit.org/show_bug.cgi?id=87219
 fast/events/keydown-leftright-keys.html
 
+# New fast/events/domactivate-sets-underlying-click-event-as-handled.html times out on Qt, GTK
+# https://bugs.webkit.org/show_bug.cgi?id=87469
+fast/events/domactivate-sets-underlying-click-event-as-handled.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
