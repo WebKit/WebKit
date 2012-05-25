@@ -409,6 +409,11 @@ void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin* origin,
     ewk_security_origin_free(ewkOrigin);
 }
 
+void ChromeClientEfl::populateVisitedLinks()
+{
+    evas_object_smart_callback_call(m_view, "populate,visited,links", 0);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 void ChromeClientEfl::needTouchEvents(bool needed)
 {

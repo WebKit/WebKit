@@ -47,6 +47,7 @@
 #include "JSLock.h"
 #include "LayoutTypes.h"
 #include "PageClientEfl.h"
+#include "PageGroup.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
@@ -1703,6 +1704,19 @@ Ewk_History* ewk_view_history_get(const Evas_Object* ewkView)
         return 0;
     }
     return priv->history;
+}
+
+Eina_Bool ewk_view_visited_link_add(Evas_Object* ewkView, const char* visitedUrl)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->page, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->page->groupPtr(), false);
+
+    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(visitedUrl));
+    priv->page->groupPtr()->addVisitedLink(kurl);
+    return true;
 }
 
 float ewk_view_zoom_get(const Evas_Object* ewkView)

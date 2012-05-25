@@ -125,6 +125,8 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded);
 
+    virtual void populateVisitedLinks();
+
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool);
 #endif

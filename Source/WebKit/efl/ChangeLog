@@ -1,3 +1,24 @@
+2012-05-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] API for PageGroup visited links hash populating
+        https://bugs.webkit.org/show_bug.cgi?id=86370
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added "populate,visited,links" ewk_view signal that tells to the client managing
+        persistent history storage to fill the visited links cache.
+        Added API for the PageGroup visited links hash populating.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::populateVisitedLinks): Implementation added (sends notification).
+        (WebCore):
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_visited_link_add): PageGroup visited links hash populating.
+        * ewk/ewk_view.h:
+
 2012-05-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] LayoutTestController's setCacheModel() implementation

@@ -73,6 +73,7 @@
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "protocolhandler,registration,requested", Ewk_Custom_Handler_Data: add a handler url for the given protocol.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
+ *  - "populate,visited,links": tells the client to fill the visited links set.
  *  - "ready", void: page is fully loaded.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
@@ -1099,6 +1100,19 @@ EAPI Eina_Bool    ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable);
  * @see ewk_view_history_enable_set()
  */
 EAPI Ewk_History *ewk_view_history_get(const Evas_Object *o);
+
+/**
+ * Adds @a visited_url to the view's visited links cache.
+ *
+ * This function is to be invoked by the client managing persistent history storage
+ * when "populate,visited,links" signal is received.
+ *
+ * @param o view object to add visited links data.
+ * @param visited_url visited url.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ */
+EAPI Eina_Bool  ewk_view_visited_link_add(Evas_Object *o, const char *visited_url);
 
 /**
  * Gets the current page zoom level of the main frame.
