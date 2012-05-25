@@ -665,7 +665,9 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
-    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, fakeBody.get(), scriptingPermission);
+    // Ignore exceptions here since this function is used to parse markup for pasting or for other editing purposes.
+    ExceptionCode ignoredEC;
+    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, fakeBody.get(), scriptingPermission, ignoredEC);
 
     if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);
@@ -992,19 +994,19 @@ String urlToMarkup(const KURL& url, const String& title)
     return markup.toString();
 }
 
-PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, ExceptionCode& ec)
+PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, FragmentScriptingPermission scriptingPermission, ExceptionCode& ec)
 {
     Document* document = contextElement->document();
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
 
     if (document->isHTMLDocument()) {
-        fragment->parseHTML(markup, contextElement);
+        fragment->parseHTML(markup, contextElement, scriptingPermission);
         return fragment;
     }
 
-    bool wasValid = fragment->parseXML(markup, contextElement);
+    bool wasValid = fragment->parseXML(markup, contextElement, scriptingPermission);
     if (!wasValid) {
-        ec = INVALID_STATE_ERR;
+        ec = SYNTAX_ERR;
         return 0;
     }
     return fragment.release();
@@ -1050,24 +1052,23 @@ static inline void removeElementPreservingChildren(PassRefPtr<DocumentFragment> 
     ASSERT(!ignoredExceptionCode);
 }
 
-PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, Element* element,  FragmentScriptingPermission scriptingPermission)
+PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, FragmentScriptingPermission scriptingPermission, ExceptionCode& ec)
 {
     ASSERT(element);
-    HTMLElement* htmlElement = toHTMLElement(element);
-    if (htmlElement->ieForbidsInsertHTML())
+    if (element->ieForbidsInsertHTML()) {
+        ec = NOT_SUPPORTED_ERR;
         return 0;
+    }
 
-    if (htmlElement->hasLocalName(colTag) || htmlElement->hasLocalName(colgroupTag) || htmlElement->hasLocalName(framesetTag)
-        || htmlElement->hasLocalName(headTag) || htmlElement->hasLocalName(styleTag) || htmlElement->hasLocalName(titleTag))
+    if (element->hasLocalName(colTag) || element->hasLocalName(colgroupTag) || element->hasLocalName(framesetTag)
+        || element->hasLocalName(headTag) || element->hasLocalName(styleTag) || element->hasLocalName(titleTag)) {
+        ec = NOT_SUPPORTED_ERR;
         return 0;
+    }
 
-    // FIXME: This code is almost identical to createFragmentForInnerOuterHTML except this code doesn't handle exceptions.
-    RefPtr<DocumentFragment> fragment = element->document()->createDocumentFragment();
-
-    if (element->document()->isHTMLDocument())
-        fragment->parseHTML(markup, element, scriptingPermission);
-    else if (!fragment->parseXML(markup, element, scriptingPermission))
-        return 0; // FIXME: We should propagate a syntax error exception out here.
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, element, scriptingPermission, ec);
+    if (!fragment)
+        return 0;
 
     // We need to pop <html> and <body> elements and remove <head> to
     // accommodate folks passing complete HTML documents to make the

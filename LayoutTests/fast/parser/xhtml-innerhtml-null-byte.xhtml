@@ -14,7 +14,7 @@
         document.getElementById("p0").innerHTML = "FAIL: Nulls mishandled.\x00";
       } catch(e) {
         document.getElementById("p0").innerHTML = "PASS: An exception was raised, no crashing.";
-        if (e.code != 11)
+        if (e.code != DOMException.SYNTAX_ERR)
           console.log("Unexpected error thrown: " + e.name + ": " + e.message);
       }
     ]]></script>

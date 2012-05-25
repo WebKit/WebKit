@@ -342,7 +342,7 @@ String HTMLElement::outerHTML() const
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, ec))
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec))
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
@@ -373,7 +373,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), ec);
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, parent.get(), AllowScriptingContent, ec);
     if (ec)
         return;
       
@@ -578,9 +578,8 @@ void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, 
     Element* contextElement = contextElementForInsertion(where, this, ec);
     if (!contextElement)
         return;
-    ExceptionCode ignoredEc = 0; // FIXME: We should propagate a syntax error exception out here.
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, this, ignoredEc);
-    if (ignoredEc)
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, this, AllowScriptingContent, ec);
+    if (!fragment)
         return;
     insertAdjacent(where, fragment.get(), ec);
 }

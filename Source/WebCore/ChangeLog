@@ -1,3 +1,35 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createContextualFragment and insertAdjacentHTML should throw syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=87454
+
+        Reviewed by Darin Adler.
+
+        Before this patch, createContextualFragment threw NOT_SUPPORTED_ERR and insertAdjacentHTML didn't throw any errors.
+        Make them throw SYNTAX_ERR to be consistent with the spec and Firefox:
+        http://html5.org/specs/dom-parsing.html#parsing
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
+
+        Also reduced the code duplication.
+
+        Test: fast/dom/xhtml-fragment-parsing-exceptions.xhtml
+
+        * dom/Range.cpp:
+        (WebCore::Range::createContextualFragment):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML): Explicitly pass AllowScriptingContent. 
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+        (WebCore::createFragmentForInnerOuterHTML): Takes ExceptionCode now.
+        (WebCore::createContextualFragment): Share code with createFragmentForInnerOuterHTML
+        and propagate the exception code.
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerHTML): Explicitly pass AllowScriptingContent.
+        (WebCore::HTMLElement::setOuterHTML): Ditto.
+        (WebCore::HTMLElement::insertAdjacentHTML): Ditto; also rename ignoredEc to ignoredEC
+        per Darin's comment on the bug 87339.
+
 2012-05-25  John Knottenbelt  <jknotten@chromium.org>
 
         Body scrollWidth() and scrollHeight() should be page scale-invariant

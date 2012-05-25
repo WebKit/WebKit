@@ -1,3 +1,19 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createContextualFragment and insertAdjacentHTML should throw syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=87454
+
+        Reviewed by Darin Adler.
+
+        Add a regression test, and rebaselined the existing tests since we throw
+        DOMException.SYNTAX_ERR instead of DOMException.INVALID_STATE_ERR.
+
+        * fast/dom/xhtml-fragment-parsing-exceptions-expected.txt: Added.
+        * fast/dom/xhtml-fragment-parsing-exceptions.xhtml: Added.
+        * fast/innerHTML/innerHTML-changing-document-properties-expected.txt:
+        * fast/parser/xhtml-innerhtml-null-byte-first.xhtml:
+        * fast/parser/xhtml-innerhtml-null-byte.xhtml:
+
 2012-05-25  John Knottenbelt  <jknotten@chromium.org>
 
         Body scrollWidth() and scrollHeight() should be page scale-invariant

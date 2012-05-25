@@ -1,0 +1,11 @@
+This tests parsing invalid XHTML content in innerHTML. You should see PASS below:
+
+createContextualFragment: PASS - SYNTAX_ERR
+
+insertAdjacentHTML: PASS - SYNTAX_ERR
+
+innerHTML: PASS - SYNTAX_ERR
+
+outerHTML: PASS - SYNTAX_ERR
+
+

@@ -37,6 +37,7 @@ namespace WebCore {
     class Document;
     class DocumentFragment;
     class Element;
+    class HTMLElement;
     class KURL;
     class Node;
     class QualifiedName;
@@ -51,9 +52,9 @@ namespace WebCore {
     PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = AllowScriptingContent);
     PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document*, const String& markup, unsigned fragmentStart, unsigned fragmentEnd, const String& baseURL, FragmentScriptingPermission);
     PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
-    PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String&, Element*, ExceptionCode&);
+    PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String&, Element*, FragmentScriptingPermission, ExceptionCode&);
     PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String&, const String& sourceMIMEType, Document* outputDoc);
-    PassRefPtr<DocumentFragment> createContextualFragment(const String&, Element*,  FragmentScriptingPermission);
+    PassRefPtr<DocumentFragment> createContextualFragment(const String&, HTMLElement*, FragmentScriptingPermission, ExceptionCode&);
 
     bool isPlainTextMarkup(Node *node);
 

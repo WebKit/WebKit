@@ -1124,12 +1124,9 @@ PassRefPtr<DocumentFragment> Range::createContextualFragment(const String& marku
         return 0;
     }
 
-    RefPtr<DocumentFragment> fragment = WebCore::createContextualFragment(markup, toElement(element), AllowScriptingContentAndDoNotMarkAlreadyStarted);
-
-    if (!fragment) {
-        ec = NOT_SUPPORTED_ERR;
+    RefPtr<DocumentFragment> fragment = WebCore::createContextualFragment(markup, toHTMLElement(element), AllowScriptingContentAndDoNotMarkAlreadyStarted, ec);
+    if (!fragment)
         return 0;
-    }
 
     return fragment.release();
 }
