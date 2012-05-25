@@ -1,3 +1,29 @@
+2012-05-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87525
+        
+        For the new multi-column layout, create a flow thread and make sure the children get put inside it.
+
+        Reviewed by Eric Seidel.
+
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        (WebCore::RenderMultiColumnBlock::addChild):
+        (WebCore):
+        * rendering/RenderMultiColumnBlock.h:
+        (WebCore):
+        (RenderMultiColumnBlock):
+        (WebCore::RenderMultiColumnBlock::flowThread):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread):
+        (WebCore):
+        * rendering/RenderMultiColumnFlowThread.h:
+        (RenderMultiColumnFlowThread):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (WebCore::RenderObject::isRenderMultiColumnSet):
+
 2012-05-25  Emil A Eklund  <eae@chromium.org>
 
         Change RenderBoxModelObject to compute relativePositionOffset as size

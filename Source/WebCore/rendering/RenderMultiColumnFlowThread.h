@@ -34,7 +34,8 @@ namespace WebCore {
 class RenderMultiColumnFlowThread : public RenderFlowThread {
 public:
     RenderMultiColumnFlowThread(Node*);
-    
+    ~RenderMultiColumnFlowThread();
+
 private:
     virtual const char* renderName() const OVERRIDE;
 };

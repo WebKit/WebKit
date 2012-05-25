@@ -33,6 +33,10 @@ RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Node* node)
 {
 }
 
+RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()
+{
+}
+
 const char* RenderMultiColumnFlowThread::renderName() const
 {    
     return "RenderMultiColumnFlowThread";

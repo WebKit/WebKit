@@ -45,6 +45,8 @@ class RenderMultiColumnSet : public RenderRegionSet {
 public:
     RenderMultiColumnSet(Node*, RenderFlowThread*);
     
+    virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
+
 private:
     virtual const char* renderName() const;
 };

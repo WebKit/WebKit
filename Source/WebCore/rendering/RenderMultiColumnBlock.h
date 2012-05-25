@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class RenderMultiColumnFlowThread;
+
 class RenderMultiColumnBlock : public RenderBlock {
 public:
     RenderMultiColumnBlock(Node*);
@@ -41,7 +43,13 @@ private:
     virtual bool recomputeLogicalWidth();
     void computeColumnCountAndWidth();
 
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
+
+    RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
+
 private:
+    RenderMultiColumnFlowThread* m_flowThread;
+
     unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
     LayoutUnit m_columnWidth; // since a multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
                               // These values will be cached (eventually) for multi-column blocks.
