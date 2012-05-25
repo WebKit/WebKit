@@ -1,3 +1,12 @@
+2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium test expectations rebaseline.
+
+        * platform/chromium-mac-leopard/editing/spelling/grammar-markers-expected.png: Added.
+        * platform/chromium-mac-snowleopard/editing/spelling/grammar-markers-expected.png: Added.
+        * platform/chromium-mac/editing/spelling/grammar-markers-expected.png: Added.
+        * platform/chromium-win/editing/spelling/grammar-markers-expected.png: Added.
+
 2012-05-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip now passing tests.
