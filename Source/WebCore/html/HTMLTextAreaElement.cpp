@@ -438,7 +438,7 @@ String HTMLTextAreaElement::validationMessage() const
         return validationMessageValueMissingText();
 
     if (tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value()), maxLength());
+        return validationMessageTooLongText(computeLengthForSubmission(value()), maxLength());
 
     return String();
 }

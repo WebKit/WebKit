@@ -1,3 +1,19 @@
+2012-05-24  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms][TextArea] Too long validation message doesn't count LF as CRLF
+        https://bugs.webkit.org/show_bug.cgi?id=87458
+
+        Reviewed by Kent Tamura.
+
+        This patch changes current number of characters in "too long" validation message
+        parameter to counting newline as 2 characters (CR and LF) as submission data.
+
+        No new tests. To have test for this change, we need to change localization
+        text handling during DRT. We'll try.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::validationMessage): Use computeLengthForSubmission instead of numGraphmeClusters.
+
 2012-05-24  Hayato Ito  <hayato@chromium.org>
 
         Fix crashes caused by a DOMCharacterDataModified event on a text node.
