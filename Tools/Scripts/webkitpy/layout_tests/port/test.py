@@ -222,6 +222,10 @@ layer at (0,0) size 800x34
     tests.add('platform/test-snow-leopard/http/test.html')
     tests.add('platform/test-snow-leopard/websocket/test.html')
 
+    # For testing if perf tests are running in a locked shard.
+    tests.add('perf/foo/test.html')
+    tests.add('perf/foo/test-ref.html')
+
     return tests
 
 

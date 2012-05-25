@@ -1,3 +1,27 @@
+2012-05-25  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [NRWT] Add unit testing for perf tests on locked shards
+        https://bugs.webkit.org/show_bug.cgi?id=87489
+
+        Reviewed by Dirk Pranke.
+
+        Adding utests that makes sure that perf tests are running in locked
+        shards and by passing --no-http won't break NRWT (r118421).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ShardingTests):
+        (ShardingTests.test_shard_by_dir):
+        (ShardingTests.test_shard_every_file):
+        (ShardingTests.test_shard_in_two):
+        (ShardingTests.test_multiple_locked_shards):
+        (LockCheckingManager):
+        (LockCheckingManager.__init__):
+        (LockCheckingManager.handle_finished_list):
+        (ManagerTest.test_http_locking):
+        (ManagerTest):
+        (ManagerTest.test_perf_locking):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         [Win] fast/events/keydown-leftright-keys.html failing since introduction in r118001
