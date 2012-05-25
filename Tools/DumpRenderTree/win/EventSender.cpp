@@ -475,6 +475,18 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_SNAPSHOT;
     else if (JSStringIsEqualToUTF8CString(character, "menu"))
         virtualKeyCode = VK_APPS;
+    else if (JSStringIsEqualToUTF8CString(character, "leftControl"))
+        virtualKeyCode = VK_LCONTROL;
+    else if (JSStringIsEqualToUTF8CString(character, "leftShift"))
+        virtualKeyCode = VK_LSHIFT;
+    else if (JSStringIsEqualToUTF8CString(character, "leftAlt"))
+        virtualKeyCode = VK_LMENU;
+    else if (JSStringIsEqualToUTF8CString(character, "rightControl"))
+        virtualKeyCode = VK_RCONTROL;
+    else if (JSStringIsEqualToUTF8CString(character, "rightShift"))
+        virtualKeyCode = VK_RSHIFT;
+    else if (JSStringIsEqualToUTF8CString(character, "rightAlt"))
+        virtualKeyCode = VK_RMENU;
     else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));

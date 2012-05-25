@@ -1,3 +1,15 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] fast/events/keydown-leftright-keys.html failing since introduction in r118001
+        https://bugs.webkit.org/show_bug.cgi?id=87511
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update the Windows implementation of keyDown to match the Mac one changed in r118001.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+
 2012-05-25  Ken Buchanan  <kenrb@chromium.org>
 
         Adding Ken Buchanan to committers.py
