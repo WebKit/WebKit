@@ -1,3 +1,37 @@
+2012-05-25  Ken Buchanan  <kenrb@chromium.org>
+
+        Layout root not getting cleared for anonymous renderers geting destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=84002
+
+        Reviewed by Abhishek Arya.
+
+        This is a follow-up to r109406, which added a check to clear layout
+        roots when they point to a renderer that is being destroyed. The
+        thinking was that layout roots would never be anonymous renderers,
+        but there are some cases where this is not true (in particular,
+        generated content containers with overflow clips can be layout roots).
+
+        As in r109406, this patch has no layout test. This is because any test
+        that exercises this behavior is caused by an existing layout bug where
+        a child is not properly getting layout (or a renderer is getting dirtied
+        out of order during layout) and will fail multiple ASSERTs:
+        in particular, ASSERT(!m_layoutRoot->container() || !m_layoutRoot->
+        container()->needsLayout()) in FrameView::scheduleRelayoutOfSubtree(),
+        and ASSERT_NOT_REACHED() in RenderObject::clearLayoutRootIfNeeded().
+        We are preventing those bugs from manifesting as security issues with
+        this patch.
+
+        This also removes an ASSERT from the RenderObject destructor. This is
+        redundant with the condition in RenderObject::clearLayoutRootIfNeeded()
+        which is always called in RenderObject::willBeDestroyed(), so the check 
+        is not needed. It had to be removed because it fails when I try to
+        adjust the ASSERT condition by removing the !node()
+        check, due to RenderWidget clearing its node() during destruction.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject):
+        (WebCore::RenderObject::willBeDestroyed):
+
 2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Hangup when continuously changing a css width value in Inspector
