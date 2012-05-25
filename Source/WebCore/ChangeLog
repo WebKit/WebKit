@@ -1,3 +1,33 @@
+2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Clean up Inspector.json after r118367
+        https://bugs.webkit.org/show_bug.cgi?id=87499
+
+        Reviewed by Yury Semikhatsky.
+
+        This cleans up the semantic inconsistencies introduced into type/field names r118367.
+
+        No new tests, as this is a refactoring.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::canBind):
+        (InspectorStyleSheetForInlineStyle):
+
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: speed-up HeapSnapshot._bfs method.

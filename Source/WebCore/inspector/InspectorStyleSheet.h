@@ -171,7 +171,7 @@ public:
     };
 
     typedef HashMap<CSSStyleDeclaration*, RefPtr<InspectorStyle> > InspectorStyleMap;
-    static PassRefPtr<InspectorStyleSheet> create(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::Origin::Enum, const String& documentURL, Listener*);
+    static PassRefPtr<InspectorStyleSheet> create(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::StyleSheetOrigin::Enum, const String& documentURL, Listener*);
     static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
@@ -201,9 +201,9 @@ public:
     InspectorCSSId styleId(CSSStyleDeclaration* style) const { return ruleOrStyleId(style); }
 
 protected:
-    InspectorStyleSheet(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::Origin::Enum, const String& documentURL, Listener*);
+    InspectorStyleSheet(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::StyleSheetOrigin::Enum, const String& documentURL, Listener*);
 
-    bool canBind() const { return m_origin != TypeBuilder::CSS::Origin::User_agent && m_origin != TypeBuilder::CSS::Origin::User; }
+    bool canBind() const { return m_origin != TypeBuilder::CSS::StyleSheetOrigin::User_agent && m_origin != TypeBuilder::CSS::StyleSheetOrigin::User; }
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;
@@ -234,7 +234,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     String m_id;
     RefPtr<CSSStyleSheet> m_pageStyleSheet;
-    TypeBuilder::CSS::Origin::Enum m_origin;
+    TypeBuilder::CSS::StyleSheetOrigin::Enum m_origin;
     String m_documentURL;
     bool m_isRevalidating;
     ParsedStyleSheet* m_parsedStyleSheet;
@@ -245,14 +245,14 @@ private:
 
 class InspectorStyleSheetForInlineStyle : public InspectorStyleSheet {
 public:
-    static PassRefPtr<InspectorStyleSheetForInlineStyle> create(InspectorPageAgent*, const String& id, PassRefPtr<Element>, TypeBuilder::CSS::Origin::Enum, Listener*);
+    static PassRefPtr<InspectorStyleSheetForInlineStyle> create(InspectorPageAgent*, const String& id, PassRefPtr<Element>, TypeBuilder::CSS::StyleSheetOrigin::Enum, Listener*);
 
     void didModifyElementAttribute();
     virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
 protected:
-    InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, PassRefPtr<Element>, TypeBuilder::CSS::Origin::Enum, Listener*);
+    InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, PassRefPtr<Element>, TypeBuilder::CSS::StyleSheetOrigin::Enum, Listener*);
 
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
