@@ -1,3 +1,17 @@
+2012-05-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87529
+        Background tabs hosted in window server flash before painting 
+        when they first become active
+
+        Reviewed by Anders Carlsson.
+
+        Initialize to LayerHostingModeInWindowServer if that is 
+        available to avoid having to re-make the context and re-set 
+        everything later on.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2012-05-25  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK][WK2] Implement API for generic permission requests
