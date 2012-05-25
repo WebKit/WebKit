@@ -1,3 +1,15 @@
+2012-05-25  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] Default media controls should render only the currentTime-containing buffered range
+        https://bugs.webkit.org/show_bug.cgi?id=85925
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/video-buffered-range-contains-currentTime.html
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSlider):
+
 2012-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: add TransformationMatrix ctor from an AffineTransform.
