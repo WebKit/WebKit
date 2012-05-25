@@ -1,3 +1,13 @@
+2012-05-25  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Remove test expectation for video-cookie.html now that the issue
+        is fixed on the Chromium side.
+        https://bugs.webkit.org/show_bug.cgi?id=87459
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         Remove the Windows platform-specific results for window-domurl-crash.
