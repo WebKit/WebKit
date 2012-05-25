@@ -1,3 +1,13 @@
+2012-05-25  Lu Guanqun  <guanqun.lu@intel.com>
+
+        [GTK] fix compilation warning in GtkInputMethodFilter.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87475
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkInputMethodFilter.cpp:
+        (WebCore::GtkInputMethodFilter::setWidget):
+
 2012-05-25  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt] Broken controls rendering when transform is applied.

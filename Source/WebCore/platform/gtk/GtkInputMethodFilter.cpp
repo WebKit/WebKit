@@ -66,7 +66,7 @@ void GtkInputMethodFilter::setWidget(GtkWidget* widget)
     ASSERT(!m_widget);
 
     m_widget = widget;
-    if (GdkWindow* window = gtk_widget_get_window(m_widget))
+    if (gtk_widget_get_window(m_widget))
         handleWidgetRealize(m_widget, this);
     else
         g_signal_connect_after(widget, "realize", G_CALLBACK(handleWidgetRealize), this);
