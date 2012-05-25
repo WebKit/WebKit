@@ -537,6 +537,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
 #endif
+#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
@@ -546,6 +547,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexLinePack:
     case CSSPropertyWebkitFlexWrap:
+#endif
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:

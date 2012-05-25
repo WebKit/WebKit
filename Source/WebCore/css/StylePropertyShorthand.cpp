@@ -307,12 +307,14 @@ const StylePropertyShorthand& webkitColumnRuleShorthand()
     return webkitColumnRuleLonghands;
 }
 
+#if ENABLE(CSS3_FLEXBOX)
 const StylePropertyShorthand& webkitFlexFlowShorthand()
 {
     static const CSSPropertyID flexFlowProperties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitFlexFlowLonghands, (flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties)));
     return webkitFlexFlowLonghands;
 }
+#endif
 
 const StylePropertyShorthand& webkitMarginCollapseShorthand()
 {
@@ -477,8 +479,10 @@ const StylePropertyShorthand& shorthandForProperty(CSSPropertyID propertyID)
         return webkitColumnsShorthand();
     case CSSPropertyWebkitColumnRule:
         return webkitColumnRuleShorthand();
+#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexFlow:
         return webkitFlexFlowShorthand();
+#endif
     case CSSPropertyWebkitMarginCollapse:
         return webkitMarginCollapseShorthand();
     case CSSPropertyWebkitMarquee:

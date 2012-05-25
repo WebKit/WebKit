@@ -1,3 +1,42 @@
+2012-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        ENABLE_CSS3_FLEXBOX is insufficient to disable all web-facing bits of the feature
+        https://bugs.webkit.org/show_bug.cgi?id=87537
+        <rdar://problem/11524921>
+
+        Reviewed by Simon Fraser.
+
+        Allow the feature flag to disable more web-facing parts of the CSS3 flexbox
+        implementation (primarily fallout from hiding it from computed style).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue):
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyleConstants.h:
+
 2012-05-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Add setting for painting debug info onto tiles

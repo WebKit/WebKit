@@ -256,6 +256,7 @@ z-index
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter
 #endif
+#if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 -webkit-flex
 -webkit-flex-align
 -webkit-flex-direction
@@ -265,6 +266,7 @@ z-index
 -webkit-flex-order
 -webkit-flex-pack
 -webkit-flex-wrap
+#endif
 -webkit-font-size-delta
 -webkit-grid-columns
 -webkit-grid-rows

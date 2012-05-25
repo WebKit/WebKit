@@ -1914,7 +1914,9 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case BLOCK:
     case TABLE:
     case BOX:
+#if ENABLE(CSS3_FLEXBOX)
     case FLEX:
+#endif
     case GRID:
         return display;
 
@@ -1927,8 +1929,10 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
         return TABLE;
     case INLINE_BOX:
         return BOX;
+#if ENABLE(CSS3_FLEXBOX)
     case INLINE_FLEX:
         return FLEX;
+#endif
     case INLINE_GRID:
         return GRID;
 
@@ -4105,6 +4109,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
+#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexDirection:
@@ -4114,6 +4119,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:
+#endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitFlowInto:
