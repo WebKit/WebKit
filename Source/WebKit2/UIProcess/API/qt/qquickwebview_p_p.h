@@ -95,7 +95,7 @@ public:
 
     virtual void _q_suspend() { }
     virtual void _q_resume() { }
-    virtual void _q_contentViewportChanged(const QPointF& trajectory) { };
+    virtual void _q_onInformVisibleContentChange(const QPointF& trajectory) { };
 
     virtual qreal zoomFactor() const { return 1; }
     virtual void setZoomFactor(qreal) { }
@@ -231,7 +231,7 @@ public:
 
     virtual void _q_suspend();
     virtual void _q_resume();
-    virtual void _q_contentViewportChanged(const QPointF& trajectory);
+    virtual void _q_onInformVisibleContentChange(const QPointF& trajectory);
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);

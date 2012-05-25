@@ -96,9 +96,8 @@ Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();
 
-    void contentViewportChanged(const QPointF& trajectory = QPointF());
+    void informVisibleContentChange(const QPointF& trajectory = QPointF());
 
-    void viewportTrajectoryVectorChanged(const QPointF&);
     void visibleContentRectAndScaleChanged();
 
 private Q_SLOTS:

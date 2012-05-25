@@ -85,7 +85,7 @@ public:
         }
 
         // Make sure that tiles all around the viewport will be requested.
-        emit engine->contentViewportChanged(QPointF());
+        emit engine->informVisibleContentChange(QPointF());
     }
 
 private:
@@ -246,7 +246,7 @@ void QtViewportInteractionEngine::flickableMovingPositionUpdate()
 {
     QPointF newPosition = m_viewport->contentPos();
 
-    emit contentViewportChanged(m_lastScrollPosition - newPosition);
+    emit informVisibleContentChange(m_lastScrollPosition - newPosition);
 
     m_lastScrollPosition = newPosition;
 }
@@ -289,11 +289,13 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
     setItemRectVisible(endVisibleContentRect);
 
     // Make sure that tiles all around the viewport will be requested.
-    emit contentViewportChanged(QPointF());
+    emit informVisibleContentChange(QPointF());
 }
 
 void QtViewportInteractionEngine::touchBegin()
 {
+    m_hadUserInteraction = true;
+
     // Prevents resuming the page between the user's flicks of the page while the animation is running.
     if (scrollAnimationActive())
         m_touchUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
@@ -317,6 +319,9 @@ QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScal
 
 void QtViewportInteractionEngine::focusEditableArea(const QRectF& caretArea, const QRectF& targetArea)
 {
+    // This can only happen as a result of a user interaction.
+    ASSERT(m_hadUserInteraction);
+
     QRectF endArea = itemRectFromCSS(targetArea);
 
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(2.0));
@@ -351,13 +356,14 @@ void QtViewportInteractionEngine::focusEditableArea(const QRectF& caretArea, con
 
 void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea)
 {
+    // This can only happen as a result of a user interaction.
+    ASSERT(m_hadUserInteraction);
+
     if (!targetArea.isValid())
         return;
 
     if (m_suspendCount)
         return;
-
-    m_hadUserInteraction = true;
 
     const int margin = 10; // We want at least a little bit of margin.
     QRectF endArea = itemRectFromCSS(targetArea.adjusted(-margin, -margin, margin, margin));
@@ -500,7 +506,9 @@ bool QtViewportInteractionEngine::panGestureActive() const
 
 void QtViewportInteractionEngine::panGestureStarted(const QPointF& position, qint64 eventTimestampMillis)
 {
-    m_hadUserInteraction = true;
+    // This can only happen as a result of a user interaction.
+    ASSERT(m_hadUserInteraction);
+
     m_viewport->handleFlickableMousePress(position, eventTimestampMillis);
     m_lastPinchCenterInViewportCoordinates = position;
 }
@@ -561,10 +569,12 @@ bool QtViewportInteractionEngine::pinchGestureActive() const
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
 {
+    // This can only happen as a result of a user interaction.
+    ASSERT(m_hadUserInteraction);
+
     if (!m_allowsUserScaling)
         return;
 
-    m_hadUserInteraction = true;
     m_scaleStack.clear();
     m_zoomOutScale = 0.0;
 
@@ -574,7 +584,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     m_pinchStartScale = m_content->contentsScale();
 
     // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
-    emit contentViewportChanged(QPointF());
+    emit informVisibleContentChange(QPointF());
 }
 
 void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)

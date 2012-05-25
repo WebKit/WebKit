@@ -207,7 +207,7 @@ private:
 
     Q_PRIVATE_SLOT(d_func(), void _q_suspend());
     Q_PRIVATE_SLOT(d_func(), void _q_resume());
-    Q_PRIVATE_SLOT(d_func(), void _q_contentViewportChanged(const QPointF&));
+    Q_PRIVATE_SLOT(d_func(), void _q_onInformVisibleContentChange(const QPointF&));
 
     Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onUrlChanged());

@@ -813,7 +813,7 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
-    QObject::connect(interactionEngine.data(), SIGNAL(contentViewportChanged(QPointF)), q, SLOT(_q_contentViewportChanged(QPointF)));
+    QObject::connect(interactionEngine.data(), SIGNAL(informVisibleContentChange(QPointF)), q, SLOT(_q_onInformVisibleContentChange(QPointF)));
 
     _q_resume();
 
@@ -865,10 +865,10 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     // it can resize the content accordingly.
     webPageProxy->setViewportSize(viewportSize);
 
-    _q_contentViewportChanged(QPointF());
+    _q_onInformVisibleContentChange(QPointF());
 }
 
-void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& trajectoryVector)
+void QQuickWebViewFlickablePrivate::_q_onInformVisibleContentChange(const QPointF& trajectoryVector)
 {
     Q_Q(QQuickWebView);
 
@@ -903,7 +903,7 @@ void QQuickWebViewFlickablePrivate::_q_resume()
     pageIsSuspended = false;
     webPageProxy->resumeActiveDOMObjectsAndAnimations();
 
-    _q_contentViewportChanged(QPointF());
+    _q_onInformVisibleContentChange(QPointF());
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)

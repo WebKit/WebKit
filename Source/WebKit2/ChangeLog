@@ -1,3 +1,36 @@
+2012-05-25  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Fix failing qmltests::FitToView::test_basic()
+        https://bugs.webkit.org/show_bug.cgi?id=87236
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename contentViewportChanged to informVisibleContentChange() to
+        reflect its functionality better. Centralize m_hadUserInteraction flag
+        setting and add assertions on it to ensure that designated
+        functions are called only on user interaction.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_onInformVisibleContentChange):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::_q_onInformVisibleContentChange):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::flickableMovingPositionUpdate):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::touchBegin):
+        (WebKit::QtViewportInteractionEngine::focusEditableArea):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-05-24  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions
