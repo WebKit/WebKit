@@ -1,3 +1,12 @@
+2012-05-25  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Remove 2 incorrect rebaselines from http://trac.webkit.org/changeset/117818/
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.create1.type-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.create2.type-expected.txt: Removed.
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         Skip more WebGL tests on Windows.
