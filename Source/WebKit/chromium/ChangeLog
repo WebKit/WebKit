@@ -1,3 +1,21 @@
+2012-05-24  Hironori Bono  <hbono@chromium.org>
+
+        Enable grammar checking on Chromium when we paste text  (Take 2)
+        https://bugs.webkit.org/show_bug.cgi?id=74393
+
+        Reviewed by Ryosuke Niwa.
+
+        This change enables grammar checking on Chromium and implements a mock grammar
+        checker to fix a failing test.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): Show suggestions when we right-click grammatically-misspelled words.
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::isGrammarCheckingEnabled): Enable grammar checking when we enable asynchronous spellchecking.
+        (WebKit::EditorClientImpl::checkGrammarOfString): set badGrammarLocation to -1 to avoid an assertion error.
+        * src/WebTextCheckingResult.cpp:
+        (WebKit::WebTextCheckingResult::operator TextCheckingResult): Fill GrammarDetails for grammatical errors.
+
 2012-05-24  Alexandre Elias  <aelias@google.com>
 
         [chromium] Support mobile device rotation resizing

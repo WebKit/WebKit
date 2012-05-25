@@ -513,8 +513,9 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
         return;
 
     // Create the pattern we'll use to draw the underline.
-    static SkBitmap* misspellBitmap = 0;
-    if (!misspellBitmap) {
+    int index = style == DocumentMarkerGrammarLineStyle ? 1 : 0;
+    static SkBitmap* misspellBitmap[2] = { 0, 0 };
+    if (!misspellBitmap[index]) {
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
         // Match the artwork used by the Mac.
         const int rowPixels = 4;
@@ -526,36 +527,45 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
         const int rowPixels = 32;  // Must be multiple of 4 for pattern below.
         const int colPixels = 2;
 #endif
-        misspellBitmap = new SkBitmap;
-        misspellBitmap->setConfig(SkBitmap::kARGB_8888_Config,
-                                   rowPixels, colPixels);
-        misspellBitmap->allocPixels();
+        misspellBitmap[index] = new SkBitmap;
+        misspellBitmap[index]->setConfig(SkBitmap::kARGB_8888_Config,
+                                         rowPixels, colPixels);
+        misspellBitmap[index]->allocPixels();
 
-        misspellBitmap->eraseARGB(0, 0, 0, 0);
+        misspellBitmap[index]->eraseARGB(0, 0, 0, 0);
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-        const uint32_t colors[] = { 0x2A2A0600, 0x57571000, // left half of 4x3
-                                    0xA8A81B00, 0xBFBF1F00,
-                                    0x70701200, 0xE0E02400 };
+        const uint32_t colors[2][6] = {
+            { 0x2A2A0600, 0x57571000, 0xA8A81B00, 0xBFBF1F00, 0x70701200, 0xE0E02400 },
+            { 0x2A001503, 0x57002A08, 0xA800540D, 0xBF005F0F, 0x70003809, 0xE0007012 }
+        };
         const uint32_t transparentColor = 0x00000000;
 
         // Pattern: a b a   a b a
         //          c d c   c d c
         //          e f e   e f e
         for (int x = 0; x < colPixels; ++x) {
-            uint32_t* row = misspellBitmap->getAddr32(0, x);
-            row[0] = colors[x * 2];
-            row[1] = colors[x * 2 + 1];
-            row[2] = colors[x * 2];
+            uint32_t* row = misspellBitmap[index]->getAddr32(0, x);
+            row[0] = colors[index][x * 2];
+            row[1] = colors[index][x * 2 + 1];
+            row[2] = colors[index][x * 2];
             row[3] = transparentColor;
         }
 #else
-        const uint32_t lineColor = 0xFF << SK_A32_SHIFT | 0xFF << SK_R32_SHIFT; // Opaque red.
-        const uint32_t antiColor = 0x60 << SK_A32_SHIFT | 0x60 << SK_R32_SHIFT; // Semitransparent red
+        static const uint32_t lineColors[2] = {
+            0xFF << SK_A32_SHIFT | 0xFF << SK_R32_SHIFT, // Opaque red.
+            0xFF << SK_A32_SHIFT | 0x50 << SK_R32_SHIFT | 0x50 << SK_G32_SHIFT | 0x50 << SK_B32_SHIFT, // Opaque gray.
+        };
+        static const uint32_t antiColors[2] = {
+            0x60 << SK_A32_SHIFT | 0x60 << SK_R32_SHIFT, // Semitransparent red
+            0xFF << SK_A32_SHIFT | 0x30 << SK_R32_SHIFT | 0x30 << SK_G32_SHIFT | 0x30 << SK_B32_SHIFT, // Semitransparent gray
+        };
+        const uint32_t lineColor = lineColors[index];
+        const uint32_t antiColor = antiColors[index];
 
         // Pattern:  X o   o X o   o X
         //             o X o   o X o
-        uint32_t* row1 = misspellBitmap->getAddr32(0, 0);
-        uint32_t* row2 = misspellBitmap->getAddr32(0, 1);
+        uint32_t* row1 = misspellBitmap[index]->getAddr32(0, 0);
+        uint32_t* row2 = misspellBitmap[index]->getAddr32(0, 1);
         for (int x = 0; x < rowPixels; x++) {
             switch (x % 4) {
             case 0:
@@ -581,7 +591,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     SkScalar originY = WebCoreFloatToSkScalar(pt.y());
     // Make sure to draw only complete dots.
-    int rowPixels = misspellBitmap->width();
+    int rowPixels = misspellBitmap[index]->width();
     float widthMod = fmodf(width, rowPixels);
     if (rowPixels - widthMod > 1)
         width -= widthMod;
@@ -593,7 +603,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
     // Make a shader for the bitmap with an origin of the box we'll draw. This
     // shader is refcounted and will have an initial refcount of 1.
     SkShader* shader = SkShader::CreateBitmapShader(
-        *misspellBitmap, SkShader::kRepeat_TileMode,
+        *misspellBitmap[index], SkShader::kRepeat_TileMode,
         SkShader::kRepeat_TileMode);
     SkMatrix matrix;
     matrix.reset();
@@ -611,7 +621,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
     rect.set(originX,
              originY,
              originX + WebCoreFloatToSkScalar(width),
-             originY + SkIntToScalar(misspellBitmap->height()));
+             originY + SkIntToScalar(misspellBitmap[index]->height()));
     platformContext()->canvas()->drawRect(rect, paint);
     platformContext()->didDrawRect(rect, paint);
 }

@@ -180,7 +180,8 @@ void EditorClientImpl::toggleContinuousSpellChecking()
 
 bool EditorClientImpl::isGrammarCheckingEnabled()
 {
-    return false;
+    const Frame* frame = m_webView->focusedWebCoreFrame();
+    return frame && frame->settings() && frame->settings()->asynchronousSpellCheckingEnabled();
 }
 
 void EditorClientImpl::toggleGrammarChecking()
@@ -790,7 +791,7 @@ void EditorClientImpl::checkGrammarOfString(const UChar*, int length,
 {
     notImplemented();
     if (badGrammarLocation)
-        *badGrammarLocation = 0;
+        *badGrammarLocation = -1;
     if (badGrammarLength)
         *badGrammarLength = 0;
 }
