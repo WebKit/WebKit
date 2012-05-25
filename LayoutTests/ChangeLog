@@ -1,3 +1,13 @@
+2012-05-25  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Add missing expectations needed after http://trac.webkit.org/changeset/118577/
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-leopard/http/tests/media/video-buffered-range-contains-currentTime-expected.png: Added.
+        * platform/chromium-mac-snowleopard/http/tests/media/video-buffered-range-contains-currentTime-expected.png: Added.
+        * platform/chromium-mac/http/tests/media/video-buffered-range-contains-currentTime-expected.png: Added.
+
 2012-05-25  Kenneth Russell  <kbr@google.com>
 
         New tex-image-and-sub-image-2d-with-video tests from r118565 failing on Mac Lion
