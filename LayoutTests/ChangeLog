@@ -1,3 +1,17 @@
+2012-05-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaselines after r118448 and r118353.
+
+        * platform/gtk/fast/forms/001-expected.txt:
+        * platform/gtk/fast/html/details-position-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-flexbox-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-radio-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+
 2012-05-24  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Widen expectations for a couple of tests to include LEOPARD.
