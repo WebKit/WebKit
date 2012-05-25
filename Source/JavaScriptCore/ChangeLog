@@ -1,3 +1,92 @@
+2012-05-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE should do redundant store elimination
+        https://bugs.webkit.org/show_bug.cgi?id=87161
+
+        Reviewed by Oliver Hunt.
+        
+        Merge r118138 from dfgopt.
+        
+        This patch adds redundant store elimination. For example, consider this
+        code:
+        
+        o.x = 42;
+        o.x = 84;
+        
+        If o.x is speculated to be a well-behaved field, the first assignment is
+        unnecessary, since the second just overwrites it. We would like to
+        eliminate the first assignment in these cases. The need for this
+        optimization arises mostly from stores that our runtime requires. For
+        example:
+        
+        o = {f:1, g:2, h:3};
+        
+        This will have four assignments to the structure for the newly created
+        object - one assignment for the empty structure, one for {f}, one for
+        {f, g}, and one for {f, g, h}. We would like to only have the last of
+        those assigments in this case.
+        
+        Intriguingly, doing so for captured variables breaks the way arguments
+        simplification used to work. Consider that prior to either arguments
+        simplification or store elimination we will have IR that looks like:
+        
+        a: SetLocal(r0, Empty)
+        b: SetLocal(r1, Empty)
+        c: GetLocal(r0)
+        d: CreateArguments(@c)
+        e: SetLocal(r0, @d)
+        f: SetLocal(r1, @d)
+        
+        Then redundant store elimination will eliminate the stores that
+        initialize the arguments registers to Empty, but then arguments
+        simplification eliminates the stores that initialize the arguments to
+        the newly created arguments - and at this point we no longer have any
+        stores to the arguments register, leading to hilarious crashes. This
+        patch therefore changes arguments simplification to replace
+        CreateArguments with JSConstant(Empty) rather than eliminating the
+        SetLocals. But this revealed bugs where arguments simplification was
+        being overzealous, so I fixed those bugs.
+        
+        This is a minor speed-up on V8/early and a handful of other tests.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::uncheckedActivationRegister):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUses):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeProperArgumentsUse):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::globalVarStoreElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::putByOffsetStoreElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::uncheckedActivationRegisterFor):
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isPhantomArguments):
+        (Node):
+        (JSC::DFG::Node::hasConstant):
+        (JSC::DFG::Node::valueOfJSConstant):
+        (JSC::DFG::Node::hasStructureTransitionData):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ConvertThis should just be a CheckStructure if the structure is known

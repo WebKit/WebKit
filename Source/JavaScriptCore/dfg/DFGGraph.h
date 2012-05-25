@@ -352,6 +352,12 @@ public:
             codeOrigin.inlineCallFrame->stackOffset;
     }
     
+    int uncheckedActivationRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        ASSERT_UNUSED(codeOrigin, !codeOrigin.inlineCallFrame);
+        return m_codeBlock->uncheckedActivationRegister();
+    }
+    
     ValueProfile* valueProfileFor(NodeIndex nodeIndex)
     {
         if (nodeIndex == NoNode)

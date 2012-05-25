@@ -200,6 +200,33 @@ private:
         return NoNode;
     }
     
+    NodeIndex globalVarStoreElimination(unsigned varNumber, JSGlobalObject* globalObject)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            switch (node.op()) {
+            case PutGlobalVar:
+                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                    return index;
+                break;
+                
+            case GetGlobalVar:
+                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                    return NoNode;
+                break;
+                
+            default:
+                break;
+            }
+            if (m_graph.clobbersWorld(index) || node.canExit())
+                return NoNode;
+        }
+        return NoNode;
+    }
+    
     NodeIndex getByValLoadElimination(NodeIndex child1, NodeIndex child2)
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -304,6 +331,56 @@ private:
         return false;
     }
     
+    NodeIndex putStructureStoreElimination(NodeIndex child1)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            if (index == child1)
+                break;
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                break;
+            switch (node.op()) {
+            case CheckStructure:
+                return NoNode;
+                
+            case PhantomPutStructure:
+                if (node.child1() == child1) // No need to retrace our steps.
+                    return NoNode;
+                break;
+                
+            case PutStructure:
+                if (node.child1() == child1)
+                    return index;
+                break;
+                
+            // PutStructure needs to execute if we GC. Hence this needs to
+            // be careful with respect to nodes that GC.
+            case CreateArguments:
+            case TearOffArguments:
+            case NewFunctionNoCheck:
+            case NewFunction:
+            case NewFunctionExpression:
+            case CreateActivation:
+            case TearOffActivation:
+            case StrCat:
+            case ToPrimitive:
+            case NewRegexp:
+            case NewArrayBuffer:
+            case NewArray:
+            case NewObject:
+            case CreateThis:
+                return NoNode;
+                
+            default:
+                break;
+            }
+            if (m_graph.clobbersWorld(index) || node.canExit())
+                return NoNode;
+        }
+        return NoNode;
+    }
+    
     NodeIndex getByOffsetLoadElimination(unsigned identifierNumber, NodeIndex child1)
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -346,6 +423,52 @@ private:
                     return NoNode;
                 break;
             }
+        }
+        return NoNode;
+    }
+    
+    NodeIndex putByOffsetStoreElimination(unsigned identifierNumber, NodeIndex child1)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            if (index == child1)
+                break;
+
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            switch (node.op()) {
+            case GetByOffset:
+                if (m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber)
+                    return NoNode;
+                break;
+                
+            case PutByOffset:
+                if (m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber) {
+                    if (node.child1() == child1) // Must be same property storage.
+                        return index;
+                    return NoNode;
+                }
+                break;
+                
+            case PutByVal:
+            case PutByValAlias:
+            case GetByVal:
+                if (m_graph.byValIsPure(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return NoNode;
+                
+            default:
+                if (m_graph.clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+            if (node.canExit())
+                return NoNode;
         }
         return NoNode;
     }
@@ -480,6 +603,58 @@ private:
         return NoNode;
     }
     
+    // This returns the Flush node that is keeping a SetLocal alive.
+    NodeIndex setLocalStoreElimination(VirtualRegister local)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
+            switch (node.op()) {
+            case GetLocal:
+            case SetLocal:
+                if (node.local() == local)
+                    return NoNode;
+                break;
+                
+            case GetLocalUnlinked:
+                if (node.unlinkedLocal() == local)
+                    return NoNode;
+                break;
+                
+            case Flush: {
+                if (node.local() != local)
+                    break;
+                if (!i)
+                    break;
+                NodeIndex prevIndex = m_currentBlock->at(i - 1);
+                if (prevIndex != node.child1().index())
+                    break;
+                ASSERT(m_graph[prevIndex].local() == local);
+                ASSERT(m_graph[prevIndex].variableAccessData() == node.variableAccessData());
+                ASSERT(m_graph[prevIndex].shouldGenerate());
+                if (m_graph[prevIndex].refCount() > 1)
+                    break;
+                return index;
+            }
+                
+            case GetScopeChain:
+                if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
+                    return NoNode;
+                break;
+                
+            default:
+                if (m_graph.clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+            if (node.canExit())
+                return NoNode;
+        }
+        return NoNode;
+    }
+    
     void performSubstitution(Edge& child, bool addRef = true)
     {
         // Check if this operand is actually unused.
@@ -501,14 +676,16 @@ private:
             m_graph[child].ref();
     }
     
-    bool setReplacement(NodeIndex replacement)
+    enum PredictionHandlingMode { RequireSamePrediction, AllowPredictionMismatch };
+    bool setReplacement(NodeIndex replacement, PredictionHandlingMode predictionHandlingMode = RequireSamePrediction)
     {
         if (replacement == NoNode)
             return false;
         
         // Be safe. Don't try to perform replacements if the predictions don't
         // agree.
-        if (m_graph[m_compileIndex].prediction() != m_graph[replacement].prediction())
+        if (predictionHandlingMode == RequireSamePrediction
+            && m_graph[m_compileIndex].prediction() != m_graph[replacement].prediction())
             return false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -535,6 +712,17 @@ private:
         ASSERT(node.refCount() == 1);
         ASSERT(node.mustGenerate());
         node.setOpAndDefaultFlags(Phantom);
+    }
+    
+    void eliminate(NodeIndex nodeIndex, NodeType phantomType = Phantom)
+    {
+        if (nodeIndex == NoNode)
+            return;
+        Node& node = m_graph[nodeIndex];
+        if (node.refCount() != 1)
+            return;
+        ASSERT(node.mustGenerate());
+        node.setOpAndDefaultFlags(phantomType);
     }
     
     void performNodeCSE(Node& node)
@@ -622,6 +810,12 @@ private:
             NodeIndex phiIndex = node.child1().index();
             if (!setReplacement(possibleReplacement))
                 break;
+            // If the GetLocal we replaced used to refer to a SetLocal, then it now
+            // should refer to the child of the SetLocal instead.
+            if (m_graph[phiIndex].op() == SetLocal) {
+                ASSERT(node.child1().index() == phiIndex);
+                m_graph.changeEdge(node.children.child1(), m_graph[phiIndex].child1());
+            }
             NodeIndex oldTailIndex = m_currentBlock->variablesAtTail.operand(
                 variableAccessData->local());
             if (oldTailIndex == m_compileIndex) {
@@ -645,10 +839,34 @@ private:
             break;
         }
             
+        case SetLocal: {
+            if (m_fixpointState == FixpointNotConverged)
+                break;
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            if (!variableAccessData->isCaptured())
+                break;
+            VirtualRegister local = variableAccessData->local();
+            NodeIndex replacementIndex = setLocalStoreElimination(local);
+            if (replacementIndex == NoNode)
+                break;
+            Node& replacement = m_graph[replacementIndex];
+            ASSERT(replacement.op() == Flush);
+            ASSERT(replacement.refCount() == 1);
+            ASSERT(replacement.shouldGenerate());
+            ASSERT(replacement.mustGenerate());
+            replacement.setOpAndDefaultFlags(Phantom);
+            NodeIndex setLocalIndex = replacement.child1().index();
+            ASSERT(m_graph[setLocalIndex].op() == SetLocal);
+            m_graph.clearAndDerefChild1(replacement);
+            replacement.children.child1() = m_graph[setLocalIndex].child1();
+            m_graph.ref(replacement.child1());
+            break;
+        }
+            
         case JSConstant:
             // This is strange, but necessary. Some phases will convert nodes to constants,
             // which may result in duplicated constants. We use CSE to clean this up.
-            setReplacement(constantCSE(node));
+            setReplacement(constantCSE(node), AllowPredictionMismatch);
             break;
             
         case GetArrayLength:
@@ -681,6 +899,12 @@ private:
             setReplacement(globalVarLoadElimination(node.varNumber(), codeBlock()->globalObjectFor(node.codeOrigin)));
             break;
             
+        case PutGlobalVar:
+            if (m_fixpointState == FixpointNotConverged)
+                break;
+            eliminate(globalVarStoreElimination(node.varNumber(), codeBlock()->globalObjectFor(node.codeOrigin)));
+            break;
+            
         case GetByVal:
             if (m_graph.byValIsPure(node))
                 setReplacement(getByValLoadElimination(node.child1().index(), node.child2().index()));
@@ -696,6 +920,12 @@ private:
         case CheckStructure:
             if (checkStructureLoadElimination(node.structureSet(), node.child1().index()))
                 eliminate();
+            break;
+            
+        case PutStructure:
+            if (m_fixpointState == FixpointNotConverged)
+                break;
+            eliminate(putStructureStoreElimination(node.child1().index()), PhantomPutStructure);
             break;
 
         case CheckFunction:
@@ -716,6 +946,12 @@ private:
 
         case GetByOffset:
             setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1().index()));
+            break;
+            
+        case PutByOffset:
+            if (m_fixpointState == FixpointNotConverged)
+                break;
+            eliminate(putByOffsetStoreElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1().index()));
             break;
             
         default:

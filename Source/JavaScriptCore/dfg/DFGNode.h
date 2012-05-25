@@ -201,9 +201,21 @@ struct Node {
         return op() == WeakJSConstant;
     }
     
+    bool isPhantomArguments()
+    {
+        return op() == PhantomArguments;
+    }
+    
     bool hasConstant()
     {
-        return isConstant() || isWeakConstant();
+        switch (op()) {
+        case JSConstant:
+        case WeakJSConstant:
+        case PhantomArguments:
+            return true;
+        default:
+            return false;
+        }
     }
 
     unsigned constantNumber()
@@ -239,9 +251,17 @@ struct Node {
     
     JSValue valueOfJSConstant(CodeBlock* codeBlock)
     {
-        if (op() == WeakJSConstant)
+        switch (op()) {
+        case WeakJSConstant:
             return JSValue(weakConstant());
-        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+        case JSConstant:
+            return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+        case PhantomArguments:
+            return JSValue();
+        default:
+            ASSERT_NOT_REACHED();
+            return JSValue(); // Have to return something in release mode.
+        }
     }
 
     bool isInt32Constant(CodeBlock* codeBlock)
@@ -589,7 +609,7 @@ struct Node {
 
     bool hasStructureTransitionData()
     {
-        return op() == PutStructure;
+        return op() == PutStructure || op() == PhantomPutStructure;
     }
     
     StructureTransitionData& structureTransitionData()

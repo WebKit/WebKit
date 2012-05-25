@@ -449,6 +449,12 @@ namespace JSC {
             ASSERT(needsFullScopeChain());
             return m_activationRegister;
         }
+        int uncheckedActivationRegister()
+        {
+            if (!needsFullScopeChain())
+                return InvalidVirtualRegister;
+            return activationRegister();
+        }
         bool usesArguments() const { return m_argumentsRegister != -1; }
         
         bool needsActivation() const

@@ -262,7 +262,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     switch (node.op()) {
     case JSConstant:
-    case WeakJSConstant: {
+    case WeakJSConstant:
+    case PhantomArguments: {
         forNode(nodeIndex).set(m_graph.valueOfJSConstant(nodeIndex));
         node.setCanExit(false);
         break;
@@ -1403,6 +1404,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case PutStructure:
+    case PhantomPutStructure:
         node.setCanExit(false);
         clobberStructures(indexInBlock);
         forNode(node.child1()).set(node.structureTransitionData().newStructure);

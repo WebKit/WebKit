@@ -283,6 +283,14 @@ public:
                     break;
                 }
                     
+                case Phantom:
+                    // We don't care about phantom uses, since phantom uses are all about
+                    // just keeping things alive for OSR exit. If something - like the
+                    // CreateArguments - is just being kept alive, then this transformation
+                    // will not break this, since the Phantom will now just keep alive a
+                    // PhantomArguments and OSR exit will still do the right things.
+                    break;
+                    
                 default:
                     observeBadArgumentsUses(node);
                     break;
@@ -391,31 +399,6 @@ public:
                         break;
                     
                     VariableAccessData* variableAccessData = node.variableAccessData();
-                    
-                    // If this is a store into the arguments register for an InlineCallFrame*
-                    // that does not create arguments, then kill it.
-                    int argumentsRegister =
-                        m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin);
-                    if ((variableAccessData->local() == argumentsRegister
-                         || variableAccessData->local()
-                             == unmodifiedArgumentsRegister(argumentsRegister))
-                        && !m_createsArguments.contains(source.codeOrigin.inlineCallFrame)) {
-                        // Find the Flush. It should be the next instruction.
-                        Node& flush = m_graph[block->at(indexInBlock + 1)];
-                        ASSERT(flush.op() == Flush);
-                        ASSERT(flush.variableAccessData() == variableAccessData);
-                        ASSERT(flush.child1() == nodeIndex);
-                        // Be defensive in release mode.
-                        if (flush.op() != Flush
-                            || flush.variableAccessData() != variableAccessData
-                            || flush.child1() != nodeIndex)
-                            break;
-                        flush.setOpAndDefaultFlags(Nop);
-                        m_graph.clearAndDerefChild1(flush);
-                        flush.setRefCount(0);
-                        changed = true;
-                        break;
-                    }
                     
                     if (variableAccessData->isCaptured())
                         break;
@@ -583,6 +566,35 @@ public:
             insertionSet.execute(*block);
         }
         
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+            if (!block)
+                continue;
+            for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
+                NodeIndex nodeIndex = block->at(indexInBlock);
+                Node& node = m_graph[nodeIndex];
+                if (!node.shouldGenerate())
+                    continue;
+                if (node.op() != CreateArguments)
+                    continue;
+                // If this is a CreateArguments for an InlineCallFrame* that does
+                // not create arguments, then replace it with a PhantomArguments.
+                // PhantomArguments is a constant that represents JSValue() (the
+                // empty value) in DFG and arguments creation for OSR exit.
+                if (m_createsArguments.contains(node.codeOrigin.inlineCallFrame))
+                    continue;
+                Node phantom(Phantom, node.codeOrigin);
+                phantom.children = node.children;
+                phantom.ref();
+                node.setOpAndDefaultFlags(PhantomArguments);
+                node.children.reset();
+                NodeIndex phantomNodeIndex = m_graph.size();
+                m_graph.append(phantom);
+                insertionSet.append(indexInBlock, phantomNodeIndex);
+            }
+            insertionSet.execute(*block);
+        }
+        
         if (changed)
             m_graph.collectGarbage();
         
@@ -659,9 +671,13 @@ private:
         }
                         
         VariableAccessData* variableAccessData = child.variableAccessData();
-        if (variableAccessData->isCaptured())
+        if (variableAccessData->isCaptured()) {
+            if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)
+                && node.codeOrigin.inlineCallFrame != child.codeOrigin.inlineCallFrame)
+                m_createsArguments.add(child.codeOrigin.inlineCallFrame);
             return;
-                        
+        }
+        
         ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
     }

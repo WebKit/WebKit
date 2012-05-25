@@ -1924,6 +1924,7 @@ void SpeculativeJIT::compile(Node& node)
 
     switch (op) {
     case JSConstant:
+    case PhantomArguments:
         initConstantInfo(m_compileIndex);
         break;
 
@@ -3459,6 +3460,15 @@ void SpeculativeJIT::compile(Node& node)
             done.link(&m_jit);
         }
         
+        noResult(m_compileIndex);
+        break;
+    }
+        
+    case PhantomPutStructure: {
+        m_jit.addWeakReferenceTransition(
+            node.codeOrigin.codeOriginOwner(),
+            node.structureTransitionData().previousStructure,
+            node.structureTransitionData().newStructure);
         noResult(m_compileIndex);
         break;
     }

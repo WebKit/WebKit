@@ -1360,13 +1360,15 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         return ValueRecovery::argumentsThatWereNotCreated();
 
     case HaveNode: {
-        if (isConstant(valueSource.nodeIndex()))
+        Node* nodePtr = &at(valueSource.nodeIndex());
+
+        if (nodePtr->isPhantomArguments())
+            return ValueRecovery::argumentsThatWereNotCreated();
+        
+        if (nodePtr->hasConstant())
             return ValueRecovery::constant(valueOfJSConstant(valueSource.nodeIndex()));
         
-        Node* nodePtr = &at(valueSource.nodeIndex());
         if (!nodePtr->shouldGenerate()) {
-            if (nodePtr->op() == CreateArguments)
-                return ValueRecovery::argumentsThatWereNotCreated();
             // It's legitimately dead. As in, nobody will ever use this node, or operand,
             // ever. Set it to Undefined to make the GC happy after the OSR.
             return ValueRecovery::constant(jsUndefined());
