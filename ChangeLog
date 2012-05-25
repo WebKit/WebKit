@@ -1,3 +1,12 @@
+2012-05-24  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Add --enable-css3-flexbox configure option after r118304.
+        https://bugs.webkit.org/show_bug.cgi?id=87455
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac:
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting

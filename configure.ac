@@ -976,6 +976,14 @@ AC_ARG_ENABLE(coverage,
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
 
+# check whether to enable CSS flaxbox support
+AC_MSG_CHECKING([whether to enable CSS3 flexbox support])
+AC_ARG_ENABLE(css3_flexbox,
+              AC_HELP_STRING([--enable-css3-flexbox],
+                             [enable CSS3 flexbox support [default=no]]),
+              [],[enable_css3_flexbox="no"])
+AC_MSG_RESULT([$enable_css3_flexbox])
+
 # check whether to enable FastMalloc
 AC_MSG_CHECKING([whether to enable optimized memory allocator])
 AC_ARG_ENABLE(fast_malloc,
@@ -1395,6 +1403,7 @@ AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = 
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS3_FLEXBOX],[test "$enable_css3_flexbox" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHADOW_DOM],[test "$enable_shadow_dom" = "yes"])
@@ -1465,6 +1474,7 @@ Build configuration:
 Features:
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
+ CSS3 Flexbox support                                     : $enable_css3_flexbox
  Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
  DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
