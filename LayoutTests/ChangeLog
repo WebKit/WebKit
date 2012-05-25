@@ -1,3 +1,11 @@
+2012-05-25  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r118448. Added rebaseline to 2 tests on Qt platform that
+        had 1 pixel differences because of rounding mistakes.
+
+        * platform/qt/fast/html/details-position-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+
 2012-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pasting text in input field is not available if <body> has visibility:hidden
