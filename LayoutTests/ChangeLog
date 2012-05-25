@@ -1,3 +1,15 @@
+2012-05-25  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Pasting into contenteditable table cell pastes into adjacent cell instead.
+        https://bugs.webkit.org/show_bug.cgi?id=53933
+
+        Reviewed by Darin Adler.
+
+        This bug has been fixed. Add a test to make sure that it won't regress.
+
+        * editing/pasteboard/paste-into-table-cell-2-expected.txt: Added.
+        * editing/pasteboard/paste-into-table-cell-2.html: Added.
+
 2012-05-25  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Remove 6 incorrect baselines from http://trac.webkit.org/changeset/117821/
