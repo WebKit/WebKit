@@ -1,3 +1,15 @@
+2012-05-24  Raymond Toy  <rtoy@google.com>
+
+        Use 32-byte alignment in AudioArray if using WEBAUDIO_FFMPEG
+        https://bugs.webkit.org/show_bug.cgi?id=87430
+
+        Reviewed by Chris Rogers.
+
+        Covered by existing tests.
+
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::allocate):
+
 2012-05-24  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add a setForceRenderSurface to WebLayer for test/bench purpose
