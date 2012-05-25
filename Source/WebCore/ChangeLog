@@ -1,3 +1,47 @@
+2012-05-21  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: add a file system call which captures the file metadata at once.
+        https://bugs.webkit.org/show_bug.cgi?id=86995
+
+        Reviewed by David Levin.
+
+        Current File.slice() (webkitSlice()) implementation calls two separate platform calls,
+        getFileSize() and getFileModificationTime() [both are defined in platform/FileSystem.h],
+        to capture the file metadata, but we should have a single file system call to get them at once
+        for two reasons: 1. save additional system call costs, and 2.  atomically obtain the file metadata.
+
+        No new tests: existing tests (http/tests/local/fileapi/* and fast/files/*) should pass.
+
+        * fileapi/File.cpp:
+        (WebCore::File::captureSnapshot):
+        * platform/FileMetadata.h:
+        * platform/FileSystem.h:
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::getFileMetadata): Added.
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::getFileMetadata): Added.
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::getFileMetadata): Added.
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::getFileMetadata): Added.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileSizeFromFindData):
+        (WebCore::getFileModificationTimeFromFindData):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::getFileMetadata): Added.
+        * platform/wince/FileSystemWinCE.cpp:
+        (WebCore::getFileSizeFromFileInfo):
+        (WebCore::getFileModificationTimeFromFileInfo):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::getFileMetadata): Added.
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::getFileMetadata): Added.
+        (WebCore):
+
 2012-05-24  Hironori Bono  <hbono@chromium.org>
 
         Enable grammar checking on Chromium when we paste text (Take 2)

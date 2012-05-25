@@ -169,13 +169,15 @@ void File::captureSnapshot(long long& snapshotSize, double& snapshotModification
 
     // Obtains a snapshot of the file by capturing its current size and modification time. This is used when we slice a file for the first time.
     // If we fail to retrieve the size or modification time, probably due to that the file has been deleted, 0 size is returned.
-    // FIXME: Combine getFileSize and getFileModificationTime into one file system call.
-    time_t modificationTime;
-    if (!getFileSize(m_path, snapshotSize) || !getFileModificationTime(m_path, modificationTime)) {
+    FileMetadata metadata;
+    if (!getFileMetadata(m_path, metadata)) {
         snapshotSize = 0;
         snapshotModificationTime = 0;
-    } else
-        snapshotModificationTime = modificationTime;
+        return;
+    }
+
+    snapshotSize = metadata.length;
+    snapshotModificationTime = metadata.modificationTime;
 }
 
 } // namespace WebCore

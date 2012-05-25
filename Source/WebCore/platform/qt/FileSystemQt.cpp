@@ -33,6 +33,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "FileMetadata.h"
 #include "PlatformString.h"
 #include <QDateTime>
 #include <QDir>
@@ -71,6 +72,17 @@ bool getFileModificationTime(const String& path, time_t& result)
     QFileInfo info(path);
     result = info.lastModified().toTime_t();
     return info.exists();
+}
+
+bool getFileMetadata(const String& path, FileMetadata& result)
+{
+    QFileInfo info(path);
+    if (!info.exists())
+        return false;
+    result.modificationTime = info.lastModified().toTime_t();
+    result.length = info.size();
+    result.type = info.isDir() ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
+    return true;
 }
 
 bool makeAllDirectories(const String& path)

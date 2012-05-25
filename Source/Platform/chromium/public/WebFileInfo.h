@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileMetadata_h
-#define FileMetadata_h
+#ifndef WebFileInfo_h
+#define WebFileInfo_h
 
-#include <wtf/text/WTFString.h>
+#include "WebString.h"
 
-namespace WebCore {
+namespace WebKit {
 
-struct FileMetadata {
+struct WebFileInfo {
     // The last modification time of the file, in seconds.
     // The value 0.0 means that the time is not set.
     double modificationTime;
@@ -52,13 +52,11 @@ struct FileMetadata {
 
     Type type;
 
-#if ENABLE(FILE_SYSTEM)
-    String platformPath;
-#endif
+    WebString platformPath;
 
-    FileMetadata() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
+    WebFileInfo() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // FileMetadata_h
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,35 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFileInfo_h
-#define WebFileInfo_h
-
-#include "platform/WebString.h"
-
-namespace WebKit {
-
-struct WebFileInfo {
-    // The last modification time of the file, in seconds.
-    // The value 0.0 means that the time is not set.
-    double modificationTime;
-
-    // The length of the file in bytes.
-    // The value -1 means that the length is not set.
-    long long length;
-
-    enum Type {
-        TypeUnknown = 0,
-        TypeFile,
-        TypeDirectory
-    };
-
-    Type type;
-
-    WebString platformPath;
-
-    WebFileInfo() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../Platform/chromium/public/WebFileInfo.h"

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "FileMetadata.h"
 #include "NotImplemented.h"
 #include "PathWalker.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -54,12 +55,8 @@ static bool getFindData(String path, WIN32_FIND_DATAW& findData)
     return true;
 }
 
-bool getFileSize(const String& path, long long& result)
+static bool getFileSizeFromFindData(const WIN32_FIND_DATAW& findData, long long& size)
 {
-    WIN32_FIND_DATAW findData;
-    if (!getFindData(path, findData))
-        return false;
-
     ULARGE_INTEGER fileSize;
     fileSize.HighPart = findData.nFileSizeHigh;
     fileSize.LowPart = findData.nFileSizeLow;
@@ -67,22 +64,54 @@ bool getFileSize(const String& path, long long& result)
     if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
         return false;
 
-    result = fileSize.QuadPart;
+    size = fileSize.QuadPart;
     return true;
 }
 
-bool getFileModificationTime(const String& path, time_t& result)
+static void getFileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
+{
+    ULARGE_INTEGER fileTime;
+    fileTime.HighPart = findData.ftLastWriteTime.dwHighDateTime;
+    fileTime.LowPart = findData.ftLastWriteTime.dwLowDateTime;
+
+    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
+    time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
+}
+
+bool getFileSize(const String& path, long long& size)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
         return false;
 
-    ULARGE_INTEGER fileSize;
-    fileSize.HighPart = findData.ftLastWriteTime.dwHighDateTime;
-    fileSize.LowPart = findData.ftLastWriteTime.dwLowDateTime;
+    return getFileSizeFromFindData(findData, size);
+}
 
-    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
-    result = fileSize.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
+bool getFileModificationTime(const String& path, time_t& time)
+{
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
+        return false;
+
+    getFileModificationTimeFromFindData(findData, time);
+    return true;
+}
+
+bool getFileMetadata(const String& path, FileMetadata& metadata)
+{
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
+        return false;
+
+    if (!getFileSizeFromFindData(findData, metadata.length))
+        return false;
+
+    time_t modificationTime;
+    getFileModificationTimeFromFindData(findData, modificationTime);
+    metadata.modificationTime = modificationTime;
+
+    metadata.type = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
+
     return true;
 }
 

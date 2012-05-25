@@ -35,7 +35,9 @@
 
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "FileMetadata.h"
 #include "Page.h"
+#include "WebFileInfo.h"
 #include "WebFileUtilities.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -326,6 +328,17 @@ bool PlatformSupport::getFileModificationTime(const String& path, time_t& result
     if (!WebKit::Platform::current()->fileUtilities()->getFileModificationTime(path, modificationTime))
         return false;
     result = static_cast<time_t>(modificationTime);
+    return true;
+}
+
+bool PlatformSupport::getFileMetadata(const String& path, FileMetadata& result)
+{
+    WebFileInfo webFileInfo;
+    if (!webKitPlatformSupport()->fileUtilities()->getFileInfo(path, webFileInfo))
+        return false;
+    result.modificationTime = webFileInfo.modificationTime;
+    result.length = webFileInfo.length;
+    result.type = static_cast<FileMetadata::Type>(webFileInfo.type);
     return true;
 }
 

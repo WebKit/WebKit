@@ -1,3 +1,14 @@
+2012-05-21  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: add a file system call which captures the file metadata at once.
+        https://bugs.webkit.org/show_bug.cgi?id=86995
+
+        Reviewed by David Levin.
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::getFileMetadata):
+        (WebCore):
+
 2012-05-24  Hironori Bono  <hbono@chromium.org>
 
         Enable grammar checking on Chromium when we paste text  (Take 2)

@@ -128,6 +128,7 @@ public:
     static bool deleteEmptyDirectory(const String&);
     static bool getFileSize(const String&, long long& result);
     static bool getFileModificationTime(const String&, time_t& result);
+    static bool getFileMetadata(const String&, FileMetadata& result);
     static String directoryName(const String& path);
     static String pathByAppendingComponent(const String& path, const String& component);
     static bool makeAllDirectories(const String& path);

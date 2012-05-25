@@ -29,6 +29,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "FileMetadata.h"
 #include "PlatformString.h"
 #include <dirent.h>
 #include <errno.h>
@@ -178,6 +179,23 @@ bool getFileModificationTime(const String& path, time_t& result)
         return false;
 
     result = fileInfo.st_mtime;
+    return true;
+}
+
+bool getFileMetadata(const String& path, FileMetadata& metadata)
+{
+    CString fsRep = fileSystemRepresentation(path);
+
+    if (!fsRep.data() || fsRep.data()[0] == '\0')
+        return false;
+
+    struct stat fileInfo;
+    if (stat(fsRep.data(), &fileInfo))
+        return false;
+
+    metadata.modificationTime = fileInfo.st_mtime;
+    metadata.length = fileInfo.st_size;
+    metadata.type = S_ISDIR(fileInfo.st_mode) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
     return true;
 }
 

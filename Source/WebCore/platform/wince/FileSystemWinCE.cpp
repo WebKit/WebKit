@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "FileMetadata.h"
 #include "NotImplemented.h"
 #include <wincrypt.h>
 #include <windows.h>
@@ -68,31 +69,54 @@ static bool getFileInfo(const String& path, BY_HANDLE_FILE_INFORMATION& fileInfo
     return rtn;
 }
 
-bool getFileSize(const String& path, long long& result)
+static void getFileSizeFromFileInfo(const BY_HANDLE_FILE_INFORMATION& fileInfo, long long& size)
+{
+    ULARGE_INTEGER fileSize;
+    fileSize.LowPart = fileInfo.nFileSizeLow;
+    fileSize.HighPart = fileInfo.nFileSizeHigh;
+    size = fileSize.QuadPart;
+}
+
+static void getFileModificationTimeFromFileInfo(const BY_HANDLE_FILE_INFORMATION& fileInfo, time_t& time)
+{
+    ULARGE_INTEGER t;
+    memcpy(&t, &fileInfo.ftLastWriteTime, sizeof(t));
+    time = t.QuadPart * 0.0000001 - 11644473600.0;
+}
+
+bool getFileSize(const String& path, long long& size)
 {
     BY_HANDLE_FILE_INFORMATION fileInformation;
     if (!getFileInfo(path, fileInformation))
         return false;
 
-    ULARGE_INTEGER fileSize;
-    fileSize.LowPart = fileInformation.nFileSizeLow;
-    fileSize.HighPart = fileInformation.nFileSizeHigh;
-
-    result = fileSize.QuadPart;
-
+    getFileSizeFromFileInfo(fileInformation, size);
     return true;
 }
 
-bool getFileModificationTime(const String& path, time_t& result)
+bool getFileModificationTime(const String& path, time_t& time)
 {
     BY_HANDLE_FILE_INFORMATION fileInformation;
     if (!getFileInfo(path, fileInformation))
         return false;
 
-    ULARGE_INTEGER t;
-    memcpy(&t, &fileInformation.ftLastWriteTime, sizeof(t));
-    
-    result = t.QuadPart * 0.0000001 - 11644473600.0;
+    getFileModificationTimeFromFileInfo(fileInformation, time);
+    return true;
+}
+
+bool getFileMetadata(const String& path, FileMetadata& metadata)
+{
+    BY_HANDLE_FILE_INFORMATION fileInformation;
+    if (!getFileInfo(path, fileInformation))
+        return false;
+
+    getFileSizeFromFileInfo(fileInformation, metadata.length);
+
+    time_t modificationTime;
+    getFileModificationTimeFromFileInfo(fileInformation, modificationTime);
+    metadata.modificationTime = modificationTime;
+
+    metadata.type = (fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
 
     return true;
 }

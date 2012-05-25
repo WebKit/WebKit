@@ -23,14 +23,15 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include <wtf/gobject/GOwnPtr.h>
+#include "FileMetadata.h"
 #include "PlatformString.h"
 #include "UUID.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <wtf/gobject/GlibUtilities.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GlibUtilities.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -137,6 +138,24 @@ bool getFileModificationTime(const String& path, time_t& modifiedTime)
         return false;
 
     modifiedTime = statResult.st_mtime;
+    return true;
+
+}
+
+bool getFileMetadata(const String& path, FileMetadata& metadata)
+{
+    CString filename = fileSystemRepresentation(path);
+    if (filename.isNull())
+        return false;
+
+    struct stat statResult;
+    gint result = g_stat(filename.data(), &statResult);
+    if (result)
+        return false;
+
+    metadata.modificationTime = statResult.st_mtime;
+    metadata.length = statResult.st_size;
+    metadata.type = S_ISDIR(statResult.st_mode) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
     return true;
 
 }

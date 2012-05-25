@@ -147,7 +147,6 @@
                 'public/WebFileChooserCompletion.h',
                 'public/WebFileChooserParams.h',
                 'public/WebFileError.h',
-                'public/WebFileInfo.h',
                 'public/WebFileSystemCallbacks.h',
                 'public/WebFileSystemEntry.h',
                 'public/WebFileWriter.h',

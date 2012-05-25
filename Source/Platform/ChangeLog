@@ -1,3 +1,17 @@
+2012-05-21  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: add a file system call which captures the file metadata at once.
+        https://bugs.webkit.org/show_bug.cgi?id=86995
+
+        Reviewed by David Levin.
+
+        * Platform.gypi: Added an entry for WebFileInfo.h.
+        * chromium/public/WebFileInfo.h: Renamed from Source/WebKit/chromium/public/WebFileInfo.h.
+        (WebKit::WebFileInfo::WebFileInfo):
+        * chromium/public/WebFileUtilities.h:
+        (WebKit):
+        (WebKit::WebFileUtilities::getFileInfo): Added.
+
 2012-05-24  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add a setForceRenderSurface to WebLayer for test/bench purpose
