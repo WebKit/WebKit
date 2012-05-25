@@ -1,3 +1,15 @@
+2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: HeapProfiler: speed-up _calculateClassesRetainedSize and _buildAggregates.
+        https://bugs.webkit.org/show_bug.cgi?id=87482
+
+        Engine didn't inline node's classIndex method because the switch statement in it wasn't inlineable.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.classIndex):
+
 2012-05-24  Andreas Kling  <kling@webkit.org>
 
         Dodge style recalc when id attribute is overwritten with same value.

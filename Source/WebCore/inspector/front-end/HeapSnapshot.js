@@ -456,13 +456,9 @@ WebInspector.HeapSnapshotNode.prototype = {
         var snapshot = this._snapshot;
         var nodes = snapshot._nodes;
         var type = nodes[this.nodeIndex + snapshot._nodeTypeOffset];;
-        switch (type) {
-        case snapshot._nodeObjectType:
-        case snapshot._nodeNativeType:
+        if (type === snapshot._nodeObjectType || type === snapshot._nodeNativeType)
             return nodes[this.nodeIndex + snapshot._nodeNameOffset];
-        default:
-            return -1 - type;
-        }
+        return -1 - type;
     },
 
     dominatorIndex: function()
