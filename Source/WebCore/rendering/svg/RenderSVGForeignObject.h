@@ -55,6 +55,7 @@ public:
     virtual bool isSVGForeignObject() const { return true; }
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&, ApplyContainerFlipOrNot = ApplyContainerFlip, bool* wasFixed = 0) const;
+    virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:

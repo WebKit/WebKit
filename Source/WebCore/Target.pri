@@ -1266,6 +1266,7 @@ SOURCES += \
     rendering/RenderFrame.cpp \
     rendering/RenderFrameBase.cpp \
     rendering/RenderFrameSet.cpp \
+    rendering/RenderGeometryMap.cpp \
     rendering/RenderHTMLCanvas.cpp \
     rendering/RenderIFrame.cpp \
     rendering/RenderImage.cpp \
@@ -2463,6 +2464,7 @@ HEADERS += \
     rendering/RenderFrame.h \
     rendering/RenderFrameBase.h \
     rendering/RenderFrameSet.h \
+    rendering/RenderGeometryMap.h \
     rendering/RenderHTMLCanvas.h \
     rendering/RenderIFrame.h \
     rendering/RenderImageResource.h \

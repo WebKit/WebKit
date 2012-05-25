@@ -4810,6 +4810,8 @@
             'rendering/RenderFrameSet.h',
             'rendering/RenderFullScreen.cpp',
             'rendering/RenderFullScreen.h',
+            'rendering/RenderGeometryMap.cpp',
+            'rendering/RenderGeometryMap.h',
             'rendering/RenderHTMLCanvas.cpp',
             'rendering/RenderHTMLCanvas.h',
             'rendering/RenderIFrame.cpp',

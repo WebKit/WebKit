@@ -1,3 +1,20 @@
+2012-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Terrible performance on http://alliances.commandandconquer.com/ and http://www.lordofultima.com/
+        https://bugs.webkit.org/show_bug.cgi?id=84410
+
+        Reviewed by Dave Hyatt.
+        
+        Basic tests for compositing inside columns, and in a flipped-writing-mode
+        document.
+
+        * compositing/geometry/composited-in-columns-expected.png: Added.
+        * compositing/geometry/composited-in-columns-expected.txt: Added.
+        * compositing/geometry/composited-in-columns.html: Added.
+        * compositing/geometry/flipped-writing-mode-expected.png: Added.
+        * compositing/geometry/flipped-writing-mode-expected.txt: Added.
+        * compositing/geometry/flipped-writing-mode.html: Added.
+
 2012-05-25  Andras Becsi  <andras.becsi@nokia.com>
 
         Acid3 fails in WebKit2 regression tests

@@ -1341,6 +1341,7 @@ SET(WebCore_SOURCES
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp
     rendering/RenderFullScreen.cpp
+    rendering/RenderGeometryMap.cpp
     rendering/RenderHTMLCanvas.cpp
     rendering/RenderIFrame.cpp
     rendering/RenderImage.cpp

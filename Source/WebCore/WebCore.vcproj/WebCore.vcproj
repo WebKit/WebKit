@@ -39371,6 +39371,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderGeometryMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderGeometryMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderHTMLCanvas.cpp"
 				>
 				<FileConfiguration

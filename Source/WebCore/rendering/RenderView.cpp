@@ -32,6 +32,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
+#include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
@@ -165,6 +166,27 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
     
     if (fixed && m_frameView)
         transformState.move(m_frameView->scrollOffsetForFixedPosition());
+}
+
+const RenderObject* RenderView::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+{
+    // If a container was specified, and was not 0 or the RenderView,
+    // then we should have found it by now.
+    ASSERT_ARG(ancestorToStopAt, !ancestorToStopAt || ancestorToStopAt == this);
+
+    LayoutSize scrollOffset;
+
+    if (m_frameView)
+        scrollOffset = m_frameView->scrollOffsetForFixedPosition();
+
+    if (!ancestorToStopAt && shouldUseTransformFromContainer(0)) {
+        TransformationMatrix t;
+        getTransformFromContainer(0, LayoutSize(), t);
+        geometryMap.pushView(this, scrollOffset, &t);
+    } else
+        geometryMap.pushView(this, scrollOffset);
+
+    return 0;
 }
 
 void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const

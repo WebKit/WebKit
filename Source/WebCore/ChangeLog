@@ -1,5 +1,137 @@
 2012-05-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Terrible performance on http://alliances.commandandconquer.com/ and http://www.lordofultima.com/
+        https://bugs.webkit.org/show_bug.cgi?id=84410
+
+        Reviewed by Dave Hyatt.
+        
+        First part of fixing O(N^2) issues when walking the RenderLayer tree
+        for computeCompositingRequirements().
+        
+        For each layer that goes into the OverlapMap, we were computing an absolute
+        layer bounds, which requires walking back to the root of the tree.
+        Optimize this when possible by storing a stack of offsets as we walk
+        the tree, and using this stack to do the mapping.
+        
+        The stack of offsets and transforms is managed by RenderGeometryMap.
+        When visiting a RenderLayer, RenderLayerCompositor pushes onto
+        the geometry map stack data about offsets and transforms between
+        the current layer and its stacking-parent. RenderGeometryMap handles
+        the case where the previous renderer pushed is between the current
+        renderer and its container. RenderGeometryMap can also handle callers
+        pushing renderers with multiple containers between them.
+        
+        RenderGeometryMap stores some flags about whether the set of mapping
+        steps in the stack involve transforms, fixed position, or special non-uniform
+        mappings like CSS columns. In some cases, it falls back to mapping via
+        renderers.
+
+        Once constructed, the RenderGeometryMap stack can be used to map multiple
+        rects or points efficiently. Stacks consisting of simple offsets are
+        collapsed to a single offset.
+        
+        Mappings between renderers and their containers are pushed by pushMappingToContainer()
+        methods, which are similar to mapLocalToContainer() methods. Having this code
+        in RenderObjects was deemed preferable to handling columns, transforms etc. all in
+        RenderLayer code.
+
+        Tested by assertions in RenderGeometryMap code that its mapping matches
+        mapping via localToAbsolute() calls.
+        
+        RenderLayerCompositor::updateCompositingLayers() creates a RenderGeometryMap,
+        and pushes and pops layer renderers as it visits them. The geometry map is used
+        by RenderLayerCompositor::addToOverlapMap() when computing absolute layer bounds.
+        
+        Futher optimizations in RenderGeometryMap are possible, especially with stacks that
+        have many offsets and a few transforms.
+
+        Tests: compositing/geometry/composited-in-columns.html
+               compositing/geometry/flipped-writing-mode.html
+
+        * CMakeLists.txt: Add RenderGeometryMap
+        * GNUmakefile.list.am: Ditt
+        * Target.pri: Ditto
+        * WebCore.gypi: Ditto
+        * WebCore.vcproj/WebCore.vcproj: Ditto
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteContentBox):
+        (WebCore::RenderBox::pushMappingToContainer):
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderBox.h:
+        * rendering/RenderGeometryMap.cpp: Added.
+        (RenderGeometryMapStep):
+        (WebCore::RenderGeometryMapStep::RenderGeometryMapStep):
+        (WebCore::RenderGeometryMapStep::mapPoint):
+        (WebCore::RenderGeometryMapStep::mapQuad):
+        (WebCore::RenderGeometryMap::RenderGeometryMap):
+        (WebCore::RenderGeometryMap::~RenderGeometryMap):
+        (WebCore::RenderGeometryMap::absolutePoint):
+        (WebCore::RenderGeometryMap::absoluteRect):
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        (WebCore::RenderGeometryMap::push):
+        (WebCore::RenderGeometryMap::pushView):
+        (WebCore::RenderGeometryMap::popMappingsToAncestor):
+        (WebCore::RenderGeometryMap::stepInserted):
+        (WebCore::RenderGeometryMap::stepRemoved):
+        * rendering/RenderGeometryMap.h: Added.
+        (RenderGeometryMap):
+        (WebCore::RenderGeometryMap::hasNonUniformStep):
+        (WebCore::RenderGeometryMap::hasTransformStep):
+        (WebCore::RenderGeometryMap::hasFixedPositionStep):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::pushMappingToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::pushMappingToContainer):
+        (WebCore::RenderObject::offsetFromContainer):
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer):
+        * rendering/RenderTableCell.h:
+        (RenderTableCell):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushMappingToContainer):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::pushMappingToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::pushMappingToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::pushMappingToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::pushMappingToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::pushMappingToContainer):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::pushMappingToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
+2012-05-25  Simon Fraser  <simon.fraser@apple.com>
+
         Cache absolute clip rects on RenderLayer for compositing overlap testing
         https://bugs.webkit.org/show_bug.cgi?id=87212
 

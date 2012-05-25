@@ -34,6 +34,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 class RenderEmbeddedObject;
+class RenderGeometryMap;
 class RenderPart;
 class ScrollingCoordinator;
 #if ENABLE(VIDEO)
@@ -238,13 +239,13 @@ private:
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
     void recursiveRepaintLayerRect(RenderLayer*, const IntRect&);
 
-    void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
-    void addToOverlapMapRecursive(OverlapMap&, RenderLayer*);
+    void addToOverlapMap(RenderGeometryMap&, OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
+    void addToOverlapMapRecursive(RenderGeometryMap&, OverlapMap&, RenderLayer*, RenderLayer* ancestorLayer = 0);
 
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);
 
     // Returns true if any layer's compositing changed
-    void computeCompositingRequirements(RenderLayer*, OverlapMap*, struct CompositingState&, bool& layersChanged);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer*, RenderGeometryMap*, OverlapMap*, struct CompositingState&, bool& layersChanged);
     
     // Recurses down the tree, parenting descendant compositing layers and collecting an array of child layers for the current compositing layer.
     void rebuildCompositingLayerTree(RenderLayer*, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth);

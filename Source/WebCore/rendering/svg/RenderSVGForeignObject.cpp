@@ -193,6 +193,11 @@ void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintCo
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
 }
 
+const RenderObject* RenderSVGForeignObject::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+{
+    return SVGRenderSupport::pushMappingToContainer(this, ancestorToStopAt, geometryMap);
+}
+
 }
 
 #endif
