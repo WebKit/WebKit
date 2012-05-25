@@ -898,11 +898,17 @@ void WebPagePrivate::setLoadState(LoadState state)
                 m_virtualViewportHeight = m_defaultLayoutSize.height();
             }
             // Check if we have already process the meta viewport tag, this only happens on history navigation.
+            // For back/forward history navigation, we should only keep these previous values if the document
+            // has the meta viewport tag when the state is Committed in setLoadState.
             // Refreshing should keep these previous values as well.
+            static ViewportArguments defaultViewportArguments;
+            bool documentHasViewportArguments = false;
             FrameLoadType frameLoadType = FrameLoadTypeStandard;
+            if (m_mainFrame && m_mainFrame->document() && !(m_mainFrame->document()->viewportArguments() == defaultViewportArguments))
+                documentHasViewportArguments = true;
             if (m_mainFrame && m_mainFrame->loader())
                 frameLoadType = m_mainFrame->loader()->loadType();
-            if (!m_didRestoreFromPageCache && !(frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin)) {
+            if (!((m_didRestoreFromPageCache && documentHasViewportArguments) || (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin))) {
                 m_viewportArguments = ViewportArguments();
 
                 // At the moment we commit a new load, set the viewport arguments

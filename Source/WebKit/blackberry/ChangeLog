@@ -1,3 +1,28 @@
+2012-05-24  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] History navigation caused google.com scale not kept
+        https://bugs.webkit.org/show_bug.cgi?id=87438
+
+        Reviewed by Antonio Gomes.
+        Patch by Jacky Jiang <zhajiang@rim.com>
+
+        PR: 159923
+        For back/forward history navigation, we were trying to keep the values
+        set by dispatchViewportDataDidChange. However, when we went back from
+        the previous page, if the current page didn't contain the meta viewport
+        tag, then those values set by previous page would never be reset.
+        Although the current page could get correct saved scale when restoring
+        view state, the scale would still be clamped by zoomToFitScale which
+        was based on the virtual viewport of the previous page which could make
+        the scale incorrect.
+        Since we know the viewport arguments of the current document before
+        setLoadState on back/forward history navigation, we can reset these
+        previous values if the document doesn't have viewport arguments during
+        setLoadState.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2012-05-25  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Pass http headers to loader in download request
