@@ -1,5 +1,15 @@
 2012-05-25  Adam Klein  <adamk@chromium.org>
 
+        Remove a bunch of flaky expectations for tests that now pass.
+
+        Unreviewed test expectations update.
+
+        Also marked some nearby tests as more definitely failing.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-25  Adam Klein  <adamk@chromium.org>
+
         compositing/overflow/overflow-positioning.html fails with timeout on multiple chromium bots
         https://bugs.webkit.org/show_bug.cgi?id=85771
 
