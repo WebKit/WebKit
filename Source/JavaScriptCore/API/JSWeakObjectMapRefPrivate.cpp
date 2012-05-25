@@ -72,7 +72,7 @@ void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    map->map().take(key);
+    map->map().remove(key);
 }
 
 // We need to keep this function in the build to keep the nightlies running.

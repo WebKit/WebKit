@@ -1,3 +1,37 @@
+2012-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM)
+        https://bugs.webkit.org/show_bug.cgi?id=87456
+
+        Reviewed by Filip Pizlo.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::JSStringOwner::finalize):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringSlowCase):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper): Use the new idioms.
+
+        (WebCore::jsString): Use get instead of find because get is simpler in
+        the case of entries that are logically null.
+
+        (WebCore::domObjectWrapperMapFor): Removed, since it was unused.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::clearWrapper): Use the new idioms.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate): Check for null while iterating,
+        since that's possible now.
+
+        (JSC::Bindings::RootObject::addRuntimeObject):
+        (JSC::Bindings::RootObject::removeRuntimeObject):
+        (JSC::Bindings::RootObject::finalize): Use the new idioms.
+
+        * bridge/runtime_root.h:
+        (RootObject): Clarified the word "need".
+
 2012-05-24  Kent Tamura  <tkent@chromium.org>
 
         PAGE_POPUP: window.setValueAndClosePopup should be moved to a

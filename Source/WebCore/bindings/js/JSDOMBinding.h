@@ -142,16 +142,14 @@ enum ParameterDefaultPolicy {
         if (setInlineCachedWrapper(world, domObject, wrapper))
             return;
         JSC::PassWeak<JSDOMWrapper> passWeak(wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
-        DOMObjectWrapperMap::AddResult result = world->m_wrappers.add(domObject, passWeak);
-        ASSERT_UNUSED(result, result.isNewEntry);
+        weakAdd(world->m_wrappers, (void*)domObject, passWeak);
     }
 
     template <typename DOMClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)
     {
         if (clearInlineCachedWrapper(world, domObject, wrapper))
             return;
-        ASSERT(world->m_wrappers.find(domObject)->second.was(wrapper));
-        world->m_wrappers.remove(domObject);
+        weakRemove(world->m_wrappers, (void*)domObject, wrapper);
     }
     
     #define CREATE_DOM_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
@@ -349,16 +347,10 @@ enum ParameterDefaultPolicy {
             return jsString(exec, stringToUString(s));
 
         JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
-        JSStringCache::iterator it = stringCache.find(stringImpl);
-        if (it != stringCache.end())
-            return it->second.get();
+        if (JSC::JSString* string = stringCache.get(stringImpl))
+            return string;
 
         return jsStringSlowCase(exec, stringCache, stringImpl);
-    }
-
-    inline DOMObjectWrapperMap& domObjectWrapperMapFor(JSC::ExecState* exec)
-    {
-        return currentWorld(exec)->m_wrappers;
     }
 
     inline String ustringToString(const JSC::UString& u)

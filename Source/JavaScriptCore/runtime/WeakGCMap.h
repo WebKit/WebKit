@@ -53,78 +53,23 @@ class WeakGCMap : private WeakHandleOwner {
 
     typedef HashMap<KeyType, WeakImpl*, HashArg, KeyTraitsArg> MapType;
     typedef typename HandleTypes<MappedType>::ExternalType ExternalType;
-    typedef typename MapType::iterator map_iterator;
 
 public:
-
-    struct iterator {
-        friend class WeakGCMap;
-        iterator(map_iterator iter)
-            : m_iterator(iter)
-        {
-        }
-        
-        std::pair<KeyType, ExternalType> get() const { return std::make_pair(m_iterator->first, HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_iterator->second->jsValue()))); }
-        
-        iterator& operator++() { ++m_iterator; return *this; }
-        
-        // postfix ++ intentionally omitted
-        
-        // Comparison.
-        bool operator==(const iterator& other) const { return m_iterator == other.m_iterator; }
-        bool operator!=(const iterator& other) const { return m_iterator != other.m_iterator; }
-        
-    private:
-        map_iterator m_iterator;
-    };
-
-    typedef WTF::HashTableAddResult<iterator> AddResult;
-
     WeakGCMap()
     {
     }
 
-    bool isEmpty() { return m_map.isEmpty(); }
     void clear()
     {
-        map_iterator end = m_map.end();
-        for (map_iterator ptr = m_map.begin(); ptr != end; ++ptr)
+        typename MapType::iterator end = m_map.end();
+        for (typename MapType::iterator ptr = m_map.begin(); ptr != end; ++ptr)
             WeakSet::deallocate(ptr->second);
         m_map.clear();
-    }
-
-    bool contains(const KeyType& key) const
-    {
-        return m_map.contains(key);
-    }
-
-    iterator find(const KeyType& key)
-    {
-        return m_map.find(key);
-    }
-
-    void remove(iterator iter)
-    {
-        ASSERT(iter.m_iterator != m_map.end());
-        WeakImpl* impl = iter.m_iterator->second;
-        ASSERT(impl);
-        WeakSet::deallocate(impl);
-        m_map.remove(iter.m_iterator);
     }
 
     ExternalType get(const KeyType& key) const
     {
         return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_map.get(key)->jsValue()));
-    }
-
-    AddResult add(JSGlobalData&, const KeyType& key, ExternalType value)
-    {
-        typename MapType::AddResult result = m_map.add(key, 0);
-        if (result.isNewEntry)
-            result.iterator->second = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
-
-        // WeakGCMap exposes a different iterator, so we need to wrap it and create our own AddResult.
-        return AddResult(iterator(result.iterator), result.isNewEntry);
     }
 
     void set(JSGlobalData&, const KeyType& key, ExternalType value)
@@ -135,21 +80,14 @@ public:
         result.iterator->second = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
     }
 
-    ExternalType take(const KeyType& key)
+    void remove(const KeyType& key)
     {
         WeakImpl* impl = m_map.take(key);
         if (!impl)
-            return HashTraits<ExternalType>::emptyValue();
-        ExternalType result = HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&impl->jsValue()));
+            return;
         WeakSet::deallocate(impl);
-        return result;
     }
 
-    size_t size() { return m_map.size(); }
-
-    iterator begin() { return iterator(m_map.begin()); }
-    iterator end() { return iterator(m_map.end()); }
-    
     ~WeakGCMap()
     {
         clear();

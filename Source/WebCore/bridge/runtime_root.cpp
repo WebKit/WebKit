@@ -105,7 +105,10 @@ void RootObject::invalidate()
     {
         HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator end = m_runtimeObjects.end();
         for (HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator it = m_runtimeObjects.begin(); it != end; ++it) {
-            it->second.get()->invalidate();
+            RuntimeObject* runtimeObject = it->second.get();
+            if (!runtimeObject) // Skip zombies.
+                continue;
+            runtimeObject->invalidate();
         }
 
         m_runtimeObjects.clear();
@@ -179,29 +182,23 @@ void RootObject::updateGlobalObject(JSGlobalObject* globalObject)
 void RootObject::addRuntimeObject(JSGlobalData&, RuntimeObject* object)
 {
     ASSERT(m_isValid);
-    ASSERT(!m_runtimeObjects.get(object));
-
-    m_runtimeObjects.set(object, JSC::PassWeak<RuntimeObject>(object, this));
+    weakAdd(m_runtimeObjects, object, JSC::PassWeak<RuntimeObject>(object, this));
 }
 
 void RootObject::removeRuntimeObject(RuntimeObject* object)
 {
     if (!m_isValid)
         return;
-
-    ASSERT(m_runtimeObjects.get(object));
-
-    m_runtimeObjects.take(object);
+    weakRemove(m_runtimeObjects, object, object);
 }
 
 void RootObject::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
     RuntimeObject* object = static_cast<RuntimeObject*>(asObject(handle.get()));
-    ASSERT(m_runtimeObjects.contains(object));
 
     RefPtr<RootObject> protect(this);
     object->invalidate();
-    m_runtimeObjects.remove(object);
+    weakRemove(m_runtimeObjects, object, object);
 }
 
 } } // namespace JSC::Bindings

@@ -51,8 +51,7 @@ public:
 
     void clearWrapper(JSDOMWrapper* wrapper)
     {
-        ASSERT_UNUSED(wrapper, m_wrapper.was(wrapper));
-        m_wrapper.clear();
+        weakClear(m_wrapper, wrapper);
     }
 
 private:

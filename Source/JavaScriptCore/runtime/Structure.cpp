@@ -67,7 +67,7 @@ bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) co
         Structure* transition = singleTransition();
         return transition && transition->m_nameInPrevious == rep && transition->m_attributesInPrevious == attributes;
     }
-    return map()->contains(make_pair(rep, attributes));
+    return map()->get(make_pair(rep, attributes));
 }
 
 inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attributes) const
@@ -101,13 +101,7 @@ inline void StructureTransitionTable::add(JSGlobalData& globalData, Structure* s
     // Newer versions of the STL have an std::make_pair function that takes rvalue references.
     // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
     // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
-    TransitionMap::AddResult result = map()->add(globalData, make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious), structure);
-    if (!result.isNewEntry) {
-        // There already is an entry! - we should only hit this when despecifying.
-        ASSERT(result.iterator.get().second->m_specificValueInPrevious);
-        ASSERT(!structure->m_specificValueInPrevious);
-        map()->set(globalData, result.iterator.get().first, structure);
-    }
+    map()->set(globalData, make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious), structure);
 }
 
 void Structure::dumpStatistics()

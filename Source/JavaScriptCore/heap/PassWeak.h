@@ -46,9 +46,7 @@ public:
     T& operator*() const;
     GetType get() const;
 
-#if !ASSERT_DISABLED
     bool was(GetType) const;
-#endif
 };
 
 template<typename T> class PassWeak : public WeakImplAccessor<PassWeak<T>, T> {
@@ -102,12 +100,10 @@ template<typename Base, typename T> inline typename WeakImplAccessor<Base, T>::G
     return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
 }
 
-#if !ASSERT_DISABLED
 template<typename Base, typename T> inline bool WeakImplAccessor<Base, T>::was(typename WeakImplAccessor<Base, T>::GetType other) const
 {
     return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell()) == other;
 }
-#endif
 
 template<typename T> inline PassWeak<T>::PassWeak()
     : m_impl(0)

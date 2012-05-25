@@ -1,3 +1,18 @@
+2012-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM)
+        https://bugs.webkit.org/show_bug.cgi?id=87456
+
+        Reviewed by Filip Pizlo.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject): Use the new idioms.
+
+        (WebKit::NPRuntimeObjectMap::invalidate): Check for null while iterating,
+        since that's possible now.
+
+        (WebKit::NPRuntimeObjectMap::finalize): Use the new idioms.
+
 2012-05-24  Brady Eidson  <beidson@apple.com>
 
         Fix the build after http://trac.webkit.org/changeset/118441

@@ -3458,27 +3458,31 @@ MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, NativeFunction constructor)
 {
-    HostFunctionStubMap::AddResult result = m_hostFunctionStubMap->add(function, PassWeak<NativeExecutable>());
-    if (!result.iterator->second)
-        result.iterator->second = PassWeak<NativeExecutable>(NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, NoIntrinsic));
-    return result.iterator->second.get();
+    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(function))
+        return nativeExecutable;
+
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, NoIntrinsic);
+    weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
+    return nativeExecutable;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
 {
-    HostFunctionStubMap::AddResult entry = m_hostFunctionStubMap->add(function, PassWeak<NativeExecutable>());
-    if (!entry.iterator->second) {
-        MacroAssemblerCodeRef code;
-        if (generator) {
-            if (globalData->canUseJIT())
-                code = generator(globalData);
-            else
-                code = MacroAssemblerCodeRef();
-        } else
-            code = JIT::compileCTINativeCall(globalData, function);
-        entry.iterator->second = PassWeak<NativeExecutable>(NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic));
-    }
-    return entry.iterator->second.get();
+    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(function))
+        return nativeExecutable;
+
+    MacroAssemblerCodeRef code;
+    if (generator) {
+        if (globalData->canUseJIT())
+            code = generator(globalData);
+        else
+            code = MacroAssemblerCodeRef();
+    } else
+        code = JIT::compileCTINativeCall(globalData, function);
+
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic);
+    weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
+    return nativeExecutable;
 }
 
 void JITThunks::clearHostFunctionStubs()

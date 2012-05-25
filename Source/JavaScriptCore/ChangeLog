@@ -1,3 +1,70 @@
+2012-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM)
+        https://bugs.webkit.org/show_bug.cgi?id=87456
+
+        Reviewed by Filip Pizlo.
+
+        Lazy finalization adds one twist to weak pointer use:
+
+                A HashMap of weak pointers may contain logically null entries.
+                (Weak pointers behave as-if null once their payloads die.)
+                Insertion must not assume that a pre-existing entry is
+                necessarily valid, and iteration must not assume that all
+                entries can be dereferenced.
+
+        (Previously, I thought that it also added a second twist:
+
+                A demand-allocated weak pointer may replace a dead payload
+                before the payload's finalizer runs. In that case, when the
+                payload's finalizer runs, the payload has already been
+                overwritten, and the finalizer should not clear the payload,
+                which now points to something new.
+
+        But that's not the case here, since we cancel the old payload's
+        finalizer when we over-write it. I've added ASSERTs to verify this
+        assumption, in case it ever changes.)
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype): No need to specify null; that's the default.
+
+        * API/JSWeakObjectMapRefPrivate.cpp: Use remove, since take() is gone.
+
+        * heap/PassWeak.h:
+        (WeakImplAccessor::was): This is no longer a debug-only function, since
+        it's required to reason about lazily finalized pointers.
+
+        * heap/Weak.h:
+        (JSC::weakAdd):
+        (JSC::weakRemove):
+        (JSC::weakClear): Added these helper functions for the common idioms of
+        what clients want to do in their weak pointer finalizers.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub): Use the new idioms. Otherwise, we
+        would return NULL for a "zombie" executable weak pointer that was waiting
+        for finalization (item (2)), and finalizing a dead executable weak pointer
+        would potentially destroy a new, live one (item (1)).
+
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::finalize): Ditto.
+
+        (JSC::RegExpCache::invalidateCode): Check for null while iterating. (See
+        item (2).)
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains):
+        (JSC::StructureTransitionTable::add): Use get and set instead of add and
+        contains, since add and contains are not compatible with lazy finalization.
+
+        * runtime/WeakGCMap.h:
+        (WeakGCMap):
+        (JSC::WeakGCMap::clear):
+        (JSC::WeakGCMap::remove): Removed a bunch of code that was incompatible with
+        lazy finalization because I didn't feel like making it compatible, and I had
+        no way to test it.
+
 2012-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r118013-r118031): Loops/Reloads under www.yahoo.com, quits after three tries with error
