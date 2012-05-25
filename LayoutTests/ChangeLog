@@ -1,3 +1,15 @@
+2012-05-25  Adam Klein  <adamk@chromium.org>
+
+        compositing/overflow/overflow-positioning.html fails with timeout on multiple chromium bots
+        https://bugs.webkit.org/show_bug.cgi?id=85771
+
+        Unreviewed test expectations update.
+
+        These tests haven't timed out lately on the Chromium bots, so removing
+        the suppressions.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-25  Anna Cavender <annacc@chromium.org>
 
         [Chromium] Removing tests from test_expectations.txt that are no longer crashing.

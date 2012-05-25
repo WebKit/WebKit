@@ -3676,16 +3676,6 @@ BUGWK85952 WIN : http/tests/media/media-source/video-media-source-seek.html = PA
 BUGWK85952 WIN : http/tests/media/media-source/video-media-source-state-changes.html = PASS TIMEOUT
 BUGWK85952 MAC DEBUG : http/tests/media/media-source/video-media-source-state-changes.html = PASS TEXT
 
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/reflections/masked-reflection-on-composited.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/visibility/visibility-simple-webgl-layer.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/rtl/rtl-absolute-overflow-scrolled.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/compositing/lost-compositor-context.html = PASS TIMEOUT
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/animation/state-at-end-event-transform-layer.html = TIMEOUT PASS
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/geometry/video-opacity-overlay.html = TIMEOUT PASS
-BUGWK85771 SNOWLEOPARD LION LINUX : compositing/scroll-painted-composited-content.html = TIMEOUT PASS
-BUGWK85771 SNOWLEOPARD LION : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS
 // Started flaking at around http://trac.webkit.org/changeset/116278.
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
@@ -3760,7 +3750,7 @@ BUGWK87282 WIN : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
 
 BUGWK87160 WIN SNOWLEOPARD : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-canvas2d-layer.html = PASS CRASH
 BUGWK87160 XP VISTA : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH
-BUGWK85771 BUGWK87160 LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH TIMEOUT
+BUGWK87160 LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = PASS CRASH
 
 BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
 
