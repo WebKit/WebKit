@@ -99,7 +99,7 @@ bool AccessibilityTable::isDataTable() const
     // When a section of the document is contentEditable, all tables should be
     // treated as data tables, otherwise users may not be able to work with rich
     // text editors that allow creating and editing tables.
-    if (node() && node()->isContentEditable())
+    if (node() && node()->rendererIsEditable())
         return true;
 
     // This employs a heuristic to determine if this table should appear.

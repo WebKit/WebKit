@@ -1,3 +1,24 @@
+2012-05-24  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Crash in WebCore::AccessibilityTable::isDataTable
+        https://bugs.webkit.org/show_bug.cgi?id=87409
+
+        Reviewed by Abhishek Arya.
+
+        Use Node::rendererIsEditable everywhere rather than
+        Node::isContentEditable because the latter can trigger a layout
+        and destroy the renderer. New test covers the change to
+        AccessibilityTable.cpp, changes to AccessibilityRenderObject.cpp
+        are covered by existing tests.
+
+        Test: accessibility/contenteditable-table-check-causes-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        (WebCore::AccessibilityRenderObject::contentChanged):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+
 2012-05-24  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms][TextArea] Too long validation message doesn't count LF as CRLF
