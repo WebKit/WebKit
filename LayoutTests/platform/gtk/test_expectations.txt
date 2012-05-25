@@ -319,42 +319,11 @@ BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
-// BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
-
-// Crashes on GStreamer side when loading one of the media elements of the test.
-BUGWK50155 : fast/events/tabindex-focus-blur-all.html = CRASH
-
-BUGWK54470 DEBUG : svg/text/select-textLength-spacing-squeeze-1.svg = CRASH
-
-BUGWK56309 : svg/text/text-deco-01-b.svg = CRASH
-
-BUGWK65183 DEBUG : editing/undo/replace-text-in-node-preserving-markers-crash.html = CRASH
-
-BUGWK68686 DEBUG : editing/pasteboard/drag-drop-input-in-svg.svg = CRASH
-
-BUGWK68700 DEBUG : fast/workers/storage/interrupt-database.html = CRASH
-
-BUGWK69001 DEBUG : plugins/js-from-destroy.html = CRASH
-
-BUGWK72245 DEBUG : fast/images/size-failure.html = CRASH
-
-BUGWK81836 DEBUG : inspector/timeline/timeline-injected-script-eval.html = CRASH
-BUGWK81836 DEBUG : inspector/styles/commit-selector.html = CRASH
-BUGWK81836 DEBUG : inspector/console/console-eval-global.html = CRASH
-
 
 // Crashes due to debug assert until we fix issues with style elements in SVG
 BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
 
-BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
-
-BUGWK83881 : fast/dom/gc-11.html = CRASH
-
 BUGWK63611 DEBUG : editing/deleting/smart-delete-003.html = CRASH
-BUGWK63611 DEBUG : editing/deleting/smart-delete-004.html = CRASH
-BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-2.html = CRASH
-BUGWK63611 DEBUG : editing/pasteboard/paste-text-008.html = CRASH
-BUGWK63611 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 BUGWK63611 DEBUG : editing/selection/directionality-after-undo-replace.html = CRASH
 
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
@@ -366,9 +335,6 @@ BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
 BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH IMAGE
-
-BUGWK86876 DEBUG : svg/text/text-tselect-02-f.svg = CRASH
-BUGWK86876 DEBUG : svg/custom/acid3-test-77.html = PASS CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
