@@ -461,6 +461,8 @@ public:
     void determineReachability();
     void resetReachability();
     
+    void resetExitStates();
+    
     unsigned numChildren(Node& node)
     {
         if (node.flags() & NodeHasVarArgs)

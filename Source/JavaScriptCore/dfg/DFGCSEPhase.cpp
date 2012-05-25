@@ -35,8 +35,9 @@ namespace JSC { namespace DFG {
 
 class CSEPhase : public Phase {
 public:
-    CSEPhase(Graph& graph)
+    CSEPhase(Graph& graph, OptimizationFixpointState fixpointState)
         : Phase(graph, "common subexpression elimination")
+        , m_fixpointState(fixpointState)
     {
         // Replacements are used to implement local common subexpression elimination.
         m_replacements.resize(m_graph.size());
@@ -750,11 +751,12 @@ private:
     unsigned m_indexInBlock;
     Vector<NodeIndex, 16> m_replacements;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
+    OptimizationFixpointState m_fixpointState;
 };
 
-bool performCSE(Graph& graph)
+bool performCSE(Graph& graph, OptimizationFixpointState fixpointState)
 {
-    return runPhase<CSEPhase>(graph);
+    return runPhase<CSEPhase>(graph, fixpointState);
 }
 
 } } // namespace JSC::DFG

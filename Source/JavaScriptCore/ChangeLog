@@ -1,3 +1,35 @@
+2012-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        new test fast/js/dfg-arguments-mixed-alias.html fails on JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=87378
+
+        Reviewed by Gavin Barraclough.
+        
+        - Captured variable tracking forgot did not consistently handle arguments, leading to OSR
+          badness.
+        
+        - Nodes capable of exiting were tracked in a non-monotonic way, leading to compiler errors.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::CSEPhase):
+        (CSEPhase):
+        (JSC::DFG::performCSE):
+        * dfg/DFGCSEPhase.h:
+        (DFG):
+        * dfg/DFGCommon.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::resetExitStates):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGPhase.h:
+        (DFG):
+        (JSC::DFG::runPhase):
+
 2012-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Made WeakSet per-block instead of per-heap

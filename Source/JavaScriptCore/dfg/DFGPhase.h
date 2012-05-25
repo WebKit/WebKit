@@ -79,6 +79,13 @@ bool runPhase(Graph& graph)
     return phase.run();
 }
 
+template<typename PhaseType, typename ArgumentType1>
+bool runPhase(Graph& graph, ArgumentType1 arg1)
+{
+    PhaseType phase(graph, arg1);
+    return phase.run();
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

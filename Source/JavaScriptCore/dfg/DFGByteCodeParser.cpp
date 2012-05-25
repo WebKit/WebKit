@@ -2836,6 +2836,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
                 inlineCallFrame.capturedVars.set(i);
         }
         
+        if (codeBlock->usesArguments() || codeBlock->needsActivation()) {
+            for (int i = argumentCountIncludingThis; i--;)
+                inlineCallFrame.capturedVars.set(argumentToOperand(i) + inlineCallFrame.stackOffset);
+        }
         for (int i = codeBlock->m_numCapturedVars; i--;)
             inlineCallFrame.capturedVars.set(i + inlineCallFrame.stackOffset);
         

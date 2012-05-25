@@ -491,6 +491,12 @@ void Graph::resetReachability()
     determineReachability();
 }
 
+void Graph::resetExitStates()
+{
+    for (unsigned i = size(); i--;)
+        at(i).setCanExit(true);
+}
+
 } } // namespace JSC::DFG
 
 #endif

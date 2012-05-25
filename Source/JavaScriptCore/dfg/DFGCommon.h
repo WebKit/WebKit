@@ -130,6 +130,8 @@ enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };
 
+enum OptimizationFixpointState { FixpointConverged, FixpointNotConverged };
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

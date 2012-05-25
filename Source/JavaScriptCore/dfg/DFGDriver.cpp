@@ -82,10 +82,12 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         changed |= performConstantFolding(dfg);
         changed |= performArgumentsSimplification(dfg);
         changed |= performCFGSimplification(dfg);
-        performCSE(dfg);
         if (!changed)
             break;
+        performCSE(dfg, FixpointNotConverged);
+        dfg.resetExitStates();
     }
+    performCSE(dfg, FixpointConverged);
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 #endif
