@@ -496,6 +496,7 @@ BUGWK84676 SKIP : fast/files/file-reader-abort.html = TIMEOUT
 BUGWK84676 SKIP : fast/files/apply-blob-url-to-xhr.html = TIMEOUT
 BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
 
+BUGWK87469 : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TIMEOUT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
@@ -1300,10 +1301,9 @@ BUGWK86771 SKIP : fast/dom/gc-10.html = FAIL
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL
 BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 
-// This test makes the test that follows it crash/timeout
-BUGWK87208 SKIP : http/tests/cookies/js-get-and-set-http-only-cookie.php = FAIL
-
 BUGWK87088 : fast/js/names.html = FAIL
+
+BUGWK87363 : fast/frames/flattening/iframe-tiny.html = TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

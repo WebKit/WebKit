@@ -1,3 +1,9 @@
+2012-05-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r118166, r118291 and r118442.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: drop obsolete WebInspector.Uint32Array and adjust snapshot chunk size for better transfer-snapshot metric.
