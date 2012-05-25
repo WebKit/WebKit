@@ -34,10 +34,9 @@ static const unsigned DefaultCapacity = 100;
 
 WebBackForwardList::WebBackForwardList(WebPageProxy* page)
     : m_page(page)
-    , m_current(NoCurrentItemIndex)
+    , m_hasCurrentIndex(false)
+    , m_currentIndex(0)
     , m_capacity(DefaultCapacity)
-    , m_closed(true)
-    , m_enabled(true)
 {
     ASSERT(m_page);
 }
@@ -59,16 +58,16 @@ void WebBackForwardList::pageClosed()
 
 void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (!m_capacity || !m_enabled || !newItem || !m_page)
+    if (!m_capacity || !newItem || !m_page)
         return;
 
     Vector<RefPtr<APIObject> > removedItems;
     
-    if (m_current != NoCurrentItemIndex) {
+    if (m_hasCurrentIndex) {
         // Toss everything in the forward list.
-        unsigned targetSize = m_current + 1;
+        unsigned targetSize = m_currentIndex + 1;
         removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
             m_page->backForwardRemovedItem(m_entries.last()->itemID());
@@ -78,11 +77,14 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 
         // Toss the first item if the list is getting too big, as long as we're not using it
         // (or even if we are, if we only want 1 entry).
-        if (m_entries.size() == m_capacity && (m_current || m_capacity == 1)) {
+        if (m_entries.size() == m_capacity && (m_currentIndex || m_capacity == 1)) {
             m_page->backForwardRemovedItem(m_entries[0]->itemID());
             removedItems.append(m_entries[0].release());
             m_entries.remove(0);
-            m_current--;
+            if (m_entries.isEmpty())
+                m_hasCurrentIndex = false;
+            else
+                m_currentIndex--;
         }
     } else {
         // If we have no current item index, we should have no other entries before adding this new item.
@@ -94,23 +96,24 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         m_entries.clear();
     }
     
-    if (m_current == NoCurrentItemIndex)
-        m_current = 0;
-    else
-        m_current++;
+    if (!m_hasCurrentIndex) {
+        m_currentIndex = 0;
+        m_hasCurrentIndex = true;
+    } else
+        m_currentIndex++;
 
     // m_current never be pointing more than 1 past the end of the entries Vector.
     // If it is, something has gone wrong and we should not try to insert the new item.
-    ASSERT(m_current <= m_entries.size());
-    if (m_current <= m_entries.size())
-        m_entries.insert(m_current, newItem);
+    ASSERT(m_currentIndex <= m_entries.size());
+    if (m_currentIndex <= m_entries.size())
+        m_entries.insert(m_currentIndex, newItem);
 
     m_page->didChangeBackForwardList(newItem, &removedItems);
 }
 
 void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     if (!m_entries.size() || !item)
         return;
@@ -121,7 +124,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
             break;
     }
     if (index < m_entries.size()) {
-        m_current = index;
+        m_currentIndex = index;
         if (m_page)
             m_page->didChangeBackForwardList(0, 0);
     }
@@ -129,36 +132,30 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 
 WebBackForwardListItem* WebBackForwardList::currentItem()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (m_current != NoCurrentItemIndex)
-        return m_entries[m_current].get();
-    return 0;
+    return m_hasCurrentIndex ? m_entries[m_currentIndex].get() : 0;
 }
 
 WebBackForwardListItem* WebBackForwardList::backItem()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (m_current && m_current != NoCurrentItemIndex)
-        return m_entries[m_current - 1].get();
-    return 0;
+    return m_hasCurrentIndex && m_currentIndex ? m_entries[m_currentIndex - 1].get() : 0;
 }
 
 WebBackForwardListItem* WebBackForwardList::forwardItem()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (m_entries.size() && m_current < m_entries.size() - 1)
-        return m_entries[m_current + 1].get();
-    return 0;
+    return m_hasCurrentIndex && m_entries.size() && m_currentIndex < m_entries.size() - 1 ? m_entries[m_currentIndex + 1].get() : 0;
 }
 
 WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (m_current == NoCurrentItemIndex)
+    if (!m_hasCurrentIndex)
         return 0;
     
     // Do range checks without doing math on index to avoid overflow.
@@ -168,26 +165,26 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
     if (index > forwardListCount())
         return 0;
         
-    return m_entries[index + m_current].get();
+    return m_entries[index + m_currentIndex].get();
 }
 
 int WebBackForwardList::backListCount()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    return m_current == NoCurrentItemIndex ? 0 : m_current;
+    return !m_hasCurrentIndex ? 0 : m_currentIndex;
 }
 
 int WebBackForwardList::forwardListCount()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    return m_current == NoCurrentItemIndex ? 0 : static_cast<int>(m_entries.size()) - (m_current + 1);
+    return !m_hasCurrentIndex ? 0 : static_cast<int>(m_entries.size()) - (m_currentIndex + 1);
 }
 
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     unsigned backListSize = static_cast<unsigned>(backListCount());
     unsigned size = std::min(backListSize, limit);
@@ -206,7 +203,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     unsigned size = std::min(static_cast<unsigned>(forwardListCount()), limit);
     if (!size)
@@ -215,9 +212,9 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
     Vector<RefPtr<APIObject> > vector;
     vector.reserveInitialCapacity(size);
 
-    unsigned last = m_current + size;
+    unsigned last = m_currentIndex + size;
     ASSERT(last < m_entries.size());
-    for (unsigned i = m_current + 1; i <= last; ++i)
+    for (unsigned i = m_currentIndex + 1; i <= last; ++i)
         vector.uncheckedAppend(m_entries[i].get());
 
     return ImmutableArray::adopt(vector);
@@ -225,7 +222,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
 
 void WebBackForwardList::clear()
 {
-    ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
+    ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     size_t size = m_entries.size();
     if (size <= 1)
@@ -243,18 +240,18 @@ void WebBackForwardList::clear()
     Vector<RefPtr<APIObject> > removedItems;
     removedItems.reserveCapacity(m_entries.size() - 1);
     for (size_t i = 0; i < m_entries.size(); ++i) {
-        if (i != m_current)
+        if (i != m_currentIndex)
             removedItems.append(m_entries[i].release());
     }
 
-    m_current = 0;
+    m_currentIndex = 0;
 
     if (currentItem) {
         m_entries.shrink(1);
         m_entries[0] = currentItem.release();
     } else {
         m_entries.clear();
-        m_current = NoCurrentItemIndex;
+        m_hasCurrentIndex = false;
     }
 
     if (m_page)

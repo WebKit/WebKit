@@ -1,3 +1,37 @@
+2012-05-25  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87418
+        WebBackForwardList should separate "has no current index" from the integer value of the current index
+
+        This patch also renames "m_current" to "m_currentIndex" for clarity and symmetry with
+        other variable names that reference "index",
+
+        It also removes the m_closed and m_enabled flags which were never actually used.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::currentItem):
+        (WebKit::WebBackForwardList::backItem):
+        (WebKit::WebBackForwardList::forwardItem):
+        (WebKit::WebBackForwardList::itemAtIndex):
+        (WebKit::WebBackForwardList::backListCount):
+        (WebKit::WebBackForwardList::forwardListCount):
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::clear):
+
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::currentIndex):
+        (WebBackForwardList):
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation):
+
 2012-05-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87529

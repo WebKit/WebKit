@@ -70,7 +70,7 @@ public:
     
     const BackForwardListItemVector& entries() const { return m_entries; }
 
-    uint32_t currentIndex() { return m_current; }
+    uint32_t currentIndex() { return m_currentIndex; }
     int backListCount();
     int forwardListCount();
 
@@ -83,18 +83,16 @@ public:
 #endif
 
 private:
-    static const unsigned NoCurrentItemIndex = UINT_MAX;
-
     WebBackForwardList(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
-    uint32_t m_current;
-    uint32_t m_capacity;
-    bool m_closed;
-    bool m_enabled;
+    
+    bool m_hasCurrentIndex;
+    unsigned m_currentIndex;
+    unsigned m_capacity;
 };
 
 } // namespace WebKit
