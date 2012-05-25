@@ -1,3 +1,13 @@
+2012-05-25  Keishi Hattori  <keishi@webkit.org>
+
+        Bad checkValidity result on recently "enabled" form fields
+        https://bugs.webkit.org/show_bug.cgi?id=85704
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/disabled-attr-checkvalidity-expected.txt: Added.
+        * fast/forms/disabled-attr-checkvalidity.html: Added.
+
 2012-05-25  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r118448. Added rebaseline to 2 tests on Qt platform that

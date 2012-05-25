@@ -1,3 +1,23 @@
+2012-05-25  Keishi Hattori  <keishi@webkit.org>
+
+        Bad checkValidity result on recently "enabled" form fields
+        https://bugs.webkit.org/show_bug.cgi?id=85704
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/disabled-attr-checkvalidity.html
+
+        We were tripping on the assertion m_isValid == validity()->valid()
+        inside HTMLFormControlElement::isValidFormControlElement.
+        m_isValid was becoming stale because setNeedsValidityCheck wasn't called
+        after m_willValidate changed.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::willValidate): We used const_cast
+        because it was too difficult to remove const. We are checking if the
+        value from willValidate has changed to avoid an infinite loop.
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+
 2012-05-24  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] DataTransferItem.webkitGetAsEntry() shouldn't be exposed without flag yet

@@ -374,7 +374,11 @@ bool HTMLFormControlElement::willValidate() const
 {
     if (!m_willValidateInitialized || m_dataListAncestorState == Unknown) {
         m_willValidateInitialized = true;
-        m_willValidate = recalcWillValidate();
+        bool newWillValidate = recalcWillValidate();
+        if (m_willValidate != newWillValidate) {
+            m_willValidate = newWillValidate;
+            const_cast<HTMLFormControlElement*>(this)->setNeedsValidityCheck();
+        }
     } else {
         // If the following assertion fails, setNeedsWillValidateCheck() is not
         // called correctly when something which changes recalcWillValidate() result
@@ -392,6 +396,7 @@ void HTMLFormControlElement::setNeedsWillValidateCheck()
         return;
     m_willValidateInitialized = true;
     m_willValidate = newWillValidate;
+    setNeedsValidityCheck();
     setNeedsStyleRecalc();
     if (!m_willValidate)
         hideVisibleValidationMessage();

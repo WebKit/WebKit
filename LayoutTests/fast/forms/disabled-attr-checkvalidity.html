@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<input id="input" disabled required />
+
+<script>
+description('Test if changing disabled updates checkValidity.');
+
+var input = document.getElementById('input');
+input.value = "";
+input.disabled = false;
+shouldBeFalse('input.checkValidity()');
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
