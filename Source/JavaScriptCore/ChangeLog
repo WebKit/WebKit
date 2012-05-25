@@ -1,5 +1,21 @@
 2012-05-22  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CSE should eliminate redundant WeakJSConstants
+        https://bugs.webkit.org/show_bug.cgi?id=87179
+
+        Reviewed by Gavin Barraclough.
+        
+        Merged r118141 from dfgopt.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::weakConstantCSE):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::weakConstant):
+
+2012-05-22  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE should do redundant store elimination
         https://bugs.webkit.org/show_bug.cgi?id=87161
 

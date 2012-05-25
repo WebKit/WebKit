@@ -246,6 +246,7 @@ struct Node {
     
     JSCell* weakConstant()
     {
+        ASSERT(op() == WeakJSConstant);
         return bitwise_cast<JSCell*>(m_opInfo);
     }
     

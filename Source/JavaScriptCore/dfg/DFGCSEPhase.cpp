@@ -141,6 +141,22 @@ private:
         return NoNode;
     }
     
+    NodeIndex weakConstantCSE(Node& node)
+    {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            Node& otherNode = m_graph[index];
+            if (otherNode.op() != WeakJSConstant)
+                continue;
+            
+            if (otherNode.weakConstant() != node.weakConstant())
+                continue;
+            
+            return index;
+        }
+        return NoNode;
+    }
+    
     NodeIndex impureCSE(Node& node)
     {
         NodeIndex child1 = canonicalize(node.child1());
@@ -867,6 +883,11 @@ private:
             // This is strange, but necessary. Some phases will convert nodes to constants,
             // which may result in duplicated constants. We use CSE to clean this up.
             setReplacement(constantCSE(node), AllowPredictionMismatch);
+            break;
+            
+        case WeakJSConstant:
+            // FIXME: have CSE for weak constants against strong constants and vice-versa.
+            setReplacement(weakConstantCSE(node));
             break;
             
         case GetArrayLength:
