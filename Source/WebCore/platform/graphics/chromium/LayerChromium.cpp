@@ -80,6 +80,7 @@ LayerChromium::LayerChromium()
     , m_preserves3D(false)
     , m_alwaysReserveTextures(false)
     , m_drawCheckerboardForMissingTiles(false)
+    , m_forceRenderSurface(false)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_drawOpacityIsAnimating(false)
@@ -426,6 +427,14 @@ void LayerChromium::setDrawCheckerboardForMissingTiles(bool checkerboard)
     setNeedsCommit();
 }
 
+void LayerChromium::setForceRenderSurface(bool force)
+{
+    if (m_forceRenderSurface == force)
+        return;
+    m_forceRenderSurface = force;
+    setNeedsCommit();
+}
+
 void LayerChromium::setDoubleSided(bool doubleSided)
 {
     if (m_doubleSided == doubleSided)
@@ -473,6 +482,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugName(m_debugName.isolatedCopy()); // We have to use isolatedCopy() here to safely pass ownership to another thread.
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawCheckerboardForMissingTiles(m_drawCheckerboardForMissingTiles);
+    layer->setForceRenderSurface(m_forceRenderSurface);
     layer->setDrawsContent(drawsContent());
     layer->setFilters(filters());
     layer->setBackgroundFilters(backgroundFilters());

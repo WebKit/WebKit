@@ -581,6 +581,37 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForTransparentChild)
     EXPECT_EQ(parent->drawableContentRect(), IntRect());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyForceRenderSurface)
+{
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    renderSurface1->setForceRenderSurface(true);
+
+    const TransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
+
+    parent->createRenderSurface();
+    parent->setClipRect(IntRect(0, 0, 10, 10));
+    parent->addChild(renderSurface1);
+    renderSurface1->addChild(child);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    EXPECT_TRUE(renderSurface1->renderSurface());
+    EXPECT_EQ(renderSurfaceLayerList.size(), 1U);
+
+    renderSurfaceLayerList.clear();
+    renderSurface1->setForceRenderSurface(false);
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    EXPECT_FALSE(renderSurface1->renderSurface());
+    EXPECT_EQ(renderSurfaceLayerList.size(), 0U);
+}
+
 TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
 {
     // The entire subtree of layers that are outside the clipRect should be culled away,

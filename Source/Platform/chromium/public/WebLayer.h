@@ -124,6 +124,10 @@ public:
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
     WEBKIT_EXPORT void setDebugBorderWidth(float);
 
+    // Forces this layer to use a render surface. There is no benefit in doing
+    // so, but this is to facilitate benchmarks and tests.
+    WEBKIT_EXPORT void setForceRenderSurface(bool);
+
     template<typename T> T to()
     {
         T res;

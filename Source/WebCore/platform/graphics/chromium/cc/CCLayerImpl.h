@@ -94,6 +94,9 @@ public:
     void setDrawsContent(bool);
     bool drawsContent() const { return m_drawsContent; }
 
+    bool forceRenderSurface() const { return m_forceRenderSurface; }
+    void setForceRenderSurface(bool force) { m_forceRenderSurface = force; }
+
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
@@ -307,6 +310,7 @@ private:
     bool m_isNonCompositedContent;
 
     bool m_drawsContent;
+    bool m_forceRenderSurface;
 
     FloatSize m_scrollDelta;
     IntSize m_sentScrollDelta;

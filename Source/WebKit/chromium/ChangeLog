@@ -1,3 +1,19 @@
+2012-05-24  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add a setForceRenderSurface to WebLayer for test/bench purpose
+        https://bugs.webkit.org/show_bug.cgi?id=87436
+
+        Reviewed by James Robinson.
+
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setForceRenderSurface):
+        (WebKit):
+        (WebKit::WebLayer::forceRenderSurface):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+        * tests/LayerChromiumTest.cpp:
+
 2012-05-24  Adam Barth  <abarth@webkit.org>
 
         Fix the chromium-android build.

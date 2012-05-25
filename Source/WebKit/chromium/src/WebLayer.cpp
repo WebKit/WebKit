@@ -294,6 +294,11 @@ void WebLayer::setDebugBorderWidth(float width)
     m_private->setDebugBorderWidth(width);
 }
 
+void WebLayer::setForceRenderSurface(bool forceRenderSurface)
+{
+    m_private->setForceRenderSurface(forceRenderSurface);
+}
+
 WebLayer::WebLayer(const PassRefPtr<LayerChromium>& node)
     : m_private(node)
 {

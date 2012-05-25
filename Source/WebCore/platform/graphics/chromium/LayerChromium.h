@@ -152,6 +152,9 @@ public:
     void setDrawCheckerboardForMissingTiles(bool);
     bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
 
+    bool forceRenderSurface() const { return m_forceRenderSurface; }
+    void setForceRenderSurface(bool);
+
     IntSize scrollDelta() const { return IntSize(); }
 
     float pageScaleDelta() const { return 1; }
@@ -329,6 +332,7 @@ private:
     bool m_preserves3D;
     bool m_alwaysReserveTextures;
     bool m_drawCheckerboardForMissingTiles;
+    bool m_forceRenderSurface;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

@@ -242,6 +242,10 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
     // A layer and its descendants should render onto a new RenderSurface if any of these rules hold:
     //
 
+    // If we force it.
+    if (layer->forceRenderSurface())
+        return true;
+
     // If the layer uses a mask.
     if (layer->maskLayer())
         return true;
