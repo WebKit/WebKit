@@ -121,6 +121,10 @@ void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
         m_maskLayer->setLayerTreeHost(host);
     if (m_replicaLayer)
         m_replicaLayer->setLayerTreeHost(host);
+
+    // If this layer already has active animations, the host needs to be notified.
+    if (host && m_layerAnimationController->hasActiveAnimation())
+        host->didAddAnimation();
 }
 
 void LayerChromium::setNeedsCommit()
@@ -662,7 +666,8 @@ void LayerChromium::notifyAnimationStarted(const CCAnimationEvent& event, double
 
 void LayerChromium::notifyAnimationFinished(double wallClockTime)
 {
-    m_layerAnimationDelegate->notifyAnimationFinished(wallClockTime);
+    if (m_layerAnimationDelegate)
+        m_layerAnimationDelegate->notifyAnimationFinished(wallClockTime);
 }
 
 Region LayerChromium::visibleContentOpaqueRegion() const

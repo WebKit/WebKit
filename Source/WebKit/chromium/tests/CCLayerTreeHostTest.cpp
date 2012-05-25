@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "AnimationIdVendor.h"
 #include "CCAnimationTestCommon.h"
 #include "CCOcclusionTrackerTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
@@ -44,6 +45,7 @@
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
+#include "cc/CCTimingFunction.h"
 #include "platform/WebThread.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -181,14 +183,27 @@ public:
         return MockLayerTreeHostImpl::create(m_testHooks, copySettings, client);
     }
 
+    virtual void didAddAnimation() OVERRIDE
+    {
+        m_didAddAnimationWasCalled = true;
+        CCLayerTreeHost::didAddAnimation();
+    }
+
+    bool didAddAnimationWasCalled()
+    {
+        return m_didAddAnimationWasCalled;
+    }
+
 private:
     MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, const CCSettings& settings)
         : CCLayerTreeHost(client, settings)
         , m_testHooks(testHooks)
+        , m_didAddAnimationWasCalled(false)
     {
     }
 
     TestHooks* m_testHooks;
+    bool m_didAddAnimationWasCalled;
 };
 
 class CompositorFakeWebGraphicsContext3DWithTextureTracking : public CompositorFakeWebGraphicsContext3D {
@@ -2813,5 +2828,38 @@ private:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestFinishAllRendering)
+
+// Layers added to tree with existing active animations should have the animation
+// correctly recognized.
+class CCLayerTreeHostTestLayerAddedWithAnimation : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestLayerAddedWithAnimation() { }
+
+    virtual void beginTest()
+    {
+        EXPECT_FALSE(static_cast<MockLayerTreeHost*>(layerTreeHost())->didAddAnimationWasCalled());
+
+        RefPtr<LayerChromium> layer = LayerChromium::create();
+        layer->setLayerAnimationDelegate(&m_animationDelegate);
+
+        // Any valid CCAnimationCurve will do here.
+        OwnPtr<CCAnimationCurve> curve(CCEaseTimingFunction::create());
+        OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), CCActiveAnimation::Opacity));
+        layer->layerAnimationController()->add(animation.release());
+
+        // We add the animation *before* attaching the layer to the tree.
+        m_layerTreeHost->rootLayer()->addChild(layer);
+        EXPECT_TRUE(static_cast<MockLayerTreeHost*>(layerTreeHost())->didAddAnimationWasCalled());
+
+        endTest();
+    }
+
+    virtual void afterTest() { }
+
+private:
+    ::TestHooks m_animationDelegate;
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerAddedWithAnimation)
 
 } // namespace

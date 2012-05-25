@@ -1,3 +1,21 @@
+2012-05-25  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] LayerChromium should recognise existing layer active animations when the layer is added.
+        https://bugs.webkit.org/show_bug.cgi?id=87166
+
+        Reviewed by Adrienne Walker.
+
+        Unit test added.
+
+        LayerChromium needs to correctly recognize if a newly added layer has an existing
+        active animation.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerTreeHost):
+        (WebCore::LayerChromium::notifyAnimationFinished):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: HeapSnapshot: introduce performance counter for HeapSnapshotConstructorsDataGrid._aggregatesReceived method.
