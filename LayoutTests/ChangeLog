@@ -1,3 +1,9 @@
+2012-05-24  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening, add expectation for new failure.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-24  Hayato Ito  <hayato@chromium.org>
 
         Fix crashes caused by a DOMCharacterDataModified event on a text node.

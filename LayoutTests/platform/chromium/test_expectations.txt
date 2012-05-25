@@ -3797,3 +3797,4 @@ BUGWK87356 : fast/files/workers/worker-read-blob-sync.html = TEXT
 BUGWK87364 DEBUG : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT PASS
 BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
 
+BUGWK87459 DEBUG : http/tests/media/video-cookie.html = CRASH
