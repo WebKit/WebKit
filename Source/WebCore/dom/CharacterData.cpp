@@ -44,6 +44,8 @@ void CharacterData::setData(const String& data, ExceptionCode&)
     if (m_data == nonNullData)
         return;
 
+    RefPtr<CharacterData> protect = this;
+
     unsigned oldLength = length();
 
     setDataAndUpdate(nonNullData, 0, oldLength, nonNullData.length());

@@ -1,3 +1,21 @@
+2012-05-24  Hayato Ito  <hayato@chromium.org>
+
+        Fix crashes caused by a DOMCharacterDataModified event on a text node.
+        https://bugs.webkit.org/show_bug.cgi?id=86953
+
+        Reviewed by Dimitri Glazkov.
+
+        TextNode can be released while CharacterData::setData() will dispatch a mutation event.
+        So protect it.
+
+        Mutation event itself should not be dispatched on the test case.
+        This is being tracked by webkit bug https://bugs.webkit.org/show_bug.cgi?id=87372.
+
+        Test: fast/events/dom-character-data-modified-textarea-crash.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData):
+
 2012-05-24  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Add --enable-css3-flexbox configure option after r118304.
