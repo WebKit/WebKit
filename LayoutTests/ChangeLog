@@ -1,5 +1,14 @@
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
+        Web Timing is not enabled on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=42435
+
+        Add the fast/performance tests to the Windows Skipped list.
+
+        * platform/win/Skipped:
+
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
         File API is not yet supported on Windows
         https://bugs.webkit.org/show_bug.cgi?id=37957
 
