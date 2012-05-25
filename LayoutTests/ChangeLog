@@ -1,3 +1,11 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        Rebaseline the Windows getComputedStyle results to reflect features
+        turned off on Windows.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+
 2012-05-25  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Pasting into contenteditable table cell pastes into adjacent cell instead.
