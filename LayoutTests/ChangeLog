@@ -1,3 +1,9 @@
+2012-05-25  Jessie Berlin  <jberlin@apple.com>
+
+        Skip more WebGL tests on Windows.
+
+        * platform/win/Skipped:
+
 2012-05-25  Elliot Poger  <epoger@chromium.org>
 
         New baselines for http://crbug.com/129184

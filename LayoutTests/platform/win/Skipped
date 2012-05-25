@@ -1471,7 +1471,11 @@ loader/navigation-while-deferring-loads.html
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
-# WebGL is not yet enabled
+# ENABLE(WEBGL) is disabled
+compositing/visibility/visibility-simple-webgl-layer.html
+compositing/webgl
+fast/canvas/webgl
+fast/events/constructors/webgl-context-event-constructor.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
