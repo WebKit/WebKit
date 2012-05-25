@@ -1,3 +1,15 @@
+2012-05-24  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] More rebaselines following r118448.
+
+        Unreviewed gardening (but I talked to eae about it).
+
+        * platform/chromium-mac-leopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png:
+
 2012-05-24  Jessie Berlin  <jberlin@apple.com>
 
         Disable all the shadow dom tests on Windows, since the feature isn't enabled there.
