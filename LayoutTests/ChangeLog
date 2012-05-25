@@ -1,3 +1,11 @@
+2012-05-25  Anna Cavender <annacc@chromium.org>
+
+        [Chromium] Removing media/video-volume-slider.html from test_expectations.txt
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-25  Adam Klein  <adamk@chromium.org>
 
         Mark some "flaky" TypedArray tests more appropriately as DEBUG SLOW

@@ -3038,9 +3038,6 @@ BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT
 
-// Needs rebaseline.
-BUGWK85990 : media/video-volume-slider.html = TEXT
-
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
