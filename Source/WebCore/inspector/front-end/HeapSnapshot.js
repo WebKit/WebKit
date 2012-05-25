@@ -888,25 +888,26 @@ WebInspector.HeapSnapshot.prototype = {
         var distances = new Uint32Array(this.nodeCount);
 
         // bfs for Window roots
-        var list = [];
+        var nodesToVisit = new Uint32Array(this.nodeCount);
+        var nodesToVisitLength = 0;
         for (var iter = this.rootNode().edges(); iter.hasNext(); iter.next()) {
             var node = iter.edge.node();
             if (node.isWindow()) {
-                list.push(node.nodeIndex);
+                nodesToVisit[nodesToVisitLength++] = node.nodeIndex;
                 distances[node.nodeIndex / nodeFieldCount] = 0;
             }
         }
-        this._bfs(list, distances);
+        this._bfs(nodesToVisit, nodesToVisitLength, distances);
 
         // bfs for root
-        list = [];
-        list.push(this._rootNodeIndex);
+        nodesToVisitLength = 0;
+        nodesToVisit[nodesToVisitLength++] = this._rootNodeIndex;
         distances[this._rootNodeIndex / nodeFieldCount] = 0;
-        this._bfs(list, distances);
+        this._bfs(nodesToVisit, nodesToVisitLength, distances);
         this._distancesToWindow = distances;
     },
 
-    _bfs: function(list, distances)
+    _bfs: function(nodesToVisit, nodesToVisitLength, distances)
     {
         // Peload fields into local variables for better performance.
         var edgeFieldsCount = this._edgeFieldsCount;
@@ -916,15 +917,12 @@ WebInspector.HeapSnapshot.prototype = {
         var edgeToNodeOffset = this._edgeToNodeOffset;
         var nodes = this._nodes;
         var nodeCount = this.nodeCount;
+        var containmentEdgesLength = containmentEdges.length;
 
         var index = 0;
-        while (index < list.length) {
-            var nodeIndex = list[index++]; // shift generates too much garbage.
+        while (index < nodesToVisitLength) {
+            var nodeIndex = nodesToVisit[index++]; // shift generates too much garbage.
             var nodeOrdinal = nodeIndex / nodeFieldCount;
-            if (index > 100000) {
-                list = list.slice(index);
-                index = 0;
-            }
             var distance = distances[nodeOrdinal] + 1;
             var firstEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
             var edgesEnd = nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount];
@@ -934,9 +932,11 @@ WebInspector.HeapSnapshot.prototype = {
                 if (distances[childNodeOrdinal])
                     continue;
                 distances[childNodeOrdinal] = distance;
-                list.push(childNodeIndex);
+                nodesToVisit[nodesToVisitLength++] = childNodeIndex;
             }
         }
+        if (nodesToVisitLength > nodeCount)
+            throw new Error("BFS failed. Nodes to visit (" + nodesToVisitLength + ") is more than nodes count (" + nodeCount + ")");
     },
 
     _buildAggregates: function(filter)

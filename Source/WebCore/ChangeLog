@@ -1,3 +1,16 @@
+2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: speed-up HeapSnapshot._bfs method.
+        https://bugs.webkit.org/show_bug.cgi?id=87502
+
+        It had containmentEdges.length call in the loop that forced deoptimization.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._calculateObjectToWindowDistance):
+        (WebInspector.HeapSnapshot.prototype._bfs):
+
 2012-05-25  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Speed up edges iteration in heap profiler
