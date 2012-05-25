@@ -2260,9 +2260,6 @@ BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT 
 BUGCR63921 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
 
-// Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
-BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
-
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 
@@ -3175,9 +3172,6 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
-BUGWK79540 : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
-BUGWK79540 LEOPARD DEBUG : fast/files/workers/worker-read-file-async.html = PASS CRASH
-
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
 BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
 
@@ -3189,8 +3183,6 @@ BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
 BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE IMAGE+TEXT
-
-BUGWK80058 WIN : fast/workers/stress-js-execution.html = CRASH PASS
 
 BUGV8_1973 : fast/js/caller-property.html = TEXT
 
