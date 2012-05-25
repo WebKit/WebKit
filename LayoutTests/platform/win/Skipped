@@ -1781,6 +1781,7 @@ platform/win/accessibility/detached-object-notification-crash.html
 # Crashes in ScrollView::delegatesScrolling
 # https://bugs.webkit.org/show_bug.cgi?id=87431
 editing/selection/selection-plugin-clear-crash.html
+plugins/destroy-during-npp-new-object-with-fallback-content.html
 
 # Crashes on debug builds
 # https://bugs.webkit.org/show_bug.cgi?id=85832
