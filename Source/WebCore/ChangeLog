@@ -1,3 +1,16 @@
+2012-05-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118452.
+        http://trac.webkit.org/changeset/118452
+        https://bugs.webkit.org/show_bug.cgi?id=87446
+
+        Causes many tests to assert on Mac, NRWT bails out (Requested
+        by sundiamonde on #webkit).
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::~RenderObject):
+        (WebCore::RenderObject::clearLayoutRootIfNeeded):
+
 2012-05-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add contextMenuItemVector stub.
