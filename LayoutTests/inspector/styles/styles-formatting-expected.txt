@@ -7,7 +7,7 @@ Running: initFormattedStyle
 
 Running: testFormattedInsertStart
 raw cssText:
-{
+{ 
     firstProperty: firstValue;
     property1: value1;
     property2: value2;
@@ -16,7 +16,7 @@ raw cssText:
 
 Running: testFormattedRemoveStart
 raw cssText:
-{
+{ 
     property1: value1;
     property2: value2;
     property3: value3;
@@ -24,7 +24,7 @@ raw cssText:
 
 Running: testFormattedInsertMiddle
 raw cssText:
-{
+{ 
     property1: value1;
     middleProperty: middleValue;
     property2: value2;
@@ -33,7 +33,7 @@ raw cssText:
 
 Running: testFormattedRemoveMiddle
 raw cssText:
-{
+{ 
     property1: value1;
     property2: value2;
     property3: value3;
@@ -41,7 +41,7 @@ raw cssText:
 
 Running: testFormattedInsertEnd
 raw cssText:
-{
+{ 
     property1: value1;
     property2: value2;
     property3: value3;
@@ -50,7 +50,7 @@ raw cssText:
 
 Running: testFormattedRemoveEnd
 raw cssText:
-{
+{ 
     property1: value1;
     property2: value2;
     property3: value3;
@@ -58,38 +58,38 @@ raw cssText:
 
 Running: testFormattedDisableStart
 raw cssText:
-{
+{ 
     property2: value2;
     property3: value3;
 }
 
 Running: testFormattedDisableEnd
 raw cssText:
-{
+{ 
     property2: value2;
 }
 
 Running: testFormattedDisableMiddle
 raw cssText:
-{
+{ 
 }
 
 Running: testFormattedInsert1
 raw cssText:
-{
+{ 
     propA: valA;
 }
 
 Running: testFormattedInsert2
 raw cssText:
-{
+{ 
     propA: valA;
     propB: valB;
 }
 
 Running: testFormattedInsert3
 raw cssText:
-{
+{ 
     propA: valA;
     propB: valB;
     propC: valC;
@@ -97,7 +97,7 @@ raw cssText:
 
 Running: testFormattedEnableStart
 raw cssText:
-{
+{ 
     propA: valA;
     property1: value1;
     propB: valB;
@@ -106,7 +106,7 @@ raw cssText:
 
 Running: testFormattedEnableEnd
 raw cssText:
-{
+{ 
     propA: valA;
     property1: value1;
     propB: valB;
@@ -116,7 +116,7 @@ raw cssText:
 
 Running: testFormattedEnableMiddle
 raw cssText:
-{
+{ 
     propA: valA;
     property1: value1;
     propB: valB;

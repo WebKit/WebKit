@@ -57,6 +57,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 using WebCore::TypeBuilder::Array;
 
@@ -638,10 +639,9 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
 
     m_formatAcquired = true;
 
-    String formatLineFeed = "";
-    String formatPropertyPrefix = "";
-    String prefix;
     String candidatePrefix = defaultPrefix;
+    StringBuilder formatLineFeed;
+    StringBuilder prefix;
     int scanStart = 0;
     int propertyIndex = 0;
     bool isFullPrefixScanned = false;
@@ -658,11 +658,12 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
             if (isLineFeed) {
                 if (!lineFeedTerminated)
                     formatLineFeed.append(ch);
+                prefix.clear();
             } else if (isHTMLSpace(ch))
                 prefix.append(ch);
             else {
-                candidatePrefix = prefix;
-                prefix = "";
+                candidatePrefix = prefix.toString();
+                prefix.clear();
                 scanStart = currentProperty.range.end;
                 ++propertyIndex;
                 processNextProperty = true;
@@ -677,8 +678,8 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
         }
     }
 
-    m_format.first = formatLineFeed;
-    m_format.second = isFullPrefixScanned ? prefix : candidatePrefix;
+    m_format.first = formatLineFeed.toString();
+    m_format.second = isFullPrefixScanned ? prefix.toString() : candidatePrefix;
     return m_format;
 }
 

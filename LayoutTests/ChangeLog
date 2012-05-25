@@ -1,3 +1,13 @@
+2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Hangup when continuously changing a css width value in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=85802
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/styles/styles-formatting-expected.txt:
+        * inspector/styles/styles-formatting.html:
+
 2012-05-25  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Widen CRASH expectation for visibility-simple-canvas2d-layer.html to include Mac10.6.

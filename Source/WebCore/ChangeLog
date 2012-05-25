@@ -1,5 +1,18 @@
 2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
 
+        Web Inspector: Hangup when continuously changing a css width value in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=85802
+
+        Reviewed by Vsevolod Vlasov.
+
+        An error in the property whitespace prefix detection algorithm would append the previous line trailing whitespace,
+        thereby enormously increasing the actual prefix during multiple incremental property changes.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters):
+
+2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: Clean up Inspector.json after r118367
         https://bugs.webkit.org/show_bug.cgi?id=87499
 
