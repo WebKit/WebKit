@@ -715,6 +715,8 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         ewk_view_setting_enable_hyperlink_auditing_set(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitTabToLinksPreferenceKey"))
         ewk_view_setting_include_links_in_focus_chain_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitOfflineWebApplicationCacheEnabled"))
+        ewk_view_setting_application_cache_set(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitLoadSiteIconsKey"))
         DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitCSSGridLayoutEnabled"))
