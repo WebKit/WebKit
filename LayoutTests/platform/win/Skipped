@@ -1785,3 +1785,7 @@ editing/selection/selection-plugin-clear-crash.html
 # Crashes on debug builds
 # https://bugs.webkit.org/show_bug.cgi?id=85832
 ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm
+
+# Asserts on debug builds
+# https://bugs.webkit.org/show_bug.cgi?id=86176
+ietestcenter/css3/valuesandunits/units-000.htm
