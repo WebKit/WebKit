@@ -74630,6 +74630,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NativeMemorySnapshotView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NavigatorView.js"
 					>
 				</File>

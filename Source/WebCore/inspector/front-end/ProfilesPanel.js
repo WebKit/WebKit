@@ -240,6 +240,8 @@ WebInspector.ProfilesPanel = function()
         this._registerProfileType(new WebInspector.CSSSelectorProfileType());
     if (Capabilities.heapProfilerPresent)
         this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
+    if (WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled())
+        this._registerProfileType(new WebInspector.NativeMemoryProfileType());
 
     InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
 

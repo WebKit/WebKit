@@ -6436,6 +6436,7 @@
             'inspector/front-end/Linkifier.js',
             'inspector/front-end/MemoryStatistics.js',
             'inspector/front-end/MetricsSidebarPane.js',
+            'inspector/front-end/NativeMemorySnapshotView.js',
             'inspector/front-end/NavigatorOverlayController.js',
             'inspector/front-end/NavigatorView.js',
             'inspector/front-end/NetworkItemView.js',

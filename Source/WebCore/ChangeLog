@@ -1,3 +1,37 @@
+2012-05-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add profile type for native memory snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=87400
+
+        Reviewed by Vsevolod Vlasov.
+
+        Introduced new profile type and view classes for native memory snapshots.
+        All the stuff is hidden behind an experimental setting.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/NativeMemorySnapshotView.js: Added.
+        (WebInspector.NativeMemorySnapshotView):
+        (WebInspector.NativeMemorySnapshotView.prototype.dispose):
+        (WebInspector.NativeMemorySnapshotView.prototype.get statusBarItems):
+        (WebInspector.NativeMemorySnapshotView.prototype.get profile):
+        (WebInspector.NativeMemoryProfileType):
+        (WebInspector.NativeMemoryProfileType.prototype.get buttonTooltip):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+        (WebInspector.NativeMemoryProfileType.prototype.get treeItemTitle):
+        (WebInspector.NativeMemoryProfileType.prototype.get description):
+        (WebInspector.NativeMemoryProfileType.prototype.createTemporaryProfile):
+        (WebInspector.NativeMemoryProfileType.prototype.createProfile):
+        (WebInspector.NativeMemoryProfileHeader):
+        (WebInspector.NativeMemoryProfileHeader.prototype.createSidebarTreeElement):
+        (WebInspector.NativeMemoryProfileHeader.prototype.createView):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-05-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: make some profiler methods private
