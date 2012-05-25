@@ -1,3 +1,59 @@
+2012-05-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] WebLayerTreeViewImpl should not hide methods in CCLayerTreeHost with signatures that match the Client interface
+        https://bugs.webkit.org/show_bug.cgi?id=87301
+
+        Reviewed by James Robinson.
+
+        Most methods in the CCLayerTreeHostClient interface have a matching
+        method signature on CCLayerTreeHost that simply calls the client, if
+        one exists at all. However, CCLayerTreeHost::updateAnimations() does
+        important work in addition to calling the client.
+
+        Currently WebLayerTreeViewImpl itself implements the interface for
+        CCLayerTreeHostClient as well as CCLayerTreeHost, and simply forwards
+        any call to a method in the client interface to its own client. This
+        blocks WebViewImpl from calling CCLayerTreeHost::updateAnimations, since
+        the method is also in the client interface.
+
+        We change WebLayerTreeViewImpl to own a CCLayerTreeHost and a
+        WebLayerTreeHostClientAdapter. This fixes the shadowing by making
+        the two interfaces separate, and resolves lifetime issues by
+        ensuring that the CCLayerTreeHost is destroyed before its client.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setSurfaceReady):
+        (WebKit::WebLayerTreeView::setRootLayer):
+        (WebKit::WebLayerTreeView::compositorIdentifier):
+        (WebKit::WebLayerTreeView::setViewportSize):
+        (WebKit::WebLayerTreeView::viewportSize):
+        (WebKit::WebLayerTreeView::setBackgroundColor):
+        (WebKit::WebLayerTreeView::setVisible):
+        (WebKit::WebLayerTreeView::setPageScaleFactorAndLimits):
+        (WebKit::WebLayerTreeView::startPageScaleAnimation):
+        (WebKit::WebLayerTreeView::setNeedsAnimate):
+        (WebKit::WebLayerTreeView::setNeedsRedraw):
+        (WebKit::WebLayerTreeView::commitRequested):
+        (WebKit::WebLayerTreeView::composite):
+        (WebKit::WebLayerTreeView::updateAnimations):
+        (WebKit::WebLayerTreeView::compositeAndReadback):
+        (WebKit::WebLayerTreeView::finishAllRendering):
+        (WebKit::WebLayerTreeView::context):
+        (WebKit::WebLayerTreeView::loseCompositorContext):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit):
+        (WebLayerTreeViewClientAdapter):
+        (WebKit::WebLayerTreeViewClientAdapter::WebLayerTreeViewClientAdapter):
+        (WebKit::WebLayerTreeViewClientAdapter::~WebLayerTreeViewClientAdapter):
+        (WebKit::WebLayerTreeViewImpl::create):
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        (WebKit::WebLayerTreeViewImpl::~WebLayerTreeViewImpl):
+        * src/WebLayerTreeViewImpl.h:
+        (WebCore):
+        (WebKit):
+        (WebKit::WebLayerTreeViewImpl::layerTreeHost):
+        (WebLayerTreeViewImpl):
+
 2012-05-25  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; rolling chromium deps.

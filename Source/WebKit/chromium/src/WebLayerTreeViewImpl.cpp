@@ -29,6 +29,7 @@
 #include "CCThreadImpl.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
+#include "cc/CCLayerTreeHost.h"
 #include "cc/CCThreadProxy.h"
 #include "platform/WebGraphicsContext3D.h"
 #include "platform/WebLayer.h"
@@ -41,87 +42,53 @@ using namespace WebCore;
 
 namespace WebKit {
 
+// Converts messages from CCLayerTreeHostClient to WebLayerTreeViewClient.
+class WebLayerTreeViewClientAdapter : public WebCore::CCLayerTreeHostClient {
+public:
+    WebLayerTreeViewClientAdapter(WebLayerTreeViewClient* client) : m_client(client) { }
+    virtual ~WebLayerTreeViewClientAdapter() { }
+
+    // CCLayerTreeHostClient implementation
+    virtual void willBeginFrame() OVERRIDE { m_client->willBeginFrame(); }
+    virtual void didBeginFrame() OVERRIDE { m_client->didBeginFrame(); }
+    virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { m_client->updateAnimations(monotonicFrameBeginTime); }
+    virtual void layout() OVERRIDE { m_client->layout(); }
+    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE { m_client->applyScrollAndScale(scrollDelta, pageScale); }
+    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext() OVERRIDE
+    {
+        OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(m_client->createContext3D());
+        if (!webContext)
+            return 0;
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow, false /* preserveDrawingBuffer */ );
+    }
+    virtual void didRecreateContext(bool success) OVERRIDE { m_client->didRebindGraphicsContext(success); }
+    virtual void willCommit() OVERRIDE { m_client->willCommit(); }
+    virtual void didCommit() OVERRIDE { m_client->didCommit(); }
+    virtual void didCommitAndDrawFrame() OVERRIDE { m_client->didCommitAndDrawFrame(); }
+    virtual void didCompleteSwapBuffers() OVERRIDE { m_client->didCompleteSwapBuffers(); }
+    virtual void scheduleComposite() OVERRIDE { m_client->scheduleComposite(); }
+
+private:
+    WebLayerTreeViewClient* m_client;
+};
+
 PassOwnPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
 {
-    OwnPtr<WebLayerTreeViewImpl> host = adoptPtr(new WebLayerTreeViewImpl(client, settings));
-    if (!host->initialize())
+    OwnPtr<WebLayerTreeViewImpl> impl = adoptPtr(new WebLayerTreeViewImpl(client, settings));
+    if (!impl->layerTreeHost())
         return nullptr;
-    host->setRootLayer(root);
-    return host.release();
+    impl->layerTreeHost()->setRootLayer(root);
+    return impl.release();
 }
 
 WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client, const WebLayerTreeView::Settings& settings) 
-    : CCLayerTreeHost(this, settings)
-    , m_client(client)
+    : m_clientAdapter(adoptPtr(new WebLayerTreeViewClientAdapter(client)))
+    , m_layerTreeHost(CCLayerTreeHost::create(m_clientAdapter.get(), settings))
 {
 }
 
 WebLayerTreeViewImpl::~WebLayerTreeViewImpl()
 {
-}
-
-void WebLayerTreeViewImpl::willBeginFrame()
-{
-    m_client->willBeginFrame();
-}
-
-void WebLayerTreeViewImpl::didBeginFrame()
-{
-    m_client->didBeginFrame();
-}
-
-void WebLayerTreeViewImpl::updateAnimations(double monotonicFrameBeginTime)
-{
-    m_client->updateAnimations(monotonicFrameBeginTime);
-}
-
-void WebLayerTreeViewImpl::layout()
-{
-    m_client->layout();
-}
-
-void WebLayerTreeViewImpl::applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale)
-{
-    m_client->applyScrollAndScale(WebSize(scrollDelta), pageScale);
-}
-
-PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createContext()
-{
-    OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(m_client->createContext3D());
-    if (!webContext)
-        return 0;
-
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow, false /* preserveDrawingBuffer */ );
-}
-
-void WebLayerTreeViewImpl::didRecreateContext(bool success)
-{
-    m_client->didRebindGraphicsContext(success);
-}
-
-void WebLayerTreeViewImpl::willCommit()
-{
-    m_client->willCommit();
-}
-
-void WebLayerTreeViewImpl::didCommit()
-{
-    m_client->didCommit();
-}
-
-void WebLayerTreeViewImpl::didCommitAndDrawFrame()
-{
-    m_client->didCommitAndDrawFrame();
-}
-
-void WebLayerTreeViewImpl::didCompleteSwapBuffers()
-{
-    m_client->didCompleteSwapBuffers();
-}
-
-void WebLayerTreeViewImpl::scheduleComposite()
-{
-    m_client->scheduleComposite();
 }
 
 } // namespace WebKit

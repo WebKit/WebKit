@@ -75,98 +75,98 @@ bool WebLayerTreeView::initialize(WebLayerTreeViewClient* client, const WebLayer
 
 void WebLayerTreeView::setSurfaceReady()
 {
-    m_private->setSurfaceReady();
+    m_private->layerTreeHost()->setSurfaceReady();
 }
 
 void WebLayerTreeView::setRootLayer(WebLayer *root)
 {
     if (root)
-        m_private->setRootLayer(*root);
+        m_private->layerTreeHost()->setRootLayer(*root);
     else
-        m_private->setRootLayer(PassRefPtr<LayerChromium>());
+        m_private->layerTreeHost()->setRootLayer(PassRefPtr<LayerChromium>());
 }
 
 int WebLayerTreeView::compositorIdentifier()
 {
-    return m_private->compositorIdentifier();
+    return m_private->layerTreeHost()->compositorIdentifier();
 }
 
 void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)
 {
-    m_private->setViewportSize(viewportSize);
+    m_private->layerTreeHost()->setViewportSize(viewportSize);
 }
 
 WebSize WebLayerTreeView::viewportSize() const
 {
-    return WebSize(m_private->viewportSize());
+    return WebSize(m_private->layerTreeHost()->viewportSize());
 }
 
 void WebLayerTreeView::setBackgroundColor(WebColor color)
 {
-    m_private->setBackgroundColor(color);
+    m_private->layerTreeHost()->setBackgroundColor(color);
 }
 
 void WebLayerTreeView::setVisible(bool visible)
 {
-    m_private->setVisible(visible);
+    m_private->layerTreeHost()->setVisible(visible);
 }
 
 void WebLayerTreeView::setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum)
 {
-    m_private->setPageScaleFactorAndLimits(pageScaleFactor, minimum, maximum);
+    m_private->layerTreeHost()->setPageScaleFactorAndLimits(pageScaleFactor, minimum, maximum);
 }
 
 void WebLayerTreeView::startPageScaleAnimation(const WebPoint& scroll, bool useAnchor, float newPageScale, double durationSec)
 {
-    m_private->startPageScaleAnimation(IntSize(scroll.x, scroll.y), useAnchor, newPageScale, durationSec);
+    m_private->layerTreeHost()->startPageScaleAnimation(IntSize(scroll.x, scroll.y), useAnchor, newPageScale, durationSec);
 }
 
 void WebLayerTreeView::setNeedsAnimate()
 {
-    m_private->setNeedsAnimate();
+    m_private->layerTreeHost()->setNeedsAnimate();
 }
 
 void WebLayerTreeView::setNeedsRedraw()
 {
-    m_private->setNeedsRedraw();
+    m_private->layerTreeHost()->setNeedsRedraw();
 }
 
 bool WebLayerTreeView::commitRequested() const
 {
-    return m_private->commitRequested();
+    return m_private->layerTreeHost()->commitRequested();
 }
 
 void WebLayerTreeView::composite()
 {
     if (CCProxy::hasImplThread())
-        m_private->setNeedsCommit();
+        m_private->layerTreeHost()->setNeedsCommit();
     else
-        m_private->composite();
+        m_private->layerTreeHost()->composite();
 }
 
 void WebLayerTreeView::updateAnimations(double frameBeginTime)
 {
-    m_private->updateAnimations(frameBeginTime);
+    m_private->layerTreeHost()->updateAnimations(frameBeginTime);
 }
 
 bool WebLayerTreeView::compositeAndReadback(void *pixels, const WebRect& rect)
 {
-    return m_private->compositeAndReadback(pixels, rect);
+    return m_private->layerTreeHost()->compositeAndReadback(pixels, rect);
 }
 
 void WebLayerTreeView::finishAllRendering()
 {
-    m_private->finishAllRendering();
+    m_private->layerTreeHost()->finishAllRendering();
 }
 
 WebGraphicsContext3D* WebLayerTreeView::context()
 {
-    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->context());
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->layerTreeHost()->context());
 }
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)
 {
-    m_private->loseContext(numTimes);
+    m_private->layerTreeHost()->loseContext(numTimes);
 }
 
 } // namespace WebKit
