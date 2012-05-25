@@ -27,12 +27,13 @@
 
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
+#include "NotImplemented.h"
 #include "PlatformMenuDescription.h"
 #include "wx/menu.h"
 
 #include <wtf/HashMap.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 typedef WTF::HashMap<int, ContextMenuAction> ItemActionMap;
 static ItemActionMap s_itemActions;
@@ -117,4 +118,13 @@ unsigned ContextMenu::itemCount() const
         return m_platformDescription->GetMenuItemCount();
     
     return 0;
+}
+
+Vector<ContextMenuItem> contextMenuItemVector(wxMenu* menu)
+{
+    Vector<ContextMenuItem> menuItemVector;
+    notImplemented();
+    return menuItemVector;
+}
+    
 }

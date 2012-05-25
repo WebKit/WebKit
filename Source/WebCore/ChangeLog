@@ -1,3 +1,11 @@
+2012-05-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add contextMenuItemVector stub.
+
+        * platform/wx/ContextMenuWx.cpp:
+        (WebCore):
+        (WebCore::contextMenuItemVector):
+
 2012-05-24  Raymond Toy  <rtoy@google.com>
 
         Use 32-byte alignment in AudioArray if using WEBAUDIO_FFMPEG
