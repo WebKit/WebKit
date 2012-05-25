@@ -1,3 +1,20 @@
+2012-05-25  Dean Jackson  <dino@apple.com>
+
+        Unreviewed, rolling out r112155.
+        http://trac.webkit.org/changeset/112155
+        https://bugs.webkit.org/show_bug.cgi?id=79389
+        Hitch (due to style recalc?) when starting CSS3 animation
+
+        This caused a number of issues, including:
+        https://bugs.webkit.org/show_bug.cgi?id=87146
+        https://bugs.webkit.org/show_bug.cgi?id=84194
+        <rdar://problem/11506629>
+        <rdar://problem/11267408>
+        <rdar://problem/11531859>
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+
 2012-05-25  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87525
