@@ -1,3 +1,59 @@
+2012-05-25  Dan Bernstein  <mitz@apple.com>
+
+        characterBreakIterator() is not safe to use reentrantly or from multiple threads
+        https://bugs.webkit.org/show_bug.cgi?id=87521
+
+        Reviewed by Darin Adler.
+
+        Replaced characterBreakIterator() with a NonSharedCharacterBreakIterator class, which
+        obtains a unique TextBreakIterator. Replaced the global shared instance with a single-entry
+        cache.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData): Changed to use NonSharedCharacterBreakIterator.
+
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer): Ditto.
+        (WebCore::rightTruncateToBuffer): Ditto.
+
+        * platform/text/String.cpp:
+        (WebCore::numGraphemeClusters): Ditto.
+        (WebCore::numCharactersInGraphemeClusters): Ditto.
+
+        * platform/text/TextBreakIterator.h: Removed the declaration of characterBreakIterator().
+        (NonSharedCharacterBreakIterator): Added. An instance of this class has a character break
+        iterator instance that is unique to it for the lifetime of the instance.
+        (WebCore::NonSharedCharacterBreakIterator::operator TextBreakIterator*): Added.
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Added. Tries
+        to swap the m_iterator member variable with the cached instance. If that fails, initializes
+        m_iterator to a new character break iterator.
+        (WebCore::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator): Added. Tries
+        to put the m_iterator member variable back in the cache. If that fails, meaning there is
+        already something in the cache, destroys m_iterator.
+
+        * platform/text/gtk/TextBreakIteratorGtk.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Same as in
+        TextBreakIteratorICU.cpp.
+        (WebCore::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator): Ditto.
+        (WebCore::cursorMovementIterator): Moved the old implementation of characterBreakIterator()
+        here.
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Same as in
+        TextBreakIteratorICU.cpp.
+        (WebCore::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator): Ditto.
+        (WebCore::cursorMovementIterator): Moved the old implementation of characterBreakIterator()
+        here.
+
+        * platform/text/wince/TextBreakIteratorWinCE.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Same as in
+        TextBreakIteratorICU.cpp.
+        (WebCore::NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator): Ditto.
+        (WebCore::cursorMovementIterator): Moved the old implementation of characterBreakIterator()
+        here.
+
 2012-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Terrible performance on http://alliances.commandandconquer.com/ and http://www.lordofultima.com/

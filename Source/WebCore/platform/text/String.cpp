@@ -51,7 +51,7 @@ PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
 
 unsigned numGraphemeClusters(const String& s)
 {
-    TextBreakIterator* it = characterBreakIterator(s.characters(), s.length());
+    NonSharedCharacterBreakIterator it(s.characters(), s.length());
     if (!it)
         return s.length();
 
@@ -63,7 +63,7 @@ unsigned numGraphemeClusters(const String& s)
 
 unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeClusters)
 {
-    TextBreakIterator* it = characterBreakIterator(s.characters(), s.length());
+    NonSharedCharacterBreakIterator it(s.characters(), s.length());
     if (!it)
         return min(s.length(), numGraphemeClusters);
 

@@ -72,7 +72,7 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
     // see <https://bugs.webkit.org/show_bug.cgi?id=29092>. 
     // We need at least two characters look-ahead to account for UTF-16 surrogates.
     if (end < dataLength) {
-        TextBreakIterator* it = characterBreakIterator(data, (end + 2 > dataLength) ? dataLength : end + 2);
+        NonSharedCharacterBreakIterator it(data, (end + 2 > dataLength) ? dataLength : end + 2);
         if (!isTextBreak(it, end))
             end = textBreakPreceding(it, end);
     }

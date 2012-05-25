@@ -23,11 +23,13 @@
  */
 
 #include "config.h"
-
 #include "TextBreakIterator.h"
 
+#include <wtf/Atomics.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <pango/pango.h>
+
+using namespace WTF;
 using namespace std;
 
 #define UTF8_IS_SURROGATE(character) (character >= 0x10000 && character <= 0x10FFFF)
@@ -219,17 +221,27 @@ static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator
     return iterator;
 }
 
-TextBreakIterator* characterBreakIterator(const UChar* string, int length)
+static TextBreakIterator* nonSharedCharacterBreakIterator;
+
+NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* buffer, int length)
 {
-    static bool createdCharacterBreakIterator = false;
-    static TextBreakIterator* staticCharacterBreakIterator;
-    return setUpIterator(createdCharacterBreakIterator, staticCharacterBreakIterator, UBRK_CHARACTER, string, length);
+    m_iterator = nonSharedCharacterBreakIterator;
+    bool createdIterator = m_iterator && weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), m_iterator, 0);
+    m_iterator = setUpIterator(createdIterator, m_iterator, UBRK_CHARACTER, buffer, length);
+}
+
+NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
+{
+    if (!weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), 0, m_iterator))
+        ubrk_close(m_iterator);
 }
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
     // FIXME: This needs closer inspection to achieve behaviour identical to the ICU version.
-    return characterBreakIterator(string, length);
+    static bool createdCursorMovementIterator = false;
+    static TextBreakIterator* staticCursorMovementIterator;
+    return setUpIterator(createdCursorMovementIterator, staticCursorMovementIterator, UBRK_CHARACTER, string, length);
 }
 
 TextBreakIterator* wordBreakIterator(const UChar* string, int length)

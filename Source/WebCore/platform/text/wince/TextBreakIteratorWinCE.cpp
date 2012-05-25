@@ -23,11 +23,13 @@
 #include "TextBreakIterator.h"
 
 #include "PlatformString.h"
+#include <wtf/Atomics.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/Unicode.h>
 
-using namespace std;
+using namespace WTF;
 using namespace WTF::Unicode;
+using namespace std;
 
 namespace WebCore {
 
@@ -235,11 +237,21 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
     return &iterator;
 }
 
-TextBreakIterator* characterBreakIterator(const UChar* string, int length)
+static CharBreakIterator* nonSharedCharacterBreakIterator;
+
+NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* buffer, int length)
 {
-    DEFINE_STATIC_LOCAL(CharBreakIterator, iterator, ());
-    iterator.reset(string, length);
-    return &iterator;
+    m_iterator = nonSharedCharacterBreakIterator;
+    bool createdIterator = m_iterator && weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), m_iterator, 0);
+    if (!createdIterator)
+        m_iterator = new CharBreakIterator;
+    m_iterator.reset(string, length);
+}
+
+NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
+{
+    if (!weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), 0, m_iterator))
+        delete m_iterator;
 }
 
 static TextBreakIterator* staticLineBreakIterator;
@@ -324,7 +336,9 @@ bool isWordTextBreak(TextBreakIterator*)
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
-    return characterBreakIterator(string, length);
+    DEFINE_STATIC_LOCAL(CharBreakIterator, iterator, ());
+    iterator.reset(string, length);
+    return &iterator;
 }
 
 } // namespace WebCore

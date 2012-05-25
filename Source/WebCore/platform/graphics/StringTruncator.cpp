@@ -63,7 +63,7 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
     ASSERT(keepCount < STRING_BUFFER_SIZE);
     
     unsigned omitStart = (keepCount + 1) / 2;
-    TextBreakIterator* it = characterBreakIterator(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.characters(), length);
     unsigned omitEnd = boundedTextBreakFollowing(it, omitStart + (length - keepCount) - 1, length);
     omitStart = textBreakAtOrPreceding(it, omitStart);
     
@@ -82,7 +82,7 @@ static unsigned rightTruncateToBuffer(const String& string, unsigned length, uns
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
     
-    TextBreakIterator* it = characterBreakIterator(string.characters(), length);
+    NonSharedCharacterBreakIterator it(string.characters(), length);
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     unsigned truncatedLength = keepLength + 1;
     
