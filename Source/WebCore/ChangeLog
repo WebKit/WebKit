@@ -1,3 +1,22 @@
+2012-05-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: cmd-[ shortcut navigates page and is fr-keyboard incompatible
+        https://bugs.webkit.org/show_bug.cgi?id=85312
+
+        Reviewed by Vsevolod Vlasov.
+
+        Suppress the handling of panel history navigation events if the corresponding keyboard activities produce
+        the "keypress" event (which is the case on French keyboards, where AltGr+[ is translated into Ctrl+Alt+[ on Windows).
+        The event is also told to preventDefault() to avoid browser history navigation on Mac while traversing the Inspector panel history.
+
+        * inspector/front-end/InspectorView.js:
+        (WebInspector.InspectorView):
+        (WebInspector.InspectorView.prototype._keyPress):
+        (WebInspector.InspectorView.prototype._keyDown):
+        (WebInspector.InspectorView.prototype._keyDownInternal):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.isWin):
+
 2012-05-25  Yury Semikhatsky  <yurys@google.com>
 
         Unreviewed. Fixed closure compiler warnings.

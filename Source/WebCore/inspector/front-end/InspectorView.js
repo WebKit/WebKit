@@ -41,7 +41,16 @@ WebInspector.InspectorView = function()
     this._history = [];
     this._historyIterator = -1;
     document.addEventListener("keydown", this._keyDown.bind(this), false);
+    document.addEventListener("keypress", this._keyPress.bind(this), false);
     this._panelOrder = [];
+
+    // Windows and Mac have two different definitions of '[', so accept both.
+    this._openBracketIdentifiers = ["U+005B", "U+00DB"].keySet();
+    this._openBracketCharCode = "[".charCodeAt(0);
+
+    // Windows and Mac have two different definitions of ']', so accept both.
+    this._closeBracketIdentifiers = ["U+005D", "U+00DD"].keySet();
+    this._closeBracketCharCode = "]".charCodeAt(0);
 }
 
 WebInspector.InspectorView.Events = {
@@ -85,46 +94,66 @@ WebInspector.InspectorView.prototype = {
         }
     },
 
+    _keyPress: function(event)
+    {
+        if (!this._keyDownTimer)
+            return;
+
+        if (event.charCode === this._openBracketCharCode || event.charCode === this._closeBracketCharCode) {
+            clearTimeout(this._keyDownTimer);
+            delete this._keyDownTimer;
+        }
+    },
+
     _keyDown: function(event)
     {
-        switch (event.keyIdentifier) {
-            // Windows and Mac have two different definitions of [, so accept both.
-            case "U+005B":
-            case "U+00DB": // [ key
-                var isRotateLeft = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
-                if (isRotateLeft) {
-                    var index = this._panelOrder.indexOf(this.currentPanel());
-                    index = (index === 0) ? this._panelOrder.length - 1 : index - 1;
-                    this._panelOrder[index].toolbarItem.click();
-                    event.consume();
-                    return;
-                }
+        // BUG85312: On French AZERTY keyboards, AltGr-]/[ combinations (synonymous to Ctrl-Alt-]/[ on Windows) are used to enter ]/[,
+        // so for a ]/[-related keydown we delay the panel switch using a timer, to see if there is a keypress event following this one.
+        // If there is, we cancel the timer and do not consider this a panel switch.
+        if (!WebInspector.isWin() || (!this._openBracketIdentifiers.hasOwnProperty(event.keyIdentifier) && !this._closeBracketIdentifiers.hasOwnProperty(event.keyIdentifier))) {
+            this._keyDownInternal(event);
+            return;
+        }
 
-                var isGoBack = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
-                if (isGoBack && this._canGoBackInHistory()) {
-                    this._goBackInHistory();
-                    event.consume();
-                }
-                break;
+        this._keyDownTimer = setTimeout(this._keyDownInternal.bind(this, event), 0);
+    },
 
-            // Windows and Mac have two different definitions of ], so accept both.
-            case "U+005D":
-            case "U+00DD":  // ] key
-                var isRotateRight = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
-                if (isRotateRight) {
-                    var index = this._panelOrder.indexOf(this.currentPanel());
-                    index = (index + 1) % this._panelOrder.length;
-                    this._panelOrder[index].toolbarItem.click();
-                    event.consume();
-                    return;
-                }
+    _keyDownInternal: function(event)
+    {
+        if (this._openBracketIdentifiers.hasOwnProperty(event.keyIdentifier)) {
+            var isRotateLeft = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
+            if (isRotateLeft) {
+                var index = this._panelOrder.indexOf(this.currentPanel());
+                index = (index === 0) ? this._panelOrder.length - 1 : index - 1;
+                this._panelOrder[index].toolbarItem.click();
+                event.consume(true);
+                return;
+            }
 
-                var isGoForward = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
-                if (isGoForward && this._canGoForwardInHistory()) {
-                    this._goForwardInHistory();
-                    event.consume();
-                }
-                break;
+            var isGoBack = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
+            if (isGoBack && this._canGoBackInHistory()) {
+                this._goBackInHistory();
+                event.consume(true);
+            }
+            return;
+        }
+
+        if (this._closeBracketIdentifiers.hasOwnProperty(event.keyIdentifier)) {
+            var isRotateRight = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
+            if (isRotateRight) {
+                var index = this._panelOrder.indexOf(this.currentPanel());
+                index = (index + 1) % this._panelOrder.length;
+                this._panelOrder[index].toolbarItem.click();
+                event.consume(true);
+                return;
+            }
+
+            var isGoForward = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && event.altKey;
+            if (isGoForward && this._canGoForwardInHistory()) {
+                this._goForwardInHistory();
+                event.consume(true);
+            }
+            return;
         }
     },
 

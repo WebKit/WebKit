@@ -512,6 +512,14 @@ WebInspector.isMac = function()
     return WebInspector._isMac;
 }
 
+WebInspector.isWin = function()
+{
+    if (typeof WebInspector._isWin === "undefined")
+        WebInspector._isWin = WebInspector.platform() === "windows";
+
+    return WebInspector._isWin;
+}
+
 WebInspector.PlatformFlavor = {
     WindowsVista: "windows-vista",
     MacTiger: "mac-tiger",
