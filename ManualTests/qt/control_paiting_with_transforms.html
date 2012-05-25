@@ -1,0 +1,23 @@
+<html>
+<head>
+  <script>
+    var d = 0;
+
+    function rotate() {
+      d+=1;
+      document.getElementById('text_rotate').style.webkitTransform = "rotate(" + d + "deg)";
+      document.getElementById('button_rotate').style.webkitTransform = "rotate(" + (360 - d) + "deg)";
+      setTimeout('rotate()', 10);
+    }
+  </script>
+</head>
+<body>
+  <p>This tests the quality of the control drawing, while transform is applied.<br>
+     Click on the button and check for quality regression, while rotating.</p>
+  <input type='button' value='rotate' onclick='rotate();'>
+  <input id='text_rotate'; style='position:absolute; left:300px; top:100px; -webkit-transform: rotate(0deg);' type='text' value=''>
+  <input id='button_rotate'; style='position:absolute; left:300px; top:300px; -webkit-transform: rotate(0deg);' type='button' value='                            '>
+</body>
+</html>
+
+

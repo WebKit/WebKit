@@ -1,3 +1,22 @@
+2012-05-25  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt] Broken controls rendering when transform is applied.
+        https://bugs.webkit.org/show_bug.cgi?id=87483
+
+        Reviewed by Simon Hausmann.
+
+        Use only the scaling transform value to determine the size of
+        the control to be drawn. When other transforms present such as
+        rotate or skew, ignore them, unless scaling also involved. In
+        that case, calculate the scaling value out of the transformation.
+
+        * ManualTests/qt/control_paiting_with_transforms.html: Added.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::painterScale):
+        (WebCore):
+        (WebCore::StylePainterMobile::sizeForPainterScale):
+
 2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
 
         [chromium] add instrumentation for compositing

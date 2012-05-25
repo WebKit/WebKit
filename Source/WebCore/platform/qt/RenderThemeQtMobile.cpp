@@ -80,6 +80,24 @@ static const QColor shadowColor(80, 80, 80, 160);
 
 static QHash<KeyIdentifier, CacheKey> cacheKeys;
 
+static qreal painterScale(QPainter* painter)
+{
+    if (!painter)
+        return 1;
+
+    const QTransform& transform = painter->transform();
+    qreal scale = 1;
+
+    if (transform.type() == QTransform::TxScale)
+        scale = qAbs(transform.m11());
+    else if (transform.type() >= QTransform::TxRotate) {
+        const QLineF l1(0, 0, 1, 0);
+        const QLineF l2 = transform.map(l1);
+        scale = qAbs(l2.length() / l1.length());
+    }
+    return scale;
+}
+
 uint qHash(const KeyIdentifier& id)
 {
     const quint32 value = id.trait1 + (id.trait2 << 1) + (uint(id.type) << 2) + (id.height << 5) + (id.width << 14) + (id.trait3 << 25);
@@ -130,11 +148,6 @@ static inline QRect shrinkRectToSquare(const QRect& rect)
 {
     const int side = qMin(rect.height(), rect.width());
     return QRect(rect.topLeft(), QSize(side, side));
-}
-
-static inline qreal painterScale(QPainter* painter)
-{
-    return painter ? painter->transform().m11() : 1;
 }
 
 static inline QPen borderPen(QPainter* painter = 0)
@@ -201,8 +214,10 @@ void StylePainterMobile::drawCheckableBackground(QPainter* painter, const QRect&
 
 QSize StylePainterMobile::sizeForPainterScale(const QRect& rect) const
 {
-    const QRect mappedRect = painter->transform().mapRect(rect);
-    return mappedRect.size();
+    qreal scale = painterScale(painter);
+    QTransform scaleTransform = QTransform::fromScale(scale, scale);
+
+    return scaleTransform.mapRect(rect).size();
 }
 
 void StylePainterMobile::drawChecker(QPainter* painter, const QRect& rect, const QColor& color) const
