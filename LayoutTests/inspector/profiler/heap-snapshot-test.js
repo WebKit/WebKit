@@ -19,6 +19,7 @@ InspectorTest.createHeapSnapshotMockObject = function()
         _edgeShortcutType: -1,
         _edgeHiddenType: -1,
         _edgeElementType: 0,
+        _realNodesLength: 18,
         // Represents the following graph:
         //   (numbers in parentheses indicate node offset)
         // 
@@ -34,7 +35,8 @@ InspectorTest.createHeapSnapshotMockObject = function()
             1, 2, 12,   //  6: B
             1, 3, 18,   //  9: C
             1, 4, 21,   // 12: D
-            1, 5, 21],  // 15: E
+            1, 5, 21,   // 15: E
+            0, 0, 21],  // 18: (extra node)
         _containmentEdges: [
             2,  6, 3,   //  0: shortcut 'a' to node 'A'
             1,  7, 6,   //  3: property 'b' to node 'B'
@@ -99,8 +101,8 @@ InspectorTest.createHeapSnapshotMockRaw = function()
 
 InspectorTest._postprocessHeapSnapshotMock = function(mock)
 {
-    mock.nodes = new Int32Array(mock.nodes);
-    mock.edges = new Int32Array(mock.edges);
+    mock.nodes = new Uint32Array(mock.nodes);
+    mock.edges = new Uint32Array(mock.edges);
     return mock;
 };
 

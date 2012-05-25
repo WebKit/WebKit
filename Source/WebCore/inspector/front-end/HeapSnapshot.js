@@ -535,16 +535,14 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     _edgeIndexesStart: function()
     {
-        return this._snapshot._nodes[this.nodeIndex + this._snapshot._firstEdgeIndexOffset];
+        var snapshot = this._snapshot;
+        return snapshot._nodes[this.nodeIndex + snapshot._firstEdgeIndexOffset];
     },
 
     _edgeIndexesEnd: function()
     {
-        var nextNodeIndex = this._nextNodeIndex();
         var snapshot = this._snapshot;
-        if (nextNodeIndex < snapshot._nodes.length)
-            return snapshot._nodes[nextNodeIndex + snapshot._firstEdgeIndexOffset]
-        return snapshot._containmentEdges.length;
+        return snapshot._nodes[this._nextNodeIndex() + snapshot._firstEdgeIndexOffset]
     },
 
     _nextNodeIndex: function()
@@ -565,7 +563,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 WebInspector.HeapSnapshotNodeIterator = function(node)
 {
     this.node = node;
-    this._nodesLength = node._snapshot._nodes.length;
+    this._nodesLength = node._snapshot._realNodesLength;
 }
 
 WebInspector.HeapSnapshotNodeIterator.prototype = {
@@ -690,8 +688,15 @@ WebInspector.HeapSnapshot.prototype = {
             visitedMarker:     0x10000  // bits: 1,0000,0000,0000,0000
         };
 
-        this.nodeCount = this._nodes.length / this._nodeFieldCount;
+        this._realNodesLength = this._nodes.length;
+        this.nodeCount = this._realNodesLength / this._nodeFieldCount;
         this._edgeCount = this._containmentEdges.length / this._edgeFieldsCount;
+
+        // Add an extra node and make its first edge field point to the end of edges array.
+        var nodes = this._nodes;
+        this._nodes = new Uint32Array(this._realNodesLength + this._nodeFieldCount);
+        this._nodes.set(nodes);
+        this._nodes[this._realNodesLength + this._firstEdgeIndexOffset] = this._containmentEdges.length;
 
         this._markInvisibleEdges();
         this._buildRetainers();
@@ -735,13 +740,11 @@ WebInspector.HeapSnapshot.prototype = {
 
         var srcNodeIndex = 0;
         var nextNodeFirstEdgeIndex = nodes[firstEdgeIndexOffset];
-        var nodesLength = nodes.length;
+        var nodesLength = this._realNodesLength;
         while (srcNodeIndex < nodesLength) {
             var firstEdgeIndex = nextNodeFirstEdgeIndex;
             var nextNodeIndex = srcNodeIndex + nodeFieldCount;
-            nextNodeFirstEdgeIndex = nextNodeIndex < nodesLength
-                                   ? nodes[nextNodeIndex + firstEdgeIndexOffset]
-                                   : containmentEdges.length;
+            nextNodeFirstEdgeIndex = nodes[nextNodeIndex + firstEdgeIndexOffset];
             for (var edgeIndex = firstEdgeIndex; edgeIndex < nextNodeFirstEdgeIndex; edgeIndex += edgeFieldsCount) {
                 var toNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
                 if (toNodeIndex % nodeFieldCount)
@@ -924,9 +927,7 @@ WebInspector.HeapSnapshot.prototype = {
             }
             var distance = distances[nodeOrdinal] + 1;
             var firstEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
-            var edgesEnd = nodeOrdinal < nodeCount - 1
-                         ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
-                         : containmentEdges.length;
+            var edgesEnd = nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount];
             for (var edgeToNodeIndex = firstEdgeIndex + edgeToNodeOffset; edgeToNodeIndex < edgesEnd; edgeToNodeIndex += edgeFieldsCount) {
                 var childNodeIndex = containmentEdges[edgeToNodeIndex];
                 var childNodeOrdinal = childNodeIndex / nodeFieldCount;
@@ -945,7 +946,7 @@ WebInspector.HeapSnapshot.prototype = {
         var classIndexes = [];
         var nodes = this._nodes;
         var flags = this._flags;
-        var nodesLength = nodes.length;
+        var nodesLength = this._realNodesLength;
         var nodeNativeType = this._nodeNativeType;
         var nodeFieldCount = this._nodeFieldCount;
         var selfSizeOffset = this._nodeSelfSizeOffset;
@@ -1097,9 +1098,7 @@ WebInspector.HeapSnapshot.prototype = {
                 painted[nodeOrdinal] = black;
                 var nodeFlag = flags[nodeOrdinal] & flag;
                 var beginEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
-                var endEdgeIndex =  nodeOrdinal < nodeCount - 1
-                                    ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
-                                    : containmentEdgesLength;
+                var endEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount];
                 for (var edgeIndex = beginEdgeIndex; edgeIndex < endEdgeIndex; edgeIndex += edgeFieldsCount) {
                     if (nodeIndex !== rootNodeIndex && containmentEdges[edgeIndex + edgeTypeOffset] === edgeShortcutType)
                         continue;
@@ -1230,9 +1229,7 @@ WebInspector.HeapSnapshot.prototype = {
                     nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
                     nodeIndex = nodeOrdinal * nodeFieldCount;
                     beginEdgeToNodeFieldIndex = nodes[nodeIndex + firstEdgeIndexOffset] + edgeToNodeOffset;
-                    endEdgeToNodeFieldIndex = nodeOrdinal < nodesCount - 1
-                                                  ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
-                                                  : containmentEdgesLength;
+                    endEdgeToNodeFieldIndex = nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount];
                     for (var toNodeFieldIndex = beginEdgeToNodeFieldIndex;
                          toNodeFieldIndex < endEdgeToNodeFieldIndex;
                          toNodeFieldIndex += edgeFieldsCount) {
@@ -1458,9 +1455,7 @@ WebInspector.HeapSnapshot.prototype = {
                 continue;
             flags[nodeOrdinal] |= flag;
             var beginEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset];
-            var endEdgeIndex = nodeOrdinal < nodeCount - 1
-                               ? nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount]
-                               : containmentEdges.length;
+            var endEdgeIndex = nodes[nodeIndex + firstEdgeIndexOffset + nodeFieldCount];
             for (var edgeIndex = beginEdgeIndex; edgeIndex < endEdgeIndex; edgeIndex += edgeFieldsCount) {
                 var childNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
                 if (flags[childNodeIndex / nodeFieldCount] & flag)
