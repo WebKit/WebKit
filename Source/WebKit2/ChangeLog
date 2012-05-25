@@ -1,3 +1,17 @@
+2012-05-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2] Fix client interface size for WKPageContextMenuClient.
+        https://bugs.webkit.org/show_bug.cgi?id=87472
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add correct offset for version 1 and 2 of WKPageContextMenuClient.
+        Revision 109750 introduces a new API and increases size of interfaceSizesByVersion
+        but the table is not properly initialized for newly introduced version 2.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+
 2012-05-24  Andreas Kling  <kling@webkit.org>
 
         Mac bots crashing under PluginInfo destructor.
