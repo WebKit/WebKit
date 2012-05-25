@@ -144,8 +144,10 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return getLayeredShorthandValue(webkitTransitionShorthand());
     case CSSPropertyWebkitAnimation:
         return getLayeredShorthandValue(webkitAnimationShorthand());
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrap:
         return getShorthandValue(webkitWrapShorthand());
+#endif
 #if ENABLE(SVG)
     case CSSPropertyMarker: {
         RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
@@ -722,11 +724,13 @@ String StylePropertySet::asText() const
         case CSSPropertyWebkitTransitionDelay:
             shorthandPropertyID = CSSPropertyWebkitTransition;
             break;
+#if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrapFlow:
         case CSSPropertyWebkitWrapMargin:
         case CSSPropertyWebkitWrapPadding:
             shorthandPropertyID = CSSPropertyWebkitWrap;
             break;
+#endif
         default:
             break;
         }
@@ -842,9 +846,11 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyPageBreakAfter,
     CSSPropertyPageBreakBefore,
     CSSPropertyPageBreakInside,
+#if ENABLE(CSS_REGIONS)
     CSSPropertyWebkitRegionBreakAfter,
     CSSPropertyWebkitRegionBreakBefore,
     CSSPropertyWebkitRegionBreakInside,
+#endif
     CSSPropertyTextAlign,
     CSSPropertyTextIndent,
     CSSPropertyWidows

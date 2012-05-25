@@ -1090,6 +1090,8 @@ bool Document::cssGridLayoutEnabled() const
     return settings() && settings()->cssGridLayoutEnabled();
 }
 
+#if ENABLE(CSS_REGIONS)
+
 static bool validFlowName(const String& flowName)
 {
     if (equalIgnoringCase(flowName, "auto")
@@ -1125,6 +1127,8 @@ PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName
         return view->flowThreadController()->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
     return 0;
 }
+
+#endif
 
 PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
 {

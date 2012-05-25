@@ -60,9 +60,11 @@ void StyleRuleBase::destroy()
     case Media:
         delete static_cast<StyleRuleMedia*>(this);
         return;
+#if ENABLE(CSS_REGIONS)
     case Region:
         delete static_cast<StyleRuleRegion*>(this);
         return;
+#endif
     case Import:
         delete static_cast<StyleRuleImport*>(this);
         return;
@@ -72,6 +74,9 @@ void StyleRuleBase::destroy()
     case Unknown:
     case Charset:
     case Keyframe:
+#if !ENABLE(CSS_REGIONS)
+    case Region:
+#endif
         ASSERT_NOT_REACHED();
         return;
     }
@@ -89,8 +94,10 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
         return static_cast<const StyleRuleFontFace*>(this)->copy();
     case Media:
         return static_cast<const StyleRuleMedia*>(this)->copy();
+#if ENABLE(CSS_REGIONS)
     case Region:
         return static_cast<const StyleRuleRegion*>(this)->copy();
+#endif
     case Import:
         // FIXME: Copy import rules.
         ASSERT_NOT_REACHED();
@@ -100,6 +107,9 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
     case Unknown:
     case Charset:
     case Keyframe:
+#if !ENABLE(CSS_REGIONS)
+    case Region:
+#endif
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -124,9 +134,11 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Media:
         rule = CSSMediaRule::create(static_cast<StyleRuleMedia*>(self), parentSheet);
         break;
+#if ENABLE(CSS_REGIONS)
     case Region:
         rule = WebKitCSSRegionRule::create(static_cast<StyleRuleRegion*>(self), parentSheet);
         break;
+#endif
     case Import:
         rule = CSSImportRule::create(static_cast<StyleRuleImport*>(self), parentSheet);
         break;
@@ -136,6 +148,9 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Unknown:
     case Charset:
     case Keyframe:
+#if !ENABLE(CSS_REGIONS)
+    case Region:
+#endif
         ASSERT_NOT_REACHED();
         return 0;
     }

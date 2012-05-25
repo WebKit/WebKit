@@ -70,8 +70,13 @@ public:
     static bool webkitIDBRequestEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBTransactionEnabled() { return isIndexedDBEnabled; }
 
+#if ENABLE(CSS_EXCLUSIONS)
     static void setCSSExclusionsEnabled(bool isEnabled) { isCSSExclusionsEnabled = isEnabled; }
     static bool cssExclusionsEnabled() { return isCSSExclusionsEnabled; }
+#else
+    static void setCSSExclusionsEnabled(bool) { }
+    static bool cssExclusionsEnabled() { return false; }
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     // Mozilla version

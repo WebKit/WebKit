@@ -1100,6 +1100,22 @@ AC_ARG_ENABLE(font_boosting,
               [],[enable_font_boosting="no"])
 AC_MSG_RESULT([$enable_font_boosting])
 
+# check whether to enable CSS Exclusions support
+AC_MSG_CHECKING([whether to enable CSS Exclusions])
+AC_ARG_ENABLE(css_exclusions,
+              AC_HELP_STRING([--enable-css-exclusions],
+                             [enable support for CSS Exclusions [default=yes]]),
+              [],[enable_css_exclusions="yes"])
+AC_MSG_RESULT([$enable_css_exclusions])
+
+# check whether to enable CSS Regions support
+AC_MSG_CHECKING([whether to enable CSS Regions])
+AC_ARG_ENABLE(css_regions,
+              AC_HELP_STRING([--enable-css-regions],
+                             [enable support for CSS Regions [default=yes]]),
+              [],[enable_css_regions="yes"])
+AC_MSG_RESULT([$enable_css_regions])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1425,6 +1441,8 @@ AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = 
 AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
 AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
 AM_CONDITIONAL([ENABLE_FONT_BOOSTING],[test "$enable_font_boosting" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1476,6 +1494,8 @@ Features:
  Blob support                                             : $enable_blob
  CSS3 Flexbox support                                     : $enable_css3_flexbox
  Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
+ CSS Exclusions support                                   : $enable_css_exclusions
+ CSS Regions support                                      : $enable_css_regions
  DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload

@@ -35,6 +35,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(CSS_REGIONS)
+
 namespace WebCore {
 
 class CSSRuleList;
@@ -68,4 +70,6 @@ private:
 
 }
 
-#endif
+#endif // ENABLE(CSS_REGIONS)
+
+#endif // WebKitCSSRegionRule_h

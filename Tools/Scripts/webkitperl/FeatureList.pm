@@ -49,7 +49,9 @@ my (
     $blobSupport,
     $channelMessagingSupport,
     $css3FlexboxSupport,
+    $cssExclusionsSupport,
     $cssFiltersSupport,
+    $cssRegionsSupport,
     $cssShadersSupport,
     $cssVariablesSupport,
     $dataTransferItemsSupport,
@@ -143,11 +145,17 @@ my @features = (
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
+    { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
+      define => "ENABLE_CSS_EXCLUSIONS", default => 1, value => \$cssExclusionsSupport },
+
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
 
     { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
       define => "ENABLE_CSS3_FLEXBOX", default => 1, value => \$css3FlexboxSupport },
+
+    { option => "css-regions", desc => "Toggle CSS Regions support",
+      define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
 
     { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },

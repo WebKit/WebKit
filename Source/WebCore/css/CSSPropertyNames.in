@@ -364,19 +364,23 @@ z-index
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
+#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow-into
 -webkit-flow-from
 -webkit-region-overflow
+-webkit-region-break-after
+-webkit-region-break-before
+-webkit-region-break-inside
+#endif
+#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-shape-inside
 -webkit-shape-outside
 -webkit-wrap-margin
 -webkit-wrap-padding
--webkit-region-break-after
--webkit-region-break-before
--webkit-region-break-inside
 -webkit-wrap-flow
 -webkit-wrap-through
 -webkit-wrap
+#endif
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 -webkit-tap-highlight-color
 #endif

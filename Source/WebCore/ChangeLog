@@ -1,3 +1,67 @@
+2012-05-24  Tim Horton  <timothy_horton@apple.com>
+
+        Add feature defines for web-facing parts of CSS Regions and Exclusions
+        https://bugs.webkit.org/show_bug.cgi?id=87442
+        <rdar://problem/10887709>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::setCSSExclusionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssExclusionsEnabled):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::detectAtToken):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::cssText):
+        (WebCore::CSSRule::destroy):
+        (WebCore::CSSRule::reattach):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::isRegionRule):
+        * css/CSSRule.idl:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue):
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/WebKitCSSRegionRule.cpp:
+        * css/WebKitCSSRegionRule.h:
+        * css/WebKitCSSRegionRule.idl:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Document.idl:
+        * page/DOMWindow.idl:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setCSSRegionsEnabled):
+        (WebCore::Settings::cssRegionsEnabled):
+
 2012-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         WebKit should be lazy-finalization-safe (esp. the DOM)

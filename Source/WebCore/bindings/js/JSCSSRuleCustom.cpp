@@ -94,9 +94,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
             break;
+#if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSRegionRule, rule);
             break;
+#endif
         default:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSRule, rule);
     }

@@ -57,7 +57,9 @@ public:
         // <https://bugs.webkit.org/show_bug.cgi?id=71293>.
         WEBKIT_KEYFRAMES_RULE,
         WEBKIT_KEYFRAME_RULE,
+#if ENABLE(CSS_REGIONS)
         WEBKIT_REGION_RULE = 10
+#endif
     };
 
     Type type() const { return static_cast<Type>(m_type); }
@@ -69,8 +71,11 @@ public:
     bool isMediaRule() const { return type() == MEDIA_RULE; }
     bool isPageRule() const { return type() == PAGE_RULE; }
     bool isStyleRule() const { return type() == STYLE_RULE; }
-    bool isRegionRule() const { return type() == WEBKIT_REGION_RULE; }
     bool isImportRule() const { return type() == IMPORT_RULE; }
+
+#if ENABLE(CSS_REGIONS)
+    bool isRegionRule() const { return type() == WEBKIT_REGION_RULE; }
+#endif
 
     void setParentStyleSheet(CSSStyleSheet* styleSheet)
     {

@@ -458,6 +458,24 @@ endif
 endif # END ENABLE_FILTERS
 
 # ----
+# Regions
+# ----
+if ENABLE_CSS_REGIONS
+FEATURE_DEFINES += ENABLE_CSS_REGIONS=1
+webcore_cppflags += -DENABLE_CSS_REGIONS=1
+
+endif # END ENABLE_CSS_REGIONS
+
+# ----
+# Exclusions
+# ----
+if ENABLE_CSS_EXCLUSIONS
+FEATURE_DEFINES += ENABLE_CSS_EXCLUSIONS=1
+webcore_cppflags += -DENABLE_CSS_EXCLUSIONS=1
+
+endif # END ENABLE_CSS_EXCLUSIONS
+
+# ----
 # Geolocation
 # ----
 if ENABLE_GEOLOCATION

@@ -2582,12 +2582,15 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
             if (scope)
                 continue;
             styleSelector->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(rule));
-        } else if (rule->isRegionRule() && styleSelector) {
+        }
+#if ENABLE(CSS_REGIONS)
+        else if (rule->isRegionRule() && styleSelector) {
             // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
             if (scope)
                 continue;
             addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
         }
+#endif
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
@@ -2946,8 +2949,10 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
             collectCSSOMWrappers(wrapperMap, static_cast<CSSImportRule*>(cssRule)->styleSheet());
         else if (cssRule->isMediaRule())
             collectCSSOMWrappers(wrapperMap, static_cast<CSSMediaRule*>(cssRule));
+#if ENABLE(CSS_REGIONS)
         else if (cssRule->isRegionRule())
             collectCSSOMWrappers(wrapperMap, static_cast<WebKitCSSRegionRule*>(cssRule));
+#endif
         else if (cssRule->isStyleRule()) {
             CSSStyleRule* cssStyleRule = static_cast<CSSStyleRule*>(cssRule);
             wrapperMap.add(cssStyleRule->styleRule(), cssStyleRule);
@@ -3858,7 +3863,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         m_style->setLineBoxContain(lineBoxContainValue->value());
         return;
     }
-
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitShapeInside:
         HANDLE_INHERIT_AND_INITIAL(wrapShapeInside, WrapShapeInside);
         if (!primitiveValue)
@@ -3878,7 +3883,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         else if (primitiveValue->isShape())
             m_style->setWrapShapeOutside(primitiveValue->getShapeValue());
         return;
-
+#endif
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {
@@ -4109,8 +4114,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:
+#if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitFlowInto:
+#endif
     case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitFontVariantLigatures:
@@ -4150,10 +4157,12 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPrintColorAdjust:
+#if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitRegionBreakAfter:
     case CSSPropertyWebkitRegionBreakBefore:
     case CSSPropertyWebkitRegionBreakInside:
     case CSSPropertyWebkitRegionOverflow:
+#endif
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisColor:
@@ -4175,11 +4184,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrap:
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
     case CSSPropertyWebkitWrapThrough:
+#endif
     case CSSPropertyWhiteSpace:
     case CSSPropertyWidows:
     case CSSPropertyWidth:

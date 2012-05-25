@@ -29,7 +29,9 @@
 
 module css {
 
-    interface WebKitCSSRegionRule : CSSRule {
+    interface [
+        Conditional=CSS_REGIONS,
+    ] WebKitCSSRegionRule : CSSRule {
         readonly attribute CSSRuleList cssRules;
     };
 
