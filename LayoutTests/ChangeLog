@@ -1,3 +1,32 @@
+2012-05-25  Elliot Poger  <epoger@chromium.org>
+
+        New baselines for http://crbug.com/129184
+
+        Unreviewed rebaselining.
+
+        * platform/chromium-linux/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-linux/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-linux/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-linux/transforms/svg-vs-css-expected.png:
+        * platform/chromium-mac/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-mac/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-mac/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-mac/transforms/svg-vs-css-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-win/transforms/svg-vs-css-expected.png:
+        * platform/efl/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/efl/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * platform/gtk/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/gtk/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * platform/mac/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/mac/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * svg/filters/subRegion-one-effect-expected.txt: Added.
+        * svg/filters/subRegion-two-effects-expected.txt: Added.
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         Implement LayoutTest's eventSender.beginDragWithFiles interface in windows platform
