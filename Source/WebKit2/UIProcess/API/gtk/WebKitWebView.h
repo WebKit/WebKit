@@ -35,6 +35,7 @@
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
+#include <webkit2/WebKitPermissionRequest.h>
 #include <webkit2/WebKitPolicyDecision.h>
 #include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>
@@ -143,6 +144,8 @@ struct _WebKitWebViewClass {
     gboolean   (* decide_policy)         (WebKitWebView             *web_view,
                                           WebKitPolicyDecision      *decision,
                                           WebKitPolicyDecisionType   type);
+    gboolean   (* permission_request)    (WebKitWebView             *web_view,
+                                          WebKitPermissionRequest   *permission_request);
     void       (* mouse_target_changed)  (WebKitWebView             *web_view,
                                           WebKitHitTestResult       *hit_test_result,
                                           guint                      modifiers);

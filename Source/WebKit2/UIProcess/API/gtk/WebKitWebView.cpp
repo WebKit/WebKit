@@ -65,6 +65,7 @@ enum {
     SCRIPT_DIALOG,
 
     DECIDE_POLICY,
+    PERMISSION_REQUEST,
 
     MOUSE_TARGET_CHANGED,
 
@@ -192,6 +193,12 @@ static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDi
 static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType)
 {
     webkit_policy_decision_use(decision);
+    return TRUE;
+}
+
+static gboolean webkitWebViewPermissionRequest(WebKitWebView*, WebKitPermissionRequest* request)
+{
+    webkit_permission_request_deny(request);
     return TRUE;
 }
 
@@ -361,6 +368,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->create = webkitWebViewCreate;
     webViewClass->script_dialog = webkitWebViewScriptDialog;
     webViewClass->decide_policy = webkitWebViewDecidePolicy;
+    webViewClass->permission_request = webkitWebViewPermissionRequest;
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
@@ -687,6 +695,70 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_POLICY_DECISION_TYPE);
 
     /**
+     * WebKitWebView::permission-request:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @request: the #WebKitPermissionRequest
+     *
+     * This signal is emitted when WebKit is requesting the client to
+     * decide about a permission request, such as allowing the browser
+     * to switch to fullscreen mode, sharing its location or similar
+     * operations.
+     *
+     * A possible way to use this signal could be through a dialog
+     * allowing the user decide what to do with the request:
+     *
+     * <informalexample><programlisting>
+     * static gboolean permission_request_cb (WebKitWebView *web_view,
+     *                                        WebKitPermissionRequest *request,
+     *                                        GtkWindow *parent_window)
+     * {
+     *     GtkWidget *dialog = gtk_message_dialog_new (parent_window,
+     *                                                 GTK_DIALOG_MODAL,
+     *                                                 GTK_MESSAGE_QUESTION,
+     *                                                 GTK_BUTTONS_YES_NO,
+     *                                                 "Allow Permission Request?");
+     *     gtk_widget_show (dialog);
+     *     gint result = gtk_dialog_run (GTK_DIALOG (dialog));
+     *
+     *     switch (result) {
+     *     case GTK_RESPONSE_YES:
+     *         webkit_permission_request_allow (request);
+     *         break;
+     *     default:
+     *         webkit_permission_request_deny (request);
+     *         break;
+     *     }
+     *     gtk_widget_destroy (dialog);
+     *
+     *     return TRUE;
+     * }
+     * </programlisting></informalexample>
+     *
+     * It is possible to handle permission requests asynchronously, by
+     * simply calling g_object_ref() on the @request argument and
+     * returning %TRUE to block the default signal handler.  If the
+     * last reference is removed on a #WebKitPermissionRequest and the
+     * request has not been handled, webkit_permission_request_deny()
+     * will be the default action.
+     *
+     * By default, if the signal is not handled,
+     * webkit_permission_request_deny() will be called over the
+     * #WebKitPermissionRequest.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     */
+    signals[PERMISSION_REQUEST] =
+        g_signal_new("permission-request",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, permission_request),
+                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
+                     webkit_marshal_BOOLEAN__OBJECT,
+                     G_TYPE_BOOLEAN, 1, /* number of parameters */
+                     WEBKIT_TYPE_PERMISSION_REQUEST);
+    /**
      * WebKitWebView::mouse-target-changed:
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @hit_test_result: a #WebKitHitTestResult
@@ -969,6 +1041,12 @@ void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisio
 {
     gboolean returnValue;
     g_signal_emit(webView, signals[DECIDE_POLICY], 0, decision, type, &returnValue);
+}
+
+void webkitWebViewMakePermissionRequest(WebKitWebView* webView, WebKitPermissionRequest* request)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[PERMISSION_REQUEST], 0, request, &returnValue);
 }
 
 void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WKHitTestResultRef wkHitTestResult, unsigned modifiers)

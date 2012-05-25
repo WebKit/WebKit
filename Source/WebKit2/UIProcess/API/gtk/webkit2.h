@@ -36,6 +36,7 @@
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitMimeInfo.h>
+#include <webkit2/WebKitPermissionRequest.h>
 #include <webkit2/WebKitPlugin.h>
 #include <webkit2/WebKitPrintOperation.h>
 #include <webkit2/WebKitScriptDialog.h>

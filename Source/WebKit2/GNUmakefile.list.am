@@ -99,6 +99,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitJavascriptResult.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitMimeInfo.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitPermissionRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPlugin.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPrintOperation.h \
@@ -596,6 +597,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitPermissionRequest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitPermissionRequest.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPlugin.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPlugin.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPluginPrivate.h \

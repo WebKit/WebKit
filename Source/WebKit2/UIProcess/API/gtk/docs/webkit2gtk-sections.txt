@@ -368,6 +368,23 @@ webkit_download_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitPermissionRequest</FILE>
+WebKitPermissionRequest
+webkit_permission_request_allow
+webkit_permission_request_deny
+
+<SUBSECTION Standard>
+WebKitPermissionRequestIface
+WEBKIT_TYPE_PERMISSION_REQUEST
+WEBKIT_PERMISSION_REQUEST
+WEBKIT_IS_PERMISSION_REQUEST
+WEBKIT_PERMISSION_REQUEST_GET_IFACE
+
+<SUBSECTION Private>
+webkit_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitPolicyDecision</FILE>
 WebKitPolicyDecision
 webkit_policy_decision_download

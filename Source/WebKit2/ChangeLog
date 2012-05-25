@@ -1,3 +1,46 @@
+2012-05-25  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK][WK2] Implement API for generic permission requests
+        https://bugs.webkit.org/show_bug.cgi?id=84018
+
+        Reviewed by Martin Robinson.
+
+        Added new 'permission-request' signal to WebKitWebView, to be
+        fired when WebKit needs confirmation from the user on whether to
+        allow or deny certain operations, such as sharing the user's
+        location with web site through the Geolocation API.
+
+        New WebKitPermissionRequest interface, providing allow() and
+        deny() operations, to be called over the objects implementing it
+        when emitted along with the new 'permission-request' signal.
+
+        * UIProcess/API/gtk/WebKitPermissionRequest.cpp: Added.
+        (webkit_permission_request_default_init):
+        (webkit_permission_request_allow):
+        (webkit_permission_request_deny):
+        * UIProcess/API/gtk/WebKitPermissionRequest.h: Added.
+        (_WebKitPermissionRequestIface):
+        * GNUmakefile.am: Added new files.
+
+        Added the new signal to WebKitWebView, providing a default handler
+        that will just deny the request when the signal is not handled.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDecidePermissionRequest): Default handler.
+        (webkit_web_view_class_init): Declare the new signal and connect
+        to the default handler.
+        (webkitWebViewMakePermissionRequest): Helper function to create a
+        make a new permission request and emit the new signal signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Declare the creational
+        function webkitWebViewMakePermissionRequest for internal use only.
+
+        Updated documentation files.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-05-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2] Fix client interface size for WKPageContextMenuClient.
