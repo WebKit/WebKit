@@ -1,3 +1,17 @@
+2012-05-25  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make sure IceCallback is valid for PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=87480
+
+        Reviewed by Adam Barth.
+
+        Existing tests have been extended to cover this change.
+
+        * Modules/mediastream/PeerConnection00.cpp:
+        (WebCore::PeerConnection00::create):
+        * Modules/mediastream/PeerConnection00.h:
+        * Modules/mediastream/PeerConnection00.idl:
+
 2012-05-25  Mike West  <mkwst@chromium.org>
 
         Inline script and style blocked by Content Security Policy should provide more detailed console errors.

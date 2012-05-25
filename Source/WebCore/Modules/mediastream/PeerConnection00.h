@@ -86,7 +86,7 @@ public:
         ICE_CLOSED = 0x700
     };
 
-    static PassRefPtr<PeerConnection00> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<IceCallback>);
+    static PassRefPtr<PeerConnection00> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<IceCallback>, ExceptionCode&);
     ~PeerConnection00();
 
     PassRefPtr<SessionDescription> createOffer(ExceptionCode&);

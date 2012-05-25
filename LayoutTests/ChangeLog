@@ -1,3 +1,13 @@
+2012-05-25  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make sure IceCallback is valid for PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=87480
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/constructors-expected.txt:
+        * fast/mediastream/constructors.html:
+
 2012-05-25  Mike West  <mkwst@chromium.org>
 
         Inline script and style blocked by Content Security Policy should provide more detailed console errors.
