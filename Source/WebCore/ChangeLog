@@ -1,3 +1,88 @@
+2012-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Cache absolute clip rects on RenderLayer for compositing overlap testing
+        https://bugs.webkit.org/show_bug.cgi?id=87212
+
+        Reviewed by Dave Hyatt.
+        
+        Enhance the cache of ClipRects on RenderLayers to store three
+        different types of ClipRects, rather than just one.
+        
+        We need to compute clip rects relative to different layers
+        for different purposes. For painting, we compute relative to
+        the compositing layer which is acting as a painting root.
+        For hit testing, we compute relative to the root, except
+        for transformed layers. For composting overlap testing, we
+        compute relative to the root ("absolute"). At other times, we do one-off
+        computation which we never want to cache ("temporary clip rects").
+        
+        This change allows us to cache rects for hit testing, and for
+        compositing overlap testing. This has huge performance benefits
+        on some pages (bug 84410).
+        
+        This change also makes ClipRects not arena-allocated, so we
+        can use RefPtr<ClipRect>.
+
+        No testable behavior change.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed): No need for the
+        explicit clipRects teardown, since clipRects don't need a live
+        RenderObject for arena-based destruction.
+
+        * rendering/RenderLayer.cpp: Remove arena-related new and delete.
+        (WebCore::RenderLayer::RenderLayer): No need to explicitly initialize m_clipRects,
+        since it's an OwnPtr now.
+        (WebCore::RenderLayer::~RenderLayer): No explicit clipRect teardown required.
+        (WebCore::RenderLayer::clippingRootForPainting): Renamed to make its purpose
+        more obvious.
+        (WebCore::RenderLayer::paintLayer): Use the TemporaryClipRects type when necessary.
+        (WebCore::RenderLayer::paintLayerContents): Ditto
+        (WebCore::RenderLayer::hitTestLayer): No longer need to use temporary clipRects when
+        hit testing since we cache clip rects for hit testing.
+        (WebCore::RenderLayer::updateClipRects): Take a ClipRectsType and pass it through.
+        (WebCore::RenderLayer::calculateClipRects): Ditto
+        (WebCore::RenderLayer::parentClipRects): Ditto
+        (WebCore::RenderLayer::backgroundClipRect): Ditto
+        (WebCore::RenderLayer::calculateRects): Take ClipRectsType, which obviates temporaryClipRects.
+        (WebCore::RenderLayer::childrenClipRect): Use clippingRootForPainting().
+        (WebCore::RenderLayer::selfClipRect): Ditto
+        (WebCore::RenderLayer::localClipRect): Ditto
+        (WebCore::RenderLayer::clearClipRectsIncludingDescendants): Take a type of clip rect to clear
+        (include all). Allows us to just clear painting clip rects.
+        (WebCore::RenderLayer::clearClipRects):
+
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::create): We don't use RefCounted<> in order to use a bit in
+        the refCount for a flag. Add create() method.
+        (WebCore::ClipRects::deref): No longer arena-allocated.
+        (WebCore::ClipRectsCache::ClipRectsCache): Struct that holds a small
+        array of the 3 types of clipRects (and, in debug, the layer relative
+        to which they were computed).
+        (WebCore::RenderLayer::clipRects):
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds): Use AbsoluteClipRects; rootLayer
+        is always the RenderView's layer here.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Use TemporaryClipRects.
+        (WebCore::RenderLayerBacking::setRequiresOwnBackingStore): When this variable changes,
+        we need to invalidate painting clipRects, since it affects the ancestor relative to which
+        those rects are computed.
+
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking): When the composited state
+        of a layer changes, we have to clear all descendant clip rects, since this
+        can affect the layers relative to which clip rects are computed.
+        (WebCore::RenderLayerCompositor::addToOverlapMap): Use AbsoluteClipRects.
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): No need
+        to call updateLayerPosition(), since that should have always happened after
+        layout. That call cleared clip rects, so removing it is very beneficial.
+        (WebCore::RenderLayerCompositor::clippedByAncestor): Use TemporaryClipRects.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers): Use TemporaryClipRects.
+
 2012-05-25  Dean Jackson  <dino@apple.com>
 
         Unreviewed, rolling out r112155.

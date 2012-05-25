@@ -101,7 +101,7 @@ public:
     // paints into some ancestor layer.
     bool paintsIntoCompositedAncestor() const { return !m_requiresOwnBackingStore; }
 
-    void setRequiresOwnBackingStore(bool flag) { m_requiresOwnBackingStore = flag; }
+    void setRequiresOwnBackingStore(bool);
 
     void setContentsNeedDisplay();
     // r is in the coordinate space of the layer's render object
