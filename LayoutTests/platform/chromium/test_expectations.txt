@@ -3803,3 +3803,7 @@ BUGWK87364 DEBUG : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT PA
 BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
 
 BUGWK87459 DEBUG : http/tests/media/video-cookie.html = CRASH
+
+// directory drag-and-drop support is not yet enabled.
+BUGWK76809 SKIP : editing/pasteboard/data-transfer-items-drag-drop-entry.html = FAIL
+BUGWK76809 SKIP : fast/filesystem/cross-filesystem-op.html = FAIL

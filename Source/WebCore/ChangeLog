@@ -1,3 +1,14 @@
+2012-05-24  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] DataTransferItem.webkitGetAsEntry() shouldn't be exposed without flag yet
+        https://bugs.webkit.org/show_bug.cgi?id=87457
+
+        Reviewed by Kent Tamura.
+
+        No new tests, marking some tests SKIP as we stop exposing this by default.
+
+        * Modules/filesystem/DataTransferItemFileSystem.idl: Removed webkitGetAsEntry
+
 2012-05-25  Rakesh KN  <rakesh.kn@motorola.com>
 
         RadioNodeList does not include a object element
