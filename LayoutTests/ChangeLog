@@ -1,3 +1,25 @@
+2012-05-25  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Gardening of failing tests and missing results
+        https://bugs.webkit.org/show_bug.cgi?id=87486
+
+        Unreviewed EFL gardening. Some rebaselines after r118448, and updated
+        expectations for a couple of tests.
+
+        * platform/efl/fast/html/details-position-expected.txt:
+        * platform/efl/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/efl/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/efl/fast/replaced/width100percent-radio-expected.png:
+        * platform/efl/fast/replaced/width100percent-radio-expected.txt:
+        * platform/efl/mathml/presentation/fractions-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/subsup-expected.txt:
+        * platform/efl/test_expectations.txt:
+
 2012-05-25  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip a new test: fast/events/domactivate-sets-underlying-click-event-as-handled.html

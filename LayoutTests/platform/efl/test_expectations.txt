@@ -46,6 +46,9 @@ BUGWK83897 SKIP : fast/regions = FAIL
 // Exclusions implementation not complete yet.
 BUGWK83898 SKIP : fast/exclusions = FAIL
 
+// CSS Regions & Exclusions implementation not complete yet.
+BUGWK83898 : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
+
 // CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
 BUGWK85465 SKIP : css3/filters = TEXT
 BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
@@ -397,7 +400,7 @@ BUGWK82294 : compositing/visibility/visibility-image-layers-dynamic.html = TEXT
 BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT
 
 // EFL's LayoutTestController does not implement display
-BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = TEXT
+BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = MISSING
 
 // EFL does not support WebGL
 BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
