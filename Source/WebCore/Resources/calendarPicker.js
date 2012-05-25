@@ -1080,11 +1080,11 @@ function handleClear() {
  * @param {string} value
  */
 function submitValue(value) {
-    window.setValueAndClosePopup(0, value);
+    window.pagePopupController.setValueAndClosePopup(0, value);
 }
 
 function handleCancel() {
-    window.setValueAndClosePopup(-1, "");
+    window.pagePopupController.setValueAndClosePopup(-1, "");
 }
 
 /**

@@ -38,17 +38,19 @@ namespace WebCore {
 
 class DOMWindow;
 class PagePopupClient;
+class PagePopupController;
 
 class DOMWindowPagePopup : public Supplement<DOMWindow> {
 public:
-    static void setValueAndClosePopup(DOMWindow*, int intValue, const String& stringValue);
+    static PagePopupController* pagePopupController(DOMWindow*);
     static void install(DOMWindow*, PagePopupClient*);
+    ~DOMWindowPagePopup();
 
 private:
     explicit DOMWindowPagePopup(PagePopupClient*);
     static const AtomicString& supplementName();
 
-    PagePopupClient* m_popupClient;
+    RefPtr<PagePopupController> m_controller;
 };
 
 }

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<input type=date>
+<script>
+description('Confirm that the main window doesn\'t have pagePopupController, which should be present only in a calendar picker.');
+shouldBeTrue('window.pagePopupController === undefined');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

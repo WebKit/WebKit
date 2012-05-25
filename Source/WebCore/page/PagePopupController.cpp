@@ -29,42 +29,27 @@
  */
 
 #include "config.h"
-#include "DOMWindowPagePopup.h"
+#include "PagePopupController.h"
 
 #if ENABLE(PAGE_POPUP)
-#include "DOMWindow.h"
-#include "PagePopupController.h"
+#include "PagePopupClient.h"
 
 namespace WebCore {
 
-DOMWindowPagePopup::DOMWindowPagePopup(PagePopupClient* popupClient)
-    : m_controller(PagePopupController::create(popupClient))
+PagePopupController::PagePopupController(PagePopupClient* client)
+    : m_popupClient(client)
 {
-    ASSERT(popupClient);
+    ASSERT(client);
 }
 
-DOMWindowPagePopup::~DOMWindowPagePopup()
+PassRefPtr<PagePopupController> PagePopupController::create(PagePopupClient* client)
 {
+    return adoptRef(new PagePopupController(client));
 }
 
-const AtomicString& DOMWindowPagePopup::supplementName()
+void PagePopupController::setValueAndClosePopup(int numValue, const String& stringValue)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup"));
-    return name;
-}
-
-PagePopupController* DOMWindowPagePopup::pagePopupController(DOMWindow* window)
-{
-    DOMWindowPagePopup* supplement = static_cast<DOMWindowPagePopup*>(from(window, supplementName()));
-    ASSERT(supplement);
-    return supplement->m_controller.get();
-}
-
-void DOMWindowPagePopup::install(DOMWindow* window, PagePopupClient* popupClient)
-{
-    ASSERT(window);
-    ASSERT(popupClient);
-    provideTo(window, supplementName(), adoptPtr(new DOMWindowPagePopup(popupClient)));
+    m_popupClient->setValueAndClosePopup(numValue, stringValue);
 }
 
 }

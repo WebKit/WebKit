@@ -59,7 +59,17 @@ bool ContextEnabledFeatures::styleScopedEnabled(Document* document)
     if (Frame* frame = document->frame())
         return frame->loader()->client()->allowStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled());
     return false;
-   
+}
+#endif   
+
+#if ENABLE(PAGE_POPUP)
+bool ContextEnabledFeatures::pagePopupEnabled(DOMWindow* window)
+{
+    if (!window)
+        return false;
+    if (Frame* frame = window->frame())
+        return frame->loader()->client()->allowPagePopup();
+    return false;
 }
 #endif
 

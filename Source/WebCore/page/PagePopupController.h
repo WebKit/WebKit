@@ -28,44 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DOMWindowPagePopup.h"
+#ifndef PagePopupController_h
+#define PagePopupController_h
 
 #if ENABLE(PAGE_POPUP)
-#include "DOMWindow.h"
-#include "PagePopupController.h"
+
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-DOMWindowPagePopup::DOMWindowPagePopup(PagePopupClient* popupClient)
-    : m_controller(PagePopupController::create(popupClient))
-{
-    ASSERT(popupClient);
-}
+class PagePopupClient;
 
-DOMWindowPagePopup::~DOMWindowPagePopup()
-{
-}
+class PagePopupController : public RefCounted<PagePopupController> {
+public:
+    static PassRefPtr<PagePopupController> create(PagePopupClient*);
+    void setValueAndClosePopup(int numValue, const String& stringValue);
 
-const AtomicString& DOMWindowPagePopup::supplementName()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup"));
-    return name;
-}
+private:
+    explicit PagePopupController(PagePopupClient*);
 
-PagePopupController* DOMWindowPagePopup::pagePopupController(DOMWindow* window)
-{
-    DOMWindowPagePopup* supplement = static_cast<DOMWindowPagePopup*>(from(window, supplementName()));
-    ASSERT(supplement);
-    return supplement->m_controller.get();
-}
-
-void DOMWindowPagePopup::install(DOMWindow* window, PagePopupClient* popupClient)
-{
-    ASSERT(window);
-    ASSERT(popupClient);
-    provideTo(window, supplementName(), adoptPtr(new DOMWindowPagePopup(popupClient)));
-}
+    PagePopupClient* m_popupClient;
+};
 
 }
+#endif
 #endif

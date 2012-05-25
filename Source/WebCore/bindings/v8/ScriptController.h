@@ -122,9 +122,6 @@ public:
     void bindToWindowObject(Frame*, const String& key, NPObject*);
 
     PassScriptInstance createScriptInstanceForWidget(Widget*);
-#if ENABLE(PAGE_POPUP)
-    void installFunctionsForPagePopup(Frame*, PagePopupClient*);
-#endif
 
     // Check if the javascript engine has been initialized.
     bool haveInterpreter() const;

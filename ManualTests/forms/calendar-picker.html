@@ -80,13 +80,17 @@ function openCalendar(args) {
     script.src = '../../Source/WebCore/Resources/calendarPicker.js?' + (new Date()).getTime();
     doc.body.appendChild(script);
 
-    setTimeout(function() {
-        frame.contentWindow.postMessage(JSON.stringify(args), "*");
-        frame.contentWindow.setValueAndClosePopup = function(numValue, stringValue) {
+    var pagePopupController = {
+        setValueAndClosePopup: function(numValue, stringValue) {
             window.log('number=' + numValue + ', string="' + stringValue + '"');
             if (numValue == 0)
                 window.document.getElementById('date').value = stringValue;
-        };
+        }
+    }
+
+    setTimeout(function() {
+        frame.contentWindow.postMessage(JSON.stringify(args), "*");
+        frame.contentWindow.pagePopupController = pagePopupController;
     }, 100);
 }
 

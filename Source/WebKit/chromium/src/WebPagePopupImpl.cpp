@@ -32,6 +32,7 @@
 #include "WebPagePopupImpl.h"
 
 #include "Chrome.h"
+#include "DOMWindowPagePopup.h"
 #include "EmptyClients.h"
 #include "FileChooser.h"
 #include "FocusController.h"
@@ -127,6 +128,10 @@ private:
     WebPagePopupImpl* m_popup;
 };
 
+class PagePopupFrameLoaderClient : public EmptyFrameLoaderClient {
+    virtual bool allowPagePopup() OVERRIDE { return true; }
+};
+
 // WebPagePopupImpl ----------------------------------------------------------------
 
 WebPagePopupImpl::WebPagePopupImpl(WebWidgetClient* client)
@@ -181,8 +186,8 @@ bool WebPagePopupImpl::initPage()
     m_page->settings()->setScriptEnabled(true);
     m_page->settings()->setAllowScriptsToCloseWindows(true);
 
-    static FrameLoaderClient* emptyFrameLoaderClient =  new EmptyFrameLoaderClient;
-    RefPtr<Frame> frame = Frame::create(m_page.get(), 0, emptyFrameLoaderClient);
+    static FrameLoaderClient* pagePopupFrameLoaderClient =  new PagePopupFrameLoaderClient;
+    RefPtr<Frame> frame = Frame::create(m_page.get(), 0, pagePopupFrameLoaderClient);
     frame->setView(FrameView::create(frame.get()));
     frame->init();
     frame->view()->resize(m_popupClient->contentSize());
@@ -195,7 +200,8 @@ bool WebPagePopupImpl::initPage()
     m_popupClient->writeDocument(*writer);
     writer->end();
 
-    frame->script()->installFunctionsForPagePopup(frame.get(), m_popupClient);
+    ASSERT(frame->existingDOMWindow());
+    DOMWindowPagePopup::install(frame->existingDOMWindow(), m_popupClient);
     return true;
 }
 

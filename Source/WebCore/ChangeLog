@@ -1,3 +1,47 @@
+2012-05-24  Kent Tamura  <tkent@chromium.org>
+
+        PAGE_POPUP: window.setValueAndClosePopup should be moved to a
+        per-context property of DOMWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=87086
+
+        Reviewed by Adam Barth.
+
+        - Introduce window.pagePagePopupController property as V8EnabledPerContext.
+        - Move window.setValueAndClosePopup() to window.pagePopupController.
+        So, we can remove ad-hoc ScriptController::installFunctionsForPagePopup().
+
+        No behavior change.
+
+        Test: fast/forms/date/no-page-popup-controller.html
+
+        * Resources/calendarPicker.js:
+        (submitValue): Use window.pagePopupController.
+        (handleCancel): ditto.
+        * WebCore.gypi: Add new files.
+        * bindings/generic/ContextEnabledFeatures.cpp:
+        (WebCore::ContextEnabledFeatures::pagePopupEnabled): Added.
+        * bindings/generic/ContextEnabledFeatures.h:
+        (ContextEnabledFeatures): Added.
+        * bindings/v8/ScriptController.cpp: Remove installFunctionsForPagePopup().
+        * bindings/v8/ScriptController.h: ditto.
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowPagePopup): Added.
+        * page/DOMWindowPagePopup.cpp:
+        (WebCore::DOMWindowPagePopup::DOMWindowPagePopup):
+        Creates a PagePopupController object for the specified PagePopupClient.
+        (WebCore::DOMWindowPagePopup::~DOMWindowPagePopup):
+        Empty destructor to generate the RefPtr<PagePopupController> destructor.
+        (WebCore::DOMWindowPagePopup::pagePopupController):
+        * page/DOMWindowPagePopup.h:
+        (DOMWindowPagePopup):
+         - Remove setValueAndClosePopup()
+         - Add pagePopupController()
+         - Change the data member from PagePopupClient to PagePopupController.
+        * page/DOMWindowPagePopup.idl: Supply per-context window.pagePopupController.
+        * page/PagePopupController.cpp: Added. This object is attached to window.
+        * page/PagePopupController.h: ditto.
+        * page/PagePopupController.idl: ditto.
+
 2012-05-21  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: add a file system call which captures the file metadata at once.

@@ -48,6 +48,9 @@ public:
 #if ENABLE(STYLE_SCOPED)
     static bool styleScopedEnabled(Document*);
 #endif
+#if ENABLE(PAGE_POPUP)
+    static bool pagePopupEnabled(DOMWindow*);
+#endif
 };
 
 } // namespace WebCore

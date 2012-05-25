@@ -1,3 +1,14 @@
+2012-05-24  Kent Tamura  <tkent@chromium.org>
+
+        PAGE_POPUP: window.setValueAndClosePopup should be moved to a
+        per-context property of DOMWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=87086
+
+        Reviewed by Adam Barth.
+
+        * ManualTests/forms/calendar-picker.html:
+        Introduce pseudo window.pagePopupController.
+
 2012-05-24  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Add --enable-css3-flexbox configure option after r118304.

@@ -313,6 +313,9 @@ namespace WebCore {
 
         virtual bool shadowDOMAllowed(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
         virtual bool allowStyleScoped(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
+#if ENABLE(PAGE_POPUP)
+        virtual bool allowPagePopup() { return false; }
+#endif
 
         // This callback notifies the client that the frame was about to run
         // JavaScript but did not because allowScript returned false. We

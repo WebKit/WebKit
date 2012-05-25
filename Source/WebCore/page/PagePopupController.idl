@@ -28,44 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DOMWindowPagePopup.h"
-
-#if ENABLE(PAGE_POPUP)
-#include "DOMWindow.h"
-#include "PagePopupController.h"
-
-namespace WebCore {
-
-DOMWindowPagePopup::DOMWindowPagePopup(PagePopupClient* popupClient)
-    : m_controller(PagePopupController::create(popupClient))
-{
-    ASSERT(popupClient);
+module window {
+    interface [
+        Conditional=PAGE_POPUP
+    ] PagePopupController {
+        void setValueAndClosePopup(in long numberValue, in DOMString stringValue);
+    };
 }
-
-DOMWindowPagePopup::~DOMWindowPagePopup()
-{
-}
-
-const AtomicString& DOMWindowPagePopup::supplementName()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup"));
-    return name;
-}
-
-PagePopupController* DOMWindowPagePopup::pagePopupController(DOMWindow* window)
-{
-    DOMWindowPagePopup* supplement = static_cast<DOMWindowPagePopup*>(from(window, supplementName()));
-    ASSERT(supplement);
-    return supplement->m_controller.get();
-}
-
-void DOMWindowPagePopup::install(DOMWindow* window, PagePopupClient* popupClient)
-{
-    ASSERT(window);
-    ASSERT(popupClient);
-    provideTo(window, supplementName(), adoptPtr(new DOMWindowPagePopup(popupClient)));
-}
-
-}
-#endif
