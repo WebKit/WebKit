@@ -1,3 +1,10 @@
+2012-05-24  Stephanie Lewis  <slewis@apple.com>
+
+        See https://bugs.webkit.org/show_bug.cgi?id=87182
+        Unreviewed, checking in expected results for branch.
+
+        * platform/mac-wk2/plugins/mouse-events-scaled-iframe-expected.txt:
+
 2012-05-24  Lucas Forschler  <lforschler@apple.com>
 
     Merge 118204
