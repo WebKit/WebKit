@@ -1,3 +1,14 @@
+2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: HeapProfiler's perf test: each N-th run pushes the run results N-th times.
+        https://bugs.webkit.org/show_bug.cgi?id=87476
+
+        The time tracking wrappers were attaching on each run.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/heap-snapshot.html:
+
 2012-05-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: HeapProfiler: upstream retainedSize calculation.

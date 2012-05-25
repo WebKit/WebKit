@@ -7,6 +7,20 @@
 
 function test()
 {
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildRetainers");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatedNodes");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildAggregates");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateClassesRetainedSize");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateObjectToWindowDistance");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateRetainedSizes");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markPageOwnedNodes");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildPostOrderIndex");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatorTree");
+
     function performanceTest(timer)
     {
         var transferTimerCookie;
@@ -20,20 +34,6 @@ function test()
 
         function step0()
         {
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildRetainers");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatedNodes");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildAggregates");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateClassesRetainedSize");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateObjectToWindowDistance");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateRetainedSizes");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markPageOwnedNodes");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildPostOrderIndex");
-            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatorTree");
-
             timer.finish(backendTimerCookie);
             transferTimerCookie = timer.start("transfer-snapshot");
             var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
