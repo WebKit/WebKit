@@ -20,6 +20,7 @@ function test()
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_splitNodesAndContainmentEdges");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildPostOrderIndex");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatorTree");
+    InspectorTest.measureFunction(WebInspector.HeapSnapshotConstructorsDataGrid.prototype, "_aggregatesReceived");
 
     function performanceTest(timer)
     {

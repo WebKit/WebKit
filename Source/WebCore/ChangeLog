@@ -1,5 +1,34 @@
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Web Inspector: HeapSnapshot: introduce performance counter for HeapSnapshotConstructorsDataGrid._aggregatesReceived method.
+        https://bugs.webkit.org/show_bug.cgi?id=87393
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshotDataGrids.js:
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._aggregatesReceived):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype._populateChildren):
+
+2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: drop obsolete WebInspector.Uint32Array and adjust snapshot chunk size for better transfer-snapshot metric.
+        https://bugs.webkit.org/show_bug.cgi?id=87490
+
+        Originally WebInspector.Uint32Array was used for dynamic array
+        reallocation because we had no information about expected arrays sizes.
+        Now we have these sizes and allocates array precisely.
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/v8/ScriptHeapSnapshot.cpp:
+        (WebCore):
+        * inspector/front-end/HeapSnapshot.js:
+        * inspector/front-end/HeapSnapshotLoader.js:
+        (WebInspector.HeapSnapshotLoader.prototype._parseUintArray):
+        (WebInspector.HeapSnapshotLoader.prototype.pushJSONChunk):
+
+2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: drop obsolete WebInspector.Uint32Array and adjust snapshot chunk size for better transfer-snapshot metric.
         https://bugs.webkit.org/show_bug.cgi?id=87490
 
