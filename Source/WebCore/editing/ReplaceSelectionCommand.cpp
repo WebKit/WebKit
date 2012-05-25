@@ -936,7 +936,10 @@ void ReplaceSelectionCommand::doApply()
 
         if (RefPtr<Node> nodeToSplitTo = nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(insertionPos)) {
             if (insertionPos.containerNode() != nodeToSplitTo->parentNode()) {
-                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo->parentNode()).get();
+                Node* splitStart = insertionPos.computeNodeAfterPosition();
+                if (!splitStart)
+                    splitStart = insertionPos.containerNode();
+                nodeToSplitTo = splitTreeToNode(splitStart, nodeToSplitTo->parentNode()).get();
                 insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
             }
         }

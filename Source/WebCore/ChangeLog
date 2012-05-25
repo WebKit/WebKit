@@ -1,3 +1,19 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r112399): insertHTML doesn't respect current selection range and inserts HTML to incorrect position
+        https://bugs.webkit.org/show_bug.cgi?id=87195
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by our passing insertionPos.anchorNode() to splitTreeToNode's start node even when
+        the position's type was an offset in a container. Fixed the bug by passing the node after the insert position
+        or the container node if the position is at the end of the container.
+
+        Test: editing/pasteboard/paste-at-end-of-node-followed-by-inline-element.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2012-05-24  Emil A Eklund  <eae@chromium.org>
 
         REGRESSION (115573): Incorrect rounding of margins for floats

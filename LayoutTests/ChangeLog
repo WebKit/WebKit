@@ -1,3 +1,15 @@
+2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r112399): insertHTML doesn't respect current selection range and inserts HTML to incorrect position
+        https://bugs.webkit.org/show_bug.cgi?id=87195
+
+        Reviewed by Darin Adler.
+
+        Add a regression test.
+
+        * editing/pasteboard/paste-at-end-of-node-followed-by-inline-element-expected.txt: Added.
+        * editing/pasteboard/paste-at-end-of-node-followed-by-inline-element.html: Added.
+
 2012-05-24  Emil A Eklund  <eae@chromium.org>
 
         REGRESSION (115573): Incorrect rounding of margins for floats
