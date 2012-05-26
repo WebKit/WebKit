@@ -1,3 +1,15 @@
+2012-05-25  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        cursor gets trapped when border-style: dashed is used
+        https://bugs.webkit.org/show_bug.cgi?id=37693
+
+        Reviewed by Tony Chang.
+
+        This bug has been fixed. Add a test to make sure that it won't regress.
+
+        * editing/selection/move-by-line-006-expected.txt: Added.
+        * editing/selection/move-by-line-006.html: Added.
+
 2012-05-25  Tony Chang  <tony@chromium.org>
 
         implement new negative flexing algorithm
