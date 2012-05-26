@@ -118,6 +118,17 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 
 #endif
 
+#if OS(WINDOWS)
+inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, unsigned newValue)
+{
+    return InterlockedCompareExchange(reinterpret_cast<LONG volatile*>(location), static_cast<LONG>(newValue), static_cast<LONG>(expected)) == static_cast<LONG>(expected);
+}
+
+inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* newValue)
+{
+    return InterlockedCompareExchangePointer(location, newValue, expected) == expected;
+}
+#else // OS(WINDOWS) --> not windows
 #if COMPILER(GCC) && !COMPILER(CLANG) // Work around a gcc bug 
 inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, unsigned newValue) 
 #else
@@ -184,6 +195,7 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
     return 0;
 #endif // ENABLE(COMPARE_AND_SWAP)
 }
+#endif // OS(WINDOWS) (end of the not-windows case)
 
 inline bool weakCompareAndSwapUIntPtr(volatile uintptr_t* location, uintptr_t expected, uintptr_t newValue)
 {
