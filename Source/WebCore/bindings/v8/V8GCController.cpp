@@ -59,6 +59,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -389,6 +393,10 @@ void V8GCController::gcPrologue()
 {
     v8::HandleScope scope;
 
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT_BEGIN0("v8", "GC");
+#endif
+
 #ifndef NDEBUG
     DOMObjectVisitor domObjectVisitor;
     visitDOMObjects(&domObjectVisitor);
@@ -508,6 +516,10 @@ void V8GCController::gcEpilogue()
     visitDOMNodes(&weakDOMNodeVisitor);
 
     enumerateGlobalHandles();
+#endif
+
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT_END0("v8", "GC");
 #endif
 }
 

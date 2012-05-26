@@ -1,3 +1,19 @@
+2012-05-25  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Instrument V8 GC with TraceEvent
+        https://bugs.webkit.org/show_bug.cgi?id=87530
+
+        Reviewed by Kentaro Hara.
+
+        We sometimes get performance issues where performance stalls can
+        be attributed to badly timed GC operations, especially ones that
+        happen just before a frame running. This adds tracing calls around
+        GC so that we can better understand these kinds of hangs.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::gcPrologue):
+        (WebCore::V8GCController::gcEpilogue):
+
 2012-05-25  Garrett Casto  <gcasto@chromium.org>
 
         Allow WebTextFieldDecoratorClient to see applied decorations.
