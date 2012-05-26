@@ -1,3 +1,11 @@
+2012-05-25  Stephanie Lewis  <slewis@apple.com>
+
+        See https://bugs.webkit.org/show_bug.cgi?id=87544
+
+        Unreviewed, skipping asserting test 
+
+        * platform/mac/Skipped:
+
 2012-05-25  Lynn Neir  <lynn.neir@skype.net>
 
         Updated tests as a result of implementing TextInputController in DRT for windows, https://bugs.webkit.org/show_bug.cgi?id=32021
