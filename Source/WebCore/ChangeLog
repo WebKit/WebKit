@@ -1,3 +1,78 @@
+2012-05-26  Rob Buis  <rwlbuis@webkit.org>
+
+        Bug 15799: textPath element does not re-render when referenced path changes
+        https://bugs.webkit.org/show_bug.cgi?id=15799
+
+        Reviewed by Nikolas Zimmermann.
+
+        Support textPath updating to changes on the referenced path. To make this possible
+        use the target reference functionality also used by SVGFEImageElement.
+
+        Tests: svg/custom/textPath-change-id-expected.svg
+               svg/custom/textPath-change-id-pattern-expected.svg
+               svg/custom/textPath-change-id-pattern.svg
+               svg/custom/textPath-change-id.svg
+               svg/custom/textPath-change-id2-expected.svg
+               svg/custom/textPath-change-id2-pattern-expected.svg
+               svg/custom/textPath-change-id2-pattern.svg
+               svg/custom/textPath-change-id2.svg
+               svg/custom/textPath-change-reference-expected.svg
+               svg/custom/textPath-change-reference-pattern-expected.svg
+               svg/custom/textPath-change-reference-pattern.svg
+               svg/custom/textPath-change-reference-using-baseval-expected.svg
+               svg/custom/textPath-change-reference-using-baseval-pattern-expected.svg
+               svg/custom/textPath-change-reference-using-baseval-pattern.svg
+               svg/custom/textPath-change-reference-using-baseval.svg
+               svg/custom/textPath-change-reference.svg
+               svg/custom/textPath-change-reference2-expected.svg
+               svg/custom/textPath-change-reference2-pattern-expected.svg
+               svg/custom/textPath-change-reference2-pattern.svg
+               svg/custom/textPath-change-reference2-using-baseval-expected.svg
+               svg/custom/textPath-change-reference2-using-baseval-pattern-expected.svg
+               svg/custom/textPath-change-reference2-using-baseval-pattern.svg
+               svg/custom/textPath-change-reference2-using-baseval.svg
+               svg/custom/textPath-change-reference2.svg
+               svg/custom/textPath-insert-path-expected.svg
+               svg/custom/textPath-insert-path-pattern-expected.svg
+               svg/custom/textPath-insert-path-pattern.svg
+               svg/custom/textPath-insert-path.svg
+               svg/custom/textPath-modify-child-expected.svg
+               svg/custom/textPath-modify-child-pattern-expected.svg
+               svg/custom/textPath-modify-child-pattern.svg
+               svg/custom/textPath-modify-child.svg
+               svg/custom/textPath-path-change-expected.svg
+               svg/custom/textPath-path-change-pattern-expected.svg
+               svg/custom/textPath-path-change-pattern.svg
+               svg/custom/textPath-path-change-using-svg-dom-expected.svg
+               svg/custom/textPath-path-change-using-svg-dom-pattern-expected.svg
+               svg/custom/textPath-path-change-using-svg-dom-pattern.svg
+               svg/custom/textPath-path-change-using-svg-dom.svg
+               svg/custom/textPath-path-change.svg
+               svg/custom/textPath-path-change2-expected.svg
+               svg/custom/textPath-path-change2-pattern-expected.svg
+               svg/custom/textPath-path-change2-pattern.svg
+               svg/custom/textPath-path-change2.svg
+               svg/custom/textPath-remove-path-expected.svg
+               svg/custom/textPath-remove-path-pattern-expected.svg
+               svg/custom/textPath-remove-path-pattern.svg
+               svg/custom/textPath-remove-path.svg
+               svg/custom/textPath-set-id-expected.svg
+               svg/custom/textPath-set-id.svg
+               svg/custom/textPath-startoffset-expected.svg
+               svg/custom/textPath-startoffset-pattern-expected.svg
+               svg/custom/textPath-startoffset-pattern.svg
+               svg/custom/textPath-startoffset.svg
+
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::~SVGTextPathElement):
+        (WebCore):
+        (WebCore::SVGTextPathElement::clearResourceReferences):
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        (WebCore::SVGTextPathElement::insertedInto):
+        (WebCore::SVGTextPathElement::removedFrom):
+        * svg/SVGTextPathElement.h:
+
 2012-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Avoid updateFromElement() usage in SVG

@@ -115,7 +115,13 @@ public:
 private:
     SVGTextPathElement(const QualifiedName&, Document*);
 
+    virtual ~SVGTextPathElement();
+
+    void clearResourceReferences();
+
+    virtual void buildPendingResource();
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const Attribute&) OVERRIDE;

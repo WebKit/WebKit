@@ -1,3 +1,82 @@
+2012-05-26  Rob Buis  <rwlbuis@webkit.org>
+
+        Bug 15799: textPath element does not re-render when referenced path changes
+        https://bugs.webkit.org/show_bug.cgi?id=15799
+
+        Reviewed by Nikolas Zimmermann.
+
+        - textPath-path-change-id.svg, react to change of id attribute on referenced path (makes the xlink:href valid).
+        - textPath-path-change-id2.svg, react to change of id attribute on referenced path (makes the xlink:href invalid).
+        - textPath-path-set-id.svg, react to setting of id attribute on referenced path (makes the xlink:href valid).
+        - textPath-change-reference.svg, <textPath> references existing <path>, change the xlink:href to a non-existing one.
+        - textPath-change-reference-using-baseval.svg, <textPath> references existing <path>, change the xlink:href to a non-existing one using SVG DOM.
+        - textPath-change-reference2.svg, <textPath> references non-existing <path>, change xlink:href to an existing one.
+        - textPath-change-reference2-using-baseval.svg, <textPath> references non-existing <path>, change xlink:href to an existing one using SVG DOM.
+        - textPath-insert-path.svg, <textPath> references non-existing <path>, <path> added dynamically.
+        - textPath-modify-child.svg, react to change on textPath content.
+        - textPath-path-change-using-svg-dom.svg, react to change on pathSegList of referenced path.
+        - textPath-path-change.svg, react to change on d attribute of referenced path.
+        - textPath-path-change2.svg, react to change on d attribute of path referenced by multiple <textPath>s.
+        - textPath-remove-path.svg, <textPath> references existing <path>, <path> is removed from DOM.
+        - textPath-startoffset.svg, react to startOffset attribute change on <textPath>.
+
+        These tests are duplicated for <textPath> inside a <pattern>.
+
+        * svg/custom/textPath-change-id-expected.svg: Added.
+        * svg/custom/textPath-change-id-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-id-pattern.svg: Added.
+        * svg/custom/textPath-change-id.svg: Added.
+        * svg/custom/textPath-change-id2-expected.svg: Added.
+        * svg/custom/textPath-change-id2-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-id2-pattern.svg: Added.
+        * svg/custom/textPath-change-id2.svg: Added.
+        * svg/custom/textPath-change-reference-expected.svg: Added.
+        * svg/custom/textPath-change-reference-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-reference-pattern.svg: Added.
+        * svg/custom/textPath-change-reference-using-baseval-expected.svg: Added.
+        * svg/custom/textPath-change-reference-using-baseval-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-reference-using-baseval-pattern.svg: Added.
+        * svg/custom/textPath-change-reference-using-baseval.svg: Added.
+        * svg/custom/textPath-change-reference.svg: Added.
+        * svg/custom/textPath-change-reference2-expected.svg: Added.
+        * svg/custom/textPath-change-reference2-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-reference2-pattern.svg: Added.
+        * svg/custom/textPath-change-reference2-using-baseval-expected.svg: Added.
+        * svg/custom/textPath-change-reference2-using-baseval-pattern-expected.svg: Added.
+        * svg/custom/textPath-change-reference2-using-baseval-pattern.svg: Added.
+        * svg/custom/textPath-change-reference2-using-baseval.svg: Added.
+        * svg/custom/textPath-change-reference2.svg: Added.
+        * svg/custom/textPath-insert-path-expected.svg: Added.
+        * svg/custom/textPath-insert-path-pattern-expected.svg: Added.
+        * svg/custom/textPath-insert-path-pattern.svg: Added.
+        * svg/custom/textPath-insert-path.svg: Added.
+        * svg/custom/textPath-modify-child-expected.svg: Added.
+        * svg/custom/textPath-modify-child-pattern-expected.svg: Added.
+        * svg/custom/textPath-modify-child-pattern.svg: Added.
+        * svg/custom/textPath-modify-child.svg: Added.
+        * svg/custom/textPath-path-change-expected.svg: Added.
+        * svg/custom/textPath-path-change-pattern-expected.svg: Added.
+        * svg/custom/textPath-path-change-pattern.svg: Added.
+        * svg/custom/textPath-path-change-using-svg-dom-expected.svg: Added.
+        * svg/custom/textPath-path-change-using-svg-dom-pattern-expected.svg: Added.
+        * svg/custom/textPath-path-change-using-svg-dom-pattern.svg: Added.
+        * svg/custom/textPath-path-change-using-svg-dom.svg: Added.
+        * svg/custom/textPath-path-change.svg: Added.
+        * svg/custom/textPath-path-change2-expected.svg: Added.
+        * svg/custom/textPath-path-change2-pattern-expected.svg: Added.
+        * svg/custom/textPath-path-change2-pattern.svg: Added.
+        * svg/custom/textPath-path-change2.svg: Added.
+        * svg/custom/textPath-remove-path-expected.svg: Added.
+        * svg/custom/textPath-remove-path-pattern-expected.svg: Added.
+        * svg/custom/textPath-remove-path-pattern.svg: Added.
+        * svg/custom/textPath-remove-path.svg: Added.
+        * svg/custom/textPath-set-id-expected.svg: Added.
+        * svg/custom/textPath-set-id.svg: Added.
+        * svg/custom/textPath-startoffset-expected.svg: Added.
+        * svg/custom/textPath-startoffset-pattern-expected.svg: Added.
+        * svg/custom/textPath-startoffset-pattern.svg: Added.
+        * svg/custom/textPath-startoffset.svg: Added.
+
 2012-05-26  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r118577 and r118585.
