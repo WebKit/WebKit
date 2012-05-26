@@ -1,3 +1,18 @@
+2012-05-25  Mihai Parparita  <mihaip@chromium.org>
+
+        Allow synchronous XHRs to be disabled in documents
+        https://bugs.webkit.org/show_bug.cgi?id=87540
+
+        Reviewed by Eric Seidel.
+
+        Synchronous XMLHttpRequests are a problematic API, since they result
+        in blocked UI threads. Some clients may wish to always disable them;
+        give them a setting to do so (see also r103629 for other cases where
+        synchronous XHRs are disabled).
+
+        * fast/xmlhttprequest/xmlhttprequest-sync-disabled-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-sync-disabled.html: Added.
+
 2012-05-25  Stephanie Lewis  <slewis@apple.com>
 
         See https://bugs.webkit.org/show_bug.cgi?id=87558

@@ -611,4 +611,10 @@ void WebSettingsImpl::setMaxUntiledLayerSize(WebSize size)
     m_maxUntiledLayerSize = size;
 }
 
+void WebSettingsImpl::setSyncXHRInDocumentsEnabled(bool enabled)
+{
+    m_settings->setSyncXHRInDocumentsEnabled(enabled);
+}
+
+
 } // namespace WebKit

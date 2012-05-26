@@ -484,14 +484,22 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
         return;
     }
 
-    // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated 
-    // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
-    // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
-    // such as file: and data: still make sense to allow.
-    if (!async && scriptExecutionContext()->isDocument() && url.protocolIsInHTTPFamily() && m_responseTypeCode != ResponseTypeDefault) {
-        logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
-        ec = INVALID_ACCESS_ERR;
-        return;
+    if (!async && scriptExecutionContext()->isDocument()) {
+        if (!document()->settings()->syncXHRInDocumentsEnabled()) {
+            logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests cannot be made in the current window context.");
+            ec = INVALID_ACCESS_ERR;
+            return;
+        }
+
+        // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
+        // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
+        // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
+        // such as file: and data: still make sense to allow.
+        if (url.protocolIsInHTTPFamily() && m_responseTypeCode != ResponseTypeDefault) {
+            logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
+            ec = INVALID_ACCESS_ERR;
+            return;
+        }
     }
 
     m_method = uppercaseKnownHTTPMethod(method);

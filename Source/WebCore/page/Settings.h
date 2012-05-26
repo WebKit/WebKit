@@ -581,6 +581,9 @@ namespace WebCore {
         void setFixedPositionCreatesStackingContext(bool creates) { m_fixedPositionCreatesStackingContext = creates; }
         bool fixedPositionCreatesStackingContext() const { return m_fixedPositionCreatesStackingContext; }
 
+        void setSyncXHRInDocumentsEnabled(bool enabled) { m_syncXHRInDocumentsEnabled = enabled; }
+        bool syncXHRInDocumentsEnabled() const { return m_syncXHRInDocumentsEnabled; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -753,6 +756,7 @@ namespace WebCore {
         bool m_needsDidFinishLoadOrderQuirk : 1;
 
         bool m_fixedPositionCreatesStackingContext : 1;
+        bool m_syncXHRInDocumentsEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

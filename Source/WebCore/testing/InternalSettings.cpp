@@ -100,6 +100,7 @@ InternalSettings::InternalSettings(Frame* frame)
 #endif
     , m_originalEditingBehavior(settings()->editingBehaviorType())
     , m_originalFixedPositionCreatesStackingContext(settings()->fixedPositionCreatesStackingContext())
+    , m_originalSyncXHRInDocumentsEnabled(settings()->syncXHRInDocumentsEnabled())
 {
 }
 
@@ -113,6 +114,7 @@ void InternalSettings::restoreTo(Settings* settings)
 #endif
     settings->setEditingBehaviorType(m_originalEditingBehavior);
     settings->setFixedPositionCreatesStackingContext(m_originalFixedPositionCreatesStackingContext);
+    settings->setSyncXHRInDocumentsEnabled(m_originalSyncXHRInDocumentsEnabled);
 }
 
 Settings* InternalSettings::settings() const
@@ -350,6 +352,12 @@ void InternalSettings::setFixedPositionCreatesStackingContext(bool creates, Exce
 {
     InternalSettingsGuardForFrameView();
     settings()->setFixedPositionCreatesStackingContext(creates);
+}
+
+void InternalSettings::setSyncXHRInDocumentsEnabled(bool creates, ExceptionCode& ec)
+{
+    InternalSettingsGuardForFrameView();
+    settings()->setSyncXHRInDocumentsEnabled(creates);
 }
 
 }

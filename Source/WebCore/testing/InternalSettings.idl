@@ -55,6 +55,7 @@ module window {
         void setMediaPlaybackRequiresUserGesture(in boolean enabled) raises(DOMException);
         void setEditingBehavior(in DOMString behavior) raises(DOMException);
         void setFixedPositionCreatesStackingContext(in boolean creates) raises(DOMException);
+        void setSyncXHRInDocumentsEnabled(in boolean enabled) raises(DOMException);
     };
 }
 

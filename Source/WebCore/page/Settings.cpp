@@ -272,6 +272,7 @@ Settings::Settings(Page* page)
     , m_requestAnimationFrameEnabled(true)
     , m_needsDidFinishLoadOrderQuirk(false)
     , m_fixedPositionCreatesStackingContext(false)
+    , m_syncXHRInDocumentsEnabled(true)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

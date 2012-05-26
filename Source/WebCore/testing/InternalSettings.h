@@ -77,6 +77,7 @@ public:
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
     void setEditingBehavior(const String&, ExceptionCode&);
     void setFixedPositionCreatesStackingContext(bool, ExceptionCode&);
+    void setSyncXHRInDocumentsEnabled(bool, ExceptionCode&);
 
     void restoreTo(Settings*);
 
@@ -95,6 +96,7 @@ private:
 #endif
     EditingBehaviorType m_originalEditingBehavior;
     bool m_originalFixedPositionCreatesStackingContext;
+    bool m_originalSyncXHRInDocumentsEnabled;
 };
 
 } // namespace WebCore

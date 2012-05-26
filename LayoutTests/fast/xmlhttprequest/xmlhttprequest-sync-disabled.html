@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        if ('internals' in window) {
+            window.internals.settings.setSyncXHRInDocumentsEnabled(false);
+        } else {
+            document.write('This test depends on the syncXHRInDocumentsEnabled setting being false, so run in DumpRenderTree or manually enable it');
+        }
+
+        description('This tests that synchronous XMLHttpRequests fail when they are disabled for documents.');
+        var xhr = new XMLHttpRequest();
+        shouldThrow('xhr.open("GET", "http://mydomain/", false)');
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

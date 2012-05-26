@@ -153,7 +153,7 @@ public:
     virtual void setDefaultTileSize(WebSize) = 0;
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
     virtual void setFixedPositionCreatesStackingContext(bool) = 0;
-
+    virtual void setSyncXHRInDocumentsEnabled(bool) = 0;
 
 protected:
     ~WebSettings() { }
