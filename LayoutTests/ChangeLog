@@ -25,6 +25,12 @@
 
 2012-05-25  Stephanie Lewis  <slewis@apple.com>
 
+        Unreviewed, fix bad copy/paste.
+
+        * platform/mac/Skipped:
+
+2012-05-25  Stephanie Lewis  <slewis@apple.com>
+
         See https://bugs.webkit.org/show_bug.cgi?id=87558
 
         Unreviewed, checking in expected failing results.

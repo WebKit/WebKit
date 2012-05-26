@@ -869,5 +869,5 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=87544
-fast/block/inline-children-root-linebox-crash.html asserts after r118567
+fast/block/inline-children-root-linebox-crash.html
 
