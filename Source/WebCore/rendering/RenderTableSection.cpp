@@ -403,6 +403,8 @@ int RenderTableSection::calcRowLogicalHeight()
 void RenderTableSection::layout()
 {
     ASSERT(needsLayout());
+    ASSERT(!needsCellRecalc());
+    ASSERT(!table()->needsSectionRecalc());
 
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
     for (RenderObject* child = children()->firstChild(); child; child = child->nextSibling()) {
