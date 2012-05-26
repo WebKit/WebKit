@@ -1170,7 +1170,10 @@ fast/forms/number/input-number-events.html
 fast/forms/number/input-number-large-padding.html
 fast/forms/number/input-number-size.html
 fast/forms/number/input-spinbutton-capturing.html
+fast/forms/number/spin-button-events.html
 fast/forms/number/spin-button-gets-disabled-or-readonly.html
+fast/forms/number/spin-button-state.html
+fast/forms/number/spin-in-multi-column.html
 
 # Datalist is not yet enabled.
 fast/forms/datalist
