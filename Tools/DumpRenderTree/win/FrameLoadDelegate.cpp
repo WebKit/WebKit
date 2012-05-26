@@ -35,6 +35,7 @@
 #include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
+#include "TextInputController.h"
 #include "WebCoreTestSupport.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
@@ -76,6 +77,7 @@ FrameLoadDelegate::FrameLoadDelegate()
     : m_refCount(1)
     , m_gcController(adoptPtr(new GCController))
     , m_accessibilityController(adoptPtr(new AccessibilityController))
+    , m_textInputController(adoptPtr(new TextInputController))
 {
 }
 
@@ -365,6 +367,9 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     ASSERT(!exception);
 
     m_accessibilityController->makeWindowObject(context, windowObject, &exception);
+    ASSERT(!exception);
+
+    m_textInputController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
     JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");

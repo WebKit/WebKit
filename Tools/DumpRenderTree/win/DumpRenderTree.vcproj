@@ -433,6 +433,18 @@
 				RelativePath=".\LayoutTestControllerWin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TextInputController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextInputController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextInputControllerWin.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Delegates"

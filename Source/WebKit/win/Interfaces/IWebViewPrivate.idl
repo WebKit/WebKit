@@ -277,4 +277,17 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing([in] BSTR scheme);
     HRESULT registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing([in] BSTR scheme);
+    // Used by TextInputController in DumpRenderTree
+
+    HRESULT setCompositionForTesting([in] BSTR composition,[in] UINT from,[in] UINT length);
+
+    HRESULT hasCompositionForTesting([out, retval] BOOL* result);
+
+    HRESULT confirmCompositionForTesting([in] BSTR composition);
+
+    HRESULT compositionRangeForTesting([out] UINT* startPosition, [out] UINT* length);
+
+    HRESULT firstRectForCharacterRangeForTesting([in] UINT location, [in] UINT length, [out, retval] RECT* resultRect);
+
+    HRESULT selectedRangeForTesting([out] UINT* location, [out] UINT* length);
 }

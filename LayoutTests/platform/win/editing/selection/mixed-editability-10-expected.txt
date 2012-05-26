@@ -15,11 +15,11 @@ Hello World
 #6 non editable DIV element with an editable empty span element
 
 Hello: 
-Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=40) is incorrect.
-Anchor ([object HTMLDivElement], 3 caret[0,0] refpos=76) is incorrect.
-Anchor ([object HTMLDivElement], 1 caret[0,0] refpos=43) is incorrect.
-Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=8) is incorrect.
-Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=73) is incorrect.
-Anchor ([object HTMLDivElement], 3 caret[0,0] refpos=47) is incorrect.
-Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=58) is incorrect.
+Anchor ([object HTMLDivElement], 0 caret[40,42] refpos=40) is correct.
+Anchor ([object HTMLDivElement], 3 caret[75,42] refpos=76) is incorrect.
+Anchor ([object HTMLDivElement], 1 caret[43,110] refpos=43) is correct.
+Anchor ([object HTMLDivElement], 0 caret[8,110] refpos=8) is correct.
+Anchor ([object HTMLDivElement], 0 caret[73,178] refpos=73) is correct.
+Anchor ([object HTMLDivElement], 3 caret[47,246] refpos=47) is correct.
+Anchor ([object HTMLDivElement], 0 caret[58,314] refpos=58) is correct.
 Anchor ([object HTMLSpanElement], 0 caret[0,0] refpos=0) is correct.

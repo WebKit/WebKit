@@ -33,6 +33,7 @@
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
 #include "SoftLinking.h"
+#include "TextIterator.h"
 #include "WebBackForwardList.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
@@ -6883,3 +6884,140 @@ void WebView::fullScreenClientForceRepaint()
 }
 
 #endif
+// Used by TextInputController in DumpRenderTree
+
+HRESULT STDMETHODCALLTYPE WebView::setCompositionForTesting(
+    /* [in] */ BSTR composition, 
+    /* [in] */ UINT from, 
+    /* [in] */ UINT length)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return E_FAIL;
+
+    String compositionStr(composition, SysStringLen(composition));
+
+    Vector<CompositionUnderline> underlines;
+    underlines.append(CompositionUnderline(0, compositionStr.length(), Color(Color::black), false));
+    frame->editor()->setComposition(compositionStr, underlines, from, from + length);
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::hasCompositionForTesting(/* [out, retval] */ BOOL* result)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+     if (!frame)
+        return E_FAIL;
+
+    *result = frame && frame->editor()->hasComposition();
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::confirmCompositionForTesting(/* [in] */ BSTR composition)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return E_FAIL;
+
+    String compositionStr(composition, SysStringLen(composition));
+
+    if (compositionStr.isNull())
+        frame->editor()->confirmComposition();
+
+    frame->editor()->confirmComposition(compositionStr);
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::compositionRangeForTesting(/* [out] */ UINT* startPosition, /* [out] */ UINT* length)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return E_FAIL;
+
+    RefPtr<Range> range = frame->editor()->compositionRange();
+
+    if (!range)
+        return E_FAIL;
+
+    *startPosition = range->startOffset();
+    *length = range->startOffset() + range->endOffset();
+
+    return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE WebView::firstRectForCharacterRangeForTesting(
+    /* [in] */ UINT location, 
+    /* [in] */ UINT length, 
+    /* [out, retval] */ RECT* resultRect)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return E_FAIL;
+
+    IntRect resultIntRect;
+    resultIntRect.setLocation(IntPoint(0, 0));
+    resultIntRect.setSize(IntSize(0, 0));
+    
+    if (location > INT_MAX)
+        return E_FAIL;
+    if (length > INT_MAX || location + length > INT_MAX)
+        length = INT_MAX - location;
+        
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
+
+    if (!range)
+        return E_FAIL;
+    
+    ASSERT(range->startContainer());
+    ASSERT(range->endContainer());
+     
+    IntRect rect = frame->editor()->firstRectForRange(range.get());
+    resultIntRect = frame->view()->contentsToWindow(rect);
+
+    resultRect->left = resultIntRect.x();
+    resultRect->top = resultIntRect.y();
+    resultRect->right = resultIntRect.x() + resultIntRect.width();
+    resultRect->bottom = resultIntRect.y() + resultIntRect.height();
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* location, /* [out] */ UINT* length)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return E_FAIL;
+
+    RefPtr<Range> range = frame->editor()->selectedRange();
+
+    size_t locationSize;
+    size_t lengthSize;
+    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
+        *location = static_cast<UINT>(locationSize);
+        *length = static_cast<UINT>(lengthSize);
+    }
+
+    return S_OK;
+}

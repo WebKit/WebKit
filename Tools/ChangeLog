@@ -1,3 +1,38 @@
+2012-05-25  Lynn Neir  <lynn.neir@skype.net>
+
+        Added windows implementation in DRT for TextInputController, https://bugs.webkit.org/show_bug.cgi?id=32021
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::FrameLoadDelegate):
+        (FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld):
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        (FrameLoadDelegate):
+        * DumpRenderTree/win/TextInputController.cpp: Added.
+        (setMarkedTextCallback):
+        (hasMarkedTextCallback):
+        (unmarkTextCallback):
+        (markedRangeCallback):
+        (insertTextCallback):
+        (firstRectForCharacterRangeCallback):
+        (selectedRangeCallback):
+        (TextInputController::makeWindowObject):
+        (TextInputController::getJSClass):
+        (TextInputController::staticValues):
+        (TextInputController::staticFunctions):
+        * DumpRenderTree/win/TextInputController.h: Added.
+        (TextInputController):
+        * DumpRenderTree/win/TextInputControllerWin.cpp: Added.
+        (TextInputController::setMarkedText):
+        (TextInputController::hasMarkedText):
+        (TextInputController::unmarkText):
+        (TextInputController::markedRange):
+        (TextInputController::insertText):
+        (TextInputController::firstRectForCharacterRange):
+        (TextInputController::selectedRange):
+
 2012-05-25  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: change scm.add(), scm.delete() to accept multiple paths

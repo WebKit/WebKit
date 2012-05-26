@@ -1,3 +1,20 @@
+2012-05-25  Lynn Neir  <lynn.neir@skype.net>
+
+        Added methods needed to implement backend for DRT's TextInputController on windows, https://bugs.webkit.org/show_bug.cgi?id=32021
+
+        Reviewed by Eric Seidel.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::setCompositionForTesting):
+        (WebView::hasCompositionForTesting):
+        (WebView::confirmCompositionForTesting):
+        (WebView::compositionRangeForTesting):
+        (WebView::firstRectForCharacterRangeForTesting):
+        (WebView::selectedRangeForTesting):
+        * WebView.h:
+        (WebView):
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Move setEditingBehavior() from layoutTestController to window.internals

@@ -33,6 +33,7 @@
 #include <wtf/OwnPtr.h>
 
 class AccessibilityController;
+class TextInputController;
 class GCController;
 
 class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate2 {
@@ -170,6 +171,7 @@ private:
     ULONG m_refCount;
     OwnPtr<GCController> m_gcController;
     OwnPtr<AccessibilityController> m_accessibilityController;
+    OwnPtr<TextInputController> m_textInputController;
 };
 
 #endif // FrameLoadDelegate_h

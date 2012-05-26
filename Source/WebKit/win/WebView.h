@@ -962,6 +962,25 @@ public:
     WebCore::Element* fullScreenElement() const { return m_fullScreenElement.get(); }
 #endif
 
+    // Used by TextInputController in DumpRenderTree
+
+    HRESULT STDMETHODCALLTYPE setCompositionForTesting(
+        /* [in] */ BSTR composition, 
+        /* [in] */ UINT from, 
+        /* [in] */ UINT length);
+
+    HRESULT STDMETHODCALLTYPE hasCompositionForTesting(/* [out, retval] */ BOOL* result);
+
+    HRESULT STDMETHODCALLTYPE confirmCompositionForTesting(/* [in] */ BSTR composition);
+
+    HRESULT STDMETHODCALLTYPE compositionRangeForTesting(/* [out] */ UINT* startPosition, /* [out] */ UINT* length);
+
+    HRESULT STDMETHODCALLTYPE firstRectForCharacterRangeForTesting(
+    /* [in] */ UINT location, 
+    /* [in] */ UINT length, 
+    /* [out, retval] */ RECT* resultRect);
+
+    HRESULT STDMETHODCALLTYPE selectedRangeForTesting(/* [out] */ UINT* location, /* [out] */ UINT* length);
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);

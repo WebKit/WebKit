@@ -1,3 +1,19 @@
+2012-05-25  Lynn Neir  <lynn.neir@skype.net>
+
+        Updated tests as a result of implementing TextInputController in DRT for windows, https://bugs.webkit.org/show_bug.cgi?id=32021
+
+        Reviewed by Eric Seidel.
+
+        * platform/win/Skipped:
+        * platform/win/editing/selection/5825350-1-expected.txt: Added.
+        * platform/win/editing/selection/5825350-2-expected.txt: Added.
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/editing/selection/move-left-right-expected.txt: Added.
+        * platform/win/fast/events/ime-composition-events-001-expected.txt:
+        * platform/win/fast/forms/input-maxlength-ime-completed-expected.txt: Removed.
+        * platform/win/fast/forms/input-maxlength-ime-preedit-expected.txt: Removed.
+        * platform/win/svg/text/caret-in-svg-text-expected.txt: Added.
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         Enhance Windows DRT implementation to support platform scroll wheel events.
