@@ -350,14 +350,6 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-void SVGStyledElement::attach()
-{
-    SVGElement::attach();
-
-    if (RenderObject* object = renderer())
-        object->updateFromElement();
-}
-
 Node::InsertionNotificationRequest SVGStyledElement::insertedInto(ContainerNode* rootParent)
 {
     SVGElement::insertedInto(rootParent);

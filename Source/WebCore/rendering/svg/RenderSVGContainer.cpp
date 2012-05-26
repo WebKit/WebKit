@@ -87,6 +87,19 @@ void RenderSVGContainer::layout()
     setNeedsLayout(false);
 }
 
+void RenderSVGContainer::addChild(RenderObject* child, RenderObject* beforeChild)
+{
+    RenderSVGModelObject::addChild(child, beforeChild);
+    SVGResourcesCache::clientWasAddedToTree(child, child->style());
+}
+
+void RenderSVGContainer::removeChild(RenderObject* child)
+{
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    RenderSVGModelObject::removeChild(child);
+}
+
+
 bool RenderSVGContainer::selfWillPaint()
 {
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);

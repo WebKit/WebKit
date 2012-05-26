@@ -529,11 +529,15 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
 void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderSVGBlock::addChild(child, beforeChild);
+
+    SVGResourcesCache::clientWasAddedToTree(child, child->style());
     subtreeChildWasAdded(child);
 }
 
 void RenderSVGText::removeChild(RenderObject* child)
 {
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     FontCachePurgePreventer fontCachePurgePreventer;
     subtreeChildWillBeRemoved(child, affectedAttributes);

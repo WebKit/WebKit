@@ -165,7 +165,7 @@ void RenderSVGResourceContainer::registerResource()
         RenderObject* renderer = (*it)->renderer();
         if (!renderer)
             continue;
-        SVGResourcesCache::clientUpdatedFromElement(renderer, renderer->style());
+        SVGResourcesCache::clientStyleChanged(renderer, StyleDifferenceLayout, renderer->style());
         renderer->setNeedsLayout(true);
     }
 }

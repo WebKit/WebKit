@@ -53,6 +53,8 @@ protected:
 
     virtual void layout();
 
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
+    virtual void removeChild(RenderObject*) OVERRIDE;
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
 
     virtual FloatRect objectBoundingBox() const { return m_objectBoundingBox; }

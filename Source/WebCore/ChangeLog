@@ -1,3 +1,56 @@
+2012-05-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Avoid updateFromElement() usage in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=87573
+
+        Stop relying on updateFromElement() - instead rely on addChild/removeChild, which
+        allows us to optimize the resources re-fetching. When a child is added to the tree
+        we don't need to remove existing resources from the SVGResourcesCache - the renderer
+        can't be in the cache yet. Similary, remove the entry from the cache earlier: as soon
+        as the renderer is removed from the tree, instead of waiting for willBeDestroyed().
+
+        No new tests, refactoring only.
+
+        * rendering/svg/RenderSVGBlock.cpp:
+        * rendering/svg/RenderSVGBlock.h:
+        (RenderSVGBlock):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addChild):
+        (WebCore):
+        (WebCore::RenderSVGContainer::removeChild):
+        * rendering/svg/RenderSVGContainer.h:
+        (RenderSVGContainer):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::addChild):
+        (WebCore::RenderSVGInline::removeChild):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addChild):
+        (WebCore):
+        (WebCore::RenderSVGRoot::removeChild):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::addChild):
+        (WebCore::RenderSVGText::removeChild):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        (WebCore::rendererCanHaveResources):
+        (WebCore):
+        (WebCore::SVGResourcesCache::clientWasAddedToTree):
+        (WebCore::SVGResourcesCache::clientWillBeRemovedFromTree):
+        * rendering/svg/SVGResourcesCache.h:
+        (SVGResourcesCache):
+        * svg/SVGStyledElement.cpp:
+        * svg/SVGStyledElement.h:
+        (SVGStyledElement):
+
 2012-05-25  Nat Duca  <nduca@chromium.org>
 
         [chromium] Instrument V8 GC with TraceEvent

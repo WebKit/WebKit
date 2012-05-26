@@ -104,12 +104,6 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }
 
-void RenderSVGBlock::updateFromElement()
-{
-    RenderBlock::updateFromElement();
-    SVGResourcesCache::clientUpdatedFromElement(this, style());
-}
-
 }
 
 #endif

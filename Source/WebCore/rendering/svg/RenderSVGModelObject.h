@@ -62,7 +62,6 @@ public:
     virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void updateFromElement();
 
     static bool checkIntersection(RenderObject*, const FloatRect&);
     static bool checkEnclosure(RenderObject*, const FloatRect&);
