@@ -1,3 +1,11 @@
+2012-05-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r118577 and r118585.
+
+        * platform/gtk/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Added.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Added.
+        * platform/gtk/test_expectations.txt:
+
 2012-05-25  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         cursor gets trapped when border-style: dashed is used
