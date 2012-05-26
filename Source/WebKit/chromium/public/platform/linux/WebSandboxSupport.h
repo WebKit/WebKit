@@ -28,38 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSandboxSupport_h
-#define WebSandboxSupport_h
-
-#include "../WebCommon.h"
-#include "../WebString.h"
-#include "WebFontFamily.h"
-
-namespace WebKit {
-
-struct WebFontRenderStyle;
-
-// Put methods here that are required due to sandbox restrictions.
-class WebSandboxSupport {
-public:
-    // Fonts ---------------------------------------------------------------
-
-    // Get a font family which contains glyphs for the given Unicode
-    // code-points.
-    //   characters: a UTF-16 encoded string
-    //   numCharacters: the number of 16-bit words in |characters|
-    //   preferredLocale: preferred locale identifier for the |characters|
-    //                    (e.g. "en", "ja", "zh-CN")
-    //
-    // Returns a string with the font family on an empty string if the
-    // request cannot be satisfied.
-    // Returns a WebFontFamily instance with the font name. The instance has empty font name if the request cannot be satisfied.
-    // FIXME: Make this to be a pure virtual function after transition.
-    virtual void getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily*) = 0;
-
-    virtual void getRenderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* style) = 0;
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../../../Platform/chromium/public/linux/WebSandboxSupport.h"

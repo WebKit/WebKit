@@ -28,34 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSandboxSupport_h
-#define WebSandboxSupport_h
-
-typedef struct CGFont* CGFontRef;
-
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
-
-namespace WebKit {
-
-// Put methods here that are required due to sandbox restrictions.
-class WebSandboxSupport {
-public:
-    // Given an input font - |srcFont| [which can't be loaded due to sandbox
-    // restrictions]. Return a font belonging to an equivalent font file
-    // that can be used to access the font and a unique identifier corresponding
-    // to the on-disk font file.
-    //
-    // If this function succeeds, the caller assumes ownership of the |out|
-    // parameter and must call CGFontRelease() to unload it when done.
-    //
-    // Returns: true on success, false on error.
-    virtual bool loadFont(NSFont* srcFont, CGFontRef* out, uint32_t* fontID) = 0;
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../../../Platform/chromium/public/mac/WebSandboxSupport.h"

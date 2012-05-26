@@ -28,20 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFontFamily_h
-#define WebFontFamily_h
-
-#include "../WebCString.h"
-#include "../WebCommon.h"
-
-namespace WebKit {
-
-struct WebFontFamily {
-    WebCString name;
-    bool isBold;
-    bool isItalic;
-};
-
-} // namespace WebKit
-
-#endif // WebFontFamily_h
+#include "../../../../../Platform/chromium/public/linux/WebFontFamily.h"

@@ -1,3 +1,33 @@
+2012-05-25  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chomium] Move sandboxSupport to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=87518
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::sandboxSupport):
+        * chromium/public/android/WebSandboxSupport.h: Added.
+        (WebKit):
+        (WebSandboxSupport):
+        * chromium/public/linux/WebFontFamily.h: Added.
+        (WebKit):
+        (WebFontFamily):
+        * chromium/public/linux/WebSandboxSupport.h: Added.
+        (WebKit):
+        (WebSandboxSupport):
+        * chromium/public/mac/WebSandboxSupport.h: Added.
+        (WebKit):
+        (WebSandboxSupport):
+        * chromium/public/win/WebSandboxSupport.h: Added.
+        (WebKit):
+        (WebSandboxSupport):
+
 2012-05-17  Andrey Kosyakov  <caseq@chromium.org>
 
         [chromium] add instrumentation for compositing

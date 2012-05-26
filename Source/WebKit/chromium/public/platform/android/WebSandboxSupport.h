@@ -28,16 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSandboxSupport_h
-#define WebSandboxSupport_h
-
-namespace WebKit {
-
-// Empty class, as we need it to compile.
-class WebSandboxSupport {
-public:
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../../../Platform/chromium/public/android/WebSandboxSupport.h"

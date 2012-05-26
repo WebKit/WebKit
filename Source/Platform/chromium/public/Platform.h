@@ -56,6 +56,7 @@ class WebPeerConnectionHandler;
 class WebPeerConnectionHandlerClient;
 class WebURL;
 class WebURLLoader;
+class WebSandboxSupport;
 class WebSocketStreamHandle;
 class WebThemeEngine;
 class WebThread;
@@ -79,6 +80,9 @@ public:
 
     // Must return non-null.
     virtual WebMimeRegistry* mimeRegistry() { return 0; }
+
+    // May return null if sandbox support is not necessary
+    virtual WebSandboxSupport* sandboxSupport() { return 0; }
 
     // May return null on some platforms.
     virtual WebThemeEngine* themeEngine() { return 0; }

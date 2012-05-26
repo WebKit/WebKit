@@ -53,16 +53,12 @@ class WebIDBKey; // FIXME: Does this belong in platform?
 class WebIDBKeyPath; // FIXME: Does this belong in platform?
 class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
-class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 class WebStorageNamespace; // FIXME: Does this belong in platform?
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
 public:
-    // May return null if sandbox support is not necessary
-    virtual WebSandboxSupport* sandboxSupport() { return 0; }
-
     // DOM Storage --------------------------------------------------
 
     // Return a LocalStorage namespace that corresponds to the following path.

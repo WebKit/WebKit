@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,4 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../../../Platform/chromium/public/win/WebSandboxSupport.h"
+#ifndef WebSandboxSupport_h
+#define WebSandboxSupport_h
+
+namespace WebKit {
+
+// Empty class, as we need it to compile.
+class WebSandboxSupport {
+public:
+};
+
+} // namespace WebKit
+
+#endif
