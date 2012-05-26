@@ -1,5 +1,14 @@
 2012-05-25  Stephanie Lewis  <slewis@apple.com>
 
+        See https://bugs.webkit.org/show_bug.cgi?id=87558
+
+        Unreviewed, checking in expected failing results.
+
+        * platform/mac/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Added.
+        * platform/mac/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Added.
+
+2012-05-25  Stephanie Lewis  <slewis@apple.com>
+
         See https://bugs.webkit.org/show_bug.cgi?id=87544
 
         Unreviewed, skipping asserting test 
