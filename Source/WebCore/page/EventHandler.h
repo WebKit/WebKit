@@ -425,6 +425,7 @@ private:
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
     IntPoint m_currentMousePosition;
+    IntPoint m_currentMouseGlobalPosition;
     IntPoint m_mouseDownPos; // In our view's coords.
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;

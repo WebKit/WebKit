@@ -1,3 +1,26 @@
+2012-05-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11439771> WebProcess sends many synchronous messages to the UI process while scrolling beneath ScrollView::contentsToScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=87571
+
+        Reviewed by Anders Carlsson.
+
+        fakeMouseEventTimerFired() uses the last known mouse position for the fake mouse event, but
+        calls contentsToScreen() to compute a corresponding position in screen coordinates. Avoid
+        this by also recording the last known mouse position in screen coordinates, and using that
+        value.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear): Added resetting m_currentMouseGlobalPosition.
+        (WebCore::EventHandler::handleMousePressEvent): Added updating m_currentMouseGlobalPosition
+        when updating m_currentMousePosition.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent): Ditto.
+        (WebCore::EventHandler::handleMouseMoveEvent): Ditto.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Ditto.
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired): Changed to use m_currentMouseGlobalPosition
+        in the fake event instead of calling contentsToScreen().
+        * page/EventHandler.h: Added m_currentMouseGlobalPosition data member.
+
 2012-05-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Remove ImageGStreamerCG implementation

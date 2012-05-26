@@ -357,6 +357,7 @@ void EventHandler::clear()
     m_shouldOnlyFireDragOverEvent = false;
 #endif
     m_currentMousePosition = IntPoint();
+    m_currentMouseGlobalPosition = IntPoint();
     m_mousePressNode = 0;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -1498,6 +1499,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     m_mousePressed = true;
     m_capturesDragging = true;
     m_currentMousePosition = mouseEvent.position();
+    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
     m_mouseDownTimestamp = mouseEvent.timestamp();
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
@@ -1631,6 +1633,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
     m_currentMousePosition = mouseEvent.position();
+    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
 
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseEvent);
@@ -1725,6 +1728,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
     RefPtr<FrameView> protector(m_frame->view());
     m_currentMousePosition = mouseEvent.position();
+    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
 
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
@@ -1848,6 +1852,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressed = false;
     m_currentMousePosition = mouseEvent.position();
+    m_currentMouseGlobalPosition = mouseEvent.globalPosition();
 
 #if ENABLE(SVG)
     if (m_svgPan) {
@@ -2668,8 +2673,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    IntPoint globalPoint = view->contentsToScreen(IntRect(view->windowToContents(m_currentMousePosition), IntSize())).location();
-    PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
+    PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, m_currentMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
 
