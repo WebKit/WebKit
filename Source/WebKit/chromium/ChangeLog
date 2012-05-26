@@ -1,3 +1,9 @@
+2012-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll chromium DEPS from r139156 to r139184.
+
+        * DEPS:
+
 2012-05-25  Garrett Casto  <gcasto@chromium.org>
 
         Allow WebTextFieldDecoratorClient to see applied decorations.
