@@ -1,3 +1,13 @@
+2012-05-25  Philip Rogers  <pdr@google.com>
+
+        Fix for self-closing <use> tags
+        https://bugs.webkit.org/show_bug.cgi?id=87504
+
+        Reviewed by Adam Barth.
+
+        * svg/custom/svg-self-closing-use-expected.html: Added.
+        * svg/custom/svg-self-closing-use.html: Added.
+
 2012-05-25  Jessie Berlin  <jberlin@apple.com>
 
         [Win] ~1/2 of all the iframe seamless tests fail

@@ -1,3 +1,22 @@
+2012-05-25  Philip Rogers  <pdr@google.com>
+
+        Fix for self-closing <use> tags
+        https://bugs.webkit.org/show_bug.cgi?id=87504
+
+        Reviewed by Adam Barth.
+
+        This change causes self-closing non-html tags to behave the same
+        as tags immediately followed by the closing tag.
+
+        Test: svg/custom/svg-self-closing-use.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachLater):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        * html/parser/HTMLConstructionSite.h:
+        (HTMLConstructionSite):
+
 2012-05-25  Dan Bernstein  <mitz@apple.com>
 
         Make the ICU-based implementation of NonSharedCharacterBreakIterator work in configurations

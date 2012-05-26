@@ -155,7 +155,7 @@ private:
     // tokens produce only one DOM mutation.
     typedef Vector<HTMLConstructionSiteTask, 1> AttachmentQueue;
 
-    void attachLater(ContainerNode* parent, PassRefPtr<Node> child);
+    void attachLater(ContainerNode* parent, PassRefPtr<Node> child, bool selfClosing = false);
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
