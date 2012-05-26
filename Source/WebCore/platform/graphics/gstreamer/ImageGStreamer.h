@@ -56,10 +56,6 @@ class ImageGStreamer : public RefCounted<ImageGStreamer> {
         ImageGStreamer(GstBuffer*&, IntSize, QImage::Format);
 #endif
 
-#if PLATFORM(MAC)
-        ImageGStreamer(GstBuffer*&, IntSize);
-#endif
-
     };
 }
 
