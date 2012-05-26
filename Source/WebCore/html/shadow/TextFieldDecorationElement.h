@@ -37,6 +37,7 @@ namespace WebCore {
 
 class CachedImage;
 class HTMLInputElement;
+class ShadowRoot;
 
 // A TextFieldDecorator object must live until all of text fields which were
 // decorated by it die.
@@ -45,6 +46,7 @@ public:
     // Returns true if this TextFieldDecorator wants to add a
     // decoration to the specified text field.
     virtual bool willAddDecorationTo(HTMLInputElement*) = 0;
+    virtual bool visibleByDefault() = 0;
 
     // A TextFieldDecorator object should own the CachedImage objects.
     virtual CachedImage* imageForNormalState() = 0;
@@ -65,8 +67,9 @@ public:
 class TextFieldDecorationElement : public HTMLDivElement {
 public:
     static PassRefPtr<TextFieldDecorationElement> create(Document*, TextFieldDecorator*);
+    static TextFieldDecorationElement* fromShadowRoot(ShadowRoot*);
     TextFieldDecorator* textFieldDecorator() { return m_textFieldDecorator; }
-    void decorate(HTMLInputElement*);
+    void decorate(HTMLInputElement*, bool visible);
 
 private:
     TextFieldDecorationElement(Document*, TextFieldDecorator*);

@@ -28,40 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextFieldDecoratorImpl_h
-#define TextFieldDecoratorImpl_h
+#include "config.h"
+#include "WebTextFieldDecoratorClient.h"
 
-#include "CachedResourceHandle.h"
 #include "TextFieldDecorationElement.h"
+#include "TextFieldDecoratorImpl.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebTextFieldDecoratorClient;
-
-class TextFieldDecoratorImpl : public WebCore::TextFieldDecorator {
-public:
-    static PassOwnPtr<TextFieldDecoratorImpl> create(WebTextFieldDecoratorClient*);
-    virtual ~TextFieldDecoratorImpl();
-
-    WebTextFieldDecoratorClient* decoratorClient();
-
-private:
-    virtual bool willAddDecorationTo(WebCore::HTMLInputElement*) OVERRIDE;
-    virtual bool visibleByDefault() OVERRIDE;
-    virtual WebCore::CachedImage* imageForNormalState() OVERRIDE;
-    virtual WebCore::CachedImage* imageForDisabledState() OVERRIDE;
-    virtual WebCore::CachedImage* imageForReadonlyState() OVERRIDE;
-    virtual void handleClick(WebCore::HTMLInputElement*) OVERRIDE;
-    virtual void willDetach(WebCore::HTMLInputElement*) OVERRIDE;
-
-    TextFieldDecoratorImpl(WebTextFieldDecoratorClient*);
-
-    WebTextFieldDecoratorClient* m_client;
-    WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForNormalState;
-    WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForDisabledState;
-    WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForReadonlyState;
-};
-
+bool WebTextFieldDecoratorClient::isClientFor(TextFieldDecorator* decorator)
+{
+    return static_cast<TextFieldDecoratorImpl*>(decorator)->decoratorClient() == this;
 }
 
-#endif // TextFieldDecoratorImpl_h
+} // namespace WebKit

@@ -66,6 +66,16 @@ PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Docume
     return adoptRef(new TextFieldDecorationElement(document, decorator));
 }
 
+TextFieldDecorationElement* TextFieldDecorationElement::fromShadowRoot(ShadowRoot* shadowRoot)
+{
+    if (!shadowRoot->firstChild()
+        || !shadowRoot->firstChild()->lastChild()
+        || !shadowRoot->firstChild()->lastChild()->isElementNode()
+        || !toElement(shadowRoot->firstChild()->lastChild())->isTextFieldDecoration())
+        return 0;
+    return toTextFieldDecorationElement(shadowRoot->firstChild()->lastChild());
+}
+
 static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, ShadowRoot*& decorationRoot, ShadowRoot*& decoratedRoot)
 {
     ShadowRoot* existingRoot = input->youngestShadowRoot();
@@ -83,7 +93,7 @@ static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, Sh
     decoratedRoot = existingRoot;
 }
 
-void TextFieldDecorationElement::decorate(HTMLInputElement* input)
+void TextFieldDecorationElement::decorate(HTMLInputElement* input, bool visible)
 {
     ASSERT(input);
     ShadowRoot* existingRoot;
@@ -99,7 +109,7 @@ void TextFieldDecorationElement::decorate(HTMLInputElement* input)
     toHTMLElement(existingRoot->firstChild())->setInlineStyleProperty(CSSPropertyWebkitBoxFlex, 1.0, CSSPrimitiveValue::CSS_NUMBER);
     box->appendChild(HTMLShadowElement::create(HTMLNames::shadowTag, input->document()));
 
-    setInlineStyleProperty(CSSPropertyWebkitBoxFlex, 0.0, CSSPrimitiveValue::CSS_NUMBER);
+    setInlineStyleProperty(CSSPropertyDisplay, visible ? CSSValueBlock : CSSValueNone);
     box->appendChild(this);
 }
 

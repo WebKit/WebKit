@@ -1,3 +1,21 @@
+2012-05-25  Garrett Casto  <gcasto@chromium.org>
+
+        Allow WebTextFieldDecoratorClient to see applied decorations.
+        https://bugs.webkit.org/show_bug.cgi?id=86557
+
+        Reviewed by Kent Tamura.
+
+        * WebKit.gyp: Added new files.
+        * public/WebInputElement.h:
+        (WebKit::WebInputElement::decorationElementFor): Returns the
+        WebElement attached to the WebInputElement by the given
+        WebTextFieldDecoratorClient, if one exists.
+        * src/TextFieldDecoratorImpl.cpp:
+        (WebKit):
+        * src/TextFieldDecoratorImpl.h:
+        (TextFieldDecoratorImpl::decoratorClient): Get the
+        WebTextFieldDecoratorClient owned by this object.
+
 2012-05-25  Mihai Parparita  <mihaip@chromium.org>
 
         Allow synchronous XHRs to be disabled in documents

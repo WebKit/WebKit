@@ -1037,7 +1037,7 @@ void ChromeClientImpl::addTextFieldDecorationsTo(HTMLInputElement* input)
         if (!decorators[i]->willAddDecorationTo(input))
             continue;
         RefPtr<TextFieldDecorationElement> decoration = TextFieldDecorationElement::create(input->document(), decorators[i].get());
-        decoration->decorate(input);
+        decoration->decorate(input, decorators[i]->visibleByDefault());
     }
 }
 

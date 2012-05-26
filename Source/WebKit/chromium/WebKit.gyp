@@ -649,6 +649,7 @@
                 'src/WebTextRun.cpp',
                 'src/WebURLLoadTiming.cpp',
                 'src/WebScopedUserGesture.cpp',
+                'src/WebTextFieldDecoratorClient.cpp',
                 'src/WebUserMediaRequest.cpp',
                 'src/WebVideoLayer.cpp',
                 'src/WebViewImpl.cpp',

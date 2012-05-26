@@ -56,10 +56,20 @@ TextFieldDecoratorImpl::~TextFieldDecoratorImpl()
 {
 }
 
+WebTextFieldDecoratorClient* TextFieldDecoratorImpl::decoratorClient()
+{
+    return m_client;
+}
+
 bool TextFieldDecoratorImpl::willAddDecorationTo(HTMLInputElement* input)
 {
     ASSERT(input);
     return m_client->shouldAddDecorationTo(WebInputElement(input));
+}
+
+bool TextFieldDecoratorImpl::visibleByDefault()
+{
+    return m_client->visibleByDefault();
 }
 
 CachedImage* TextFieldDecoratorImpl::imageForNormalState()

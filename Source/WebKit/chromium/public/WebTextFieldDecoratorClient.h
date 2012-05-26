@@ -33,6 +33,10 @@
 
 #include "platform/WebCString.h"
 
+#if WEBKIT_IMPLEMENTATION
+namespace WebCore { class TextFieldDecorator; }
+#endif
+
 namespace WebKit {
 
 class WebInputElement;
@@ -43,6 +47,8 @@ public:
     // have a decoration icon. This function is called whenever a text field is
     // created, and should not take much time.
     virtual bool shouldAddDecorationTo(const WebInputElement&) = 0;
+    // Returns true if the decoration should be visible when it's created.
+    virtual bool visibleByDefault() = 0;
 
     // Image resource name for the normal state. The image is stretched to
     // font-size x font-size square. The function must return an existing
@@ -62,6 +68,10 @@ public:
     // implementation of this function should not do something which updates
     // state of WebKit objects.
     virtual void willDetach(const WebInputElement&) = 0;
+
+#if WEBKIT_IMPLEMENTATION
+    bool isClientFor(WebCore::TextFieldDecorator*);
+#endif
 
     virtual ~WebTextFieldDecoratorClient() { }
 };

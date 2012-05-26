@@ -31,11 +31,16 @@
 #include "config.h"
 #include "WebInputElement.h"
 
+#include "ElementShadow.h"
 #include "HTMLDataListElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
+#include "TextFieldDecorationElement.h"
+#include "TextFieldDecoratorImpl.h"
 #include "WebNodeCollection.h"
+#include "WebTextFieldDecoratorClient.h"
 #include "platform/WebString.h"
 #include <wtf/PassRefPtr.h>
 
@@ -219,6 +224,18 @@ void WebInputElement::stopSpeechInput()
 int WebInputElement::defaultMaxLength()
 {
     return HTMLInputElement::maximumLength;
+}
+
+WebElement WebInputElement::decorationElementFor(WebTextFieldDecoratorClient* decoratorClient)
+{
+    ShadowRoot* shadowRoot = unwrap<HTMLInputElement>()->youngestShadowRoot();
+    while (shadowRoot) {
+        TextFieldDecorationElement* decoration = TextFieldDecorationElement::fromShadowRoot(shadowRoot);
+        if (decoration && decoratorClient->isClientFor(decoration->textFieldDecorator()))
+            return WebElement(decoration);
+        shadowRoot = shadowRoot->olderShadowRoot();
+    }
+    return WebElement();
 }
 
 WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
