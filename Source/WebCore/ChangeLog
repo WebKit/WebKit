@@ -1,3 +1,20 @@
+2012-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Clip rects assertion when hovering div with transform
+        https://bugs.webkit.org/show_bug.cgi?id=87580
+
+        Reviewed by Eric Seidel.
+        
+        Hit testing used to use temporary clip rects in composited documents,
+        until r118562. Now that we cache clip rects for hit testing, we need
+        to clear the cache on descendant layers when a layer gains or loses
+        a transform.
+
+        Test: fast/layers/clip-rects-assertion.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+
 2012-05-25  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11439771> WebProcess sends many synchronous messages to the UI process while scrolling beneath ScrollView::contentsToScreen()

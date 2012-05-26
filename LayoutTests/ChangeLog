@@ -1,3 +1,16 @@
+2012-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Clip rects assertion when hovering div with transform
+        https://bugs.webkit.org/show_bug.cgi?id=87580
+
+        Reviewed by Eric Seidel.
+        
+        Test that changes transform on hover style, testing for clipRect-related
+        assertions.
+
+        * fast/layers/clip-rects-assertion-expected.txt: Added.
+        * fast/layers/clip-rects-assertion.html: Added.
+
 2012-05-26  Rob Buis  <rwlbuis@webkit.org>
 
         Bug 15799: textPath element does not re-render when referenced path changes

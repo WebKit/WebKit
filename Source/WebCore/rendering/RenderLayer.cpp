@@ -508,6 +508,9 @@ void RenderLayer::updateTransform()
             m_transform = adoptPtr(new TransformationMatrix);
         else
             m_transform.clear();
+        
+        // Layers with transforms act as clip rects roots, so clear the cached clip rects here.
+        clearClipRectsIncludingDescendants();
     }
     
     if (hasTransform) {
