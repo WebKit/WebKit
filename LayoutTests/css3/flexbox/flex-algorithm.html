@@ -86,6 +86,39 @@ if (window.layoutTestController)
   <div data-expected-width="200" style="width: 200px"></div>
 </div>
 
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
+  <div data-expected-width="250" style="-webkit-flex: 1 1 500px"></div>
+  <div data-expected-width="300" style="width: 300px"></div>
+</div>
+
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
+  <div data-expected-width="250" style="-webkit-flex: 1 1 500px; margin-right: 300px;"></div>
+</div>
+
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
+  <div data-expected-width="550" style="-webkit-flex: 1 1 500px; padding-left: 300px;"></div>
+</div>
+
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
+  <div data-expected-width="550" style="-webkit-flex: 1 1 500px; border-left: 200px dashed orange; border-right: 100px dashed orange;"></div>
+</div>
+
+<!-- Test some overflow cases. -->
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
+  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
+</div>
+
+<div style="display: -webkit-flex" class="flexbox">
+  <div data-expected-width="600" style="-webkit-flex: 100000000000000000000000000000000000000 0 600px"></div>
+  <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
+  <div data-expected-width="0" style="-webkit-flex: 1 1 100000000000000000000000000000000000000px"></div>
+</div>
+
 <!-- Test flexitem borders. -->
 <div style="display: -webkit-flex" class="flexbox">
   <div data-expected-width="250" style="-webkit-flex: 1; border-left: 150px solid black"></div>
