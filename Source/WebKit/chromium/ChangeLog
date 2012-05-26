@@ -1,3 +1,9 @@
+2012-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from r139024 to r139156 in an attempt to fix Chromium Win builds.
+
+        * DEPS:
+
 2012-05-25  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chomium] Move sandboxSupport to Platform.h
