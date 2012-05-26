@@ -127,7 +127,7 @@ JSGlobalObject::~JSGlobalObject()
 
 void JSGlobalObject::destroy(JSCell* cell)
 {
-    jsCast<JSGlobalObject*>(cell)->JSGlobalObject::~JSGlobalObject();
+    static_cast<JSGlobalObject*>(cell)->JSGlobalObject::~JSGlobalObject();
 }
 
 void JSGlobalObject::init(JSObject* thisValue)

@@ -123,7 +123,7 @@ JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGloba
 
 void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
 {
-    JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(cell);
+    JSTestMediaQueryListListener* thisObject = static_cast<JSTestMediaQueryListListener*>(cell);
     thisObject->JSTestMediaQueryListListener::~JSTestMediaQueryListListener();
 }
 
@@ -192,7 +192,7 @@ bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::Handle<J
 
 void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestMediaQueryListListener* jsTestMediaQueryListListener = jsCast<JSTestMediaQueryListListener*>(handle.get().asCell());
+    JSTestMediaQueryListListener* jsTestMediaQueryListListener = static_cast<JSTestMediaQueryListListener*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
     jsTestMediaQueryListListener->releaseImpl();

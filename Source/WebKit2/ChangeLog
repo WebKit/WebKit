@@ -1,3 +1,18 @@
+2012-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM) v2
+        https://bugs.webkit.org/show_bug.cgi?id=87581
+
+        Reviewed by Oliver Hunt.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::destroy):
+        (WebKit::JSNPObject::leakNPObject):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::finalize): Use static_cast instead of jsCast because
+        jsCast does Structure-based validation, and our Structure is not guaranteed
+        to be alive when we get finalized.
+
 2012-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         REGRESSION (r116720): Subframe PDF scrolls extremely slowly

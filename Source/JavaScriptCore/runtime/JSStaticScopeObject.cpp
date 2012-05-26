@@ -36,7 +36,7 @@ const ClassInfo JSStaticScopeObject::s_info = { "Object", &Base::s_info, 0, 0, C
 
 void JSStaticScopeObject::destroy(JSCell* cell)
 {
-    jsCast<JSStaticScopeObject*>(cell)->JSStaticScopeObject::~JSStaticScopeObject();
+    static_cast<JSStaticScopeObject*>(cell)->JSStaticScopeObject::~JSStaticScopeObject();
 }
 
 void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

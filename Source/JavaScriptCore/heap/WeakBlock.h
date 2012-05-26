@@ -115,16 +115,6 @@ inline WeakBlock::FreeCell* WeakBlock::asFreeCell(WeakImpl* weakImpl)
     return reinterpret_cast<FreeCell*>(weakImpl);
 }
 
-inline void WeakBlock::finalize(WeakImpl* weakImpl)
-{
-    ASSERT(weakImpl->state() == WeakImpl::Dead);
-    weakImpl->setState(WeakImpl::Finalized);
-    WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
-    if (!weakHandleOwner)
-        return;
-    weakHandleOwner->finalize(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(weakImpl->jsValue())), weakImpl->context());
-}
-
 inline WeakImpl* WeakBlock::weakImpls()
 {
     return reinterpret_cast<WeakImpl*>(this) + ((sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl));

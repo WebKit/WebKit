@@ -104,7 +104,7 @@ void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpP
 
 void RegExpConstructor::destroy(JSCell* cell)
 {
-    jsCast<RegExpConstructor*>(cell)->RegExpConstructor::~RegExpConstructor();
+    static_cast<RegExpConstructor*>(cell)->RegExpConstructor::~RegExpConstructor();
 }
 
 void RegExpConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -81,7 +81,7 @@ JSNPObject::~JSNPObject()
 
 void JSNPObject::destroy(JSCell* cell)
 {
-    jsCast<JSNPObject*>(cell)->JSNPObject::~JSNPObject();
+    static_cast<JSNPObject*>(cell)->JSNPObject::~JSNPObject();
 }
 
 void JSNPObject::invalidate()
@@ -96,7 +96,6 @@ void JSNPObject::invalidate()
 NPObject* JSNPObject::leakNPObject()
 {
     ASSERT(m_npObject);
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
 
     NPObject* object = m_npObject;
     m_npObject = 0;

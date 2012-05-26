@@ -42,6 +42,19 @@ inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleO
     return new (NotNull, weakImpl) WeakImpl(jsValue, weakHandleOwner, context);
 }
 
+inline void WeakBlock::finalize(WeakImpl* weakImpl)
+{
+    ASSERT(weakImpl->state() == WeakImpl::Dead);
+    weakImpl->setState(WeakImpl::Finalized);
+    WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
+    if (!weakHandleOwner)
+        return;
+#if !ASSERT_DISABLED || ENABLE(GC_VALIDATION)
+    weakImpl->jsValue().asCell()->clearStructure();
+#endif
+    weakHandleOwner->finalize(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(weakImpl->jsValue())), weakImpl->context());
+}
+
 } // namespace JSC
 
 #endif // WeakSetInlines_h

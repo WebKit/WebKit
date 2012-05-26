@@ -125,7 +125,7 @@ JSObject* JSTestActiveDOMObject::createPrototype(ExecState* exec, JSGlobalObject
 
 void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
 {
-    JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(cell);
+    JSTestActiveDOMObject* thisObject = static_cast<JSTestActiveDOMObject*>(cell);
     thisObject->JSTestActiveDOMObject::~JSTestActiveDOMObject();
 }
 
@@ -229,7 +229,7 @@ bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
 
 void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestActiveDOMObject* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.get().asCell());
+    JSTestActiveDOMObject* jsTestActiveDOMObject = static_cast<JSTestActiveDOMObject*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestActiveDOMObject->impl(), jsTestActiveDOMObject);
     jsTestActiveDOMObject->releaseImpl();

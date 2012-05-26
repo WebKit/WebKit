@@ -54,7 +54,7 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void Arguments::destroy(JSCell* cell)
 {
-    jsCast<Arguments*>(cell)->Arguments::~Arguments();
+    static_cast<Arguments*>(cell)->Arguments::~Arguments();
 }
 
 void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)

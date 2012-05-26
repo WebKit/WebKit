@@ -47,7 +47,7 @@ void JSRopeString::RopeBuilder::expand()
 
 void JSString::destroy(JSCell* cell)
 {
-    JSString* thisObject = jsCast<JSString*>(cell);
+    JSString* thisObject = static_cast<JSString*>(cell);
     thisObject->JSString::~JSString();
 }
 

@@ -989,7 +989,7 @@ QtRuntimeMethod::~QtRuntimeMethod()
 
 void QtRuntimeMethod::destroy(JSCell* cell)
 {
-    jsCast<QtRuntimeMethod*>(cell)->QtRuntimeMethod::~QtRuntimeMethod();
+    static_cast<QtRuntimeMethod*>(cell)->QtRuntimeMethod::~QtRuntimeMethod();
 }
 
 // ===============

@@ -61,7 +61,7 @@ JSCallbackConstructor::~JSCallbackConstructor()
 
 void JSCallbackConstructor::destroy(JSCell* cell)
 {
-    jsCast<JSCallbackConstructor*>(cell)->JSCallbackConstructor::~JSCallbackConstructor();
+    static_cast<JSCallbackConstructor*>(cell)->JSCallbackConstructor::~JSCallbackConstructor();
 }
 
 static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)

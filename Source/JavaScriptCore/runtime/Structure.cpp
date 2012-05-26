@@ -216,7 +216,7 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
 
 void Structure::destroy(JSCell* cell)
 {
-    jsCast<Structure*>(cell)->Structure::~Structure();
+    static_cast<Structure*>(cell)->Structure::~Structure();
 }
 
 void Structure::materializePropertyMap(JSGlobalData& globalData)

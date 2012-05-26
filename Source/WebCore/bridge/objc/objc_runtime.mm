@@ -201,7 +201,7 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Struc
 
 void ObjcFallbackObjectImp::destroy(JSCell* cell)
 {
-    jsCast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
+    static_cast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
 }
 
 void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)

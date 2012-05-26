@@ -183,7 +183,7 @@ const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_inf
 
 void StrictModeTypeErrorFunction::destroy(JSCell* cell)
 {
-    jsCast<StrictModeTypeErrorFunction*>(cell)->StrictModeTypeErrorFunction::~StrictModeTypeErrorFunction();
+    static_cast<StrictModeTypeErrorFunction*>(cell)->StrictModeTypeErrorFunction::~StrictModeTypeErrorFunction();
 }
 
 } // namespace JSC

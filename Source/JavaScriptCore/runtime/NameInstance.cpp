@@ -38,7 +38,7 @@ NameInstance::NameInstance(JSGlobalData& globalData, Structure* structure, JSStr
 
 void NameInstance::destroy(JSCell* cell)
 {
-    jsCast<NameInstance*>(cell)->NameInstance::~NameInstance();
+    static_cast<NameInstance*>(cell)->NameInstance::~NameInstance();
 }
 
 } // namespace JSC

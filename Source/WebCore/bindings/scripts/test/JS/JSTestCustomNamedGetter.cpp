@@ -123,7 +123,7 @@ JSObject* JSTestCustomNamedGetter::createPrototype(ExecState* exec, JSGlobalObje
 
 void JSTestCustomNamedGetter::destroy(JSC::JSCell* cell)
 {
-    JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(cell);
+    JSTestCustomNamedGetter* thisObject = static_cast<JSTestCustomNamedGetter*>(cell);
     thisObject->JSTestCustomNamedGetter::~JSTestCustomNamedGetter();
 }
 
@@ -202,7 +202,7 @@ bool JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::U
 
 void JSTestCustomNamedGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestCustomNamedGetter* jsTestCustomNamedGetter = jsCast<JSTestCustomNamedGetter*>(handle.get().asCell());
+    JSTestCustomNamedGetter* jsTestCustomNamedGetter = static_cast<JSTestCustomNamedGetter*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestCustomNamedGetter->impl(), jsTestCustomNamedGetter);
     jsTestCustomNamedGetter->releaseImpl();

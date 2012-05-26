@@ -67,7 +67,7 @@ void JSDOMWindowBase::finishCreation(JSGlobalData& globalData, JSDOMWindowShell*
 
 void JSDOMWindowBase::destroy(JSCell* cell)
 {
-    jsCast<JSDOMWindowBase*>(cell)->JSDOMWindowBase::~JSDOMWindowBase();
+    static_cast<JSDOMWindowBase*>(cell)->JSDOMWindowBase::~JSDOMWindowBase();
 }
 
 void JSDOMWindowBase::updateDocument()

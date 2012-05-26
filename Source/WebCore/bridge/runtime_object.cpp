@@ -51,7 +51,7 @@ void RuntimeObject::finishCreation(JSGlobalObject* globalObject)
 
 void RuntimeObject::destroy(JSCell* cell)
 {
-    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
     ASSERT(!thisObject->m_instance);
     thisObject->RuntimeObject::~RuntimeObject();
 }

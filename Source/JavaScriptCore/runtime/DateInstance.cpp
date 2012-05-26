@@ -55,7 +55,7 @@ void DateInstance::finishCreation(JSGlobalData& globalData, double time)
 
 void DateInstance::destroy(JSCell* cell)
 {
-    jsCast<DateInstance*>(cell)->DateInstance::~DateInstance();
+    static_cast<DateInstance*>(cell)->DateInstance::~DateInstance();
 }
 
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exec) const

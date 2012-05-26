@@ -243,7 +243,7 @@ void RegExp::finishCreation(JSGlobalData& globalData)
 
 void RegExp::destroy(JSCell* cell)
 {
-    RegExp* thisObject = jsCast<RegExp*>(cell);
+    RegExp* thisObject = static_cast<RegExp*>(cell);
 #if REGEXP_FUNC_TEST_DATA_GEN
     RegExpFunctionalTestCollector::get()->clearRegExp(this);
 #endif

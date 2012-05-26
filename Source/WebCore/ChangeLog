@@ -1,3 +1,69 @@
+2012-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM) v2
+        https://bugs.webkit.org/show_bug.cgi?id=87581
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::destroy):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::destroy):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::destroy):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNodeOwner::finalize):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::destroy):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObject::destroy):
+        (WebCore::JSTestActiveDOMObjectOwner::finalize):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::destroy):
+        (WebCore::JSTestCustomNamedGetterOwner::finalize):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::destroy):
+        (WebCore::JSTestEventConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::destroy):
+        (WebCore::JSTestEventTargetOwner::finalize):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::destroy):
+        (WebCore::JSTestExceptionOwner::finalize):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::destroy):
+        (WebCore::JSTestInterfaceOwner::finalize):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::destroy):
+        (WebCore::JSTestMediaQueryListListenerOwner::finalize):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::destroy):
+        (WebCore::JSTestNamedConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::destroy):
+        (WebCore::JSTestObjOwner::finalize):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::destroy):
+        (WebCore::JSTestSerializedScriptValueInterfaceOwner::finalize):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::destroy):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::destroy):
+        * bridge/qt/qt_runtime_qt4.cpp:
+        (JSC::Bindings::QtRuntimeMethod::destroy):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::destroy):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::destroy):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::destroy):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::finalize): Use static_cast instead of jsCast because
+        jsCast does Structure-based validation, and our Structure is not guaranteed
+        to be alive when we get finalized.
+
 2012-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Clip rects assertion when hovering div with transform

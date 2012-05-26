@@ -51,7 +51,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* struct
 
 void JSDOMGlobalObject::destroy(JSCell* cell)
 {
-    jsCast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
+    static_cast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
 void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData)

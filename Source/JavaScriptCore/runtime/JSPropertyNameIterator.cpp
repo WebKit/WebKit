@@ -83,7 +83,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 
 void JSPropertyNameIterator::destroy(JSCell* cell)
 {
-    jsCast<JSPropertyNameIterator*>(cell)->JSPropertyNameIterator::~JSPropertyNameIterator();
+    static_cast<JSPropertyNameIterator*>(cell)->JSPropertyNameIterator::~JSPropertyNameIterator();
 }
 
 JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)

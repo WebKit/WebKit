@@ -1,3 +1,60 @@
+2012-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit should be lazy-finalization-safe (esp. the DOM) v2
+        https://bugs.webkit.org/show_bug.cgi?id=87581
+
+        Reviewed by Oliver Hunt.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor):
+        * heap/WeakBlock.h:
+        * heap/WeakSetInlines.h:
+        (JSC::WeakBlock::finalize): Since we don't guarantee destruction order,
+        it's not valid to access GC pointers like the Structure pointer during
+        finalization. We NULL out the structure pointer in debug builds to try
+        to make this programming mistake more obvious.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::destroy):
+        * API/JSCallbackObject.cpp:
+        (JSC::::destroy):
+        (JSC::JSCallbackObjectData::finalize):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::destroy):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::destroy):
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::destroy):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::destroy):
+        (JSC::NativeExecutable::destroy):
+        (JSC::ScriptExecutable::destroy):
+        (JSC::EvalExecutable::destroy):
+        (JSC::ProgramExecutable::destroy):
+        (JSC::FunctionExecutable::destroy):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::destroy):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::destroy):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::destroy):
+        * runtime/JSString.cpp:
+        (JSC::JSString::destroy):
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::destroy):
+        * runtime/NameInstance.cpp:
+        (JSC::NameInstance::destroy):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::destroy):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::destroy):
+        * runtime/Structure.cpp:
+        (JSC::Structure::destroy):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::destroy): Use static_cast instead of jsCast because
+        jsCast does Structure-based validation, and our Structure is not guaranteed
+        to be alive when we get finalized.
+
 2012-05-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CSE should eliminate redundant WeakJSConstants

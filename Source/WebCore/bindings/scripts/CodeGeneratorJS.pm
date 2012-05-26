@@ -1626,7 +1626,7 @@ sub GenerateImplementation
         # the finalizer issue is being tracked in http://webkit.org/b/75451
         push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
+        push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
         push(@implContent, "    thisObject->${className}::~${className}();\n");
         push(@implContent, "}\n\n");
 

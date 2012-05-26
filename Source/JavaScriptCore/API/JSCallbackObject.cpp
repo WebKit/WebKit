@@ -54,13 +54,13 @@ Structure* JSCallbackObject<JSGlobalObject>::createStructure(JSGlobalData& globa
 template <class Parent>
 void JSCallbackObject<Parent>::destroy(JSCell* cell)
 {
-    jsCast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();
+    static_cast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();
 }
 
 void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)
 {
     JSClassRef jsClass = static_cast<JSClassRef>(context);
-    JSObjectRef thisRef = toRef(asObject(handle.get()));
+    JSObjectRef thisRef = toRef(static_cast<JSObject*>(handle.get().asCell()));
     
     for (; jsClass; jsClass = jsClass->parentClass)
         if (JSObjectFinalizeCallback finalize = jsClass->finalize)

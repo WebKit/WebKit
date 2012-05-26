@@ -52,7 +52,7 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 
 void RuntimeMethod::destroy(JSCell* cell)
 {
-    jsCast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
+    static_cast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
 }
 
 void RuntimeMethod::finishCreation(JSGlobalData& globalData, const UString& ident)
