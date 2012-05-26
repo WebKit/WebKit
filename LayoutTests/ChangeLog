@@ -1,3 +1,9 @@
+2012-05-26  David Barton  <dbarton@mathscribe.com>
+
+        My first commit - set svn:mime-type to image/png on one .png file.
+
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.png:
+
 2012-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Clip rects assertion when hovering div with transform
