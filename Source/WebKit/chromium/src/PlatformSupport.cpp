@@ -317,20 +317,6 @@ bool PlatformSupport::deleteEmptyDirectory(const String& path)
     return WebKit::Platform::current()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
-bool PlatformSupport::getFileSize(const String& path, long long& result)
-{
-    return WebKit::Platform::current()->fileUtilities()->getFileSize(path, result);
-}
-
-bool PlatformSupport::getFileModificationTime(const String& path, time_t& result)
-{
-    double modificationTime;
-    if (!WebKit::Platform::current()->fileUtilities()->getFileModificationTime(path, modificationTime))
-        return false;
-    result = static_cast<time_t>(modificationTime);
-    return true;
-}
-
 bool PlatformSupport::getFileMetadata(const String& path, FileMetadata& result)
 {
     WebFileInfo webFileInfo;

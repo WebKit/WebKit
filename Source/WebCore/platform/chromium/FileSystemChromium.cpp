@@ -50,25 +50,25 @@ bool deleteEmptyDirectory(const String& path)
 
 bool getFileSize(const String& path, long long& result)
 {
-    return PlatformSupport::getFileSize(path, result);
+    FileMetadata metadata;
+    if (!PlatformSupport::getFileMetadata(path, metadata))
+        return false;
+    result = metadata.length;
+    return true;
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
 {
-    return PlatformSupport::getFileModificationTime(path, result);
+    FileMetadata metadata;
+    if (!PlatformSupport::getFileMetadata(path, metadata))
+        return false;
+    result = metadata.modificationTime;
+    return true;
 }
 
 bool getFileMetadata(const String& path, FileMetadata& metadata)
 {
-    // FIXME: Call PlatformSupport::getFileMetadata once it is implemented.
-    // return PlatformSupport::getFileMetadata(path, metadata);
-    if (!PlatformSupport::getFileSize(path, metadata.length))
-        return false;
-    time_t modificationTime;
-    if (!PlatformSupport::getFileModificationTime(path, modificationTime))
-        return false;
-    metadata.modificationTime = modificationTime;
-    return true;
+    return PlatformSupport::getFileMetadata(path, metadata);
 }
 
 String directoryName(const String& path)
