@@ -218,6 +218,7 @@ void FileReader::didFinishLoading()
     ASSERT(m_state != DONE);
     m_state = DONE;
 
+    fireEvent(eventNames().progressEvent);
     fireEvent(eventNames().loadEvent);
     fireEvent(eventNames().loadendEvent);
     

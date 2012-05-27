@@ -1,3 +1,19 @@
+2012-05-27  Li Yin  <li.yin@intel.com>
+
+        [FileAPI] FileReader should fire progress event when blob has been completely read into memory
+        https://bugs.webkit.org/show_bug.cgi?id=87585
+
+        Reviewed by Kentaro Hara.
+
+        From Spec: http://www.w3.org/TR/FileAPI/#dfn-progress-event
+        One progress event will fire when blob has been completely read into memory.
+        Firefox, Opera and IE follows the spec.
+        Webkit based browser doesn't do that, it only fires progress event at interval of 50ms.
+        WebKit should add the behavior to make the conformance with the spec.
+
+        * fast/files/file-reader-event-listener-expected.txt:
+        * fast/files/file-reader-event-listener.html:
+
 2012-05-26  Li Yin  <li.yin@intel.com>
 
         [FileAPI] The result attribute of FileReader shuold use null to replace empty string

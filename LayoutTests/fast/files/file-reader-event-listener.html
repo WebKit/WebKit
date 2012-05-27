@@ -6,6 +6,7 @@
 
 <script>
 var fileReader;
+var receivedProgressEvent = false;
 
 function log(message)
 {
@@ -23,8 +24,15 @@ function onLoadStart()
     fileReader.dispatchEvent(event);
 }
 
+function onProgress()
+{
+    receivedProgressEvent = true;
+}
+
 function onLoad()
 {
+    if (receivedProgressEvent)
+        log("Received progress event");
     log("Received load event");
 }
 
@@ -64,6 +72,7 @@ function onInputFileChange()
     fileReader = new FileReader();
     fileReader.readAsText(file);
     fileReader.addEventListener("loadstart", onLoadStart, false);
+    fileReader.addEventListener("progress", onProgress, false);
     fileReader.addEventListener("load", onLoad, false);
     fileReader.addEventListener("loadend", onLoadEnd, false);
     fileReader.addEventListener("abort", onAbort, false);
