@@ -1,3 +1,18 @@
+2012-05-27  David Kilzer  <ddkilzer@apple.com>
+
+        Use xcrun to find gperf path on platforms that use Xcode
+        <http://webkit.org/b/87587>
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        (Generate Derived Sources): Set GPERF environment variable using
+        xcrun.
+        * css/makeprop.pl: Use GPERF environment variable if set, else
+        "gperf".
+        * css/makevalues.pl: Ditto.
+        * make-hash-tools.pl: Ditto.
+
 2012-05-27  Li Yin  <li.yin@intel.com>
 
         [FileAPI] FileReader should fire progress event when blob has been completely read into memory

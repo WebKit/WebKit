@@ -3,6 +3,7 @@
 #   This file is part of the WebKit project
 #
 #   Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
+#   Copyright (C) 2012 Apple Inc. All rights reserved.
 #
 #   This library is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU Library General Public
@@ -26,14 +27,13 @@ my $outdir = $ARGV[0];
 shift;
 my $option = basename($ARGV[0],".gperf");
 
-
 if ($option eq "ColorData") {
-
     my $colorDataGenerated         = "$outdir/ColorData.cpp";
     my $colorDataGperf             = $ARGV[0];
     shift;
 
-    system("gperf --key-positions=\"*\" -D -s 2 $colorDataGperf --output-file=$colorDataGenerated") == 0 || die "calling gperf failed: $?";
+    my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+    system("\"$gperf\" --key-positions=\"*\" -D -s 2 $colorDataGperf --output-file=$colorDataGenerated") == 0 || die "calling gperf failed: $?";
 
 } else {
     die "Unknown option.";

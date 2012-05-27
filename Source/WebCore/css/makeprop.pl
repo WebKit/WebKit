@@ -3,7 +3,7 @@
 #   This file is part of the WebKit project
 #
 #   Copyright (C) 1999 Waldo Bastian (bastian@kde.org)
-#   Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+#   Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
 #   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
 #
@@ -222,4 +222,5 @@ EOF
 
 close HEADER;
 
-system("gperf --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf --output-file=CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";
+my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+system("\"$gperf\" --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf --output-file=CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";
