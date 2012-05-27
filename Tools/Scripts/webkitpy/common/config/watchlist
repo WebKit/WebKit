@@ -154,6 +154,9 @@
         },
         "Media": {
             "filename": r"(Source|LayoutTests)/.*([Mm]edia|[Aa]udio|[Vv]ideo)",
+        },
+        "MathML": {
+            "filename": r".*mathml",
         }
     },
     "CC_RULES": {
@@ -173,6 +176,7 @@
         "GStreamerGraphics": [ "alexis.menard@openbossa.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Loader": [ "japhet@chromium.org" ],
+        "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", ],
         "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
