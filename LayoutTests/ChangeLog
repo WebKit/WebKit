@@ -1,3 +1,19 @@
+2012-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/block/inline-children-root-linebox-crash.html asserts after r118567
+        https://bugs.webkit.org/show_bug.cgi?id=87544
+
+        Reviewed by Darin Adler.
+        
+        Remove fast/block/inline-children-root-linebox-crash.html from the skipped
+        list.
+        
+        New, more complex writing mode flipping test with compositing.
+
+        * compositing/geometry/flipped-blocks-inline-mapping-expected.txt: Added.
+        * compositing/geometry/flipped-blocks-inline-mapping.html: Added.
+        * platform/mac/Skipped:
+
 2012-05-26  David Barton  <dbarton@mathscribe.com>
 
         My first commit - set svn:mime-type to image/png on one .png file.

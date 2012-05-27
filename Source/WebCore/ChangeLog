@@ -1,3 +1,29 @@
+2012-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/block/inline-children-root-linebox-crash.html asserts after r118567
+        https://bugs.webkit.org/show_bug.cgi?id=87544
+
+        Reviewed by Darin Adler.
+        
+        RenderInline::offsetFromContainer() set offsetDependsOnPoint to true based
+        on the container's flipped writing mode. However, offsetFromContainer() would
+        then overwrite that, since it only checked for columns.
+        
+        Fix by having RenderInline::offsetFromContainer() check for flipping on
+        the container. This fixes the assertion.
+        
+        The new testcase exercises fixes another issue; unlike mapLocalToAbsolute(),
+        RenderGeometryMap::absoluteRect() didn't pass the rect center point through
+        the mapping, which resulted in a different result in some flipping cases.
+
+        Test: compositing/geometry/flipped-blocks-inline-mapping.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::absoluteRect):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer):
+        (WebCore::RenderInline::pushMappingToContainer):
+
 2012-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         WebKit should be lazy-finalization-safe (esp. the DOM) v2

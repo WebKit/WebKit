@@ -114,7 +114,7 @@ FloatRect RenderGeometryMap::absoluteRect(const FloatRect& rect) const
         result = rect;
         result.move(m_accumulatedOffset);
     } else {
-        TransformState transformState(TransformState::ApplyTransformDirection, rect);
+        TransformState transformState(TransformState::ApplyTransformDirection, rect.center(), rect);
         mapToAbsolute(transformState);
         result = transformState.lastPlanarQuad().boundingBox();
     }

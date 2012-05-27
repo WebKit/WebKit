@@ -1080,7 +1080,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const Layo
         offset -= toRenderBox(container)->scrolledContentOffset();
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = container->hasColumns();
+        *offsetDependsOnPoint = container->hasColumns() || (container->isBox() && container->style()->isFlippedBlocksWritingMode());
 
     return offset;
 }
@@ -1142,11 +1142,6 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderBoxModelObj
     if (!container)
         return 0;
 
-    bool offsetDependsOnPoint = false;
-
-    if (container->isBox() && container->style()->isFlippedBlocksWritingMode())
-        offsetDependsOnPoint = true;
-
     LayoutSize adjustmentForSkippedAncestor;
     if (ancestorSkipped) {
         // There can't be a transform between repaintContainer and o, because transforms create containers, so it should be safe
@@ -1154,6 +1149,7 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderBoxModelObj
         adjustmentForSkippedAncestor = -ancestorToStopAt->offsetFromAncestorContainer(container);
     }
 
+    bool offsetDependsOnPoint = false;
     LayoutSize containerOffset = offsetFromContainer(container, LayoutPoint(), &offsetDependsOnPoint);
 
     bool preserve3D = container->style()->preserves3D() || style()->preserves3D();
