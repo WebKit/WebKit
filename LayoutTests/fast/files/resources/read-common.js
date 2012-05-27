@@ -168,9 +168,13 @@ function createReaderSync()
     return new FileReaderSync();
 }
 
-// 'result' can be either an ArrayBuffer object or a string.
+// 'result' can be an ArrayBuffer object, a string or null.
 function logResult(result)
 {
+    if (result === null) {
+        log("result: null");
+        return;
+    }
     if (typeof result == 'object') {
         log("result size: " + result.byteLength);
         result = new Uint8Array(result, 0, result.byteLength);

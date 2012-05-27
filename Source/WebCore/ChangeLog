@@ -1,3 +1,28 @@
+2012-05-26  Li Yin  <li.yin@intel.com>
+
+        [FileAPI] The result attribute of FileReader shuold use null to replace empty string
+        https://bugs.webkit.org/show_bug.cgi?id=87578
+
+        Reviewed by Kentaro Hara.
+
+        From Spec: http://www.w3.org/TR/FileAPI/#filedata-attr
+        Before read method has been called or an error in reading has occurred,
+        the result attribute should be null, not empty string.
+
+        Currently, Firefox, Opera and IE 10 follows the spec, but Webkit based 
+        browser don't.
+        WebKit should change the returned value empty string into null to keep 
+        conformance with the spec.
+
+        Tests: fast/files/read-file-async.html
+               fast/files/blob-slice-test.html
+               fast/files/read-blob-async.html
+               fast/files/workers/worker-read-blob-async.html
+               fast/files/workers/worker-read-file-async.html
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::stringResult):
+
 2012-05-26  Andy Estes  <aestes@apple.com>
 
         Fix the build when NETSCAPE_PLUGIN_API is disabled by marking a

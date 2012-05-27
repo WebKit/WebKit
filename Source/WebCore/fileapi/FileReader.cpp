@@ -254,7 +254,10 @@ PassRefPtr<ArrayBuffer> FileReader::arrayBufferResult() const
 
 String FileReader::stringResult()
 {
-    return m_loader ? m_loader->stringResult() : "";
+    String ret =  m_loader ? m_loader->stringResult() : "";
+    if (ret.isEmpty())
+        return String();
+    return ret;
 }
 
 } // namespace WebCore
