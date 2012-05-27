@@ -109,7 +109,7 @@ void WebPageCompositorPrivate::render(const IntRect& dstRect, const IntRect& tra
 
 bool WebPageCompositorPrivate::drawsRootLayer() const
 {
-    return m_drawsRootLayer;
+    return m_rootLayer && m_drawsRootLayer;
 }
 
 bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)

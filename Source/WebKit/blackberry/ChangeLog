@@ -1,3 +1,29 @@
+2012-05-27  Arvid Nilsson  <anilsson@rim.com>
+
+        2012-04-12  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Web page fails to render after clicking link with target=_blank
+        https://bugs.webkit.org/show_bug.cgi?id=87562
+
+        Reviewed by Antonio Gomes.
+
+        Clicking such a link opens a new tab. The compositor was briefly in
+        charge of drawing the root layer while the backing store was inactive
+        and the user was looking at the other tab. The problem was that the
+        compositor believed it was still painting the root layer even after the
+        backing store became active again. The flag was not properly cleared
+        when turning off compositing.
+
+        Fixed by returning false from drawsRootLayer() if we don't have a root
+        layer.
+
+        Reviewed internally by Filip Spacek.
+
+        PR #149342
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawsRootLayer):
+
 2012-05-24  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] History navigation caused google.com scale not kept
