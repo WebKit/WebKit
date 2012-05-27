@@ -1,0 +1,6 @@
+http://127.0.0.1:8000/cache/resources/random.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/random.cgi, main document URL http://127.0.0.1:8000/cache/cancel-in-progress-load.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
+http://127.0.0.1:8000/cache/resources/random.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/random.cgi, http status code 200>
+<unknown> - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/navigation/resources/slow-resource.pl">
+http://127.0.0.1:8000/cache/resources/random.cgi - didFinishLoading
+

@@ -387,6 +387,12 @@ void CachedResource::didAddClient(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
+void CachedResource::allClientsRemoved()
+{
+    if (m_loader)
+        m_loader->cancelIfNotFinishing();
+}
+
 bool CachedResource::addClientToSet(CachedResourceClient* client)
 {
     ASSERT(!isPurgeable());

@@ -1,3 +1,16 @@
+2012-05-26  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=35377.
+
+        Reviewed by Darin Adler.
+
+        * http/tests/cache/cancel-in-progress-load-expected.txt: Added.
+        * http/tests/cache/cancel-in-progress-load.html: Added.
+        * http/tests/misc/write-while-waiting.html: Add waitUntilDone()/notifyDone().
+            The slow script will now be cancelled when the script element is removed from the document.
+            Without waitUntilDone(), LayoutTestController will immediately end the test upon cancellation
+            of the last resource.
+
 2012-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         fast/block/inline-children-root-linebox-crash.html asserts after r118567

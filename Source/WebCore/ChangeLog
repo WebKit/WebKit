@@ -1,3 +1,32 @@
+2012-05-26  Nate Chapin  <japhet@chromium.org>
+
+        Cancel CachedResource loads when the last client is removed.
+        https://bugs.webkit.org/show_bug.cgi?id=35377
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/cache/cancel-in-progress-load.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::errorLoadingResource):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::allClientsRemoved):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::allClientsRemoved):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore):
+        * loader/cache/CachedRawResource.h:
+        (WebCore::CachedRawResource::shouldIgnoreHTTPStatusCodeErrors):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::allClientsRemoved):
+        (WebCore):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::allClientsRemoved):
+
 2012-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         fast/block/inline-children-root-linebox-crash.html asserts after r118567

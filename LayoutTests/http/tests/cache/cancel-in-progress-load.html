@@ -1,0 +1,19 @@
+<html>
+<body>
+<img id="img" onload="finish()"; onerror="finish();" src="../navigation/resources/slow-resource.pl"></img>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpResourceLoadCallbacks();
+}
+
+function finish() {
+     (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+document.getElementById("img").src = "resources/random.cgi";
+</script>
+</body>
+</html>

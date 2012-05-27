@@ -67,6 +67,7 @@ void CachedScript::allClientsRemoved()
 {
     if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
         m_decodedDataDeletionTimer.startOneShot(interval);
+    CachedResource::allClientsRemoved();
 }
 
 void CachedScript::setEncoding(const String& chs)

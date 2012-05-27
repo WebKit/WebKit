@@ -124,6 +124,7 @@ void CachedImage::allClientsRemoved()
         m_image->resetAnimation();
     if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
         m_decodedDataDeletionTimer.startOneShot(interval);
+    CachedResource::allClientsRemoved();
 }
 
 pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const

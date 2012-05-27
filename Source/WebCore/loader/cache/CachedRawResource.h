@@ -49,7 +49,6 @@ private:
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
-    virtual void allClientsRemoved();
 
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
     virtual void setResponse(const ResourceResponse&);
