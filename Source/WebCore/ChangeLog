@@ -1,3 +1,32 @@
+2012-05-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        When pages are loaded from AppCache with DeferredLoading, willSendRequest() is never called
+        https://bugs.webkit.org/show_bug.cgi?id=87582
+
+        Reviewed by Darin Adler.
+
+        Previously, there was a shortcut when a deferred MainResourceLoader is resumed: If the data
+        was coming from AppCache we could jump directly to startDataLoadTimer().
+
+        The problem with the shortcut is willSendRequest() is never called in that particular case
+        (substituteData + deferred-resume). The imbalance between willSendRequest() and didReceiveResponse()
+        causes problems.
+
+        This patch removes the shortcut so that MainResourceLoader::loadNow() is used regardless of
+        the deferred loading. The method MainResourceLoader::loadNow() handle the substituteData as if the loading
+        was not deferred.
+
+        Test: http/tests/appcache/load-from-appcache-defer-resume-crash.html
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::handleSubstituteDataLoadSoon):
+        Rename the method to be consistent with the attribute it uses, making the naming more explicit.
+        (WebCore::MainResourceLoader::loadNow):
+        (WebCore::MainResourceLoader::setDefersLoading):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+
 2012-05-27  David Kilzer  <ddkilzer@apple.com>
 
         Use xcrun to find gperf path on platforms that use Xcode

@@ -1,3 +1,24 @@
+2012-05-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        When pages are loaded from AppCache with DeferredLoading, willSendRequest() is never called
+        https://bugs.webkit.org/show_bug.cgi?id=87582
+
+        Reviewed by Darin Adler.
+
+        Extend DumpRenderTree to support loading the main resource deferred with a delay. This makes it
+        possible to test pages in a similar way as they are loaded in Browsers.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (setUseDeferredFrameLoadingCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::useDeferredFrameLoading):
+        (LayoutTestController::setUseDeferredFrameLoading):
+        (LayoutTestController):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+
 2012-05-27  David Barton  <dbarton@mathscribe.com>
 
         [watchlist] Improve MathML rule

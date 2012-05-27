@@ -173,6 +173,15 @@
         printf ("%s\n", [string UTF8String]);
         [frame stopLoading];
     }
+
+    if (!done && gLayoutTestController->useDeferredFrameLoading()) {
+        [sender setDefersCallbacks:YES];
+        NSTimeInterval deferredWaitTime = 5 * NSEC_PER_MSEC;
+        dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+        dispatch_after(when, dispatch_get_main_queue(), ^{
+            [sender setDefersCallbacks:NO];
+        });
+    }
 }
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame

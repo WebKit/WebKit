@@ -167,7 +167,7 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
         // A redirect resulted in loading substitute data.
         ASSERT(documentLoader()->timing()->redirectCount());
         handle()->cancel();
-        handleDataLoadSoon(request);
+        handleSubstituteDataLoadSoon(request);
     }
 
     deref(); // balances ref in willSendRequest
@@ -606,7 +606,7 @@ void MainResourceLoader::startDataLoadTimer()
 #endif
 }
 
-void MainResourceLoader::handleDataLoadSoon(const ResourceRequest& r)
+void MainResourceLoader::handleSubstituteDataLoadSoon(const ResourceRequest& r)
 {
     m_initialRequest = r;
     
@@ -642,7 +642,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
 
     resourceLoadScheduler()->addMainResourceLoad(this);
     if (m_substituteData.isValid()) 
-        handleDataLoadSoon(r);
+        handleSubstituteDataLoadSoon(r);
     else if (shouldLoadEmpty || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
     else
@@ -696,13 +696,9 @@ void MainResourceLoader::setDefersLoading(bool defers)
         if (m_initialRequest.isNull())
             return;
 
-        if (m_substituteData.isValid() && m_documentLoader->deferMainResourceDataLoad())
-            startDataLoadTimer();
-        else {
-            ResourceRequest r(m_initialRequest);
-            m_initialRequest = ResourceRequest();
-            loadNow(r);
-        }
+        ResourceRequest initialRequest(m_initialRequest);
+        m_initialRequest = ResourceRequest();
+        loadNow(initialRequest);
     }
 }
 
