@@ -1,5 +1,44 @@
 2012-05-27  Arvid Nilsson  <anilsson@rim.com>
 
+        2012-04-18  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] BackingStore accesses tiles even though it's not active
+        https://bugs.webkit.org/show_bug.cgi?id=87563
+
+        Reviewed by Antonio Gomes.
+
+        There are many scenarios that can call render and cause tile access,
+        and they used to be rerouted to the direct rendering code when the
+        backing store was not active. This was thanks to an implicit check for
+        isActive() by virtue of calling shouldDirectRenderingToWindow() from
+        render().
+
+        If we're using OpenGL for compositing the backing store contents
+        however, direct rendering is always disabled and we jump right into the
+        tile based rendering code.
+
+        Fixed by adding an explicit check for isActive() in render(), now that
+        the implicit check in shouldDirectRenderingToWindow() is conditional on
+        having raster usage.
+
+        Since PR136381/bug83131, when OpenGL compositing is used, and the
+        backing store is not active, it is not in charge of drawing the root
+        layer. Instead, we switch off the paintingGoesToWindow flag on the root
+        RenderLayer so no invalidates will reach the ChromeClient or the
+        BackingStore any more. Instead, invalidations will cause the root
+        accelerated compositing layer to be repainted. Any BackingStore render
+        calls while in this state are pointless, and can safely do an early
+        return.
+
+        Reviewed internally by Jakob Petsovits.
+
+        PR #150403
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+
+2012-05-27  Arvid Nilsson  <anilsson@rim.com>
+
         2012-04-12  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Web page fails to render after clicking link with target=_blank

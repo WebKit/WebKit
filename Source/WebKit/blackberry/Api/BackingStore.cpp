@@ -1011,6 +1011,12 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
     if (shouldDirectRenderingToWindow())
         return renderDirectToWindow(rect);
 
+    // If direct rendering is off, even though we're not active, someone else
+    // has to render the root layer. There are no tiles available for us to
+    // draw to.
+    if (!isActive())
+        return false;
+
     TileRectList tileRectList = mapFromTransformedContentsToTiles(rect);
     if (tileRectList.isEmpty())
         return false;
