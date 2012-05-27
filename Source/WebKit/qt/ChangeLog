@@ -1,3 +1,10 @@
+2012-05-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Trivial unreviewed build fix with newer Qt
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptPrompt): Don't use deprecated QString/QChar functions.
+
 2012-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         createContextualFragment and insertAdjacentHTML should throw syntax error

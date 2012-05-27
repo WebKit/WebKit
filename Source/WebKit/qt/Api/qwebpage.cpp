@@ -2143,7 +2143,7 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     // double the &'s because single & will underline the following character
     // (Accelerator mnemonics)
     QString escMsg(msg);
-    escMsg.replace(QChar::fromAscii('&'), QString::fromAscii("&&"));
+    escMsg.replace(QChar::fromLatin1('&'), QLatin1String("&&"));
     dlg.setLabelText(escMsg);
 
     dlg.setTextEchoMode(QLineEdit::Normal);
