@@ -78,6 +78,8 @@ void PluginData::initPlugins(const Page* page)
     ASSERT(m_plugins.isEmpty());
     
     platformStrategies()->pluginStrategy()->getPluginInfo(page, m_plugins);
+#else
+    UNUSED_PARAM(page);
 #endif
 }
 #endif

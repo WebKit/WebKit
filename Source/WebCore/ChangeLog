@@ -1,3 +1,11 @@
+2012-05-26  Andy Estes  <aestes@apple.com>
+
+        Fix the build when NETSCAPE_PLUGIN_API is disabled by marking a
+        parameter as unused.
+
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::initPlugins):
+
 2012-05-26  Nate Chapin  <japhet@chromium.org>
 
         Cancel CachedResource loads when the last client is removed.
