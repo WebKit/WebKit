@@ -1,3 +1,17 @@
+2012-05-26  David Kilzer  <ddkilzer@apple.com>
+
+        Use xcrun to find path to nm for Mac port
+        <http://webkit.org/b/87588>
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.nm_command): Add. Tries to find a path for the nm
+        command using xcrun.  Falls back to returning 'nm'.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.nm_command): Add. Returns 'nm'.
+        (WebKitPort._webcore_symbols_string): Call self.nm_command().
+
 2012-05-25  Lynn Neir  <lynn.neir@skype.net>
 
         Added windows implementation in DRT for TextInputController, https://bugs.webkit.org/show_bug.cgi?id=32021

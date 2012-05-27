@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi <rgabor@inf.u-szeged.hu>, University of Szeged
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -262,12 +262,15 @@ class WebKitPort(Port):
         """If a port makes certain features available only through runtime flags, it can override this routine to indicate which ones are available."""
         return None
 
+    def nm_command(self):
+        return 'nm'
+
     def _webcore_symbols_string(self):
         webcore_library_path = self._path_to_webcore_library()
         if not webcore_library_path:
             return None
         try:
-            return self._executive.run_command(['nm', webcore_library_path], error_handler=Executive.ignore_error)
+            return self._executive.run_command([self.nm_command(), webcore_library_path], error_handler=Executive.ignore_error)
         except OSError, e:
             _log.warn("Failed to run nm: %s.  Can't determine WebCore supported features." % e)
         return None
