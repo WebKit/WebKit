@@ -5630,6 +5630,8 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     }
 
     m_compositor = compositor;
+    if (m_compositor)
+        m_compositor->setPage(this);
 
     // The previous compositor, if any, has now released it's OpenGL resources,
     // so we can safely free the owned context, if any.
@@ -5862,6 +5864,9 @@ void WebPagePrivate::destroyCompositor()
     if (!m_ownedContext)
         return;
 
+    // m_compositor is a RefPtr, so it may live on beyond this point.
+    // Disconnect the compositor from us
+    m_compositor->setPage(0);
     m_compositor.clear();
     m_ownedContext.clear();
 }

@@ -1,5 +1,32 @@
 2012-05-27  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Crash when deleting WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=87589
+
+        Reviewed by Rob Buis.
+
+        The WebPageCompositorPrivate is reference counted, so it may outlive
+        either the WebPage or the WebPageCompositor, depending on who releases
+        its reference first.
+
+        Fixed by disconnecting the objects properly, regardless of who goes
+        away first.
+
+        Reviewed internally by Mike Lattanzio.
+
+        PR #156444
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::destroyCompositor):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::~WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::client):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setPage):
+
+2012-05-27  Arvid Nilsson  <anilsson@rim.com>
+
         2012-04-18  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] BackingStore accesses tiles even though it's not active

@@ -190,14 +190,16 @@ WebPageCompositor::~WebPageCompositor()
 {
     using namespace BlackBerry::Platform;
 
-    webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), PassRefPtr<WebPageCompositorPrivate>(0)));
+    // If we're being destroyed before the page, send a message to disconnect us
+    if (d->page())
+        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), PassRefPtr<WebPageCompositorPrivate>(0)));
     d->compositorDestroyed();
     d->deref();
 }
 
 WebPageCompositorClient* WebPageCompositor::client() const
 {
-    return 0;
+    return d->client();
 }
 
 void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context* context, double timestamp)
