@@ -156,7 +156,7 @@
             "filename": r"(Source|LayoutTests)/.*([Mm]edia|[Aa]udio|[Vv]ideo)",
         },
         "MathML": {
-            "filename": r".*mathml",
+            "filename": r"(Source|LayoutTests|Websites)/.*mathml",
         }
     },
     "CC_RULES": {

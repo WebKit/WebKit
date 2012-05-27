@@ -1,5 +1,18 @@
 2012-05-27  David Barton  <dbarton@mathscribe.com>
 
+        [watchlist] Improve MathML rule
+        https://bugs.webkit.org/show_bug.cgi?id=87592
+
+        Reviewed by Adam Barth.
+
+        The old rule "filename": r".*mathml" works fine because "filename" is a prefix match,
+        but if this changed the rule would be slow. We protect against this, clarify the rule,
+        and make it more similar to existing rules.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2012-05-27  David Barton  <dbarton@mathscribe.com>
+
         [watchlist] Add myself & a rule for MathML
         https://bugs.webkit.org/show_bug.cgi?id=87586
 
