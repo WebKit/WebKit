@@ -1,3 +1,9 @@
+2012-05-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r118618.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-27  Li Yin  <li.yin@intel.com>
 
         [FileAPI] FileReader should fire progress event when blob has been completely read into memory
