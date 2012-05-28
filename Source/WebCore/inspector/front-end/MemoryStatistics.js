@@ -258,6 +258,8 @@ WebInspector.MemoryStatistics.prototype = {
     _onRecordAdded: function(event)
     {
         var counters = event.data["counters"];
+        if (!counters)
+            return;
         this._counters.push({
             time: event.data.endTime || event.data.startTime,
             documentCount: counters["documents"],
