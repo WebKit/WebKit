@@ -884,8 +884,10 @@ void WebPagePrivate::setLoadState(LoadState state)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-            if (isAcceleratedCompositingActive() && !compositorDrawsRootLayer())
-                syncDestroyCompositorOnCompositingThread();
+            if (isAcceleratedCompositingActive()) {
+                Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+                    Platform::createMethodCallMessage(&WebPagePrivate::destroyLayerResources, this));
+            }
 #endif
             m_previousContentsSize = IntSize();
             m_backingStore->d->resetRenderQueue();
@@ -5895,12 +5897,6 @@ bool WebPagePrivate::createCompositor()
 
 void WebPagePrivate::destroyCompositor()
 {
-    // We shouldn't release the compositor unless we created and own the
-    // context. If the compositor was created from the WebPageCompositor API,
-    // keep it around and reuse it later.
-    if (!m_ownedContext)
-        return;
-
     // m_compositor is a RefPtr, so it may live on beyond this point.
     // Disconnect the compositor from us
     m_compositor->setPage(0);

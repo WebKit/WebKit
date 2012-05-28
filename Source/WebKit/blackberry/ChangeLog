@@ -1,5 +1,38 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Dangling pointer in WebPagePrivate::setCompositor() message
+        https://bugs.webkit.org/show_bug.cgi?id=87590
+
+        Reviewed by Rob Buis.
+
+        A crash would be seen in GuardedPointerBase::getWithGuardLocked when
+        attempting to unpickle and execute serialized call to setCompositor.
+
+        The problem was that the message had been created with a dangling
+        pointer as the target. The web page failed to inform its compositor
+        that it was being destroyed due to an early return in
+        WebPagePrivate::destroyCompositor.
+
+        The root cause was that a method called "destroyCompositor" was being
+        called in two situations, when navigating to a new page as well as when
+        actually deleting the web page. And in one case, we really only wanted
+        to free up some memory by clearing textures, while in the other case we
+        really did want to destroy the compositor.
+
+        Fixed by calling a method to release textures when that's what we want
+        to do, and calling a method to destroy the compositor when that's what
+        we want to do, and making that latter method unconditional.
+
+        Reviewed internally by Jeff Rogers.
+
+        PR #156765
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::destroyCompositor):
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Add a default tap highlight
         https://bugs.webkit.org/show_bug.cgi?id=87569
 
