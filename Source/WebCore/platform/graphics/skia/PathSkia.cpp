@@ -53,6 +53,13 @@ Path::Path(const Path& other)
     m_path = new SkPath(*other.m_path);
 }
 
+#if PLATFORM(BLACKBERRY)
+Path::Path(const SkPath& path)
+{
+    m_path = new SkPath(path);
+}
+#endif
+
 Path::~Path()
 {
     delete m_path;

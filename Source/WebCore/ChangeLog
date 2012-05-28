@@ -1,3 +1,24 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add a constructor to create a Path from an SkPath
+        https://bugs.webkit.org/show_bug.cgi?id=87566
+
+        Reviewed by Antonio Gomes.
+
+        Skia allows the creation of more complex paths than WebCore would
+        allow. This will be used in the BlackBerry port to implement a default
+        tap highlight appearance.
+
+        Reviewed internally by Mike Lattanzio.
+
+        PR #154329
+
+        * platform/graphics/Path.h:
+        (Path):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore):
+        (WebCore::Path::Path):
+
 2012-05-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Mac on Lion.

@@ -159,6 +159,10 @@ namespace WebCore {
         void platformAddPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 #endif
 
+#if PLATFORM(BLACKBERRY)
+        Path(const SkPath&);
+#endif
+
     private:
         PlatformPathPtr m_path;
     };
