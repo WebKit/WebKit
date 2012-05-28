@@ -37,6 +37,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorValues.h"
+#include "ScriptDebugServer.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -181,6 +182,13 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Ar
     v8::Handle<v8::Value> inferredName = function->GetInferredName();
     if (inferredName->IsString() && v8::Handle<v8::String>::Cast(inferredName)->Length())
         result->Set(v8::String::New("inferredName"), inferredName);
+
+    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
+    ScriptDebugServer& debugServer = host->scriptDebugServer();
+    v8::Handle<v8::Value> scopes = debugServer.functionScopes(function);
+    if (!scopes.IsEmpty() && scopes->IsArray())
+        result->Set(v8::String::New("rawScopes"), scopes);
+
     return result;
 }
 

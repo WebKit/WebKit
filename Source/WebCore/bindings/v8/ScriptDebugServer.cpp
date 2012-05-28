@@ -396,6 +396,14 @@ void ScriptDebugServer::ensureDebuggerScriptCompiled()
     }
 }
 
+v8::Local<v8::Value> ScriptDebugServer::functionScopes(v8::Handle<v8::Function> function)
+{
+    ensureDebuggerScriptCompiled();
+
+    v8::Handle<v8::Value> argv[] = { function };
+    return callDebuggerMethod("getFunctionScopes", 1, argv);
+}
+
 bool ScriptDebugServer::isPaused()
 {
     return !m_executionState.get().IsEmpty();

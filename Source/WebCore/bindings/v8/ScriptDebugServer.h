@@ -94,6 +94,8 @@ public:
 
     bool isPaused();
 
+    v8::Local<v8::Value> functionScopes(v8::Handle<v8::Function>);
+
 protected:
     ScriptDebugServer();
     ~ScriptDebugServer() { }

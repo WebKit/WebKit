@@ -20,6 +20,26 @@ var obj = {
 function functionWithDisplayName() {}
 functionWithDisplayName.displayName = "user-friendly name";
 
+var smallClosure = (function(p) { return function() { return p; }; })("Capybara");
+
+var bigClosure = (function(p) {
+    var o = {
+       e: 7,
+       f: 5,
+       get u() { return 3; },
+       set v(value) { }
+    };
+    with (o) {
+        try {
+            throw Error("Test");
+        } catch (ex) {
+            return function() {
+                return String(p) + String(ex) + u + e;
+            };
+        }
+    }
+})({});
+
 function test()
 {
     function dumpFunctionDetails(details)
@@ -33,69 +53,101 @@ function test()
         InspectorTest.addResult("inferredName: " + details.inferredName);
     }
 
+    function dumpFunctionNoScopes()
+    {
+        InspectorTest.addResult("scopeChain: n/a");
+    }
+
+
+    function dumpFunctionScope(pos, type, propertyDescriptors)
+    {
+        var variables;
+        if (type == "global") {
+            variables = "<global object properties omitted>";
+        } else {
+            var varArray = [];
+            for (var i = 0; i < propertyDescriptors.length; i++) {
+                var d = propertyDescriptors[i];
+                var valueStr;
+                if (d.value) {
+                    if (d.value.value)
+                        valueStr = JSON.stringify(d.value.value);
+                    else
+                        valueStr = "<no string representation>";
+                } else {
+                    valueStr = "<no value>";
+                }
+                varArray.push(d.name + ": " + valueStr);
+            }
+            varArray.sort();
+            variables = varArray.join();
+        }
+        InspectorTest.addResult("scopeChain #" + pos + ": " + type + "; " + variables);
+    }
+
+    function loadAndDumpScopeObjects(scopeChain, end) {
+        function loadScopeObject(pos, next) {
+            if (pos >= scopeChain.length) {
+                next();
+                return;
+            }
+            var scopeJson = scopeChain[pos];
+            RuntimeAgent.getProperties(scopeJson.object.objectId, true, didGetProperties);
+
+            function didGetProperties(error, propertyDescriptors) {
+                dumpFunctionScope(pos, scopeJson.type, propertyDescriptors);
+                loadScopeObject(pos + 1, next);
+            }
+        }
+
+        if (scopeChain) {
+            loadScopeObject(0, end);
+        } else {
+            dumpFunctionNoScopes();
+            end();
+        }
+    }
+
+    function performStandardTestCase(pageExpression, next) {
+        InspectorTest.evaluateInPage(pageExpression, didEvaluate);
+
+        function didEvaluate(remote)
+        {
+            InspectorTest.addResult(pageExpression + " type = " + remote.type);
+            DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
+        }
+        function didGetDetails(error, response)
+        {
+            dumpFunctionDetails(response);
+            loadAndDumpScopeObjects(response.scopeChain, next);
+        }
+    }
 
     InspectorTest.runDebuggerTestSuite([
         function testGetFirstLineFunctionDetails(next)
         {
-            InspectorTest.evaluateInPage("firstLineFunction", didEvaluate);
-
-            function didEvaluate(remote)
-            {
-                InspectorTest.addResult("firstLineFunction type = " + remote.type);
-                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
-            }
-            function didGetDetails(error, response)
-            {
-                dumpFunctionDetails(response);
-                next();
-            }
+            performStandardTestCase("firstLineFunction", next);
         },
         function testGetNonFirstLineFunctionDetails(next)
         {
-            InspectorTest.evaluateInPage("notFirstLineFunction", didEvaluate);
-
-            function didEvaluate(remote)
-            {
-                InspectorTest.addResult("nonFirstLineFunction type = " + remote.type);
-                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
-            }
-            function didGetDetails(error, response)
-            {
-                dumpFunctionDetails(response);
-                next();
-            }
+            performStandardTestCase("notFirstLineFunction", next);
         },
         function testGetDetailsOfFunctionWithInferredName(next)
         {
-            InspectorTest.evaluateInPage("obj.m", didEvaluate);
-
-            function didEvaluate(remote)
-            {
-                InspectorTest.addResult("obj.m type = " + remote.type);
-                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
-            }
-            function didGetDetails(error, response)
-            {
-                dumpFunctionDetails(response);
-                next();
-            }
+            performStandardTestCase("obj.m", next);
         },
         function testGetDetailsOfFunctionWithDisplayName(next)
         {
-            InspectorTest.evaluateInPage("functionWithDisplayName", didEvaluate);
-
-            function didEvaluate(remote)
-            {
-                InspectorTest.addResult("functionWithDisplayName type = " + remote.type);
-                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
-            }
-            function didGetDetails(error, response)
-            {
-                dumpFunctionDetails(response);
-                next();
-            }
+            performStandardTestCase("functionWithDisplayName", next);
+        },
+        function testSmallClosure(next)
+        {
+            performStandardTestCase("smallClosure", next);
+        },
+        function testBigClosure(next)
+        {
+            performStandardTestCase("bigClosure", next);
         }
-
     ]);
 };
 

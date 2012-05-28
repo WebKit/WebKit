@@ -197,7 +197,17 @@ InjectedScript.prototype = {
         var func = this._objectForId(parsedFunctionId);
         if (typeof func !== "function")
             return "Cannot resolve function by id.";
-        return InjectedScriptHost.functionDetails(func);
+        var details = InjectedScriptHost.functionDetails(func);
+        if ("rawScopes" in details) {
+            var objectGroupName = this._idToObjectGroupName[parsedFunctionId.id];
+            var rawScopes = details.rawScopes;
+            var scopes = [];
+            delete details.rawScopes;
+            for (var i = 0; i < rawScopes.length; i++)
+                scopes.push(InjectedScript.CallFrameProxy._createScopeJson(rawScopes[i].type, rawScopes[i].object, objectGroupName));
+            details.scopeChain = scopes;
+        }
+        return details;
     },
 
     releaseObject: function(objectId)
@@ -522,32 +532,34 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 InjectedScript.CallFrameProxy.prototype = {
     _wrapScopeChain: function(callFrame)
     {
-        const GLOBAL_SCOPE = 0;
-        const LOCAL_SCOPE = 1;
-        const WITH_SCOPE = 2;
-        const CLOSURE_SCOPE = 3;
-        const CATCH_SCOPE = 4;
-
-        var scopeTypeNames = {};
-        scopeTypeNames[GLOBAL_SCOPE] = "global";
-        scopeTypeNames[LOCAL_SCOPE] = "local";
-        scopeTypeNames[WITH_SCOPE] = "with";
-        scopeTypeNames[CLOSURE_SCOPE] = "closure";
-        scopeTypeNames[CATCH_SCOPE] = "catch";
-
         var scopeChain = callFrame.scopeChain;
         var scopeChainProxy = [];
-        var foundLocalScope = false;
         for (var i = 0; i < scopeChain.length; i++) {
-            var scope = {};
-            scope.object = injectedScript._wrapObject(scopeChain[i], "backtrace");
-
-            var scopeType = callFrame.scopeType(i);
-            scope.type = scopeTypeNames[scopeType];
+            var scope = InjectedScript.CallFrameProxy._createScopeJson(callFrame.scopeType(i), scopeChain[i], "backtrace");
             scopeChainProxy.push(scope);
         }
         return scopeChainProxy;
     }
+}
+
+InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId) {
+    const GLOBAL_SCOPE = 0;
+    const LOCAL_SCOPE = 1;
+    const WITH_SCOPE = 2;
+    const CLOSURE_SCOPE = 3;
+    const CATCH_SCOPE = 4;
+
+    var scopeTypeNames = {};
+    scopeTypeNames[GLOBAL_SCOPE] = "global";
+    scopeTypeNames[LOCAL_SCOPE] = "local";
+    scopeTypeNames[WITH_SCOPE] = "with";
+    scopeTypeNames[CLOSURE_SCOPE] = "closure";
+    scopeTypeNames[CATCH_SCOPE] = "catch";
+
+    return {
+        object: injectedScript._wrapObject(scopeObject, groupId),
+        type: scopeTypeNames[scopeTypeCode]
+    };
 }
 
 /**

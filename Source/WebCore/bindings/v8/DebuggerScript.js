@@ -62,6 +62,23 @@ DebuggerScript.getWorkerScripts = function()
     return result;
 }
 
+DebuggerScript.getFunctionScopes = function(fun)
+{
+    var mirror = MakeMirror(fun);
+    var count = mirror.scopeCount();
+    if (count == 0)
+        return null;
+    var result = [];
+    for (var i = 0; i < count; i++) {
+        var scopeMirror = mirror.scope(i);
+        result[i] = {
+            type: scopeMirror.scopeType(),
+            object: DebuggerScript._buildScopeObject(scopeMirror)
+        };
+    }
+    return result;
+}
+
 DebuggerScript.getScripts = function(contextData)
 {
     var result = [];
@@ -233,35 +250,8 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     var scopeType = [];
     for (var i = 0; i < frameMirror.scopeCount(); i++) {
         var scopeMirror = frameMirror.scope(i);
-        var scopeObjectMirror = scopeMirror.scopeObject();
-
-        var scopeObject;
-        switch (scopeMirror.scopeType()) {
-        case ScopeType.Local:
-        case ScopeType.Closure:
-        case ScopeType.Catch:
-            // For transient objects we create a "persistent" copy that contains
-            // the same properties.
-            scopeObject = {};
-            // Reset scope object prototype to null so that the proto properties
-            // don't appear in the local scope section.
-            scopeObject.__proto__ = null;
-            var properties = scopeObjectMirror.properties();
-            for (var j = 0; j < properties.length; j++) {
-                var name = properties[j].name();
-                if (name.charAt(0) === ".")
-                    continue; // Skip internal variables like ".arguments"
-                scopeObject[name] = properties[j].value_;
-            }
-            break;
-        case ScopeType.Global:
-        case ScopeType.With:
-            scopeObject = scopeMirror.details_.object();
-            break;
-        }
-
         scopeType.push(scopeMirror.scopeType());
-        scopeChain.push(scopeObject);
+        scopeChain.push(DebuggerScript._buildScopeObject(scopeMirror));
     }
 
     function evaluate(expression) {
@@ -279,6 +269,38 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "evaluate": evaluate,
         "caller": callerFrame
     };
+}
+
+DebuggerScript._buildScopeObject = function(scopeMirror) {
+    var scopeObject;
+    switch (scopeMirror.scopeType()) {
+    case ScopeType.Local:
+    case ScopeType.Closure:
+    case ScopeType.Catch:
+        // For transient objects we create a "persistent" copy that contains
+        // the same properties.
+        scopeObject = {};
+        // Reset scope object prototype to null so that the proto properties
+        // don't appear in the local scope section.
+        scopeObject.__proto__ = null;
+        var scopeObjectMirror = scopeMirror.scopeObject();
+        var properties = scopeObjectMirror.properties();
+        for (var j = 0; j < properties.length; j++) {
+            var name = properties[j].name();
+            if (name.charAt(0) === ".")
+                continue; // Skip internal variables like ".arguments"
+            scopeObject[name] = properties[j].value_;
+        }
+        break;
+    case ScopeType.Global:
+    case ScopeType.With:
+        scopeObject = scopeMirror.details_.object();
+        break;
+    case ScopeType.Block:
+        // Unsupported yet. Mustn't be reachable.
+        break;
+    }
+    return scopeObject;
 }
 
 return DebuggerScript;

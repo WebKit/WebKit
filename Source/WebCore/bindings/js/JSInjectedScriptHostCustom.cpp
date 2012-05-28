@@ -184,6 +184,8 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     UString displayName = function->displayName(exec);
     if (!displayName.isEmpty())
         result->putDirect(exec->globalData(), Identifier(exec, "displayName"), jsString(exec, displayName));
+    // FIXME: provide function scope data in "scopesRaw" property when JSC supports it.
+    //     https://bugs.webkit.org/show_bug.cgi?id=87192
     return result;
 }
 

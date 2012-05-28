@@ -45,6 +45,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "Pasteboard.h"
@@ -181,6 +182,14 @@ void InjectedScriptHost::didDestroyWorker(long id)
         m_inspectorAgent->didDestroyWorker(static_cast<int>(id));
 }
 #endif // ENABLE(WORKERS)
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+ScriptDebugServer& InjectedScriptHost::scriptDebugServer()
+{
+    return m_debuggerAgent->scriptDebugServer();
+}
+#endif
+
 
 } // namespace WebCore
 

@@ -45,10 +45,12 @@ class InspectorConsoleAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
+class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
 class Node;
+class ScriptDebugServer;
 class ScriptObject;
 class ScriptValue;
 class Storage;
@@ -67,6 +69,9 @@ public:
 #endif
             , InspectorDOMStorageAgent* domStorageAgent
             , InspectorDOMAgent* domAgent
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+            , InspectorDebuggerAgent* debuggerAgent
+#endif
         )
     {
         m_inspectorAgent = inspectorAgent;
@@ -76,6 +81,9 @@ public:
 #endif
         m_domStorageAgent = domStorageAgent;
         m_domAgent = domAgent;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_debuggerAgent = debuggerAgent;
+#endif
     }
 
     static Node* scriptValueAsNode(ScriptValue);
@@ -107,6 +115,10 @@ public:
     void didDestroyWorker(long id);
 #endif
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    ScriptDebugServer& scriptDebugServer();
+#endif
+
 private:
     InjectedScriptHost();
 
@@ -117,6 +129,9 @@ private:
 #endif
     InspectorDOMStorageAgent* m_domStorageAgent;
     InspectorDOMAgent* m_domAgent;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorDebuggerAgent* m_debuggerAgent;
+#endif
     long m_lastWorkerId;
     Vector<OwnPtr<InspectableObject> > m_inspectedObjects;
     OwnPtr<InspectableObject> m_defaultInspectableObject;

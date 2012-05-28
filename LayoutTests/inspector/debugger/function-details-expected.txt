@@ -11,9 +11,10 @@ scriptId is valid: true
 name: firstLineFunction
 displayName: undefined
 inferredName: undefined
+scopeChain: n/a
 
 Running: testGetNonFirstLineFunctionDetails
-nonFirstLineFunction type = function
+notFirstLineFunction type = function
 Function details: 
 lineNumber: 12
 columnNumber: undefined
@@ -21,6 +22,7 @@ scriptId is valid: true
 name: notFirstLineFunction
 displayName: undefined
 inferredName: undefined
+scopeChain: n/a
 
 Running: testGetDetailsOfFunctionWithInferredName
 obj.m type = function
@@ -31,6 +33,7 @@ scriptId is valid: true
 name: undefined
 displayName: undefined
 inferredName: undefined
+scopeChain: n/a
 
 Running: testGetDetailsOfFunctionWithDisplayName
 functionWithDisplayName type = function
@@ -41,5 +44,28 @@ scriptId is valid: true
 name: functionWithDisplayName
 displayName: user-friendly name
 inferredName: undefined
+scopeChain: n/a
+
+Running: testSmallClosure
+smallClosure type = function
+Function details: 
+lineNumber: 22
+columnNumber: undefined
+scriptId is valid: true
+name: undefined
+displayName: undefined
+inferredName: undefined
+scopeChain: n/a
+
+Running: testBigClosure
+bigClosure type = function
+Function details: 
+lineNumber: 35
+columnNumber: undefined
+scriptId is valid: true
+name: undefined
+displayName: undefined
+inferredName: undefined
+scopeChain: n/a
 Debugger was disabled.
 

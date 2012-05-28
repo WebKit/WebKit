@@ -1,3 +1,16 @@
+2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Expose function (closure) scopes in remote protocol
+        https://bugs.webkit.org/show_bug.cgi?id=86861
+
+        Reviewed by Yury Semikhatsky.
+
+        Test for function details now checks scopes.
+
+        * inspector/debugger/function-details-expected.txt:
+        * inspector/debugger/function-details.html:
+        * platform/chromium/inspector/debugger/function-details-expected.txt:
+
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Rebaseline following r118598

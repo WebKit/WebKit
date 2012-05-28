@@ -1,3 +1,40 @@
+2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Expose function (closure) scopes in remote protocol
+        https://bugs.webkit.org/show_bug.cgi?id=86861
+
+        Reviewed by Yury Semikhatsky.
+
+        A data transfer from V8's FunctionMirror via DebuggerScript.js via InjectedScriptHost is built.
+        Scope field is added to protocol declaration similar to scopes of stack call frame.
+        Test for function details is extended.
+        JSC code binging got fixme for implemting the corresponding feature.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::functionDetails):
+        * bindings/v8/DebuggerScript.js:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::functionScopes):
+        (WebCore):
+        * bindings/v8/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::functionDetailsCallback):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore):
+        (WebCore::InjectedScriptHost::scriptDebugServer):
+        * inspector/InjectedScriptHost.h:
+        (WebCore):
+        (WebCore::InjectedScriptHost::init):
+        (InjectedScriptHost):
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add a constructor to create a Path from an SkPath
