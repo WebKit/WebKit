@@ -1,3 +1,16 @@
+2012-05-28  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        FileWriterSync binding should have no static table
+        https://bugs.webkit.org/show_bug.cgi?id=87645
+
+        Reviewed by George Staikos.
+
+        FileWriterSync could be used in filesystem FileWriter in worker thread, so we should add ProgressEvent in idl file.
+
+        Covered by existing test: fast/filesystem/workers/sync-operations.html.
+
+        * Modules/filesystem/FileWriterSync.idl:
+
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add an overlay layer
