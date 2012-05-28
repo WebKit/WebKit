@@ -947,7 +947,9 @@ void Element::attach()
     // When a shadow root exists, it does the work of attaching the children.
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
-        shadow->attachHost(this);
+        shadow->attach();
+        attachChildrenIfNeeded();
+        attachAsNode();
     } else {
         if (firstChild())
             parentPusher.push();
@@ -983,9 +985,11 @@ void Element::detach()
     if (hasRareData())
         rareData()->resetComputedStyle();
 
-    if (ElementShadow* shadow = this->shadow())
-        shadow->detachHost(this);
-    else
+    if (ElementShadow* shadow = this->shadow()) {
+        detachChildrenIfNeeded();
+        shadow->detach();
+        detachAsNode();
+    } else
         ContainerNode::detach();
 
     RenderWidget::resumeWidgetHierarchyUpdates();

@@ -1,3 +1,23 @@
+2012-05-27  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring][ShadowDOM] Some ElementShadow methods can be inlined.
+        https://bugs.webkit.org/show_bug.cgi?id=87617
+
+        Reviewed by Kentaro Hara.
+
+        Inlined ElementShadow::attachHost(), ElementShadow::detachHost() and
+        ElementShadow::reattach()
+
+        No new tests. No behavior change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElememtnShadow::reattachHostChildrenAndShadow):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+
 2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: protect typed API from C++ implicit float to int cast

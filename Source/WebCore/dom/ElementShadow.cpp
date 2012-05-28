@@ -123,26 +123,12 @@ void ElementShadow::attach()
     distributor().didDistribute();
 }
 
-void ElementShadow::attachHost(Element* host)
-{
-    attach();
-    host->attachChildrenIfNeeded();
-    host->attachAsNode();
-}
-
 void ElementShadow::detach()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (root->attached())
             root->detach();
     }
-}
-
-void ElementShadow::detachHost(Element* host)
-{
-    host->detachChildrenIfNeeded();
-    detach();
-    host->detachAsNode();
 }
 
 InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
@@ -157,12 +143,6 @@ InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
     }
 
     return distributor().findInsertionPointFor(node);
-}
-
-void ElementShadow::reattach()
-{
-    detach();
-    attach();
 }
 
 bool ElementShadow::childNeedsStyleRecalc()
@@ -241,7 +221,8 @@ void ElementShadow::reattachHostChildrenAndShadow()
 
     Element* hostNode = youngestShadowRoot()->host();
     hostNode->detachChildrenIfNeeded();
-    reattach();
+    detach();
+    attach();
     hostNode->attachChildrenIfNeeded();
 }
 
