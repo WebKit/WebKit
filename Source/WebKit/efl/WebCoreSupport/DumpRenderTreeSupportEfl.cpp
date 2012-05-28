@@ -428,24 +428,6 @@ void DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(const Evas_Object* ewkVie
         corePage->settings()->setCSSGridLayoutEnabled(enabled);
 }
 
-void DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
-    if (!corePage)
-        return;
-
-    WebCore::InspectorController* controller = corePage->inspectorController();
-    if (!controller)
-        return;
-
-    if (enabled)
-        controller->enableProfiler();
-    else
-        controller->disableProfiler();
-#endif
-}
-
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);

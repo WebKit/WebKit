@@ -301,20 +301,6 @@ void DumpRenderTreeSupportQt::setAutofilled(const QWebElement& element, bool isA
     inputElement->setAutofilled(isAutofilled);
 }
 
-void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-    Frame* coreFrame = QWebFramePrivate::core(frame);
-    InspectorController* controller = coreFrame->page()->inspectorController();
-    if (!controller)
-        return;
-    if (enabled)
-        controller->enableProfiler();
-    else
-        controller->disableProfiler();
-#endif
-}
-
 void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const QString& value)
 {
     WebCore::Element* webElement = element.m_element;
@@ -1272,11 +1258,6 @@ void QWEBKIT_EXPORT qt_drt_resetOriginAccessWhiteLists()
 void QWEBKIT_EXPORT qt_drt_run(bool b)
 {
     DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(b);
-}
-
-void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)
-{
-    DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(frame, enabled);
 }
 
 void QWEBKIT_EXPORT qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)

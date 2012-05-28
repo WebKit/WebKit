@@ -1265,7 +1265,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
     }
 
     [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
-    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:NO];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
     [WebView _resetOriginAccessWhitelists];

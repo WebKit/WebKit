@@ -340,21 +340,18 @@ Node* InspectorController::highlightedNode() const
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorController::enableProfiler()
-{
-    ErrorString error;
-    m_profilerAgent->enable(&error);
-}
-
-void InspectorController::disableProfiler()
-{
-    ErrorString error;
-    m_profilerAgent->disable(&error);
-}
-
 bool InspectorController::profilerEnabled()
 {
     return m_profilerAgent->enabled();
+}
+
+void InspectorController::setProfilerEnabled(bool enable)
+{
+    ErrorString error;
+    if (enable)
+        m_profilerAgent->enable(&error);
+    else
+        m_profilerAgent->disable(&error);
 }
 
 void InspectorController::resume()

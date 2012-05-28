@@ -100,8 +100,7 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool profilerEnabled();
-    void enableProfiler();
-    void disableProfiler();
+    void setProfilerEnabled(bool);
 
     void resume();
 #endif

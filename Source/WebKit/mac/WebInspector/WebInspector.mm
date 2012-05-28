@@ -149,10 +149,7 @@ using namespace WebCore;
     if (!page)
         return;
 
-    if (enabled)
-        page->inspectorController()->enableProfiler();
-    else
-        page->inspectorController()->disableProfiler();
+    page->inspectorController()->setProfilerEnabled(enabled);
 }
 
 - (BOOL)isTimelineProfilingEnabled

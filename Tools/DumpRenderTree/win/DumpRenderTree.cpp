@@ -905,10 +905,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (SUCCEEDED(webViewPrivate->defaultMinimumTimerInterval(&minimumInterval)))
         webViewPrivate->setMinimumTimerInterval(minimumInterval);
 
-    COMPtr<IWebInspector> inspector;
-    if (SUCCEEDED(webViewPrivate->inspector(&inspector)))
-        inspector->setJavaScriptProfilingEnabled(FALSE);
-
     HWND viewWindow;
     if (SUCCEEDED(webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))) && viewWindow)
         SetFocus(viewWindow);

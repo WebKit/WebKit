@@ -174,7 +174,6 @@ public:
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, JSStringRef script);
-    void setJavaScriptProfilingEnabled(bool);
 
     void setPOSIXLocale(JSStringRef);
 

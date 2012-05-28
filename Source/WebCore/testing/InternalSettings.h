@@ -81,6 +81,8 @@ public:
 
     void restoreTo(Settings*);
 
+    void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
+
 private:
     InternalSettings(Frame*);
 
@@ -97,6 +99,9 @@ private:
     EditingBehaviorType m_originalEditingBehavior;
     bool m_originalFixedPositionCreatesStackingContext;
     bool m_originalSyncXHRInDocumentsEnabled;
+#if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
+    bool m_originalJavaScriptProfilingEnabled;
+#endif
 };
 
 } // namespace WebCore

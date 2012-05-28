@@ -112,15 +112,6 @@ void DRTDevToolsAgent::detach()
     m_drtDevToolsClient = 0;
 }
 
-bool DRTDevToolsAgent::setJavaScriptProfilingEnabled(bool enabled)
-{
-    WebDevToolsAgent* agent = webDevToolsAgent();
-    if (!agent)
-        return false;
-    agent->setJavaScriptProfilingEnabled(enabled);
-    return true;
-}
-
 bool DRTDevToolsAgent::evaluateInWebInspector(long callID, const std::string& script)
 {
     WebDevToolsAgent* agent = webDevToolsAgent();

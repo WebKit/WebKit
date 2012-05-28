@@ -349,9 +349,6 @@ public:
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);
 
-    // Allows layout tests to start JavaScript profiling.
-    void setJavaScriptProfilingEnabled(const CppArgumentList&, CppVariant*);
-
     // Allows layout tests to exec scripts at WebInspector side.
     void evaluateInWebInspector(const CppArgumentList&, CppVariant*);
 

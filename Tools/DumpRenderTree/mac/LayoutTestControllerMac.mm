@@ -561,12 +561,6 @@ void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
     [sharedWebIconDatabase setEnabled:iconDatabaseEnabled];
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
-{
-    setDeveloperExtrasEnabled(profilingEnabled);
-    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
-}
-
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
 {
     NSView *documentView = [[mainFrame frameView] documentView];

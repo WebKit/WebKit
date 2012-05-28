@@ -68,7 +68,6 @@ public:
 
     // Exposed for LayoutTestController.
     virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;
-    virtual void setJavaScriptProfilingEnabled(bool) = 0;
 
     class MessageDescriptor {
     public:

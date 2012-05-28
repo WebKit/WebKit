@@ -256,3 +256,5 @@ EXPORTS
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
+        ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
+        ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z

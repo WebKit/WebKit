@@ -560,15 +560,6 @@ void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& 
     ic->evaluateForTestInFrontend(callId, script);
 }
 
-void WebDevToolsAgentImpl::setJavaScriptProfilingEnabled(bool enabled)
-{
-    InspectorController* ic = inspectorController();
-    if (enabled)
-        ic->enableProfiler();
-    else
-        ic->disableProfiler();
-}
-
 WebString WebDevToolsAgent::inspectorProtocolVersion()
 {
     return WebCore::inspectorProtocolVersion();

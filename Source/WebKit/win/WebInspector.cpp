@@ -232,10 +232,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabl
     if (!page)
         return S_OK;
 
-    if (enabled)
-        page->inspectorController()->enableProfiler();
-    else
-        page->inspectorController()->disableProfiler();
+    page->inspectorController()->setProfilerEnabled(enabled);
 
     return S_OK;
 }

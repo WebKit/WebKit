@@ -540,17 +540,6 @@ void LayoutTestController::setIconDatabaseEnabled(bool enabled)
         webkit_icon_database_set_path(database, 0);
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
-{
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    ASSERT(view);
-
-    setDeveloperExtrasEnabled(flag);
-
-    WebKitWebInspector* inspector = webkit_web_view_get_inspector(view);
-    g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", flag, NULL);
-}
-
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(flag);

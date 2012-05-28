@@ -69,7 +69,6 @@ public:
     void detach();
 
     bool evaluateInWebInspector(long callID, const std::string& script);
-    bool setJavaScriptProfilingEnabled(bool);
     TaskList* taskList() { return &m_taskList; }
 
 private:

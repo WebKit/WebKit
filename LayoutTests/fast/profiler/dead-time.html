@@ -5,8 +5,9 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-    layoutTestController.setJavaScriptProfilingEnabled(true);
 }
+if (window.internals)
+    internals.settings.setJavaScriptProfilingEnabled(true);
 
 function startTest()
 {
@@ -27,3 +28,4 @@ the profile.  In the profile there should be a large amount of the % spent in
 <div id="output"></div>
 </body>
 </html>
+

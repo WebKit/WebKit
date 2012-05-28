@@ -195,10 +195,8 @@ void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
     m_page->corePage()->inspectorController()->show();
     if (!m_frontendClient)
         return;
-    if (enabled)
-        m_page->corePage()->inspectorController()->enableProfiler();
-    else
-        m_page->corePage()->inspectorController()->disableProfiler();        
+
+    m_page->corePage()->inspectorController()->setProfilerEnabled(enabled);
 #endif
 }
 

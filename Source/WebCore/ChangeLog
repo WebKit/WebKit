@@ -1,3 +1,31 @@
+2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=42328
+
+        Reviewed by Eric Seidel.
+
+        Add setJavaScriptProfilingEnabled() to window.internals.settings. No new tests, but this
+        change will allow more tests to run in WebKitTestRunner and DRT for ports that weren't
+        implementing this function before.
+        This patch also refactors InspectorController::enableProfiler() and
+        InspectorController::disableProfiler() to InspectorController::setProfilerEnabled(bool).
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::profilerEnabled):
+        (WebCore::InspectorController::setProfilerEnabled):
+        * inspector/InspectorController.h:
+        (InspectorController):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::restoreTo):
+        (WebCore::InternalSettings::setJavaScriptProfilingEnabled):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-05-28  Yong Li  <yoli@rim.com>
 
         Crash on incomplete :not().

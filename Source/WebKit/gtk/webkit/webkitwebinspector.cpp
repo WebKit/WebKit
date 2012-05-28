@@ -353,11 +353,7 @@ static void webkit_web_inspector_set_property(GObject* object, guint prop_id, co
     case PROP_JAVASCRIPT_PROFILING_ENABLED: {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         bool enabled = g_value_get_boolean(value);
-        WebCore::InspectorController* controller = priv->page->inspectorController();
-        if (enabled)
-            controller->enableProfiler();
-        else
-            controller->disableProfiler();
+        priv->page->inspectorController()->setProfilerEnabled(enabled);
 #else
         g_message("PROP_JAVASCRIPT_PROFILING_ENABLED is not work because of the javascript debugger is disabled\n");
 #endif

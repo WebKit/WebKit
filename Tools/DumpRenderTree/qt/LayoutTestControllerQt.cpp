@@ -477,12 +477,6 @@ void LayoutTestController::setAutofilled(const QWebElement& element, bool isAuto
     return DumpRenderTreeSupportQt::setAutofilled(element, isAutofilled);
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
-{
-    setDeveloperExtrasEnabled(enable);
-    DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(m_topLoadingFrame, enable);
-}
-
 void LayoutTestController::setValueForUser(const QWebElement& element, const QString& value)
 {
     DumpRenderTreeSupportQt::setValueForUser(element, value);

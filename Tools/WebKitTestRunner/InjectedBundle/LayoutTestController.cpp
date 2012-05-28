@@ -478,13 +478,6 @@ void LayoutTestController::evaluateInWebInspector(long callID, JSStringRef scrip
 #endif // ENABLE(INSPECTOR)
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
-{
-#if ENABLE(INSPECTOR)
-    WKBundleInspectorSetJavaScriptProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
-#endif // ENABLE(INSPECTOR)
-}
-
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;
 static WorldMap& worldMap()
 {
