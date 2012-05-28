@@ -64,6 +64,7 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
     , m_isDrawable(false)
     , m_isMask(false)
     , m_animationsChanged(false)
+    , m_clearOverrideOnCommit(false)
 {
     if (type == Layer)
         m_tiler = LayerTiler::create(this);
@@ -287,6 +288,10 @@ void LayerWebKitThread::commitOnCompositingThread()
         m_layerCompositingThread->setRunningAnimations(m_runningAnimations);
         m_layerCompositingThread->setSuspendedAnimations(m_suspendedAnimations);
         m_animationsChanged = false;
+    }
+    if (m_clearOverrideOnCommit) {
+        m_layerCompositingThread->clearOverride();
+        m_clearOverrideOnCommit = false;
     }
     m_position = oldPosition;
     updateLayerHierarchy();

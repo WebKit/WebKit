@@ -57,6 +57,59 @@ namespace WebCore {
 class LayerCompositingThreadClient;
 class LayerRenderer;
 
+class LayerOverride {
+public:
+    static PassOwnPtr<LayerOverride> create() { return adoptPtr(new LayerOverride()); }
+
+    bool isPositionSet() const { return m_positionSet; }
+    FloatPoint position() const { return m_position; }
+    void setPosition(const FloatPoint& position) { m_position = position; m_positionSet = true; }
+
+    bool isAnchorPointSet() const { return m_anchorPointSet; }
+    FloatPoint anchorPoint() const { return m_anchorPoint; }
+    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; m_anchorPointSet = true; }
+
+    bool isBoundsSet() const { return m_boundsSet; }
+    IntSize bounds() const { return m_bounds; }
+    void setBounds(const IntSize&) { m_bounds = bounds; m_boundsSet = true; }
+
+    bool isTransformSet() const { return m_transformSet; }
+    const TransformationMatrix& transform() const { return m_transform; }
+    void setTransform(const TransformationMatrix& transform) { m_transform = transform; m_transformSet = true; }
+
+    bool isOpacitySet() const { return m_opacitySet; }
+    float opacity() const { return m_opacity; }
+    void setOpacity(float) { m_opacity = opacity; m_opacitySet = true; }
+
+    const Vector<RefPtr<LayerAnimation> >& animations() const { return m_animations; }
+    void addAnimation(PassRefPtr<LayerAnimation> animation) { m_animations.append(animation); }
+    void removeAnimation(const String& name);
+
+private:
+    LayerOverride()
+        : m_opacity(1.0)
+        , m_positionSet(false)
+        , m_anchorPointSet(false)
+        , m_boundsSet(false)
+        , m_transformSet(false)
+        , m_opacitySet(false)
+    {
+    }
+
+    FloatPoint m_position;
+    FloatPoint m_anchorPoint;
+    IntSize m_bounds;
+    TransformationMatrix m_transform;
+    float m_opacity;
+    Vector<RefPtr<LayerAnimation> > m_animations;
+
+    unsigned m_positionSet : 1;
+    unsigned m_anchorPointSet : 1;
+    unsigned m_boundsSet : 1;
+    unsigned m_transformSet : 1;
+    unsigned m_opacitySet : 1;
+};
+
 class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThread>, public LayerData, public BlackBerry::Platform::GuardedPointerBase {
 public:
     static PassRefPtr<LayerCompositingThread> create(LayerType, LayerCompositingThreadClient*);
@@ -69,6 +122,19 @@ public:
     void clearAnimations();
 
     // Not thread safe
+
+    // These will be overwritten on the next commit if this layer has a LayerWebKitThread counterpart.
+    // Useful for stand-alone layers that are created and managed on the compositing thread.
+    // These functions can also be used to update animated properties in LayerAnimation.
+    void setPosition(const FloatPoint& position) { m_position = position; }
+    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; }
+    void setBounds(const IntSize& bounds) { m_bounds = bounds; }
+    void setSizeIsScaleInvariant(bool invariant) { m_sizeIsScaleInvariant = invariant; }
+    void setTransform(const TransformationMatrix& matrix) { m_transform = matrix; }
+    void setOpacity(float opacity) { m_opacity = opacity; }
+    void addSublayer(LayerCompositingThread*);
+    void removeFromSuperlayer();
+    void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
 
     // Returns true if we have an animation
     bool updateAnimations(double currentTime);
@@ -128,17 +194,18 @@ public:
     // this allows you to do it from the compositing thread.
     void scheduleCommit();
 
-    // These two functions are used to update animated properties in LayerAnimation.
-    void setOpacity(float opacity) { m_opacity = opacity; }
-    void setTransform(const TransformationMatrix& matrix) { m_transform = matrix; }
-
     bool hasRunningAnimations() const { return !m_runningAnimations.isEmpty(); }
 
     bool hasVisibleHolePunchRect() const;
 
     void addAnimation(LayerAnimation* animation) { m_runningAnimations.append(animation); }
+    void removeAnimation(const String& name);
+
     void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_runningAnimations = animations; }
     void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_suspendedAnimations = animations; }
+
+    LayerOverride* override();
+    void clearOverride();
 
 protected:
     virtual ~LayerCompositingThread();
@@ -147,10 +214,6 @@ private:
     LayerCompositingThread(LayerType, LayerCompositingThreadClient*);
 
     void updateTileContents(const IntRect& tile);
-
-    void removeFromSuperlayer();
-
-    size_t numSublayers() const { return m_sublayers.size(); }
 
     // Returns the index of the sublayer or -1 if not found.
     int indexOfSublayer(const LayerCompositingThread*);
@@ -186,6 +249,7 @@ private:
     Vector<RefPtr<LayerAnimation> > m_runningAnimations;
     Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
 
+    OwnPtr<LayerOverride> m_override;
     LayerCompositingThreadClient* m_client;
 };
 

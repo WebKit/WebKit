@@ -146,6 +146,9 @@ public:
     void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >&);
     void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >&);
 
+    // Allows you to clear the LayerCompositingThread::overrides from the WK thread
+    void clearOverride() { m_clearOverrideOnCommit = true; setNeedsCommit(); }
+
 protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
@@ -196,6 +199,7 @@ private:
     unsigned m_isDrawable : 1;
     unsigned m_isMask : 1;
     unsigned m_animationsChanged : 1;
+    unsigned m_clearOverrideOnCommit : 1;
 };
 
 }

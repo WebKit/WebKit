@@ -55,6 +55,16 @@
 
 namespace WebCore {
 
+void LayerOverride::removeAnimation(const String& name)
+{
+    for (size_t i = 0; i < m_animations.size(); ++i) {
+        if (m_animations[i]->name() == name) {
+            m_animations.remove(i);
+            return;
+        }
+    }
+}
+
 PassRefPtr<LayerCompositingThread> LayerCompositingThread::create(LayerType type, LayerCompositingThreadClient* client)
 {
     return adoptRef(new LayerCompositingThread(type, client));
@@ -382,6 +392,13 @@ const LayerCompositingThread* LayerCompositingThread::rootLayer() const
     return layer;
 }
 
+void LayerCompositingThread::addSublayer(LayerCompositingThread* layer)
+{
+    layer->removeFromSuperlayer();
+    layer->setSuperlayer(this);
+    m_sublayers.append(layer);
+}
+
 void LayerCompositingThread::removeFromSuperlayer()
 {
     if (m_superlayer)
@@ -479,7 +496,30 @@ bool LayerCompositingThread::updateAnimations(double currentTime)
         animation->apply(this, elapsedTime);
     }
 
-    return !m_runningAnimations.isEmpty();
+    bool hasRunningAnimations = !m_runningAnimations.isEmpty();
+
+    // If there are any overrides, apply them
+    if (m_override) {
+        if (m_override->isPositionSet())
+            m_position = m_override->position();
+        if (m_override->isAnchorPointSet())
+            m_anchorPoint = m_override->anchorPoint();
+        if (m_override->isBoundsSet())
+            m_bounds = m_override->bounds();
+        if (m_override->isTransformSet())
+            m_transform = m_override->transform();
+        if (m_override->isOpacitySet())
+            m_opacity = m_override->opacity();
+
+        for (size_t i = 0; i < m_override->animations().size(); ++i) {
+            LayerAnimation* animation = m_override->animations()[i].get();
+            double elapsedTime = (m_suspendTime ? m_suspendTime : currentTime) - animation->startTime() + animation->timeOffset();
+            animation->apply(this, elapsedTime);
+            hasRunningAnimations |= true;
+        }
+    }
+
+    return hasRunningAnimations;
 }
 
 bool LayerCompositingThread::hasVisibleHolePunchRect() const
@@ -499,6 +539,28 @@ void LayerCompositingThread::createLayerRendererSurface()
 {
     ASSERT(!m_layerRendererSurface);
     m_layerRendererSurface = adoptPtr(new LayerRendererSurface(m_layerRenderer, this));
+}
+
+void LayerCompositingThread::removeAnimation(const String& name)
+{
+    for (size_t i = 0; i < m_runningAnimations.size(); ++i) {
+        if (m_runningAnimations[i]->name() == name) {
+            m_runningAnimations.remove(i);
+            return;
+        }
+    }
+}
+
+LayerOverride* LayerCompositingThread::override()
+{
+    if (!m_override)
+        m_override = LayerOverride::create();
+    return m_override.get();
+}
+
+void LayerCompositingThread::clearOverride()
+{
+    m_override.clear();
 }
 
 }

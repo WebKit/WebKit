@@ -1,3 +1,61 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Make it possible to manipulate layers on the compositing thread
+        https://bugs.webkit.org/show_bug.cgi?id=87602
+
+        Reviewed by Rob Buis.
+
+        Normally, layers are manipulated on the WebKit thread, and the changes are
+        synced to the compositing thread during the next accelerated compositing commit
+        operation.
+
+        However, for overlay layers the ability to manipulate layers on the compositing
+        thread is necessary for adequate user interface responsiveness.
+
+        Two mechanisms are added:
+        1. For a layer with a WebKit-thread counterpart, you can temporarily override
+        attributes or add animations whose output override attributes.
+        2. For a layer with no WebKit-thread counterpart, you can now directly set the
+        compositing thread values for attributes. If you attempt to do this for layers
+        that do have a WebKit-thread counterpart, the compositing thread values will
+        be overwritten at the time of the next commit, which makes the override
+        mechanism more useful there.
+
+        PR #156812
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::addSublayer):
+        (WebCore):
+        (WebCore::LayerCompositingThread::updateAnimations):
+        (WebCore::LayerCompositingThread::removeAnimation):
+        (WebCore::LayerCompositingThread::override):
+        (WebCore::LayerCompositingThread::clearOverride):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerOverride):
+        (WebCore::LayerOverride::create):
+        (WebCore::LayerOverride::setPosition):
+        (WebCore::LayerOverride::setAnchorPoint):
+        (WebCore::LayerOverride::setBounds):
+        (WebCore::LayerOverride::setTransform):
+        (WebCore::LayerOverride::setOpacity):
+        (WebCore::LayerOverride::addAnimation):
+        (WebCore::LayerOverride::LayerOverride):
+        (WebCore):
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::setPosition):
+        (WebCore::LayerCompositingThread::setAnchorPoint):
+        (WebCore::LayerCompositingThread::setBounds):
+        (WebCore::LayerCompositingThread::setSizeIsScaleInvariant):
+        (WebCore::LayerCompositingThread::setTransform):
+        (WebCore::LayerCompositingThread::setOpacity):
+        (WebCore::LayerCompositingThread::setNeedsTexture):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::LayerWebKitThread):
+        (WebCore::LayerWebKitThread::commitOnCompositingThread):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (LayerWebKitThread):
+        (WebCore::LayerWebKitThread::clearOverride):
+
 2012-05-28  Rob Flack  <flackr@chromium.org>
 
         [chromium] Only increase size of Combo Box Options when displayed on touch screen
