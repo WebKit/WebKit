@@ -71,4 +71,11 @@ private:
 
 } // namespace WebCore
 
+namespace WTF {
+template <> struct VectorTraits<WebCore::CSSProperty> : VectorTraitsBase<false, WebCore::CSSProperty> {
+    static const bool canInitializeWithMemset = true;
+    static const bool canMoveWithMemcpy = true;
+};
+}
+
 #endif // CSSProperty_h

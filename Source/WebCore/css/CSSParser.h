@@ -293,7 +293,8 @@ public:
     RefPtr<StyleKeyframe> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
     OwnPtr<CSSParserValueList> m_valueList;
-    Vector<CSSProperty, 256> m_parsedProperties;
+    typedef Vector<CSSProperty, 256> ParsedPropertyVector;
+    ParsedPropertyVector m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
 
     unsigned m_numParsedPropertiesBeforeMarginBox;

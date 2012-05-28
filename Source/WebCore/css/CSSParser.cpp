@@ -1177,38 +1177,33 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return m_mediaQuery.release();
 }
 
+static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, StylePropertyVector& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties)
+{
+    // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
+    for (int i = input.size() - 1; i >= 0; --i) {
+        const CSSProperty& property = input[i];
+        if (property.isImportant() != important)
+            continue;
+        const unsigned propertyIDIndex = property.id() - firstCSSProperty;
+        if (seenProperties.get(propertyIDIndex))
+            continue;
+        seenProperties.set(propertyIDIndex);
+        output[--unusedEntries] = property;
+    }
+}
+
 PassRefPtr<StylePropertySet> CSSParser::createStylePropertySet()
 {
     BitArray<numCSSProperties> seenProperties;
-    BitArray<numCSSProperties> seenImportantProperties;
+    size_t unusedEntries = m_parsedProperties.size();
+    StylePropertyVector results = Vector<CSSProperty>(unusedEntries);
 
-    StylePropertyVector results;
-    results.reserveInitialCapacity(m_parsedProperties.size());
+    // Important properties have higher priority, so add them first. Duplicate definitions can then be ignored when found.
+    filterProperties(true, m_parsedProperties, results, unusedEntries, seenProperties);
+    filterProperties(false, m_parsedProperties, results, unusedEntries, seenProperties);
 
-    for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
-        const CSSProperty& property = m_parsedProperties[i];
-        const unsigned propertyIDIndex = property.id() - firstCSSProperty;
-
-        // Ignore non-important properties if we already have an important property with the same ID.
-        if (!property.isImportant() && seenImportantProperties.get(propertyIDIndex))
-            continue;
-
-        // If we already had this property, this new one takes precedence, so wipe out the old one.
-        if (seenProperties.get(propertyIDIndex)) {
-            for (unsigned i = 0; i < results.size(); ++i) {
-                if (results[i].id() == property.id()) {
-                    results.remove(i);
-                    break;
-                }
-            }
-        }
-
-        if (property.isImportant())
-            seenImportantProperties.set(propertyIDIndex);
-        seenProperties.set(propertyIDIndex);
-
-        results.uncheckedAppend(property);
-    }
+    if (unusedEntries)
+        results.remove(0, unusedEntries);
 
     return StylePropertySet::adopt(results, m_context.mode);
 }

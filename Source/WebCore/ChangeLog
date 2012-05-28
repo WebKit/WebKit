@@ -1,3 +1,26 @@
+2012-05-28  Luke Macpherson  <macpherson@chromium.org>
+
+        Make CSSParser::filteredProperties() O(n) instead of O(n^2) and improve readability.
+        https://bugs.webkit.org/show_bug.cgi?id=87078
+
+        Reviewed by Darin Adler.
+
+        This patch implements a number of improvements to filteredProperties:
+        1) Make the code more linearly readable by separating out handling of important and non-important properties.
+        2) Eliminate one BitArray instance (reduces hot memory so more cache friendly).
+        3) Remove O(n^2) behavior caused by scanning for and removing previously encountered definitions of each property.
+        The key algorithmic change is to add properties in decreasing precedence:
+        a) Iterating once per (important, !important) so that important properties are visited first.
+        b) Reverse iteration of m_parsedProperties visits the properties in decreasing precedence.
+
+        Covered by loads of existing tests - getting CSS property precedence wrong results in too many errors to list.
+        In particular fast/css contains test cases for important corner cases like duplicated important properties.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStylePropertySet):
+        * css/CSSProperty.h:
+        Add vector traits so that CSSProperty can just be memset by vector without calling constructor.
+
 2012-05-28  MORITA Hajime  <morrita@google.com>
 
         Can't edit <input> elements with :first-letter
