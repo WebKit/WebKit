@@ -28,7 +28,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "Font.h"
 #include "LayerChromium.h"
 #include "cc/CCLayerTilingData.h"
 #include "cc/CCTiledLayerImpl.h"
@@ -65,8 +64,6 @@ public:
     virtual void reserveTextures() OVERRIDE;
 
     virtual Region visibleContentOpaqueRegion() const OVERRIDE;
-
-    void paintDebugTileInfo(GraphicsContext&, const IntRect&);
 
 protected:
     TiledLayerChromium();
@@ -130,7 +127,6 @@ private:
 
     TilingOption m_tilingOption;
     OwnPtr<CCLayerTilingData> m_tiler;
-    OwnPtr<Font> m_debugInfoFont;
 };
 
 }

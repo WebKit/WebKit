@@ -1,3 +1,28 @@
+2012-05-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118580.
+        http://trac.webkit.org/changeset/118580
+        https://bugs.webkit.org/show_bug.cgi?id=87647
+
+        Caused webkit_unit_tests to crash on chromium. (Requested by
+        bulach on #webkit).
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::paint):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (ContentLayerPainter):
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (UpdatableTile):
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::TiledLayerChromium::updateTiles):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (CCSettings):
+
 2012-05-28  Peter Beverloo  <peter@chromium.org>
 
         &AElig doesn't get rendered as U+00C6
