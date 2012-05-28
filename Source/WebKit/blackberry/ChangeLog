@@ -1,3 +1,20 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Plumb through the return value of makeCurrent to caller
+        https://bugs.webkit.org/show_bug.cgi?id=87564
+
+        Reviewed by Rob Buis.
+
+        This way the caller can take appropriate action if makeCurrent fails,
+        for example because we're running out of memory.
+
+        Reviewed internally by George Staikos.
+
+        PR #149721
+
+        * WebKitSupport/GLES2Context.cpp:
+        (BlackBerry::WebKit::GLES2Context::makeCurrent):
+
 2012-05-27  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Crash when deleting WebPageCompositor

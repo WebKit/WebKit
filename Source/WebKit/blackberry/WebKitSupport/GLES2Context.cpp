@@ -100,8 +100,7 @@ Platform::IntSize GLES2Context::surfaceSize() const
 
 bool GLES2Context::makeCurrent()
 {
-    Platform::Graphics::makeBufferCurrent(buffer(), Platform::Graphics::GLES2);
-    return true;
+    return Platform::Graphics::makeBufferCurrent(buffer(), Platform::Graphics::GLES2);
 }
 
 bool GLES2Context::swapBuffers()
