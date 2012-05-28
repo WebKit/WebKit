@@ -905,14 +905,13 @@ Color RenderThemeBlackBerry::platformFocusRingColor() const
 #if ENABLE(TOUCH_EVENTS)
 Color RenderThemeBlackBerry::platformTapHighlightColor() const
 {
-    // Same color as 'focusRingPen' + 80 of alpha channel.
-    return Color(163, 200, 254, 80);
+    return Color(0, 168, 223, 50);
 }
 #endif
 
 Color RenderThemeBlackBerry::platformActiveSelectionBackgroundColor() const
 {
-    return Color(selection);
+    return Color(0, 168, 223, 50);
 }
 
 double RenderThemeBlackBerry::animationRepeatIntervalForProgressBar(RenderProgress* renderProgress) const
