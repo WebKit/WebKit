@@ -72,7 +72,7 @@ static bool shouldLoadAsEmptyDocument(const KURL& url)
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck))
-    , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
+    , m_dataLoadTimer(this, &MainResourceLoader::handleSubstituteDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
@@ -580,7 +580,7 @@ void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
     didReceiveResponse(response);
 }
 
-void MainResourceLoader::handleDataLoadNow(MainResourceLoaderTimer*)
+void MainResourceLoader::handleSubstituteDataLoadNow(MainResourceLoaderTimer*)
 {
     RefPtr<MainResourceLoader> protect(this);
 
@@ -613,7 +613,7 @@ void MainResourceLoader::handleSubstituteDataLoadSoon(const ResourceRequest& r)
     if (m_documentLoader->deferMainResourceDataLoad())
         startDataLoadTimer();
     else
-        handleDataLoadNow(0);
+        handleSubstituteDataLoadNow(0);
 }
 
 bool MainResourceLoader::loadNow(ResourceRequest& r)

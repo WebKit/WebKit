@@ -1,3 +1,21 @@
+2012-05-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Minor code cleaning for the interface of MainResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=87607
+
+        Reviewed by Darin Adler.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::MainResourceLoader):
+        (WebCore::MainResourceLoader::handleSubstituteDataLoadNow):
+        (WebCore::MainResourceLoader::handleSubstituteDataLoadSoon):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+        -Add the OVERRIDE keyword for the methods inherited from ResourceLoader.
+        -Remove the useless declaration of handleDataLoad(ResourceRequest&), this method does not exist.
+        -Rename handleDataLoadNow() to handleSubstituteDataLoadNow() and make the method private. This should
+         only be used by handleSubstituteDataLoadSoon() and indirectly through the timer.
+
 2012-05-27  Yoshifumi Inoue  <yosin@chromium.org>
 
         [WTF] Introduce UINT64_C to MathExtras.h

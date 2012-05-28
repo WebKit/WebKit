@@ -55,15 +55,15 @@ namespace WebCore {
         virtual ~MainResourceLoader();
 
         void load(const ResourceRequest&, const SubstituteData&);
-        virtual void addData(const char*, int, bool allAtOnce);
+        virtual void addData(const char*, int, bool allAtOnce) OVERRIDE;
 
-        virtual void setDefersLoading(bool);
+        virtual void setDefersLoading(bool) OVERRIDE;
 
-        virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
-        virtual void didReceiveResponse(const ResourceResponse&);
-        virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
-        virtual void didFinishLoading(double finishTime);
-        virtual void didFail(const ResourceError&);
+        virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
+        virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
+        virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce) OVERRIDE;
+        virtual void didFinishLoading(double finishTime) OVERRIDE;
+        virtual void didFail(const ResourceError&) OVERRIDE;
 
 #if HAVE(RUNLOOP_TIMER)
         typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
@@ -71,23 +71,21 @@ namespace WebCore {
         typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
 #endif
 
-        void handleDataLoadNow(MainResourceLoaderTimer*);
-
         bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
     private:
         MainResourceLoader(Frame*);
 
-        virtual void willCancel(const ResourceError&);
-        virtual void didCancel(const ResourceError&);
+        virtual void willCancel(const ResourceError&) OVERRIDE;
+        virtual void didCancel(const ResourceError&) OVERRIDE;
 
         bool loadNow(ResourceRequest&);
 
         void handleEmptyLoad(const KURL&, bool forURLScheme);
         void handleSubstituteDataLoadSoon(const ResourceRequest&);
+        void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
         void startDataLoadTimer();
-        void handleDataLoad(ResourceRequest&);
 
         void receivedError(const ResourceError&);
         ResourceError interruptedForPolicyChangeError() const;
