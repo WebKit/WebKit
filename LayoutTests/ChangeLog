@@ -1,3 +1,17 @@
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        fast/tokenizer/entities-01.html & fast/tokenizer/entities-03.html need new baseline after r118672
+        https://bugs.webkit.org/show_bug.cgi?id=87648
+
+        Unreviewed gardening.
+
+        r118672 fixed a rendering bug with &AElig but did not update the
+        expected results for fast/tokenizer/entities-01.html and
+        fast/tokenizer/entities-03.html.
+
+        * fast/tokenizer/entities-01-expected.txt:
+        * fast/tokenizer/entities-03-expected.txt:
+
 2012-05-28  Peter Beverloo  <peter@chromium.org>
 
         &AElig doesn't get rendered as U+00C6
