@@ -1,3 +1,15 @@
+2012-05-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        cut, copy or paste event won't be fired in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87352
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/cppevent-in-shadow-expected.txt: Added.
+        * fast/dom/shadow/cppevent-in-shadow.html: Added.
+        * fast/dom/shadow/cppevent-input-in-shadow-expected.txt: Added.
+        * fast/dom/shadow/cppevent-input-in-shadow.html: Added.
+
 2012-05-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Enable blob support for the EFL port

@@ -1,3 +1,19 @@
+2012-05-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        cut, copy or paste event won't be fired in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87352
+
+        Reviewed by Dimitri Glazkov.
+
+        cut, copy or paste event was not fired in Shadow DOM.
+        Since event re-targeting has been implemented, it should be safe to fire them in Shadow DOM now.
+
+        Tests: fast/dom/shadow/cppevent-in-shadow.html
+               fast/dom/shadow/cppevent-input-in-shadow.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::findEventTargetFrom):
+
 2012-05-27  Hayato Ito  <hayato@chromium.org>
 
         Support multiple shadow roots in event dispatching.

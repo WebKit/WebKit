@@ -674,8 +674,8 @@ Node* Editor::findEventTargetFrom(const VisibleSelection& selection) const
         target = m_frame->document()->body();
     if (!target)
         return 0;
-    return target->shadowAncestorNode();
 
+    return target;
 }
 
 Node* Editor::findEventTargetFromSelection() const
