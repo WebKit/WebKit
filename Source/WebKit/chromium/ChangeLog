@@ -1,3 +1,19 @@
+2012-05-28  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Build fix for the Android bot, set CXX_target at gyp generation-time
+        https://bugs.webkit.org/show_bug.cgi?id=87649
+
+        Unreviewed build fix.
+
+        Chromium Android builds were broken because v8 tried to compile files
+        for target with the "-m32" flag. This was caused by a v8 check falling
+        back to using "which g++" to find the right compiler, whereas it should
+        have used the $CXX_target environment variable. This isn't being set
+        for Android builds.
+
+        * gyp_webkit: Set the CXX_target environment variable. Annotate the fix
+          with a FIXME comment too.
+
 2012-05-28  Keishi Hattori  <keishi@webkit.org>
 
         Expose value localization function of HTMLInputElement
