@@ -1,3 +1,19 @@
+2012-05-27  Luke Macpherson  <macpherson@chromium.org>
+
+        Use StringBuilder in WebKitCSSTransformValue::customCssText() to allow code reuse with CSS Variables.
+        https://bugs.webkit.org/show_bug.cgi?id=87462
+
+        Reviewed by Dimitri Glazkov.
+
+        Factor out strings into a const char* array, and use a StringBuilder instead of String concatenation.
+        This will allow future code to re-use the array of transform names, and StringBuilder is generally faster.
+
+        Covered by existing CSS transform tests.
+
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore):
+        (WebCore::WebKitCSSTransformValue::customCssText):
+
 2012-05-27  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Update color for tap highlight and selection
