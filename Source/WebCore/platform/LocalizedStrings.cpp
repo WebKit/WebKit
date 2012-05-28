@@ -48,7 +48,7 @@ namespace WebCore {
 //  2) It doesn't handle the %2$d syntax.
 // Note that because |format| is used as the second parameter to va_start, it cannot be a reference
 // type according to section 18.7/3 of the C++ N1905 standard.
-static String formatLocalizedString(const String& format, ...)
+static String formatLocalizedString(String format, ...)
 {
 #if USE(CF)
     va_list arguments;
