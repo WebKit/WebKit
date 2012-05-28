@@ -522,9 +522,10 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     view()->adjustMediaTypeForPrinting(printing);
 
     m_doc->styleResolverChanged(RecalcStyleImmediately);
-    if (printing)
+    if (printing && !tree()->parent()) {
+        // Only root frame should be fit to page size. Subframes should be constrained by parents only.
         view()->forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
-    else {
+    } else {
         view()->forceLayout();
         if (shouldAdjustViewSize == AdjustViewSize)
             view()->adjustViewSize();
@@ -542,10 +543,12 @@ FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, cons
         return FloatSize();
 
     if (contentRenderer()->style()->isHorizontalWritingMode()) {
+        ASSERT(fabs(originalSize.width()) > numeric_limits<float>::epsilon());
         float ratio = originalSize.height() / originalSize.width();
         resultSize.setWidth(floorf(expectedSize.width()));
         resultSize.setHeight(floorf(resultSize.width() * ratio));
     } else {
+        ASSERT(fabs(originalSize.height()) > numeric_limits<float>::epsilon());
         float ratio = originalSize.width() / originalSize.height();
         resultSize.setHeight(floorf(expectedSize.height()));
         resultSize.setWidth(floorf(resultSize.height() * ratio));
