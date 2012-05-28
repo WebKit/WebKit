@@ -1,3 +1,63 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Make custom compositing thread layers more flexible
+        https://bugs.webkit.org/show_bug.cgi?id=87600
+
+        Reviewed by Rob Buis.
+
+        Introduce a LayerCompositingThreadClient that's used to fine tune the
+        behaviour of custom layers. Let the LayerTiler be a
+        LayerCompositingThreadClient and thus decouple it from
+        LayerCompositingThread. Adjust method signatures to allow a one-to-many
+        relationship between Client and Layer.
+
+        Remove the old LayerCompositingThread::drawCustom() in favour of this new
+        Client interface.
+
+        PR #156812
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::create):
+        (WebCore::LayerCompositingThread::LayerCompositingThread):
+        (WebCore::LayerCompositingThread::~LayerCompositingThread):
+        (WebCore::LayerCompositingThread::deleteTextures):
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::hasMissingTextures):
+        (WebCore::LayerCompositingThread::drawMissingTextures):
+        (WebCore::LayerCompositingThread::updateTextureContentsIfNeeded):
+        (WebCore::LayerCompositingThread::bindContentsTexture):
+        (WebCore::LayerCompositingThread::setVisible):
+        (WebCore::LayerCompositingThread::scheduleCommit):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore):
+        (LayerCompositingThread):
+        * platform/graphics/blackberry/LayerCompositingThreadClient.h: Added.
+        (WebCore):
+        (LayerCompositingThreadClient):
+        (WebCore::LayerCompositingThreadClient::~LayerCompositingThreadClient):
+        (WebCore::LayerCompositingThreadClient::bindContentsTexture):
+        (WebCore::LayerCompositingThreadClient::hasMissingTextures):
+        (WebCore::LayerCompositingThreadClient::drawMissingTextures):
+        (WebCore::LayerCompositingThreadClient::scheduleCommit):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::drawDebugBorder):
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerTiler::LayerTiler):
+        (WebCore::LayerTiler::layerCompositingThreadDestroyed):
+        (WebCore::LayerTiler::layerVisibilityChanged):
+        (WebCore::LayerTiler::uploadTexturesIfNeeded):
+        (WebCore::LayerTiler::deleteTextures):
+        (WebCore::LayerTiler::scheduleCommit):
+        (WebCore):
+        (WebCore::LayerTiler::bindContentsTexture):
+        * platform/graphics/blackberry/LayerTiler.h:
+        (LayerTiler):
+        (WebCore::LayerTiler::hasMissingTextures):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::LayerWebKitThread):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (LayerWebKitThread):
+
 2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled

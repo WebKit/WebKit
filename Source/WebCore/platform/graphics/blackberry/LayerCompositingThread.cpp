@@ -36,6 +36,7 @@
 
 #include "LayerCompositingThread.h"
 
+#include "LayerCompositingThreadClient.h"
 #include "LayerMessage.h"
 #include "LayerRenderer.h"
 #include "LayerWebKitThread.h"
@@ -54,12 +55,12 @@
 
 namespace WebCore {
 
-PassRefPtr<LayerCompositingThread> LayerCompositingThread::create(LayerType type, PassRefPtr<LayerTiler> tiler)
+PassRefPtr<LayerCompositingThread> LayerCompositingThread::create(LayerType type, LayerCompositingThreadClient* client)
 {
-    return adoptRef(new LayerCompositingThread(type, tiler));
+    return adoptRef(new LayerCompositingThread(type, client));
 }
 
-LayerCompositingThread::LayerCompositingThread(LayerType type, PassRefPtr<LayerTiler> tiler)
+LayerCompositingThread::LayerCompositingThread(LayerType type, LayerCompositingThreadClient* client)
     : LayerData(type)
     , m_layerRenderer(0)
     , m_superlayer(0)
@@ -67,16 +68,13 @@ LayerCompositingThread::LayerCompositingThread(LayerType type, PassRefPtr<LayerT
     , m_drawOpacity(0)
     , m_visible(false)
     , m_commitScheduled(false)
-    , m_tiler(tiler)
+    , m_client(client)
 {
 }
 
 LayerCompositingThread::~LayerCompositingThread()
 {
     ASSERT(isCompositingThread());
-
-    if (m_tiler)
-        m_tiler->layerCompositingThreadDestroyed();
 
     ASSERT(!superlayer());
 
@@ -91,6 +89,9 @@ LayerCompositingThread::~LayerCompositingThread()
     // layer renderer to track us anymore
     if (m_layerRenderer)
         m_layerRenderer->removeLayer(this);
+
+    if (m_client)
+        m_client->layerCompositingThreadDestroyed(this);
 }
 
 void LayerCompositingThread::setLayerRenderer(LayerRenderer* renderer)
@@ -107,8 +108,8 @@ void LayerCompositingThread::deleteTextures()
 {
     releaseTextureResources();
 
-    if (m_tiler)
-        m_tiler->deleteTextures();
+    if (m_client)
+        m_client->deleteTextures(this);
 }
 
 void LayerCompositingThread::setDrawTransform(const TransformationMatrix& matrix)
@@ -258,15 +259,8 @@ void LayerCompositingThread::drawTextures(int positionLocation, int texCoordLoca
         return;
     }
 
-    if (m_layerType == CustomLayer) {
-        // Custom layers don't have a LayerTiler, so they either have to set
-        // m_texID or implement drawCustom.
-        drawCustom(positionLocation, texCoordLocation);
-        return;
-    }
-
-    if (m_tiler)
-        m_tiler->drawTextures(this, positionLocation, texCoordLocation);
+    if (m_client)
+        m_client->drawTextures(this, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransform, LayerCompositingThread* mask, int positionLocation, int texCoordLocation)
@@ -295,18 +289,15 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
     }
 }
 
-void LayerCompositingThread::drawMissingTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect)
+bool LayerCompositingThread::hasMissingTextures() const
 {
-    if (m_pluginView || m_texID)
-        return;
+    return m_client ? m_client->hasMissingTextures(this) : false;
+}
 
-#if ENABLE(VIDEO)
-    if (m_mediaPlayer)
-        return;
-#endif
-
-    if (m_tiler)
-        m_tiler->drawMissingTextures(this, positionLocation, texCoordLocation);
+void LayerCompositingThread::drawMissingTextures(int positionLocation, int texCoordLocation, const FloatRect& /*visibleRect*/)
+{
+    if (m_client)
+        m_client->drawMissingTextures(this, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::releaseTextureResources()
@@ -421,16 +412,14 @@ void LayerCompositingThread::setSublayers(const Vector<RefPtr<LayerCompositingTh
 
 void LayerCompositingThread::updateTextureContentsIfNeeded()
 {
-    if (m_texID || pluginView())
-        return;
+    if (m_client)
+        m_client->uploadTexturesIfNeeded(this);
+}
 
-#if ENABLE(VIDEO)
-    if (mediaPlayer())
-        return;
-#endif
-
-    if (m_tiler)
-        m_tiler->uploadTexturesIfNeeded();
+void LayerCompositingThread::bindContentsTexture()
+{
+    if (m_client)
+        m_client->bindContentsTexture(this);
 }
 
 void LayerCompositingThread::setVisible(bool visible)
@@ -440,16 +429,8 @@ void LayerCompositingThread::setVisible(bool visible)
 
     m_visible = visible;
 
-    if (m_texID || pluginView())
-        return;
-
-#if ENABLE(VIDEO)
-    if (mediaPlayer())
-        return;
-#endif
-
-    if (m_tiler)
-        m_tiler->layerVisibilityChanged(visible);
+    if (m_client)
+        m_client->layerVisibilityChanged(this, visible);
 }
 
 void LayerCompositingThread::setNeedsCommit()
@@ -460,7 +441,7 @@ void LayerCompositingThread::setNeedsCommit()
 
 void LayerCompositingThread::scheduleCommit()
 {
-    if (!m_tiler)
+    if (!m_client)
         return;
 
     if (!isWebKitThread()) {
@@ -475,9 +456,7 @@ void LayerCompositingThread::scheduleCommit()
 
     m_commitScheduled = false;
 
-    // FIXME: The only way to get at our LayerWebKitThread is to go through the tiler.
-    if (LayerWebKitThread* layer = m_tiler->layer())
-        layer->setNeedsCommit();
+    m_client->scheduleCommit();
 }
 
 bool LayerCompositingThread::updateAnimations(double currentTime)

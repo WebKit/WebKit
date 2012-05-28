@@ -48,7 +48,6 @@
 #define ENABLE_SCISSOR 1
 
 #define DEBUG_SHADER_COMPILATION 0
-#define DEBUG_DIRTY_LAYERS 0 // Show dirty layers as red.
 #define DEBUG_LAYER_ANIMATIONS 0 // Show running animations as green.
 #define DEBUG_CLIPPING 0
 
@@ -567,11 +566,6 @@ IntRect LayerRenderer::toWebKitDocumentCoordinates(const FloatRect& r) const
 void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
 {
     Color borderColor = layer->borderColor();
-
-#if DEBUG_DIRTY_LAYERS
-    if (layer->isDirty())
-        borderColor = Color(0xFF, 0x00, 0x00, 0xFF);
-#endif
 
 #if DEBUG_LAYER_ANIMATIONS
     if (layer->hasRunningAnimations())

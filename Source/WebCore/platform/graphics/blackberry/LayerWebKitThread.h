@@ -149,9 +149,6 @@ public:
 protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
-    // Create a custom Layer{WebKitThread, CompositingThread} pair, used when you need to subclass both.
-    LayerWebKitThread(PassRefPtr<LayerCompositingThread>, GraphicsLayerBlackBerry* owner);
-
     void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
     void setLayerProgramShader(LayerData::LayerProgramShader shader) { m_layerProgramShader = shader; }
     void createFrontBufferLock();

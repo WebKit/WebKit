@@ -54,11 +54,12 @@ class Buffer;
 
 namespace WebCore {
 
+class LayerCompositingThreadClient;
 class LayerRenderer;
 
 class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThread>, public LayerData, public BlackBerry::Platform::GuardedPointerBase {
 public:
-    static PassRefPtr<LayerCompositingThread> create(LayerType, PassRefPtr<LayerTiler>);
+    static PassRefPtr<LayerCompositingThread> create(LayerType, LayerCompositingThreadClient*);
 
     // Thread safe
     void setPluginView(PluginView*);
@@ -72,11 +73,7 @@ public:
     // Returns true if we have an animation
     bool updateAnimations(double currentTime);
     void updateTextureContentsIfNeeded();
-    void bindContentsTexture()
-    {
-        if (m_tiler)
-            m_tiler->bindContentsTexture();
-    }
+    void bindContentsTexture();
 
     const LayerCompositingThread* rootLayer() const;
     void setSublayers(const Vector<RefPtr<LayerCompositingThread> >&);
@@ -110,10 +107,9 @@ public:
     void deleteTextures();
 
     void drawTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
-    bool hasMissingTextures() const { return m_tiler ? m_tiler->hasMissingTextures() : false; }
+    bool hasMissingTextures() const;
     void drawMissingTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
     void drawSurface(const TransformationMatrix&, LayerCompositingThread* mask, int positionLocation, int texCoordLocation);
-    bool isDirty() const { return m_tiler ? m_tiler->hasDirtyTiles() : false; }
 
     void releaseTextureResources();
 
@@ -147,10 +143,8 @@ public:
 protected:
     virtual ~LayerCompositingThread();
 
-    virtual void drawCustom(int positionLocation, int texCoordLocation) { }
-
 private:
-    LayerCompositingThread(LayerType, PassRefPtr<LayerTiler>);
+    LayerCompositingThread(LayerType, LayerCompositingThreadClient*);
 
     void updateTileContents(const IntRect& tile);
 
@@ -189,9 +183,10 @@ private:
     bool m_visible;
     bool m_commitScheduled;
 
-    RefPtr<LayerTiler> m_tiler;
     Vector<RefPtr<LayerAnimation> > m_runningAnimations;
     Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
+
+    LayerCompositingThreadClient* m_client;
 };
 
 } // namespace WebCore

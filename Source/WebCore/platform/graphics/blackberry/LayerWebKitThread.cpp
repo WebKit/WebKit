@@ -67,19 +67,7 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
 {
     if (type == Layer)
         m_tiler = LayerTiler::create(this);
-    m_layerCompositingThread = LayerCompositingThread::create(type, m_tiler);
-}
-
-LayerWebKitThread::LayerWebKitThread(PassRefPtr<LayerCompositingThread> layerCompositingThread, GraphicsLayerBlackBerry* owner)
-    : LayerData(CustomLayer)
-    , m_owner(owner)
-    , m_superlayer(0)
-    , m_contents(0)
-    , m_scale(1.0)
-    , m_isDrawable(false)
-    , m_isMask(false)
-{
-    m_layerCompositingThread = layerCompositingThread;
+    m_layerCompositingThread = LayerCompositingThread::create(type, m_tiler.get());
 }
 
 LayerWebKitThread::~LayerWebKitThread()
