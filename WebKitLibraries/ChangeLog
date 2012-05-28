@@ -1,3 +1,15 @@
+2012-05-28  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Remove obsolete feature define ENABLE_3D_CANVAS from FeatureDefines.vsprops for windows
+        https://bugs.webkit.org/show_bug.cgi?id=87622
+
+        Reviewed by Eric Seidel.
+
+        Removed the ENABLE_3D_CANVAS from the property define as this is
+        obsolete since bug #53041
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-05-24  John Mellor  <johnme@chromium.org>
 
         Font Boosting: Add compile flag and runtime setting
