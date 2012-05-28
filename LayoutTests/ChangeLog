@@ -1,5 +1,17 @@
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
+        [chromium] Rebaseline following r118598
+        https://bugs.webkit.org/show_bug.cgi?id=87669
+
+        Unreviewed gardening.
+
+        In chromium we print a prefix "line 1:" on one console message.
+
+        * platform/chromium/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Added.
+        * platform/chromium/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Added.
+
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
         [chromium] http/tests/cache/cancel-in-progress-load.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=87657
 
