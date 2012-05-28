@@ -1,3 +1,13 @@
+2012-05-28  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r96517): Attribute selector fails to match dynamically modified style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=87349
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/dynamic-style-attribute-query-expected.txt: Added.
+        * fast/css/dynamic-style-attribute-query.html: Added.
+
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
         [Chromium] [V8] Layout Test fast/js/string-replace-2.html failing following 11594 => 11648 v8 update

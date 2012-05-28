@@ -403,10 +403,13 @@ static inline bool isFastCheckableRelation(CSSSelector::Relation relation)
 
 static inline bool isFastCheckableMatch(const CSSSelector* selector)
 {
-    if (selector->m_match == CSSSelector::Set)
-        return true;
+    if (selector->m_match == CSSSelector::Set) {
+        // Style attribute is generated lazily but the fast path doesn't trigger it.
+        // Disallow them here rather than making the fast path more branchy.
+        return selector->attribute() != styleAttr;
+    }
     if (selector->m_match == CSSSelector::Exact)
-        return !htmlAttributeHasCaseInsensitiveValue(selector->attribute());
+        return selector->attribute() != styleAttr && !htmlAttributeHasCaseInsensitiveValue(selector->attribute());
     return selector->m_match == CSSSelector::None || selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
 }
 

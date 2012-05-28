@@ -1,0 +1,5 @@
+PASS document.querySelector('#testDiv[style]') is not null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

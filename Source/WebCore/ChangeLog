@@ -1,3 +1,18 @@
+2012-05-28  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r96517): Attribute selector fails to match dynamically modified style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=87349
+
+        Reviewed by Andreas Kling.
+        
+        Selector fast path does not trigger lazy style attribute generation. Since attribute selectors matching
+        style attribute are rare, disallow them from the fast path rather than making it more branchy.
+
+        Test: fast/css/dynamic-style-attribute-query.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::isFastCheckableMatch):
+
 2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Expose function (closure) scopes in remote protocol
