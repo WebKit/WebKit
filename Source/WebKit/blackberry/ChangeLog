@@ -1,5 +1,58 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Add a default tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=87569
+
+        Reviewed by Rob Buis.
+
+        We used to require the embedder to implement tap highlight drawing.
+        Now, a default tap highlight, implemented using the recently added
+        accelerated compositing overlay layer support, can be used instead.
+
+        The tap highlight appears instantly but fades out when hidden.
+
+        The default tap highlight can be overridden using the new
+        WebPage::setTapHighlight() method.
+
+        Reviewed internally by Mike Lattanzio and Mike Fenton.
+
+        PR #154329
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::tapHighlight):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::setTapHighlight):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * Api/WebTapHighlight.h: Added.
+        (WebKit):
+        * WebKitSupport/DefaultTapHighlight.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::fadeAnimationName):
+        (BlackBerry::WebKit::DefaultTapHighlight::DefaultTapHighlight):
+        (BlackBerry::WebKit::DefaultTapHighlight::~DefaultTapHighlight):
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+        (BlackBerry::WebKit::DefaultTapHighlight::hide):
+        (BlackBerry::WebKit::DefaultTapHighlight::notifySyncRequired):
+        (BlackBerry::WebKit::DefaultTapHighlight::paintContents):
+        * WebKitSupport/DefaultTapHighlight.h: Added.
+        (WebKit):
+        (DefaultTapHighlight):
+        (BlackBerry::WebKit::DefaultTapHighlight::create):
+        (BlackBerry::WebKit::DefaultTapHighlight::notifyAnimationStarted):
+        (BlackBerry::WebKit::DefaultTapHighlight::showDebugBorders):
+        (BlackBerry::WebKit::DefaultTapHighlight::showRepaintCounter):
+        (BlackBerry::WebKit::DefaultTapHighlight::contentsVisible):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Add an overlay layer
         https://bugs.webkit.org/show_bug.cgi?id=87567
 

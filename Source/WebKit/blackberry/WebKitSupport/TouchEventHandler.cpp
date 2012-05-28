@@ -44,6 +44,7 @@
 #include "RenderedDocumentMarker.h"
 #include "SelectionHandler.h"
 #include "WebPage_p.h"
+#include "WebTapHighlight.h"
 
 #include <wtf/MathExtras.h>
 
@@ -389,12 +390,9 @@ void TouchEventHandler::drawTapHighlight()
 
     Color highlightColor = element->renderStyle()->tapHighlightColor();
 
-    m_webPage->m_client->drawTapHighlight(region,
-                                          highlightColor.red(),
-                                          highlightColor.green(),
-                                          highlightColor.blue(),
-                                          highlightColor.alpha(),
-                                          shouldHideTapHighlightRightAfterScrolling);
+    m_webPage->m_tapHighlight->draw(region,
+                                    highlightColor.red(), highlightColor.green(), highlightColor.blue(), highlightColor.alpha(),
+                                    shouldHideTapHighlightRightAfterScrolling);
 }
 
 }

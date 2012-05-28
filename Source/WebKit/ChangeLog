@@ -1,3 +1,18 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add a default tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=87569
+
+        Reviewed by Rob Buis.
+
+        Add DefaultTapHighlight to the build system
+
+        Reviewed internally by Mike Lattanzio and Mike Fenton.
+
+        PR #154329
+
+        * PlatformBlackBerry.cmake:
+
 2012-05-24  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Implement select popup and remove old hook to air popup

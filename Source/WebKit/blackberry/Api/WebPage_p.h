@@ -32,6 +32,7 @@
 #include "ViewportArguments.h"
 #include "WebPage.h"
 #include "WebSettings.h"
+#include "WebTapHighlight.h"
 
 #include <BlackBerryPlatformMessage.h>
 
@@ -42,6 +43,7 @@ class Document;
 class Frame;
 class GeolocationControllerClientBlackBerry;
 class JavaScriptDebuggerBlackBerry;
+class LayerWebKitThread;
 class Node;
 class Page;
 class PluginView;
@@ -429,6 +431,7 @@ public:
     WebCore::Frame* m_mainFrame;
     RefPtr<WebCore::Node> m_currentContextNode;
     WebSettings* m_webSettings;
+    OwnPtr<WebTapHighlight> m_tapHighlight;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<WebCore::JavaScriptDebuggerBlackBerry> m_scriptDebugger;

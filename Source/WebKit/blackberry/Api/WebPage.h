@@ -67,6 +67,7 @@ class WebPageCompositor;
 class WebPageGroupLoadDeferrer;
 class WebPagePrivate;
 class WebSettings;
+class WebTapHighlight;
 class WebViewportArguments;
 
 enum JavaScriptDataType { JSUndefined = 0, JSNull, JSBoolean, JSNumber, JSString, JSObject, JSException, JSDataTypeMax };
@@ -334,6 +335,9 @@ public:
     void setUserViewportArguments(const WebViewportArguments&);
     void resetUserViewportArguments();
 
+    WebTapHighlight* tapHighlight() const;
+    void setTapHighlight(WebTapHighlight*);
+
     // Popup client
     void initPopupWebView(BlackBerry::WebKit::WebPage*);
     void popupOpened(WebCore::PagePopupBlackBerry* webPopup);
@@ -342,6 +346,7 @@ public:
     WebCore::PagePopupBlackBerry* popup();
 
     void autofillTextField(const std::string&);
+
 private:
     virtual ~WebPage();
 

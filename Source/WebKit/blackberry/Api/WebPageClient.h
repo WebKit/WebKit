@@ -132,9 +132,6 @@ public:
     virtual void notifyContentRendered(const Platform::IntRect&) = 0;
     virtual void notifyScreenRotated() = 0;
 
-    virtual void drawTapHighlight(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll) = 0;
-    virtual void hideTapHighlight() = 0;
-
     virtual void inputFocusGained(Platform::BlackBerryInputType, int inputStyle) = 0;
     virtual void inputFocusLost() = 0;
     virtual void inputTextChanged() = 0;

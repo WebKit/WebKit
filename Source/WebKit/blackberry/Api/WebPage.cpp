@@ -132,6 +132,7 @@
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
+#include "DefaultTapHighlight.h"
 #include "FrameLayers.h"
 #include "WebPageCompositor_p.h"
 #endif
@@ -503,6 +504,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
     m_webSettings = WebSettings::createFromStandardSettings();
     m_webSettings->setUserAgentString(defaultUserAgent());
+
+#if USE(ACCELERATED_COMPOSITING)
+    m_tapHighlight = DefaultTapHighlight::create(this);
+#endif
 
     // FIXME: We explicitly call setDelegate() instead of passing ourself in createFromStandardSettings()
     // so that we only get one didChangeSettings() callback when we set the page group name. This causes us
@@ -6184,6 +6189,16 @@ const String& WebPagePrivate::defaultUserAgent()
     }
 
     return *defaultUserAgent;
+}
+
+WebTapHighlight* WebPage::tapHighlight() const
+{
+    return d->m_tapHighlight.get();
+}
+
+void WebPage::setTapHighlight(WebTapHighlight* tapHighlight)
+{
+    d->m_tapHighlight = adoptPtr(tapHighlight);
 }
 
 void WebPage::popupOpened(PagePopupBlackBerry* webPopup)

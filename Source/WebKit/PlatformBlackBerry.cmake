@@ -80,6 +80,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/BackingStoreCompositingSurface.cpp
     blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreClient.cpp
+    blackberry/WebKitSupport/DefaultTapHighlight.cpp
     blackberry/WebKitSupport/DOMSupport.cpp
     blackberry/WebKitSupport/FrameLayers.cpp
     blackberry/WebKitSupport/InPageSearchManager.cpp
