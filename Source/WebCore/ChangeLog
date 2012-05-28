@@ -1,3 +1,32 @@
+2012-05-28  MORITA Hajime  <morrita@google.com>
+
+        Can't edit <input> elements with :first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=87615
+
+        Reviewed by Kent Tamura.
+
+        A check using canHaveGeneratedChildren() should cover not only
+        button and menulist, but also RenderTextControl.
+        This change pulles canHaveGeneratedChildren() up
+        from RenderDeprecatedFlexibleBox to RenderObject,
+        and lets RenderTextControl override it.
+
+        Test: fast/forms/input-first-letter-edit.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlock.h: Removed a static function canHaveGeneratedChildren()
+        (RenderBlock):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore):
+        (WebCore::RenderObject::canHaveGeneratedChildren): Added.
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderTextControl.h:
+
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add support for layers with scale invariant size

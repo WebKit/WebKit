@@ -49,7 +49,6 @@ public:
     virtual bool isDeprecatedFlexibleBox() const { return true; }
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
-    virtual bool canHaveGeneratedChildren() const { return true; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location);
 

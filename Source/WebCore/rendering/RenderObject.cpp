@@ -2900,6 +2900,15 @@ bool RenderObject::canUpdateSelectionOnRootLineBoxes()
     return containingBlock ? !containingBlock->needsLayout() : true;
 }
 
+// We only create "generated" child renderers like one for first-letter if:
+// - the firstLetterBlock can have children in the DOM and
+// - the block doesn't have any special assumption on its text children.
+// This correctly prevents form controls from having such renderers.
+bool RenderObject::canHaveGeneratedChildren() const
+{
+    return canHaveChildren();
+}
+
 #if ENABLE(SVG)
 
 RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()

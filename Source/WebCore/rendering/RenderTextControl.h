@@ -71,6 +71,7 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool avoidsFloats() const { return true; }
+    virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
     
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
 
