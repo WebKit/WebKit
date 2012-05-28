@@ -1,3 +1,14 @@
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] http/tests/appcache/abort-cache* are flaky and should be skipped
+        https://bugs.webkit.org/show_bug.cgi?id=87634
+
+        Unreviewed EFL gardening. Aborting application cache downloads is
+        flaky on EFL port so we need to skip the corresponding test cases for
+        now.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-28  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Move input element's internal spinner layout tests to test_expectations.txt

@@ -534,6 +534,10 @@ BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 // Font kerning issue, fails on GTK as well.
 BUGWK76048 : fast/text/font-kerning.html = IMAGE
 
+// Aborting application cache downloads is flaky.
+BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS
+BUGWK87633 : http/tests/appcache/abort-cache-ondownloading-resource-404.html = TEXT PASS
+
 // Fails on GTK as well
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
