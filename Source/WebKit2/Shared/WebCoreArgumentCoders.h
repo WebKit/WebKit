@@ -234,7 +234,7 @@ template<> struct ArgumentCoder<WebCore::KURL> {
     static bool decode(ArgumentDecoder*, WebCore::KURL&);
 };
 
-#if PLATFORM(QT)
+#if USE(UI_SIDE_COMPOSITING)
 template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
     static void encode(ArgumentEncoder*, const WebCore::FloatPoint3D&);
     static bool decode(ArgumentDecoder*, WebCore::FloatPoint3D&);
@@ -250,76 +250,14 @@ template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
     static bool decode(ArgumentDecoder*, WebCore::TransformationMatrix&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::MatrixTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::MatrixTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::MatrixTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::Matrix3DTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::Matrix3DTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::Matrix3DTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::PerspectiveTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::PerspectiveTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::PerspectiveTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::RotateTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::RotateTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::RotateTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::ScaleTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::ScaleTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::ScaleTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::SkewTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::SkewTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::SkewTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::TranslateTransformOperation> > {
-    static void encode(ArgumentEncoder*, const WebCore::TranslateTransformOperation*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TranslateTransformOperation>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
-    static void encode(ArgumentEncoder*, const RefPtr<WebCore::TimingFunction>&);
-    static void encode(ArgumentEncoder*, const WebCore::TimingFunction*);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TimingFunction>&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::TransformOperation> > {
-    static void encode(ArgumentEncoder*, const RefPtr<WebCore::TransformOperation>&);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TransformOperation>&);
-};
-
-template<> struct ArgumentCoder<WebCore::TransformOperations> {
-    static void encode(ArgumentEncoder*, const WebCore::TransformOperations&);
-    static bool decode(ArgumentDecoder*, WebCore::TransformOperations&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::Animation> > {
-    static void encode(ArgumentEncoder*, const RefPtr<WebCore::Animation>&);
-    static bool decode(ArgumentDecoder*, RefPtr<WebCore::Animation>&);
-};
-#endif
-
-#if USE(UI_SIDE_COMPOSITING) && ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_FILTERS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder*, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder*, WebCore::FilterOperations&);
 };
 #endif
-
-#if USE(ACCELERATED_COMPOSITING)
-template<> struct ArgumentCoder<WebCore::KeyframeValueList> {
-    static void encode(ArgumentEncoder*, const WebCore::KeyframeValueList& keyframes);
-    static bool decode(ArgumentDecoder*, WebCore::KeyframeValueList& keyframes);
-};
 #endif
+
 
 } // namespace CoreIPC
 

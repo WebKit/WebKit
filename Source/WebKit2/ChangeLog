@@ -1,3 +1,16 @@
+2012-05-28  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Remove unused argument coders for animation
+        https://bugs.webkit.org/show_bug.cgi?id=87435
+
+        Reviewed by Sam Weinig.
+
+        Left the used argument coders only, behind a proper USE(UI_SIDE_COMPOSITING) flag.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC):
+        * Shared/WebCoreArgumentCoders.h:
+
 2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move allowRoundingHacks to Internals interface
