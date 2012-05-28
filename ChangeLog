@@ -1,3 +1,19 @@
+2012-05-27  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Make WEBKIT_SET_EXTRA_COMPILER_FLAGS work with clang.
+        https://bugs.webkit.org/show_bug.cgi?id=87597
+
+        Reviewed by Daniel Bates.
+
+        Building with clang requires at least the -fPIC option being
+        passed correctly, just like it is needed with gcc. clang is also
+        compatible with most of gcc's compiler options, so we only need to
+        check for clang besides g++ in the macro definition.
+
+        * Source/cmake/WebKitHelpers.cmake: Check for "Clang" and use
+        CMAKE_COMPILER_IS_GNUCXX for the previous check, as it is shorter
+        and achieves the same effect.
+
 2012-05-25  Zan Dobersek  <zandobersek@gmail.com>
 
         configure.ac has duplicated AC_MSG_RESULT([$enable_sandbox]) and nothing for seamless iframes
