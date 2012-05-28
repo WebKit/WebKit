@@ -26,7 +26,8 @@
 module events {
 
     interface [
-        ConstructorTemplate=Event
+        ConstructorTemplate=Event,
+        JSNoStaticTables
     ] ProgressEvent : Event {
         readonly attribute [InitializedByEventConstructor] boolean lengthComputable;
         readonly attribute [InitializedByEventConstructor] unsigned long long loaded;
