@@ -575,6 +575,7 @@
         {
           'action_name': 'HTMLEntityTable',
           'inputs': [
+            '../html/parser/create-html-entity-table',
             '../html/parser/HTMLEntityNames.in',
           ],
           'outputs': [

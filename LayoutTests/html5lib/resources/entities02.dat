@@ -247,3 +247,13 @@
 |   <body>
 |     <div>
 |       "ZZ&prod=23"
+
+#data
+<div>ZZ&AElig=</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       "ZZÆ="

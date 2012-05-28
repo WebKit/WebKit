@@ -124,7 +124,7 @@ index = {}
 offset = 0
 for entry in entries:
     letter = entry[ENTITY][0]
-    if not index.get(letter):
+    if letter not in index:
         index[letter] = offset
     values = entry[VALUE].split(' ')
     assert len(values) <= 2, values
