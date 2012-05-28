@@ -1,3 +1,16 @@
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] LayoutTestController needs DeferredFrameLoading flag
+        https://bugs.webkit.org/show_bug.cgi?id=87652
+  
+        Unreviewed gardening.
+
+        r118631 introduced a new test and a new API on LayoutTestController
+        that we need to implement in chromium.
+        Skip the test temporarily.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         fast/tokenizer/entities-01.html & fast/tokenizer/entities-03.html need new baseline after r118672

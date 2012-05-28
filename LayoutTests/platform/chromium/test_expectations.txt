@@ -3760,3 +3760,6 @@ BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
 // directory drag-and-drop support is not yet enabled.
 BUGWK76809 SKIP : editing/pasteboard/data-transfer-items-drag-drop-entry.html = FAIL
 BUGWK76809 SKIP : fast/filesystem/cross-filesystem-op.html = FAIL
+
+// Requires setUseDeferredFrameLoading() API from LayoutTestController.
+BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = FAIL
