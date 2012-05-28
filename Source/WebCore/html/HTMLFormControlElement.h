@@ -130,7 +130,6 @@ protected:
     virtual void didRecalcStyle(StyleChange) OVERRIDE;
 
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
-    virtual void detach();
 
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();

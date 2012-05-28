@@ -70,12 +70,6 @@ HTMLFormControlElement::~HTMLFormControlElement()
 {
 }
 
-void HTMLFormControlElement::detach()
-{
-    m_validationMessage = nullptr;
-    HTMLElement::detach();
-}
-
 String HTMLFormControlElement::formEnctype() const
 {
     return FormSubmission::Attributes::parseEncodingType(fastGetAttribute(formenctypeAttr));
@@ -233,6 +227,7 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Containe
 
 void HTMLFormControlElement::removedFrom(ContainerNode* insertionPoint)
 {
+    m_validationMessage = nullptr;
     m_fieldSetAncestorValid = false;
     m_dataListAncestorState = Unknown;
     HTMLElement::removedFrom(insertionPoint);
