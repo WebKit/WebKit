@@ -1,3 +1,15 @@
+2012-05-27  Darin Adler  <darin@apple.com>
+
+        Fix an incorrect assertion in Vector::remove
+        https://bugs.webkit.org/show_bug.cgi?id=87612
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Vector.h: There's no good reason to disallow calling remove
+        with a size of 0, even when the position is at the end of the vector,
+        so changed the two-argument Vector::remove assertion to assert that
+        the position is <= size rather than < size.
+
 2012-05-27  Yoshifumi Inoue  <yosin@chromium.org>
 
         [WTF] Introduce UINT64_C to MathExtras.h

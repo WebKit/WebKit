@@ -1110,7 +1110,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     inline void Vector<T, inlineCapacity>::remove(size_t position, size_t length)
     {
-        ASSERT(position < size());
+        ASSERT(position <= size());
         ASSERT(position + length <= size());
         T* beginSpot = begin() + position;
         T* endSpot = beginSpot + length;
