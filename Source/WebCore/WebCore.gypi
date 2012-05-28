@@ -3875,7 +3875,6 @@
             'platform/graphics/gstreamer/GStreamerGWorld.cpp',
             'platform/graphics/gstreamer/GStreamerGWorld.h',
             'platform/graphics/gstreamer/ImageGStreamer.h',
-            'platform/graphics/gstreamer/ImageGStreamerCG.mm',
             'platform/graphics/gstreamer/ImageGStreamerCairo.cpp',
             'platform/graphics/gstreamer/ImageGStreamerQt.cpp',
             'platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp',

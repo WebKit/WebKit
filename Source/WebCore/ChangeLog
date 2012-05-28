@@ -1,3 +1,15 @@
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Buildfix: remove obsolete file from gypi.
+        https://bugs.webkit.org/show_bug.cgi?id=87643
+
+        Reviewed by no-reviewer.
+
+        Following http://trac.webkit.org/changeset/118610.
+        Removes reference to platform/graphics/gstreamer/ImageGStreamerCG.mm
+
+        * WebCore.gypi:
+
 2012-05-28  MORITA Hajime  <morrita@google.com>
 
         HTMLFormControlElement::m_validationMessage shouldn't be cleared on detach()
