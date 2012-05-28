@@ -3768,3 +3768,6 @@ BUGWK87653 : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Flaky: sometimes it dumps the render tree, but it expects just text.
 BUGWK87657 : http/tests/cache/cancel-in-progress-load.html = PASS TEXT MISSING
+
+// This test probably doesn't require an image.
+BUGWK87671 : fast/layers/clip-rects-assertion-expected.txt = MISSING
