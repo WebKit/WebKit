@@ -114,6 +114,8 @@ MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
+    m_weakSet.sweep();
+
     if (sweepMode == SweepOnly && !m_cellsNeedDestruction)
         return FreeList();
 

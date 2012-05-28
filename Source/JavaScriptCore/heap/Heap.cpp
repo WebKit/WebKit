@@ -687,7 +687,6 @@ void Heap::collect(SweepToggle sweepToggle)
 
     {
         GCPHASE(FinalizeWeakHandles);
-        m_objectSpace.sweepWeakSets();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
     

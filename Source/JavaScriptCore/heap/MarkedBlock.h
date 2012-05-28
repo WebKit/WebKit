@@ -133,7 +133,6 @@ namespace JSC {
 
         void visitWeakSet(HeapRootVisitor&);
         void reapWeakSet();
-        void sweepWeakSet();
 
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
@@ -285,11 +284,6 @@ namespace JSC {
     inline void MarkedBlock::reapWeakSet()
     {
         m_weakSet.reap();
-    }
-
-    inline void MarkedBlock::sweepWeakSet()
-    {
-        m_weakSet.sweep();
     }
 
     inline void MarkedBlock::didConsumeFreeList()
