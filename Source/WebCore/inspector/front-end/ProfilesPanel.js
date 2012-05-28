@@ -304,6 +304,8 @@ WebInspector.ProfilesPanel.prototype = {
     toggleRecordButton: function()
     {
         var isProfiling = this._selectedProfileType.buttonClicked();
+        this.recordButton.toggled = isProfiling;
+        this.recordButton.title = this._selectedProfileType.buttonTooltip;
         if (isProfiling)
             this._launcherView.profileStarted();
         else
