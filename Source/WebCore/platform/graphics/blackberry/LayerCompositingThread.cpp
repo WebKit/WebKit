@@ -122,12 +122,18 @@ void LayerCompositingThread::deleteTextures()
         m_client->deleteTextures(this);
 }
 
-void LayerCompositingThread::setDrawTransform(const TransformationMatrix& matrix)
+void LayerCompositingThread::setDrawTransform(double scale, const TransformationMatrix& matrix)
 {
     m_drawTransform = matrix;
 
     float bx = m_bounds.width() / 2.0;
     float by = m_bounds.height() / 2.0;
+
+    if (sizeIsScaleInvariant()) {
+        bx /= scale;
+        by /= scale;
+    }
+
     m_transformedBounds.setP1(matrix.mapPoint(FloatPoint(-bx, -by)));
     m_transformedBounds.setP2(matrix.mapPoint(FloatPoint(-bx, by)));
     m_transformedBounds.setP3(matrix.mapPoint(FloatPoint(bx, by)));
@@ -198,7 +204,7 @@ FloatQuad LayerCompositingThread::getTransformedHolePunchRect() const
     return getTransformedRect(m_bounds, drawRect, m_drawTransform);
 }
 
-void LayerCompositingThread::drawTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect)
+void LayerCompositingThread::drawTextures(double scale, int positionLocation, int texCoordLocation, const FloatRect& visibleRect)
 {
     static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
 
@@ -270,7 +276,7 @@ void LayerCompositingThread::drawTextures(int positionLocation, int texCoordLoca
     }
 
     if (m_client)
-        m_client->drawTextures(this, positionLocation, texCoordLocation);
+        m_client->drawTextures(this, scale, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransform, LayerCompositingThread* mask, int positionLocation, int texCoordLocation)
@@ -304,10 +310,10 @@ bool LayerCompositingThread::hasMissingTextures() const
     return m_client ? m_client->hasMissingTextures(this) : false;
 }
 
-void LayerCompositingThread::drawMissingTextures(int positionLocation, int texCoordLocation, const FloatRect& /*visibleRect*/)
+void LayerCompositingThread::drawMissingTextures(double scale, int positionLocation, int texCoordLocation, const FloatRect& /*visibleRect*/)
 {
     if (m_client)
-        m_client->drawMissingTextures(this, positionLocation, texCoordLocation);
+        m_client->drawMissingTextures(this, scale, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::releaseTextureResources()

@@ -152,6 +152,7 @@ LayerRenderer::LayerRenderer(GLES2Context* context)
     , m_checkerProgramObject(0)
     , m_positionLocation(0)
     , m_texCoordLocation(1)
+    , m_scale(1.0)
     , m_animationTime(-numeric_limits<double>::infinity())
     , m_fbo(0)
     , m_currentLayerRendererSurface(0)
@@ -318,6 +319,12 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
 
     if (!rootLayer)
         return;
+
+    // Used to draw scale invariant layers. We assume uniform scale.
+    // The matrix maps to normalized device coordinates, a system that maps the
+    // viewport to the interval -1 to 1.
+    // So it has to scale down by a factor equal to one half the viewport.
+    m_scale = matrix.m11() * m_viewport.width() / 2;
 
     Vector<RefPtr<LayerCompositingThread> > surfaceLayers;
     const Vector<RefPtr<LayerCompositingThread> >& sublayers = rootLayer->getSublayers();
@@ -658,7 +665,9 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     // Where: P is the projection matrix
     //        M is the layer's matrix computed above
     //        S is the scale adjustment (to scale up to the layer size)
-    IntSize bounds = layer->bounds();
+    FloatSize bounds = layer->bounds();
+    if (layer->sizeIsScaleInvariant())
+        bounds.scale(1.0 / m_scale);
     FloatPoint anchorPoint = layer->anchorPoint();
     FloatPoint position = layer->position();
 
@@ -725,7 +734,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
             surface->setReplicaDrawTransform(replicaMatrix);
         }
 
-        IntRect drawRect = IntRect(IntPoint(), bounds);
+        IntRect drawRect = enclosingIntRect(FloatRect(FloatPoint(), bounds));
         surface->setContentRect(drawRect);
 
         TransformationMatrix projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY(), -1000, 1000);
@@ -738,7 +747,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         surfaceLayers.append(layer);
     }
 
-    layer->setDrawTransform(localMatrix);
+    layer->setDrawTransform(m_scale, localMatrix);
 
 #if ENABLE(VIDEO)
     bool layerVisible = clipRect.intersects(layer->getDrawRect()) || layer->mediaPlayer();
@@ -846,7 +855,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         if (!drawSurface) {
             glUseProgram(m_layerProgramObject[shader]);
             glUniform1f(m_alphaLocation[shader], layer->drawOpacity());
-            layer->drawTextures(m_positionLocation, m_texCoordLocation, m_visibleRect);
+            layer->drawTextures(m_scale, m_positionLocation, m_texCoordLocation, m_visibleRect);
         } else {
             // Draw the reflection if it exists.
             if (layer->replicaLayer()) {
@@ -870,7 +879,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         if (layer->hasMissingTextures()) {
             glDisable(GL_BLEND);
             glUseProgram(m_checkerProgramObject);
-            layer->drawMissingTextures(m_positionLocation, m_texCoordLocation, m_visibleRect);
+            layer->drawMissingTextures(m_scale, m_positionLocation, m_texCoordLocation, m_visibleRect);
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         }

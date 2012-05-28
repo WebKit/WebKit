@@ -176,6 +176,7 @@ private:
     int m_checkerSurfaceHeightLocation;
 
     // Current draw configuration.
+    double m_scale;
     double m_animationTime;
     FloatRect m_visibleRect;
     IntRect m_layoutRect;

@@ -1,5 +1,53 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Add support for layers with scale invariant size
+        https://bugs.webkit.org/show_bug.cgi?id=87601
+
+        Reviewed by Rob Buis.
+
+        To support layers that have a "floating" appearance, i.e. don't change size
+        when the web page is drawn at a different scale, we add a new layer property
+        named "sizeIsScaleInvariant".
+
+        The anchor position will still be given in document coordinates for these
+        "floating" layers, so this is well suited for interface elements like selection
+        handles whose size is always the same but move with the web page contents.
+
+        PR #156812
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::setDrawTransform):
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawMissingTextures):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerCompositingThread):
+        * platform/graphics/blackberry/LayerCompositingThreadClient.h:
+        (LayerCompositingThreadClient):
+        (WebCore::LayerCompositingThreadClient::drawMissingTextures):
+        * platform/graphics/blackberry/LayerData.h:
+        (WebCore::LayerData::LayerData):
+        (WebCore::LayerData::sizeIsScaleInvariant):
+        (LayerData):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::LayerRenderer):
+        (WebCore::LayerRenderer::compositeLayers):
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (LayerRenderer):
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerTiler::updateTextureContentsIfNeeded):
+        (WebCore::LayerTiler::drawTextures):
+        (WebCore::LayerTiler::drawMissingTextures):
+        (WebCore::LayerTiler::drawTexturesInternal):
+        * platform/graphics/blackberry/LayerTiler.h:
+        (LayerTiler):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (WebCore::LayerWebKitThread::setSizeIsScaleInvariant):
+        (LayerWebKitThread):
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Make it possible to manipulate layers on the compositing thread
         https://bugs.webkit.org/show_bug.cgi?id=87602
 

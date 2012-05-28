@@ -34,7 +34,7 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible) = 0;
 
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*) = 0;
-    virtual void drawTextures(LayerCompositingThread*, int positionLocation, int texCoordLocation, double scale) = 0;
+    virtual void drawTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation) = 0;
     virtual void deleteTextures(LayerCompositingThread*) = 0;
 
     // Optional. Allows layers to serve as a mask for other layers
@@ -42,7 +42,7 @@ public:
 
     // Optional. Allows layers to have uncached regions, typically drawn as checkerboard
     virtual bool hasMissingTextures(const LayerCompositingThread*) const { return false; }
-    virtual void drawMissingTextures(LayerCompositingThread*, int positionLocation, int texCoordLocation) { }
+    virtual void drawMissingTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation) { }
 
     // Unlike the other methods here, this one will be called on the WebKit thread
     virtual void scheduleCommit() { }

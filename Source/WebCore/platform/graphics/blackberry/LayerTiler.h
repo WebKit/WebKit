@@ -66,9 +66,9 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible);
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*);
     virtual void bindContentsTexture(LayerCompositingThread*);
-    virtual void drawTextures(LayerCompositingThread*, int positionLocation, int texCoordLocation);
+    virtual void drawTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation);
     virtual bool hasMissingTextures(const LayerCompositingThread*) const { return m_hasMissingTextures; }
-    virtual void drawMissingTextures(LayerCompositingThread*, int positionLocation, int texCoordLocation);
+    virtual void drawMissingTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation);
     virtual void deleteTextures(LayerCompositingThread*);
     void commitPendingTextureUploads();
 
@@ -157,7 +157,7 @@ private:
     void addTileJob(const TileIndex&, const TextureJob&, TileJobsMap&);
     void performTileJob(LayerTile*, const TextureJob&, const IntRect&);
     void processTextureJob(const TextureJob&, TileJobsMap&);
-    void drawTexturesInternal(LayerCompositingThread*, int positionLocation, int texCoordLocation, bool missing);
+    void drawTexturesInternal(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation, bool missing);
     void pruneTextures();
     void visibilityChanged(bool needsDisplay);
 

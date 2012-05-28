@@ -150,7 +150,7 @@ public:
     // The layer renderer must be set if the layer has been rendered
     void setLayerRenderer(LayerRenderer*);
 
-    void setDrawTransform(const TransformationMatrix&);
+    void setDrawTransform(double scale, const TransformationMatrix&);
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
 
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
@@ -172,9 +172,9 @@ public:
 
     void deleteTextures();
 
-    void drawTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
+    void drawTextures(double scale, int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
     bool hasMissingTextures() const;
-    void drawMissingTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
+    void drawMissingTextures(double scale, int positionLocation, int texCoordLocation, const FloatRect& visibleRect);
     void drawSurface(const TransformationMatrix&, LayerCompositingThread* mask, int positionLocation, int texCoordLocation);
 
     void releaseTextureResources();

@@ -122,6 +122,11 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         renderJobs = m_renderJobs;
     }
 
+    // There's no point in drawing contents at a higher resolution for scale
+    // invariant layers.
+    if (m_layer->sizeIsScaleInvariant())
+        scale = 1.0;
+
     bool isZoomJob = false;
     if (scale != m_contentsScale) {
         // The first time around, it does not count as a zoom job.
@@ -470,20 +475,25 @@ void LayerTiler::performTileJob(LayerTile* tile, const TextureJob& job, const In
     ASSERT_NOT_REACHED();
 }
 
-void LayerTiler::drawTextures(LayerCompositingThread* layer, int pos, int texCoord)
+void LayerTiler::drawTextures(LayerCompositingThread* layer, double scale, int pos, int texCoord)
 {
-    drawTexturesInternal(layer, pos, texCoord, false /* drawMissing */);
+    drawTexturesInternal(layer, scale, pos, texCoord, false /* drawMissing */);
 }
 
-void LayerTiler::drawMissingTextures(LayerCompositingThread* layer, int pos, int texCoord)
+void LayerTiler::drawMissingTextures(LayerCompositingThread* layer, double scale, int pos, int texCoord)
 {
-    drawTexturesInternal(layer, pos, texCoord, true /* drawMissing */);
+    drawTexturesInternal(layer, scale, pos, texCoord, true /* drawMissing */);
 }
 
-void LayerTiler::drawTexturesInternal(LayerCompositingThread* layer, int positionLocation, int texCoordLocation, bool drawMissing)
+void LayerTiler::drawTexturesInternal(LayerCompositingThread* layer, double scale, int positionLocation, int texCoordLocation, bool drawMissing)
 {
     const TransformationMatrix& drawTransform = layer->drawTransform();
-    IntSize bounds = layer->bounds();
+    FloatSize bounds = layer->bounds();
+
+    if (layer->sizeIsScaleInvariant()) {
+        bounds.setWidth(bounds.width() / scale);
+        bounds.setHeight(bounds.width() / scale);
+    }
 
     float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
     float vertices[4 * 4];

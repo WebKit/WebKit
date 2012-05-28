@@ -74,6 +74,8 @@ public:
 
     void setBounds(const IntSize&);
 
+    void setSizeIsScaleInvariant(bool invariant) { m_sizeIsScaleInvariant = invariant; setNeedsCommit(); }
+
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
     void setFrame(const FloatRect&);
