@@ -74,6 +74,7 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // willDisconnectDOMWindowExtensionFromGlobalObject
         0, // didReconnectDOMWindowExtensionToGlobalObject
         0, // willDestroyGlobalObjectForDOMWindowExtension
+        0, // shouldForceUniversalAccessFromLocalURL
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 }
