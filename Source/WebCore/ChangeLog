@@ -1,3 +1,22 @@
+2012-05-27  Hayato Ito  <hayato@chromium.org>
+
+        Support multiple shadow roots in event dispatching.
+        https://bugs.webkit.org/show_bug.cgi?id=87470
+
+        Reviewed by Dimitri Glazkov.
+
+        The current implementation does not set event's target correctly
+        if an event happens on DOM tree with multiple shadow roots.  So
+        this patch updates an event re-targeting algorithm so that it
+        works even if it is applied to multiple shadow roots.
+
+        Tests: fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseParentIncludingInsertionPointAndShadowRoot):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::ensureEventAncestors):
+
 2012-05-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Minor code cleaning for the interface of MainResourceLoader

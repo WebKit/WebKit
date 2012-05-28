@@ -225,6 +225,27 @@ function prepareDOMTree7(parent)
     debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
 }
 
+// Hosting multiple shadow roots
+function prepareDOMTree8(parent)
+{
+    parent.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'A'},
+                            createShadowRoot(
+                                createDOM('content', {'id': 'C'}),
+                                createDOM('div', {'id': 'D'})),
+                            createShadowRoot(
+                                createDOM('shadow', {'id': 'E'}),
+                                createDOM('div', {'id': 'F'})),
+                            createDOM('div', {'id': 'B'}))));
+
+    addEventListeners(['top', 'A', 'B', 'A/', 'A/C', 'A/D', 'A//', 'A//E', 'A//F']);
+    getNodeInShadowTreeStack('A/').id = 'older-shadow-root';
+    getNodeInShadowTreeStack('A//').id = 'younger-shadow-root';
+    parent.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+}
+
 function debugDispatchedEvent(eventType)
 {
     debug('\n  ' + eventType);
@@ -317,6 +338,11 @@ function test()
     moveMouse('A', 'child-of-inactive-content');
 
     sandbox.innerHTML = '';
+    prepareDOMTree8(sandbox);
+
+    moveMouse('B', 'A');
+    moveMouse('A/D', 'A//F');
+    moveMouse('B', 'A//F');
 }
 
 test();

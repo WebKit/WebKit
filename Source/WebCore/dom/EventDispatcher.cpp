@@ -199,37 +199,23 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 {
     if (m_ancestorsInitialized)
         return;
-
-    ComposedShadowTreeWalker ancestorWalker(m_node.get());
-    EventTarget* originalTarget = eventTargetRespectingSVGTargetRules(ancestorWalker.get());
-    m_ancestors.append(EventContext(m_node.get(), originalTarget, originalTarget));
     m_ancestorsInitialized = true;
-
-    if (!m_node->inDocument())
-        return;
-
+    bool inDocument = m_node->inDocument();
+    bool isSVGElement = m_node->isSVGElement();
     Vector<EventTarget*> targetStack;
-    targetStack.append(originalTarget);
-    while (true) {
-        if (ancestorWalker.get()->isShadowRoot()) {
-            if (determineDispatchBehavior(event, toShadowRoot(ancestorWalker.get())) == StayInsideShadowDOM)
-                return;
-            ancestorWalker.parentIncludingInsertionPointAndShadowRoot();
-            if (!ancestorWalker.get())
-                return;
-            if (!m_node->isSVGElement()) {
-                targetStack.removeLast();
-                if (targetStack.isEmpty())
-                    targetStack.append(ancestorWalker.get());
-            }
-        } else {
-            ancestorWalker.parentIncludingInsertionPointAndShadowRoot();
-            if (!ancestorWalker.get())
-                return;
-            if (isInsertionPoint(ancestorWalker.get()) && toInsertionPoint(ancestorWalker.get())->isActive())
-                targetStack.append(ancestorWalker.get());
-        }
-        m_ancestors.append(EventContext(ancestorWalker.get(), eventTargetRespectingSVGTargetRules(ancestorWalker.get()), targetStack.last()));
+    for (ComposedShadowTreeWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
+        Node* node = walker.get();
+        if (isActiveInsertionPoint(node) || targetStack.isEmpty())
+            targetStack.append(eventTargetRespectingSVGTargetRules(node));
+        m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
+        if (!inDocument)
+            return;
+        if (!node->isShadowRoot())
+            continue;
+        if (determineDispatchBehavior(event, toShadowRoot(node)) == StayInsideShadowDOM)
+            return;
+        if (!isSVGElement && !targetStack.isEmpty())
+            targetStack.removeLast();
     }
 }
 

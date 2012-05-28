@@ -321,6 +321,60 @@ Moving mouse from A to child-of-inactive-content
      @shadow-root-B (target: active-content) (related: A)
      @B (target: child-of-inactive-content) (related: A)
      @top (target: child-of-inactive-content) (related: A)
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=B
+			DIV	 id=D
+			DIV	 id=F
+
+
+Moving mouse from B to A
+
+  mouseout
+     @B (target: B) (related: A)
+     @C (target: C) (related: A)
+     @older-shadow-root (target: C) (related: A)
+     @E (target: E) (related: A)
+     @younger-shadow-root (target: E) (related: A)
+     @A (target: B) (related: A)
+     @top (target: B) (related: A)
+
+  mouseover
+     @A (target: A) (related: B)
+     @top (target: A) (related: B)
+
+Moving mouse from A/D to A//F
+
+  mouseout
+     @D (target: D) (related: A)
+     @older-shadow-root (target: D) (related: A)
+     @E (target: E) (related: F)
+     @younger-shadow-root (target: E) (related: F)
+
+  mouseover
+     @F (target: F) (related: E)
+     @younger-shadow-root (target: F) (related: E)
+
+Moving mouse from B to A//F
+
+  mouseout
+     @B (target: B) (related: A)
+     @C (target: C) (related: A)
+     @older-shadow-root (target: C) (related: A)
+     @E (target: E) (related: F)
+     @younger-shadow-root (target: E) (related: F)
+     @A (target: B) (related: A)
+     @top (target: B) (related: A)
+
+  mouseover
+     @F (target: F) (related: E)
+     @younger-shadow-root (target: F) (related: E)
+     @A (target: A) (related: B)
+     @top (target: A) (related: B)
 PASS successfullyParsed is true
 
 TEST COMPLETE
