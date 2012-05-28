@@ -1,3 +1,16 @@
+2012-05-28  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87609
+        [Chromium] FrameLoaderClient::allowStyleScoped() should be implemented interms of WebPermissionClient
+
+        Reviewed by Kent Tamura.
+
+        Added allowStyleScoped() implementation which is essentially same as shadowDOMAllowed().
+
+        * src/FrameLoaderClientImpl.cpp:
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll chromium DEPS from r139156 to r139184.

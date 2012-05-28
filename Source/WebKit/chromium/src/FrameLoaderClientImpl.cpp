@@ -248,6 +248,15 @@ bool FrameLoaderClientImpl::shadowDOMAllowed(bool enabledAsRuntimeFeature)
     return enabledAsRuntimeFeature;
 }
 
+bool FrameLoaderClientImpl::allowStyleScoped(bool enabledAsRuntimeFeature) OVERRIDE
+{
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview && webview->permissionClient())
+        return webview->permissionClient()->allowWebComponents(m_webFrame, enabledAsRuntimeFeature);
+
+    return enabledAsRuntimeFeature;
+}
+
 void FrameLoaderClientImpl::didNotAllowScript()
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
