@@ -167,6 +167,7 @@ public:
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
     virtual bool canSetStringValue() const;
+    virtual String localizeValue(const String&) const;
     virtual String visibleValue() const;
     virtual String convertFromVisibleValue(const String&) const;
     virtual bool isAcceptableValue(const String&);

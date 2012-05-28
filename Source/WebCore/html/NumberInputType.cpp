@@ -218,21 +218,25 @@ static bool isE(UChar ch)
     return ch == 'e' || ch == 'E';
 }
 
-String NumberInputType::visibleValue() const
+String NumberInputType::localizeValue(const String& proposedValue) const
 {
-    String currentValue = element()->value();
-    if (currentValue.isEmpty())
-        return currentValue;
+    if (proposedValue.isEmpty())
+        return proposedValue;
     // We don't localize scientific notations.
-    if (currentValue.find(isE) != notFound)
-        return currentValue;
+    if (proposedValue.find(isE) != notFound)
+        return proposedValue;
     // FIXME: The following three lines should be removed when we
     // remove the second argument of convertToLocalizedNumber().
     // Note: parseToDoubleForNumberTypeWithDecimalPlaces set zero to decimalPlaces
     // if currentValue isn't valid floating pointer number.
     unsigned decimalPlace;
-    parseToDoubleForNumberTypeWithDecimalPlaces(currentValue, &decimalPlace);
-    return convertToLocalizedNumber(currentValue, decimalPlace);
+    parseToDoubleForNumberTypeWithDecimalPlaces(proposedValue, &decimalPlace);
+    return convertToLocalizedNumber(proposedValue, decimalPlace);
+}
+
+String NumberInputType::visibleValue() const
+{
+    return localizeValue(element()->value());
 }
 
 String NumberInputType::convertFromVisibleValue(const String& visibleValue) const

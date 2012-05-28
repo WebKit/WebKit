@@ -61,6 +61,7 @@ private:
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
     virtual String serialize(double) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
+    virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;

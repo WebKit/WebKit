@@ -96,6 +96,9 @@ namespace WebKit {
 
         WEBKIT_EXPORT WebNodeCollection dataListOptions() const;
 
+        // Return the localized value for this input type.
+        WEBKIT_EXPORT WebString localizeValue(const WebString&) const;
+
         WEBKIT_EXPORT bool isSpeechInputEnabled() const;
         WEBKIT_EXPORT SpeechInputState getSpeechInputState() const;
         WEBKIT_EXPORT void startSpeechInput();

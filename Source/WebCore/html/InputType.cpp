@@ -629,6 +629,11 @@ void InputType::didDispatchClick(Event*, const ClickHandlingState&)
 {
 }
 
+String InputType::localizeValue(const String& proposedValue) const
+{
+    return proposedValue;
+}
+
 String InputType::visibleValue() const
 {
     return element()->value();

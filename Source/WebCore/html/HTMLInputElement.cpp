@@ -1266,6 +1266,13 @@ String HTMLInputElement::sanitizeValue(const String& proposedValue) const
     return m_inputType->sanitizeValue(proposedValue);
 }
 
+String HTMLInputElement::localizeValue(const String& proposedValue) const
+{
+    if (proposedValue.isNull())
+        return proposedValue;
+    return m_inputType->localizeValue(proposedValue);
+}
+
 bool HTMLInputElement::hasUnacceptableValue() const
 {
     return m_inputType->hasUnacceptableValue();

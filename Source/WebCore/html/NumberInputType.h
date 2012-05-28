@@ -55,6 +55,7 @@ private:
     virtual double parseToDoubleWithDecimalPlaces(const String&, double, unsigned*) const OVERRIDE;
     virtual String serialize(double) const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
+    virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual bool isAcceptableValue(const String&) OVERRIDE;

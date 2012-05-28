@@ -183,6 +183,11 @@ WebNodeCollection WebInputElement::dataListOptions() const
     return WebNodeCollection();
 }
 
+WebString WebInputElement::localizeValue(const WebString& proposedValue) const
+{
+    return constUnwrap<HTMLInputElement>()->localizeValue(proposedValue);
+}
+
 bool WebInputElement::isSpeechInputEnabled() const
 {
 #if ENABLE(INPUT_SPEECH)

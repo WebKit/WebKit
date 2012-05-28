@@ -147,6 +147,8 @@ public:
 
     String sanitizeValue(const String&) const;
 
+    String localizeValue(const String&) const;
+
     void updateInnerTextValue();
 
     // The value which is drawn by a renderer.

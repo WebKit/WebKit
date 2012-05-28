@@ -155,15 +155,19 @@ String BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const
     return serialize(value);
 }
 
-String BaseDateAndTimeInputType::visibleValue() const
+String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) const
 {
-    String currentValue = element()->value();
     DateComponents date;
-    if (!parseToDateComponents(currentValue, &date))
-        return currentValue;
+    if (!parseToDateComponents(proposedValue, &date))
+        return proposedValue;
 
     String localized = formatLocalizedDate(date);
-    return localized.isEmpty() ? currentValue : localized;
+    return localized.isEmpty() ? proposedValue : localized;
+}
+
+String BaseDateAndTimeInputType::visibleValue() const
+{
+    return localizeValue(element()->value());
 }
 
 String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleValue) const
