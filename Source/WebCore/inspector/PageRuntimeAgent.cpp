@@ -154,7 +154,7 @@ void PageRuntimeAgent::notifyContextCreated(const String& frameId, ScriptState* 
     long executionContextId = injectedScriptManager()->injectedScriptIdFor(scriptState);
     String name = securityOrigin ? securityOrigin->toString() : "";
     m_frontend->isolatedContextCreated(ExecutionContextDescription::create()
-        .setId(executionContextId)
+        .setId(static_cast<int>(executionContextId))
         .setIsPageContext(isPageContext)
         .setName(name)
         .setFrameId(frameId)

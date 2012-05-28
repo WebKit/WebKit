@@ -325,11 +325,11 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
     ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
 
     RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> totalJsHeap = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::totalJsHeap);
-    totalJsHeap->setSize(totalJSHeapSize);
+    totalJsHeap->setSize(static_cast<int>(totalJSHeapSize));
 
     RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
     RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> usedJsHeap = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::usedJsHeap);
-    usedJsHeap->setSize(usedJSHeapSize);
+    usedJsHeap->setSize(static_cast<int>(usedJSHeapSize));
     children->addItem(usedJsHeap);
 
     totalJsHeap->setChildren(children);
@@ -344,7 +344,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Web
     PlatformSupport::getProcessMemorySize(&privateBytes, &sharedBytes);
 #endif
     processMemory = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
-    processMemory->setSize(privateBytes);
+    processMemory->setSize(static_cast<int>(privateBytes));
 
     RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
     children->addItem(jsHeapInfo());

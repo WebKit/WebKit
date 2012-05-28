@@ -1,3 +1,43 @@
+2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: protect typed API from C++ implicit float to int cast
+        https://bugs.webkit.org/show_bug.cgi?id=87183
+
+        Reviewed by Yury Semikhatsky.
+
+        An intermediate C++ class is introduced that uses C++ template technique to control actual type
+        of its constructor argument.
+        All input parameters of type "int" now have type ExactlyInt. 
+        All usage sites are fixed accordingly.
+
+        * inspector/CodeGeneratorInspector.py:
+        (TypeModel.RefPtrBased):
+        (TypeModel.Enum):
+        (TypeModel.ValueType):
+        (TypeModel.ValueType.get_opt_output_type_):
+        (TypeModel.ValueType.ValueOptional.get_command_return_pass_model):
+        (TypeModel.ExactlyInt):
+        (TypeModel.ExactlyInt.__init__):
+        (TypeModel.ExactlyInt.get_input_param_type_text):
+        (TypeModel.ExactlyInt.get_opt_output_type_):
+        (TypeModel.init_class):
+        (ExactlyInt):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::enable):
+        (WebCore::InspectorAgent::didCreateWorker):
+        (WebCore::InspectorAgent::didDestroyWorker):
+        (WebCore::InspectorAgent::evaluateForTestInFrontend):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::jsHeapInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::notifyContextCreated):
+
 2012-05-28  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-binding-tests results.

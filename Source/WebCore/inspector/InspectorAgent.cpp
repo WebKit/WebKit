@@ -126,7 +126,7 @@ void InspectorAgent::enable(ErrorString*)
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
         InspectorWorkerResource* worker = it->second.get();
-        m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
+        m_frontend->inspector()->didCreateWorker(static_cast<int>(worker->id()), worker->url(), worker->isSharedWorker());
     }
 #endif
 
@@ -134,7 +134,7 @@ void InspectorAgent::enable(ErrorString*)
         inspect(m_pendingInspectData.first, m_pendingInspectData.second);
 
     for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontend && it != m_pendingEvaluateTestCommands.end(); ++it)
-        m_frontend->inspector()->evaluateForTestInFrontend((*it).first, (*it).second);
+        m_frontend->inspector()->evaluateForTestInFrontend(static_cast<int>((*it).first), (*it).second);
     m_pendingEvaluateTestCommands.clear();
 }
 
@@ -163,7 +163,7 @@ void InspectorAgent::didCreateWorker(intptr_t id, const String& url, bool isShar
     m_workers.set(id, workerResource);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_frontend->inspector()->didCreateWorker(id, url, isSharedWorker);
+        m_frontend->inspector()->didCreateWorker(static_cast<int>(id), url, isSharedWorker);
 #endif
 }
 
@@ -177,7 +177,7 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
         return;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_frontend->inspector()->didDestroyWorker(id);
+        m_frontend->inspector()->didDestroyWorker(static_cast<int>(id));
 #endif
     m_workers.remove(workerResource);
 }
@@ -186,7 +186,7 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_frontend->inspector()->evaluateForTestInFrontend(callId, script);
+        m_frontend->inspector()->evaluateForTestInFrontend(static_cast<int>(callId), script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
 }

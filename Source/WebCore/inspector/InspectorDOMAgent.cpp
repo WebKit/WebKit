@@ -1219,7 +1219,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
 
     RefPtr<TypeBuilder::DOM::Node> value = TypeBuilder::DOM::Node::create()
         .setNodeId(id)
-        .setNodeType(node->nodeType())
+        .setNodeType(static_cast<int>(node->nodeType()))
         .setNodeName(nodeName)
         .setLocalName(localName)
         .setNodeValue(nodeValue);
