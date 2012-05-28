@@ -1,3 +1,9 @@
+2012-05-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Mac on Lion.
+
+        * inspector/CodeGeneratorInspector.py:
+
 2012-05-28  Keishi Hattori  <keishi@webkit.org>
 
         Expose value localization function of HTMLInputElement

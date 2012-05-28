@@ -2251,7 +2251,7 @@ private:
     int m_value;
 
     template<typename T>
-    static int cast_to_int(T t) { return T::default_case_cast_is_not_supported(); }
+    static int cast_to_int(T) { return T::default_case_cast_is_not_supported(); }
 };
 
 template<>
