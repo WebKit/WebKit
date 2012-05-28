@@ -67,6 +67,9 @@ public:
     WebCore::LayerCompositingThread* rootLayer() const { return m_rootLayer.get(); }
     void setRootLayer(WebCore::LayerCompositingThread*);
 
+    WebCore::LayerCompositingThread* overlayLayer() const { return m_overlayLayer.get(); }
+    void setOverlayLayer(WebCore::LayerCompositingThread*);
+
     bool drawsRootLayer() const;
     void setDrawsRootLayer(bool drawsRootLayer) { m_drawsRootLayer = drawsRootLayer; }
 
@@ -100,6 +103,7 @@ private:
     Platform::Graphics::GLES2Context* m_context;
     OwnPtr<WebCore::LayerRenderer> m_layerRenderer;
     RefPtr<WebCore::LayerCompositingThread> m_rootLayer;
+    RefPtr<WebCore::LayerCompositingThread> m_overlayLayer;
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;

@@ -5582,7 +5582,7 @@ void WebPagePrivate::drawLayersOnCommit()
 
 void WebPagePrivate::scheduleRootLayerCommit()
 {
-    if (!m_frameLayers || !m_frameLayers->hasLayer())
+    if (!(m_frameLayers && m_frameLayers->hasLayer()) && !m_overlayLayer)
         return;
 
     m_needsCommit = true;
@@ -5618,6 +5618,16 @@ LayerRenderingResults WebPagePrivate::lastCompositingResults() const
     return LayerRenderingResults();
 }
 
+GraphicsLayer* WebPagePrivate::overlayLayer()
+{
+    // The overlay layer has no GraphicsLayerClient, it's just a container
+    // for various overlays.
+    if (!m_overlayLayer)
+        m_overlayLayer = GraphicsLayer::create(0);
+
+    return m_overlayLayer.get();
+}
+
 void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> compositor)
 {
     using namespace BlackBerry::Platform;
@@ -5647,16 +5657,34 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
             WTF_PRETTY_FUNCTION, m_compositor.get());
 #endif
 
-    if (!m_frameLayers || !m_compositor)
+    if (!m_compositor)
         return;
 
-    if (m_frameLayers->rootLayer() && m_frameLayers->rootLayer()->layerCompositingThread() != m_compositor->rootLayer())
-        m_compositor->setRootLayer(m_frameLayers->rootLayer()->layerCompositingThread());
+    // Frame layers
+    LayerWebKitThread* rootLayer = 0;
+    if (m_frameLayers)
+        rootLayer = m_frameLayers->rootLayer();
+
+    if (rootLayer && rootLayer->layerCompositingThread() != m_compositor->rootLayer())
+        m_compositor->setRootLayer(rootLayer->layerCompositingThread());
+
+    // Overlay layers
+    LayerWebKitThread* overlayLayer = 0;
+    if (m_overlayLayer)
+        overlayLayer = m_overlayLayer->platformLayer();
+
+    if (overlayLayer && overlayLayer->layerCompositingThread() != m_compositor->overlayLayer())
+        m_compositor->setOverlayLayer(overlayLayer->layerCompositingThread());
 
     m_compositor->setLayoutRectForCompositing(layoutRectForCompositing);
     m_compositor->setContentsSizeForCompositing(contentsSizeForCompositing);
     m_compositor->setDrawsRootLayer(drawsRootLayer);
-    m_compositor->commit(m_frameLayers->rootLayer());
+
+    if (rootLayer)
+        rootLayer->commitOnCompositingThread();
+
+    if (overlayLayer)
+        overlayLayer->commitOnCompositingThread();
 }
 
 bool WebPagePrivate::commitRootLayerIfNeeded()
@@ -5677,7 +5705,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (!m_needsCommit)
         return false;
 
-    if (!m_frameLayers || !m_frameLayers->hasLayer())
+    if (!(m_frameLayers && m_frameLayers->hasLayer()) && !m_overlayLayer)
         return false;
 
     FrameView* view = m_mainFrame->view();
@@ -5702,8 +5730,12 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (m_rootLayerCommitTimer->isActive())
         m_rootLayerCommitTimer->stop();
 
-    m_frameLayers->commitOnWebKitThread(currentScale());
+    double scale = currentScale();
+    if (m_frameLayers && m_frameLayers->hasLayer())
+        m_frameLayers->commitOnWebKitThread(scale);
     updateDelegatedOverlays();
+    if (m_overlayLayer)
+        m_overlayLayer->platformLayer()->commitOnWebKitThread(scale);
 
     // Stash the visible content rect according to webkit thread
     // This is the rectangle used to layout fixed positioned elements,

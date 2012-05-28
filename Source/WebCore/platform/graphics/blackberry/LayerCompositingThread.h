@@ -36,6 +36,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "FloatQuad.h"
+#include "LayerAnimation.h"
 #include "LayerData.h"
 #include "LayerRendererSurface.h"
 #include "LayerTiler.h"
@@ -139,8 +140,14 @@ public:
 
     bool hasVisibleHolePunchRect() const;
 
+    void addAnimation(LayerAnimation* animation) { m_runningAnimations.append(animation); }
+    void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_runningAnimations = animations; }
+    void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_suspendedAnimations = animations; }
+
 protected:
     virtual ~LayerCompositingThread();
+
+    virtual void drawCustom(int positionLocation, int texCoordLocation) { }
 
 private:
     LayerCompositingThread(LayerType, PassRefPtr<LayerTiler>);
@@ -183,6 +190,8 @@ private:
     bool m_commitScheduled;
 
     RefPtr<LayerTiler> m_tiler;
+    Vector<RefPtr<LayerAnimation> > m_runningAnimations;
+    Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
 };
 
 } // namespace WebCore

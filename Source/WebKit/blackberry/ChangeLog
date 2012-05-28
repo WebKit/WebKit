@@ -1,5 +1,40 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Add an overlay layer
+        https://bugs.webkit.org/show_bug.cgi?id=87567
+
+        Reviewed by Antonio Gomes.
+
+        The overlay layer allows us to have compositing layers even though the
+        web page is not currently using accelerated compositing.
+
+        These layers can be used to implement tap highlight, inspector overlay
+        and more.
+
+        Reviewed internally by Filip Spacek.
+
+        PR #154335
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::scheduleRootLayerCommit):
+        (BlackBerry::WebKit::WebPagePrivate::overlayLayer):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setOverlayLayer):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::overlayLayer):
+        (WebPageCompositorPrivate):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Update WebPageCompositor::render() API
         https://bugs.webkit.org/show_bug.cgi?id=87565
 

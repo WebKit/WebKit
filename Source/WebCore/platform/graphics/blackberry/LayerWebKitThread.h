@@ -36,6 +36,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsLayerBlackBerry.h"
+#include "LayerAnimation.h"
 #include "LayerData.h"
 #include "LayerTiler.h"
 
@@ -142,11 +143,14 @@ public:
     void setNeedsCommit();
     void notifyAnimationStarted(double time);
 
-    void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_runningAnimations = animations; setNeedsCommit(); }
-    void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >& animations) { m_suspendedAnimations = animations; setNeedsCommit(); }
+    void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >&);
+    void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >&);
 
 protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
+
+    // Create a custom Layer{WebKitThread, CompositingThread} pair, used when you need to subclass both.
+    LayerWebKitThread(PassRefPtr<LayerCompositingThread>, GraphicsLayerBlackBerry* owner);
 
     void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
     void setLayerProgramShader(LayerData::LayerProgramShader shader) { m_layerProgramShader = shader; }
@@ -178,6 +182,9 @@ private:
 
     GraphicsLayerBlackBerry* m_owner;
 
+    Vector<RefPtr<LayerAnimation> > m_runningAnimations;
+    Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
+
     Vector<RefPtr<LayerWebKitThread> > m_sublayers;
     LayerWebKitThread* m_superlayer;
     RefPtr<LayerWebKitThread> m_maskLayer;
@@ -189,8 +196,9 @@ private:
     RefPtr<LayerTiler> m_tiler;
     FloatSize m_absoluteOffset;
     double m_scale; // Scale applies only to content layers
-    bool m_isDrawable;
-    bool m_isMask;
+    unsigned m_isDrawable : 1;
+    unsigned m_isMask : 1;
+    unsigned m_animationsChanged : 1;
 };
 
 }

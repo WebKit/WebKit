@@ -75,7 +75,8 @@ LayerCompositingThread::~LayerCompositingThread()
 {
     ASSERT(isCompositingThread());
 
-    m_tiler->layerCompositingThreadDestroyed();
+    if (m_tiler)
+        m_tiler->layerCompositingThreadDestroyed();
 
     ASSERT(!superlayer());
 
@@ -106,7 +107,8 @@ void LayerCompositingThread::deleteTextures()
 {
     releaseTextureResources();
 
-    m_tiler->deleteTextures();
+    if (m_tiler)
+        m_tiler->deleteTextures();
 }
 
 void LayerCompositingThread::setDrawTransform(const TransformationMatrix& matrix)
@@ -256,7 +258,15 @@ void LayerCompositingThread::drawTextures(int positionLocation, int texCoordLoca
         return;
     }
 
-    m_tiler->drawTextures(this, positionLocation, texCoordLocation);
+    if (m_layerType == CustomLayer) {
+        // Custom layers don't have a LayerTiler, so they either have to set
+        // m_texID or implement drawCustom.
+        drawCustom(positionLocation, texCoordLocation);
+        return;
+    }
+
+    if (m_tiler)
+        m_tiler->drawTextures(this, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransform, LayerCompositingThread* mask, int positionLocation, int texCoordLocation)
@@ -295,7 +305,8 @@ void LayerCompositingThread::drawMissingTextures(int positionLocation, int texCo
         return;
 #endif
 
-    m_tiler->drawMissingTextures(this, positionLocation, texCoordLocation);
+    if (m_tiler)
+        m_tiler->drawMissingTextures(this, positionLocation, texCoordLocation);
 }
 
 void LayerCompositingThread::releaseTextureResources()
@@ -418,7 +429,8 @@ void LayerCompositingThread::updateTextureContentsIfNeeded()
         return;
 #endif
 
-    m_tiler->uploadTexturesIfNeeded();
+    if (m_tiler)
+        m_tiler->uploadTexturesIfNeeded();
 }
 
 void LayerCompositingThread::setVisible(bool visible)
@@ -436,7 +448,8 @@ void LayerCompositingThread::setVisible(bool visible)
         return;
 #endif
 
-    m_tiler->layerVisibilityChanged(visible);
+    if (m_tiler)
+        m_tiler->layerVisibilityChanged(visible);
 }
 
 void LayerCompositingThread::setNeedsCommit()
@@ -447,6 +460,9 @@ void LayerCompositingThread::setNeedsCommit()
 
 void LayerCompositingThread::scheduleCommit()
 {
+    if (!m_tiler)
+        return;
+
     if (!isWebKitThread()) {
         if (m_commitScheduled)
             return;

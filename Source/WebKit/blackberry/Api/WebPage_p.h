@@ -368,6 +368,7 @@ public:
     void rootLayerCommitTimerFired(WebCore::Timer<WebPagePrivate>*);
     bool commitRootLayerIfNeeded();
     WebCore::LayerRenderingResults lastCompositingResults() const;
+    WebCore::GraphicsLayer* overlayLayer();
 
     // WebKit thread, plumbed through from ChromeClientBlackBerry.
     void setRootLayerWebKitThread(WebCore::Frame*, WebCore::LayerWebKitThread*);
@@ -516,6 +517,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool m_isAcceleratedCompositingActive;
     OwnPtr<FrameLayers> m_frameLayers; // WebKit thread only.
+    OwnPtr<WebCore::GraphicsLayer> m_overlayLayer;
 
     // Compositing thread only, used only when the WebKit layer created the context.
     // If the API client created the context, this will be null.

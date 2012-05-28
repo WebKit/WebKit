@@ -78,6 +78,11 @@ void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
     m_rootLayer = rootLayer;
 }
 
+void WebPageCompositorPrivate::setOverlayLayer(LayerCompositingThread* overlayLayer)
+{
+    m_overlayLayer = overlayLayer;
+}
+
 void WebPageCompositorPrivate::prepareFrame(double animationTime)
 {
     if (!m_layerRenderer)
@@ -88,6 +93,8 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
     animationTime = currentTime();
     if (m_rootLayer)
         m_layerRenderer->prepareFrame(animationTime, m_rootLayer.get());
+    if (m_overlayLayer)
+        m_layerRenderer->prepareFrame(animationTime, m_overlayLayer.get());
 }
 
 void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& transformedContents, const FloatRect& /*viewport*/)
@@ -120,6 +127,8 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
 
     if (m_rootLayer)
         m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
+    if (m_overlayLayer)
+        m_layerRenderer->compositeLayers(transform, m_overlayLayer.get());
 
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 
@@ -162,6 +171,8 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     transform.translate3d(-contents.x(), -contents.y(), 0);
     if (m_rootLayer)
         m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
+    if (m_overlayLayer)
+        m_layerRenderer->compositeLayers(transform, m_overlayLayer.get());
 
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 

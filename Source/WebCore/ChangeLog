@@ -1,3 +1,61 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add an overlay layer
+        https://bugs.webkit.org/show_bug.cgi?id=87567
+
+        Reviewed by Antonio Gomes.
+
+        The overlay layer allows us to have compositing layers even though the
+        web page is not currently using accelerated compositing.
+
+        These layers can be used to implement tap highlight, inspector overlay
+        and more.
+
+        The WebCore changes support the overlay layer functionality in WebKit
+        by making it possible to add animations from the compositing thread
+        without them being instantly overwritten during the next commit.
+
+        Also a new custom layer type is added, which allow an overlay layer to
+        draw itself using raw OpenGL calls. An instance of a custom subclass of
+        LayerCompositingThread must be provided when creating the
+        LayerWebKitThread. Then, the custom layer can be used as the content
+        layer of a GraphicsLayer, or by itself.
+
+        Reviewed internally by Filip Spacek.
+
+        PR #154335
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::~LayerCompositingThread):
+        (WebCore::LayerCompositingThread::deleteTextures):
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawMissingTextures):
+        (WebCore::LayerCompositingThread::updateTextureContentsIfNeeded):
+        (WebCore::LayerCompositingThread::setVisible):
+        (WebCore::LayerCompositingThread::scheduleCommit):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore::LayerCompositingThread::addAnimation):
+        (WebCore::LayerCompositingThread::setRunningAnimations):
+        (WebCore::LayerCompositingThread::setSuspendedAnimations):
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::drawCustom):
+        * platform/graphics/blackberry/LayerData.h:
+        (LayerData):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::LayerWebKitThread):
+        (WebCore):
+        (WebCore::LayerWebKitThread::~LayerWebKitThread):
+        (WebCore::LayerWebKitThread::updateTextureContentsIfNeeded):
+        (WebCore::LayerWebKitThread::startAnimations):
+        (WebCore::LayerWebKitThread::commitOnCompositingThread):
+        (WebCore::LayerWebKitThread::setNeedsDisplayInRect):
+        (WebCore::LayerWebKitThread::setNeedsDisplay):
+        (WebCore::LayerWebKitThread::setIsMask):
+        (WebCore::LayerWebKitThread::setRunningAnimations):
+        (WebCore::LayerWebKitThread::setSuspendedAnimations):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (LayerWebKitThread):
+
 2012-05-28  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         ProgressEvent JSC binding should have no static table

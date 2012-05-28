@@ -37,7 +37,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "LayerAnimation.h"
 #include "PlatformString.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
@@ -54,7 +53,7 @@ class MediaPlayer;
 
 class LayerData {
 public:
-    enum LayerType { Layer, TransformLayer, WebGLLayer, CanvasLayer };
+    enum LayerType { Layer, TransformLayer, WebGLLayer, CanvasLayer, CustomLayer };
     enum FilterType { Linear, Nearest, Trilinear, Lanczos };
     enum LayerProgramShader { LayerProgramShaderRGBA = 0,
                               LayerProgramShaderBGRA,
@@ -191,8 +190,6 @@ protected:
 
     pthread_mutex_t* m_frontBufferLock;
 
-    Vector<RefPtr<LayerAnimation> > m_runningAnimations;
-    Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
     double m_suspendTime;
 
     unsigned m_doubleSided : 1;

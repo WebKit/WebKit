@@ -63,9 +63,23 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
     , m_scale(1.0)
     , m_isDrawable(false)
     , m_isMask(false)
+    , m_animationsChanged(false)
 {
-    m_tiler = LayerTiler::create(this);
+    if (type == Layer)
+        m_tiler = LayerTiler::create(this);
     m_layerCompositingThread = LayerCompositingThread::create(type, m_tiler);
+}
+
+LayerWebKitThread::LayerWebKitThread(PassRefPtr<LayerCompositingThread> layerCompositingThread, GraphicsLayerBlackBerry* owner)
+    : LayerData(CustomLayer)
+    , m_owner(owner)
+    , m_superlayer(0)
+    , m_contents(0)
+    , m_scale(1.0)
+    , m_isDrawable(false)
+    , m_isMask(false)
+{
+    m_layerCompositingThread = layerCompositingThread;
 }
 
 LayerWebKitThread::~LayerWebKitThread()
@@ -75,7 +89,8 @@ LayerWebKitThread::~LayerWebKitThread()
     if (m_frontBufferLock)
         pthread_mutex_destroy(m_frontBufferLock);
 
-    m_tiler->layerWebKitThreadDestroyed();
+    if (m_tiler)
+        m_tiler->layerWebKitThreadDestroyed();
 
     // Our superlayer should be holding a reference to us so there should be no
     // way for us to be destroyed while we still have a superlayer.
@@ -167,7 +182,8 @@ void LayerWebKitThread::createFrontBufferLock()
 
 void LayerWebKitThread::updateTextureContentsIfNeeded()
 {
-    m_tiler->updateTextureContentsIfNeeded(m_isMask ? 1.0 : contentsScale());
+    if (m_tiler)
+        m_tiler->updateTextureContentsIfNeeded(m_isMask ? 1.0 : contentsScale());
 }
 
 void LayerWebKitThread::setContents(Image* contents)
@@ -226,6 +242,7 @@ void LayerWebKitThread::startAnimations(double time)
 {
     for (size_t i = 0; i < m_runningAnimations.size(); ++i) {
         if (!m_runningAnimations[i]->startTime()) {
+            m_animationsChanged = true;
             m_runningAnimations[i]->setStartTime(time);
             notifyAnimationStarted(time);
         }
@@ -278,9 +295,15 @@ void LayerWebKitThread::commitOnCompositingThread()
     m_position += m_absoluteOffset;
     // Copy the base variables from this object into m_layerCompositingThread
     replicate(m_layerCompositingThread.get());
+    if (m_animationsChanged) {
+        m_layerCompositingThread->setRunningAnimations(m_runningAnimations);
+        m_layerCompositingThread->setSuspendedAnimations(m_suspendedAnimations);
+        m_animationsChanged = false;
+    }
     m_position = oldPosition;
     updateLayerHierarchy();
-    m_tiler->commitPendingTextureUploads();
+    if (m_tiler)
+        m_tiler->commitPendingTextureUploads();
 
     size_t listSize = m_sublayers.size();
     for (size_t i = 0; i < listSize; i++)
@@ -424,13 +447,15 @@ void LayerWebKitThread::setSublayers(const Vector<RefPtr<LayerWebKitThread> >& s
 
 void LayerWebKitThread::setNeedsDisplayInRect(const FloatRect& dirtyRect)
 {
-    m_tiler->setNeedsDisplay(dirtyRect);
+    if (m_tiler)
+        m_tiler->setNeedsDisplay(dirtyRect);
     setNeedsCommit(); // FIXME: Replace this with a more targeted message for dirty rect handling with plugin content?
 }
 
 void LayerWebKitThread::setNeedsDisplay()
 {
-    m_tiler->setNeedsDisplay();
+    if (m_tiler)
+        m_tiler->setNeedsDisplay();
     setNeedsCommit(); // FIXME: Replace this with a more targeted message for dirty rect handling with plugin content?
 }
 
@@ -448,8 +473,22 @@ void LayerWebKitThread::updateLayerHierarchy()
 void LayerWebKitThread::setIsMask(bool isMask)
 {
     m_isMask = isMask;
-    if (isMask)
+    if (isMask && m_tiler)
         m_tiler->disableTiling(true);
+}
+
+void LayerWebKitThread::setRunningAnimations(const Vector<RefPtr<LayerAnimation> >& animations)
+{
+    m_runningAnimations = animations;
+    m_animationsChanged = true;
+    setNeedsCommit();
+}
+
+void LayerWebKitThread::setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >& animations)
+{
+    m_suspendedAnimations = animations;
+    m_animationsChanged = true;
+    setNeedsCommit();
 }
 
 }
