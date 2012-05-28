@@ -27,6 +27,7 @@
 #include "WebSocketFrame.h"
 
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/MathExtras.h>
 
 using namespace std;
 
@@ -94,12 +95,7 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(char* data, size_t d
         }
     }
 
-    // FIXME: UINT64_C(0x7FFFFFFFFFFFFFFF) should be used but it did not compile on Qt bots.
-#if COMPILER(MSVC)
-    static const uint64_t maxPayloadLength = 0x7FFFFFFFFFFFFFFFui64;
-#else
-    static const uint64_t maxPayloadLength = 0x7FFFFFFFFFFFFFFFull;
-#endif
+    static const uint64_t maxPayloadLength = UINT64_C(0x7FFFFFFFFFFFFFFF);
     size_t maskingKeyLength = masked ? maskingKeyWidthInBytes : 0;
     if (payloadLength64 > maxPayloadLength || payloadLength64 + maskingKeyLength > numeric_limits<size_t>::max()) {
         errorString = "WebSocket frame length too large: " + String::number(payloadLength64) + " bytes";

@@ -1,3 +1,18 @@
+2012-05-27  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [WTF] Introduce UINT64_C to MathExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=87485
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces UINT64_C for all platforms to avoid using
+        conditional compilation.
+
+        No new tests. This patch doesn't change behavior.
+
+        * Modules/websockets/WebSocketFrame.cpp:
+        (WebCore::WebSocketFrame::parseFrame): Replace conditional compilation with UINT64_C.
+
 2012-05-27  Luke Macpherson  <macpherson@chromium.org>
 
         Use StringBuilder in WebKitCSSTransformValue::customCssText() to allow code reuse with CSS Variables.

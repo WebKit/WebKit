@@ -302,6 +302,14 @@ using std::wtf_isnan;
 #define isnan(x) wtf_isnan(x)
 #endif
 
+#ifndef UINT64_C
+#if COMPILER(MSVC)
+#define UINT64_C(c) c ## ui64
+#else
+#define UINT64_C(c) c ## ull
+#endif
+#endif
+
 
 // decompose 'number' to its sign, exponent, and mantissa components.
 // The result is interpreted as:
