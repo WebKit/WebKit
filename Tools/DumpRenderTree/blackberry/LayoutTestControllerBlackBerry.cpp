@@ -705,11 +705,6 @@ void LayoutTestController::setTextDirection(JSStringRef)
     notImplemented();
 }
 
-void LayoutTestController::allowRoundingHacks()
-{
-    notImplemented();
-}
-
 void LayoutTestController::goBack()
 {
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html

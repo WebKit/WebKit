@@ -1,3 +1,27 @@
+2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move allowRoundingHacks to Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=87328
+
+        Reviewed by Hajime Morita.
+
+        Add allowRoundingHacks function, because it is able to work in the
+        cross-port way by means of the Internals interface.
+
+        In addition, a function is added in order to restore default setting values.
+
+        No new tests, since we are improving here the infra-structure for testing
+        a specific method.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::reset):
+        (WebCore):
+        (WebCore::Internals::resetDefaultsToConsistentValues):
+        (WebCore::Internals::allowRoundingHacks):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] http authentication crash the browser when user commit or cancel the http authentication dialog

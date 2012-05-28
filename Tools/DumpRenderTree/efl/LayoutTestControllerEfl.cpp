@@ -838,11 +838,6 @@ void LayoutTestController::setTextDirection(JSStringRef)
     notImplemented();
 }
 
-void LayoutTestController::allowRoundingHacks()
-{
-    notImplemented();
-}
-
 void LayoutTestController::addChromeInputField()
 {
     notImplemented();

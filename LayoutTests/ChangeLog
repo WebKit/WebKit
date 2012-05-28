@@ -1,3 +1,16 @@
+2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move allowRoundingHacks to Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=87328
+
+        Reviewed by Hajime Morita.
+
+        Invoke allowRoundingHacks function from internals, because it is able to work in the
+        cross-port way via the Internals interface.
+
+        * platform/mac/fast/text/rounding-hacks-expansion.html:
+        * platform/mac/fast/text/rounding-hacks.html:
+
 2012-05-27  Shinya Kawanaka  <shinyak@chromium.org>
 
         cut, copy or paste event won't be fired in Shadow DOM.

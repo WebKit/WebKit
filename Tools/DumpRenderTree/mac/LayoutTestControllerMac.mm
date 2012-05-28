@@ -967,11 +967,6 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
     [mainFrame _stringByEvaluatingJavaScriptFromString:scriptNS withGlobalObject:globalObject inScriptWorld:world];
 }
 
-void LayoutTestController::allowRoundingHacks()
-{
-    [WebView _setAllowsRoundingHacks:YES];
-}
-
 @interface APITestDelegate : NSObject
 {
     bool* m_condition;

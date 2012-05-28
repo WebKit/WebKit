@@ -168,6 +168,8 @@ public:
     void suspendAnimations(Document*, ExceptionCode&) const;
     void resumeAnimations(Document*, ExceptionCode&) const;
 
+    void allowRoundingHacks() const;
+
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
@@ -184,6 +186,7 @@ public:
 private:
     explicit Internals(Document*);
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    void resetDefaultsToConsistentValues();
 
     RefPtr<InternalSettings> m_settings;
 };

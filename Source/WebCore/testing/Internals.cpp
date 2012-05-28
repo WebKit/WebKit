@@ -60,6 +60,7 @@
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
+#include "TextRun.h"
 #include "TreeScope.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -592,6 +593,13 @@ void Internals::reset(Document* document)
         if (document->frame() == page->mainFrame())
             setUserPreferredLanguages(Vector<String>());
     }
+
+    resetDefaultsToConsistentValues();
+}
+
+void Internals::resetDefaultsToConsistentValues()
+{
+    TextRun::setAllowsRoundingHacks(false);
 }
 
 bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
@@ -1050,6 +1058,10 @@ void Internals::resumeAnimations(Document* document, ExceptionCode& ec) const
     controller->resumeAnimations();
 }
 
+void Internals::allowRoundingHacks() const
+{
+    TextRun::setAllowsRoundingHacks(true);
+}
 
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)

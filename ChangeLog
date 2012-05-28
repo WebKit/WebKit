@@ -1,3 +1,12 @@
+2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move allowRoundingHacks to Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=87328
+
+        Reviewed by Hajime Morita.
+
+        * Source/autotools/symbols.filter: Add allowRoundingHacks symbol filter.
+
 2012-05-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Enable blob support for the EFL port

@@ -1475,10 +1475,6 @@ void LayoutTestController::setTextDirection(JSStringRef direction)
     framePrivate->setTextDirection(bstrT(direction).GetBSTR());
 }
 
-void LayoutTestController::allowRoundingHacks()
-{
-}
-
 void LayoutTestController::addChromeInputField()
 {
 }

@@ -982,10 +982,6 @@ void LayoutTestController::setTextDirection(JSStringRef direction)
     // FIXME: Implement.
 }
 
-void LayoutTestController::allowRoundingHacks()
-{
-}
-
 void LayoutTestController::addChromeInputField()
 {
 }
