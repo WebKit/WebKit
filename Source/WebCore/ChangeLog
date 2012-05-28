@@ -1,3 +1,22 @@
+2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authentication crash the browser when user commit or cancel the http authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=87579
+
+        Reviewed by George Staikos.
+
+        In function NetworkJob::startNewJobWithRequest, We should cancel the
+        NetworkJob first before we start a new NetworkJob which reuses the
+        resource handle of the old one. If we only set the m_handle = 0 of the
+        old NetworkJob without cancelling itself, it will still receives data
+        notification from network thread and handles the received data with
+        the released resource handler, which will cause the crash.
+
+        No new tests because no behavior has changed.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::startNewJobWithRequest):
+
 2012-05-27  MORITA Hajime  <morrita@google.com>
 
         [Refactoring][ShadowDOM] Some ElementShadow methods can be inlined.

@@ -528,8 +528,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
 
     // Pass the ownership of the ResourceHandle to the new NetworkJob.
     RefPtr<ResourceHandle> handle = m_handle;
-    m_handle = 0;
-    m_multipartResponse = nullptr;
+    cancelJob();
 
     NetworkManager::instance()->startJob(m_playerId,
         m_pageGroupName,
