@@ -1,3 +1,9 @@
+2012-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         Weak pointer finalization should be lazy
