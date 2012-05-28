@@ -22,52 +22,32 @@
 #ifndef StyleResolver_h
 #define StyleResolver_h
 
-#include "CSSRule.h"
-#include "CSSValueList.h"
 #include "LinkHash.h"
-#include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "SelectorChecker.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
-
 class CSSFontSelector;
-class CSSPageRule;
-class CSSPrimitiveValue;
-class CSSProperty;
-class CSSRuleList;
-class CSSFontFace;
-class CSSFontFaceRule;
 class CSSImageGeneratorValue;
 class CSSImageSetValue;
 class CSSImageValue;
-class CSSSelector;
+class CSSRuleList;
 class CSSStyleRule;
 class CSSStyleSheet;
-class CSSValue;
 class ContainerNode;
 class CustomFilterOperation;
 class CustomFilterParameter;
 class Document;
 class Element;
-class Frame;
-class FrameView;
-class KURL;
 class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;
+class MediaQueryExp;
 class Node;
 class RenderRegion;
 class RuleData;
 class RuleSet;
-class Settings;
 class StaticCSSRuleList;
 class StyleBuilder;
 class StyleImage;
@@ -77,31 +57,19 @@ class StylePropertySet;
 class StyleRule;
 class StyleRuleKeyframes;
 class StyleRulePage;
-class StyleRuleRegion;
 class StyleShader;
-class StyleSheet;
 class StyleSheetContents;
-class StyleSheetList;
 class StyledElement;
 class WebKitCSSFilterValue;
 class WebKitCSSShaderValue;
 
+struct MediaQueryResult;
+
+enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
+    
 #if ENABLE(CSS_SHADERS)
 typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
 #endif
-
-class MediaQueryResult {
-    WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
-public:
-    MediaQueryResult(const MediaQueryExp& expr, bool result)
-        : m_expression(expr)
-        , m_result(result)
-    {
-    }
-
-    MediaQueryExp m_expression;
-    bool m_result;
-};
 
 enum StyleSharingBehavior {
     AllowStyleSharing,
@@ -225,7 +193,7 @@ public:
 
     CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 
-    void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
+    void addViewportDependentMediaQueryResult(const MediaQueryExp&, bool result);
 
     bool affectedByViewportChange() const;
 
@@ -496,7 +464,7 @@ private:
     bool m_sameOriginOnly;
 
     RefPtr<CSSFontSelector> m_fontSelector;
-    Vector<OwnPtr<MediaQueryResult> > m_viewportDependentMediaQueryResults;
+    Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
 
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;

@@ -31,42 +31,30 @@
 #include "PlatformString.h"
 
 namespace WebCore {
+
 class Frame;
 class MediaQueryExp;
 class MediaQuerySet;
 class RenderStyle;
 class StyleResolver;
 
-/**
- * Class that evaluates css media queries as defined in
- * CSS3 Module "Media Queries" (http://www.w3.org/TR/css3-mediaqueries/)
- * Special constructors are needed, if simple media queries are to be
- * evaluated without knowledge of the medium features. This can happen
- * for example when parsing UA stylesheets, if evaluation is done
- * right after parsing.
- *
- * the boolean parameter is used to approximate results of evaluation, if
- * the device characteristics are not known. This can be used to prune the loading
- * of stylesheets to only those which are probable to match.
- */
+// Class that evaluates CSS media queries as defined in CSS3 Module "Media Queries".
+//
+// Special constructors are supplied so that simple media queries can be
+// evaluated without knowledge of device characteristics. This is used, for example,
+// when parsing user agent stylesheets. The boolean parameter to the constructor is used
+// if the device characteristics are not known. This can be used to prune loading
+// of stylesheets to remove those that definitely won't match.
+
 class MediaQueryEvaluator {
      WTF_MAKE_NONCOPYABLE(MediaQueryEvaluator); WTF_MAKE_FAST_ALLOCATED;
 public:
-    /** Creates evaluator which evaluates only simple media queries
-     *  Evaluator returns true for "all", and returns value of \mediaFeatureResult
-     *  for any media features
-     */
-    MediaQueryEvaluator(bool mediaFeatureResult = false);
-
-    /** Creates evaluator which evaluates only simple media queries
-     *  Evaluator  returns true for acceptedMediaType and returns value of \mediafeatureResult
-     *  for any media features
-     */
+    // Creates evaluator which evaluates only simple media queries.
+    // Evaluator returns true for acceptedMediaType and uses mediaFeatureResult for any media features.
     MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult = false);
     MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult = false);
 
-    /** Creates evaluator which evaluates full media queries
-     */
+    // Creates evaluator which evaluates full media queries.
     MediaQueryEvaluator(const String& acceptedMediaType, Frame*, RenderStyle*);
 
     ~MediaQueryEvaluator();
@@ -74,18 +62,19 @@ public:
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
     bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
 
-    /** Evaluates a list of media queries */
+    // Evaluates a list of media queries.
     bool eval(const MediaQuerySet*, StyleResolver* = 0) const;
 
-    /** Evaluates media query subexpression, ie "and (media-feature: value)" part */
-    bool eval(const MediaQueryExp*) const;
+    // Evaluates media query subexpression, i.e. "and (media-feature: value)" part.
+    bool eval(const MediaQueryExp&) const;
 
 private:
     String m_mediaType;
     Frame* m_frame; // not owned
     RefPtr<RenderStyle> m_style;
-    bool m_expResult;
+    bool m_mediaFeatureResult;
 };
 
-} // namespace
+} // namespace WebCore
+
 #endif

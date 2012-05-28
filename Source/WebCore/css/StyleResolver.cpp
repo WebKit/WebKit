@@ -77,6 +77,7 @@
 #include "MatrixTransformOperation.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "MediaQueryExp.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -159,6 +160,17 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+struct MediaQueryResult {
+    MediaQueryResult(const MediaQueryExp& expression, bool result)
+        : expression(expression)
+        , result(result)
+    {
+    }
+
+    MediaQueryExp expression;
+    bool result;
+};
 
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) { \
@@ -5128,16 +5140,16 @@ bool StyleResolver::hasSelectorForAttribute(const AtomicString &attrname) const
     return m_features.attrsInRules.contains(attrname.impl());
 }
 
-void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)
+void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExp& expression, bool result)
 {
-    m_viewportDependentMediaQueryResults.append(adoptPtr(new MediaQueryResult(*expr, result)));
+    m_viewportDependentMediaQueryResults.append(MediaQueryResult(expression, result));
 }
 
 bool StyleResolver::affectedByViewportChange() const
 {
-    unsigned s = m_viewportDependentMediaQueryResults.size();
-    for (unsigned i = 0; i < s; i++) {
-        if (m_medium->eval(&m_viewportDependentMediaQueryResults[i]->m_expression) != m_viewportDependentMediaQueryResults[i]->m_result)
+    unsigned size = m_viewportDependentMediaQueryResults.size();
+    for (unsigned i = 0; i < size; i++) {
+        if (m_medium->eval(m_viewportDependentMediaQueryResults[i].expression) != m_viewportDependentMediaQueryResults[i].result)
             return true;
     }
     return false;

@@ -1,3 +1,53 @@
+2012-05-28  Darin Adler  <darin@apple.com>
+
+        StyleResolver need not allocate each MediaQueryResult on the heap
+        https://bugs.webkit.org/show_bug.cgi?id=75223
+
+        Reviewed by Daniel Bates.
+
+        * css/MediaQuery.cpp: Removed some comments that pointed to CSS documents.
+        There is no guarantee these links will be valid over time.
+        (WebCore::MediaQuery::MediaQuery): Rewrote for clarity, conventional WebKit coding
+        style, and simplicity.
+        (WebCore::MediaQuery::copy): Moved out of line; not performance critical, and this
+        allows us to cut down header dependencies.
+        (WebCore::MediaQuery::cssText): Updated for change to data member name.
+
+        * css/MediaQuery.h: Removed unneeded includes. Removed non-helpful argument name
+        "exprs". Changed expressions function to return a reference instead of
+        a pointer. Changed mediaType and cssText functions to return a reference. Renamed
+        m_serializationCache to m_serializedQuery. Moved copy function out of header.
+
+        * css/MediaQueryEvaluator.cpp: Renamed EvalFunc to MediaFeatureEvaluationFunction.
+        Broke a FIXME into three and reworded for clarity.
+        (WebCore::MediaQueryEvaluator): Updated for name changes.
+        (WebCore::MediaQueryEvaluator::eval): Rewrote this for clarity and to regularize
+        the logic a bit.
+        (WebCore::aspect_ratioMediaFeatureEval): Got rid of a != 0 that is contrary to the
+        normal WebKit style.
+        (WebCore::device_aspect_ratioMediaFeatureEval): Ditto.
+        (WebCore::transform_3dMediaFeatureEval): Fixed mangled #if that was here.
+        (WebCore::view_modeMediaFeatureEval): Replaced UNUSED_PARAM usage with ASSERT_UNUSED.
+        (WebCore::createFunctionMap): Changed this so it returns the map so we can use a
+        cleaner style in the caller.
+        (WebCore::MediaQueryEvaluator::eval): Updated to take a reference and improved the
+        comments and coding style a bit.
+
+        * css/MediaQueryEvaluator.h: Updated comment style. Removed unused constructor.
+        Removed unneeded destructor declaration. Renamed m_expResult to m_mediaFeatureResult.
+
+        * css/StyleResolver.cpp: Moved the MediaQueryResult class into this file
+        and made it a structure rather than a class.
+        (WebCore::StyleResolver::addViewportDependentMediaQueryResult): Updated to take
+        a reference argument instead of a pointer and for the new vector type.
+        (WebCore::StyleResolver::affectedByViewportChange): Updated for above changes.
+
+        * css/StyleResolver.h: Removed many unneeded includes and forward declarations of
+        classes, including now-unneeded include of MediaQueryExp.h. Replaced MediaQueryResult
+        definition with a forward declaration. Changed addViewportDependentMediaQueryResult
+        to take a reference instead of a pointer. Changed m_viewportDependentMediaQueryResults
+        to be a vector of values rather than of pointers.
+
 2012-05-27  Shinya Kawanaka  <shinyak@chromium.org>
 
         cut, copy or paste event won't be fired in Shadow DOM.
