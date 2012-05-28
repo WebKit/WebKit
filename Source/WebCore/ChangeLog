@@ -1,3 +1,19 @@
+2012-05-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: dom counters graphs vanish on switching between timeline views
+        https://bugs.webkit.org/show_bug.cgi?id=87628
+
+        Reviewed by Vsevolod Vlasov.
+
+        MemoryStatistics object now listens to the TimelineModel events instead of being
+        populated by timeline panel. This behavior mathes that of the overview pane.
+
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype.addTimlineEvent):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Buildfix: remove obsolete file from gypi.

@@ -30,13 +30,17 @@
 
 /**
  * @param {WebInspector.TimelinePanel} timelinePanel
+ * @param {WebInspector.TimelineModel} model
  * @param {number} sidebarWidth
  * @constructor
  */
-WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
+WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
 {
     this._timelinePanel = timelinePanel;
     this._counters = [];
+
+    model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
+    model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
     this._containerAnchor = timelinePanel.element.lastChild;
     this._memorySplitView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, undefined, sidebarWidth);
@@ -207,7 +211,7 @@ WebInspector.CounterUI.prototype = {
 
 
 WebInspector.MemoryStatistics.prototype = {
-    reset: function()
+    _onRecordsCleared: function()
     {
         this._counters = [];
     },
@@ -251,7 +255,7 @@ WebInspector.MemoryStatistics.prototype = {
         this._canvas.height = height;
     },
 
-    addTimlineEvent: function(event)
+    _onRecordAdded: function(event)
     {
         var counters = event.data["counters"];
         this._counters.push({

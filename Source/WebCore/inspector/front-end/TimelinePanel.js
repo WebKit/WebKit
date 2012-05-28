@@ -61,7 +61,7 @@ WebInspector.TimelinePanel = function()
     this._timelineMemorySplitter.id = "timeline-memory-splitter";
     this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
     this._timelineMemorySplitter.addStyleClass("hidden");
-    this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
+    this._memoryStatistics = new WebInspector.MemoryStatistics(this, this._model, this.splitView.preferredSidebarWidth());
     WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
@@ -482,9 +482,6 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._innerAddRecordToTimeline(event.data, this._rootRecord());
         this._scheduleRefresh(false);
-
-        if (event.data["counters"])
-            this._memoryStatistics.addTimlineEvent(event);
     },
 
     _innerAddRecordToTimeline: function(record, parentRecord)
@@ -537,7 +534,6 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
         this._allRecordsCount = 0;
-        this._memoryStatistics.reset();
     },
 
     elementsToRestoreScrollPositionsFor: function()
