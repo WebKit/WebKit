@@ -58,9 +58,6 @@ public:
                 const WebCore::FloatRect& contents, // This is public API, thus takes transformed contents
                 const WebCore::FloatRect& viewport);
 
-    // Internal
-    bool hardwareCompositing() const;
-
     Platform::Graphics::GLES2Context* context() const { return m_context; }
     void setContext(Platform::Graphics::GLES2Context*);
 

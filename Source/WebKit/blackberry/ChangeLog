@@ -1,5 +1,33 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Always create a compositor
+        https://bugs.webkit.org/show_bug.cgi?id=87598
+
+        Reviewed by Rob Buis.
+
+        There will likely be compositing layers either due to web content or
+        due to overlays.
+
+        Defer initialization of OpenGL objects (i.e., delay creation of the
+        LayerRenderer object) until we actually need to draw and there are such
+        layers, to avoid initializing OpenGL in the unlikely case that there
+        are no compositing layers or overlay layers.
+
+        PR #156811
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::createCompositor):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContext):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Dangling pointer in WebPagePrivate::setCompositor() message
         https://bugs.webkit.org/show_bug.cgi?id=87590
 

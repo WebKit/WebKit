@@ -556,6 +556,14 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #if ENABLE(WEB_TIMING)
     m_page->settings()->setMemoryInfoEnabled(true);
 #endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    // The compositor will be needed for overlay rendering, so create it
+    // unconditionally. It will allocate OpenGL objects lazily, so this incurs
+    // no overhead in the unlikely case where the compositor is not needed.
+    Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+            createMethodCallMessage(&WebPagePrivate::createCompositor, this));
+#endif
 }
 
 class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldLoadManualScript> {
@@ -5886,11 +5894,6 @@ bool WebPagePrivate::createCompositor()
     m_ownedContext = GLES2Context::create(this);
     m_compositor = WebPageCompositorPrivate::create(this, 0);
     m_compositor->setContext(m_ownedContext.get());
-
-    if (!m_compositor->hardwareCompositing()) {
-        destroyCompositor();
-        return false;
-    }
 
     return true;
 }

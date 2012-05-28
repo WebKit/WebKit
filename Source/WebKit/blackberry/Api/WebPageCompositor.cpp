@@ -60,17 +60,8 @@ void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* cont
         return;
 
     m_context = context;
-    if (!m_context) {
+    if (!m_context)
         m_layerRenderer.clear();
-        return;
-    }
-
-    m_layerRenderer = LayerRenderer::create(m_context);
-}
-
-bool WebPageCompositorPrivate::hardwareCompositing() const
-{
-    return m_layerRenderer && m_layerRenderer->hardwareCompositing();
 }
 
 void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
@@ -85,8 +76,23 @@ void WebPageCompositorPrivate::setOverlayLayer(LayerCompositingThread* overlayLa
 
 void WebPageCompositorPrivate::prepareFrame(double animationTime)
 {
-    if (!m_layerRenderer)
+    if (!m_context)
         return;
+
+    // The LayerRenderer is involved in rendering the BackingStore when
+    // WebPageCompositor is used to render the web page. The presence of a
+    // WebPageCompositorClient (m_client) indicates this is the case, so
+    // create a LayerRenderer if there are layers or if there's a client.
+    if (!m_rootLayer && !m_overlayLayer && !m_client)
+        return;
+
+    if (!m_layerRenderer) {
+        m_layerRenderer = LayerRenderer::create(m_context);
+        if (!m_layerRenderer->hardwareCompositing()) {
+            m_layerRenderer.clear();
+            return;
+        }
+    }
 
     // Unfortunately, we have to use currentTime() because the animations are
     // started in that time coordinate system.
@@ -99,19 +105,16 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
 
 void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& transformedContents, const FloatRect& /*viewport*/)
 {
-    if (!m_layerRenderer) {
-        // It's not safe to call into the BackingStore if the compositor hasn't been set yet.
-        // For thread safety, we have to do it using a round-trip to the WebKit thread, so the
-        // embedder might call this before the round-trip to WebPagePrivate::setCompositor() is
-        // done.
-        if (m_webPage->compositor() != this)
-            return;
-
-        // The clip rect is in OpenGL coordinate system, so turn it upside down to get to window coordinates.
-        IntRect dstRect(clipRect.x(), m_context->surfaceSize().height() - clipRect.y() - clipRect.height(), clipRect.width(), clipRect.height());
-        m_webPage->m_backingStore->d->blitContents(dstRect, enclosingIntRect(transformedContents), true);
+    // m_layerRenderer should have been created in prepareFrame
+    if (!m_layerRenderer)
         return;
-    }
+
+    // It's not safe to call into the BackingStore if the compositor hasn't been set yet.
+    // For thread safety, we have to do it using a round-trip to the WebKit thread, so the
+    // embedder might call this before the round-trip to WebPagePrivate::setCompositor() is
+    // done.
+    if (m_webPage->compositor() != this)
+        return;
 
     m_layerRenderer->setClearSurfaceOnDrawLayers(false);
 
@@ -145,6 +148,12 @@ bool WebPageCompositorPrivate::drawsRootLayer() const
 
 bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)
 {
+    // Is there anything to draw?
+    if (!m_rootLayer && !m_overlayLayer)
+        return false;
+
+    // prepareFrame creates the LayerRenderer if needed
+    prepareFrame(currentTime());
     if (!m_layerRenderer)
         return false;
 
@@ -157,7 +166,6 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     // WebKit uses upper left as the origin of the window coordinate system. The passed in 'dstRect'
     // is in WebKit window coordinate system. Here we setup the viewport to the corresponding value
     // in OpenGL window coordinates.
-    m_layerRenderer->prepareFrame(currentTime(), m_rootLayer.get());
     int viewportY = std::max(0, m_context->surfaceSize().height() - dstRect.maxY());
     IntRect viewport = IntRect(dstRect.x(), viewportY, dstRect.width(), dstRect.height());
 
