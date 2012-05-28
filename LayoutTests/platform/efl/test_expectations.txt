@@ -150,6 +150,17 @@ BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
+// Needs inner spin button widget for input element
+BUGWK86846 : fast/events/touch/touch-before-pressing-spin-button.html = TEXT
+BUGWK86846 : fast/forms/number/input-number-events.html = TEXT
+BUGWK86846 : fast/forms/number/input-number-large-padding.html = TEXT
+BUGWK86846 : fast/forms/number/input-spinbutton-capturing.html = TEXT
+BUGWK86846 : fast/forms/number/spin-button-gets-disabled-or-readonly.html = TEXT
+BUGWK86846 : fast/forms/number/spin-button-state.html = TEXT
+
+// Needs inner spin button to respect -webkit-inner-spin-button style
+BUGWK87619 : fast/forms/number/input-number-size.html = TEXT
+
 BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
 
 // Needs to have PNG generated, which currently fails for this case.

@@ -1,3 +1,13 @@
+2012-05-28  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Move input element's internal spinner layout tests to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=87629
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unreviewed EFL gardening after r118585
