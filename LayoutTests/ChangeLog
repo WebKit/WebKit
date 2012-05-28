@@ -1,5 +1,19 @@
 2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Unreviewed EFL gardening after r118585
+        https://bugs.webkit.org/show_bug.cgi?id=87621
+
+        Unreviewed EFL Gardening.
+
+        Two contentSecurityPolicy tests need expectation for EFL port after
+        r118585 due to line numbers not being printed. Mac and GTK port are
+        already doing the same.
+
+        * platform/efl/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Added.
+        * platform/efl/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Added.
+
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Test added in r118577 is failing and should be skipped
         https://bugs.webkit.org/show_bug.cgi?id=87620
 
