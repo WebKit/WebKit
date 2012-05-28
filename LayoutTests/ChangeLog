@@ -1,5 +1,16 @@
 2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] fast/dom/beforeload/image-object-before-load* need to be skipped after r118618
+        https://bugs.webkit.org/show_bug.cgi?id=87632
+
+        Unreviewed EFL gardening.
+        fast/dom/beforeload/image-object-before-load* need to be skipped after
+        r118618. The issue will be addressed in Bug 87631.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] http/tests/appcache/abort-cache* are flaky and should be skipped
         https://bugs.webkit.org/show_bug.cgi?id=87634
 
