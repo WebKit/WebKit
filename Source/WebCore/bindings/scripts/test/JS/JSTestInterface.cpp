@@ -435,7 +435,7 @@ bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
 
 void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSTestInterface* jsTestInterface = static_cast<JSTestInterface*>(handle.get().asCell());
+    JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsTestInterface->impl(), jsTestInterface);
     jsTestInterface->releaseImpl();
