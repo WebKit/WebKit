@@ -3763,3 +3763,6 @@ BUGWK76809 SKIP : fast/filesystem/cross-filesystem-op.html = FAIL
 
 // Requires setUseDeferredFrameLoading() API from LayoutTestController.
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = FAIL
+
+// A few pixels off from the baseline, added by r118567.
+BUGWK87653 : compositing/geometry/composited-in-columns.html = IMAGE+TEXT

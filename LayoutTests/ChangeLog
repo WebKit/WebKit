@@ -1,5 +1,18 @@
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
+        [chromium] Baseline compositing/geometry/composited-in-columns.html
+        https://bugs.webkit.org/show_bug.cgi?id=87653
+
+        Unreviewed gardening.
+
+        r118567 introduced a new test. Chromium is positioning the layers
+        a few pixels off.
+        Set the baseline for IMAGE+TEXT temporarily.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
         [chromium] LayoutTestController needs DeferredFrameLoading flag
         https://bugs.webkit.org/show_bug.cgi?id=87652
   
