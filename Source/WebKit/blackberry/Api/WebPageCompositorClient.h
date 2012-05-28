@@ -32,7 +32,6 @@ public:
 
     virtual double requestAnimationFrame() = 0;
     virtual void invalidate(double animationFrameTimestamp) = 0;
-    virtual void requestCleanup() = 0;
 };
 
 } // namespace WebKit

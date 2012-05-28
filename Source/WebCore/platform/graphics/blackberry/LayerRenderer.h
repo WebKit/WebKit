@@ -79,6 +79,8 @@ private:
 class LayerRenderer {
     WTF_MAKE_NONCOPYABLE(LayerRenderer);
 public:
+    static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top, float nearZ, float farZ);
+
     static PassOwnPtr<LayerRenderer> create(BlackBerry::Platform::Graphics::GLES2Context*);
 
     LayerRenderer(BlackBerry::Platform::Graphics::GLES2Context*);
@@ -86,11 +88,26 @@ public:
 
     void releaseLayerResources();
 
-    // Recomposites all the layers. Returns true if it needs more draw.
-    void drawLayers(const FloatRect& visibleRect, const IntRect& layoutRect, const IntSize& contentsSize, const IntRect& dstRect);
+    // In order to render the layers, you must do the following 3 operations, in order.
 
-    void setRootLayer(LayerCompositingThread*);
-    LayerCompositingThread* rootLayer() { return m_rootLayer.get(); }
+    // 1. Upload textures and other operations that should be performed at the beginning of each frame.
+    // Note, this call also resets the last rendering results.
+    void prepareFrame(double animationTime, LayerCompositingThread* rootLayer);
+
+    // 2. Set the OpenGL viewport and store other viewport-related parameters
+    //   viewport is the GL viewport
+    //   clipRect is an additional clip rect, if clipping is required beyond the clipping effect of the viewport.
+    //   visibleRect is the subrect of the web page that you wish to composite, expressed in content coordinates
+    // The last two parameters are required to draw fixed position elements in the right place:
+    //   layoutRect is the subrect of the web page that the WebKit thread believes is visible (scroll position, actual visible size).
+    //   contentsSize is the contents size of the web page
+    void setViewport(const IntRect& viewport, const IntRect& clipRect, const FloatRect& visibleRect, const IntRect& layoutRect, const IntSize& contentsSize);
+
+    // 3. Prepares all the layers for compositing
+    // transform is the model-view-project matrix that goes all the way from contents to normalized device coordinates.
+    void compositeLayers(const TransformationMatrix&, LayerCompositingThread* rootLayer);
+    void compositeBuffer(const TransformationMatrix&, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer*, float opacity);
+    void drawCheckerboardPattern(const TransformationMatrix&, const FloatRect& contents);
 
     // Keep track of layers that need cleanup when the LayerRenderer is destroyed
     void addLayer(LayerCompositingThread*);
@@ -118,7 +135,8 @@ public:
     bool layerAlreadyOnSurface(LayerCompositingThread*) const;
 
 private:
-    void updateLayersRecursive(LayerCompositingThread*, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect, double currentTime);
+    void prepareFrameRecursive(LayerCompositingThread*, double animationTime, bool isContextCurrent);
+    void updateLayersRecursive(LayerCompositingThread*, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect);
     void compositeLayersRecursive(LayerCompositingThread*, int stencilValue, FloatRect clipRect);
     void updateScissorIfNeeded(const FloatRect& clipRect);
 
@@ -158,14 +176,14 @@ private:
     int m_checkerSurfaceHeightLocation;
 
     // Current draw configuration.
+    double m_animationTime;
     FloatRect m_visibleRect;
     IntRect m_layoutRect;
     IntSize m_contentsSize;
 
-    IntRect m_viewport;
-    IntRect m_scissorRect;
-
-    RefPtr<LayerCompositingThread> m_rootLayer;
+    IntRect m_viewport; // In render target coordinates
+    IntRect m_scissorRect; // In render target coordinates
+    FloatRect m_clipRect; // In normalized device coordinates
 
     unsigned m_fbo;
     LayerRendererSurface* m_currentLayerRendererSurface;

@@ -39,10 +39,14 @@ public:
 
     WebPageCompositorClient* client() const;
 
-    void prepareFrame(Platform::Graphics::GLES2Context*, double timestamp);
+    void prepareFrame(Platform::Graphics::GLES2Context*, double animationTime);
 
-    // FIXME: dstRect should be a Platform::TransformationMatrix instead. PR142628
-    void render(Platform::Graphics::GLES2Context*, const Platform::IntRect& dstRect, const Platform::IntRect& contents);
+    void render(Platform::Graphics::GLES2Context*,
+                const Platform::IntRect& targetRect,
+                const Platform::IntRect& clipRect,
+                const Platform::TransformationMatrix&,
+                const Platform::FloatRect& contents,
+                const Platform::FloatRect& viewport);
 
     void cleanup(Platform::Graphics::GLES2Context*);
 

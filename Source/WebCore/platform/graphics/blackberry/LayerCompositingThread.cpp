@@ -187,7 +187,7 @@ FloatQuad LayerCompositingThread::getTransformedHolePunchRect() const
 
 void LayerCompositingThread::drawTextures(int positionLocation, int texCoordLocation, const FloatRect& visibleRect)
 {
-    float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+    static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
 
     if (m_pluginView) {
         if (m_isVisible) {
@@ -279,7 +279,7 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
         FloatQuad surfaceQuad = getTransformedRect(m_bounds, IntRect(IntPoint::zero(), m_bounds), drawTransform);
         glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &surfaceQuad);
 
-        float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+        static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
         glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }

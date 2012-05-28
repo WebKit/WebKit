@@ -1,5 +1,58 @@
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Update WebPageCompositor::render() API
+        https://bugs.webkit.org/show_bug.cgi?id=87565
+
+        Reviewed by Rob Buis.
+
+        The new API allows the embedder to specify the root transform and many
+        OpenGL related parameters to be used when rendering the web page.
+
+        To honor the transform, we have to implement a way to composite the
+        BackingStore output using a generic transform. This method,
+        BackingStorePrivate::compositeContents(), uses a strategy that differs
+        from blitContents(), because that one is optimized for software
+        blitting, while this one is optimized for GPU rendering. Specifically,
+        instead of drawing the checkerboard first, and the rendered subregions
+        of the tile afterward, we draw the whole tile in one call, and then
+        draw checkered regions on top, if any.
+
+        Removed the blit generation condvar from the new code paths for drawing
+        BackingStore output using a transform, since the condvar is ineffective
+        in preventing flicker when we're not in charge of swapping the window.
+        Instead, another synchronization solution will be implemented in the
+        future.
+
+        Reviewed internally by Filip Spacek.
+        Some parts reviewed internally by Jacky Jiang and others by
+        Mike Lattanzio.
+
+        PR #151887, #154334
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        * Api/BackingStore_p.h:
+        (WebCore):
+        (BackingStorePrivate):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContext):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setRootLayer):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositor::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositor::render):
+        * Api/WebPageCompositor.h:
+        * Api/WebPageCompositorClient.h:
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Plumb through the return value of makeCurrent to caller
         https://bugs.webkit.org/show_bug.cgi?id=87564
 

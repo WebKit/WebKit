@@ -32,6 +32,8 @@
 
 namespace WebCore {
 class IntRect;
+class FloatRect;
+class LayerRenderer;
 class TransformationMatrix;
 }
 
@@ -196,8 +198,15 @@ public:
     Platform::IntRect blitTileRect(TileBuffer*, const TileRect&, const Platform::IntPoint&, const WebCore::TransformationMatrix&, BackingStoreGeometry*);
 
 #if USE(ACCELERATED_COMPOSITING)
+    // Use instead of blitContents if you need more control over OpenGL state.
+    // Note that contents is expressed in untransformed content coordinates.
+    // Preconditions: You have to call prepareFrame and setViewport on the LayerRenderer before
+    //                calling this.
+    void compositeContents(WebCore::LayerRenderer*, const WebCore::TransformationMatrix&, const WebCore::FloatRect& contents);
+
     void blendCompositingSurface(const Platform::IntRect& dstRect);
     void clearCompositingSurface();
+
     bool drawLayersOnCommitIfNeeded();
     void drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect);
     // WebPage will call this when drawing layers to tell us we don't need to

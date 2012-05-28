@@ -34,6 +34,7 @@
 #include <BlackBerryPlatformMessageClient.h>
 #include <GenericTimerClient.h>
 #include <ThreadTimerClient.h>
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -65,7 +66,6 @@ void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* cont
     }
 
     m_layerRenderer = LayerRenderer::create(m_context);
-    m_layerRenderer->setRootLayer(m_rootLayer.get());
 }
 
 bool WebPageCompositorPrivate::hardwareCompositing() const
@@ -76,34 +76,56 @@ bool WebPageCompositorPrivate::hardwareCompositing() const
 void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
 {
     m_rootLayer = rootLayer;
-
-    if (m_layerRenderer)
-        m_layerRenderer->setRootLayer(m_rootLayer.get());
 }
 
-void WebPageCompositorPrivate::commit(LayerWebKitThread* rootLayer)
+void WebPageCompositorPrivate::prepareFrame(double animationTime)
 {
-    if (!rootLayer)
+    if (!m_layerRenderer)
         return;
 
-    rootLayer->commitOnCompositingThread();
+    // Unfortunately, we have to use currentTime() because the animations are
+    // started in that time coordinate system.
+    animationTime = currentTime();
+    if (m_rootLayer)
+        m_layerRenderer->prepareFrame(animationTime, m_rootLayer.get());
 }
 
-void WebPageCompositorPrivate::render(const IntRect& dstRect, const IntRect& transformedContents)
+void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& transformedContents, const FloatRect& /*viewport*/)
 {
-    // It's not safe to call into the BackingStore if the compositor hasn't been set yet.
-    // For thread safety, we have to do it using a round-trip to the WebKit thread, so the
-    // embedder might call this before the round-trip to WebPagePrivate::setCompositor() is
-    // done.
-    if (m_webPage->compositor() != this)
-        return;
+    if (!m_layerRenderer) {
+        // It's not safe to call into the BackingStore if the compositor hasn't been set yet.
+        // For thread safety, we have to do it using a round-trip to the WebKit thread, so the
+        // embedder might call this before the round-trip to WebPagePrivate::setCompositor() is
+        // done.
+        if (m_webPage->compositor() != this)
+            return;
 
-    // The BackingStore is the root layer
-    if (BackingStore* backingStore = m_webPage->m_backingStore)
-        backingStore->d->blitContents(dstRect, transformedContents, true);
-    else {
-        FloatRect contents = m_webPage->mapFromTransformedFloatRect(FloatRect(transformedContents));
-        drawLayers(dstRect, contents);
+        // The clip rect is in OpenGL coordinate system, so turn it upside down to get to window coordinates.
+        IntRect dstRect(clipRect.x(), m_context->surfaceSize().height() - clipRect.y() - clipRect.height(), clipRect.width(), clipRect.height());
+        m_webPage->m_backingStore->d->blitContents(dstRect, enclosingIntRect(transformedContents), true);
+        return;
+    }
+
+    m_layerRenderer->setClearSurfaceOnDrawLayers(false);
+
+    FloatRect contents = m_webPage->mapFromTransformedFloatRect(transformedContents);
+
+    m_layerRenderer->setViewport(targetRect, clipRect, contents, m_layoutRectForCompositing, m_contentsSizeForCompositing);
+
+    TransformationMatrix transform(transformIn);
+    transform *= *m_webPage->m_transformationMatrix;
+
+    if (!drawsRootLayer())
+        m_webPage->m_backingStore->d->compositeContents(m_layerRenderer.get(), transform, contents);
+
+    if (m_rootLayer)
+        m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
+
+    m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
+
+    if (m_lastCompositingResults.needsAnimationFrame) {
+        Platform::AnimationFrameRateController::instance()->addClient(this);
+        m_webPage->updateDelegatedOverlays();
     }
 }
 
@@ -122,7 +144,25 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
         shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
     m_layerRenderer->setClearSurfaceOnDrawLayers(shouldClear);
 
-    m_layerRenderer->drawLayers(contents, m_layoutRectForCompositing, m_contentsSizeForCompositing, dstRect);
+    // OpenGL window coordinates origin is at the lower left corner of the surface while
+    // WebKit uses upper left as the origin of the window coordinate system. The passed in 'dstRect'
+    // is in WebKit window coordinate system. Here we setup the viewport to the corresponding value
+    // in OpenGL window coordinates.
+    m_layerRenderer->prepareFrame(currentTime(), m_rootLayer.get());
+    int viewportY = std::max(0, m_context->surfaceSize().height() - dstRect.maxY());
+    IntRect viewport = IntRect(dstRect.x(), viewportY, dstRect.width(), dstRect.height());
+
+    m_layerRenderer->setViewport(viewport, viewport, contents, m_layoutRectForCompositing, m_contentsSizeForCompositing);
+
+    // WebKit uses row vectors which are multiplied by the matrix on the left (i.e. v*M)
+    // Transformations are composed on the left so that M1.xform(M2) means M2*M1
+    // We therefore start with our (othogonal) projection matrix, which will be applied
+    // as the last transformation.
+    TransformationMatrix transform = LayerRenderer::orthoMatrix(0, contents.width(), contents.height(), 0, -1000, 1000);
+    transform.translate3d(-contents.x(), -contents.y(), 0);
+    if (m_rootLayer)
+        m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
+
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 
     if (m_lastCompositingResults.needsAnimationFrame) {
@@ -202,15 +242,21 @@ WebPageCompositorClient* WebPageCompositor::client() const
     return d->client();
 }
 
-void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context* context, double timestamp)
+void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context* context, double animationTime)
 {
     d->setContext(context);
+    d->prepareFrame(animationTime);
 }
 
-void WebPageCompositor::render(Platform::Graphics::GLES2Context* context, const Platform::IntRect& dstRect, const Platform::IntRect& contents)
+void WebPageCompositor::render(Platform::Graphics::GLES2Context* context,
+                               const Platform::IntRect& targetRect,
+                               const Platform::IntRect& clipRect,
+                               const Platform::TransformationMatrix& transform,
+                               const Platform::FloatRect& contents,
+                               const Platform::FloatRect& viewport)
 {
     d->setContext(context);
-    d->render(dstRect, contents);
+    d->render(targetRect, clipRect, TransformationMatrix(reinterpret_cast<const TransformationMatrix&>(transform)), contents, viewport);
 }
 
 void WebPageCompositor::cleanup(Platform::Graphics::GLES2Context* context)
@@ -252,7 +298,12 @@ void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context*, double)
 {
 }
 
-void WebPageCompositor::render(Platform::Graphics::GLES2Context*, const Platform::IntRect&, const Platform::IntRect&)
+void WebPageCompositor::render(Platform::Graphics::GLES2Context*,
+                               const Platform::IntRect&,
+                               const Platform::IntRect&,
+                               const Platform::TransformationMatrix&,
+                               const Platform::FloatRect&,
+                               const Platform::FloatRect&)
 {
 }
 

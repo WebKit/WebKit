@@ -1,3 +1,42 @@
+2012-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Update WebPageCompositor::render() API
+        https://bugs.webkit.org/show_bug.cgi?id=87565
+
+        Reviewed by Rob Buis.
+
+        The new API allows the embedder to specify the root transform and many
+        OpenGL related parameters.
+
+        Also refactor the code to allow several sets of layers to be rendered,
+        and to allow interleaving the rendering of layers with rendering of
+        buffers and checkerboard.
+
+        Reviewed internally by Filip Spacek.
+
+        PR #154334
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawSurface):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::orthoMatrix):
+        (WebCore::LayerRenderer::LayerRenderer):
+        (WebCore::LayerRenderer::prepareFrame):
+        (WebCore):
+        (WebCore::LayerRenderer::setViewport):
+        (WebCore::LayerRenderer::compositeLayers):
+        (WebCore::LayerRenderer::compositeBuffer):
+        (WebCore::LayerRenderer::drawCheckerboardPattern):
+        (WebCore::LayerRenderer::drawLayersOnSurfaces):
+        (WebCore::LayerRenderer::prepareFrameRecursive):
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        (WebCore::LayerRenderer::updateScissorIfNeeded):
+        (WebCore::LayerRenderingResults::addHolePunchRect):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (LayerRenderer):
+
 2012-05-28  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r96517): Attribute selector fails to match dynamically modified style attribute

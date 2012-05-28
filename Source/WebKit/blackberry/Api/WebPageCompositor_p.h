@@ -50,6 +50,15 @@ public:
 
     ~WebPageCompositorPrivate();
 
+    // Public API
+    void prepareFrame(double animationTime);
+    void render(const WebCore::IntRect& targetRect,
+                const WebCore::IntRect& clipRect,
+                const WebCore::TransformationMatrix&,
+                const WebCore::FloatRect& contents, // This is public API, thus takes transformed contents
+                const WebCore::FloatRect& viewport);
+
+    // Internal
     bool hardwareCompositing() const;
 
     Platform::Graphics::GLES2Context* context() const { return m_context; }
@@ -58,12 +67,6 @@ public:
     WebCore::LayerCompositingThread* rootLayer() const { return m_rootLayer.get(); }
     void setRootLayer(WebCore::LayerCompositingThread*);
 
-    void commit(WebCore::LayerWebKitThread* rootLayerProxy);
-
-    // This is mapped from the public API, thus takes transformed contents
-    void render(const WebCore::IntRect& dstRect, const WebCore::IntRect& transformedContents);
-
-    // Returns true if the WebPageCompositor draws the root layer, false if the BackingStore draws the root layer
     bool drawsRootLayer() const;
     void setDrawsRootLayer(bool drawsRootLayer) { m_drawsRootLayer = drawsRootLayer; }
 

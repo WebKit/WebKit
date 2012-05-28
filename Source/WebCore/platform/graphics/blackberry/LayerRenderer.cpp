@@ -40,8 +40,9 @@
 #include "PlatformString.h"
 #include "TextureCacheCompositingThread.h"
 
+#include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
-#include <wtf/CurrentTime.h>
+#include <limits>
 #include <wtf/text/CString.h>
 
 #define ENABLE_SCISSOR 1
@@ -49,7 +50,7 @@
 #define DEBUG_SHADER_COMPILATION 0
 #define DEBUG_DIRTY_LAYERS 0 // Show dirty layers as red.
 #define DEBUG_LAYER_ANIMATIONS 0 // Show running animations as green.
-#define DEBUG_VIDEO_CLIPPING 0
+#define DEBUG_CLIPPING 0
 
 using BlackBerry::Platform::Graphics::GLES2Context;
 using namespace std;
@@ -116,7 +117,7 @@ static GLuint loadShaderProgram(const char* vertexShaderSource, const char* frag
     return programObject;
 }
 
-static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top, float nearZ, float farZ)
+TransformationMatrix LayerRenderer::orthoMatrix(float left, float right, float bottom, float top, float nearZ, float farZ)
 {
     float deltaX = right - left;
     float deltaY = top - bottom;
@@ -152,6 +153,7 @@ LayerRenderer::LayerRenderer(GLES2Context* context)
     , m_checkerProgramObject(0)
     , m_positionLocation(0)
     , m_texCoordLocation(1)
+    , m_animationTime(-numeric_limits<double>::infinity())
     , m_fbo(0)
     , m_currentLayerRendererSurface(0)
     , m_clearSurfaceOnDrawLayers(true)
@@ -207,67 +209,54 @@ static inline bool compareLayerZ(const LayerCompositingThread* a, const LayerCom
     return transformA.m43() < transformB.m43();
 }
 
-// Re-composites all sublayers.
-void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layoutRect, const IntSize& contentsSize, const IntRect& dstRect)
+void LayerRenderer::prepareFrame(double animationTime, LayerCompositingThread* rootLayer)
 {
-    ASSERT(m_hardwareCompositing);
-    if (!m_hardwareCompositing)
+    if (animationTime != m_animationTime) {
+        m_animationTime = animationTime;
+
+        // Aha, new frame! Reset rendering results.
+        bool wasEmpty = m_lastRenderingResults.isEmpty();
+        m_lastRenderingResults = LayerRenderingResults();
+        m_lastRenderingResults.wasEmpty = wasEmpty;
+    }
+
+    if (!rootLayer)
         return;
 
-    bool wasEmpty = m_lastRenderingResults.isEmpty();
-    m_lastRenderingResults = LayerRenderingResults();
-    m_lastRenderingResults.wasEmpty = wasEmpty;
+    bool isContextCurrent = makeContextCurrent();
+    prepareFrameRecursive(rootLayer, animationTime, isContextCurrent);
+}
 
-    if (!m_rootLayer)
-        return;
-
+void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRect, const FloatRect& visibleRect, const IntRect& layoutRect, const IntSize& contentsSize)
+{
     // These parameters are used to calculate position of fixed position elements
     m_visibleRect = visibleRect;
     m_layoutRect = layoutRect;
     m_contentsSize = contentsSize;
 
-    // WebKit uses row vectors which are multiplied by the matrix on the left (i.e. v*M)
-    // Transformations are composed on the left so that M1.xform(M2) means M2*M1
-    // We therefore start with our (othogonal) projection matrix, which will be applied
-    // as the last transformation.
-    TransformationMatrix matrix = orthoMatrix(0, visibleRect.width(), visibleRect.height(), 0, -1000, 1000);
-    matrix.translate3d(-visibleRect.x(), -visibleRect.y(), 0);
+    m_viewport = targetRect;
+    m_scissorRect = clipRect;
 
-    // OpenGL window coordinates origin is at the lower left corner of the surface while
-    // WebKit uses upper left as the origin of the window coordinate system. The passed in 'dstRect'
-    // is in WebKit window coordinate system. Here we setup the viewport to the corresponding value
-    // in OpenGL window coordinates.
-    int viewportY = std::max(0, m_context->surfaceSize().height() - dstRect.maxY());
-    m_viewport = IntRect(dstRect.x(), viewportY, dstRect.width(), dstRect.height());
+    // The clipRect parameter uses render target coordinates, map to normalized device coordinates
+    m_clipRect = clipRect;
+    m_clipRect.intersect(targetRect);
+    m_clipRect = FloatRect(-1 + 2 * (m_clipRect.x() - targetRect.x()) / targetRect.width(),
+                           -1 + 2 * (m_clipRect.y() - targetRect.y()) / targetRect.height(),
+                           2 * m_clipRect.width() / targetRect.width(),
+                           2 * m_clipRect.height() / targetRect.height());
 
-    double animationTime = currentTime();
-
-#if DEBUG_VIDEO_CLIPPING
-    // Invoking updateLayersRecursive() which will call LayerCompositingThread::setDrawTransform().
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "LayerRenderer::drawLayers() visible=(x=%.2f,y=%.2f,width=%.2f,height=%.2f), layout=(x=%d,y=%d,width=%d,height=%d), contents=(%dx%d), dst=(x=%d,y=%d,width=%d,height=%d).",
-        visibleRect.x(), visibleRect.y(), visibleRect.width(), visibleRect.height(),
-        layoutRect.x(), layoutRect.y(), layoutRect.width(), layoutRect.height(),
-        contentsSize.width(), contentsSize.height(),
-        dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height());
+#if DEBUG_CLIPPING
+    printf("LayerRenderer::setViewport() m_visibleRect=(%.2f,%.2f %.2fx%.2f), m_layoutRect=(%d,%d %dx%d), m_contentsSize=(%dx%d), m_viewport=(%d,%d %dx%d), m_scissorRect=(%d,%d %dx%d), m_clipRect=(%.2f,%.2f %.2fx%.2f)\n",
+        m_visibleRect.x(), m_visibleRect.y(), m_visibleRect.width(), m_visibleRect.height(),
+        m_layoutRect.x(), m_layoutRect.y(), m_layoutRect.width(), m_layoutRect.height(),
+        m_contentsSize.width(), m_contentsSize.height(),
+        m_viewport.x(), m_viewport.y(), m_viewport.width(), m_viewport.height(),
+        m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height(),
+        m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height());
+    fflush(stdout);
 #endif
 
-    Vector<RefPtr<LayerCompositingThread> > surfaceLayers;
-    const Vector<RefPtr<LayerCompositingThread> >& sublayers = m_rootLayer->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); i++) {
-        float opacity = 1;
-        FloatRect clipRect(-1, -1, 2, 2);
-        updateLayersRecursive(sublayers[i].get(), matrix, surfaceLayers, opacity, clipRect, animationTime);
-    }
-
-    // Decompose the dirty rect into a set of non-overlaping rectangles
-    // (they need to not overlap so that the blending code doesn't draw any region twice).
-    for (int i = 0; i < LayerRenderingResults::NumberOfDirtyRects; ++i) {
-        BlackBerry::Platform::IntRectRegion region(BlackBerry::Platform::IntRect(m_lastRenderingResults.dirtyRect(i)));
-        m_lastRenderingResults.dirtyRegion = BlackBerry::Platform::IntRectRegion::unionRegions(m_lastRenderingResults.dirtyRegion, region);
-    }
-
-    // If we won't draw anything, don't touch the OpenGL APIs.
-    if (m_lastRenderingResults.isEmpty() && wasEmpty)
+    if (!m_hardwareCompositing)
         return;
 
     // Okay, we're going to do some drawing.
@@ -293,43 +282,80 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
     // The layer quads are drawn in clock-wise order so the front face is CCW.
     glFrontFace(GL_CCW);
 
-    // The shader used to render layers returns pre-multiplied alpha colors
-    // so we need to send the blending mode appropriately.
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
     // Update the parameters for the checkerboard drawing.
     glUseProgram(m_checkerProgramObject);
     float bitmapScale = static_cast<float>(m_layoutRect.width()) / static_cast<float>(m_visibleRect.width());
     glUniform1f(m_checkerScaleLocation, bitmapScale);
-    float scale = static_cast<float>(dstRect.width()) / static_cast<float>(m_visibleRect.width());
+    float scale = static_cast<float>(m_viewport.width()) / static_cast<float>(m_visibleRect.width());
     glUniform2f(m_checkerOriginLocation, m_visibleRect.x()*scale, m_visibleRect.y()*scale);
     glUniform1f(m_checkerSurfaceHeightLocation, m_context->surfaceSize().height());
 
     checkGLError();
 
-    // If some layers should be drawed on temporary surfaces, we should do it first.
-    drawLayersOnSurfaces(surfaceLayers);
+    glViewport(m_viewport.x(), m_viewport.y(), m_viewport.width(), m_viewport.height());
 
 #if ENABLE_SCISSOR
-    m_scissorRect = m_viewport;
     glEnable(GL_SCISSOR_TEST);
+#if DEBUG_CLIPPING
+    printf("LayerRenderer::compositeLayers(): clipping to (%d,%d %dx%d)\n", m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
+    fflush(stdout);
+#endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
 #endif
 
     glClearStencil(0);
     glClearColor(0, 0, 0, 0);
     GLenum buffersToClear = GL_STENCIL_BUFFER_BIT;
-    if (m_clearSurfaceOnDrawLayers) {
+    if (m_clearSurfaceOnDrawLayers)
         buffersToClear |= GL_COLOR_BUFFER_BIT;
-    }
     glClear(buffersToClear);
+}
+
+void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCompositingThread* rootLayer)
+{
+    ASSERT(m_hardwareCompositing);
+    if (!m_hardwareCompositing)
+        return;
+
+    if (!rootLayer)
+        return;
+
+    Vector<RefPtr<LayerCompositingThread> > surfaceLayers;
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = rootLayer->getSublayers();
+    for (size_t i = 0; i < sublayers.size(); i++) {
+        float opacity = 1;
+        FloatRect clipRect(m_clipRect);
+        updateLayersRecursive(sublayers[i].get(), matrix, surfaceLayers, opacity, clipRect);
+    }
+
+    // Decompose the dirty rect into a set of non-overlaping rectangles
+    // (they need to not overlap so that the blending code doesn't draw any region twice).
+    for (int i = 0; i < LayerRenderingResults::NumberOfDirtyRects; ++i) {
+        BlackBerry::Platform::IntRectRegion region(BlackBerry::Platform::IntRect(m_lastRenderingResults.dirtyRect(i)));
+        m_lastRenderingResults.dirtyRegion = BlackBerry::Platform::IntRectRegion::unionRegions(m_lastRenderingResults.dirtyRegion, region);
+    }
+
+    // If we won't draw anything, don't touch the OpenGL APIs.
+    if (m_lastRenderingResults.isEmpty() && m_lastRenderingResults.wasEmpty)
+        return;
+
+    // Okay, we're going to do some drawing.
+    if (!makeContextCurrent())
+        return;
+
+    // The shader used to render layers returns pre-multiplied alpha colors
+    // so we need to send the blending mode appropriately.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+    // If some layers should be drawed on temporary surfaces, we should do it first.
+    drawLayersOnSurfaces(surfaceLayers);
 
     // Don't render the root layer, the BlackBerry port uses the BackingStore to draw the
     // root layer.
     for (size_t i = 0; i < sublayers.size(); i++) {
         int currentStencilValue = 0;
-        FloatRect clipRect(-1, -1, 2, 2);
+        FloatRect clipRect(m_clipRect);
         compositeLayersRecursive(sublayers[i].get(), currentStencilValue, clipRect);
     }
 
@@ -351,6 +377,9 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
     // driver by unbinding early (when the pixmap is hopefully still around).
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    // Turn off blending again
+    glDisable(GL_BLEND);
+
     LayerSet::iterator iter = m_layersLockingTextureResources.begin();
     for (; iter != m_layersLockingTextureResources.end(); ++iter)
         (*iter)->releaseTextureResources();
@@ -359,10 +388,63 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
 
     if (m_needsCommit) {
         m_needsCommit = false;
-        m_rootLayer->scheduleCommit();
+        rootLayer->scheduleCommit();
     }
 
     textureCacheCompositingThread()->collectGarbage();
+}
+
+static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+
+void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer* buffer, float opacity)
+{
+    if (!buffer)
+        return;
+
+    FloatQuad vertices(transform.mapPoint(contents.minXMinYCorner()),
+                       transform.mapPoint(contents.minXMaxYCorner()),
+                       transform.mapPoint(contents.maxXMaxYCorner()),
+                       transform.mapPoint(contents.maxXMinYCorner()));
+
+    if (!vertices.boundingBox().intersects(m_clipRect))
+        return;
+
+    if (opacity < 1.0f) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    glUseProgram(m_layerProgramObject[LayerData::LayerProgramShaderRGBA]);
+    glUniform1f(m_alphaLocation[LayerData::LayerProgramShaderRGBA], opacity);
+
+    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &vertices);
+    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+
+    if (BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(buffer, GL_TEXTURE_2D)) {
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        BlackBerry::Platform::Graphics::releaseBufferGLTexture(buffer);
+    }
+
+    if (opacity < 1.0f)
+        glDisable(GL_BLEND);
+}
+
+void LayerRenderer::drawCheckerboardPattern(const TransformationMatrix& transform, const FloatRect& contents)
+{
+    FloatQuad vertices(transform.mapPoint(contents.minXMinYCorner()),
+                       transform.mapPoint(contents.minXMaxYCorner()),
+                       transform.mapPoint(contents.maxXMaxYCorner()),
+                       transform.mapPoint(contents.maxXMinYCorner()));
+
+    if (!vertices.boundingBox().intersects(m_clipRect))
+        return;
+
+    glUseProgram(m_checkerProgramObject);
+
+    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &vertices);
+    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 bool LayerRenderer::useSurface(LayerRendererSurface* surface)
@@ -415,15 +497,13 @@ void LayerRenderer::drawLayersOnSurfaces(const Vector<RefPtr<LayerCompositingThr
 
     // If there are layers drawed on surfaces, we need to switch to default framebuffer.
     // Otherwise, we just need to set viewport.
-    if (surfaceLayers.size())
+    if (surfaceLayers.size()) {
         useSurface(0);
-    else
-        glViewport(m_viewport.x(), m_viewport.y(), m_viewport.width(), m_viewport.height());
-}
-
-void LayerRenderer::setRootLayer(LayerCompositingThread* layer)
-{
-    m_rootLayer = layer;
+#if ENABLE_SCISSOR
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
+#endif
+    }
 }
 
 void LayerRenderer::addLayer(LayerCompositingThread* layer)
@@ -526,9 +606,34 @@ void LayerRenderer::drawHolePunchRect(LayerCompositingThread* layer)
     m_lastRenderingResults.addHolePunchRect(holeWC);
 }
 
-void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const TransformationMatrix& matrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect, double currentTime)
+void LayerRenderer::prepareFrameRecursive(LayerCompositingThread* layer, double animationTime, bool isContextCurrent)
 {
+    // This might cause the layer to recompute some attributes.
+    m_lastRenderingResults.needsAnimationFrame |= layer->updateAnimations(animationTime);
 
+    if (isContextCurrent) {
+        // Even non-visible layers need to perform their texture jobs, or they will
+        // pile up and waste memory.
+        if (layer->needsTexture())
+            layer->updateTextureContentsIfNeeded();
+        if (layer->maskLayer() && layer->maskLayer()->needsTexture())
+            layer->maskLayer()->updateTextureContentsIfNeeded();
+        if (layer->replicaLayer()) {
+            LayerCompositingThread* replica = layer->replicaLayer();
+            if (replica->needsTexture())
+                replica->updateTextureContentsIfNeeded();
+            if (replica->maskLayer() && replica->maskLayer()->needsTexture())
+                replica->maskLayer()->updateTextureContentsIfNeeded();
+        }
+    }
+
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
+    for (size_t i = 0; i < sublayers.size(); i++)
+        prepareFrameRecursive(sublayers[i].get(), animationTime, isContextCurrent);
+}
+
+void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const TransformationMatrix& matrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect)
+{
     // The contract for LayerCompositingThread::setLayerRenderer is it must be set if the layer has been rendered.
     // So do it now, before we render it in compositeLayersRecursive.
     layer->setLayerRenderer(this);
@@ -540,9 +645,6 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         if (replica->maskLayer())
             replica->maskLayer()->setLayerRenderer(this);
     }
-
-    // This might cause the layer to recompute some attributes.
-    m_lastRenderingResults.needsAnimationFrame |= layer->updateAnimations(currentTime);
 
     // Compute the new matrix transformation that will be applied to this layer and
     // all its sublayers. It's important to remember that the layer's position
@@ -681,7 +783,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
 
     const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
-        updateLayersRecursive(sublayers[i].get(), localMatrix, surfaceLayers, opacity, clipRect, currentTime);
+        updateLayersRecursive(sublayers[i].get(), localMatrix, surfaceLayers, opacity, clipRect);
 }
 
 static bool hasRotationalComponent(const TransformationMatrix& m)
@@ -730,20 +832,6 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
     // Note that there are two types of layers:
     // 1. Layers that have their own GraphicsContext and can draw their contents on demand (layer->drawsContent() == true).
     // 2. Layers that are just containers of images/video/etc that don't own a GraphicsContext (layer->contents() == true).
-
-    // Even non-visible layers need to perform their texture jobs, or they will
-    // pile up and waste memory.
-    if (layer->needsTexture())
-        layer->updateTextureContentsIfNeeded();
-    if (layer->maskLayer() && layer->maskLayer()->needsTexture())
-        layer->maskLayer()->updateTextureContentsIfNeeded();
-    if (layer->replicaLayer()) {
-        LayerCompositingThread* replica = layer->replicaLayer();
-        if (replica->needsTexture())
-            replica->updateTextureContentsIfNeeded();
-        if (replica->maskLayer() && replica->maskLayer()->needsTexture())
-            replica->maskLayer()->updateTextureContentsIfNeeded();
-    }
 
     if ((layer->needsTexture() || layer->layerRendererSurface()) && layerVisible) {
         updateScissorIfNeeded(clipRect);
@@ -870,11 +958,19 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 void LayerRenderer::updateScissorIfNeeded(const FloatRect& clipRect)
 {
 #if ENABLE_SCISSOR
+#if DEBUG_CLIPPING
+    printf("LayerRenderer::updateScissorIfNeeded(): clipRect=(%.2f,%.2f %.2fx%.2f)\n", clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
+    fflush(stdout);
+#endif
     IntRect clipRectWC = toOpenGLWindowCoordinates(clipRect);
     if (m_scissorRect == clipRectWC)
         return;
 
     m_scissorRect = clipRectWC;
+#if DEBUG_CLIPPING
+    printf("LayerRenderer::updateScissorIfNeeded(): clipping to (%d,%d %dx%d)\n", m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
+    fflush(stdout);
+#endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
 #endif
 }
@@ -1092,8 +1188,9 @@ IntRect LayerRenderingResults::holePunchRect(unsigned index) const
 
 void LayerRenderingResults::addHolePunchRect(const IntRect& rect)
 {
-#if DEBUG_VIDEO_CLIPPING
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "LayerRenderingResults::addHolePunchRect (x=%d,y=%d,width=%d,height=%d).", rect.x(), rect.y(), rect.width(), rect.height());
+#if DEBUG_CLIPPING
+    printf("LayerRenderingResults::addHolePunchRect (%d,%d %dx%d)\n", rect.x(), rect.y(), rect.width(), rect.height());
+    fflush(stdout);
 #endif
     if (!rect.isEmpty())
         m_holePunchRects.append(rect);
