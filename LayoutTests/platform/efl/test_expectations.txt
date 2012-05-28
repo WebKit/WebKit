@@ -609,6 +609,9 @@ BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FA
 BUGWK86615 : editing/deleting/5408255.html = TEXT
 BUGWK86615 : editing/deleting/regional-indicators.html = TEXT
 
+// Newly introduced test which is failing on GTK as well.
+BUGWK87575 : http/tests/media/video-buffered-range-contains-currentTime.html = TEXT
+
 // Custom font loading delaying text drawing on Canvas
 BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 

@@ -1,5 +1,15 @@
 2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Test added in r118577 is failing and should be skipped
+        https://bugs.webkit.org/show_bug.cgi?id=87620
+
+        Unreviewed EFL gardening. Skipping new test introduced in r118577
+        which is failing on our port.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] New tests added in r118567 should be skipped on EFL port
         https://bugs.webkit.org/show_bug.cgi?id=87618
 
