@@ -1,3 +1,14 @@
+2012-05-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] New tests added in r118567 should be skipped on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=87618
+
+        Unreviewed EFL gardening. Move the test added in r118567 to test
+        expectations since the EFL port lacks support for
+        LayoutTestController::layerTreeAsText.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move allowRoundingHacks to Internals interface
