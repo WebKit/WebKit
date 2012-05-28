@@ -2741,8 +2741,6 @@ BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer
 
 BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS TEXT
 
-BUGWK81310 : fast/dom/shadow/content-element-in-media-element.html = TEXT
-
 // two regions reftests failing on Chromium
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = PASS IMAGE
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE

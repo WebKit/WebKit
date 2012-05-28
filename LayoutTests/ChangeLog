@@ -1,3 +1,22 @@
+2012-05-27  Takashi Sakamoto  <tasak@google.com>
+
+        fast/dom/shadow/content-element-in-media.html is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=81310
+
+        Modifying to check() to dump expected and actual text at the same
+        absolute position, because DumpRenderTree dumps absolute x,y-position
+        information for a layer which contains RenderVideo. For example,
+        backgroundClip at (8,163), clip at (8, 163) and so on.
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/resources/shadow-test-driver.js:
+        (check):
+        Disabled actual block when dumping expected block as text, and vice
+        versa.
+        * platform/chromium/test_expectations.txt:
+        Removed BUGWK81310.
+
 2012-05-27  Benjamin Poulain  <bpoulain@apple.com>
 
         When pages are loaded from AppCache with DeferredLoading, willSendRequest() is never called
