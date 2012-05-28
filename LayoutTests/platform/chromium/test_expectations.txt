@@ -3220,8 +3220,7 @@ BUGWK83954 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
 BUGWK80665 : fast/js/string-match.html = TEXT
-BUGWK80665 RELEASE : fast/js/string-replace-2.html = TEXT
-BUGWK87423 DEBUG : fast/js/string-replace-2.html = CRASH
+BUGWK80665 : fast/js/string-replace-2.html = TEXT
 
 BUGABARTH SNOWLEOPARD : fast/events/input-image-scrolled-x-y.html = PASS CRASH
 

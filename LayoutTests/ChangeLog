@@ -1,3 +1,14 @@
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
+        [Chromium] [V8] Layout Test fast/js/string-replace-2.html failing following 11594 => 11648 v8 update
+        https://bugs.webkit.org/show_bug.cgi?id=87423
+
+        Unreviewed gardening.
+        
+        We have rolled v8 and we can now set the expectation for both debug and release back to TEXT.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-28  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Expose function (closure) scopes in remote protocol
