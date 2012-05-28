@@ -5,6 +5,17 @@
 
         Unreviewed gardening.
 
+        Adds PASS and IMAGE expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] http/tests/cache/cancel-in-progress-load.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=87657
+
+        Unreviewed gardening.
+
         r118618 added this new test but it's been flaky in chromium.
 
         * platform/chromium/test_expectations.txt:
