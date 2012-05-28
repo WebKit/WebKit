@@ -1,5 +1,11 @@
 2012-05-28  Peter Beverloo  <peter@chromium.org>
 
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
+2012-05-28  Peter Beverloo  <peter@chromium.org>
+
         [Chromium] Build fix for the Android bot, set CXX_target at gyp generation-time
         https://bugs.webkit.org/show_bug.cgi?id=87649
 
