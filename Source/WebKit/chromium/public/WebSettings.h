@@ -67,6 +67,7 @@ public:
     virtual void setApplyDefaultDeviceScaleFactorInCompositor(bool) = 0;
     virtual void setFontBoostingEnabled(bool) = 0;
     virtual void setDefaultTextEncodingName(const WebString&) = 0;
+    virtual void setDeviceSupportsTouch(bool) = 0;
     virtual void setJavaScriptEnabled(bool) = 0;
     virtual void setWebSecurityEnabled(bool) = 0;
     virtual void setJavaScriptCanOpenWindowsAutomatically(bool) = 0;

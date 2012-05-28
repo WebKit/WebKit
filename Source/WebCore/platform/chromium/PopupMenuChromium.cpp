@@ -66,17 +66,18 @@ PopupMenuChromium::~PopupMenuChromium()
     hide();
 }
 
-void PopupMenuChromium::show(const IntRect& r, FrameView* v, int index)
+void PopupMenuChromium::show(const IntRect& rect, FrameView* frameView, int index)
 {
     if (!p.popup) {
+        Settings* settings = frameView->frame()->page()->settings();
         PopupContainerSettings popupSettings = dropDownSettings;
-        popupSettings.defaultDeviceScaleFactor =
-            v->frame()->page()->settings()->defaultDeviceScaleFactor();
+        popupSettings.defaultDeviceScaleFactor = settings->defaultDeviceScaleFactor();
         if (!popupSettings.defaultDeviceScaleFactor)
             popupSettings.defaultDeviceScaleFactor = 1;
+        popupSettings.deviceSupportsTouch = settings->deviceSupportsTouch();
         p.popup = PopupContainer::create(client(), PopupContainer::Select, popupSettings);
     }
-    p.popup->showInRect(r, v, index);
+    p.popup->showInRect(rect, frameView, index);
 }
 
 void PopupMenuChromium::hide()

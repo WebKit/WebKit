@@ -182,10 +182,6 @@ public:
 protected:
     virtual void SetUp()
     {
-        // When touch is enabled, padding is added to option elements
-        // In these tests, we'll assume touch is disabled.
-        m_touchWasEnabled = RuntimeEnabledFeatures::touchEnabled();
-        RuntimeEnabledFeatures::setTouchEnabled(false);
         m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient));
         m_webView->initializeMainFrame(&m_webFrameClient);
         m_popupMenu = adoptRef(new PopupMenuChromium(&m_popupMenuClient));
@@ -196,7 +192,6 @@ protected:
         m_popupMenu = 0;
         m_webView->close();
         webkit_support::UnregisterAllMockedURLs();
-        RuntimeEnabledFeatures::setTouchEnabled(m_touchWasEnabled);
     }
 
     // Returns true if there currently is a select popup in the WebView.
@@ -284,7 +279,6 @@ protected:
     TestWebFrameClient m_webFrameClient;
     TestPopupMenuClient m_popupMenuClient;
     RefPtr<PopupMenu> m_popupMenu;
-    bool m_touchWasEnabled;
     std::string baseURL;
 };
 
@@ -360,8 +354,9 @@ TEST_F(SelectPopupMenuTest, ClickItem)
 {
     showPopup();
 
-    // Y of 18 to be on the item at index 1 (12 font plus border and more to be safe).
-    IntPoint row1Point(2, 18);
+    int menuItemHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuItemHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuItemHeight * 1.5);
     // Simulate a click down/up on the first item.
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
@@ -377,8 +372,9 @@ TEST_F(SelectPopupMenuTest, MouseOverItemClickOutside)
 {
     showPopup();
 
-    // Y of 18 to be on the item at index 1 (12 font plus border and more to be safe).
-    IntPoint row1Point(2, 18);
+    int menuItemHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuItemHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuItemHeight * 1.5);
     // Simulate the mouse moving over the first item.
     PlatformMouseEvent mouseEvent(row1Point, row1Point, NoButton, PlatformEvent::MouseMoved,
                                   1, false, false, false, false, 0);
@@ -421,9 +417,9 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
 
     showPopup();
 
-    int menuHeight = m_webView->selectPopup()->menuItemHeight();
-    // menuHeight * 0.5 means the Y position on the item at index 0.
-    IntPoint row1Point(2, menuHeight * 0.5);
+    int menuItemHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuItemHeight * 0.5 means the Y position on the item at index 0.
+    IntPoint row1Point(2, menuItemHeight * 0.5);
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
 
@@ -437,8 +433,8 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     m_popupMenuClient.setDisabledIndex(1);
 
     showPopup();
-    // menuHeight * 1.5 means the Y position on the item at index 1.
-    row1Point.setY(menuHeight * 1.5);
+    // menuItemHeight * 1.5 means the Y position on the item at index 1.
+    row1Point.setY(menuItemHeight * 1.5);
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
 
@@ -446,8 +442,8 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     EXPECT_STREQ("upclick", std::string(element.innerText().utf8()).c_str());
 
     showPopup();
-    // menuHeight * 2.5 means the Y position on the item at index 2.
-    row1Point.setY(menuHeight * 2.5);
+    // menuItemHeight * 2.5 means the Y position on the item at index 2.
+    row1Point.setY(menuItemHeight * 2.5);
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
 
@@ -488,9 +484,9 @@ TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
 
     showPopup();
 
-    int menuHeight = m_webView->selectPopup()->menuItemHeight();
-    // menuHeight * 1.5 means the Y position on the item at index 1.
-    IntPoint row1Point(2, menuHeight * 1.5);
+    int menuItemHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuItemHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuItemHeight * 1.5);
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
 
@@ -510,9 +506,9 @@ TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnClick)
 
     showPopup();
 
-    int menuHeight = m_webView->selectPopup()->menuItemHeight();
-    // menuHeight * 1.5 means the Y position on the item at index 1.
-    IntPoint row1Point(2, menuHeight * 1.5);
+    int menuItemHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuItemHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuItemHeight * 1.5);
     simulateLeftMouseDownEvent(row1Point);
     simulateLeftMouseUpEvent(row1Point);
 

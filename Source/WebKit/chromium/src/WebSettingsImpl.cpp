@@ -118,6 +118,21 @@ void WebSettingsImpl::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
     m_settings->setDefaultDeviceScaleFactor(defaultDeviceScaleFactor);
 }
 
+int WebSettingsImpl::defaultDeviceScaleFactor()
+{
+    return m_settings->defaultDeviceScaleFactor();
+}
+
+void WebSettingsImpl::setDeviceSupportsTouch(bool deviceSupportsTouch)
+{
+    m_settings->setDeviceSupportsTouch(deviceSupportsTouch);
+}
+
+bool WebSettingsImpl::deviceSupportsTouch()
+{
+    return m_settings->deviceSupportsTouch();
+}
+
 void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDefaultDeviceScaleFactorInCompositor)
 {
     m_applyDefaultDeviceScaleFactorInCompositor = applyDefaultDeviceScaleFactorInCompositor;

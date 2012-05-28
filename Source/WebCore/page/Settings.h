@@ -575,6 +575,9 @@ namespace WebCore {
         void setRequestAnimationFrameEnabled(bool enabled) { m_requestAnimationFrameEnabled = enabled; }
         bool requestAnimationFrameEnabled() const { return m_requestAnimationFrameEnabled; }
 
+        void setDeviceSupportsTouch(bool enabled) { m_deviceSupportsTouch = enabled; }
+        bool deviceSupportsTouch() const { return m_deviceSupportsTouch; }
+
         void setNeedsDidFinishLoadOrderQuirk(bool needsQuirk) { m_needsDidFinishLoadOrderQuirk = needsQuirk; }
         bool needsDidFinishLoadOrderQuirk() const { return m_needsDidFinishLoadOrderQuirk; }
 
@@ -753,6 +756,7 @@ namespace WebCore {
         bool m_shouldRespectImageOrientation : 1;
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
         bool m_requestAnimationFrameEnabled : 1;
+        bool m_deviceSupportsTouch : 1;
         bool m_needsDidFinishLoadOrderQuirk : 1;
 
         bool m_fixedPositionCreatesStackingContext : 1;

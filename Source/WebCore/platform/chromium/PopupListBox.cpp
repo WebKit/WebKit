@@ -632,7 +632,7 @@ int PopupListBox::getRowHeight(int index)
 {
     int scale = m_settings.defaultDeviceScaleFactor;
     int paddingForTouch = 0;
-    if (RuntimeEnabledFeatures::touchEnabled())
+    if (m_settings.deviceSupportsTouch)
         paddingForTouch = PopupMenuChromium::optionPaddingForTouch();
     if (index < 0 || m_popupClient->itemStyle(index).isDisplayNone())
         return PopupMenuChromium::minimumRowHeight() * scale;

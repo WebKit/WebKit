@@ -2955,10 +2955,10 @@ void WebViewImpl::applyAutofillSuggestions(
 
     if (!m_autofillPopup) {
         PopupContainerSettings popupSettings = autofillPopupSettings;
-        popupSettings.defaultDeviceScaleFactor =
-            m_page->settings()->defaultDeviceScaleFactor();
+        popupSettings.defaultDeviceScaleFactor = settingsImpl()->defaultDeviceScaleFactor();
         if (!popupSettings.defaultDeviceScaleFactor)
             popupSettings.defaultDeviceScaleFactor = 1;
+        popupSettings.deviceSupportsTouch = settingsImpl()->deviceSupportsTouch();
         m_autofillPopup = PopupContainer::create(m_autofillPopupClient.get(),
                                                  PopupContainer::Suggestion,
                                                  popupSettings);

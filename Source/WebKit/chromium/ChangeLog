@@ -1,3 +1,28 @@
+2012-05-28  Rob Flack  <flackr@chromium.org>
+
+        [chromium] Only increase size of Combo Box Options when displayed on touch screen
+        https://bugs.webkit.org/show_bug.cgi?id=85921
+
+        Reviewed by Adam Barth.
+
+        Adds a flag to set whether the current device is a touch screen, independent of whether touch events are supported and use this for the combo box sizing.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::defaultDeviceScaleFactor):
+        (WebKit):
+        (WebKit::WebSettingsImpl::setDeviceSupportsTouch):
+        (WebKit::WebSettingsImpl::deviceSupportsTouch):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        * tests/PopupMenuTest.cpp:
+        (WebKit::SelectPopupMenuTest::SetUp):
+        (WebKit::SelectPopupMenuTest::TearDown):
+        (SelectPopupMenuTest):
+        (WebKit::TEST_F):
+
 2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled

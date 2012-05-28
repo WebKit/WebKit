@@ -1,3 +1,27 @@
+2012-05-28  Rob Flack  <flackr@chromium.org>
+
+        [chromium] Only increase size of Combo Box Options when displayed on touch screen
+        https://bugs.webkit.org/show_bug.cgi?id=85921
+
+        Reviewed by Adam Barth.
+
+        Adds a flag to set whether the current device is a touch screen, independent of whether touch events are supported and use this for the combo box sizing.
+
+        No new tests as this is a flag change and covered by existing tests: WebKit/chromium/tests/PopupMenuTest.cpp
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setDeviceSupportsTouch):
+        (WebCore::Settings::deviceSupportsTouch):
+        (Settings):
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::getRowHeight):
+        * platform/chromium/PopupListBox.h:
+        (PopupContainerSettings):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupMenuChromium::show):
+
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Make custom compositing thread layers more flexible

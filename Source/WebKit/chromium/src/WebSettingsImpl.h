@@ -55,9 +55,12 @@ public:
     virtual void setMinimumFontSize(int);
     virtual void setMinimumLogicalFontSize(int);
     virtual void setDefaultDeviceScaleFactor(int);
+    virtual int defaultDeviceScaleFactor();
     virtual void setApplyDefaultDeviceScaleFactorInCompositor(bool);
     virtual void setFontBoostingEnabled(bool);
     virtual void setDefaultTextEncodingName(const WebString&);
+    virtual void setDeviceSupportsTouch(bool);
+    virtual bool deviceSupportsTouch();
     virtual void setJavaScriptEnabled(bool);
     virtual void setWebSecurityEnabled(bool);
     virtual void setJavaScriptCanOpenWindowsAutomatically(bool);
