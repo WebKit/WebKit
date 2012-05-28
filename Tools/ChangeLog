@@ -1,3 +1,17 @@
+2012-05-28  Luke Macpherson  <macpherson@chromium.org>
+
+        Fix mac build with older XCode by defining NSEC_PER_MSEC.
+        https://bugs.webkit.org/show_bug.cgi?id=87616
+
+        Reviewed by Hajime Morita.
+
+        The following patch introduced the use of NSEC_PER_MSEC which is not defined for older XCode versions.
+        http://trac.webkit.org/changeset/118631/trunk/Tools/DumpRenderTree/mac/FrameLoadDelegate.mm
+        Patch just adds a #ifndef / #define check.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+
 2012-05-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Enable blob support for the EFL port

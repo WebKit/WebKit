@@ -54,6 +54,10 @@
 #import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 
+#ifndef NSEC_PER_MSEC
+#define NSEC_PER_MSEC 1000000ull
+#endif
+
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
 @end
