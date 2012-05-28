@@ -1,3 +1,20 @@
+2012-05-28  Yong Li  <yoli@rim.com>
+
+        Crash on incomplete :not().
+        https://bugs.webkit.org/show_bug.cgi?id=86673
+
+        Reviewed by Antti Koivisto.
+
+        Add back null-checks for incomplete :not() class
+        which were dropped by r81845.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::CSSSelector::selectorText):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+
 2012-05-28  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         FileWriterSync binding should have no static table

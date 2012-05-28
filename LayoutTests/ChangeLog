@@ -1,3 +1,16 @@
+2012-05-28  Yong Li  <yoli@rim.com>
+
+        Crash on incomplete :not().
+        https://bugs.webkit.org/show_bug.cgi?id=86673
+
+        Reviewed by Antti Koivisto.
+
+        Add a test case that makes CSS parser create incomplete
+        :not selector.
+
+        * fast/css/crash-on-incomplete-not.html: Added.
+        * fast/css/crash-on-incomplete-not-expected.txt: Added.
+
 2012-05-28  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Adjust expectations for fast/layers/clip-rects-assertion-expected.txt
