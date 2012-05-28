@@ -955,13 +955,6 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 fast/events/pointer-events-2.html
 fast/events/remove-target-with-shadow-in-drag.html
 fast/files/blob-builder-crash.html
-fast/files/blob-slice-overflow.html
-fast/files/blob-slice-test.html
-fast/files/create-blob-url-crash.html
-fast/files/file-reader-fffd.html
-fast/files/not-enough-arguments.html
-fast/files/revoke-blob-url.html
-fast/files/url-required-arguments.html
 fast/forms/001.html
 fast/forms/float-before-fieldset.html
 fast/forms/form-element-geometry.html
@@ -1301,10 +1294,7 @@ http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
 http/tests/cache/subresource-failover-to-network.html
 http/tests/cache/subresource-multiple-instances.html
-http/tests/fileapi/create-blob-url-from-data-url.html
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
-http/tests/local/blob/send-data-blob.html
-http/tests/local/blob/send-sliced-data-blob.html
 http/tests/loading/nested_bad_objects.php
 http/tests/loading/progress-finished-callback.html
 http/tests/misc/401-alternative-content.php

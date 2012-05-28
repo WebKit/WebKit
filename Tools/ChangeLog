@@ -1,3 +1,14 @@
+2012-05-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Enable blob support for the EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=85363
+
+        Reviewed by Hajime Morita.
+
+        Enable Blob support by default for the EFL port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-05-27  Benjamin Poulain  <bpoulain@apple.com>
 
         When pages are loaded from AppCache with DeferredLoading, willSendRequest() is never called

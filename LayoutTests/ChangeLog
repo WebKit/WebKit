@@ -1,3 +1,15 @@
+2012-05-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Enable blob support for the EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=85363
+
+        Reviewed by Hajime Morita.
+
+        Unskip tests which require blob support to be enabled.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-27  Hayato Ito  <hayato@chromium.org>
 
         Support multiple shadow roots in event dispatching.

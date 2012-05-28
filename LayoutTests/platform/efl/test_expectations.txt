@@ -404,6 +404,7 @@ BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = MISSING
 
 // EFL does not support WebGL
 BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
+BUGWK77219 : fast/dom/constructed-objects-prototypes.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
@@ -420,12 +421,6 @@ BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMA
 BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
-
-// Turn on blob support for the EFL port.
-BUGWK85363 : fast/dom/DOMURL/check-instanceof-domurl-functions.html = TEXT
-BUGWK85363 : fast/dom/call-a-constructor-as-a-function.html = TEXT
-BUGWK85363 : fast/dom/constructed-objects-prototypes.html = TEXT
-BUGWK85363 : fast/files/url-null.html = TEXT
 
 // Expose title direction in WebKit API
 BUGWK58845 : fast/dom/title-directionality.html = FAIL
