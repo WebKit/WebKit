@@ -30,42 +30,44 @@
 #define MediaQuery_h
 
 #include "PlatformString.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
 class MediaQueryExp;
 
 class MediaQuery {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Restrictor { Only, Not, None };
+    enum Restrictor {
+        Only, Not, None
+    };
 
     typedef Vector<OwnPtr<MediaQueryExp> > ExpressionVector;
 
-    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<ExpressionVector>);
+    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<ExpressionVector> exprs);
     ~MediaQuery();
 
-    bool operator==(const MediaQuery&) const;
-
     Restrictor restrictor() const { return m_restrictor; }
-    const ExpressionVector& expressions() const { return *m_expressions; }
-    const String& mediaType() const { return m_mediaType; }
-    const String& cssText() const;
+    const Vector<OwnPtr<MediaQueryExp> >* expressions() const { return m_expressions.get(); }
+    String mediaType() const { return m_mediaType; }
+    bool operator==(const MediaQuery& other) const;
+    String cssText() const;
     bool ignored() const { return m_ignored; }
 
-    PassOwnPtr<MediaQuery> copy() const;
+    PassOwnPtr<MediaQuery> copy() const { return adoptPtr(new MediaQuery(*this)); }
 
-private:
+ private:
     MediaQuery(const MediaQuery&);
-    void operator=(const MediaQuery&);
-    
-    String serialize() const;
 
     Restrictor m_restrictor;
     String m_mediaType;
     OwnPtr<ExpressionVector> m_expressions;
     bool m_ignored;
-    String m_serializedQuery;
+    String m_serializationCache;
+
+    String serialize() const;
 };
 
 } // namespace

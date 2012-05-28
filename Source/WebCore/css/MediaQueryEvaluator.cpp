@@ -58,40 +58,50 @@ using namespace MediaFeatureNames;
 
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
-typedef bool (*MediaFeatureEvaluationFunction)(CSSValue*, RenderStyle*, Frame*, MediaFeaturePrefix);
-typedef HashMap<AtomicStringImpl*, MediaFeatureEvaluationFunction> FunctionMap;
+typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Frame*, MediaFeaturePrefix);
+typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
+static FunctionMap* gFunctionMap;
 
-// FIXME: color-index, min-color-index, and max-color-index are not implemented.
-// To implement them we'd have to add information about indexed color to the WebCore platform;
-// most modern platforms don't make use of indexed color, so it's not clear this is worthwhile.
+/*
+ * FIXME: following media features are not implemented: color_index, scan, resolution
+ *
+ * color_index, min-color-index, max_color_index: It's unknown how to retrieve
+ * the information if the display mode is indexed
+ * scan: The "scan" media feature describes the scanning process of
+ * tv output devices. It's unknown how to retrieve this information from
+ * the platform
+ * resolution, min-resolution, max-resolution: css parser doesn't seem to
+ * support CSS_DIMENSION
+ */
 
-// FIXME: scan is not implemented: This media feature describes the scanning process of
-// TV output devices. To implement this we'd have to add information to the WebCore platform.
-
-// FIXME: resolution, min-resolution, max-resolution are not implemented: At the time this
-// was originally written the author said the CSS parser "didn't seem to support CSS_DIMENSION".
-
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
-    : m_mediaType(acceptedMediaType)
-    , m_frame(0)
+MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
+    : m_frame(0)
     , m_style(0)
-    , m_mediaFeatureResult(mediaFeatureResult)
+    , m_expResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
+MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
     , m_frame(0)
     , m_style(0)
-    , m_mediaFeatureResult(mediaFeatureResult)
+    , m_expResult(mediaFeatureResult)
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
+MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool mediaFeatureResult)
+    : m_mediaType(acceptedMediaType)
+    , m_frame(0)
+    , m_style(0)
+    , m_expResult(mediaFeatureResult)
+{
+}
+
+MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
     : m_mediaType(acceptedMediaType)
     , m_frame(frame)
     , m_style(style)
-    , m_mediaFeatureResult(false) // Ignored if both m_frame and m_style are non-null.
+    , m_expResult(false) // doesn't matter when we have m_frame and m_style
 {
 }
 
@@ -126,35 +136,35 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
         return true;
 
     const Vector<OwnPtr<MediaQuery> >& queries = querySet->queryVector();
+    if (!queries.size())
+        return true; // empty query list evaluates to true
 
-    bool result = true;
+    // iterate over queries, stop if any of them eval to true (OR semantics)
+    bool result = false;
+    for (size_t i = 0; i < queries.size() && !result; ++i) {
+        MediaQuery* query = queries[i].get();
 
-    // Iterate over queries and stop if any of them eval to true ("or" semantics).
-    for (size_t i = 0; i < queries.size(); ++i) {
-        const MediaQuery& query = *queries[i];
-
-        result = false;
-
-        if (query.ignored())
+        if (query->ignored())
             continue;
 
-        if (mediaTypeMatch(query.mediaType())) {
-            const Vector<OwnPtr<MediaQueryExp> >& expressions = query.expressions();
+        if (mediaTypeMatch(query->mediaType())) {
+            const Vector<OwnPtr<MediaQueryExp> >* exps = query->expressions();
             // iterate through expressions, stop if any of them eval to false
             // (AND semantics)
             size_t j = 0;
-            for (; j < expressions.size(); ++j) {
-                result = eval(*expressions[j]);
-                if (styleResolver && expressions[j]->isViewportDependent())
-                    styleResolver->addViewportDependentMediaQueryResult(*expressions[j], result);
-                if (!result)
+            for (; j < exps->size(); ++j) {
+                bool exprResult = eval(exps->at(j).get());
+                if (styleResolver && exps->at(j)->isViewportDependent())
+                    styleResolver->addViewportDependentMediaQueryResult(exps->at(j).get(), exprResult);
+                if (!exprResult)
                     break;
             }
-        }
 
-        result = applyRestrictor(query.restrictor(), result);
-        if (result)
-            break;
+            // assume true if we are at the end of the list,
+            // otherwise assume false
+            result = applyRestrictor(query->restrictor(), exps->size() == j);
+        } else
+            result = applyRestrictor(query->restrictor(), false);
     }
 
     return result;
@@ -253,7 +263,7 @@ static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
         int h = 0;
         int v = 0;
         if (parseAspectRatio(value, h, v))
-            return v && compareValue(width * v, height * h, op);
+            return v != 0 && compareValue(width * v, height * h, op);
         return false;
     }
 
@@ -269,7 +279,7 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, F
         int h = 0;
         int v = 0;
         if (parseAspectRatio(value, h, v))
-            return v && compareValue(static_cast<int>(sg.width()) * v, static_cast<int>(sg.height()) * h, op);
+            return v != 0  && compareValue(static_cast<int>(sg.width()) * v, static_cast<int>(sg.height()) * h, op);
         return false;
     }
 
@@ -493,51 +503,68 @@ static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, 
 
 static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
+    bool returnValueIfNoParameter;
+    int have3dRendering;
+
+#if ENABLE(3D_RENDERING)
     bool threeDEnabled = false;
-#if ENABLE(3D_RENDERING) && USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* view = frame->contentRenderer())
         threeDEnabled = view->compositor()->canRender3DTransforms();
+#endif
+
+    returnValueIfNoParameter = threeDEnabled;
+    have3dRendering = threeDEnabled ? 1 : 0;
 #else
     UNUSED_PARAM(frame);
+    returnValueIfNoParameter = false;
+    have3dRendering = 0;
 #endif
+
     if (value) {
         float number;
-        return numberValue(value, number) && compareValue(static_cast<int>(threeDEnabled), static_cast<int>(number), op);
+        return numberValue(value, number) && compareValue(have3dRendering, static_cast<int>(number), op);
     }
-    return threeDEnabled;
+    return returnValueIfNoParameter;
 }
 
 static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
-    ASSERT_UNUSED(op, op == NoPrefix);
+    UNUSED_PARAM(op);
     if (!value)
         return true;
     return Page::stringToViewMode(static_cast<CSSPrimitiveValue*>(value)->getStringValue()) == frame->page()->viewMode();
 }
 
-static FunctionMap* createFunctionMap()
+static void createFunctionMap()
 {
-    FunctionMap* functionMap = new FunctionMap;
+    // Create the table.
+    gFunctionMap = new FunctionMap;
 #define ADD_TO_FUNCTIONMAP(name, str)  \
-    functionMap->set(name##MediaFeature.impl(), name##MediaFeatureEval);
+    gFunctionMap->set(name##MediaFeature.impl(), name##MediaFeatureEval);
     CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(ADD_TO_FUNCTIONMAP);
 #undef ADD_TO_FUNCTIONMAP
-    return functionMap;
 }
 
-bool MediaQueryEvaluator::eval(const MediaQueryExp& expression) const
+bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
 {
     if (!m_frame || !m_style)
-        return m_mediaFeatureResult;
+        return m_expResult;
 
-    if (!expression.isValid())
+    if (!expr->isValid())
         return false;
 
-    static FunctionMap* functionMap = createFunctionMap();
-    MediaFeatureEvaluationFunction function = functionMap->get(expression.mediaFeature().impl());
+    if (!gFunctionMap)
+        createFunctionMap();
 
-    // Start with no prefix: Some trampoline functions add the prefix and call other media feature functions.
-    return function && function(expression.value(), m_style.get(), m_frame, NoPrefix);
+    // call the media feature evaluation function. Assume no prefix
+    // and let trampoline functions override the prefix if prefix is
+    // used
+    EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
+    if (func)
+        return func(expr->value(), m_style.get(), m_frame, NoPrefix);
+
+    return false;
 }
 
 } // namespace

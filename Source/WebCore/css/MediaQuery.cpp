@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+// http://dev.w3.org/csswg/cssom/#serialize-a-media-query
 String MediaQuery::serialize() const
 {
     StringBuilder result;
@@ -65,7 +66,6 @@ String MediaQuery::serialize() const
         result.append(" and ");
         result.append(m_expressions->at(i)->serialize());
     }
-
     return result.toString();
 }
 
@@ -74,33 +74,32 @@ static bool expressionCompare(const OwnPtr<MediaQueryExp>& a, const OwnPtr<Media
     return codePointCompare(a->serialize(), b->serialize()) < 0;
 }
 
-MediaQuery::MediaQuery(Restrictor restrictor, const String& mediaType, PassOwnPtr<ExpressionVector> expressions)
-    : m_restrictor(restrictor)
+
+MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > > exprs)
+    : m_restrictor(r)
     , m_mediaType(mediaType.lower())
-    , m_expressions(expressions)
+    , m_expressions(exprs)
     , m_ignored(false)
 {
     if (!m_expressions) {
-        m_expressions = adoptPtr(new ExpressionVector);
+        m_expressions = adoptPtr(new Vector<OwnPtr<MediaQueryExp> >);
         return;
     }
 
-    ExpressionVector& vector = *m_expressions;
+    nonCopyingSort(m_expressions->begin(), m_expressions->end(), expressionCompare);
 
-    nonCopyingSort(vector.begin(), vector.end(), expressionCompare);
+    // remove all duplicated expressions
+    String key;
+    for (int i = m_expressions->size() - 1; i >= 0; --i) {
 
-    String previousSerializedExpression;
-    for (size_t i = vector.size(); i; ) {
-        --i;
+        // if not all of the expressions is valid the media query must be ignored.
+        if (!m_ignored)
+            m_ignored = !m_expressions->at(i)->isValid();
 
-        // If any expression is invalid, the entire media query must be ignored.
-        m_ignored = m_ignored || !vector[i]->isValid();
-
-        // Remove duplicate expressions.
-        String serializedExpression = vector[i]->serialize();
-        if (serializedExpression == previousSerializedExpression)
-            vector.remove(i);
-        previousSerializedExpression = serializedExpression;
+        if (m_expressions->at(i)->serialize() == key)
+            m_expressions->remove(i);
+        else
+            key = m_expressions->at(i)->serialize();
     }
 }
 
@@ -109,31 +108,29 @@ MediaQuery::MediaQuery(const MediaQuery& o)
     , m_mediaType(o.m_mediaType)
     , m_expressions(adoptPtr(new Vector<OwnPtr<MediaQueryExp> >(o.m_expressions->size())))
     , m_ignored(o.m_ignored)
-    , m_serializedQuery(o.m_serializedQuery)
+    , m_serializationCache(o.m_serializationCache)
 {
     for (unsigned i = 0; i < m_expressions->size(); ++i)
         (*m_expressions)[i] = o.m_expressions->at(i)->copy();
-}
-
-PassOwnPtr<MediaQuery> MediaQuery::copy() const
-{
-    return adoptPtr(new MediaQuery(*this));
 }
 
 MediaQuery::~MediaQuery()
 {
 }
 
+// http://dev.w3.org/csswg/cssom/#compare-media-queries
 bool MediaQuery::operator==(const MediaQuery& other) const
 {
     return cssText() == other.cssText();
 }
 
-const String& MediaQuery::cssText() const
+// http://dev.w3.org/csswg/cssom/#serialize-a-list-of-media-queries
+String MediaQuery::cssText() const
 {
-    if (m_serializedQuery.isNull())
-        const_cast<MediaQuery*>(this)->m_serializedQuery = serialize();
-    return m_serializedQuery;
+    if (m_serializationCache.isNull())
+        const_cast<MediaQuery*>(this)->m_serializationCache = serialize();
+
+    return m_serializationCache;
 }
 
-} // namespace WebCore
+} //namespace

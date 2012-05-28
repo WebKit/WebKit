@@ -1,3 +1,43 @@
+2012-05-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118650.
+        http://trac.webkit.org/changeset/118650
+        https://bugs.webkit.org/show_bug.cgi?id=87639
+
+        Patch caused massive failures throughout the builders
+        (Requested by zdobersek on #webkit).
+
+        * css/MediaQuery.cpp:
+        (WebCore):
+        (WebCore::MediaQuery::serialize):
+        (WebCore::MediaQuery::MediaQuery):
+        (WebCore::MediaQuery::cssText):
+        * css/MediaQuery.h:
+        (WebCore::MediaQuery::expressions):
+        (WebCore::MediaQuery::mediaType):
+        (MediaQuery):
+        (WebCore::MediaQuery::copy):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::eval):
+        (WebCore::aspect_ratioMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        (WebCore::transform_3dMediaFeatureEval):
+        (WebCore::view_modeMediaFeatureEval):
+        (WebCore::createFunctionMap):
+        * css/MediaQueryEvaluator.h:
+        (WebCore):
+        (MediaQueryEvaluator):
+        * css/StyleResolver.cpp:
+        (WebCore):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (MediaQueryResult):
+        (WebCore::MediaQueryResult::MediaQueryResult):
+        (WebCore):
+        (StyleResolver):
+
 2012-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move allowRoundingHacks to Internals interface
