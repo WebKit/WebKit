@@ -1,3 +1,13 @@
+2012-05-29  David Barr  <davidbarr@chromium.org>
+
+        [text-overflow: ellipsis] WebKit should ignore the ellipsis for the purpose of dispatching mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=63781
+
+        Reviewed by Eric Seidel.
+
+        * fast/css/text-overflow-ellipsis-hit-test-expected.txt: Added.
+        * fast/css/text-overflow-ellipsis-hit-test.html: Added.
+
 2012-05-29  Jessie Berlin  <jberlin@apple.com>
 
         <progress> element is unsupported on Windows

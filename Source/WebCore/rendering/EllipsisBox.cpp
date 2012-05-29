@@ -104,28 +104,8 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style->colorSpace());
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
+bool EllipsisBox::nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint&, const LayoutPoint&, LayoutUnit, LayoutUnit)
 {
-    LayoutPoint adjustedLocation = accumulatedOffset + roundedLayoutPoint(topLeft());
-
-    // Hit test the markup box.
-    if (m_markupBox) {
-        RenderStyle* style = m_renderer->style(isFirstLineStyle());
-        LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - m_markupBox->x();
-        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent());
-        if (m_markupBox->nodeAtPoint(request, result, pointInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, pointInContainer - LayoutSize(mtx, mty));
-            return true;
-        }
-    }
-
-    LayoutRect boundsRect(adjustedLocation, LayoutSize(m_logicalWidth, m_height));
-    if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
-        renderer()->updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, boundsRect))
-            return true;
-    }
-
     return false;
 }
 
