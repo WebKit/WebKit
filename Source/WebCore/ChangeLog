@@ -1,3 +1,24 @@
+2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authentication challenge issue when loading subresource
+        https://bugs.webkit.org/show_bug.cgi?id=87660
+
+        Reviewed by Rob Buis.
+
+        We should try to store the credential information as soon as we
+        receive http status notification which indicates that the
+        authentication succeeds, instead of storing credentials when the
+        main resource receives notify done which is too late for loading
+        subresource.
+
+        Internally reviewed by Joe Mason <jmason@rim.com>
+
+        No new tests since there is no change in behavior.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyStatusReceived):
+        (WebCore::NetworkJob::handleNotifyClose):
+
 2012-05-29  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Move DefaultFonts.plist to C++ code

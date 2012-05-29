@@ -208,6 +208,13 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
         m_response.setHTTPStatusCode(status);
 
     m_response.setHTTPStatusText(message);
+
+    if (!isError(m_extendedStatusCode))
+        storeCredentials();
+    else if (isUnauthorized(m_extendedStatusCode)) {
+        purgeCredentials();
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "Authentication failed, purge the stored credentials for this site.");
+    }
 }
 
 void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers)
@@ -440,14 +447,6 @@ void NetworkJob::handleNotifyClose(int status)
             // Connection failed before sending notifyStatusReceived: use generic NetworkError.
             notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusNetworkError, 0);
         }
-
-        // If an HTTP authentication-enabled request is successful, save
-        // the credentials for later reuse. If the request fails, delete
-        // the saved credentials.
-        if (!isError(m_extendedStatusCode))
-            storeCredentials();
-        else if (isUnauthorized(m_extendedStatusCode))
-            purgeCredentials();
 
         if (shouldReleaseClientResource()) {
             if (isRedirect(m_extendedStatusCode) && (m_redirectCount >= s_redirectMaximum))
