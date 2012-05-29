@@ -2981,6 +2981,7 @@ BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRAS
 BUGWK70866 LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
+BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-removal.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS

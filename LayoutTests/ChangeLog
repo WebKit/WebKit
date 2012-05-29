@@ -1,3 +1,9 @@
+2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Updating test expectations (fast/forms/form-associated-element-removal MISSING).
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Victor Carbune  <victor@rosedu.org>
 
         Display cues in the controls area
