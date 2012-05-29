@@ -16,3 +16,5 @@ DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 OTHER_FILES += \
     WebView/* \
     common/*
+
+RESOURCES = resources.qrc
