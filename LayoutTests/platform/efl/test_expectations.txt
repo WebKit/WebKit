@@ -122,6 +122,9 @@ BUGWKEFL SKIP : fast/events/option-tab.html = FAIL
 BUGWKEFL : fast/forms/input-placeholder-paint-order.html = MISSING
 BUGWKEFL : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING
 
+// Implementing copy{En,De}codedHostName only to test them does not make sense
+BUGWK86080 SKIP : fast/encoding/idn-security.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////

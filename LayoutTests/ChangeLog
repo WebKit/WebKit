@@ -1,3 +1,15 @@
+2012-05-29  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][DRT] move idn encoding test to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=86080
+
+        Unreviewed gardening. Implementing copy{En,De}codedHostName just
+        to test them is not useful: marking fast/encoding/idn-security.html
+        as expected to fail.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
