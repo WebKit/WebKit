@@ -110,6 +110,11 @@ void HTMLFormControlElement::updateFieldSetAndLegendAncestor() const
     m_fieldSetAncestorValid = true;
 }
 
+void HTMLFormControlElement::ancestorDisabledStateWasChanged()
+{
+    disabledAttributeChanged();
+}
+
 void HTMLFormControlElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == formAttr)
@@ -123,6 +128,7 @@ void HTMLFormControlElement::parseAttribute(const Attribute& attribute)
         bool oldReadOnly = m_readOnly;
         m_readOnly = !attribute.isNull();
         if (oldReadOnly != m_readOnly) {
+            setNeedsWillValidateCheck();
             setNeedsStyleRecalc();
             if (renderer() && renderer()->style()->hasAppearance())
                 renderer()->theme()->stateChanged(renderer(), ReadOnlyState);
@@ -134,11 +140,11 @@ void HTMLFormControlElement::parseAttribute(const Attribute& attribute)
             requiredAttributeChanged();
     } else
         HTMLElement::parseAttribute(attribute);
-    setNeedsWillValidateCheck();
 }
 
 void HTMLFormControlElement::disabledAttributeChanged()
 {
+    setNeedsWillValidateCheck();
     setNeedsStyleRecalc();
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), EnabledState);
@@ -218,6 +224,7 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
 
 Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode* insertionPoint)
 {
+    m_fieldSetAncestorValid = false;
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
     HTMLElement::insertedInto(insertionPoint);
@@ -362,7 +369,7 @@ bool HTMLFormControlElement::recalcWillValidate() const
         if (m_dataListAncestorState == Unknown)
             m_dataListAncestorState = NotInsideDataList;
     }
-    return m_dataListAncestorState == NotInsideDataList && !m_disabled && !m_readOnly;
+    return m_dataListAncestorState == NotInsideDataList && !disabled() && !m_readOnly;
 }
 
 bool HTMLFormControlElement::willValidate() const

@@ -52,9 +52,9 @@ void HTMLFieldSetElement::disabledAttributeChanged()
     // This element must be updated before the style of nodes in its subtree gets recalculated.
     HTMLFormControlElement::disabledAttributeChanged();
 
-    for (Node* currentNode = this; currentNode; currentNode = currentNode->traverseNextNode(this)) {
+    for (Node* currentNode = this->traverseNextNode(this); currentNode; currentNode = currentNode->traverseNextNode(this)) {
         if (currentNode && currentNode->isElementNode() && toElement(currentNode)->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(currentNode)->setNeedsStyleRecalc();
+            static_cast<HTMLFormControlElement*>(currentNode)->ancestorDisabledStateWasChanged();
     }
 }
 

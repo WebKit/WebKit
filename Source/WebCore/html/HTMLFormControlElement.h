@@ -52,6 +52,7 @@ public:
     bool formNoValidate() const;
 
     void updateFieldSetAndLegendAncestor() const;
+    void ancestorDisabledStateWasChanged();
 
     virtual void reset() { }
 

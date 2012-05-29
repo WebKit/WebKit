@@ -1,3 +1,37 @@
+2012-05-28  Kent Tamura  <tkent@chromium.org>
+
+        Form controls in <fieldset disabled> should not be validated.
+        https://bugs.webkit.org/show_bug.cgi?id=87381
+
+        Reviewed by Hajime Morita.
+
+        We need to use disabeld() instead of m_disabled to calculate
+        willValidate property. Also, we need to update willValidate if
+        necessary.
+
+        Test: fast/forms/fieldset/validation-in-fieldset.html
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::disabledAttributeChanged):
+         - Do not traverse this.
+         - Calls ancestorDisabledStateWasChanged() instead of
+          setNeedsStyleRecalc() because we'd like to do additional tasks.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::ancestorDisabledStateWasChanged):
+        Added. Just calls disabledAttributeChanged().
+        (WebCore::HTMLFormControlElement::parseAttribute):
+        Do not call setNeedsWillValidateCheck() whenever an attribute is updated.
+        It should be called only if disabled or readonly attribute is updated.
+        (WebCore::HTMLFormControlElement::disabledAttributeChanged):
+        Add setNeedsWillValidateCheck(). It was moved from parseAttribute().
+        (WebCore::HTMLFormControlElement::insertedInto):
+        Invalidate ancestor information.
+        (WebCore::HTMLFormControlElement::recalcWillValidate):
+        Use disabled() instead of m_disabled. disabled() takes care of
+        ancestor's disabled state.
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+
 2012-05-28  Rakesh KN  <rakesh.kn@motorola.com>
 
         [Forms] HTMLFieldSetElement.idl doesn't have elements attribute.
