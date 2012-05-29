@@ -170,7 +170,7 @@ mroot > * + mrow, mroot > * + mfenced { /* FIXME: eliminate */
 mtable {
     display: inline-table;
     text-align: center;
-    vertical-align: -40%;
+    vertical-align: middle;
 }
 
 mtr {

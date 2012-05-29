@@ -190,7 +190,7 @@ layer at (0,0) size 800x544
             text run at (0,25) width 27: "text "
           RenderMathMLMath {math} at (27,0) size 92x69
             RenderMathMLOperator {mo} at (1,0) size 6x69
-            RenderTable {mtable} at (7,4) size 78x57
+            RenderTable {mtable} at (7,8) size 78x57
               RenderTableSection (anonymous) at (0,0) size 78x57
                 RenderTableRow {mtr} at (0,0) size 78x19
                   RenderTableCell {mtd} at (0,0) size 26x19 [r=0 c=0 rs=1 cs=1]

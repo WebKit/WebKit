@@ -220,7 +220,7 @@ layer at (0,0) size 800x358
                         text run at (0,0) width 9: "+"
                   RenderMathMLRow {mrow} at (75,0) size 30x68
                     RenderMathMLOperator {mo} at (0,0) size 6x68
-                    RenderTable {mtable} at (6,4) size 18x56
+                    RenderTable {mtable} at (6,7) size 18x56
                       RenderTableSection (anonymous) at (0,0) size 18x56
                         RenderTableRow {mtr} at (0,2) size 18x16
                           RenderTableCell {mtd} at (2,2) size 14x16 [r=0 c=0 rs=1 cs=1]

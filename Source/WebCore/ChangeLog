@@ -1,3 +1,19 @@
+2012-05-28  David Barton  <dbarton@mathscribe.com>
+
+        mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86786
+
+        Reviewed by Darin Adler.
+
+        The fix to https://bugs.webkit.org/show_bug.cgi?id=84167 changed inline-table baselines,
+        including for <mtable>. We therefore have to correct <mtable>'s vertical-align CSS
+        property.
+
+        Tested by existing tests mo-stretch.html, row-alignment.xhtml, and tables.xhtml.
+
+        * css/mathml.css:
+        (mtable):
+
 2012-05-28  Luke Macpherson  <macpherson@chromium.org>
 
         Make CSSParser::filteredProperties() O(n) instead of O(n^2) and improve readability.
