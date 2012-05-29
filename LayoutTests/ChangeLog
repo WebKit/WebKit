@@ -1,3 +1,10 @@
+2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Adding VISTA timeout expectations to a number of viewport tests. Also, narrowing optgroup-clicking.html
+        to be just MAC.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Victor Carbune  <victor@rosedu.org>
 
         Update cue event dispatching for zero and negative duration cues
