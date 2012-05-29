@@ -1,3 +1,23 @@
+2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r109729): The optgroup element's "disabled" attribute has no effect to rendering and selection
+        https://bugs.webkit.org/show_bug.cgi?id=87614
+
+        Reviewed by Kent Tamura.
+
+        Note: An image for optgroup-rendering.html will be change due by
+        BUG-87719. Color of option elements should be blue (:enabled 
+        pseudo class) instead of green.
+
+        * fast/forms/select/optgroup-clicking-expected.txt: Added.
+        * fast/forms/select/optgroup-clicking.html: Added.
+        * fast/forms/select/optgroup-disabled-expected.txt: Added.
+        * fast/forms/select/optgroup-disabled.html: Added.
+        * fast/forms/select/optgroup-rendering.html: Added.
+        * platform/chromium/test_expectations.txt: Add MISSING entry for optgroup-rendering.html.
+        * platform/chromium-linux/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-linux/fast/forms/select/optgroup-rendering-expected.txt: Added.
+
 2012-05-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         REGRESSION(r118742): It made inspector/profiler/heap-snapshot-loader.html fail on Lion, Qt

@@ -1,3 +1,28 @@
+2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r109729): The optgroup element's "disabled" attribute has no effect to rendering and selection
+        https://bugs.webkit.org/show_bug.cgi?id=87614
+
+        Reviewed by Kent Tamura.
+
+        This patch adds HTMLOptGroupElement::disabled and isEnabledFormControl
+        methods which was implemented in HTMLFormControlElement at r109729 and
+        updates CSS pseudo class checker to check "optgroup" element.
+
+        Tests: fast/forms/select/optgroup-clicking.html
+               fast/forms/select/optgroup-disabled.html
+               fast/forms/select/optgroup-rendering.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector): On disabled and enabled pseudo class checker. 
+        We checked tag name "optgroup" in addition isFormControlElement.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement): Checks optgroup.disabled.
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::disabled): Added.
+        * html/HTMLOptGroupElement.h:
+        (HTMLOptGroupElement): Added isEnabledFormControl.
+
 2012-05-29  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] [Regression] SELECT popup misplaced when there is not enough vertical space

@@ -1392,6 +1392,9 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->hasTagName(optionTag))
         return false;
 
+    if (element->hasTagName(optgroupTag) && m_element->disabled() != element->disabled())
+        return false;
+
     bool isControl = element->isFormControlElement();
 
     if (isControl != m_element->isFormControlElement())

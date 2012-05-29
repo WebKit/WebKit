@@ -49,6 +49,11 @@ PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName&
     return adoptRef(new HTMLOptGroupElement(tagName, document));
 }
 
+bool HTMLOptGroupElement::disabled() const
+{
+    return fastHasAttribute(disabledAttr);
+}
+
 bool HTMLOptGroupElement::supportsFocus() const
 {
     return HTMLElement::supportsFocus();
