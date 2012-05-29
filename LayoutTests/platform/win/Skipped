@@ -1781,3 +1781,6 @@ ietestcenter/css3/valuesandunits/units-000.htm
 
 # Network Information is not supported yet.
 networkinformation
+
+# Asserts/crashes in PluginView::didFinishLoading
+fast/loader/reload-zero-byte-plugin.html

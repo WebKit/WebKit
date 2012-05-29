@@ -1,3 +1,12 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] ASSERT(m_manualStream) failed in PluginView::didFinishLoading running
+        fast/loader/reload-zero-byte-plugin.html
+
+        Skip the test on Windows to get the bots greener.
+
+        * platform/win/Skipped:
+
 2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Adding VISTA timeout expectations to a number of viewport tests. Also, narrowing optgroup-clicking.html
