@@ -1,3 +1,10 @@
+2012-05-29  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r118631. http/tests/appcache/load-from-appcache-defer-resume-crash.html
+        fails because of missing LayoutTestController::setUseDeferredFrameLoading implementation.
+
+        * platform/qt/Skipped:
+
 2012-05-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
