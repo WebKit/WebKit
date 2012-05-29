@@ -1,3 +1,7 @@
+2012-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        * platform/mac/Skipped: Skipping a heap profiler test (unsupported functionality).
+
 2012-05-29  Jessie Berlin  <jberlin@apple.com>
 
         Regression: fast/forms/select/optgroup-clicking.html is failing / timing out
