@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>common/change-document-title.js</file>
+    </qresource>
+</RCC>

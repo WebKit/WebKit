@@ -268,6 +268,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QQmlListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
     Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
     Q_PROPERTY(double devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged)
+    Q_PROPERTY(QList<QUrl> userScripts READ userScripts WRITE setUserScripts NOTIFY userScriptsChanged)
     Q_ENUMS(NavigationRequestActionExperimental)
 
 public:
@@ -300,6 +301,8 @@ public:
     void setUserAgent(const QString& userAgent);
     double devicePixelRatio() const;
     void setDevicePixelRatio(double);
+    QList<QUrl> userScripts() const;
+    void setUserScripts(const QList<QUrl>& userScripts);
 
     QWebKitTest* test();
 
@@ -353,6 +356,7 @@ Q_SIGNALS:
     void devicePixelRatioChanged();
     void enterFullScreenRequested();
     void exitFullScreenRequested();
+    void userScriptsChanged();
 
 private:
     QQuickWebView* q_ptr;

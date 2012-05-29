@@ -102,6 +102,11 @@ void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
     }
 }
 
+void WebPageProxy::setUserScripts(const Vector<String>& scripts)
+{
+    process()->send(Messages::WebPage::SetUserScripts(scripts), m_pageID);
+}
+
 #if PLUGIN_ARCHITECTURE(X11)
 void WebPageProxy::createPluginContainer(uint64_t& windowID)
 {

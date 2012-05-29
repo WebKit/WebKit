@@ -1,3 +1,49 @@
+2012-05-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Allow user to inject JS scripts when the page loads
+        https://bugs.webkit.org/show_bug.cgi?id=85827
+
+        Reviewed by Simon Hausmann.
+
+        Create a new experimental property to list URLs of JS scripts that should be
+        loaded when a page is loaded. These scripts will run in the normal JS environment
+        of the page.
+
+        The supported URL schemes are file:/// and qrc:///. The scripts are read from the
+        UI process and transfered to the Web process.
+
+        Together with the experimental messaging API this provides a way for the
+        application to manipulate the DOM (by injecting a script that does the
+        manipulation and communicating with it via postMessage). This covers some of the
+        use cases of QWebElement in our WK1 API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (readUserScript):
+        (QQuickWebViewPrivate::updateUserScripts):
+        (QQuickWebViewExperimental::userScripts):
+        (QQuickWebViewExperimental::setUserScripts):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_userScripts.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/append-document-title.js: Added.
+        * UIProcess/API/qt/tests/qmltests/common/big-user-script.js: Added.
+        * UIProcess/API/qt/tests/qmltests/common/change-document-title.js: Added.
+        * UIProcess/API/qt/tests/qmltests/resources.qrc: Added.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::setUserScripts):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::setUserScripts):
+        (WebKit):
+
 2012-05-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118752.

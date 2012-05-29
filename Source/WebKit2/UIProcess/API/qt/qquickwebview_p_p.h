@@ -124,6 +124,7 @@ public:
     bool renderToOffscreenBuffer() const { return m_renderToOffscreenBuffer; }
     bool transparentBackground() const;
     void setNavigatorQtObjectEnabled(bool);
+    void updateUserScripts();
 
     QPointF contentPos() const;
     void setContentPos(const QPointF&);
@@ -191,6 +192,8 @@ protected:
     QQmlComponent* databaseQuotaDialog;
 
     WebCore::ViewportAttributes attributes;
+
+    QList<QUrl> userScripts;
 
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
