@@ -468,6 +468,9 @@ protected:
 
     void computeInitialRegionRangeForBlock();
     void computeRegionRangeForBlock();
+    
+    virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
+    
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

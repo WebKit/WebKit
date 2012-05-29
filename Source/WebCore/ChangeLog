@@ -1,3 +1,20 @@
+2012-05-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87759
+        
+        Pull the initial page logical height checking for columns into its own separate function. This
+        will allow the derived RenderMultiColumnBlock class to do its own setup there. It also has the
+        effect of cleaning up layoutBlock even for the existing code.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::checkForPaginationLogicalHeightChange):
+        (WebCore):
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+
 2012-05-29  Victor Carbune  <victor@rosedu.org>
 
         Update cue event dispatching for zero and negative duration cues

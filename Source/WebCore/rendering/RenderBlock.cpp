@@ -1364,29 +1364,8 @@ bool RenderBlock::recomputeLogicalWidth()
     return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth();
 }
 
-void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
 {
-    ASSERT(needsLayout());
-
-    if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
-        return;                                      // cause us to come in here.  Just bail.
-
-    if (!relayoutChildren && simplifiedLayout())
-        return;
-
-    LayoutRepainter repainter(*this, everHadLayout() && checkForRepaintDuringLayout());
-
-    if (recomputeLogicalWidth())
-        relayoutChildren = true;
-
-    m_overflow.clear();
-
-    clearFloats();
-
-    LayoutUnit previousHeight = logicalHeight();
-    setLogicalHeight(ZERO_LAYOUT_UNIT);
-    bool hasSpecifiedPageLogicalHeight = false;
-    bool pageLogicalHeightChanged = false;
     ColumnInfo* colInfo = columnInfo();
     if (hasColumns()) {
         if (!pageLogicalHeight) {
@@ -1410,10 +1389,37 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
         colInfo->setPaginationUnit(paginationUnit());
     }
+}
+
+void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+{
+    ASSERT(needsLayout());
+
+    if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
+        return;                                      // cause us to come in here.  Just bail.
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    LayoutRepainter repainter(*this, everHadLayout() && checkForRepaintDuringLayout());
+
+    if (recomputeLogicalWidth())
+        relayoutChildren = true;
+
+    m_overflow.clear();
+
+    clearFloats();
+
+    LayoutUnit previousHeight = logicalHeight();
+    setLogicalHeight(ZERO_LAYOUT_UNIT);
+
+    bool pageLogicalHeightChanged = false;
+    bool hasSpecifiedPageLogicalHeight = false;
+    checkForPaginationLogicalHeightChange(pageLogicalHeight, pageLogicalHeightChanged, hasSpecifiedPageLogicalHeight);
 
     RenderView* renderView = view();
     RenderStyle* styleToUse = style();
-    LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
+    LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, columnInfo());
 
     if (inRenderFlowThread()) {
         // Regions changing widths can force us to relayout our children.
