@@ -22,6 +22,7 @@
 #define V8Float64Array_h
 
 #include "V8ArrayBufferView.h"
+#include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>

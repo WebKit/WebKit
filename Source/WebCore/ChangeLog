@@ -1,3 +1,65 @@
+2012-05-28  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Implement V8Binding::v8Null(isolate) and use it in CodeGeneratorV8.pm
+        https://bugs.webkit.org/show_bug.cgi?id=87692
+
+        Reviewed by Adam Barth.
+
+        Since v8::Null(isolate) crashes if we pass a NULL isolate, we are planning
+        to pass Isolate to v8::Null() in the following steps:
+
+        [1] Implement V8Bindings::v8Null(isolate). v8Null(isolate) does the NULL check.
+        If isolate is NULL, v8Null(isolate) calls v8::Null(). Otherwise,
+        v8Null(isolate) calls v8::Null(isolate).
+
+        [2] In V8 bindings, we replace v8::Null() with v8::Null(isolate) for a non-optional
+        'isolate' parameter. (e.g. void foo(..., Isolate* isolate) { v8::Null(); } )
+
+        [3] In V8 bindings, we replace v8::Null() with v8Null(isolate) for an optional
+        'isolate' parameter. (e.g. void foo(..., Isolate* isolate = 0) { v8::Null(); } )
+
+        This bug fixes [1] by implementing V8Binding::v8Null(isolate). Also this patch uses
+        V8Binding::v8Null(isolate) in bindings/v8/*.{h,cpp}.
+
+        No tests. No behavior change.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (NativeToJSValue):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::valueAttrGetter):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::readonlyValueAttrGetter):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::toV8):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8Null):
+        (WebCore):
+        (WebCore::v8DateOrNull):
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore):
+
 2012-05-28  Kent Tamura  <tkent@chromium.org>
 
         Fix a crash in HTMLFormControlElement::disabled().

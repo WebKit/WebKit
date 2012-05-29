@@ -22,6 +22,7 @@
 #define V8TestObj_h
 
 #include "TestObj.h"
+#include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -66,7 +67,7 @@ v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl, v8::Isolate* isolate)
 inline v8::Handle<v8::Value> toV8(TestObj* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8Null(isolate);
     return V8TestObj::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl, v8::Isolate* isolate = 0)

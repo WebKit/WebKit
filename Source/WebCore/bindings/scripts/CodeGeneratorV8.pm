@@ -249,6 +249,7 @@ sub GenerateHeader
 
     $headerIncludes{"wtf/text/StringHash.h"} = 1;
     $headerIncludes{"WrapperTypeInfo.h"} = 1;
+    $headerIncludes{"V8Binding.h"} = 1;
     $headerIncludes{"V8DOMWrapper.h"} = 1;
     $headerIncludes{"wtf/HashMap.h"} = 1;
     $headerIncludes{"v8.h"} = 1;
@@ -455,7 +456,7 @@ END
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Isolate* isolate = 0${forceNewObjectParameter})
 {
     if (!impl)
-        return v8::Null();
+        return v8Null(isolate);
     return ${className}::wrap(impl, isolate${forceNewObjectCall});
 }
 END
@@ -472,7 +473,7 @@ v8::Handle<v8::Value> toV8Slow(Node*, v8::Isolate*, bool);
 inline v8::Handle<v8::Value> toV8(Node* impl, v8::Isolate* isolate = 0, bool forceNewObject = false)
 {
     if (UNLIKELY(!impl))
-        return v8::Null();
+        return v8Null(isolate);
     if (UNLIKELY(forceNewObject))
         return toV8Slow(impl, isolate, forceNewObject);
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
@@ -3798,7 +3799,7 @@ sub NativeToJSValue
     my $signature = shift;
     my $value = shift;
     my $getIsolate = shift;
-    $getIsolate = $getIsolate ? ", $getIsolate" : "";
+    my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
     my $type = GetTypeFromSignature($signature);
 
     return "v8Boolean($value)" if $type eq "boolean";
@@ -3818,7 +3819,7 @@ sub NativeToJSValue
     return "v8::Integer::New($value)" if $nativeType eq "int";
     return "v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
 
-    return "v8DateOrNull($value)" if $type eq "Date";
+    return "v8DateOrNull($value$getIsolateArg)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
     return "v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
     return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type);
@@ -3830,13 +3831,13 @@ sub NativeToJSValue
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
-            return "v8StringOrNull($value$getIsolate)" if $conv eq "Null";
-            return "v8StringOrUndefined($value$getIsolate)" if $conv eq "Undefined";
-            return "v8StringOrFalse($value$getIsolate)" if $conv eq "False";
+            return "v8StringOrNull($value$getIsolateArg)" if $conv eq "Null";
+            return "v8StringOrUndefined($value$getIsolateArg)" if $conv eq "Undefined";
+            return "v8StringOrFalse($value$getIsolateArg)" if $conv eq "False";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return "v8String($value$getIsolate)";
+        return "v8String($value$getIsolateArg)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
@@ -3845,35 +3846,35 @@ sub NativeToJSValue
             AddToImplIncludes("V8$arrayType.h");
             AddToImplIncludes("$arrayType.h");
         }
-        return "v8Array($value$getIsolate)";
+        return "v8Array($value$getIsolateArg)";
     }
 
     AddIncludesForType($type);
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? "$getIsolate, true)" : "$getIsolate)");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? "$getIsolateArg, true)" : "$getIsolateArg)");
     }
 
     if ($type eq "EventTarget") {
-        return "V8DOMWrapper::convertEventTargetToV8Object($value$getIsolate)";
+        return "V8DOMWrapper::convertEventTargetToV8Object($value$getIsolateArg)";
     }
 
     if ($type eq "EventListener") {
         AddToImplIncludes("V8AbstractEventListener.h");
-        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(v8::Null())";
+        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(" . ($getIsolate ? "v8::Null($getIsolate)" : "v8::Null()") . ")";
     }
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("$type.h");
-        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(v8::Null())";
+        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(" . ($getIsolate ? "v8::Null($getIsolate)" : "v8::Null()") . ")";
     }
 
     AddToImplIncludes("wtf/RefCounted.h");
     AddToImplIncludes("wtf/RefPtr.h");
     AddToImplIncludes("wtf/GetPtr.h");
 
-    return "toV8($value$getIsolate)";
+    return "toV8($value$getIsolateArg)";
 }
 
 sub ReturnNativeToJSValue

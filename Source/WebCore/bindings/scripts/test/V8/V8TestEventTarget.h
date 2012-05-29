@@ -22,6 +22,7 @@
 #define V8TestEventTarget_h
 
 #include "TestEventTarget.h"
+#include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -62,7 +63,7 @@ v8::Handle<v8::Object> V8TestEventTarget::wrap(TestEventTarget* impl, v8::Isolat
 inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8Null(isolate);
     return V8TestEventTarget::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl, v8::Isolate* isolate = 0)

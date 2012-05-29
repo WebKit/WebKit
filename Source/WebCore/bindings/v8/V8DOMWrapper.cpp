@@ -54,10 +54,12 @@
 #include "V8Proxy.h"
 #include "V8StyleSheet.h"
 #include "V8WorkerContextEventListener.h"
+#include "V8XPathNSResolver.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WrapperTypeInfo.h"
+#include "XPathNSResolver.h"
 #include <algorithm>
 #include <utility>
 #include <v8-debug.h>

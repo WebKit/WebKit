@@ -39,12 +39,9 @@
 #include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
-#include "V8Event.h"
 #include "V8IsolatedContext.h"
 #include "V8Utilities.h"
-#include "V8XPathNSResolver.h"
 #include "WrapperTypeInfo.h"
-#include "XPathNSResolver.h"
 #include <v8.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -58,6 +55,7 @@ namespace WebCore {
     class V8BindingPerContextData;
     class V8Proxy;
     class WorkerContext;
+    class XPathResolver;
 
     enum ListenerLookupType {
         ListenerFindOnly,

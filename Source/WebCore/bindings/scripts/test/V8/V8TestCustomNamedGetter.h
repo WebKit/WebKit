@@ -22,6 +22,7 @@
 #define V8TestCustomNamedGetter_h
 
 #include "TestCustomNamedGetter.h"
+#include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -60,7 +61,7 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl
 inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8::Null();
+        return v8Null(isolate);
     return V8TestCustomNamedGetter::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Isolate* isolate = 0)
