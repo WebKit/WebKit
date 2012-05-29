@@ -1,3 +1,11 @@
+2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening. Unskip passing test.
+
+        * platform/efl/Skipped:
+        * platform/efl/editing/input/emacs-ctrl-o-expected.png: Added.
+        * platform/efl/editing/input/emacs-ctrl-o-expected.txt: Added.
+
 2012-05-29  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Align codes and names for IDB-specific and DOM-specific errors/exceptions

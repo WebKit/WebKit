@@ -516,9 +516,6 @@ http/tests/multipart/invalid-image-data.html
 compositing/geometry/fixed-position.html
 compositing/geometry/vertical-scroll-composited.html
 
-# EFL's EventSender aborts in keyNameFromJSValue if it does not know the key
-editing/input/emacs-ctrl-o.html
-
 # Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
