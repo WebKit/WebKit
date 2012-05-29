@@ -138,6 +138,7 @@ public:
     ManagedTexture* backgroundTexture() const { return m_backgroundTexture.get(); }
 
     int owningLayerId() const;
+    CCRenderSurface* targetRenderSurface() const;
 
     bool hasReplica() const;
 

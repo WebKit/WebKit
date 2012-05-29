@@ -391,6 +391,14 @@ int CCRenderSurface::owningLayerId() const
     return m_owningLayer ? m_owningLayer->id() : 0;
 }
 
+CCRenderSurface* CCRenderSurface::targetRenderSurface() const
+{
+    CCLayerImpl* parent = m_owningLayer->parent();
+    if (!parent)
+        return 0;
+    return parent->targetRenderSurface();
+}
+
 bool CCRenderSurface::hasReplica() const
 {
     return m_owningLayer->replicaLayer();

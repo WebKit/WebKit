@@ -439,34 +439,45 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContribu
     // This should be called while the contributing render surface is still considered the current target in the occlusion tracker.
     ASSERT(surface == m_stack.last().surface);
 
-    // A contributing surface doesn't get occluded by things inside its own surface, so only things outside the surface can occlude it. That occlusion is
-    // found just below the top of the stack (if it exists).
-    if (m_stack.size() < 2)
-        return contentRect;
     if (contentRect.isEmpty())
         return contentRect;
 
-    const StackObject& secondLast = m_stack[m_stack.size() - 2];
-
     IntRect surfaceClipRect = surface->clipRect();
     if (surfaceClipRect.isEmpty()) {
-        const RenderSurfaceType* targetSurface = secondLast.surface;
-        surfaceClipRect = intersection(targetSurface->contentRect(), enclosingIntRect(surface->drawableContentRect()));
+        const RenderSurfaceType* targetSurface = surface->targetRenderSurface();
+        if (targetSurface)
+            surfaceClipRect = intersection(targetSurface->contentRect(), enclosingIntRect(surface->drawableContentRect()));
+        else
+            surfaceClipRect = m_scissorRectInScreenSpace;
     }
+
+    // A contributing surface doesn't get occluded by things inside its own surface, so only things outside the surface can occlude it. That occlusion is
+    // found just below the top of the stack (if it exists).
+    bool hasOcclusion = m_stack.size() > 1;
 
     const TransformationMatrix& transformToScreen = forReplica ? surface->replicaScreenSpaceTransform() : surface->screenSpaceTransform();
     const TransformationMatrix& transformToTarget = forReplica ? surface->replicaOriginTransform() : surface->originTransform();
 
     IntRect unoccludedInScreen = contentRect;
-    if (surfaceTransformsToScreenKnown(surface))
-        unoccludedInScreen = computeUnoccludedContentRect(contentRect, transformToScreen, m_scissorRectInScreenSpace, secondLast.occlusionInScreen);
+    if (surfaceTransformsToScreenKnown(surface)) {
+        if (hasOcclusion) {
+            const StackObject& secondLast = m_stack[m_stack.size() - 2];
+            unoccludedInScreen = computeUnoccludedContentRect(contentRect, transformToScreen, m_scissorRectInScreenSpace, secondLast.occlusionInScreen);
+        } else
+            unoccludedInScreen = computeUnoccludedContentRect(contentRect, transformToScreen, m_scissorRectInScreenSpace, Region());
+    }
 
     if (unoccludedInScreen.isEmpty())
         return unoccludedInScreen;
 
     IntRect unoccludedInTarget = contentRect;
-    if (surfaceTransformsToTargetKnown(surface))
-        unoccludedInTarget = computeUnoccludedContentRect(contentRect, transformToTarget, surfaceClipRect, secondLast.occlusionInTarget);
+    if (surfaceTransformsToTargetKnown(surface)) {
+        if (hasOcclusion) {
+            const StackObject& secondLast = m_stack[m_stack.size() - 2];
+            unoccludedInTarget = computeUnoccludedContentRect(contentRect, transformToTarget, surfaceClipRect, secondLast.occlusionInTarget);
+        } else
+            unoccludedInTarget = computeUnoccludedContentRect(contentRect, transformToTarget, surfaceClipRect, Region());
+    }
 
     return intersection(unoccludedInScreen, unoccludedInTarget);
 }

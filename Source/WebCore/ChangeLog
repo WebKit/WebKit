@@ -1,3 +1,30 @@
+2012-05-29  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Unoccluded area in surfaces should always be clipped to the rootScissorRect
+        https://bugs.webkit.org/show_bug.cgi?id=87677
+
+        Reviewed by Adrienne Walker.
+
+        When a contributing surface is visited, and we have not visited another
+        surface, then we know the surface is completely unoccluded. However, the
+        root scissor rect should still be applied, and anything outside of it
+        should be considered occluded.
+
+        Unit test: WebKitTests::CCOcclusionTrackerTestTopmostSurfaceIsClippedToScissor
+
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::targetRenderSurface):
+        (WebCore):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::targetRenderSurface):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
 2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Refactoring http/proxy authentication to use authcallback mechanism introduced with libcurl

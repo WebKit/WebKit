@@ -1,3 +1,15 @@
+2012-05-29  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Unoccluded area in surfaces should always be clipped to the rootScissorRect
+        https://bugs.webkit.org/show_bug.cgi?id=87677
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (CCOcclusionTrackerTestTopmostSurfaceIsClippedToScissor):
+        (WebKitTests::CCOcclusionTrackerTestTopmostSurfaceIsClippedToScissor::runMyTest):
+        (WebKitTests):
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag

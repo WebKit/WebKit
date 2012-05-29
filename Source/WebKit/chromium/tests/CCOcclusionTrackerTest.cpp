@@ -2426,6 +2426,45 @@ protected:
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestSurfaceChildOfSurface);
 
 template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestTopmostSurfaceIsClippedToScissor : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        // This test verifies that the top-most surface is considered occluded outside of its scissor rect and outside the screen's scissor rect.
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 200));
+        typename Types::LayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+        this->calcDrawEtc(parent);
+
+        {
+            // Make a screen scissor rect that is larger than the root layer's.
+            TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+            this->visitLayer(surface, occlusion);
+
+            // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
+            this->enterContributingSurface(surface, occlusion);
+            // Make sure the parent's clipRect clips the unoccluded region of the child surface.
+            EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+        }
+        this->resetLayerIterator();
+        {
+            // Make a screen scissor rect that is smaller than the root layer's.
+            TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 100, 100));
+
+            this->visitLayer(surface, occlusion);
+
+            // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
+            this->enterContributingSurface(surface, occlusion);
+            // Make sure the screen scissor rect clips the unoccluded region of the child surface.
+            EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+        }
+    }
+};
+
+ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestTopmostSurfaceIsClippedToScissor);
+
+template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestSurfaceChildOfClippingSurface : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
     void runMyTest()

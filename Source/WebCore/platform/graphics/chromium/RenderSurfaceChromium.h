@@ -108,6 +108,8 @@ public:
     void setNearestAncestorThatMovesPixels(RenderSurfaceChromium* surface) { m_nearestAncestorThatMovesPixels = surface; }
     const RenderSurfaceChromium* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
 
+    RenderSurfaceChromium* targetRenderSurface() const;
+
     bool hasReplica() const;
 
     bool hasMask() const;

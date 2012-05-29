@@ -64,6 +64,14 @@ FloatRect RenderSurfaceChromium::drawableContentRect() const
     return drawableContentRect;
 }
 
+RenderSurfaceChromium* RenderSurfaceChromium::targetRenderSurface() const
+{
+    LayerChromium* parent = m_owningLayer->parent();
+    if (!parent)
+        return 0;
+    return parent->targetRenderSurface();
+}
+
 bool RenderSurfaceChromium::hasReplica() const
 {
     return m_owningLayer->replicaLayer();
