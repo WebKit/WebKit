@@ -1,3 +1,37 @@
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebOverlay build fixes and bug fixes
+        https://bugs.webkit.org/show_bug.cgi?id=87780
+
+        Reviewed by Rob Buis.
+
+        Fix build when accelerated compositing disabled, or debug build.
+
+        Also fix a bug where the selection overlay would not disappear properly
+        because of a typo in WebPage::removeOverlay(). Also convert said method
+        to early return style.
+
+        Debug build fixes contributed by Ming Xie.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlay::addAnimation):
+        (BlackBerry::WebKit::WebOverlay::setContentsToImage):
+        (WebKit):
+        (BlackBerry::WebKit::WebOverlay::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlay::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlay::invalidate):
+        (BlackBerry::WebKit::WebOverlay::setClient):
+        (BlackBerry::WebKit::WebOverlay::override):
+        (BlackBerry::WebKit::WebOverlay::resetOverrides):
+        * Api/WebOverlayOverride.cpp:
+        (BlackBerry::WebKit::WebOverlayOverride::WebOverlayOverride):
+        * Api/WebOverlay_p.h:
+        (BlackBerry::WebKit::WebOverlayPrivate::~WebOverlayPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::removeOverlay):
+        (BlackBerry::WebKit::WebPage::addCompositingThreadOverlay):
+        (BlackBerry::WebKit::WebPage::removeCompositingThreadOverlay):
+
 2012-05-29  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Add malloc info to about:memory page

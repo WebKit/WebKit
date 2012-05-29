@@ -6228,18 +6228,19 @@ void WebPage::addOverlay(WebOverlay* overlay)
 void WebPage::removeOverlay(WebOverlay* overlay)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (overlay->d->graphicsLayer() == d->overlayLayer()) {
-        overlay->removeFromParent();
-        overlay->d->clear();
-        overlay->d->setPage(0);
-    }
+    if (overlay->d->graphicsLayer()->parent() != d->overlayLayer())
+        return;
+
+    overlay->removeFromParent();
+    overlay->d->clear();
+    overlay->d->setPage(0);
 #endif
 }
 
 void WebPage::addCompositingThreadOverlay(WebOverlay* overlay)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
     overlay->d->setPage(d);
     d->compositor()->addOverlay(overlay->d->layerCompositingThread());
 #endif
@@ -6248,7 +6249,7 @@ void WebPage::addCompositingThreadOverlay(WebOverlay* overlay)
 void WebPage::removeCompositingThreadOverlay(WebOverlay* overlay)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
     d->compositor()->removeOverlay(overlay->d->layerCompositingThread());
     overlay->d->clear();
     overlay->d->setPage(0);

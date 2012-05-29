@@ -61,7 +61,7 @@ public:
 
     virtual ~WebOverlayPrivate()
     {
-        ASSERT(pthread_self() == d->nativeThread);
+        ASSERT(pthread_self() == nativeThread);
     }
 
     WebPagePrivate* page() const;

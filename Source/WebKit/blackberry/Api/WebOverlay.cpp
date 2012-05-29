@@ -734,11 +734,39 @@ void WebOverlay::removeFromParent()
 {
 }
 
-void WebOverlay::addAnimation(WebAnimation*)
+void WebOverlay::addAnimation(const WebAnimation&)
 {
 }
 
 void WebOverlay::removeAnimation(const WebString&)
+{
+}
+
+void WebOverlay::setContentsToImage(const unsigned char*, const Platform::IntSize&)
+{
+}
+
+void WebOverlay::setContentsToColor(int, int, int, int)
+{
+}
+
+void WebOverlay::setDrawsContent(bool)
+{
+}
+
+void WebOverlay::invalidate()
+{
+}
+
+void WebOverlay::setClient(WebOverlayClient*)
+{
+}
+
+WebOverlayOverride* WebOverlay::override()
+{
+}
+
+void WebOverlay::resetOverrides()
 {
 }
 

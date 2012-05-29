@@ -86,7 +86,7 @@ void WebOverlayOverride::removeAnimation(const WebString& name)
 namespace BlackBerry {
 namespace WebKit {
 
-WebOverlayOverride::WebOverlayOverride(WebOverlayPrivate*)
+WebOverlayOverride::WebOverlayOverride(WebOverlayPrivate*, bool)
 {
 }
 
