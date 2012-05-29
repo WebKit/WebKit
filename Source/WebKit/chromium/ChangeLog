@@ -1,3 +1,18 @@
+2012-05-29  Hironori Bono  <hbono@chromium.org>
+
+        Use WebSpellCheckClient::spellcheck to retrieve suggestions.
+        https://bugs.webkit.org/show_bug.cgi?id=87690
+
+        Reviewed by Hajime Morita.
+
+        This change uses WebSpellCheckClient::spellcheck as a fallback method to
+        retrieve suggestions when a marker does not have any suggestions. (It consumes
+        lots of CPU power to get suggestions for misspelled word, i.e. Chromium cannot
+        afford to attach suggestions to all spelling markers.)
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): Retrieve suggestions if markers do not have any.
+
 2012-05-28  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] Receiving reserved close codes, 1005, 1006, and 1015 must appear as code=1006 and wasClean=false

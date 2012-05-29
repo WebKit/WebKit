@@ -290,8 +290,13 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                             suggestions.append(descriptions);
                         }
                     }
-                    data.dictionarySuggestions = suggestions;
                     data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
+                    if (!suggestions.isEmpty())
+                        data.dictionarySuggestions = suggestions;
+                    else if (m_webView->spellCheckClient()) {
+                        int misspelledOffset, misspelledLength;
+                        m_webView->spellCheckClient()->spellCheck(data.misspelledWord, misspelledOffset, misspelledLength, &data.dictionarySuggestions);
+                    }
                 }
             }
         } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
