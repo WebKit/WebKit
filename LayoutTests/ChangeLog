@@ -1,3 +1,16 @@
+2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/compositing/geometry/composited-in-columns-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/qt-5.0-wk2/svg/css/text-gradient-shadow-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/css/text-gradient-shadow-expected.txt:
+        * platform/qt-5.0/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/qt-5.0/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/wk2/Skipped:
+
 2012-05-29  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Regression: fast/forms/select/optgroup-clicking.html is failing

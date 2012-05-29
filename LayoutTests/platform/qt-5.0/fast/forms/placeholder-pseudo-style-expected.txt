@@ -28,38 +28,38 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (183,52) size 173x25
       RenderText {#text} at (0,0) size 0x0
 layer at (12,33) size 169x21
-  RenderBlock {DIV} at (2,2) size 169x21
-layer at (12,33) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#640000]
     RenderText {#text} at (0,0) size 25x21
       text run at (0,0) width 25: "text"
-layer at (193,33) size 158x21
-  RenderBlock {DIV} at (0,0) size 158x21
+layer at (12,33) size 169x21
+  RenderBlock {DIV} at (2,2) size 169x21
 layer at (193,33) size 158x21
   RenderBlock {DIV} at (2,2) size 158x21 [color=#640000]
     RenderText {#text} at (0,0) size 48x21
       text run at (0,0) width 48: "search"
-layer at (374,33) size 169x21
-  RenderBlock {DIV} at (2,2) size 169x21
+layer at (193,33) size 158x21
+  RenderBlock {DIV} at (0,0) size 158x21
 layer at (374,33) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#640000]
     RenderText {#text} at (0,0) size 69x21
       text run at (0,0) width 69: "password"
-layer at (555,33) size 169x21
-  RenderBlock {DIV} at (2,2) size 169x21 [color=#545454]
+layer at (374,33) size 169x21
+  RenderBlock {DIV} at (2,2) size 169x21
 layer at (555,33) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#640000]
     RenderText {#text} at (0,0) size 90x21
       text run at (0,0) width 90: "disabled text"
-layer at (12,62) size 169x21
-  RenderBlock {DIV} at (2,2) size 169x21
+layer at (555,33) size 169x21
+  RenderBlock {DIV} at (2,2) size 169x21 [color=#545454]
 layer at (12,62) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 48x21
       text run at (0,0) width 48: "default"
-layer at (193,62) size 169x21
+layer at (12,62) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21
 layer at (193,62) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 113x21
       text run at (0,0) width 113: "default disabled"
+layer at (193,62) size 169x21
+  RenderBlock {DIV} at (2,2) size 169x21
