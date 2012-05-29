@@ -1,3 +1,17 @@
+2012-05-28  MORITA Hajime  <morrita@google.com>
+
+        Rename FrameLoaderClient::shadowDOMAllowed() to allowShadowDOM()
+        https://bugs.webkit.org/show_bug.cgi?id=87101
+
+        Reviewed by Kentaro Hara.
+
+        No new tests. No behavior change.
+
+        * bindings/generic/ContextEnabledFeatures.cpp:
+        (WebCore::ContextEnabledFeatures::shadowDOMEnabled):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowShadowDOM):
+
 2012-05-28  David Barton  <dbarton@mathscribe.com>
 
         mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac

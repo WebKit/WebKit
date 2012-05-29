@@ -239,7 +239,7 @@ bool FrameLoaderClientImpl::allowRunningInsecureContent(bool enabledPerSettings,
     return enabledPerSettings;
 }
 
-bool FrameLoaderClientImpl::shadowDOMAllowed(bool enabledAsRuntimeFeature)
+bool FrameLoaderClientImpl::allowShadowDOM(bool enabledAsRuntimeFeature)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())

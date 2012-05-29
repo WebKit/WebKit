@@ -311,7 +311,7 @@ namespace WebCore {
         virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
 
-        virtual bool shadowDOMAllowed(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
+        virtual bool allowShadowDOM(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
         virtual bool allowStyleScoped(bool enabledAsRuntimeFeatures) { return enabledAsRuntimeFeatures; }
 #if ENABLE(PAGE_POPUP)
         virtual bool allowPagePopup() { return false; }

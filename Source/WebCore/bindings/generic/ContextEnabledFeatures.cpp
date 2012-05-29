@@ -46,7 +46,7 @@ bool ContextEnabledFeatures::shadowDOMEnabled(DOMWindow* window)
     if (!window)
         return false;
     if (Frame* frame = window->frame())
-        return frame->loader()->client()->shadowDOMAllowed(RuntimeEnabledFeatures::shadowDOMEnabled());
+        return frame->loader()->client()->allowShadowDOM(RuntimeEnabledFeatures::shadowDOMEnabled());
     return false;
 }
 #endif

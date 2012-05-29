@@ -1,3 +1,15 @@
+2012-05-28  MORITA Hajime  <morrita@google.com>
+
+        Rename FrameLoaderClient::shadowDOMAllowed() to allowShadowDOM()
+        https://bugs.webkit.org/show_bug.cgi?id=87101
+
+        Reviewed by Kentaro Hara.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowShadowDOM):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-05-28  Rob Flack  <flackr@chromium.org>
 
         [chromium] Only increase size of Combo Box Options when displayed on touch screen

@@ -199,7 +199,7 @@ public:
     virtual bool allowImage(bool enabledPerSettings, const WebCore::KURL& imageURL);
     virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, WebCore::SecurityOrigin*, const WebCore::KURL&);
     virtual bool allowRunningInsecureContent(bool enabledPerSettings, WebCore::SecurityOrigin*, const WebCore::KURL&);
-    virtual bool shadowDOMAllowed(bool enabledAsRuntimeFeature) OVERRIDE;
+    virtual bool allowShadowDOM(bool enabledAsRuntimeFeature) OVERRIDE;
     virtual bool allowStyleScoped(bool enabledAsRuntimeFeature) OVERRIDE;
     virtual void didNotAllowScript();
     virtual void didNotAllowPlugins();
