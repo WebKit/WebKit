@@ -103,6 +103,10 @@ enum EFloat {
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
 
+// Box decoration attributes. Not inherited.
+
+enum EBoxDecorationBreak { DSLICE, DCLONE };
+
 // Box attributes. Not inherited.
 
 enum EBoxSizing { CONTENT_BOX, BORDER_BOX };

@@ -121,6 +121,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-border-image: none
     -webkit-border-vertical-spacing: 0px
     -webkit-box-align: stretch
+    -webkit-box-decoration-break: slice
     -webkit-box-direction: normal
     -webkit-box-flex: 0
     -webkit-box-flex-group: 1

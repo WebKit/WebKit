@@ -58,6 +58,7 @@ public:
     bool hasAutoZIndex() const { return m_hasAutoZIndex; }
     
     EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(m_boxSizing); }
+    EBoxDecorationBreak boxDecorationBreak() const { return static_cast<EBoxDecorationBreak>(m_boxDecorationBreak); }
 
 private:
     friend class RenderStyle;
@@ -79,6 +80,7 @@ private:
     int m_zIndex;
     bool m_hasAutoZIndex : 1;
     unsigned m_boxSizing : 1; // EBoxSizing
+    unsigned m_boxDecorationBreak : 1; // EBoxDecorationBreak
 };
 
 } // namespace WebCore

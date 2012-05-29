@@ -463,6 +463,10 @@ end
 //center
 //baseline
 
+// CSS_PROP_BOX_DECORATION_BREAK
+clone
+slice
+
 // CSS_PROP_BOX_DIRECTION
 // normal
 reverse

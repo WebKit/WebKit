@@ -664,6 +664,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueStretch || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline)
             return true;
         break;
+    case CSSPropertyWebkitBoxDecorationBreak:
+         if (valueID == CSSValueClone || valueID == CSSValueSlice)
+             return true;
+         break;
     case CSSPropertyWebkitBoxDirection:
         if (valueID == CSSValueNormal || valueID == CSSValueReverse)
             return true;
@@ -905,6 +909,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBoxAlign:
+    case CSSPropertyWebkitBoxDecorationBreak:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:

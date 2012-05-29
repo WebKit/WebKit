@@ -1,3 +1,41 @@
+2012-05-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [CSS3 Backgrounds and Borders] Implement box-decoration-break parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=87678
+
+        Reviewed by Eric Seidel.
+
+        Add a new test to cover the parsing part of the new css property. Also rebase the
+        existing tests which are listing the css properties of the style.
+
+        * fast/box-decoration-break/box-decoration-break-parsing-expected.txt: Added.
+        * fast/box-decoration-break/box-decoration-break-parsing.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-linux-x86/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac-leopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-snowleopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-vista/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         [text-overflow: ellipsis] WebKit should ignore the ellipsis for the purpose of dispatching mouse events

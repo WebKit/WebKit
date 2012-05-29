@@ -743,6 +743,33 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxDecorationBreak e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case DSLICE:
+        m_value.ident = CSSValueSlice;
+        break;
+    case DCLONE:
+        m_value.ident = CSSValueClone;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBoxDecorationBreak() const
+{
+    switch (m_value.ident) {
+    case CSSValueSlice:
+        return DSLICE;
+    case CSSValueClone:
+        return DCLONE;
+    default:
+        ASSERT_NOT_REACHED();
+        return DSLICE;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)
     : CSSValue(PrimitiveClass)
 {

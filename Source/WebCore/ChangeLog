@@ -1,3 +1,43 @@
+2012-05-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [CSS3 Backgrounds and Borders] Implement box-decoration-break parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=87678
+
+        Reviewed by Eric Seidel.
+
+        Implement the parsing part of box-decoration-break. The specification
+        is located at http://www.w3.org/TR/css3-background/#box-decoration-break.
+        So far Opera implements it. This patch only implements the parsing part of
+        the property. A following patch will implement the rendering part. Despite
+        the rendering part missing it improves http://css3test.com by 1%.
+
+        Test: fast/box-decoration-break/box-decoration-break-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::operator EBoxDecorationBreak):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleBoxData.cpp:
+        (WebCore::StyleBoxData::StyleBoxData):
+        (WebCore::StyleBoxData::operator==):
+        * rendering/style/StyleBoxData.h:
+        (WebCore::StyleBoxData::boxDecorationBreak):
+        (StyleBoxData):
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         [text-overflow: ellipsis] WebKit should ignore the ellipsis for the purpose of dispatching mouse events

@@ -240,6 +240,8 @@ rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-align) : stretch
 rect: style.getPropertyCSSValue(-webkit-box-align) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-box-decoration-break) : slice
+rect: style.getPropertyCSSValue(-webkit-box-decoration-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-direction) : normal
 rect: style.getPropertyCSSValue(-webkit-box-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-flex) : 0
@@ -768,6 +770,8 @@ g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-align) : stretch
 g: style.getPropertyCSSValue(-webkit-box-align) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-box-decoration-break) : slice
+g: style.getPropertyCSSValue(-webkit-box-decoration-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-direction) : normal
 g: style.getPropertyCSSValue(-webkit-box-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-flex) : 0
