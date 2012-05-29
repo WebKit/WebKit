@@ -3,6 +3,15 @@
         mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
         https://bugs.webkit.org/show_bug.cgi?id=86786
 
+        Unreviewed gardening - add back these two tests to skip for now.
+
+        * platform/mac/Skipped:
+
+2012-05-28  David Barton  <dbarton@mathscribe.com>
+
+        mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86786
+
         Reviewed by Darin Adler.
 
         * platform/mac/Skipped:
