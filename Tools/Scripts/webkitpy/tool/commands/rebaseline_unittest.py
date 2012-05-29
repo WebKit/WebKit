@@ -95,10 +95,10 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         command.bind_to_tool(MockTool())
         expected_logs = "Retrieving http://example.com/f/builders/Webkit Linux/results/layout-test-results/userscripts/another-test-actual.txt.\n"
         command._print_scm_changes = True
-        command._scm_changes = {'add': [], 'rm': []}
+        command._scm_changes = {'add': [], 'delete': []}
         command._tool._scm.exists = lambda x: False
         OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Linux", "userscripts/another-test.html", None, "txt"], expected_logs=expected_logs)
-        self.assertEquals(command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'rm': []})
+        self.assertEquals(command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
         command = RebaselineTest()

@@ -1,3 +1,20 @@
+2012-05-29  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: rename 'rm' to 'delete' in rebaseline scm output
+        https://bugs.webkit.org/show_bug.cgi?id=87779
+
+        Reviewed by Eric Seidel.
+
+        Update output to match the names in scm.py as per
+        https://bugs.webkit.org/show_bug.cgi?id=87451#c26 .
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_test_and_print_scm_changes):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaselineall):
+
 2012-05-29  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87711

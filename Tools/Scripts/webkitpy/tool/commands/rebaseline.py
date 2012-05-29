@@ -178,7 +178,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
         self._print_scm_changes = options.print_scm_changes
-        self._scm_changes = {'add': [], 'rm': []}
+        self._scm_changes = {'add': [], 'delete': []}
 
         if len(args) > 2:
             platforms_to_move_existing_baselines_to = args[2:]

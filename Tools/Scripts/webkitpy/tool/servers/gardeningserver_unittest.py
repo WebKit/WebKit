@@ -191,7 +191,7 @@ class GardeningServerTest(unittest.TestCase):
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         server = MockServer()
 
-        self.output = ['{"add": [], "rm": []}', '']
+        self.output = ['{"add": [], "delete": []}', '']
 
         def run_command(args, cwd=None, **kwargs):
             print >> sys.stderr, "MOCK run_command: %s, cwd=%s" % (args, cwd)
