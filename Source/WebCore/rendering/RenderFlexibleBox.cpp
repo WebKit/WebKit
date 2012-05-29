@@ -698,7 +698,9 @@ bool RenderFlexibleBox::hasAutoMarginsInCrossAxis(RenderBox* child)
 
 LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox* child)
 {
-    LayoutUnit childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
+    LayoutUnit childCrossExtent = 0;
+    if (!child->isPositioned())
+        childCrossExtent = crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child);
     return lineCrossAxisExtent - childCrossExtent;
 }
 
@@ -932,13 +934,13 @@ void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit chil
         child->setOverrideWidth(childPreferredSize);
 }
 
-void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset)
+void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode layoutMode)
 {
     ASSERT(child->isPositioned());
     child->containingBlock()->insertPositionedObject(child);
     RenderLayer* childLayer = child->layer();
     LayoutUnit inlinePosition = isColumnFlow() ? crossAxisOffset : mainAxisOffset;
-    if (style()->flexDirection() == FlowRowReverse)
+    if (layoutMode == FlipForRowReverse && style()->flexDirection() == FlowRowReverse)
         inlinePosition = mainAxisExtent() - mainAxisOffset;
     childLayer->setStaticInlinePosition(inlinePosition); // FIXME: Not right for regions.
 
@@ -983,7 +985,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
         if (child->isPositioned()) {
-            prepareChildForPositionedLayout(child, mainAxisOffset, crossAxisOffset);
+            prepareChildForPositionedLayout(child, mainAxisOffset, crossAxisOffset, FlipForRowReverse);
             mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, style()->flexPack(), childSizes.size());
             continue;
         }
@@ -1115,8 +1117,17 @@ void RenderFlexibleBox::packFlexLines(FlexOrderIterator& iterator, WTF::Vector<L
 
 void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit delta)
 {
-    LayoutRect oldRect = child->frameRect();
+    if (child->isPositioned()) {
+        LayoutUnit staticInlinePosition = child->layer()->staticInlinePosition();
+        LayoutUnit staticBlockPosition = child->layer()->staticBlockPosition();
+        LayoutUnit mainAxis = isColumnFlow() ? staticBlockPosition : staticInlinePosition;
+        LayoutUnit crossAxis = isColumnFlow() ? staticInlinePosition : staticBlockPosition;
+        crossAxis += delta;
+        prepareChildForPositionedLayout(child, mainAxis, crossAxis, NoFlipForRowReverse);
+        return;
+    }
 
+    LayoutRect oldRect = child->frameRect();
     setFlowAwareLocationForChild(child, flowAwareLocationForChild(child) + LayoutSize(0, delta));
 
     // If the child moved, we have to repaint it as well as any floating/positioned
@@ -1224,6 +1235,8 @@ void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
 
     LayoutUnit crossExtent = crossAxisExtent();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        if (child->isPositioned())
+            continue;
         LayoutPoint location = flowAwareLocationForChild(child);
         location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
         setFlowAwareLocationForChild(child, location);
@@ -1237,16 +1250,10 @@ void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WT
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next()) {
             ASSERT(child);
-            LayoutPoint location = flowAwareLocationForChild(child);
             LayoutUnit lineCrossAxisExtent = lineContexts[lineNumber].crossAxisExtent;
             LayoutUnit originalOffset = lineContexts[lineNumber].crossAxisOffset - crossAxisStartEdge;
             LayoutUnit newOffset = contentExtent - originalOffset - lineCrossAxisExtent;
-            location.setY(location.y() + newOffset - originalOffset);
-
-            LayoutRect oldRect = child->frameRect();
-            setFlowAwareLocationForChild(child, location);
-            if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
-                child->repaintDuringLayoutIfMoved(oldRect);
+            adjustAlignmentForChild(child, newOffset - originalOffset);
         }
     }
 }

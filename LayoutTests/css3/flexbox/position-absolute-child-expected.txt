@@ -5,7 +5,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-tb rtl row
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -19,7 +25,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-tb rtl column
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -33,7 +45,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-tb rtl row-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -47,7 +65,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-tb rtl column-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -61,7 +85,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-bt rtl row
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -75,7 +105,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-bt rtl column
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -89,7 +125,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-bt rtl row-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -103,7 +145,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 horizontal-bt rtl column-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -117,7 +165,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-rl rtl row
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -131,7 +185,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-rl rtl column
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -145,7 +205,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-rl rtl row-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -159,7 +225,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-rl rtl column-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -173,7 +245,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-lr rtl row
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -187,7 +265,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-lr rtl column
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -201,7 +285,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-lr rtl row-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS
@@ -215,7 +305,13 @@ PASS
 PASS
 PASS
 PASS
+PASS
+PASS
+PASS
 vertical-lr rtl column-reverse
+PASS
+PASS
+PASS
 PASS
 PASS
 PASS

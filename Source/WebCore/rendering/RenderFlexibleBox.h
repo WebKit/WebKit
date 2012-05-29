@@ -54,6 +54,11 @@ private:
         NegativeFlexibility,
     };
 
+    enum PositionedLayoutMode {
+        FlipForRowReverse,
+        NoFlipForRowReverse,
+    };
+
     struct FlexOrderHashTraits;
     typedef HashSet<int, DefaultHash<int>::Hash, FlexOrderHashTraits> FlexOrderHashSet;
 
@@ -120,7 +125,7 @@ private:
     void freezeViolations(const WTF::Vector<Violation>&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalWeightedNegativeFlexibility, InflexibleFlexItemSize&);
 
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
-    void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
+    void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode);
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>&);
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
     void packFlexLines(FlexOrderIterator&, WTF::Vector<LineContext>&);

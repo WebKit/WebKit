@@ -1,3 +1,21 @@
+2012-05-25  Ojan Vafai  <ojan@chromium.org>
+
+        Absolute positioned elements in a relative positioned CSS3 Flexbox fail to display properly
+        https://bugs.webkit.org/show_bug.cgi?id=58453
+
+        Reviewed by Tony Chang.
+
+        Test: css3/flexbox/align-absolute-child.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::prepareChildForPositionedLayout):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::adjustAlignmentForChild):
+        When adjusting positioned items, adjust their static position, not their location.
+        (WebCore::RenderFlexibleBox::flipForRightToLeftColumn):
+        (WebCore::RenderFlexibleBox::flipForWrapReverse):
+        * rendering/RenderFlexibleBox.h:
+
 2012-05-29  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to text fragment destruction when updating first-letter block.
