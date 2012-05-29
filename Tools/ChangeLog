@@ -1,5 +1,18 @@
 2012-05-29  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch optimize-baselines should add/delete files in batches from the vcs
+        https://bugs.webkit.org/show_bug.cgi?id=87538
+
+        Reviewed by Ojan Vafai.
+
+        Invoking git and svn on one file at a time is kinda slow. We
+        should batch the add and rm operations together.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer._move_baselines):
+
+2012-05-29  Dirk Pranke  <dpranke@chromium.org>
+
         garden-o-matic should rebaseline baselines in parallel
         https://bugs.webkit.org/show_bug.cgi?id=87451
 

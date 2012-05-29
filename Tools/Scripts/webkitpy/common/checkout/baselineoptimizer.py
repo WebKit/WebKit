@@ -154,17 +154,22 @@ class BaselineOptimizer(object):
                 source = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
                 data_for_result[result] = self._filesystem.read_binary_file(source)
 
+        file_names = []
         for directory, result in results_by_directory.items():
             if new_results_by_directory.get(directory) != result:
-                file_name = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
-                self._scm.delete(file_name)
+                file_names.append(self._filesystem.join(self._scm.checkout_root, directory, baseline_name))
+        if file_names:
+            self._scm.delete_list(file_names)
 
+        file_names = []
         for directory, result in new_results_by_directory.items():
             if results_by_directory.get(directory) != result:
                 destination = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
                 self._filesystem.maybe_make_directory(self._filesystem.split(destination)[0])
                 self._filesystem.write_binary_file(destination, data_for_result[result])
-                self._scm.add(destination)
+                file_names.append(destination)
+        if file_names:
+            self._scm.add_list(file_names)
 
     def directories_by_result(self, baseline_name):
         results_by_directory = self._read_results_by_directory(baseline_name)
