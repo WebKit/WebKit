@@ -1,3 +1,13 @@
+2012-05-29  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Retainers are missing for all objects
+        https://bugs.webkit.org/show_bug.cgi?id=87655
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshotDataGrids.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype.setDataSource):
+
 2012-05-29  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Video sink doesn't respect WebKit code style

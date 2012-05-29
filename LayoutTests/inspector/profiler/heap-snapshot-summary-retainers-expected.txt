@@ -1,0 +1,9 @@
+Tests retainers view. Number of retainers of an A object must be 2 (A itself and B).
+
+Profiler was enabled.
+Detailed heap profiles were enabled.
+
+Running: testRetainersView
+
+Profiler was disabled.
+

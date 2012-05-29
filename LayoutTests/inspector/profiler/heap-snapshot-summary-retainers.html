@@ -1,0 +1,57 @@
+<html>
+<head>
+  <script src="../../http/tests/inspector/inspector-test.js"></script>
+  <script src="heap-snapshot-test.js"></script>
+<script>
+
+function test()
+{
+    var instanceCount = 25;
+    function createHeapSnapshot()
+    {
+        return InspectorTest.createHeapSnapshot(instanceCount);
+    }
+
+    InspectorTest.runHeapSnapshotTestSuite([
+        function testRetainersView(next)
+        {
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+
+            function step1()
+            {
+                InspectorTest.switchToView("Summary", step2);
+            }
+
+            function step2()
+            {
+                var row = InspectorTest.findRow("object", "A");
+                InspectorTest.assertEquals(true, !!row, "\"A\" row");
+                InspectorTest.expandRow(row, step3);
+            }
+
+            function step3(row)
+            {
+                var count = row.data["count"];
+                InspectorTest.assertEquals(instanceCount.toString(), count);
+                InspectorTest.clickRowAndGetRetainers(row.children[0], step4);
+            }
+
+            function step4(retainersRoot)
+            {
+                var rowsShown = InspectorTest.countDataRows(retainersRoot);
+                InspectorTest.assertEquals(2, rowsShown, "retaining objects");
+                setTimeout(next, 0);
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests retainers view.
+Number of retainers of an A object must be 2 (A itself and B).
+</p>
+</body>
+</html>

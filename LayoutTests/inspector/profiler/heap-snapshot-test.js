@@ -338,6 +338,25 @@ InspectorTest.clickColumn = function(column, callback)
     this._currentGrid()._clickInHeaderCell(event);
 };
 
+InspectorTest.clickRowAndGetRetainers = function(row, callback)
+{
+    callback = InspectorTest.safeWrap(callback);
+    var event = {
+        target: {
+            enclosingNodeOrSelfWithNodeName: function() { return row._element; },
+            selectedNode: row
+        }
+    };
+    this._currentGrid()._mouseDownInDataTable(event);
+    var rootNode = InspectorTest._currentGrid().snapshotView.retainmentDataGrid.rootNode();
+    function populateComplete()
+    {
+        rootNode.removeEventListener("populate complete", populateComplete, this);
+        callback(rootNode);
+    }
+    rootNode.addEventListener("populate complete", populateComplete, this);
+};
+
 InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
 {
     callback = InspectorTest.safeWrap(callback);

@@ -1,3 +1,16 @@
+2012-05-29  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Retainers are missing for all objects
+        https://bugs.webkit.org/show_bug.cgi?id=87655
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-summary-retainers-expected.txt: Added.
+        * inspector/profiler/heap-snapshot-summary-retainers.html: Added.
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.):
+        (initialize_HeapSnapshotTest):
+
 2012-05-29  Simon Pena  <spena@igalia.com>
 
         [GTK] fast tests needs rebaseline after r118733
