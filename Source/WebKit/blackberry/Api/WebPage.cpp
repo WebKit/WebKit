@@ -116,6 +116,8 @@
 #include "WebDOMDocument.h"
 #endif
 #include "WebKitVersion.h"
+#include "WebOverlay.h"
+#include "WebOverlay_p.h"
 #include "WebPageClient.h"
 #include "WebSocket.h"
 #include "WebViewportArguments.h"
@@ -6204,6 +6206,46 @@ WebTapHighlight* WebPage::tapHighlight() const
 void WebPage::setTapHighlight(WebTapHighlight* tapHighlight)
 {
     d->m_tapHighlight = adoptPtr(tapHighlight);
+}
+
+void WebPage::addOverlay(WebOverlay* overlay)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (overlay->d->graphicsLayer()) {
+        overlay->d->setPage(d);
+        d->overlayLayer()->addChild(overlay->d->graphicsLayer());
+    }
+#endif
+}
+
+void WebPage::removeOverlay(WebOverlay* overlay)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (overlay->d->graphicsLayer() == d->overlayLayer()) {
+        overlay->removeFromParent();
+        overlay->d->clear();
+        overlay->d->setPage(0);
+    }
+#endif
+}
+
+void WebPage::addCompositingThreadOverlay(WebOverlay* overlay)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+    overlay->d->setPage(d);
+    d->compositor()->addOverlay(overlay->d->layerCompositingThread());
+#endif
+}
+
+void WebPage::removeCompositingThreadOverlay(WebOverlay* overlay)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
+    d->compositor()->removeOverlay(overlay->d->layerCompositingThread());
+    overlay->d->clear();
+    overlay->d->setPage(0);
+#endif
 }
 
 void WebPage::popupOpened(PagePopupBlackBerry* webPopup)

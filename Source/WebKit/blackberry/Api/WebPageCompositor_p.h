@@ -67,6 +67,8 @@ public:
     WebCore::LayerCompositingThread* overlayLayer() const { return m_overlayLayer.get(); }
     void setOverlayLayer(WebCore::LayerCompositingThread*);
 
+    WebCore::LayerCompositingThread* compositingThreadOverlayLayer() const { return m_compositingThreadOverlayLayer.get(); }
+
     bool drawsRootLayer() const;
     void setDrawsRootLayer(bool drawsRootLayer) { m_drawsRootLayer = drawsRootLayer; }
 
@@ -89,11 +91,15 @@ public:
     WebPageCompositorClient* client() const { return m_client; }
     void compositorDestroyed();
 
+    void addOverlay(WebCore::LayerCompositingThread*);
+    void removeOverlay(WebCore::LayerCompositingThread*);
+
 protected:
     WebPageCompositorPrivate(WebPagePrivate*, WebPageCompositorClient*);
 
 private:
     void animationFrameChanged();
+    void compositeLayers(const WebCore::TransformationMatrix&);
 
     WebPageCompositorClient* m_client;
     WebPagePrivate* m_webPage;
@@ -101,6 +107,7 @@ private:
     OwnPtr<WebCore::LayerRenderer> m_layerRenderer;
     RefPtr<WebCore::LayerCompositingThread> m_rootLayer;
     RefPtr<WebCore::LayerCompositingThread> m_overlayLayer;
+    RefPtr<WebCore::LayerCompositingThread> m_compositingThreadOverlayLayer;
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;

@@ -1,3 +1,16 @@
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebOverlay API
+        https://bugs.webkit.org/show_bug.cgi?id=87603
+
+        Reviewed by Rob Buis.
+
+        Add WebOverlay related files to the build system.
+
+        PR #156812
+
+        * PlatformBlackBerry.cmake:
+
 2012-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add a default tap highlight

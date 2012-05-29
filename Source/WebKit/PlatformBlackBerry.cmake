@@ -47,13 +47,16 @@ ADD_DEFINITIONS(-DUSER_PROCESSES)
 LIST(APPEND WebKit_SOURCES
     blackberry/Api/BackingStore.cpp
     blackberry/Api/BlackBerryGlobal.cpp
-    blackberry/Api/WebString.cpp
+    blackberry/Api/WebAnimation.cpp
     blackberry/Api/WebKitMIMETypeConverter.cpp
     blackberry/Api/WebKitTextCodec.cpp
+    blackberry/Api/WebOverlay.cpp
+    blackberry/Api/WebOverlayOverride.cpp
     blackberry/Api/WebPage.cpp
     blackberry/Api/WebPageCompositor.cpp
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
+    blackberry/Api/WebString.cpp
     blackberry/Api/WebViewportArguments.cpp
     blackberry/WebCoreSupport/AboutData.cpp
     blackberry/WebCoreSupport/AutofillManager.cpp

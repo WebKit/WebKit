@@ -83,7 +83,7 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
     // WebPageCompositor is used to render the web page. The presence of a
     // WebPageCompositorClient (m_client) indicates this is the case, so
     // create a LayerRenderer if there are layers or if there's a client.
-    if (!m_rootLayer && !m_overlayLayer && !m_client)
+    if (!m_rootLayer && !m_overlayLayer && !m_compositingThreadOverlayLayer && !m_client)
         return;
 
     if (!m_layerRenderer) {
@@ -101,6 +101,8 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
         m_layerRenderer->prepareFrame(animationTime, m_rootLayer.get());
     if (m_overlayLayer)
         m_layerRenderer->prepareFrame(animationTime, m_overlayLayer.get());
+    if (m_compositingThreadOverlayLayer)
+        m_layerRenderer->prepareFrame(animationTime, m_compositingThreadOverlayLayer.get());
 }
 
 void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& clipRect, const TransformationMatrix& transformIn, const FloatRect& transformedContents, const FloatRect& /*viewport*/)
@@ -128,10 +130,17 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
     if (!drawsRootLayer())
         m_webPage->m_backingStore->d->compositeContents(m_layerRenderer.get(), transform, contents);
 
+    compositeLayers(transform);
+}
+
+void WebPageCompositorPrivate::compositeLayers(const TransformationMatrix& transform)
+{
     if (m_rootLayer)
         m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
     if (m_overlayLayer)
         m_layerRenderer->compositeLayers(transform, m_overlayLayer.get());
+    if (m_compositingThreadOverlayLayer)
+        m_layerRenderer->compositeLayers(transform, m_compositingThreadOverlayLayer.get());
 
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 
@@ -149,7 +158,7 @@ bool WebPageCompositorPrivate::drawsRootLayer() const
 bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)
 {
     // Is there anything to draw?
-    if (!m_rootLayer && !m_overlayLayer)
+    if (!m_rootLayer && !m_overlayLayer && !m_compositingThreadOverlayLayer)
         return false;
 
     // prepareFrame creates the LayerRenderer if needed
@@ -177,17 +186,7 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     // as the last transformation.
     TransformationMatrix transform = LayerRenderer::orthoMatrix(0, contents.width(), contents.height(), 0, -1000, 1000);
     transform.translate3d(-contents.x(), -contents.y(), 0);
-    if (m_rootLayer)
-        m_layerRenderer->compositeLayers(transform, m_rootLayer.get());
-    if (m_overlayLayer)
-        m_layerRenderer->compositeLayers(transform, m_overlayLayer.get());
-
-    m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
-
-    if (m_lastCompositingResults.needsAnimationFrame) {
-        Platform::AnimationFrameRateController::instance()->addClient(this);
-        m_webPage->updateDelegatedOverlays();
-    }
+    compositeLayers(transform);
 
     return true;
 }
@@ -226,6 +225,24 @@ void WebPageCompositorPrivate::compositorDestroyed()
         m_client->compositorDestroyed();
 
     m_client = 0;
+}
+
+void WebPageCompositorPrivate::addOverlay(LayerCompositingThread* layer)
+{
+    if (!m_compositingThreadOverlayLayer)
+        m_compositingThreadOverlayLayer = LayerCompositingThread::create(LayerData::CustomLayer, 0);
+    m_compositingThreadOverlayLayer->addSublayer(layer);
+}
+
+void WebPageCompositorPrivate::removeOverlay(LayerCompositingThread* layer)
+{
+    if (layer->superlayer() != m_compositingThreadOverlayLayer)
+        return;
+
+    layer->removeFromSuperlayer();
+
+    if (m_compositingThreadOverlayLayer && m_compositingThreadOverlayLayer->getSublayers().isEmpty())
+        m_compositingThreadOverlayLayer.clear();
 }
 
 WebPageCompositor::WebPageCompositor(WebPage* page, WebPageCompositorClient* client)

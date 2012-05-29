@@ -1,3 +1,196 @@
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebOverlay API
+        https://bugs.webkit.org/show_bug.cgi?id=87603
+
+        Reviewed by Rob Buis.
+
+        This new API makes it possible to leverage the BlackBerry accelerated
+        compositing implementation to draw, transform and fluidly animate
+        overlays in the embedding library or application.
+
+        A WebOverlay has an affinity for the thread where it was created. If
+        the current thread is the WebKit thread, use WebPage::addOverlay() to
+        add it to the page, and manipulate it only from the WebKit thread, with
+        exception of the "override" functionality which can be used from the
+        compositing thread. If the current thread is the compositing thread,
+        use WebPage::addCompositingThreadOverlay() to add it to the page, and
+        only manipulate it on the compositing thread.
+
+        A WebOverlay can be painted using Skia, or its contents can be set to
+        an image or a solid color.
+
+        PR #156812
+
+        * Api/WebAnimation.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::WebAnimation::fadeAnimation):
+        (BlackBerry::WebKit::WebAnimation::name):
+        (BlackBerry::WebKit::WebAnimation::WebAnimation):
+        (BlackBerry::WebKit::WebAnimation::~WebAnimation):
+        (BlackBerry::WebKit::WebAnimation::operator=):
+        * Api/WebAnimation.h: Added.
+        (WebKit):
+        * Api/WebAnimation_p.h: Added.
+        (WebKit):
+        (WebAnimationPrivate):
+        (BlackBerry::WebKit::WebAnimationPrivate::WebAnimationPrivate):
+        * Api/WebOverlay.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::WebOverlay::WebOverlay):
+        (BlackBerry::WebKit::WebOverlay::~WebOverlay):
+        (BlackBerry::WebKit::WebOverlay::position):
+        (BlackBerry::WebKit::WebOverlay::setPosition):
+        (BlackBerry::WebKit::WebOverlay::anchorPoint):
+        (BlackBerry::WebKit::WebOverlay::setAnchorPoint):
+        (BlackBerry::WebKit::WebOverlay::size):
+        (BlackBerry::WebKit::WebOverlay::setSize):
+        (BlackBerry::WebKit::WebOverlay::sizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlay::setSizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlay::transform):
+        (BlackBerry::WebKit::WebOverlay::setTransform):
+        (BlackBerry::WebKit::WebOverlay::opacity):
+        (BlackBerry::WebKit::WebOverlay::setOpacity):
+        (BlackBerry::WebKit::WebOverlay::addAnimation):
+        (BlackBerry::WebKit::WebOverlay::removeAnimation):
+        (BlackBerry::WebKit::WebOverlay::parent):
+        (BlackBerry::WebKit::WebOverlay::addChild):
+        (BlackBerry::WebKit::WebOverlay::removeFromParent):
+        (BlackBerry::WebKit::WebOverlay::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlay::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlay::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlay::invalidate):
+        (BlackBerry::WebKit::WebOverlay::setClient):
+        (BlackBerry::WebKit::WebOverlay::override):
+        (BlackBerry::WebKit::WebOverlay::resetOverrides):
+        (BlackBerry::WebKit::WebOverlayPrivate::page):
+        (BlackBerry::WebKit::WebOverlayPrivate::override):
+        (BlackBerry::WebKit::WebOverlayPrivate::drawContents):
+        (BlackBerry::WebKit::WebOverlayPrivate::scheduleCompositingRun):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::WebOverlayPrivateWebKitThread):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::override):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::position):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setPosition):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::anchorPoint):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setAnchorPoint):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::size):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setSize):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::sizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setSizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::transform):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setTransform):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::opacity):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setOpacity):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::addAnimation):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::removeAnimation):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::addChild):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::removeFromParent):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::clear):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::invalidate):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::resetOverrides):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::notifySyncRequired):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::paintContents):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::~WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::invalidate):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContents):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::layerCompositingThreadDestroyed):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::layerVisibilityChanged):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::drawTextures):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::deleteTextures):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setClient):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::override):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::position):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setPosition):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::anchorPoint):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setAnchorPoint):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::size):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setSize):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::sizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setSizeIsScaleInvariant):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::transform):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setTransform):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::opacity):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setOpacity):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::addAnimation):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::removeAnimation):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::addChild):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::removeFromParent):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::clear):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::invalidate):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::resetOverrides):
+        * Api/WebOverlay.h: Added.
+        (WebCore):
+        (WebKit):
+        * Api/WebOverlayClient.h: Added.
+        (WebKit):
+        * Api/WebOverlayOverride.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::WebOverlayOverride::WebOverlayOverride):
+        (BlackBerry::WebKit::WebOverlayOverride::~WebOverlayOverride):
+        (BlackBerry::WebKit::WebOverlayOverride::setPosition):
+        (BlackBerry::WebKit::WebOverlayOverride::setAnchorPoint):
+        (BlackBerry::WebKit::WebOverlayOverride::setSize):
+        (BlackBerry::WebKit::WebOverlayOverride::setTransform):
+        (BlackBerry::WebKit::WebOverlayOverride::setOpacity):
+        (BlackBerry::WebKit::WebOverlayOverride::addAnimation):
+        (BlackBerry::WebKit::WebOverlayOverride::removeAnimation):
+        * Api/WebOverlayOverride.h: Added.
+        (WebKit):
+        * Api/WebOverlay_p.h: Added.
+        (WTF):
+        (WebCore):
+        (WebKit):
+        (WebOverlayPrivate):
+        (BlackBerry::WebKit::WebOverlayPrivate::WebOverlayPrivate):
+        (BlackBerry::WebKit::WebOverlayPrivate::~WebOverlayPrivate):
+        (BlackBerry::WebKit::WebOverlayPrivate::setPage):
+        (BlackBerry::WebKit::WebOverlayPrivate::setClient):
+        (BlackBerry::WebKit::WebOverlayPrivate::layerCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivate::graphicsLayer):
+        (WebOverlayPrivateWebKitThread):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::graphicsLayer):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::notifyAnimationStarted):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::showDebugBorders):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::showRepaintCounter):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::contentsVisible):
+        (WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setLayer):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::drawsContent):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::contents):
+        (WebOverlayPrivateCompositingThread):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::addOverlay):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::removeOverlay):
+        (BlackBerry::WebKit::WebPage::addCompositingThreadOverlay):
+        (BlackBerry::WebKit::WebPage::removeCompositingThreadOverlay):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::compositeLayers):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::addOverlay):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::removeOverlay):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::compositingThreadOverlayLayer):
+        (WebPageCompositorPrivate):
+
 2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail

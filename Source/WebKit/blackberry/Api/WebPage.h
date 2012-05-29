@@ -62,6 +62,7 @@ class BackingStore;
 class BackingStoreClient;
 class BackingStorePrivate;
 class RenderQueue;
+class WebOverlay;
 class WebPageClient;
 class WebPageCompositor;
 class WebPageGroupLoadDeferrer;
@@ -337,6 +338,15 @@ public:
 
     WebTapHighlight* tapHighlight() const;
     void setTapHighlight(WebTapHighlight*);
+
+    // Adds an overlay that can be modified on the WebKit thread, and
+    // whose attributes can be overridden on the compositing thread.
+    void addOverlay(WebOverlay*);
+    void removeOverlay(WebOverlay*);
+
+    // Adds an overlay that can only be modified on the compositing thread.
+    void addCompositingThreadOverlay(WebOverlay*);
+    void removeCompositingThreadOverlay(WebOverlay*);
 
     // Popup client
     void initPopupWebView(BlackBerry::WebKit::WebPage*);
