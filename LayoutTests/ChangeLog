@@ -1,3 +1,89 @@
+2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        House cleaning on Skipped: remove tests which do not exist, unskip
+        some which are passing and add expectations for some which were
+        lacking them.
+
+        * platform/efl/Skipped:
+        * platform/efl/editing/selection/fake-doubleclick-expected.png: Added.
+        * platform/efl/editing/selection/fake-doubleclick-expected.txt: Added.
+        * platform/efl/fast/borders/border-image-slice-constrained-expected.png: Added.
+        * platform/efl/fast/borders/border-image-slice-constrained-expected.txt: Added.
+        * platform/efl/fast/borders/border-mixed-alpha-expected.png: Added.
+        * platform/efl/fast/borders/borderRadiusArcs01-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusDouble01-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusDouble02-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusDouble03-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusGroove01-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusGroove02-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusInset01-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusOutset01-expected.txt: Added.
+        * platform/efl/fast/borders/borderRadiusRidge01-expected.txt: Added.
+        * platform/efl/fast/borders/scaled-border-image-expected.png: Added.
+        * platform/efl/fast/borders/scaled-border-image-expected.txt: Added.
+        * platform/efl/fast/forms/input-appearance-disabled-expected.png: Added.
+        * platform/efl/fast/forms/input-appearance-disabled-expected.txt: Added.
+        * platform/efl/fast/forms/input-appearance-readonly-expected.png: Added.
+        * platform/efl/fast/forms/input-appearance-readonly-expected.txt: Added.
+        * platform/efl/fast/forms/input-placeholder-visibility-3-expected.png: Added.
+        * platform/efl/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/efl/fast/forms/textarea-placeholder-visibility-1-expected.png: Added.
+        * platform/efl/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/efl/fast/forms/textarea-placeholder-visibility-2-expected.png: Added.
+        * platform/efl/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+        * platform/efl/fast/forms/textarea-scrollbar-expected.png: Added.
+        * platform/efl/fast/forms/textarea-scrollbar-expected.txt: Added.
+        * platform/efl/fast/line-grid/line-grid-floating-expected.png: Added.
+        * platform/efl/fast/line-grid/line-grid-floating-expected.txt: Added.
+        * platform/efl/fast/line-grid/line-grid-inside-columns-expected.png: Added.
+        * platform/efl/fast/line-grid/line-grid-inside-columns-expected.txt: Added.
+        * platform/efl/fast/line-grid/line-grid-into-floats-expected.png: Added.
+        * platform/efl/fast/line-grid/line-grid-into-floats-expected.txt: Added.
+        * platform/efl/fast/line-grid/line-grid-positioned-expected.png: Added.
+        * platform/efl/fast/line-grid/line-grid-positioned-expected.txt: Added.
+        * platform/efl/fast/repaint/4774354-expected.png: Added.
+        * platform/efl/fast/repaint/4774354-expected.txt: Added.
+        * platform/efl/fast/repaint/4776765-expected.png: Added.
+        * platform/efl/fast/repaint/4776765-expected.txt: Added.
+        * platform/efl/fast/repaint/delete-into-nested-block-expected.png: Added.
+        * platform/efl/fast/repaint/delete-into-nested-block-expected.txt: Added.
+        * platform/efl/fast/repaint/inline-outline-repaint-expected.png: Added.
+        * platform/efl/fast/repaint/inline-outline-repaint-expected.txt: Added.
+        * platform/efl/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/efl/fast/repaint/selection-after-delete-expected.txt: Added.
+        * platform/efl/fast/selectors/159-expected.png: Added.
+        * platform/efl/fast/selectors/159-expected.txt: Added.
+        * platform/efl/fast/selectors/177a-expected.png: Added.
+        * platform/efl/fast/selectors/177a-expected.txt: Added.
+        * platform/efl/fast/spatial-navigation/snav-multiple-select-focusring-expected.png: Added.
+        * platform/efl/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Added.
+        * platform/efl/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/efl/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/efl/fast/text/delete-hard-break-character-expected.png: Added.
+        * platform/efl/fast/text/delete-hard-break-character-expected.txt: Added.
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.png: Added.
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt: Added.
+        * platform/efl/mathml/presentation/roots-expected.png: Added.
+        * platform/efl/mathml/presentation/roots-expected.txt: Added.
+        * platform/efl/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/efl/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/efl/media/controls-styling-expected.png: Added.
+        * platform/efl/media/controls-styling-expected.txt: Added.
+        * platform/efl/svg/batik/text/textAnchor-expected.png: Added.
+        * platform/efl/svg/batik/text/textOnPath3-expected.png: Added.
+        * platform/efl/svg/batik/text/verticalTextOnPath-expected.png: Added.
+        * platform/efl/svg/carto.net/tabgroup-expected.png: Added.
+        * platform/efl/transitions/cross-fade-background-image-expected.png: Added.
+        * platform/efl/transitions/cross-fade-border-image-expected.png: Added.
+        * platform/efl/transitions/default-timing-function-expected.png:
+        * platform/efl/transitions/default-timing-function-expected.txt:
+        * platform/efl/transitions/move-after-transition-expected.png:
+        * platform/efl/transitions/move-after-transition-expected.txt:
+        * platform/efl/transitions/svg-text-shadow-transition-expected.png:
+        * platform/efl/transitions/svg-text-shadow-transition-expected.txt:
+
 2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Updating test expectations (fast/forms/form-associated-element-removal MISSING).

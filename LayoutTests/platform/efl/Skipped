@@ -520,9 +520,6 @@ compositing/geometry/vertical-scroll-composited.html
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
 
-# No suitable baselines found on other ports
-fast/dom/Window/window-property-descriptors.html
-
 # BUG: onresize event is not being emitted for iframes
 fast/dynamic/paused-event-dispatch.html
 fast/frames/flattening/iframe-flattening-crash.html
@@ -602,7 +599,6 @@ fast/forms/search-zoomed.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/harness/results.html
 fast/html/tab-order.html
-fast/inline/skipped-whitespace-boundingBox.html
 fast/multicol/client-rects.html
 fast/multicol/single-line.html
 fast/repaint/selection-clear.html
@@ -715,7 +711,6 @@ fast/text/large-text-composed-char.html
 fast/writing-mode/japanese-rl-selection.html
 fast/writing-mode/japanese-rl-text-with-broken-font.html
 fast/writing-mode/japanese-rl-text.html
-fast/writing-mode/japanese-ruby-horizontal-bt.html
 fast/writing-mode/japanese-ruby-vertical-rl.html
 
 # BUG: form widgets do not respect RTL settings
@@ -728,9 +723,6 @@ fast/text/international/vertical-text-metrics-test.html
 
 # BUG: second box not rendered correctly
 fast/writing-mode/text-orientation-basic.html
-
-# BUG: controls look different
-media/controls-styling.html
 
 # BUG: volume control rendered when there is no audio
 media/video-no-audio.html
@@ -749,10 +741,6 @@ fast/forms/range/slider-zoomed.html
 
 # BUG: wrong textarea sizes
 fast/forms/textarea-metrics.html
-
-# BUG: In practice, the style seems to be applied, but the colors are not reported correctly.
-fast/dom/HTMLInputElement/checked-pseudo-selector.html
-fast/forms/setCustomValidity.html
 
 # BUG: <select> element is not being scrolled as expected.
 fast/forms/listbox-selection-2.html
@@ -781,12 +769,6 @@ mathml/presentation/row.xhtml
 
 # BUG: Integral symbol is drawn almost like a straight line.
 mathml/presentation/over.xhtml
-
-# BUG: Square root symbol does not stretch well with high indices.
-mathml/presentation/roots.xhtml
-
-# BUG: Wrong row alignment.
-mathml/presentation/row-alignment.xhtml
 
 # BUG: there should be no scrollbars.
 mathml/presentation/style.xhtml
@@ -1139,10 +1121,6 @@ svg/as-image/img-preserveAspectRatio-support-2.html
 svg/as-image/same-image-two-instances.html
 svg/as-image/svg-image-change-content-size.xhtml
 svg/batik/masking/maskRegions.svg
-svg/batik/text/textAnchor.svg
-svg/batik/text/textOnPath3.svg
-svg/batik/text/verticalTextOnPath.svg
-svg/carto.net/tabgroup.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
@@ -1222,13 +1200,6 @@ tables/mozilla/
 tables/mozilla/bugs/bug14929.html
 tables/mozilla/bugs/bug2947.html
 tables/mozilla_expected_failures/
-transforms/no_transform_hit_testing.html
-transitions/cross-fade-background-image.html
-transitions/cross-fade-border-image.html
-transitions/default-timing-function.html
-transitions/move-after-transition.html
-transitions/svg-text-shadow-transition.html
-transitions/svg-transitions.html
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 editing/input/reveal-contenteditable-on-input-vertically.html
@@ -1333,34 +1304,10 @@ editing/unsupported-content/list-type-after.html
 editing/unsupported-content/table-delete-001.html
 editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
-editing/selection/fake-doubleclick.html
 editing/spelling/inline_spelling_markers.html
 editing/spelling/spelling.html
-fast/borders/border-image-slice-constrained.html
-fast/borders/border-mixed-alpha.html
-fast/borders/borderRadiusArcs01.html
-fast/borders/borderRadiusDouble01.html
-fast/borders/borderRadiusDouble02.html
-fast/borders/borderRadiusDouble03.html
-fast/borders/borderRadiusGroove01.html
-fast/borders/borderRadiusGroove02.html
-fast/borders/borderRadiusInset01.html
-fast/borders/borderRadiusOutset01.html
-fast/borders/borderRadiusRidge01.html
-fast/borders/scaled-border-image.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/forms/input-appearance-disabled.html
-fast/forms/input-appearance-readonly.html
-fast/forms/input-placeholder-visibility-3.html
-fast/forms/password-placeholder-text-security.html
-fast/forms/textarea-placeholder-visibility-1.html
-fast/forms/textarea-placeholder-visibility-2.html
-fast/forms/textarea-scrollbar.html
 fast/js/global-constructors.html
-fast/line-grid/line-grid-floating.html
-fast/line-grid/line-grid-inside-columns.html
-fast/line-grid/line-grid-into-floats.html
-fast/line-grid/line-grid-positioned.html
 fast/multicol/block-axis-horizontal-bt.html
 fast/multicol/block-axis-horizontal-tb.html
 fast/multicol/block-axis-vertical-lr.html
@@ -1373,15 +1320,6 @@ fast/multicol/pagination-v-horizontal-bt.html
 fast/multicol/pagination-v-horizontal-tb.html
 fast/multicol/pagination-v-vertical-lr.html
 fast/multicol/pagination-v-vertical-rl.html
-fast/repaint/4774354.html
-fast/repaint/4776765.html
-fast/repaint/delete-into-nested-block.html
-fast/repaint/inline-outline-repaint.html
-fast/repaint/selection-after-delete.html
-fast/selectors/159.html
-fast/selectors/177a.html
-fast/spatial-navigation/snav-multiple-select-focusring.html
-fast/text/delete-hard-break-character.html
 fast/text/unicode-variation-selector.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
@@ -1403,9 +1341,6 @@ media/media-can-play-flac-audio.html
 
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
-
-# The inner <input> should now grow to take the full cell's height.
-fast/table/colspanMinWidth-vertical.html
 
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
