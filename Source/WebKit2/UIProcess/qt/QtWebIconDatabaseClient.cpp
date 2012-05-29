@@ -62,13 +62,29 @@ QtWebIconDatabaseClient::~QtWebIconDatabaseClient()
     WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), 0);
 }
 
-void QtWebIconDatabaseClient::didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo)
+void QtWebIconDatabaseClient::didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo)
 {
-    QUrl qUrl = WKURLCopyQUrl(pageURL);
-    toQtWebIconDatabaseClient(clientInfo)->requestIconForPageURL(qUrl);
+    emit toQtWebIconDatabaseClient(clientInfo)->iconChangedForPageURL(toImpl(pageURL)->string());
 }
 
-QImage QtWebIconDatabaseClient::iconImageForPageURL(const String& pageURL, const QSize& iconSize)
+WTF::String QtWebIconDatabaseClient::iconForPageURL(const WTF::String& pageURL)
+{
+    String iconURL;
+    m_iconDatabase->synchronousIconURLForPageURL(pageURL, iconURL);
+
+    if (iconURL.isEmpty())
+        return String();
+
+    // Verify that the image data is actually available before reporting back
+    // a url, since clients assume that the url can be used directly.
+    WebCore::Image* iconImage = m_iconDatabase->imageForPageURL(pageURL);
+    if (!iconImage || iconImage->isNull())
+        return String();
+
+    return iconURL;
+}
+
+QImage QtWebIconDatabaseClient::iconImageForPageURL(const WTF::String& pageURL, const QSize& iconSize)
 {
     MutexLocker locker(m_imageLock);
 
@@ -82,33 +98,6 @@ QImage QtWebIconDatabaseClient::iconImageForPageURL(const String& pageURL, const
         return QImage();
 
     return nativeImage->toImage();
-}
-
-unsigned QtWebIconDatabaseClient::iconURLHashForPageURL(const String& pageURL)
-{
-    String iconURL;
-    m_iconDatabase->synchronousIconURLForPageURL(pageURL, iconURL);
-    return StringHash::hash(iconURL);
-}
-
-void QtWebIconDatabaseClient::requestIconForPageURL(const QUrl& pageURL)
-{
-    String pageURLString = WebCore::KURL(pageURL).string();
-    if (iconImageForPageURL(pageURLString).isNull())
-        return;
-
-    unsigned iconID = iconURLHashForPageURL(pageURLString);
-    QUrl url;
-    url.setScheme(QStringLiteral("image"));
-    url.setHost(QStringLiteral("webicon"));
-    QString path;
-    path.append(QLatin1Char('/'));
-    path.append(QString::number(m_contextId));
-    path.append(QLatin1Char('/'));
-    path.append(QString::number(iconID));
-    url.setPath(path);
-    url.setEncodedFragment(pageURL.toEncoded());
-    emit iconChangedForPageURL(pageURL, url);
 }
 
 void QtWebIconDatabaseClient::retainIconForPageURL(const String& pageURL)

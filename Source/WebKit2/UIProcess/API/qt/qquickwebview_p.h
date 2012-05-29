@@ -212,7 +212,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onUrlChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onReceivedResponseFromDownload(QWebDownloadItem*));
-    Q_PRIVATE_SLOT(d_func(), void _q_onIconChangedForPageURL(const QUrl&, const QUrl&));
+    Q_PRIVATE_SLOT(d_func(), void _q_onIconChangedForPageURL(const QString&));
     // Hides QObject::d_ptr allowing us to use the convenience macros.
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
     QQuickWebViewExperimental* m_experimental;

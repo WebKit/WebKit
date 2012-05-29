@@ -269,7 +269,7 @@ Rectangle {
                 height: 16
                 anchors {
                     left: parent.left
-                    leftMargin: 4
+                    leftMargin: 6
                     verticalCenter: parent.verticalCenter
                 }
             }

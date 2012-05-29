@@ -49,18 +49,16 @@ public:
     QtWebIconDatabaseClient(QtWebContext*);
     ~QtWebIconDatabaseClient();
 
+    WTF::String iconForPageURL(const WTF::String& pageURL);
     QImage iconImageForPageURL(const WTF::String& pageURL, const QSize& iconSize = QSize(32, 32));
+
     void retainIconForPageURL(const WTF::String&);
     void releaseIconForPageURL(const WTF::String&);
 
-public Q_SLOTS:
-    void requestIconForPageURL(const QUrl&);
-
 public:
-    Q_SIGNAL void iconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURL);
+    Q_SIGNAL void iconChangedForPageURL(const QString& pageURL);
 
 private:
-    unsigned iconURLHashForPageURL(const WTF::String&);
     static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo);
     uint64_t m_contextId;
     RefPtr<WebKit::WebIconDatabase> m_iconDatabase;

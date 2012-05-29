@@ -1,3 +1,22 @@
+2012-05-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Sync up favicon-implementation with WebView url changes in r118158
+
+        https://bugs.webkit.org/show_bug.cgi?id=87133
+
+        We now base64-encode the page url in the image-provider url, so that any
+        normalization done by QUrl will not mess up the page-url. The logic of
+        creating and parsing the provider-url has been moved into the image
+        provider, to keep it in one place.
+
+        We were also releasing icons (even ones we hadn't retained), which we can't
+        do since we don't know when the icon url is no longer in use.
+
+        Reviewed-by Simon Hausmann.
+
+        * declarative/plugin.cpp:
+        * declarative/public.pri:
+
 2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled

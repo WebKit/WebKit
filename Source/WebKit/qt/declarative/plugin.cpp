@@ -17,6 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "config.h"
+
 #include "qglobal.h"
 
 #if defined(HAVE_QQUICK1)

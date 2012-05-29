@@ -44,6 +44,7 @@
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p_p.h"
+#include "qwebiconimageprovider_p.h"
 #include "qwebkittest_p.h"
 #include "qwebloadrequest_p.h"
 #include "qwebnavigationhistory_p.h"
@@ -56,6 +57,7 @@
 #include <QDateTime>
 #include <QtCore/QFile>
 #include <QtQml/QJSValue>
+#include <QtQuick/QQuickView>
 #include <WKOpenPanelResultListener.h>
 #include <WKSerializedScriptValue.h>
 #include <WebCore/IntPoint.h>
@@ -305,7 +307,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(toAPI(webPageProxy.get())));
 
     QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
-    QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QUrl, QUrl)), q_ptr, SLOT(_q_onIconChangedForPageURL(QUrl, QUrl)));
+    QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QString)), q_ptr, SLOT(_q_onIconChangedForPageURL(QString)));
 
     // Any page setting should preferrable be set before creating the page.
     webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
@@ -375,9 +377,6 @@ void QQuickWebViewPrivate::loadProgressDidChange(int loadProgress)
 {
     Q_Q(QQuickWebView);
 
-    if (!loadProgress)
-        setIcon(QUrl());
-
     m_loadProgress = loadProgress;
 
     emit q->loadProgressChanged();
@@ -418,16 +417,6 @@ void QQuickWebViewPrivate::setNeedsDisplay()
     }
 
     q->page()->update();
-}
-
-void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURL)
-{
-    Q_Q(QQuickWebView);
-
-    if (q->url() != pageURL)
-        return;
-
-    setIcon(iconURL);
 }
 
 void QQuickWebViewPrivate::processDidCrash()
@@ -483,8 +472,38 @@ void QQuickWebViewPrivate::_q_onVisibleChanged()
 
 void QQuickWebViewPrivate::_q_onUrlChanged()
 {
+    updateIcon();
+}
+
+void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QString& pageUrl)
+{
+    if (pageUrl != QString(m_currentUrl))
+        return;
+
+    updateIcon();
+}
+
+/* Called either when the url changes, or when the icon for the current page changes */
+void QQuickWebViewPrivate::updateIcon()
+{
     Q_Q(QQuickWebView);
-    context->iconDatabase()->requestIconForPageURL(q->url());
+
+    QQuickView* view = qobject_cast<QQuickView*>(q->canvas());
+    if (!view)
+        return;
+
+    QWebIconImageProvider* provider = static_cast<QWebIconImageProvider*>(
+                view->engine()->imageProvider(QWebIconImageProvider::identifier()));
+    if (!provider)
+        return;
+
+    WTF::String iconUrl = provider->iconURLForPageURLInContext(m_currentUrl, context.get());
+
+    if (iconUrl == m_iconUrl)
+        return;
+
+    m_iconUrl = iconUrl;
+    emit q->iconChanged();
 }
 
 void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* downloadItem)
@@ -642,31 +661,6 @@ void QQuickWebViewPrivate::addAttachedPropertyTo(QObject* object)
     Q_Q(QQuickWebView);
     QQuickWebViewAttached* attached = static_cast<QQuickWebViewAttached*>(qmlAttachedPropertiesObject<QQuickWebView>(object));
     attached->setView(q);
-}
-
-void QQuickWebViewPrivate::setIcon(const QUrl& iconURL)
-{
-    Q_Q(QQuickWebView);
-    if (m_iconURL == iconURL)
-        return;
-
-    if (!webPageProxy->mainFrame())
-        return;
-
-    String oldPageURL = QUrl::fromPercentEncoding(m_iconURL.encodedFragment());
-    String newPageURL = webPageProxy->mainFrame()->url();
-
-    if (oldPageURL != newPageURL) {
-        QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
-        if (!oldPageURL.isEmpty())
-            iconDatabase->releaseIconForPageURL(oldPageURL);
-
-        if (!newPageURL.isEmpty())
-            iconDatabase->retainIconForPageURL(newPageURL);
-    }
-
-    m_iconURL = iconURL;
-    emit q->iconChanged();
 }
 
 bool QQuickWebViewPrivate::navigatorQtObjectEnabled() const
@@ -1561,7 +1555,7 @@ void QQuickWebView::emitUrlChangeIfNeeded()
 QUrl QQuickWebView::icon() const
 {
     Q_D(const QQuickWebView);
-    return d->m_iconURL;
+    return QUrl(d->m_iconUrl);
 }
 
 /*!

@@ -103,7 +103,7 @@ public:
     void _q_onVisibleChanged();
     void _q_onUrlChanged();
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
-    void _q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURLString);
+    void _q_onIconChangedForPageURL(const QString&);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtWebPageUIClient::FileChooserType);
     quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
@@ -118,7 +118,6 @@ public:
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setTransparentBackground(bool);
     void addAttachedPropertyTo(QObject*);
-    void setIcon(const QUrl&);
 
     bool navigatorQtObjectEnabled() const;
     bool renderToOffscreenBuffer() const { return m_renderToOffscreenBuffer; }
@@ -132,6 +131,8 @@ public:
     QRect visibleContentsRect() const;
 
     void setDialogActive(bool active) { m_dialogActive = active; }
+
+    void updateIcon();
 
     // PageClient.
     WebCore::IntSize viewSize() const;
@@ -200,7 +201,7 @@ protected:
     bool m_renderToOffscreenBuffer;
     bool m_dialogActive;
     bool m_allowAnyHTTPSCertificateForLocalHost;
-    QUrl m_iconURL;
+    WTF::String m_iconUrl;
     int m_loadProgress;
     WTF::String m_currentUrl;
 };
