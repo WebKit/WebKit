@@ -4,8 +4,6 @@ import QtWebKit 3.0
 import QtWebKit.experimental 1.0
 import "../common"
 
-// FIXME: Moved to Desktop tests because we want to have mouseClick() to open the <select> tag. We can move it back
-// when TestCase starts supporting touch events, see https://bugreports.qt.nokia.com/browse/QTBUG-23083.
 TestWebView {
     id: webView
 
@@ -59,7 +57,7 @@ TestWebView {
         }
 
         function openItemSelector() {
-            mouseClick(webView, 15, 15, Qt.LeftButton)
+            webView.experimental.test.touchTap(webView, 15, 15)
         }
 
         function test_accept() {

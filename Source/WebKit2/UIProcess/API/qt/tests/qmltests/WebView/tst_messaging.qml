@@ -45,7 +45,7 @@ Item {
     }
 
     TestCase {
-        name: "DesktopWebViewMessaging"
+        name: "WebViewMessaging"
         property url testUrl: Qt.resolvedUrl("../common/messaging.html")
 
         function init() {

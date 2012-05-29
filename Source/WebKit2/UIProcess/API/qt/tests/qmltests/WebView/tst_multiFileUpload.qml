@@ -4,8 +4,6 @@ import QtWebKit 3.0
 import QtWebKit.experimental 1.0
 import "../common"
 
-// FIXME: Added to Desktop tests because we want to have mouseClick() to open the <input> tag. We can move it back
-// when TestCase starts supporting touch events, see https://bugreports.qt.nokia.com/browse/QTBUG-23083.
 TestWebView {
     id: webView
 
@@ -13,7 +11,6 @@ TestWebView {
     height: 400
 
     property bool selectFile
-    property bool acceptMultiple: false
 
     experimental.filePicker: Item {
         Timer {
@@ -21,12 +18,8 @@ TestWebView {
             interval: 1
             onTriggered: {
                 var selectedFiles = ["filename1", "filename2"]
-                if (selectFile) {
-                    if (acceptMultiple)
-                        model.accept(selectedFiles)
-                    else
-                        model.accept("acceptedfilename");
-                }
+                if (selectFile)
+                    model.accept(selectedFiles)
                 else
                     model.reject();
             }
@@ -41,32 +34,24 @@ TestWebView {
 
     TestCase {
         id: test
-        name: "WebViewSingleFilePicker"
+        name: "WebViewMultiFilePicker"
         when: windowShown
 
         function init() {
-            webView.url = Qt.resolvedUrl("../common/singlefileupload.html")
+            webView.url = Qt.resolvedUrl("../common/multifileupload.html")
             verify(webView.waitForLoadSucceeded())
             titleSpy.clear()
         }
 
         function openItemSelector() {
-            mouseClick(webView, 15, 15, Qt.LeftButton)
+            webView.experimental.test.touchTap(webView, 15, 15)
         }
 
         function test_accept() {
             webView.selectFile = true;
             openItemSelector()
             titleSpy.wait()
-            compare(webView.title, "acceptedfilename")
-        }
-
-        function test_multiple() {
-            webView.selectFile = true;
-            webView.acceptMultiple = true;
-            openItemSelector()
-            titleSpy.wait()
-            compare(webView.title, "filename1")
+            compare(webView.title, "filename1,filename2")
         }
 
         function test_reject() {
