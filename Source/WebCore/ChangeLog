@@ -1,3 +1,47 @@
+2012-05-29  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION (r90971): the cursor is painted “behind” the placeholder text
+        https://bugs.webkit.org/show_bug.cgi?id=87155
+
+        Reviewed by Hajime Morita.
+
+        This regression happened only on platforms on which
+        RenderTheme::shouldShowPlaceholderWhenFocused() returns true.
+
+        Because the order of renderers for the editable node and the placeholder
+        node was:
+         - A renderer for the editable node
+         - A renderer for the placeholder node,
+        The text caret was painted, then the palceholder was painted.
+
+        We should not use z-index in the built-in shadow nodes. So the patch
+        fixes this bug by re-ordering these renderers.
+
+        Tests: fast/forms/input-placeholder-paint-order-2.html
+               fast/forms/input-placeholder-paint-order.html
+               fast/forms/textarea/textarea-placeholder-paint-order-2.html
+               fast/forms/textarea/textarea-placeholder-paint-order.html
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::fixPlaceholderRenderer):
+        Added. Reorder the order of renderers so that the placeholder renderer
+        precedes the inner text renderer.
+        * html/HTMLTextFormControlElement.h: Add fixPlaceholderRenderer() declaration.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::attach): Calls fixPlaceholderRenderer().
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        ditto. Also, use innerTextElement() to improvde code readability.
+        * html/HTMLTextAreaElement.h:
+        (HTMLTextAreaElement): Overrides attach().
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        Calls fixPlaceholderRenderer().
+        (WebCore::TextFieldInputType::attach): ditto.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType): Overrides attach().
+
 2012-05-28  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Implement V8Binding::v8Null(isolate) and use it in CodeGeneratorV8.pm

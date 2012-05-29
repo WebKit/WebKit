@@ -166,6 +166,23 @@ void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderVal
     ASSERT(!ec);
 }
 
+void HTMLTextFormControlElement::fixPlaceholderRenderer(HTMLElement* placeholder, HTMLElement* siblingElement)
+{
+    // FIXME: We should change the order of DOM nodes. But it makes an assertion
+    // failure in editing code.
+    if (!placeholder || !placeholder->renderer())
+        return;
+    RenderObject* placeholderRenderer = placeholder->renderer();
+    RenderObject* siblingRenderer = siblingElement->renderer();
+    ASSERT(siblingRenderer);
+    if (placeholderRenderer->nextSibling() == siblingRenderer)
+        return;
+    RenderObject* parentRenderer = placeholderRenderer->parent();
+    ASSERT(parentRenderer == siblingRenderer->parent());
+    parentRenderer->removeChild(placeholderRenderer);
+    parentRenderer->addChild(placeholderRenderer, siblingRenderer);
+}
+
 RenderTextControl* HTMLTextFormControlElement::textRendererAfterUpdateLayout()
 {
     if (!isTextFormControl())

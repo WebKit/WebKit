@@ -3436,6 +3436,10 @@ BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL P
 BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
+// New tests.  Need expectations.
+BUGWK87155 : fast/forms/input-placeholder-paint-order.html = MISSING FAIL
+BUGWK87155 : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING FAIL
+
 // Flaky/crashing on a single platform every 30 tries or so
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH

@@ -80,6 +80,7 @@ private:
     virtual HTMLElement* placeholderElement() const OVERRIDE;
     virtual void updatePlaceholderText() OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
+    virtual void attach() OVERRIDE;
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;

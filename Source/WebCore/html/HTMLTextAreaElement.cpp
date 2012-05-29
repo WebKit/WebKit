@@ -496,6 +496,12 @@ HTMLElement* HTMLTextAreaElement::placeholderElement() const
     return m_placeholder.get();
 }
 
+void HTMLTextAreaElement::attach()
+{
+    HTMLTextFormControlElement::attach();
+    fixPlaceholderRenderer(m_placeholder.get(), innerTextElement());
+}
+
 void HTMLTextAreaElement::updatePlaceholderText()
 {
     ExceptionCode ec = 0;
@@ -511,11 +517,12 @@ void HTMLTextAreaElement::updatePlaceholderText()
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(document());
         m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
-        shadow()->oldestShadowRoot()->insertBefore(m_placeholder, shadow()->oldestShadowRoot()->firstChild()->nextSibling(), ec);
+        shadow()->oldestShadowRoot()->insertBefore(m_placeholder, innerTextElement()->nextSibling(), ec);
         ASSERT(!ec);
     }
     m_placeholder->setInnerText(placeholderText, ec);
     ASSERT(!ec);
+    fixPlaceholderRenderer(m_placeholder.get(), innerTextElement());
 }
 
 }

@@ -410,6 +410,13 @@ void TextFieldInputType::updatePlaceholderText()
     }
     m_placeholder->setInnerText(placeholderText, ec);
     ASSERT(!ec);
+    element()->fixPlaceholderRenderer(m_placeholder.get(), m_container ? m_container.get() : m_innerText.get());
+}
+
+void TextFieldInputType::attach()
+{
+    InputType::attach();
+    element()->fixPlaceholderRenderer(m_placeholder.get(), m_container ? m_container.get() : m_innerText.get());
 }
 
 bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) const
