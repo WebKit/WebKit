@@ -1,3 +1,13 @@
+2012-05-29  MORITA Hajime  <morrita@google.com>
+
+        ShadowRoot.getElementById() returns removed node.
+        https://bugs.webkit.org/show_bug.cgi?id=62184
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/get-element-by-id-in-shadow-mutation-expected.txt: Added.
+        * fast/dom/shadow/get-element-by-id-in-shadow-mutation.html: Added.
+
 2012-05-29  Alexey Proskuryakov  <ap@apple.com>
 
         * platform/mac/Skipped: Skipping a heap profiler test (unsupported functionality).

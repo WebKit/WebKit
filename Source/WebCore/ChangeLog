@@ -1,3 +1,28 @@
+2012-05-29  MORITA Hajime  <morrita@google.com>
+
+        ShadowRoot.getElementById() returns removed node.
+        https://bugs.webkit.org/show_bug.cgi?id=62184
+
+        Deregitration of m_elementsById map is done at Element::removedFrom()
+        But the tree scope of the removed node is already reset from a shadow root
+        to a document.
+
+        This change lookup the old shadow root through its parent node and
+        deregitrater the node against it.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/dom/shadow/get-element-by-id-in-shadow-mutation.html
+
+        * dom/Element.cpp:
+        (WebCore::treeScopeOfParent):
+        (WebCore):
+        (WebCore::Element::removedFrom):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::updateId):
+        (WebCore):
+
 2012-05-29  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Unoccluded area in surfaces should always be clipped to the rootScissorRect

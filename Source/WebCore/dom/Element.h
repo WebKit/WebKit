@@ -303,6 +303,7 @@ public:
     virtual String title() const;
 
     void updateId(const AtomicString& oldId, const AtomicString& newId);
+    void updateId(TreeScope*, const AtomicString& oldId, const AtomicString& newId);
     void updateName(const AtomicString& oldName, const AtomicString& newName);
 
     void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
@@ -587,7 +588,14 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     if (oldId == newId)
         return;
 
-    TreeScope* scope = treeScope();
+    updateId(treeScope(), oldId, newId);
+}
+
+inline void Element::updateId(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId)
+{
+    ASSERT(inDocument());
+    ASSERT(oldId != newId);
+
     if (!oldId.isEmpty())
         scope->removeElementById(oldId, this);
     if (!newId.isEmpty())
