@@ -109,6 +109,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitWebInspector.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebResource.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
