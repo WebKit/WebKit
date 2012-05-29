@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input type="file" multiple onchange="onInputFileChange(this.files)">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test the attribute of FileList.");
+
+function onInputFileChange(files)
+{
+    window.files = files;
+    debug("Start");
+    shouldBe("files.length", "2");
+    shouldBeTrue("files.item(0) instanceof File");
+    shouldBeEqualToString('files.item(0).name', 'UTF8.txt');
+    shouldBeTrue("files.item(1) instanceof File");
+    shouldBeEqualToString('files.item(1).name', 'UTF8-2.txt');
+    shouldBeNull("files.item(999)");
+}
+
+eventSender.beginDragWithFiles(['resources/UTF8.txt', 'resources/UTF8-2.txt']);
+eventSender.mouseMoveTo(10, 10);
+eventSender.mouseUp();
+
+</script>
+</body>
+<script src="../js/resources/js-test-post.js"></script>
+</html>

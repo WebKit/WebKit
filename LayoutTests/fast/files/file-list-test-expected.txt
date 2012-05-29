@@ -1,0 +1,16 @@
+
+Test the attribute of FileList.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Start
+PASS files.length is 2
+PASS files.item(0) instanceof File is true
+PASS files.item(0).name is "UTF8.txt"
+PASS files.item(1) instanceof File is true
+PASS files.item(1).name is "UTF8-2.txt"
+PASS files.item(999) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
