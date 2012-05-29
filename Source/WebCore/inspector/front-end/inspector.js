@@ -706,7 +706,7 @@ WebInspector.documentKeyDown = function(event)
 
     if (event.keyIdentifier === "F1" ||
         (event.keyIdentifier === helpKey && event.shiftKey && (!WebInspector.isBeingEdited(event.target) || event.metaKey))) {
-        WebInspector.shortcutsScreen.showModal();
+        this.settingsController.showSettingsScreen(WebInspector.SettingsScreen.Tabs.Shortcuts);
         event.consume(true);
         return;
     }

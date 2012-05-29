@@ -30,6 +30,7 @@
 
 /**
  * @constructor
+ * @param {string=} title
  * @extends {WebInspector.View}
  */
 WebInspector.HelpScreen = function(title)
@@ -42,14 +43,13 @@ WebInspector.HelpScreen = function(title)
     this.element.tabIndex = 0;
     this.element.addEventListener("focus", this._onBlur.bind(this), false);
 
-    var mainWindow = this.element.createChild("div", "help-window-main");
-    var captionWindow = mainWindow.createChild("div", "help-window-caption");
-    var closeButton = captionWindow.createChild("button", "help-close-button");
-    this.contentElement = mainWindow.createChild("div", "help-content");
-    captionWindow.createChild("h1", "help-window-title").textContent = title;
-
-    closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
-    closeButton.addEventListener("click", this.hide.bind(this), false);
+    if (title) {
+        var mainWindow = this.element.createChild("div", "help-window-main");
+        var captionWindow = mainWindow.createChild("div", "help-window-caption");
+        captionWindow.appendChild(this._createCloseButton());
+        this.contentElement = mainWindow.createChild("div", "help-content");
+        captionWindow.createChild("h1", "help-window-title").textContent = title;
+    }
 }
 
 /**
@@ -58,6 +58,15 @@ WebInspector.HelpScreen = function(title)
 WebInspector.HelpScreen._visibleScreen = null;
 
 WebInspector.HelpScreen.prototype = {
+    _createCloseButton: function()
+    {
+        var closeButton = document.createElement("button");
+        closeButton.className = "help-close-button";
+        closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
+        closeButton.addEventListener("click", this.hide.bind(this), false);
+        return closeButton;
+    },
+
     showModal: function()
     {
         var visibleHelpScreen = WebInspector.HelpScreen._visibleScreen;

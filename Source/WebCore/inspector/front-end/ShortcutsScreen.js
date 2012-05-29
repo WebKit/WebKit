@@ -30,13 +30,10 @@
 
 /**
  * @constructor
- * @extends {WebInspector.HelpScreen}
  */
 WebInspector.ShortcutsScreen = function()
 {
-    WebInspector.HelpScreen.call(this, WebInspector.UIString("Keyboard Shortcuts"));
     this._sections = {};
-    this._tableReady = false;
 }
 
 WebInspector.ShortcutsScreen.prototype = {
@@ -48,24 +45,8 @@ WebInspector.ShortcutsScreen.prototype = {
         return section;
     },
 
-    /**
-     * @override
-     */
-    wasShown: function()
+    _createShortcutsTabView: function()
     {
-        this._buildTable(this.contentElement);
-        WebInspector.HelpScreen.prototype.wasShown.call(this);
-    },
-
-    /**
-     * @param parent{Node}
-     */
-    _buildTable: function(parent)
-    {
-        if (this._tableReady)
-            return;
-        this._tableReady = true;
-
         var orderedSections = [];
         for (var section in this._sections)
             orderedSections.push(this._sections[section]);
@@ -75,15 +56,16 @@ WebInspector.ShortcutsScreen.prototype = {
         }
         orderedSections.sort(compareSections);
 
-        var container = document.createElement("div");
-        container.className = "help-container";
+        var view = new WebInspector.View();
+
+        var container = view.element;
+        container.className = "help-content help-container";
         for (var i = 0; i < orderedSections.length; ++i)
             orderedSections[i].renderSection(container);
-        parent.appendChild(container);
+
+        return view;
     }
 }
-
-WebInspector.ShortcutsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
 
 /**
  * We cannot initialize it here as localized strings are not loaded yet.
@@ -130,7 +112,10 @@ WebInspector.ShortcutsSection.prototype = {
     renderSection: function(container)
     {
         var parent = container.createChild("div", "help-block");
-        this._renderHeader(parent);
+
+        var headLine = parent.createChild("div", "help-line");
+        headLine.createChild("div", "help-key-cell");
+        headLine.createChild("div", "help-section-title help-cell").textContent = this.name;
 
         for (var i = 0; i < this._lines.length; ++i) {
             var line = parent.createChild("div", "help-line");
@@ -139,13 +124,6 @@ WebInspector.ShortcutsSection.prototype = {
             keyCell.appendChild(this._createSpan("help-key-delimiter", ":"));
             line.createChild("div", "help-cell").textContent = this._lines[i].text;
         }
-    },
-
-    _renderHeader: function(parent)
-    {
-        var line = parent.createChild("div", "help-line");
-        line.createChild("div", "help-key-cell");
-        line.createChild("div", "help-section-title help-cell").textContent = this.name;
     },
 
     _renderSequence: function(sequence, delimiter)

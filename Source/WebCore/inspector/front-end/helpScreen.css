@@ -51,27 +51,27 @@ body.compact .help-window-main {
     font-size: 13px;
 }
 
-.help-content::-webkit-scrollbar {
+.help-window-main ::-webkit-scrollbar {
     width: 11px;
 }
 
-.help-content::-webkit-scrollbar-corner,
-.help-content::-webkit-resizer {
+.help-window-main ::-webkit-scrollbar-corner,
+.help-window-main ::-webkit-resizer {
     display: none;
 }
 
-.help-content::-webkit-scrollbar-thumb:vertical {
+.help-window-main ::-webkit-scrollbar-thumb:vertical {
     background: -webkit-gradient(linear, left top, right top, from(rgb(128, 128, 128)), to(rgb(128, 128, 128)), color-stop(40%, rgb(96, 96, 96)));
     border-radius: 5px;
     min-height: 20px;
 }
 
-.help-content::-webkit-scrollbar-thumb:vertical:hover,
-.help-content::-webkit-scrollbar-thumb:vertical:active {
+.help-window-main ::-webkit-scrollbar-thumb:vertical:hover,
+.help-window-main ::-webkit-scrollbar-thumb:vertical:active {
     background: -webkit-gradient(linear, left top, right top, from(rgb(176, 176, 176)), to(rgb(176, 176, 176)), color-stop(40%, rgb(144, 144, 144)));
 }
 
-.help-content::-webkit-scrollbar-track:vertical {
+.help-window-main ::-webkit-scrollbar-track:vertical {
     background: -webkit-gradient(linear, left top, right top, from(rgb(10, 10, 10)), to(rgb(32, 32, 32)), color-stop(25%, rgb(32, 32, 32)));
     border-radius: 5px;
 }
@@ -118,7 +118,7 @@ body:not(.platform-mac) .help-close-button {
     padding-bottom: 9px;
 }
 
-#settings .help-container {
+#settings.help-container {
     -webkit-column-width: 240px;
 }
 
@@ -225,4 +225,47 @@ body.platform-mac .help-key {
 .help-content option {
     background-color: black;
     color: white;
+}
+
+body:not(.compact) #settings-screen .tabbed-pane {
+    height: auto;
+}
+
+#settings-screen .tabbed-pane-header {
+    height: auto;
+}
+
+#settings-screen .tabbed-pane-header-tabs {
+    padding-top: 9px;
+}
+
+#settings-screen .tabbed-pane-header-tab {
+    background-color: transparent;
+    position: relative;
+    top: 1px;
+    text-shadow: none;
+    color: rgb(255, 255, 255);
+    height: 19px;
+    font-size: 13px;
+    padding: 0 4px;
+    margin: 0;
+}
+
+#settings-screen .help-close-button {
+    margin: 6px 0;
+}
+
+#settings-screen .tabbed-pane-header-tab.selected {
+    border-bottom: solid 1px rgb(51, 51, 51);
+    border-bottom-right-radius: 2px;
+}
+
+#settings-screen .tabbed-pane-content {
+    margin: 8px;
+    padding: 0 4px;
+}
+
+#settings-screen .help-content {
+    margin: 0;
+    padding: 0;
 }

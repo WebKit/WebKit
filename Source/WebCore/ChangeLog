@@ -1,3 +1,60 @@
+2012-05-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Tabbed Settings Screen
+        https://bugs.webkit.org/show_bug.cgi?id=87497
+
+        Reviewed by Yury Semikhatsky.
+
+        Combine settings screen and shortcuts screen
+        to a single tabbed settings screen.
+        This will make shortcuts screen more discoverable.
+
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen): Make titled tamplate optional.
+        (WebInspector.HelpScreen.prototype._createCloseButton): Extract method.
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen): Split initialization and UI construction.
+        (WebInspector.SettingsScreen.prototype._createSettingsTabView.appendSection):
+        (WebInspector.SettingsScreen.prototype._createSettingsTabView):
+        Extract GUI construction method.
+        (WebInspector.SettingsScreen.prototype._getOrCreateTabbedPane):
+        Make GUI construction lazy.
+        (WebInspector.SettingsScreen.prototype.selectTab):
+        Add method for external tab swithching.
+        (WebInspector.SettingsScreen.prototype.wasShown):
+        Make GUI construction lazy.
+        (WebInspector.SettingsScreenTabbedPane):
+        Extend class to access protected member.
+        (WebInspector.SettingsController.prototype._buttonClicked):
+        Change "showSettingsScreen" visibility and parameters.
+        (WebInspector.SettingsController.prototype._onHideSettingsScreen):
+        Preserve settings screen state.
+        (WebInspector.SettingsController.prototype.showSettingsScreen):
+        Change method visibility and parameters.
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsScreen): Remove inheritance from HelpScreen.
+        (WebInspector.ShortcutsScreen.prototype._createShortcutsTabView):
+        Refactoring of GUI construction.
+        (WebInspector.ShortcutsSection.prototype.renderSection):
+        Ditto.
+        * inspector/front-end/helpScreen.css:
+        (.help-window-main ::-webkit-scrollbar): Rebind scrollbar settings.
+        (.help-window-main ::-webkit-resizer): Ditto.
+        (.help-window-main ::-webkit-scrollbar-thumb:vertical): Ditto.
+        (.help-window-main ::-webkit-scrollbar-thumb:vertical:active): Ditto.
+        (.help-window-main ::-webkit-scrollbar-track:vertical): Ditto.
+        (body:not(.compact) #settings-screen .tabbed-pane): Fix container height.
+        (#settings-screen .tabbed-pane-header): Ditto.
+        (#settings-screen .tabbed-pane-header-tabs): Adjust spacing.
+        (#settings-screen .tabbed-pane-header-tab): Adjust style.
+        (#settings-screen .help-close-button): Adjust spacing.
+        (#settings-screen .tabbed-pane-header-tab.selected):
+        Erase line below active tab.
+        (#settings-screen .tabbed-pane-content): Adjust spacing.
+        (#settings-screen .help-content): Ditto.
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown): Use Settings screen to show shortcuts.
+
 2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: REGRESSION: load heap snapshot doesn't work.

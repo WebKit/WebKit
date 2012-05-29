@@ -35,95 +35,138 @@
  */
 WebInspector.SettingsScreen = function(onHide)
 {
-    WebInspector.HelpScreen.call(this, WebInspector.UIString("Settings"));
-    this.contentElement.id = "settings";
+    WebInspector.HelpScreen.call(this);
+    this.element.id = "settings-screen";
 
     /** @type {!function()} */
     this._onHide = onHide;
-
-    var container = document.createElement("div");
-    container.className = "help-container";
-
-    /**
-     *  @param {string} name
-     *  @return {!Element}
-     */
-    function appendSection(name) {
-        var block = container.createChild("div", "help-block");
-        block.createChild("div", "help-section-title").textContent = name;
-        return block;
-    }
-
-    var p = appendSection(WebInspector.UIString("General"));
-    if (Preferences.showDockToRight)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
-    if (Preferences.exposeDisableCache)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
-    var disableJSElement = this._createCheckboxSetting(WebInspector.UIString("Disable JavaScript"), WebInspector.settings.javaScriptDisabled);
-    p.appendChild(disableJSElement);
-    WebInspector.settings.javaScriptDisabled.addChangeListener(this._javaScriptDisabledChanged, this);
-    this._disableJSCheckbox = disableJSElement.getElementsByTagName("input")[0];
-    this._updateScriptDisabledCheckbox();
-    
-    p = appendSection(WebInspector.UIString("Rendering"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show paint rectangles"), WebInspector.settings.showPaintRects));
-    WebInspector.settings.showPaintRects.addChangeListener(this._showPaintRectsChanged, this);
-
-    p = appendSection(WebInspector.UIString("Elements"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
-
-    p = appendSection(WebInspector.UIString("Styles"));
-    p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [
-        [ WebInspector.StylesSidebarPane.ColorFormat.Original, WebInspector.UIString("As authored") ],
-        [ WebInspector.StylesSidebarPane.ColorFormat.HEX, "HEX: #DAC0DE" ],
-        [ WebInspector.StylesSidebarPane.ColorFormat.RGB, "RGB: rgb(128, 255, 255)" ],
-        [ WebInspector.StylesSidebarPane.ColorFormat.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show user agent styles"), WebInspector.settings.showUserAgentStyles));
-
-    p = appendSection(WebInspector.UIString("Text editor"));
-    p.appendChild(this._createSelectSetting(WebInspector.UIString("Indent"), [
-            [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
-            [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
-            [ WebInspector.UIString("8 spaces"), WebInspector.TextEditorModel.Indent.EightSpaces ],
-            [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
-        ], WebInspector.settings.textEditorIndent));
-
-    p = appendSection(WebInspector.UIString("User Agent"));
-    p.appendChild(this._createUserAgentControl());
-    if (Capabilities.canOverrideDeviceMetrics)
-        p.appendChild(this._createDeviceMetricsControl());
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
-
-    p = appendSection(WebInspector.UIString("Scripts"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show script folders"), WebInspector.settings.showScriptFolders));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Search in content scripts"), WebInspector.settings.searchInContentScripts));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable source maps"), WebInspector.settings.sourceMapsEnabled));
-
-    p = appendSection(WebInspector.UIString("Profiler"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show objects' hidden properties"), WebInspector.settings.showHeapSnapshotObjectsHiddenProperties));
-
-    p = appendSection(WebInspector.UIString("Console"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
-
-    if (WebInspector.extensionServer.hasExtensions()) {
-        var handlerSelector = new WebInspector.HandlerSelector(WebInspector.openAnchorLocationRegistry);
-        p = appendSection(WebInspector.UIString("Extensions"));
-        p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in"), handlerSelector.element));
-    }
-
-    var experiments = WebInspector.experimentsSettings.experiments;
-    if (WebInspector.experimentsSettings.experimentsEnabled && experiments.length) {
-        var experimentsSection = appendSection(WebInspector.UIString("Experiments"));
-        experimentsSection.appendChild(this._createExperimentsWarningSubsection());
-        for (var i = 0; i < experiments.length; ++i)
-            experimentsSection.appendChild(this._createExperimentCheckbox(experiments[i]));
-    }
-
-    this.contentElement.appendChild(container);
 }
 
 WebInspector.SettingsScreen.prototype = {
+
+    /**
+     * @return {!WebInspector.View}
+     */
+    _createSettingsTabView: function()
+    {
+        var view = new WebInspector.View();
+
+        var container = view.element;
+        container.id = "settings";
+        container.className = "help-content help-container";
+
+        /**
+         *  @param {string} name
+         *  @return {!Element}
+         */
+        function appendSection(name)
+        {
+            var block = container.createChild("div", "help-block");
+            block.createChild("div", "help-section-title").textContent = name;
+            return block;
+        }
+
+        var p = appendSection(WebInspector.UIString("General"));
+        if (Preferences.showDockToRight)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
+        if (Preferences.exposeDisableCache)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
+        var disableJSElement = this._createCheckboxSetting(WebInspector.UIString("Disable JavaScript"), WebInspector.settings.javaScriptDisabled);
+        p.appendChild(disableJSElement);
+        WebInspector.settings.javaScriptDisabled.addChangeListener(this._javaScriptDisabledChanged, this);
+        this._disableJSCheckbox = disableJSElement.getElementsByTagName("input")[0];
+        this._updateScriptDisabledCheckbox();
+        
+        p = appendSection(WebInspector.UIString("Rendering"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show paint rectangles"), WebInspector.settings.showPaintRects));
+        WebInspector.settings.showPaintRects.addChangeListener(this._showPaintRectsChanged, this);
+
+        p = appendSection(WebInspector.UIString("Elements"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
+
+        p = appendSection(WebInspector.UIString("Styles"));
+        p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [
+            [ WebInspector.StylesSidebarPane.ColorFormat.Original, WebInspector.UIString("As authored") ],
+            [ WebInspector.StylesSidebarPane.ColorFormat.HEX, "HEX: #DAC0DE" ],
+            [ WebInspector.StylesSidebarPane.ColorFormat.RGB, "RGB: rgb(128, 255, 255)" ],
+            [ WebInspector.StylesSidebarPane.ColorFormat.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show user agent styles"), WebInspector.settings.showUserAgentStyles));
+
+        p = appendSection(WebInspector.UIString("Text editor"));
+        p.appendChild(this._createSelectSetting(WebInspector.UIString("Indent"), [
+                [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
+                [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
+                [ WebInspector.UIString("8 spaces"), WebInspector.TextEditorModel.Indent.EightSpaces ],
+                [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
+            ], WebInspector.settings.textEditorIndent));
+
+        p = appendSection(WebInspector.UIString("User Agent"));
+        p.appendChild(this._createUserAgentControl());
+        if (Capabilities.canOverrideDeviceMetrics)
+            p.appendChild(this._createDeviceMetricsControl());
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
+
+        p = appendSection(WebInspector.UIString("Scripts"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show script folders"), WebInspector.settings.showScriptFolders));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Search in content scripts"), WebInspector.settings.searchInContentScripts));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable source maps"), WebInspector.settings.sourceMapsEnabled));
+
+        p = appendSection(WebInspector.UIString("Profiler"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show objects' hidden properties"), WebInspector.settings.showHeapSnapshotObjectsHiddenProperties));
+
+        p = appendSection(WebInspector.UIString("Console"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
+
+        if (WebInspector.extensionServer.hasExtensions()) {
+            var handlerSelector = new WebInspector.HandlerSelector(WebInspector.openAnchorLocationRegistry);
+            p = appendSection(WebInspector.UIString("Extensions"));
+            p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in"), handlerSelector.element));
+        }
+
+        var experiments = WebInspector.experimentsSettings.experiments;
+        if (WebInspector.experimentsSettings.experimentsEnabled && experiments.length) {
+            var experimentsSection = appendSection(WebInspector.UIString("Experiments"));
+            experimentsSection.appendChild(this._createExperimentsWarningSubsection());
+            for (var i = 0; i < experiments.length; ++i)
+                experimentsSection.appendChild(this._createExperimentCheckbox(experiments[i]));
+        }
+
+        return view;
+    },
+
+    /**
+     * return {!WebInspector.SettingsScreenTabbedPane}
+     */
+    _getOrCreateTabbedPane: function()
+    {
+        if (this._tabbedPane)
+            return this._tabbedPane;
+
+        var tabbedPane = new WebInspector.SettingsScreenTabbedPane(this._createCloseButton());
+        tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Settings, WebInspector.UIString("Settings"), this._createSettingsTabView());
+        tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Shortcuts, WebInspector.UIString("Keyboard Shortcuts"), WebInspector.shortcutsScreen._createShortcutsTabView());
+
+        this._tabbedPane = tabbedPane;
+        return tabbedPane;
+    },
+
+    /**
+     * @param {!string} tabId
+     */
+    selectTab: function(tabId)
+    {
+        this._getOrCreateTabbedPane().selectTab(tabId);
+    },
+
+    /**
+     * @override
+     */
+    wasShown: function()
+    {
+        this._getOrCreateTabbedPane().show(this.element);
+        WebInspector.HelpScreen.prototype.wasShown.call(this);
+    },
 
     /**
      * @override
@@ -592,6 +635,26 @@ WebInspector.SettingsScreen.prototype = {
 
 WebInspector.SettingsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
 
+WebInspector.SettingsScreen.Tabs = {
+    Settings: "Settings",
+    Shortcuts: "Shortcuts"
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.TabbedPane}
+ * @param {!Element} closeButton
+ */
+WebInspector.SettingsScreenTabbedPane = function(closeButton)
+{
+    WebInspector.TabbedPane.call(this);
+    this.element.addStyleClass("help-window-main");
+
+    this._headerContentsElement.insertBefore(closeButton, this._headerContentsElement.firstChild);
+}
+
+WebInspector.SettingsScreenTabbedPane.prototype.__proto__ = WebInspector.TabbedPane.prototype;
+
 /**
  * @constructor
  */
@@ -616,19 +679,24 @@ WebInspector.SettingsController.prototype =
         if (this._statusBarButton.toggled)
             this._hideSettingsScreen();
         else
-            this._showSettingsScreen();
+            this.showSettingsScreen();
     },
 
     _onHideSettingsScreen: function()
     {
         this._statusBarButton.toggled = false;
-        delete this._settingsScreen;
     },
 
-    _showSettingsScreen: function()
+    /**
+     * @param {tabId=}
+     */
+    showSettingsScreen: function(tabId)
     {
         if (!this._settingsScreen)
             this._settingsScreen = new WebInspector.SettingsScreen(this._onHideSettingsScreen.bind(this));
+
+        if (tabId)
+            this._settingsScreen.selectTab(tabId);
 
         this._settingsScreen.showModal();
         this._statusBarButton.toggled = true;
