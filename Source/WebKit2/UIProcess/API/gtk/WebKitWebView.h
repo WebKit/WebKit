@@ -306,6 +306,10 @@ webkit_web_view_get_subresources                   (WebKitWebView             *w
 WEBKIT_API WebKitWebInspector *
 webkit_web_view_get_inspector                      (WebKitWebView             *web_view);
 
+WEBKIT_API gboolean
+webkit_web_view_can_show_mime_type                 (WebKitWebView             *web_view,
+                                                    const gchar               *mime_type);
+
 G_END_DECLS
 
 #endif

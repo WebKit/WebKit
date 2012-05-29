@@ -1,3 +1,39 @@
+2012-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_can_show_mime_type() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=85998
+
+        Reviewed by Martin Robinson.
+
+        And use it in the default handler of WebKitWebView::decide-policy
+        signal to decide whether to use or ignore a response policy
+        decision depending on whether the mime type of the response can be
+        displayed in the WebView or not.
+
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkitURIResponseGetProperty): Add getter for mime-type property.
+        (webkit_uri_response_class_init): Add mime-type property.
+        (webkit_uri_response_get_mime_type): Return the mime type of the
+        response.
+        * UIProcess/API/gtk/WebKitURIResponse.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDecidePolicy): In case of response policy decisions,
+        use the URI response to decide what to do: download if the
+        response is an attachment, use if the mime type is supported by
+        the web view or ignore otherwise.
+        (webkit_web_view_can_show_mime_type): Returns whether the given
+        mime type can be displayed in the WebView or not.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebResourceResponse):
+        (testWebResourceMimeType):
+        (serverCallback):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewCanShowMIMEType):
+        (beforeAll):
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag

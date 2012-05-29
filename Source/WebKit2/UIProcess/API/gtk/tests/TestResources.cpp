@@ -300,13 +300,11 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
-    int waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse()
+    WebKitURIResponse* waitUntilResourceLoadFinsihedAndReturnURIResponse()
     {
         waitUntilResourceLoadFinsihed();
         g_assert(m_resource);
-        WebKitURIResponse* response = webkit_web_resource_get_response(m_resource.get());
-        g_assert(response);
-        return webkit_uri_response_get_status_code(response);
+        return webkit_web_resource_get_response(m_resource.get());
     }
 
     GRefPtr<WebKitWebResource> m_resource;
@@ -355,33 +353,48 @@ static void testWebResourceResponse(SingleResourceLoadTest* test, gconstpointer)
 {
     // No cached resource: First load.
     test->loadURI(kServer->getURIForPath("/javascript.html").data());
-    gint statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_OK);
+    WebKitURIResponse* response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // No cached resource: Second load.
     test->loadURI(kServer->getURIForPath("/javascript.html").data());
-    statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_OK);
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // No cached resource: Reload.
     webkit_web_view_reload(test->m_webView);
-    statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_OK);
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // Cached resource: First load.
     test->loadURI(kServer->getURIForPath("/image.html").data());
-    statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_OK);
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // Cached resource: Second load.
     test->loadURI(kServer->getURIForPath("/image.html").data());
-    statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_OK);
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_OK);
 
     // Cached resource: Reload.
     webkit_web_view_reload(test->m_webView);
-    statusCode = test->waitUntilResourceLoadFinsihedAndReturnHTTPStatusResponse();
-    g_assert_cmpint(statusCode, ==, SOUP_STATUS_NOT_MODIFIED);
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpint(webkit_uri_response_get_status_code(response), ==, SOUP_STATUS_NOT_MODIFIED);
+}
+
+static void testWebResourceMimeType(SingleResourceLoadTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    WebKitURIResponse* response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/javascript");
+
+    test->loadURI(kServer->getURIForPath("/image.html").data());
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "image/vnd.microsoft.icon");
+
+    test->loadURI(kServer->getURIForPath("/redirected-css.html").data());
+    response = test->waitUntilResourceLoadFinsihedAndReturnURIResponse();
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/css");
 }
 
 class ResourceURITrackingTest: public SingleResourceLoadTest {
@@ -555,6 +568,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         addCacheHTTPHeadersToResponse(message);
     } else if (g_str_equal(path, "/javascript.js")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
+        soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
     } else if (g_str_equal(path, "/blank.ico")) {
         GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
@@ -569,6 +583,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
             "    padding: 0px;"
             "}";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, simpleCSS, strlen(simpleCSS));
+        soup_message_headers_append(message->response_headers, "Content-Type", "text/css");
     } else if (g_str_equal(path, "/redirected.css")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "/simple-style.css");
@@ -585,6 +600,7 @@ void beforeAll()
     ResourcesTest::add("WebKitWebView", "resources", testWebViewResources);
     SingleResourceLoadTest::add("WebKitWebResource", "loading", testWebResourceLoading);
     SingleResourceLoadTest::add("WebKitWebResource", "response", testWebResourceResponse);
+    SingleResourceLoadTest::add("WebKitWebResource", "mime-type", testWebResourceMimeType);
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     ResourcesTest::add("WebKitWebView", "replaced-content", testWebViewResourcesReplacedContent);

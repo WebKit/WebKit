@@ -706,6 +706,23 @@ static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
     g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
 }
 
+static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
+{
+    // Supported MIME types.
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "text/html"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "text/plain"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "image/jpeg"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "audio/ogg"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "video/ogg"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "application/x-shockwave-flash"));
+
+    // Unsupported MIME types.
+    g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "text/vcard"));
+    g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/pdf"));
+    g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/zip"));
+    g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/octet-stream"));
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -720,6 +737,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
+    WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
 }
 
 void afterAll()

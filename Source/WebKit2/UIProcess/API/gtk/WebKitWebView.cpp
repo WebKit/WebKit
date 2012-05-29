@@ -33,9 +33,11 @@
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitResourceLoadClient.h"
+#include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
+#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebResourcePrivate.h"
@@ -190,9 +192,25 @@ static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDi
     return TRUE;
 }
 
-static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType)
+static gboolean webkitWebViewDecidePolicy(WebKitWebView* webView, WebKitPolicyDecision* decision, WebKitPolicyDecisionType decisionType)
 {
-    webkit_policy_decision_use(decision);
+    if (decisionType != WEBKIT_POLICY_DECISION_TYPE_RESPONSE) {
+        webkit_policy_decision_use(decision);
+        return TRUE;
+    }
+
+    WebKitURIResponse* response = webkit_response_policy_decision_get_response(WEBKIT_RESPONSE_POLICY_DECISION(decision));
+    const ResourceResponse resourceResponse = webkitURIResponseGetResourceResponse(response);
+    if (resourceResponse.isAttachment()) {
+        webkit_policy_decision_download(decision);
+        return TRUE;
+    }
+
+    if (webkit_web_view_can_show_mime_type(webView, webkit_uri_response_get_mime_type(response)))
+        webkit_policy_decision_use(decision);
+    else
+        webkit_policy_decision_ignore(decision);
+
     return TRUE;
 }
 
@@ -2025,4 +2043,22 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
     }
 
     return webView->priv->inspector.get();
+}
+
+/**
+ * webkit_web_view_can_show_mime_type:
+ * @web_view: a #WebKitWebView
+ * @mime_type: a MIME type
+ *
+ * Whether or not a MIME type can be displayed in @web_view.
+ *
+ * Returns: %TRUE if the MIME type @mime_type can be displayed or %FALSE otherwise
+ */
+gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* mimeType)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(mimeType, FALSE);
+
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    return page->canShowMIMEType(String::fromUTF8(mimeType));
 }

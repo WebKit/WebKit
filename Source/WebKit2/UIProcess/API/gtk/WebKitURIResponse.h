@@ -64,6 +64,9 @@ webkit_uri_response_get_status_code    (WebKitURIResponse *response);
 WEBKIT_API guint64
 webkit_uri_response_get_content_length (WebKitURIResponse *response);
 
+WEBKIT_API const gchar *
+webkit_uri_response_get_mime_type      (WebKitURIResponse *response);
+
 G_END_DECLS
 
 #endif

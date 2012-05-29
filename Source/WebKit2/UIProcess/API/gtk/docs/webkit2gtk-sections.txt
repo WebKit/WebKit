@@ -95,6 +95,7 @@ webkit_web_view_get_inspector
 webkit_web_view_get_javascript_global_context
 webkit_web_view_run_javascript
 webkit_web_view_run_javascript_finish
+webkit_web_view_can_show_mime_type
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -302,6 +303,7 @@ WebKitURIResponse
 webkit_uri_response_get_uri
 webkit_uri_response_get_status_code
 webkit_uri_response_get_content_length
+webkit_uri_response_get_mime_type
 
 <SUBSECTION Standard>
 WebKitURIResponseClass

@@ -30,7 +30,8 @@ enum {
 
     PROP_URI,
     PROP_STATUS_CODE,
-    PROP_CONTENT_LENGTH
+    PROP_CONTENT_LENGTH,
+    PROP_MIME_TYPE
 };
 
 using namespace WebCore;
@@ -40,6 +41,7 @@ G_DEFINE_TYPE(WebKitURIResponse, webkit_uri_response, G_TYPE_OBJECT)
 struct _WebKitURIResponsePrivate {
     WebCore::ResourceResponse resourceResponse;
     CString uri;
+    CString mimeType;
 };
 
 static void webkitURIResponseFinalize(GObject* object)
@@ -61,6 +63,9 @@ static void webkitURIResponseGetProperty(GObject* object, guint propId, GValue* 
         break;
     case PROP_CONTENT_LENGTH:
         g_value_set_uint64(value, webkit_uri_response_get_content_length(response));
+        break;
+    case PROP_MIME_TYPE:
+        g_value_set_string(value, webkit_uri_response_get_mime_type(response));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -110,6 +115,19 @@ static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass
                                                         _("Content Length"),
                                                         _("The expected content length of the response."),
                                                         0, G_MAXUINT64, 0,
+                                                        WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitURIResponse:mime-type:
+     *
+     * The MIME type of the response.
+     */
+    g_object_class_install_property(objectClass,
+                                    PROP_MIME_TYPE,
+                                    g_param_spec_string("mime-type",
+                                                        _("MIME Type"),
+                                                        _("The MIME type of the response"),
+                                                        0,
                                                         WEBKIT_PARAM_READABLE));
 
     g_type_class_add_private(responseClass, sizeof(WebKitURIResponsePrivate));
@@ -168,6 +186,20 @@ guint64 webkit_uri_response_get_content_length(WebKitURIResponse* response)
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
     return response->priv->resourceResponse.expectedContentLength();
+}
+
+/**
+ * webkit_uri_response_get_mime_type:
+ * @response: a #WebKitURIResponse
+ *
+ * Returns: the MIME type of the #WebKitURIResponse
+ */
+const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
+
+    response->priv->mimeType = response->priv->resourceResponse.mimeType().utf8();
+    return response->priv->mimeType.data();
 }
 
 WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse& resourceResponse)
