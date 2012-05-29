@@ -1,3 +1,21 @@
+2012-05-28  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] Receiving reserved close codes, 1005, 1006, and 1015 must appear as code=1006 and wasClean=false
+        https://bugs.webkit.org/show_bug.cgi?id=87084
+
+        Reviewed by Kent Tamura.
+
+        Status codes 1005, 1006, and 1015 are forbidden to be sent in actual close frames.
+        If a client received these frames, the client should handle them as broken.
+        Close frames containing invalid body size are the same as these forbidden cases.
+        Update close-code-and-reason tests to verify this patch.
+
+        * Modules/websockets/WebSocket.cpp: Handle AbnormalClosure as wasClean == false
+        (WebCore::WebSocket::didClose):
+        * Modules/websockets/WebSocketChannel.cpp: Handle close frames' status code carefully
+        (WebCore::WebSocketChannel::processFrame):
+        * Modules/websockets/WebSocketChannel.h: Update on newly defined close event codes
+
 2012-05-28  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Avoid passing NULL to an 'isolate' parameter

@@ -55,7 +55,12 @@ public:
         CloseEventCodeFrameTooLarge = 1004,
         CloseEventCodeNoStatusRcvd = 1005,
         CloseEventCodeAbnormalClosure = 1006,
-        CloseEventCodeInvalidUTF8 = 1007,
+        CloseEventCodeInvalidFramePayloadData = 1007,
+        CloseEventCodePolicyViolation = 1008,
+        CloseEventCodeMessageTooBig = 1009,
+        CloseEventCodeMandatoryExt = 1010,
+        CloseEventCodeInternalError = 1011,
+        CloseEventCodeTLSHandshake = 1015,
         CloseEventCodeMinimumUserDefined = 3000,
         CloseEventCodeMaximumUserDefined = 4999
     };

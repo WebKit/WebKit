@@ -557,6 +557,8 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
     if (!m_channel)
         return;
     bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete;
+    if (!m_useHixie76Protocol)
+        wasClean = wasClean && code != WebSocketChannel::CloseEventCodeAbnormalClosure;
     m_state = CLOSED;
     m_bufferedAmount = unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());

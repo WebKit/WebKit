@@ -1,3 +1,4 @@
+var codeNormalClosure = 1000;
 var codeNoStatusRcvd = 1005;
 var codeAbnormalClosure = 1006;
 var emptyString = "";
@@ -30,21 +31,42 @@ ws.onclose = function(event)
 ws.close();
 
 var testId = 0;
-var testNum = 3;
+var testNum = 7;
 var sendData = [
     "-", // request close frame without code and reason
     "--", // request close frame with invalid body which size is 1
+    "1000 ok", // request close frame with code 1000 and reason
+    "1005 foo", // request close frame with forbidden code 1005 and reason
+    "1006 bar", // request close frame with forbidden code 1006 and reason
+    "1015 baz", // request close frame with forbidden code 1015 and reason
     "65535 good bye", // request close frame with specified code and reason
 ];
 var expectedCode = [
     codeNoStatusRcvd,
-    codeNoStatusRcvd,
+    codeAbnormalClosure,
+    codeNormalClosure,
+    codeAbnormalClosure,
+    codeAbnormalClosure,
+    codeAbnormalClosure,
     65535,
 ];
 var expectedReason = [
     "",
     "",
+    "ok",
+    "",
+    "",
+    "",
     "good bye",
+];
+var expectedWasClean = [
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true,
 ];
 
 WebSocketTest = function() {
@@ -68,11 +90,13 @@ WebSocketTest.prototype.onmessage = function(event)
 WebSocketTest.prototype.onclose = function(event)
 {
     postMessage("WebSocketTest.onclose() was called with testId = " + testId + ".");
-    postResult(event.wasClean, "event.wasClean", "true");
+    postResult(event.wasClean == expectedWasClean[testId], "event.wasClean", expectedWasClean[testId]);
     postResult(event.code == expectedCode[testId], "event.code", expectedCode[testId]);
     postResult(event.reason == expectedReason[testId], "event.reason", expectedReason[testId]);
     event.code = 0;
     event.reason = "readonly";
+    event.wasClean = !event.wasClean;
+    postResult(event.wasClean == expectedWasClean[testId], "event.wasClean", expectedWasClean[testId]);
     postResult(event.code == expectedCode[testId], "event.code", expectedCode[testId]);
     postResult(event.reason == expectedReason[testId], "event.reason", expectedReason[testId]);
     testId++;
