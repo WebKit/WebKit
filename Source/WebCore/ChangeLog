@@ -1,3 +1,57 @@
+2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: REGRESSION: load heap snapshot doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=87642
+
+        HeapSnapshotReceiver interface was introduced.
+        It declares the API for HeapSnapshotLoader, HeapSnapshotLoaderProxy and HeapSnapshotSaveToFileReceiver.
+        The HeapProfileHeader was refactored and tests were added.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshotLoader.js:
+        (WebInspector.HeapSnapshotLoader):
+        (WebInspector.HeapSnapshotLoader.prototype.startLoading):
+        (WebInspector.HeapSnapshotLoader.prototype.dispose):
+        (WebInspector.HeapSnapshotLoader.prototype._reset):
+        (WebInspector.HeapSnapshotLoader.prototype.finishLoading):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotWorker.prototype.startCheckingForLongRunningCalls):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.startLoading):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.pushJSONChunk):
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.finishLoading):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotReceiver):
+        (WebInspector.HeapSnapshotReceiver.prototype.startLoading):
+        (WebInspector.HeapSnapshotReceiver.prototype.pushJSONChunk):
+        (WebInspector.HeapSnapshotReceiver.prototype.finishLoading):
+        (WebInspector.HeapSnapshotReceiver.prototype.dispose):
+        (WebInspector.HeapProfileHeader):
+        (WebInspector.HeapProfileHeader.prototype.load):
+        (WebInspector.HeapProfileHeader.prototype._setupWorker):
+        (WebInspector.HeapProfileHeader.prototype.dispose):
+        (WebInspector.HeapProfileHeader.prototype._saveStatusUpdate):
+        (WebInspector.HeapProfileHeader.prototype.pushJSONChunk):
+        (WebInspector.HeapProfileHeader.prototype._parsed):
+        (WebInspector.HeapProfileHeader.prototype.finishHeapSnapshot):
+        (WebInspector.HeapProfileHeader.prototype.saveToFile):
+        (WebInspector.HeapProfileHeader.prototype.loadFromFile.onLoad):
+        (WebInspector.HeapProfileHeader.prototype.loadFromFile):
+        (WebInspector.HeapProfileHeader.prototype._loadNextChunk):
+        (WebInspector.HeapProfileHeader.prototype._nextChunkLoaded):
+        (WebInspector.HeapProfileHeader.prototype._createFileReader):
+        (WebInspector.HeapSnapshotSaveToFileReceiver):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype.startLoading):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype.pushJSONChunk):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype.finishLoading):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype.dispose):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype._startSavingSnapshot):
+        (WebInspector.HeapSnapshotSaveToFileReceiver.prototype._saveStatusUpdate):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._createFileSelectorElement.onChange):
+        (WebInspector.ProfilesPanel.prototype._createFileSelectorElement):
+        (WebInspector.ProfilesPanel.prototype._loadFromFile):
+
 2012-05-29  Eric Seidel  <eric@webkit.org>
 
         Add HTMLIFrameElement.seamless property accessor now that seamless is enabled and works

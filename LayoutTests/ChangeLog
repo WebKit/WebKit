@@ -1,3 +1,31 @@
+2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: REGRESSION: load heap snapshot doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=87642
+
+        HeapSnapshotReceiver interface was introduced.
+        It declares the API for HSLoader, HSLoaderProxy and HSSaveToFileReceiver.
+        The HeapProfileHeader was refactored and tests were added.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-loader-expected.txt:
+        * inspector/profiler/heap-snapshot-loader.html:
+
+2012-05-29  Marcus Bulach  <bulach@chromium.org>
+
+        Test expectation pngs missing checksums are treated as MISSING by bots
+        https://bugs.webkit.org/show_bug.cgi?id=87552
+
+        Unreviewed gardening.
+
+        This test was already failing for IMAGE and TEXT reasons prior to r118566.
+        On r118566, new images were added, probably without an embedded checksum.
+        It looks like our test infrastructure thinks that these images are MISSING.
+        Temporarily add MISSING expectations, so that we can proceed with this (failing) test.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Marcus Bulach  <bulach@chromium.org>
 
         Test expectation pngs missing checksums are treated as MISSING by bots

@@ -11,12 +11,13 @@ function test()
         InspectorTest.assertEquals(JSON.stringify(reference), JSON.stringify(actual));
     }
 
+    var source = InspectorTest.createHeapSnapshotMockRaw();
+    var sourceStringified = JSON.stringify(source);
+    var partSize = sourceStringified.length >> 3;
+
     InspectorTest.runTestSuite([
         function heapSnapshotLoaderTest(next)
         {
-            var source = InspectorTest.createHeapSnapshotMockRaw();
-            var sourceStringified = JSON.stringify(source);
-            var partSize = sourceStringified.length >> 3;
             var loader = new WebInspector.HeapSnapshotLoader();
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
                 loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
@@ -25,6 +26,83 @@ function test()
             result._containmentEdges = new Uint32Array(result._containmentEdges);
             InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
             next();
+        },
+
+        function heapSnapshotSaveToFileTest(next)
+        {
+            var profileUID = 42;
+
+            var dispatcher = InspectorBackend._domainDispatchers["Profiler"];
+            var panel = WebInspector.panels.profiles;
+
+            dispatcher.addProfileHeader({
+                typeId: WebInspector.HeapSnapshotProfileType.TypeId,
+                title: "heapSnapshotSaveToFileTest",
+                uid: profileUID,
+                maxJSObjectId: 6
+            });
+
+            var profileHeader = panel._profiles[0];
+
+            var oldGetProfile = ProfilerAgent.getProfile;
+            ProfilerAgent.getProfile = function getProfileMock(profileTypeName, uid) {
+                for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
+                    dispatcher.addHeapSnapshotChunk(uid, sourceStringified.slice(i, i + partSize));
+                dispatcher.finishHeapSnapshot(uid);
+            };
+
+            var savedSnapshotData;
+            var oldSave = InspectorFrontendHost.save;
+            InspectorFrontendHost.save = function saveMock(url, data)
+            {
+                savedSnapshotData = data;
+                WebInspector.fileManager.savedURL(url);
+            }
+
+            var oldAppend = InspectorFrontendHost.append;
+            InspectorFrontendHost.append = function appendMock(url, data)
+            {
+                savedSnapshotData += data;
+                WebInspector.fileManager.appendedToURL(url);
+            }
+
+            function parsed()
+            {
+                profileHeader.saveToFile();
+                InspectorTest.assertEquals(sourceStringified, savedSnapshotData, "Saved snapshot data");
+
+                InspectorFrontendHost.save = oldSave;
+                InspectorFrontendHost.append = oldAppend;
+                ProfilerAgent.getProfile = oldGetProfile;
+                next();
+            }
+            InspectorTest.addSniffer(profileHeader, "_parsed", parsed);
+
+            panel.showProfile(profileHeader);
+        },
+
+        function heapSnapshotLoadFromFileTest(next)
+        {
+            var panel = WebInspector.panels.profiles;
+
+            var fileMock = {
+                name: "mock.heapsnapshot",
+                size: sourceStringified.length,
+                webkitSlice: function(begin, end) {
+                    return this;
+                }
+            };
+
+            WebInspector.HeapProfileHeader.prototype._createFileReader = function() {
+                return {
+                    readAsText: function(filePart) {
+                        var profileHeader = panel._profiles[panel._profiles.length - 1];
+                        InspectorTest.addSniffer(profileHeader, "_parsed", function parsed() { next(); });
+                        profileHeader._nextChunkLoaded(sourceStringified);
+                    }
+                };
+            }
+            panel._loadFromFile(fileMock);
         }
     ]);
 }

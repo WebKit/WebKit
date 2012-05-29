@@ -264,14 +264,16 @@ WebInspector.ProfilesPanel.prototype = {
         fileSelectorElement.type = "file";
         fileSelectorElement.style.zIndex = -1;
         fileSelectorElement.style.position = "absolute";
-        fileSelectorElement.onchange = this._loadFromFile.bind(this);
+        function onChange(event) {
+            this._loadFromFile(this._fileSelectorElement.files[0]);
+        }
+        fileSelectorElement.onchange = onChange.bind(this);
         this.element.appendChild(fileSelectorElement);
         this._fileSelectorElement = fileSelectorElement;
     },
 
-    _loadFromFile: function(event)
+    _loadFromFile: function(file)
     {
-        var file = this._fileSelectorElement.files[0];
         if (!file.name.endsWith(".heapsnapshot")) {
             WebInspector.log(WebInspector.UIString("Only heap snapshots from files with extension '.heapsnapshot' can be loaded."));
             return;

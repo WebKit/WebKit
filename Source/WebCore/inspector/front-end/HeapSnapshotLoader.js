@@ -30,15 +30,35 @@
 
 /**
  * @constructor
+ * @implements {WebInspector.HeapSnapshotReceiver}
  */
 WebInspector.HeapSnapshotLoader = function()
 {
-    this._json = "";
-    this._state = "find-snapshot-info";
-    this._snapshot = {};
+    this._reset();
 }
 
 WebInspector.HeapSnapshotLoader.prototype = {
+    /**
+     * @param {function(WebInspector.HeapSnapshotProxy)} callback
+     * @return {boolean}
+     */
+    startLoading: function(callback)
+    {
+        return true;
+    },
+
+    dispose: function()
+    {
+        this._reset();
+    },
+
+    _reset: function()
+    {
+        this._json = "";
+        this._state = "find-snapshot-info";
+        this._snapshot = {};
+    },
+
     _findBalancedCurlyBrackets: function()
     {
         var counter = 0;
@@ -60,10 +80,8 @@ WebInspector.HeapSnapshotLoader.prototype = {
         if (!this._json)
             return null;
         this._parseStringsArray();
-        this._json = "";
         var result = new WebInspector.HeapSnapshot(this._snapshot);
-        this._json = "";
-        this._snapshot = {};
+        this._reset();
         return result;
     },
 
@@ -114,6 +132,9 @@ WebInspector.HeapSnapshotLoader.prototype = {
         this._snapshot.strings = JSON.parse(this._json);
     },
 
+    /**
+     * @param {string} chunk
+     */
     pushJSONChunk: function(chunk)
     {
         this._json += chunk;
