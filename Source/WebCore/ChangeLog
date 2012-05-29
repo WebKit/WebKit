@@ -1,3 +1,10 @@
+2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: Web Inspector: single line fix after r118742.
+
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapProfileHeader.prototype.saveToFile):
+
 2012-05-29  Kentaro Hara  <haraken@chromium.org>
 
         Remove m_rootNode and m_selectorChecker from SelectorQuery.h

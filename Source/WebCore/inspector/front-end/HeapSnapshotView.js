@@ -963,6 +963,7 @@ WebInspector.HeapProfileHeader.prototype = {
     {
         this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".heapsnapshot";
         this._receiver = new WebInspector.HeapSnapshotSaveToFileReceiver(this._fileName, this);
+        this._numberOfChunks = 0;
         this._receiver.startLoading(function(snapshot) { });
     },
 
