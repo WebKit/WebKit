@@ -169,16 +169,8 @@ void RenderFlowThread::layout()
                 
                 region->deleteAllRenderBoxRegionInfo();
 
-                LayoutUnit regionLogicalWidth;
-                LayoutUnit regionLogicalHeight;
-
-                if (isHorizontalWritingMode()) {
-                    regionLogicalWidth = region->contentWidth();
-                    regionLogicalHeight = region->contentHeight();
-                } else {
-                    regionLogicalWidth = region->contentHeight();
-                    regionLogicalHeight = region->contentWidth();
-                }
+                LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
+                LayoutUnit regionLogicalHeight = region->logicalHeightForFlowThreadContent();
 
                 if (!m_hasValidRegions)
                     m_hasValidRegions = true;
@@ -199,15 +191,13 @@ void RenderFlowThread::layout()
                 RenderRegion* region = *iter;
                 if (!region->isValid())
                     continue;
-                LayoutRect regionRect;
-                if (isHorizontalWritingMode()) {
-                    regionRect = LayoutRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - region->contentWidth(), logicalHeight, region->contentWidth(), region->contentHeight());
-                    logicalHeight += regionRect.height();
-                } else {
-                    regionRect = LayoutRect(logicalHeight, style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - region->contentHeight(), region->contentWidth(), region->contentHeight());
-                    logicalHeight += regionRect.width();
-                }
-                region->setRegionRect(regionRect);
+                    
+                LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
+                LayoutUnit regionLogicalHeight = region->logicalHeightForFlowThreadContent();
+    
+                LayoutRect regionRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
+                region->setRegionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
+                logicalHeight += regionLogicalHeight;
             }
         }
     }
@@ -235,7 +225,7 @@ void RenderFlowThread::computeLogicalWidth()
         if (!region->isValid())
             continue;
         ASSERT(!region->needsLayout());
-        logicalWidth = max(isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight(), logicalWidth);
+        logicalWidth = max(region->logicalWidthForFlowThreadContent(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
 
@@ -245,7 +235,7 @@ void RenderFlowThread::computeLogicalWidth()
         if (!region->isValid())
             continue;
         
-        LayoutUnit regionLogicalWidth = isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight();
+        LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
         if (regionLogicalWidth != logicalWidth) {
             LayoutUnit logicalLeft = style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth - regionLogicalWidth;
             region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
@@ -262,7 +252,7 @@ void RenderFlowThread::computeLogicalHeight()
         if (!region->isValid())
             continue;
         ASSERT(!region->needsLayout());
-        logicalHeight += isHorizontalWritingMode() ? region->contentHeight() : region->contentWidth();
+        logicalHeight += region->logicalHeightForFlowThreadContent();
     }
 
     setLogicalHeight(logicalHeight);

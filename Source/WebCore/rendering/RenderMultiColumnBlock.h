@@ -44,6 +44,8 @@ public:
     unsigned columnCount() const { return m_columnCount; }
 
 private:
+    virtual bool isRenderMultiColumnBlock() const { return true; }
+    
     virtual const char* renderName() const;
 
     virtual bool recomputeLogicalWidth();
@@ -63,6 +65,21 @@ private:
                               // These values will be cached (eventually) for multi-column blocks.
     LayoutUnit m_columnHeight; // The current column height.
 };
+
+inline RenderMultiColumnBlock* toRenderMultiColumnBlock(RenderObject* object)
+{
+    ASSERT(!object || object->isRenderMultiColumnBlock());
+    return static_cast<RenderMultiColumnBlock*>(object);
+}
+
+inline const RenderMultiColumnBlock* toRenderMultiColumnBlock(const RenderObject* object)
+{
+    ASSERT(!object || object->isRenderMultiColumnBlock());
+    return static_cast<const RenderMultiColumnBlock*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderMultiColumnBlock(const RenderMultiColumnBlock*);
 
 } // namespace WebCore
 

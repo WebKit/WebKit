@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RenderMultiColumnSet.h"
+#include "RenderMultiColumnBlock.h"
 
 namespace WebCore {
 
@@ -34,6 +35,29 @@ RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThr
     , m_columnWidth(ZERO_LAYOUT_UNIT)
     , m_columnHeight(ZERO_LAYOUT_UNIT)
 {
+}
+
+void RenderMultiColumnSet::computeLogicalWidth()
+{
+    // Our logical width starts off matching the column block itself.
+    // This width will be fixed up after the flow thread lays out once it is determined exactly how many
+    // columns we ended up holding.
+    // FIXME: When we add regions support, we'll start it off at the width of the multi-column
+    // block in that particular region.
+    setLogicalWidth(parentBox()->contentLogicalWidth());
+    
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    setColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+}
+
+void RenderMultiColumnSet::computeLogicalHeight()
+{
+    // Make sure our column height is up to date.
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    setColumnHeight(parentBlock->columnHeight()); // FIXME: Once we make more than one column set, this will become variable.
+    
+    // Our logical height is always just the height of our columns.
+    setLogicalHeight(columnHeight());
 }
 
 const char* RenderMultiColumnSet::renderName() const

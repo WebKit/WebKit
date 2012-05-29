@@ -53,6 +53,16 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
 {
 }
 
+LayoutUnit RenderRegion::logicalWidthForFlowThreadContent() const
+{
+    return m_flowThread->isHorizontalWritingMode() ? contentWidth() : contentHeight();
+}
+
+LayoutUnit RenderRegion::logicalHeightForFlowThreadContent() const
+{
+    return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
+}
+
 LayoutRect RenderRegion::regionOverflowRect() const
 {
     // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
@@ -147,7 +157,10 @@ void RenderRegion::layout()
 {
     RenderReplaced::layout();
     if (m_flowThread && isValid()) {
-        if (regionRect().width() != contentWidth() || regionRect().height() != contentHeight())
+        LayoutRect oldRegionRect(regionRect());
+        if (!isHorizontalWritingMode())
+            oldRegionRect = oldRegionRect.transposedRect();
+        if (oldRegionRect.width() != logicalWidthForFlowThreadContent() || oldRegionRect.height() != logicalHeightForFlowThreadContent())
             m_flowThread->invalidateRegions();
     }
 

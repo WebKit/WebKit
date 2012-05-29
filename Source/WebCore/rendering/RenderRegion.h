@@ -95,6 +95,10 @@ public:
     void setRegionState(RegionState regionState) { m_regionState = regionState; }
     void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
     bool shouldDispatchRegionLayoutUpdateEvent() { return m_dispatchRegionLayoutUpdateEvent; }
+    
+    virtual LayoutUnit logicalWidthForFlowThreadContent() const;
+    virtual LayoutUnit logicalHeightForFlowThreadContent() const;
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 

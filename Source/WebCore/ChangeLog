@@ -1,3 +1,53 @@
+2012-05-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87787
+        
+        [New Multicolumn] Refactor the region and flow thread code so that it can pick up the correct column widths
+        and heights when determining the logical width and height of the flow thread itself.
+
+        This patch adds new virtual methods to RenderRegion: logicalWidthForFlowThreadContent and logicalHeightForFlowThreadContent.
+        For normal regions, these methods return the contentWidth and contentHeight of the regions themselves. For column sets,
+        however, these methods actually return the column widths and heights.
+        
+        This allows the flow thread to properly lay out according to the column width.
+        
+        Region invalidation is also done properly by using these new methods.
+        
+        In some cases the code is actually simplified, since we can get rid of some isHorizontalWritingMode() switching.
+        
+        With this patch the flow thread now actually lays out and paints at the right width (spilling out of the region set in a single unbroken
+        column).
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::ensureColumnSets):
+        * rendering/RenderMultiColumnBlock.h:
+        (WebCore::RenderMultiColumnBlock::isRenderMultiColumnBlock):
+        (RenderMultiColumnBlock):
+        (WebCore::toRenderMultiColumnBlock):
+        (WebCore):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::computeLogicalWidth):
+        (WebCore):
+        (WebCore::RenderMultiColumnSet::computeLogicalHeight):
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::setColumnWidthAndCount):
+        (RenderMultiColumnSet):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMultiColumnBlock):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::logicalWidthForFlowThreadContent):
+        (WebCore):
+        (WebCore::RenderRegion::logicalHeightForFlowThreadContent):
+        (WebCore::RenderRegion::layout):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+
 2012-05-29  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Align codes and names for IDB-specific and DOM-specific errors/exceptions

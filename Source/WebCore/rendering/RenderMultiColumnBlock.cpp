@@ -137,8 +137,6 @@ void RenderMultiColumnBlock::ensureColumnSets()
     if (flowThread() && !firstChild()->isRenderMultiColumnSet()) {
         RenderMultiColumnSet* columnSet = new (renderArena()) RenderMultiColumnSet(document(), flowThread());
         columnSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-        columnSet->setColumnWidthAndCount(columnWidth(), columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
-        columnSet->setColumnHeight(columnHeight()); // FIXME: Once we make more than one column set, this will become variable.
         RenderBlock::addChild(columnSet, firstChild());
         flowThread()->addRegionToThread(columnSet);
     }

@@ -51,10 +51,10 @@ public:
     LayoutUnit columnWidth() const { return m_columnWidth; }
     LayoutUnit columnHeight() const { return m_columnHeight; }
 
-    void setColumnWidthAndCount(unsigned count, LayoutUnit width)
+    void setColumnWidthAndCount(LayoutUnit width, unsigned count)
     {
-        m_columnCount = count;
         m_columnWidth = width;
+        m_columnCount = count;
     }
     void setColumnHeight(LayoutUnit height)
     {
@@ -62,6 +62,12 @@ public:
     }
 
 private:
+    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void computeLogicalHeight() OVERRIDE;
+
+    virtual LayoutUnit logicalWidthForFlowThreadContent() const OVERRIDE { return m_columnWidth; }
+    virtual LayoutUnit logicalHeightForFlowThreadContent() const OVERRIDE { return m_columnHeight; } // FIXME: Will be wrong once we have multiple sets.
+
     virtual const char* renderName() const;
     
     unsigned m_columnCount;
