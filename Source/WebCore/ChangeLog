@@ -1,3 +1,53 @@
+2012-05-29  Andreas Kling  <kling@webkit.org>
+
+        Make StylePropertySet a variable-sized object to reduce memory use.
+        <http://webkit.org/b/87506>
+
+        Reviewed by Antti Koivisto.
+
+        Make immutable StylePropertySet objects variable-sized and allocate exactly
+        the space needed to hold the CSSProperty objects passed at construction.
+        This lets us avoid the memory overhead of Vector<CSSProperty, 4>.
+
+        Renamed StylePropertySet::adopt* to create and createImmutable since they no
+        longer adopt the incoming vector. More cleanup will follow in this area.
+
+        This reduces memory usage across the board - the more CSS declarations,
+        the bigger the benefit. As an example, we save around ~0.5MB on wsj.com.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStylePropertySet):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::createImmutable):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::~StylePropertySet):
+        (WebCore::StylePropertySet::copyPropertiesFrom):
+        (WebCore::StylePropertySet::removeProperty):
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::parseDeclaration):
+        (WebCore::StylePropertySet::addParsedProperties):
+        (WebCore::StylePropertySet::asText):
+        (WebCore::StylePropertySet::merge):
+        (WebCore::StylePropertySet::addSubresourceStyleURLs):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::findPropertyWithId):
+        (WebCore::StylePropertySet::removeEquivalentProperties):
+        (WebCore::StylePropertySet::copyPropertiesInSet):
+        (WebCore::StylePropertySet::averageSizeInBytes):
+        (SameSizeAsStylePropertySet):
+        (WebCore::StylePropertySet::append):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::create):
+        (StylePropertySet):
+        (WebCore::StylePropertySet::propertyAt):
+        (WebCore::StylePropertySet::propertyCount):
+        (WebCore::StylePropertySet::isEmpty):
+        (WebCore::StylePropertySet::array):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateAttributeStyle):
+
 2012-05-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87759

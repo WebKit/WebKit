@@ -49,22 +49,16 @@ public:
     {
         return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> adopt(StylePropertyVector& properties, CSSParserMode cssParserMode)
+    static PassRefPtr<StylePropertySet> create(StylePropertyVector& properties)
     {
-        return adoptRef(new StylePropertySet(properties, cssParserMode));
+        return adoptRef(new StylePropertySet(properties, CSSStrictMode, /* makeMutable */ true));
     }
-    static PassRefPtr<StylePropertySet> adoptMutable(StylePropertyVector& properties)
-    {
-        RefPtr<StylePropertySet> result = adoptRef(new StylePropertySet(properties, CSSStrictMode));
-        result->m_isMutable = true;
-        return result.release();
-    }
+    static PassRefPtr<StylePropertySet> createImmutable(StylePropertyVector&, CSSParserMode);
 
-    unsigned propertyCount() const { return m_properties.size(); }
-    bool isEmpty() const { return m_properties.isEmpty(); }
-    const CSSProperty& propertyAt(unsigned index) const { return m_properties[index]; }
-
-    void shrinkToFit() { m_properties.shrinkToFit(); }
+    unsigned propertyCount() const;
+    bool isEmpty() const;
+    const CSSProperty& propertyAt(unsigned index) const;
+    CSSProperty& propertyAt(unsigned index);
 
     PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     String getPropertyValue(CSSPropertyID) const;
@@ -125,7 +119,7 @@ public:
     
 private:
     StylePropertySet(CSSParserMode);
-    StylePropertySet(StylePropertyVector&, CSSParserMode);
+    StylePropertySet(StylePropertyVector&, CSSParserMode, bool makeMutable);
     StylePropertySet(const StylePropertySet&);
 
     void setNeedsStyleRecalc();
@@ -146,14 +140,60 @@ private:
     const CSSProperty* findPropertyWithId(CSSPropertyID) const;
     CSSProperty* findPropertyWithId(CSSPropertyID);
 
-    StylePropertyVector m_properties;
+    void append(const CSSProperty&);
+    CSSProperty* array();
+    const CSSProperty* array() const;
 
     unsigned m_cssParserMode : 2;
     mutable unsigned m_ownsCSSOMWrapper : 1;
     mutable unsigned m_isMutable : 1;
+    unsigned m_arraySize : 28;
+
+    union {
+        Vector<CSSProperty>* m_mutablePropertyVector;
+        void* m_properties;
+    };
     
     friend class PropertySetCSSStyleDeclaration;
 };
+
+inline CSSProperty& StylePropertySet::propertyAt(unsigned index)
+{
+    if (isMutable())
+        return m_mutablePropertyVector->at(index);
+    return array()[index];
+}
+
+inline const CSSProperty& StylePropertySet::propertyAt(unsigned index) const
+{
+    if (isMutable())
+        return m_mutablePropertyVector->at(index);
+    return array()[index];
+}
+
+inline unsigned StylePropertySet::propertyCount() const
+{
+    if (isMutable())
+        return m_mutablePropertyVector->size();
+    return m_arraySize;
+}
+
+inline bool StylePropertySet::isEmpty() const
+{
+    return !propertyCount();
+}
+
+inline CSSProperty* StylePropertySet::array()
+{
+    ASSERT(!isMutable());
+    return reinterpret_cast<CSSProperty*>(&m_properties);
+}
+
+inline const CSSProperty* StylePropertySet::array() const
+{
+    ASSERT(!isMutable());
+    return reinterpret_cast<const CSSProperty*>(&m_properties);
+}
 
 } // namespace WebCore
 

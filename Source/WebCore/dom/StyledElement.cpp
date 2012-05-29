@@ -317,12 +317,7 @@ void StyledElement::updateAttributeStyle()
     }
     clearAttributeStyleDirty();
 
-    if (style->isEmpty())
-        attributeData()->setAttributeStyle(0);
-    else {
-        style->shrinkToFit();
-        attributeData()->setAttributeStyle(style);
-    }
+    attributeData()->setAttributeStyle(style->isEmpty() ? 0 : style);
 
     if (!cacheHash || cacheIterator->second)
         return;
