@@ -1,3 +1,55 @@
+2012-05-28  Kent Tamura  <tkent@chromium.org>
+
+        Fix a crash in HTMLFormControlElement::disabled().
+        https://bugs.webkit.org/show_bug.cgi?id=86534
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop to hold pointers of fildset and legend elements. We can avoid it by
+        holding ancestor's disabled state.
+
+        The ancesotr's disabled state should be invalidated when
+         - fieldset's disabled value is changed.
+         - fieldset's children is updated because a legend position might be changed.
+         - A form control is attached to or detached from a tree.
+
+        No new tests. It's almost impossible to make a reliable test.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::invalidateDisabledStateUnder):
+        Added. Invalidate disabled state of form controls under the specified node.
+        (WebCore::HTMLFieldSetElement::disabledAttributeChanged):
+        Uses invalidateDisabledStateUnder().
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        Added new override function. We need invalidate disabled state of form
+        controls under legend elements.
+
+        * html/HTMLFieldSetElement.h:
+        (HTMLFieldSetElement): Add invalidateDisabledStateUnder() and childrenChanged().
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        Remove initialization of the removed data members.
+        Initialize m_ancestorDisabledState.
+        (WebCore::HTMLFormControlElement::updateAncestorDisabledState):
+        Update m_ancestorDisabledState. It should be
+        AncestorDisabledStateDisabled if the control is under a disabled
+        fieldset and not under the first legend child of the disabled filedset.
+        (WebCore::HTMLFormControlElement::ancestorDisabledStateWasChanged):
+        Invalidate m_ancestorDisabledState.
+        (WebCore::HTMLFormControlElement::insertedInto): ditto.
+        (WebCore::HTMLFormControlElement::removedFrom): ditto.
+        (WebCore::HTMLFormControlElement::disabled):
+        Calls updateAncestorDisabledState() if needed.
+        (WebCore::HTMLFormControlElement::recalcWillValidate):
+        Remove unnecessary check for m_legendAncestor.
+
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        - Rename updateFieldSetAndLegendAncestor() to updateAncestorDisabledState(), and make it private.
+        - Remove m_fieldSetAncestor, m_legendAncestor, and m_fieldSetAncestorValid.
+        - Add m_ancestorDisabledState.
+
 2012-05-28  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] Receiving reserved close codes, 1005, 1006, and 1015 must appear as code=1006 and wasClean=false

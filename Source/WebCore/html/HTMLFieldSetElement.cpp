@@ -47,14 +47,27 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
     return adoptRef(new HTMLFieldSetElement(tagName, document, form));
 }
 
+void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
+{
+    for (Node* currentNode = base->traverseNextNode(base); currentNode; currentNode = currentNode->traverseNextNode(base)) {
+        if (currentNode && currentNode->isElementNode() && toElement(currentNode)->isFormControlElement())
+            static_cast<HTMLFormControlElement*>(currentNode)->ancestorDisabledStateWasChanged();
+    }
+}
+
 void HTMLFieldSetElement::disabledAttributeChanged()
 {
     // This element must be updated before the style of nodes in its subtree gets recalculated.
     HTMLFormControlElement::disabledAttributeChanged();
+    invalidateDisabledStateUnder(this);
+}
 
-    for (Node* currentNode = this->traverseNextNode(this); currentNode; currentNode = currentNode->traverseNextNode(this)) {
-        if (currentNode && currentNode->isElementNode() && toElement(currentNode)->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(currentNode)->ancestorDisabledStateWasChanged();
+void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    for (Element* element = firstElementChild(); element; element = element->nextElementSibling()) {
+        if (element->hasTagName(legendTag))
+            invalidateDisabledStateUnder(element);
     }
 }
 

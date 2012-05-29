@@ -11,7 +11,11 @@
   <div id=w>
     <input type=text id=e required>
   </div>
+  <legend>
+    <input id="inLegend" required>
+  </legend>
 </datalist>
+
 
 <script>
 description('Test for child elements of a datalist element.');
@@ -27,6 +31,8 @@ shouldBeTrue('e.willValidate');
 document.body.appendChild(e);
 shouldBeTrue('e.willValidate');
 shouldBe('document.querySelector(":invalid")', 'e');
+
+shouldBeFalse('document.getElementById("inLegend").willValidate');
 
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>

@@ -51,7 +51,6 @@ public:
     void setFormMethod(const String&);
     bool formNoValidate() const;
 
-    void updateFieldSetAndLegendAncestor() const;
     void ancestorDisabledStateWasChanged();
 
     virtual void reset() { }
@@ -148,16 +147,16 @@ private:
     virtual bool isDefaultButtonForForm() const;
     virtual bool isValidFormControlElement();
     String visibleValidationMessage() const;
+    void updateAncestorDisabledState() const;
 
-    mutable HTMLFieldSetElement* m_fieldSetAncestor;
-    mutable HTMLLegendElement* m_legendAncestor;
     OwnPtr<ValidationMessage> m_validationMessage;
-    mutable bool m_fieldSetAncestorValid : 1;
     bool m_disabled : 1;
     bool m_readOnly : 1;
     bool m_required : 1;
     bool m_valueMatchesRenderer : 1;
 
+    enum AncestorDisabledState { AncestorDisabledStateUnknown, AncestorDisabledStateEnabled, AncestorDisabledStateDisabled };
+    mutable AncestorDisabledState m_ancestorDisabledState;
     enum DataListAncestorState { Unknown, InsideDataList, NotInsideDataList };
     mutable enum DataListAncestorState m_dataListAncestorState;
 

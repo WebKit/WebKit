@@ -9,6 +9,7 @@ PASS w.querySelector(":invalid") is e
 PASS e.willValidate is true
 PASS e.willValidate is true
 PASS document.querySelector(":invalid") is e
+PASS document.getElementById("inLegend").willValidate is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
