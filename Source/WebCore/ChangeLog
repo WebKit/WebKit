@@ -1,3 +1,49 @@
+2012-05-28  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Avoid passing NULL to an 'isolate' parameter
+        https://bugs.webkit.org/show_bug.cgi?id=87689
+
+        Reviewed by Adam Barth.
+
+        v8::Null(isolate) crashes if we pass a NULL isolate.
+        Thus we are planning to replace v8::Null()s in a following way:
+
+        - Implement V8Bindings::v8Null(isolate). v8Null(isolate) does the NULL check.
+        If isolate is NULL, v8Null(isolate) calls v8::Null(). Otherwise,
+        v8Null(isolate) calls v8::Null(isolate).
+
+        - In V8 bindings, we replace v8::Null() with v8::Null(isolate) for a
+        non-optional 'isolate' parameter.
+        (e.g. void foo(..., Isolate* isolate) { v8::Null(); } )
+
+        - In V8 bindings, we replace v8::Null() with v8Null(isolate) for an
+        optional 'isolate' parameter.
+        (e.g. void foo(..., Isolate* isolate = 0) { v8::Null(); } )
+
+        However, currently we cannot do the replacement mechanically, since some code
+        pass NULL to a non-optional 'isolate' parameter. In other words, currently
+        "non-optional" does not guarantee that 'isolate' is not NULL.
+
+        This patch removes all the code that passes NULL to a non-optional 'isolate'
+        parameter. This will enable us to achieve the replacement mechanically.
+
+        No tests. No behavior change.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateCallbackImplementation):
+        (NativeToJSValue):
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        (WebCore::V8TestCallback::callbackWithClass1Param):
+        (WebCore::V8TestCallback::callbackWithClass2Param):
+        (WebCore::V8TestCallback::callbackWithStringList):
+        (WebCore::V8TestCallback::callbackRequiresThisToPass):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::installPerContextProperties):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8SQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8MutationCallbackCustom.cpp:
+        (WebCore::V8MutationCallback::handleEvent):
+
 2012-05-28  Kent Tamura  <tkent@chromium.org>
 
         Form controls in <fieldset disabled> should not be validated.

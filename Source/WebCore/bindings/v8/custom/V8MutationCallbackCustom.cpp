@@ -66,9 +66,9 @@ bool V8MutationCallback::handleEvent(MutationRecordArray* mutations, WebKitMutat
 
     v8::Local<v8::Array> mutationsArray = v8::Array::New(mutations->size());
     for (size_t i = 0; i < mutations->size(); ++i)
-        mutationsArray->Set(v8::Integer::New(i), toV8(mutations->at(i).get(), 0));
+        mutationsArray->Set(v8::Integer::New(i), toV8(mutations->at(i).get()));
 
-    v8::Handle<v8::Value> observerHandle = toV8(observer, 0);
+    v8::Handle<v8::Value> observerHandle = toV8(observer);
     if (observerHandle.IsEmpty()) {
         if (!isScriptControllerTerminating())
             CRASH();
