@@ -1,3 +1,11 @@
+2012-05-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Cancel potential url-edit when going back/forward
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Compilation warning in DumpRenderTreeView.cpp
