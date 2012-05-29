@@ -675,7 +675,7 @@ String crashedPluginText()
 
 String insecurePluginVersionText()
 {
-    return WEB_UI_STRING("Insecure Plug-In Version", "Label text to be used when an insecure plug-in version was blocked from loading");
+    return WEB_UI_STRING("Blocked Plug-in", "Label text to be used when an insecure plug-in version was blocked from loading");
 }
 
 String multipleFileUploadText(unsigned numberOfFiles)
