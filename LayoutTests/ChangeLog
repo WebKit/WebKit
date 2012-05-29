@@ -1,3 +1,14 @@
+2012-05-28  Marcus Bulach  <bulach@chromium.org>
+
+        Removes pixel result requirements from fast/layers/clip-rects-assertion-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=87663
+
+        Unreviewed gardening.
+
+        This test was added by r118612, but no pixel result were provided.
+        It seems that it's enough to remove the param for dumpAsText() and just use the text text output.
+        * fast/layers/clip-rects-assertion.html:
+
 2012-05-28  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] Receiving reserved close codes, 1005, 1006, and 1015 must appear as code=1006 and wasClean=false
