@@ -2478,3 +2478,7 @@ fast/frames/flattening/iframe-tiny.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
+
+# [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
+# https://bugs.webkit.org/show_bug.cgi?id=87700
+fast/dom/window-scroll-scaling.html
