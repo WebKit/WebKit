@@ -1,3 +1,17 @@
+2012-05-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should keep captured variables alive until the (inline) return.
+        https://bugs.webkit.org/show_bug.cgi?id=87205
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-inline-arguments-osr-exit-and-capture-expected.txt: Added.
+        * fast/js/dfg-inline-arguments-osr-exit-and-capture.html: Added.
+        * fast/js/script-tests/dfg-inline-arguments-osr-exit-and-capture.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2012-05-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Implement box-decoration-break parsing.

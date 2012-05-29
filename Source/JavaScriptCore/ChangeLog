@@ -1,3 +1,39 @@
+2012-05-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should keep captured variables alive until the (inline) return.
+        https://bugs.webkit.org/show_bug.cgi?id=87205
+
+        Reviewed by Gavin Barraclough.
+        
+        Changes the way we do flushing for captured variables and arguments. Instead of flushing
+        each SetLocal immediately, we flush at kill points. So a SetLocal will cause a Flush of
+        whatever was live in the variable previously, and a return will cause a Flush of all
+        captured variables and all arguments.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForArgument):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::findArgumentPosition):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::flushArgumentsAndCapturedVariables):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+
 2012-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         WeakGCMap should be lazy-finalization-safe

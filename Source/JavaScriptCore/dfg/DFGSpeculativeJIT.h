@@ -2191,22 +2191,23 @@ public:
         unsigned setLocalIndexInBlock = m_indexInBlock + 1;
         
         Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock));
+        bool hadInt32ToDouble = false;
         
         if (setLocal->op() == Int32ToDouble) {
             setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
-            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
-        } else
-            ASSERT(setLocal->child1() == m_compileIndex);
+            hadInt32ToDouble = true;
+        }
+        if (setLocal->op() == Flush)
+            setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
         
+        if (hadInt32ToDouble)
+            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
+        else
+            ASSERT(setLocal->child1() == m_compileIndex);
         ASSERT(setLocal->op() == SetLocal);
         ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
 
         Node* nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
-        if (nextNode->codeOrigin == at(m_compileIndex).codeOrigin) {
-            ASSERT(nextNode->op() == Flush);
-            nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 2));
-            ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin); // duplicate the same assertion as below so that if we fail, we'll know we came down this path.
-        }
         ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin);
         
         OSRExit& exit = m_jit.codeBlock()->lastOSRExit();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -620,7 +620,7 @@ private:
     }
     
     // This returns the Flush node that is keeping a SetLocal alive.
-    NodeIndex setLocalStoreElimination(VirtualRegister local)
+    NodeIndex setLocalStoreElimination(VirtualRegister local, NodeIndex expectedNodeIndex)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -629,7 +629,7 @@ private:
                 continue;
             switch (node.op()) {
             case GetLocal:
-            case SetLocal:
+            case Flush:
                 if (node.local() == local)
                     return NoNode;
                 break;
@@ -639,19 +639,13 @@ private:
                     return NoNode;
                 break;
                 
-            case Flush: {
+            case SetLocal: {
                 if (node.local() != local)
                     break;
-                if (!i)
-                    break;
-                NodeIndex prevIndex = m_currentBlock->at(i - 1);
-                if (prevIndex != node.child1().index())
-                    break;
-                ASSERT(m_graph[prevIndex].local() == local);
-                ASSERT(m_graph[prevIndex].variableAccessData() == node.variableAccessData());
-                ASSERT(m_graph[prevIndex].shouldGenerate());
-                if (m_graph[prevIndex].refCount() > 1)
-                    break;
+                if (index != expectedNodeIndex)
+                    return NoNode;
+                if (m_graph[index].refCount() > 1)
+                    return NoNode;
                 return index;
             }
                 
@@ -659,6 +653,14 @@ private:
                 if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
                     return NoNode;
                 break;
+                
+            case TearOffActivation:
+            case TearOffArguments:
+                // If an activation is being torn off then it means that captured variables
+                // are live. We could be clever here and check if the local qualifies as an
+                // argument register. But that seems like it would buy us very little since
+                // any kind of tear offs are rare to begin with.
+                return NoNode;
                 
             default:
                 if (m_graph.clobbersWorld(index))
@@ -855,27 +857,26 @@ private:
             break;
         }
             
-        case SetLocal: {
+        case Flush: {
             if (m_fixpointState == FixpointNotConverged)
                 break;
             VariableAccessData* variableAccessData = node.variableAccessData();
             if (!variableAccessData->isCaptured())
                 break;
             VirtualRegister local = variableAccessData->local();
-            NodeIndex replacementIndex = setLocalStoreElimination(local);
+            NodeIndex replacementIndex = setLocalStoreElimination(local, node.child1().index());
             if (replacementIndex == NoNode)
                 break;
             Node& replacement = m_graph[replacementIndex];
-            ASSERT(replacement.op() == Flush);
+            ASSERT(replacement.op() == SetLocal);
             ASSERT(replacement.refCount() == 1);
             ASSERT(replacement.shouldGenerate());
-            ASSERT(replacement.mustGenerate());
-            replacement.setOpAndDefaultFlags(Phantom);
-            NodeIndex setLocalIndex = replacement.child1().index();
-            ASSERT(m_graph[setLocalIndex].op() == SetLocal);
-            m_graph.clearAndDerefChild1(replacement);
-            replacement.children.child1() = m_graph[setLocalIndex].child1();
-            m_graph.ref(replacement.child1());
+            node.setOpAndDefaultFlags(Phantom);
+            NodeIndex dataNodeIndex = replacement.child1().index();
+            ASSERT(m_graph[dataNodeIndex].hasResult());
+            m_graph.clearAndDerefChild1(node);
+            node.children.child1() = Edge(dataNodeIndex);
+            m_graph.ref(dataNodeIndex);
             break;
         }
             

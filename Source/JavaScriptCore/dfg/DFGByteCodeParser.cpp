@@ -142,20 +142,21 @@ private:
     {
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
-    void setDirect(int operand, NodeIndex value)
+    enum SetMode { NormalSet, SetOnEntry };
+    void setDirect(int operand, NodeIndex value, SetMode setMode = NormalSet)
     {
         // Is this an argument?
         if (operandIsArgument(operand)) {
-            setArgument(operand, value);
+            setArgument(operand, value, setMode);
             return;
         }
 
         // Must be a local.
-        setLocal((unsigned)operand, value);
+        setLocal((unsigned)operand, value, setMode);
     }
-    void set(int operand, NodeIndex value)
+    void set(int operand, NodeIndex value, SetMode setMode = NormalSet)
     {
-        setDirect(m_inlineStackTop->remapOperand(operand), value);
+        setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
     }
     
     NodeIndex injectLazyOperandPrediction(NodeIndex nodeIndex)
@@ -236,37 +237,19 @@ private:
         
         return nodeIndex;
     }
-    void setLocal(unsigned operand, NodeIndex value)
+    void setLocal(unsigned operand, NodeIndex value, SetMode setMode = NormalSet)
     {
         bool isCaptured = m_codeBlock->localIsCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
         
+        if (setMode == NormalSet) {
+            ArgumentPosition* argumentPosition = findArgumentPositionForLocal(operand);
+            if (isCaptured || argumentPosition)
+                flushDirect(operand, argumentPosition);
+        }
+
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
-        
-        bool shouldFlush = isCaptured;
-        
-        if (!shouldFlush) {
-            // If this is in argument position, then it should be flushed.
-            for (InlineStackEntry* stack = m_inlineStackTop; ; stack = stack->m_caller) {
-                InlineCallFrame* inlineCallFrame = stack->m_inlineCallFrame;
-                if (!inlineCallFrame)
-                    break;
-                if (static_cast<int>(operand) >= inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize)
-                    continue;
-                if (static_cast<int>(operand) == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
-                    continue;
-                if (operand < inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size())
-                    continue;
-                int argument = operandToArgument(operand - inlineCallFrame->stackOffset);
-                stack->m_argumentPositions[argument]->addVariable(variableAccessData);
-                shouldFlush = true;
-                break;
-            }
-        }
-        
-        if (shouldFlush)
-            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -292,7 +275,7 @@ private:
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
                     variableAccessData->mergeIsCaptured(isCaptured);
                     nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
-                    m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
+                    m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                     return nodeIndex;
                 }
                 nodePtr = &flushChild;
@@ -336,31 +319,70 @@ private:
         
         return nodeIndex;
     }
-    void setArgument(int operand, NodeIndex value)
+    void setArgument(int operand, NodeIndex value, SetMode setMode = NormalSet)
     {
         unsigned argument = operandToArgument(operand);
         bool isCaptured = m_codeBlock->argumentIsCaptured(argument);
         
         ASSERT(argument < m_numArguments);
         
+        // Always flush arguments, except for 'this'.
+        if (argument && setMode == NormalSet)
+            flushDirect(operand);
+        
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
-        InlineStackEntry* stack = m_inlineStackTop;
-        while (stack->m_inlineCallFrame) // find the machine stack entry.
-            stack = stack->m_caller;
-        stack->m_argumentPositions[argument]->addVariable(variableAccessData);
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
-        // Always flush arguments, except for 'this'.
-        if (argument)
-            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
     }
     
-    VariableAccessData* flushArgument(int operand)
+    ArgumentPosition* findArgumentPositionForArgument(int argument)
+    {
+        InlineStackEntry* stack = m_inlineStackTop;
+        while (stack->m_inlineCallFrame)
+            stack = stack->m_caller;
+        return stack->m_argumentPositions[argument];
+    }
+    
+    ArgumentPosition* findArgumentPositionForLocal(int operand)
+    {
+        for (InlineStackEntry* stack = m_inlineStackTop; ; stack = stack->m_caller) {
+            InlineCallFrame* inlineCallFrame = stack->m_inlineCallFrame;
+            if (!inlineCallFrame)
+                break;
+            if (operand >= inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize)
+                continue;
+            if (operand == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
+                continue;
+            if (static_cast<unsigned>(operand) < inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size())
+                continue;
+            int argument = operandToArgument(operand - inlineCallFrame->stackOffset);
+            return stack->m_argumentPositions[argument];
+        }
+        return 0;
+    }
+    
+    ArgumentPosition* findArgumentPosition(int operand)
+    {
+        if (operandIsArgument(operand))
+            return findArgumentPositionForArgument(operandToArgument(operand));
+        return findArgumentPositionForLocal(operand);
+    }
+    
+    void flush(int operand)
+    {
+        flushDirect(m_inlineStackTop->remapOperand(operand));
+    }
+    
+    void flushDirect(int operand)
+    {
+        flushDirect(operand, findArgumentPosition(operand));
+    }
+    
+    void flushDirect(int operand, ArgumentPosition* argumentPosition)
     {
         // FIXME: This should check if the same operand had already been flushed to
         // some other local variable.
         
-        operand = m_inlineStackTop->remapOperand(operand);
         bool isCaptured = m_codeBlock->isCaptured(m_inlineStackTop->m_inlineCallFrame, operand);
         
         ASSERT(operand < FirstConstantRegisterIndex);
@@ -398,7 +420,9 @@ private:
             VariableAccessData* variableAccessData = node.variableAccessData();
             variableAccessData->mergeIsCaptured(isCaptured);
             addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
-            return variableAccessData;
+            if (argumentPosition)
+                argumentPosition->addVariable(variableAccessData);
+            return;
         }
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
@@ -413,7 +437,21 @@ private:
             m_currentBlock->variablesAtTail.local(index) = nodeIndex;
             m_currentBlock->variablesAtHead.setLocalFirstTime(index, nodeIndex);
         }
-        return variableAccessData;
+        if (argumentPosition)
+            argumentPosition->addVariable(variableAccessData);
+    }
+    
+    void flushArgumentsAndCapturedVariables()
+    {
+        int numArguments;
+        if (m_inlineStackTop->m_inlineCallFrame)
+            numArguments = m_inlineStackTop->m_inlineCallFrame->arguments.size();
+        else
+            numArguments = m_inlineStackTop->m_codeBlock->numParameters();
+        for (unsigned argument = numArguments; argument-- > 1;)
+            flush(argumentToOperand(argument));
+        for (unsigned local = m_inlineStackTop->m_codeBlock->m_numCapturedVars; local--;)
+            flush(local);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -1219,17 +1257,6 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // FIXME: Don't flush constants!
     
-    Vector<VariableAccessData*, 8> arguments;
-    for (int i = 1; i < argumentCountIncludingThis; ++i) {
-        VariableAccessData* variableAccessData =
-            flushArgument(registerOffset + argumentToOperand(i));
-        arguments.append(variableAccessData);
-        
-        // Are we going to be capturing arguments? If so make sure we record this fact.
-        if (codeBlock->argumentIsCaptured(i))
-            variableAccessData->mergeIsCaptured(true);
-    }
-    
     int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
     // Make sure that the area used by the call frame is reserved.
@@ -1250,13 +1277,6 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         (VirtualRegister)m_inlineStackTop->remapOperand(
             usesResult ? resultOperand : InvalidVirtualRegister),
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
-    
-    // Link up the argument variable access datas to their argument positions.
-    for (int i = 1; i < argumentCountIncludingThis; ++i) {
-        if (static_cast<size_t>(i) >= inlineStackEntry.m_argumentPositions.size())
-            break;
-        inlineStackEntry.m_argumentPositions[i]->addVariable(arguments[i - 1]);
-    }
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
@@ -1578,7 +1598,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_enter:
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
-                set(i, constantUndefined());
+                set(i, constantUndefined(), SetOnEntry);
             NEXT_OPCODE(op_enter);
 
         case op_convert_this: {
@@ -2352,6 +2372,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_ret:
+            flushArgumentsAndCapturedVariables();
             if (m_inlineStackTop->m_inlineCallFrame) {
                 if (m_inlineStackTop->m_returnValue != InvalidVirtualRegister)
                     setDirect(m_inlineStackTop->m_returnValue, get(currentInstruction[1].u.operand));
@@ -2379,15 +2400,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_ret);
             
         case op_end:
+            flushArgumentsAndCapturedVariables();
             ASSERT(!m_inlineStackTop->m_inlineCallFrame);
             addToGraph(Return, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_end);
 
         case op_throw:
+            flushArgumentsAndCapturedVariables();
             addToGraph(Throw, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_throw);
             
         case op_throw_reference_error:
+            flushArgumentsAndCapturedVariables();
             addToGraph(ThrowReferenceError);
             LAST_OPCODE(op_throw_reference_error);
             
@@ -2818,8 +2842,8 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     , m_didEarlyReturn(false)
     , m_caller(byteCodeParser->m_inlineStackTop)
 {
-    m_argumentPositions.resize(codeBlock->numParameters());
-    for (unsigned i = codeBlock->numParameters(); i--;) {
+    m_argumentPositions.resize(argumentCountIncludingThis);
+    for (unsigned i = argumentCountIncludingThis; i--;) {
         byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
         ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
         m_argumentPositions[i] = argumentPosition;
