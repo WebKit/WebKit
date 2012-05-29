@@ -26,87 +26,39 @@
 #include "config.h"
 #include "Settings.h"
 
-#include "LocaleToScriptMapping.h"
-#include <wtf/text/CString.h>
-
 namespace WebCore {
-
-static NSDictionary *defaultFontFamilyDictionary()
-{
-    static NSDictionary *fontFamilyDictionary;
-    if (fontFamilyDictionary)
-        return fontFamilyDictionary;
-
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
-#ifdef BUILDING_ON_LION
-    // Temporary workaround for a Safari Webpage Preview Fetcher crash caused by insufficient sandbox permissions.
-    if (!bundle)
-        return 0;
-#endif
-    NSData *fileData = [NSData dataWithContentsOfURL:[bundle URLForResource:@"DefaultFonts" withExtension:@"plist"]];
-    if (!fileData)
-        FATAL("Could not read font fallback file");
-    NSError *error;
-    id propertyList = [NSPropertyListSerialization propertyListWithData:fileData options:NSPropertyListImmutable format:0 error:&error];
-    if (!propertyList)
-        FATAL("Could not parse font fallback property list: %s", [[error description] UTF8String]);
-    if (![propertyList isKindOfClass:[NSDictionary class]])
-        FATAL("Font fallback file has incorrect format - root object is not a dictionary");
-
-    fontFamilyDictionary = static_cast<NSDictionary *>(propertyList);
-    CFRetain(fontFamilyDictionary);
-    return fontFamilyDictionary;
-}
 
 void Settings::initializeDefaultFontFamilies()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, standardFamily, ("standard"));
-    DEFINE_STATIC_LOCAL(AtomicString, monospaceFamily, ("monospace"));
-    DEFINE_STATIC_LOCAL(AtomicString, serifFamily, ("serif"));
-    DEFINE_STATIC_LOCAL(AtomicString, sansSerifFamily, ("sans-serif"));
-    DEFINE_STATIC_LOCAL(AtomicString, cursiveFamily, ("cursive"));
-    DEFINE_STATIC_LOCAL(AtomicString, fantasyFamily, ("fantasy"));
-    DEFINE_STATIC_LOCAL(AtomicString, pictographFamily, ("pictograph"));
+    setStandardFontFamily("Apple LiSung", USCRIPT_TRADITIONAL_HAN);
+    setFixedFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
+    setSerifFontFamily("Apple LiSung", USCRIPT_TRADITIONAL_HAN);
+    setSansSerifFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
 
-    NSDictionary *rootDictionary = defaultFontFamilyDictionary();
-    for (NSString *scriptName in rootDictionary) {
-        NSDictionary *scriptDictionary = static_cast<NSDictionary *>([rootDictionary objectForKey:scriptName]);
-        if (![scriptName isKindOfClass:[NSString class]])
-            FATAL("Font fallback file has incorrect format - script name is not a string");
-        if (![scriptDictionary isKindOfClass:[NSDictionary class]])
-            FATAL("Font fallback file has incorrect format - per-script value is not a dictionary");
+    setStandardFontFamily("STSong", USCRIPT_SIMPLIFIED_HAN);
+    setFixedFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
+    setSerifFontFamily("STSong", USCRIPT_SIMPLIFIED_HAN);
+    setSansSerifFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
 
-        UScriptCode script = scriptNameToCode(scriptName);
-        if (script == USCRIPT_UNKNOWN)
-            FATAL("Font fallback file has incorrect format - unknown language code %s", [scriptName UTF8String]);
+    setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setFixedFontFamily("Osaka-Mono", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSerifFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSansSerifFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
 
-        for (NSString *genericFamilyName in scriptDictionary) {
-            NSString *familyName = [scriptDictionary objectForKey:genericFamilyName];
-            if (![genericFamilyName isKindOfClass:[NSString class]])
-                FATAL("Font fallback file has incorrect format - generic family name is not a string");
-            if (![familyName isKindOfClass:[NSString class]])
-                FATAL("Font fallback file has incorrect format - font family name is not a string");
+    setStandardFontFamily("AppleMyungjo", USCRIPT_HANGUL);
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    setFixedFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+    setSansSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+#else
+    setFixedFontFamily("AppleGothic", USCRIPT_HANGUL);
+    setSansSerifFontFamily("AppleGothic", USCRIPT_HANGUL);
+#endif
+    setSerifFontFamily("AppleMyungjo", USCRIPT_HANGUL);
 
-            AtomicString genericFamily(genericFamilyName);
-
-            if (genericFamily == standardFamily)
-                setStandardFontFamily(familyName, script);
-            else if (genericFamily == monospaceFamily)
-                setFixedFontFamily(familyName, script);
-            else if (genericFamily == serifFamily)
-                setSerifFontFamily(familyName, script);
-            else if (genericFamily == sansSerifFamily)
-                setSansSerifFontFamily(familyName, script);
-            else if (genericFamily == cursiveFamily)
-                setCursiveFontFamily(familyName, script);
-            else if (genericFamily == fantasyFamily)
-                setFantasyFontFamily(familyName, script);
-            else if (genericFamily == pictographFamily)
-                setPictographFontFamily(familyName, script);
-            else
-                FATAL("Font fallback file has incorrect format - unknown font family name %s", [familyName UTF8String]);
-        }
-    }
+    setStandardFontFamily("Times", USCRIPT_COMMON);
+    setFixedFontFamily("Courier", USCRIPT_COMMON);
+    setSerifFontFamily("Times", USCRIPT_COMMON);
+    setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
 }
 
 

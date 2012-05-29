@@ -1,3 +1,17 @@
+2012-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Move DefaultFonts.plist to C++ code
+        https://bugs.webkit.org/show_bug.cgi?id=87560
+        <rdar://problem/11466119>
+
+        Reviewed by Dan Bernstein.
+
+        * DerivedSources.make:
+        * Resources/DefaultFonts.plist.in: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/SettingsMac.mm: (WebCore::Settings::initializeDefaultFontFamilies):
+        Instead of having a separate configuration file, just hardcode the settings in C++.
+
 2012-05-29  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Retainers are missing for all objects
