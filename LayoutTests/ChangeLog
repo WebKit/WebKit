@@ -27,6 +27,87 @@
 
         [EFL] Unreviewed gardening.
 
+        Unskip a lot of fast/selectors tests which were really passing all
+        the time, they just needed updated baselines after the jhbuild and
+        font commits.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/selectors/001-expected.png:
+        * platform/efl/fast/selectors/002-expected.png:
+        * platform/efl/fast/selectors/003-expected.png:
+        * platform/efl/fast/selectors/004-expected.png:
+        * platform/efl/fast/selectors/005-expected.png:
+        * platform/efl/fast/selectors/006-expected.png:
+        * platform/efl/fast/selectors/007a-expected.png:
+        * platform/efl/fast/selectors/007b-expected.png:
+        * platform/efl/fast/selectors/008-expected.png:
+        * platform/efl/fast/selectors/009-expected.png:
+        * platform/efl/fast/selectors/010-expected.png:
+        * platform/efl/fast/selectors/011-expected.png:
+        * platform/efl/fast/selectors/012-expected.png:
+        * platform/efl/fast/selectors/013-expected.png:
+        * platform/efl/fast/selectors/014-expected.png:
+        * platform/efl/fast/selectors/015-expected.png:
+        * platform/efl/fast/selectors/018-expected.png:
+        * platform/efl/fast/selectors/018b-expected.png:
+        * platform/efl/fast/selectors/021-expected.png:
+        * platform/efl/fast/selectors/021b-expected.png:
+        * platform/efl/fast/selectors/032-expected.png:
+        * platform/efl/fast/selectors/034-expected.png:
+        * platform/efl/fast/selectors/038-expected.png:
+        * platform/efl/fast/selectors/040-expected.png:
+        * platform/efl/fast/selectors/043-expected.png:
+        * platform/efl/fast/selectors/043b-expected.png:
+        * platform/efl/fast/selectors/044-expected.png:
+        * platform/efl/fast/selectors/044b-expected.png:
+        * platform/efl/fast/selectors/044c-expected.png:
+        * platform/efl/fast/selectors/044d-expected.png:
+        * platform/efl/fast/selectors/045-expected.png:
+        * platform/efl/fast/selectors/045b-expected.png:
+        * platform/efl/fast/selectors/045c-expected.png:
+        * platform/efl/fast/selectors/046-expected.png:
+        * platform/efl/fast/selectors/054-expected.png:
+        * platform/efl/fast/selectors/056-expected.png:
+        * platform/efl/fast/selectors/058-expected.png:
+        * platform/efl/fast/selectors/059-expected.png:
+        * platform/efl/fast/selectors/060-expected.png:
+        * platform/efl/fast/selectors/061-expected.png:
+        * platform/efl/fast/selectors/063-expected.png:
+        * platform/efl/fast/selectors/064-expected.png:
+        * platform/efl/fast/selectors/066-expected.png:
+        * platform/efl/fast/selectors/066b-expected.png:
+        * platform/efl/fast/selectors/072-expected.png:
+        * platform/efl/fast/selectors/072b-expected.png:
+        * platform/efl/fast/selectors/077-expected.png:
+        * platform/efl/fast/selectors/077b-expected.png:
+        * platform/efl/fast/selectors/078b-expected.png:
+        * platform/efl/fast/selectors/083-expected.png:
+        * platform/efl/fast/selectors/087b-expected.png:
+        * platform/efl/fast/selectors/090b-expected.png:
+        * platform/efl/fast/selectors/154-expected.png:
+        * platform/efl/fast/selectors/155-expected.png:
+        * platform/efl/fast/selectors/155a-expected.png:
+        * platform/efl/fast/selectors/155b-expected.png:
+        * platform/efl/fast/selectors/155c-expected.png:
+        * platform/efl/fast/selectors/155d-expected.png:
+        * platform/efl/fast/selectors/156b-expected.png:
+        * platform/efl/fast/selectors/157-expected.png:
+        * platform/efl/fast/selectors/158-expected.png:
+        * platform/efl/fast/selectors/160-expected.png:
+        * platform/efl/fast/selectors/168-expected.png:
+        * platform/efl/fast/selectors/168a-expected.png:
+        * platform/efl/fast/selectors/169-expected.png:
+        * platform/efl/fast/selectors/169a-expected.png:
+        * platform/efl/fast/selectors/lang-inheritance-expected.png:
+        * platform/efl/fast/selectors/lang-inheritance2-expected.png:
+        * platform/efl/fast/selectors/lang-vs-xml-lang-expected.png:
+        * platform/efl/fast/selectors/lang-vs-xml-lang-xhtml-expected.png:
+        * platform/efl/fast/selectors/visited-descendant-expected.png:
+
+2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
         House cleaning on Skipped: remove tests which do not exist, unskip
         some which are passing and add expectations for some which were
         lacking them.
