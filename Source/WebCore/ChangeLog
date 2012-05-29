@@ -1,3 +1,51 @@
+2012-05-28  Rakesh KN  <rakesh.kn@motorola.com>
+
+        [Forms] HTMLFieldSetElement.idl doesn't have elements attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=80110
+
+        Reviewed by Kent Tamura.
+
+        Implemented elements attribute for HTMLFieldSetElement. This is spec'ed at
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-fieldset-elements
+
+        Tests: fast/forms/fieldset/fieldset-elements.html
+               fast/forms/fieldset/fieldset-form-collection-radionode-list.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::radioNodeList):
+        Extended ASSERT to assert if not HTMLFieldSetElement or HTMLFormElement.
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::elements):
+        Elements attribute implementation.
+        (WebCore::HTMLFieldSetElement::refreshElementsIfNeeded):
+        Update the formcontrol elements collections if dom tree got modified.
+        (WebCore::HTMLFieldSetElement::associatedElements):
+        FormControl elements collection accessor.
+        (WebCore::HTMLFieldSetElement::length):
+        Number of elements in the fieldset group.
+        * html/HTMLFieldSetElement.h:
+        Added elements collection member and form control collection members.
+        * html/HTMLFieldSetElement.idl:
+        Added elements attribute.
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formControlElements):
+        Added support for HTMLFieldSetElement, based on base element type gets its associated elements.
+        (WebCore::HTMLFormCollection::numberOfFormControlElements): Ditto
+        (WebCore::HTMLFormCollection::getNamedFormItem): Process image elements only for form element.
+        (WebCore::HTMLFormCollection::updateNameCache): Ditto
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        DynamicSubTree root element is decided based on the type whether base element is form or fieldset element.
+        Renamed m_formElement to m_baseElement.
+        (WebCore::RadioNodeList::~RadioNodeList):
+        Renamed m_formElement to m_baseElement.
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+        Form element specific changes moved under form element check.
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+        (RadioNodeList):
+        Renamed m_formElement to m_baseElement.
+
 2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail

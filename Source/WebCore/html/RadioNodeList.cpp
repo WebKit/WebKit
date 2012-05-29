@@ -36,18 +36,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RadioNodeList::RadioNodeList(const AtomicString& name, Element* formElement)
-    : DynamicSubtreeNodeList(formElement->document())
+RadioNodeList::RadioNodeList(const AtomicString& name, Element* baseElement)
+    : DynamicSubtreeNodeList(baseElement->hasTagName(formTag) ? static_cast<Node*>(baseElement->document()) : baseElement)
     , m_name(name)
-    , m_formElement(formElement)
+    , m_baseElement(baseElement)
 {
-    m_formElement->document()->registerDynamicSubtreeNodeList(this);
+    m_baseElement->document()->registerDynamicSubtreeNodeList(this);
 }
 
 RadioNodeList::~RadioNodeList()
 {
-    m_formElement->removeCachedRadioNodeList(this, m_name);
-    m_formElement->document()->unregisterDynamicSubtreeNodeList(this);
+    m_baseElement->removeCachedRadioNodeList(this, m_name);
+    m_baseElement->document()->unregisterDynamicSubtreeNodeList(this);
 }
 
 static inline HTMLInputElement* toRadioButtonInputElement(Node* node)
@@ -86,13 +86,15 @@ void RadioNodeList::setValue(const String& value)
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement) const
 {
     ASSERT(testElement->hasTagName(objectTag) || testElement->isFormControlElement());
-    HTMLFormElement* formElement = 0;
-    if (testElement->hasTagName(objectTag))
-        formElement = static_cast<HTMLObjectElement*>(testElement)->form();
-    else
-        formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
-    if (!formElement || formElement != m_formElement)
-        return false;
+    if (m_baseElement->hasTagName(formTag)) {
+        HTMLFormElement* formElement = 0;
+        if (testElement->hasTagName(objectTag))
+            formElement = static_cast<HTMLObjectElement*>(testElement)->form();
+        else
+            formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
+        if (!formElement || formElement != m_baseElement)
+            return false;
+    }
 
     return testElement->getIdAttribute() == m_name || testElement->getNameAttribute() == m_name;
 }

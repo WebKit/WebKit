@@ -2931,7 +2931,7 @@ void NodeRareData::clearChildNodeListCache()
 
 PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
 {
-    ASSERT(hasTagName(formTag));
+    ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
 
     NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
 

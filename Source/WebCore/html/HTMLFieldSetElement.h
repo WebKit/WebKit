@@ -25,13 +25,23 @@
 #define HTMLFieldSetElement_h
 
 #include "HTMLFormControlElement.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+class FormAssociatedElement;
+class HTMLCollection;
+class HTMLFormCollection;
 
 class HTMLFieldSetElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     HTMLLegendElement* legend() const;
+
+    HTMLCollection* elements();
+
+    const Vector<FormAssociatedElement*>& associatedElements() const;
+    unsigned length() const;
 
 protected:
     virtual void disabledAttributeChanged() OVERRIDE;
@@ -44,6 +54,13 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual const AtomicString& formControlType() const;
     virtual bool recalcWillValidate() const { return false; }
+
+    void refreshElementsIfNeeded() const;
+
+    OwnPtr<HTMLFormCollection> m_elementsCollection;
+    mutable Vector<FormAssociatedElement*> m_associatedElements;
+    // When dom tree is modified, we have to refresh the m_associatedElements array.
+    mutable uint64_t m_documentVersion;
 };
 
 } // namespace

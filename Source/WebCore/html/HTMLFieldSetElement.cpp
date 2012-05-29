@@ -24,9 +24,11 @@
 
 #include "config.h"
 #include "HTMLFieldSetElement.h"
-#include "HTMLLegendElement.h"
 
+#include "HTMLFormCollection.h"
+#include "HTMLLegendElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "RenderFieldset.h"
 #include <wtf/StdLibExtras.h>
 
@@ -79,6 +81,55 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
             return static_cast<HTMLLegendElement*>(node);
     }
     return 0;
+}
+
+HTMLCollection* HTMLFieldSetElement::elements()
+{
+    if (!m_elementsCollection)
+        m_elementsCollection = HTMLFormCollection::create(this);
+    return m_elementsCollection.get();
+}
+
+void HTMLFieldSetElement::refreshElementsIfNeeded() const
+{
+    uint64_t docVersion = document()->domTreeVersion();
+    if (m_documentVersion == docVersion)
+        return;
+
+    m_documentVersion = docVersion;
+
+    m_associatedElements.clear();
+
+    for (Node* node = firstChild(); node; node = node->traverseNextNode(this)) {
+        if (!node->isElementNode())
+            continue;
+
+        if (node->hasTagName(objectTag)) {
+            m_associatedElements.append(static_cast<HTMLObjectElement*>(node));
+            continue;
+        }
+
+        if (!toElement(node)->isFormControlElement())
+            continue;
+
+        m_associatedElements.append(static_cast<HTMLFormControlElement*>(node));
+    }
+}
+
+const Vector<FormAssociatedElement*>& HTMLFieldSetElement::associatedElements() const
+{
+    refreshElementsIfNeeded();
+    return m_associatedElements;
+}
+
+unsigned HTMLFieldSetElement::length() const
+{
+    refreshElementsIfNeeded();
+    unsigned len = 0;
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        if (m_associatedElements[i]->isEnumeratable())
+            ++len;
+    return len;
 }
 
 } // namespace

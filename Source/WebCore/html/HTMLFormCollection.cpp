@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLFormCollection.h"
 
+#include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
@@ -53,8 +54,10 @@ HTMLFormCollection::~HTMLFormCollection()
 const Vector<FormAssociatedElement*>& HTMLFormCollection::formControlElements() const
 {
     ASSERT(base());
-    ASSERT(base()->hasTagName(formTag));
-    return static_cast<HTMLFormElement*>(base())->associatedElements();
+    ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
+    if (base()->hasTagName(formTag))
+        return static_cast<HTMLFormElement*>(base())->associatedElements();
+    return static_cast<HTMLFieldSetElement*>(base())->associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
@@ -67,8 +70,10 @@ const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
 unsigned HTMLFormCollection::numberOfFormControlElements() const
 {
     ASSERT(base());
-    ASSERT(base()->hasTagName(formTag));
-    return static_cast<HTMLFormElement*>(base())->length();
+    ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
+    if (base()->hasTagName(formTag))
+        return static_cast<HTMLFormElement*>(base())->length();
+    return static_cast<HTMLFieldSetElement*>(base())->length();
 }
 
 unsigned HTMLFormCollection::calcLength() const
@@ -134,6 +139,9 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
         }
     }
 
+    if (base()->hasTagName(fieldsetTag))
+        return 0;
+
     const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
     if (!foundInputElements) {
         for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
@@ -195,15 +203,17 @@ void HTMLFormCollection::updateNameCache() const
         }
     }
 
-    const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
-    for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
-        HTMLImageElement* element = imageElementsArray[i];
-        const AtomicString& idAttrVal = element->getIdAttribute();
-        const AtomicString& nameAttrVal = element->getNameAttribute();
-        if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
-            append(m_cache.idCache, idAttrVal, element);
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
-            append(m_cache.nameCache, nameAttrVal, element);
+    if (base()->hasTagName(formTag)) {
+        const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
+        for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
+            HTMLImageElement* element = imageElementsArray[i];
+            const AtomicString& idAttrVal = element->getIdAttribute();
+            const AtomicString& nameAttrVal = element->getNameAttribute();
+            if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
+                append(m_cache.idCache, idAttrVal, element);
+            if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
+                append(m_cache.nameCache, nameAttrVal, element);
+        }
     }
 
     m_cache.hasNameCache = true;

@@ -1,3 +1,15 @@
+2012-05-28  Rakesh KN  <rakesh.kn@motorola.com>
+
+        [Forms] HTMLFieldSetElement.idl doesn't have elements attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=80110
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/fieldset/fieldset-elements-expected.txt: Added.
+        * fast/forms/fieldset/fieldset-elements.html: Added.
+        * fast/forms/fieldset/fieldset-form-collection-radionode-list-expected.txt: Added.
+        * fast/forms/fieldset/fieldset-form-collection-radionode-list.html: Added.
+
 2012-05-28  David Barton  <dbarton@mathscribe.com>
 
         mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
