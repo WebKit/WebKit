@@ -1,3 +1,15 @@
+2012-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Incomplete repaint on twitter.com when replying to a tweet
+        https://bugs.webkit.org/show_bug.cgi?id=87553
+
+        Reviewed by Dean Jackson.
+        
+        Manual test that adds a transform to a layer, forcing that
+        layer to gain backing store.
+
+        * ManualTests/compositing/requires-backing-change.html: Added.
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag

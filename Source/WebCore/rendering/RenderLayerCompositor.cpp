@@ -420,7 +420,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         LOG(Compositing, "\nUpdate %d of %s. Overlap testing is %s\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame->tree()->uniqueName().string().utf8().data(),
             m_compositingConsultsOverlap ? "on" : "off");
     }
-#endif        
+#endif
 
     if (needHierarchyUpdate) {
         // Update the hierarchy of the compositing layers.
@@ -578,6 +578,28 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer* layer)
     }
 }
 
+// This method assumes that layout is up-to-date, unlike repaintOnCompositingChange().
+void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer* layer, const LayoutRect& rect)
+{
+    RenderLayer* compositedAncestor = layer->enclosingCompositingLayerForRepaint(false /*exclude self*/);
+    if (compositedAncestor) {
+        ASSERT(compositedAncestor->backing());
+
+        LayoutPoint offset;
+        layer->convertToLayerCoords(compositedAncestor, offset);
+
+        LayoutRect repaintRect = rect;
+        repaintRect.moveBy(offset);
+
+        compositedAncestor->setBackingNeedsRepaintInRect(repaintRect);
+    }
+
+    // The contents of this layer may be moving from a GraphicsLayer to the window,
+    // so we need to make sure the window system synchronizes those changes on the screen.
+    if (compositedAncestor == m_renderView->layer())
+        m_renderView->frameView()->setNeedsOneShotDrawingSynchronization();
+}
+
 // The bounds of the GraphicsLayer created for a compositing layer is the union of the bounds of all the descendant
 // RenderLayers that are rendered by the composited RenderLayer.
 IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer)
@@ -597,24 +619,9 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     if (!child->isComposited() || parent->renderer()->documentBeingDestroyed())
         return;
 
+    repaintInCompositedAncestor(child, child->backing()->compositedBounds());
+
     setCompositingParent(child, 0);
-    
-    RenderLayer* compLayer = parent->enclosingCompositingLayerForRepaint();
-    if (compLayer) {
-        ASSERT(compLayer->backing());
-        LayoutRect compBounds = child->backing()->compositedBounds();
-
-        LayoutPoint offset;
-        child->convertToLayerCoords(compLayer, offset);
-        compBounds.moveBy(offset);
-
-        compLayer->setBackingNeedsRepaintInRect(compBounds);
-
-        // The contents of this layer may be moving from a GraphicsLayer to the window,
-        // so we need to make sure the window system synchronizes those changes on the screen.
-        m_renderView->frameView()->setNeedsOneShotDrawingSynchronization();
-    }
-
     setCompositingLayersNeedRebuild();
 }
 

@@ -1,3 +1,31 @@
+2012-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Incomplete repaint on twitter.com when replying to a tweet
+        https://bugs.webkit.org/show_bug.cgi?id=87553
+
+        Reviewed by Dean Jackson.
+        
+        Style changes can cause a compositing layer to change between
+        requiring its own backing store or not, e.g. with the addition
+        or removal of a transform.
+        
+        When that happens, we need to repaint the ancesetor layer that
+        this layer was, or will be drawing into.
+        
+        Factored some code out of layerWillBeRemoved() to be able to
+        also call it from setRequiresOwnBackingStore().
+
+        New manual test, ManualTests/compositing/requires-backing-change.html.
+        I was not able to get an automated pixel test to work.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setRequiresOwnBackingStore):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Remove trailing whitespace.
+        (WebCore::RenderLayerCompositor::repaintInCompositedAncestor):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        * rendering/RenderLayerCompositor.h:
+
 2012-05-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87771
