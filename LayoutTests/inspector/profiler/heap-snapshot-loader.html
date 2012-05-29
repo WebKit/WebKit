@@ -34,6 +34,7 @@ function test()
 
             var dispatcher = InspectorBackend._domainDispatchers["Profiler"];
             var panel = WebInspector.panels.profiles;
+            panel._reset();
 
             dispatcher.addProfileHeader({
                 typeId: WebInspector.HeapSnapshotProfileType.TypeId,

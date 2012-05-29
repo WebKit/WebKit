@@ -1,3 +1,10 @@
+2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: Web Inspector: single line fix.
+        heap-snapshot-loader are failing in Debug configuration because the list of profiles is not empty.
+
+        * inspector/profiler/heap-snapshot-loader.html:
+
 2012-05-29  Marcus Bulach  <bulach@chromium.org>
 
         Split svg/dom/viewspec-parser.html in smaller tests
