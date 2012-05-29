@@ -3798,3 +3798,6 @@ BUGWK87772 : svg/dom/viewspec-parser-2.html = TEXT TIMEOUT
 BUGWK87772 : svg/dom/viewspec-parser-3.html = TEXT TIMEOUT
 BUGWK87772 : svg/dom/viewspec-parser-4.html = TEXT TIMEOUT
 BUGWK87772 : svg/dom/viewspec-parser-5.html = TEXT TIMEOUT
+
+BUGWK87789 : media/track/track-cues-missed.html = PASS CRASH
+
