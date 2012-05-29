@@ -1312,6 +1312,10 @@ BUGWK87593 : http/tests/cache/cancel-in-progress-load.html = FAIL
 BUGWK84102 : fast/profiler/dead-time.html = TEXT
 BUGWK84102 : fast/profiler/stop-profiling-after-setTimeout.html = TEXT
 
+BUGWK87734 : svg/dom/complex-svgView-specification.html = IMAGE
+BUGWK87734 : svg/dom/SVGViewSpec.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

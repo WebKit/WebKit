@@ -1,3 +1,18 @@
+2012-05-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r118733 and r118735.
+
+        * platform/gtk/fast/css/text-overflow-input-expected.txt:
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/gtk/test_expectations.txt:
+
 2012-05-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed Gardening. Update test expectations after r118733.
