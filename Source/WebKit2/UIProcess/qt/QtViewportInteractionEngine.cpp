@@ -170,6 +170,9 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale) const
 
 void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 {
+    ASSERT_WITH_MESSAGE(m_suspendCount,
+        "setItemRectVisible has to be guarded using a ViewportUpdateDeferrer.");
+
     if (itemRect.isEmpty())
         return;
 
@@ -201,13 +204,6 @@ void QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
     QRectF currentItemRectVisible = m_viewport->mapRectToWebContent(m_viewport->boundingRect());
     if (itemRect == currentItemRectVisible)
         return;
-
-    // FIXME: Investigate why that animation doesn't run when we are unfocused.
-    if (!m_viewport->isVisible() || !m_viewport->hasFocus()) {
-        // Apply the end result immediately when we are non-visible.
-        setItemRectVisible(itemRect);
-        return;
-    }
 
     QEasingCurve easingCurve;
     easingCurve.setCustomType(physicalOvershoot);
@@ -286,10 +282,8 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
 
     QRectF endVisibleContentRect(endPosition / endItemScale, m_viewport->boundingRect().size() / endItemScale);
 
+    ViewportUpdateDeferrer(this);
     setItemRectVisible(endVisibleContentRect);
-
-    // Make sure that tiles all around the viewport will be requested.
-    emit informVisibleContentChange(QPointF());
 }
 
 void QtViewportInteractionEngine::touchBegin()
@@ -553,6 +547,7 @@ void QtViewportInteractionEngine::cancelScrollAnimation()
     // immediately positioned back to valid boundaries.
 
     m_viewport->cancelFlick();
+    ViewportUpdateDeferrer(this);
     setItemRectVisible(nearestValidBounds());
 }
 
@@ -582,9 +577,6 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
 
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
     m_pinchStartScale = m_content->contentsScale();
-
-    // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
-    emit informVisibleContentChange(QPointF());
 }
 
 void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)
@@ -639,6 +631,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
     if (m_suspendCount)
         return;
 
+    ViewportUpdateDeferrer(this);
     setItemRectVisible(nearestValidBounds());
 }
 

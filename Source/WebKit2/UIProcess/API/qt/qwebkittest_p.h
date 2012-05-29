@@ -22,6 +22,7 @@
 #define qwebkittest_p_h
 
 #include "qwebkitglobal.h"
+#include "qquickwebview_p.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
@@ -59,6 +60,8 @@ public slots:
 public:
     QWebKitTest(QQuickWebViewPrivate* webviewPrivate, QObject* parent = 0);
     virtual ~QWebKitTest();
+
+    bool sendTouchEvent(QQuickWebView* window, QEvent::Type type, const QList<QTouchEvent::TouchPoint>& points, ulong timestamp);
 
     QSize contentsSize() const;
     QVariant contentsScale() const;

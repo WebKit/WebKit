@@ -217,6 +217,7 @@ private:
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
     QQuickWebViewExperimental* m_experimental;
 
+    friend class QWebKitTest;
     friend class WebKit::QtViewportInteractionEngine;
     friend class WebKit::QtWebPageLoadClient;
     friend class WebKit::QtWebPagePolicyClient;

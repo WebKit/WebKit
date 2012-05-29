@@ -831,7 +831,8 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
-    , pageIsSuspended(true)
+    , pageIsSuspended(false)
+    , lastCommittedScale(-1)
 {
     // Disable mouse events on the flickable web view so we do not
     // select text during pan gestures on platforms which send both
@@ -925,14 +926,19 @@ void QQuickWebViewFlickablePrivate::_q_onInformVisibleContentChange(const QPoint
     if (!drawingArea)
         return;
 
-    const QRect visibleRect(visibleContentsRect());
-    float scale = pageView->contentsScale();
-
-    emit q->experimental()->test()->contentsScaleChanged();
-
     QRectF accurateVisibleRect(q->boundingRect());
     accurateVisibleRect.translate(contentPos());
-    drawingArea->setVisibleContentsRect(visibleRect, scale, trajectoryVector, FloatPoint(accurateVisibleRect.x(), accurateVisibleRect.y()));
+
+    if (accurateVisibleRect == drawingArea->contentsRect())
+        return;
+
+    float scale = pageView->contentsScale();
+
+    if (scale != lastCommittedScale)
+        emit q->experimental()->test()->contentsScaleCommitted();
+    lastCommittedScale = scale;
+
+    drawingArea->setVisibleContentsRect(QRect(visibleContentsRect()), scale, trajectoryVector, FloatPoint(accurateVisibleRect.x(), accurateVisibleRect.y()));
 
     // Ensure that updatePaintNode is always called before painting.
     pageView->update();
@@ -969,25 +975,21 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(attributes, viewportSize, newSize);
 
-    bool scaleCommitNotified = false;
-
     if (!qFuzzyCompare(minimumScale, attributes.minimumScale)) {
         interactionEngine->setCSSScaleBounds(minimumScale, attributes.maximumScale);
         emit q->experimental()->test()->viewportChanged();
 
         if (!interactionEngine->hadUserInteraction() && !pageIsSuspended) {
-            // Emits contentsScaleCommitted();
-            scaleCommitNotified = true;
+            // Emits contentsScaleChanged();
             interactionEngine->setCSSScale(minimumScale);
         }
     }
 
     // Emit for testing purposes, so that it can be verified that
     // we didn't do scale adjustment.
-    if (!scaleCommitNotified)
-        emit q->experimental()->test()->contentsScaleCommitted();
+    interactionEngine->setItemRectVisible(interactionEngine->nearestValidBounds());
+    emit q->experimental()->test()->contentsScaleCommitted();
 }
-
 
 /*!
     \qmlsignal WebView::onNavigationRequested(WebNavigationRequest request)

@@ -124,7 +124,7 @@ void QQuickWebPage::setContentsScale(qreal scale)
     ASSERT(scale > 0);
     d->contentsScale = scale;
     d->updateSize();
-    emit d->viewportItem->experimental()->test()->contentsScaleCommitted();
+    emit d->viewportItem->experimental()->test()->contentsScaleChanged();
 }
 
 qreal QQuickWebPage::contentsScale() const

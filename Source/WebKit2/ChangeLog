@@ -1,3 +1,77 @@
+2012-05-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt][WK2] Fix failing qmltests::FitToView::test_basic()
+        https://bugs.webkit.org/show_bug.cgi?id=87236
+
+        Reviewed by Simon Hausmann.
+
+        The fix is a combination of things. First of all some events
+        were emitted at the wrong times or when nothing had changed.
+
+        We also initialized the view saying it was suspended which is
+        not correct.
+
+        Another bug was that the touch tap, didn't result in marking
+        the view as having user interaction. This was recently fixed
+        in r118493.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::setContentsScale):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+
+            Make sure pageIsSuspended is initialized to false.
+
+        (QQuickWebViewFlickablePrivate::_q_onInformVisibleContentChange):
+
+            Early bail out if there is no change.
+
+            Inform contentScaleCommitted if the scale changed since last time.
+
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+
+            Make sure to commit the right signals, ie. *Changed and not *Committed.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (touchPoint):
+        (QWebKitTest::sendTouchEvent):
+        (QWebKitTest::touchTap):
+        (QWebKitTest::touchDoubleTap):
+
+            Add proper touch emulation for the testing system. Call directly
+            to our WebKit API (avoid Qt event loop) to ensure all events gets
+            delivered.
+
+        * UIProcess/API/qt/qwebkittest_p.h:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+
+            Assert that a ViewportUpdateDeferrer is always used when calling
+            this method.
+
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+
+            Remove work around now we have the proper fix in place.
+
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+
+            Do not send the informVisibleContentChange manually, use the
+            ViewportUpdateDeferrer instead.
+
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+
+            Add missing ViewportUpdateDeferrer.
+
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+
+            No reason to emit informVisibleContentChange before pinch
+            start, as it is always done on end (due to the ViewportUpdateDeferrer).
+
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+
+            Add missing ViewportUpdateDeferrer.
+
 2012-05-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Allow user to inject JS scripts when the page loads

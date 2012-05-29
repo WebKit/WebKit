@@ -242,6 +242,7 @@ public:
 private:
     QScopedPointer<WebKit::QtViewportInteractionEngine> interactionEngine;
     bool pageIsSuspended;
+    float lastCommittedScale;
 };
 
 #endif // qquickwebview_p_p_h
