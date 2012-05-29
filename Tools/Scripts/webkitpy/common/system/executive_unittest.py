@@ -31,6 +31,7 @@ import os
 import signal
 import subprocess
 import sys
+import time
 import unittest
 
 # Since we execute this script directly as part of the unit tests, we need to ensure
@@ -215,6 +216,18 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
         pids = executive.running_pids()
         self.assertTrue(os.getpid() in pids)
+
+    def test_run_in_parallel(self):
+        NUM_PROCESSES = 4
+        DELAY_SECS = 0.25
+        cmd_line = [sys.executable, '-c', 'import time; time.sleep(%f); print "hello"' % DELAY_SECS]
+        cwd = os.getcwd()
+        commands = [tuple([cmd_line, cwd])] * NUM_PROCESSES
+        start = time.time()
+        command_outputs = Executive().run_in_parallel(commands, processes=NUM_PROCESSES)
+        done = time.time()
+        self.assertTrue(done - start < NUM_PROCESSES * DELAY_SECS)
+        self.assertEquals([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
 
 
 def main(platform, stdin, stdout, cmd, args):

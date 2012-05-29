@@ -23,6 +23,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import BaseHTTPServer
+import logging
+import json
 import os
 
 from webkitpy.common.memoized import memoized
@@ -31,6 +33,9 @@ from webkitpy.layout_tests.controllers.test_expectations_editor import BugManage
 from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectations, TestExpectationSerializer
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 from webkitpy.layout_tests.port import builders
+
+
+_log = logging.getLogger(__name__)
 
 
 class BuildCoverageExtrapolator(object):
@@ -171,15 +176,43 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
                 builders_to_fallback_paths[builder] = fallback_path
         return builders_to_fallback_paths.keys()
 
-    def rebaselineall(self):
-        # FIXME: Optimize this to run in parallel, cache zips, etc.
-        test_list = self._read_entity_body_as_json()
+    def _rebaseline_commands(self, test_list):
+        path_to_webkit_patch = self.server.tool.path()
+        cwd = self.server.tool.scm().checkout_root
+        commands = []
+        for test in test_list:
+            for builder in self._builders_to_fetch_from(test_list[test]):
+                suffixes = ','.join(test_list[test][builder])
+                cmd_line = [path_to_webkit_patch, 'rebaseline-test', '--print-scm-changes', '--suffixes', suffixes, builder, test]
+                commands.append(tuple([cmd_line, cwd]))
+        return commands
+
+    def _files_to_add(self, command_results):
+        files_to_add = set()
+        for output in [result[1] for result in command_results]:
+            try:
+                files_to_add.update(json.loads(output)['add'])
+            except ValueError, e:
+                _log.warning('"%s" is not a JSON object, ignoring' % output)
+
+        return list(files_to_add)
+
+    def _optimize_baselines(self, test_list):
+        # We don't run this in parallel because modifying the SCM in parallel is unreliable.
         for test in test_list:
             all_suffixes = set()
-            builders = self._builders_to_fetch_from(test_list[test])
-            for builder in builders:
-                suffixes = test_list[test][builder]
-                all_suffixes.update(suffixes)
-                self._run_webkit_patch(['rebaseline-test', '--suffixes', ','.join(suffixes), builder, test])
+            for builder in self._builders_to_fetch_from(test_list[test]):
+                all_suffixes.update(test_list[test][builder])
             self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
+
+    def rebaselineall(self):
+        test_list = self._read_entity_body_as_json()
+
+        commands = self._rebaseline_commands(test_list)
+        command_results = self.server.tool.executive.run_in_parallel(commands)
+
+        files_to_add = self._files_to_add(command_results)
+        self.server.tool.scm().add_list(list(files_to_add))
+
+        self._optimize_baselines(test_list)
         self._serve_text('success')

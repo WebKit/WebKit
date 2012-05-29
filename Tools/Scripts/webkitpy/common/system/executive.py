@@ -451,3 +451,15 @@ class Executive(object):
 
     def popen(self, *args, **kwargs):
         return subprocess.Popen(*args, **kwargs)
+
+    def run_in_parallel(self, command_lines_and_cwds, processes=None):
+        """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""
+        return multiprocessing.Pool(processes=processes).map(_run_command_thunk, command_lines_and_cwds)
+
+
+def _run_command_thunk(cmd_line_and_cwd):
+    # Note that this needs to be a bare module (and hence Picklable) method to work with multiprocessing.Pool.
+    (cmd_line, cwd) = cmd_line_and_cwd
+    proc = subprocess.Popen(cmd_line, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = proc.communicate()
+    return (proc.returncode, stdout, stderr)

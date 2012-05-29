@@ -327,9 +327,12 @@ class ChromiumPort(Port):
                 (filetype, filepath))
             return (self._filesystem.read_text_file(filepath) or '')
         else:
-            _log.warning(
-                "%s test_expectations overrides file '%s' does not exist" %
-                (filetype, filepath))
+            # FIXME: This allows this to work with mock checkouts;
+            # This probably shouldn't be used with a mock checkout, though.
+            if not 'mock-checkout' in filepath:
+                _log.warning(
+                    "%s test_expectations overrides file '%s' does not exist" %
+                    (filetype, filepath))
             return ''
 
     def test_expectations_overrides(self):

@@ -108,6 +108,11 @@ class MockExecutive(object):
             self._proc = MockProcess()
         return self._proc
 
+    def run_in_parallel(self, commands):
+        command_outputs = []
+        for cmd_line, cwd in commands:
+            command_outputs.append([0, self.run_command(cmd_line, cwd=cwd), ''])
+        return command_outputs
 
 class MockExecutive2(object):
     @staticmethod

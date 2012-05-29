@@ -1,3 +1,71 @@
+2012-05-29  Dirk Pranke  <dpranke@chromium.org>
+
+        garden-o-matic should rebaseline baselines in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=87451
+
+        Reviewed by Ojan Vafai.
+                                                                               
+        This modifies garden-o-matic so that we will fetch all                  
+        of the baselines in parallel from the bots, and then                    
+        optimize the baselines serially (since that should be fairly            
+        quick and we get into trouble if we optimize in parallel due            
+        to concurrent access to the source control system).                     
+
+        This change adds a flag to webkit-patch rebaseline-test (--print-scm-changes)
+        so that the files that need to be modified in the SCM are returned to 
+        garden-o-matic rather than actually added or removed. This is done so that
+        we can run multiple rebaseline-tests in parallel (we can't modify the SCM
+        concurrently). In order to safely return the files (as a JSON dict) I
+        needed to shift all of the logging in rebaseline-test to use the logging
+        module (and hence log to stderr).
+
+        I also had to stub out a line in chromium.py that would get confused if
+        the skia overrides file didn't exist in a mock checkout.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.popen):
+        (Executive):
+        (Executive.run_in_parallel):
+        (_run_command_thunk):
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_in_parallel):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_run_in_parallel):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._expectations_file_contents):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand.__init__):
+        (RebaselineTest.__init__):
+        (RebaselineTest._copy_existing_baseline):
+        (RebaselineTest._save_baseline):
+        (RebaselineTest):
+        (RebaselineTest._add_to_scm):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest.execute):
+        (RebaselineExpectations._rebaseline_port):
+        (RebaselineExpectations.execute):
+        (Rebaseline._builder_to_pull_from):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_test):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (test_rebaseline_expectations):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler._rebaseline_commands):
+        (GardeningHTTPRequestHandler):
+        (GardeningHTTPRequestHandler._files_to_add):
+        (GardeningHTTPRequestHandler._optimize_baselines):
+        (GardeningHTTPRequestHandler.rebaselineall):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest._post_to_path):
+        (GardeningServerTest.test_rebaselineall):
+        (GardeningServerTest.test_rebaselineall.run_command):
+
 2012-05-29  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the type of dispatch_time() offset

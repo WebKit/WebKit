@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import sys
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -170,8 +171,8 @@ class GardeningExpectationsUpdaterTest(unittest.TestCase):
 
 
 class GardeningServerTest(unittest.TestCase):
-    def _post_to_path(self, path, body=None, expected_stderr=None, expected_stdout=None):
-        handler = TestGardeningHTTPRequestHandler(MockServer())
+    def _post_to_path(self, path, body=None, expected_stderr=None, expected_stdout=None, server=None):
+        handler = TestGardeningHTTPRequestHandler(server or MockServer())
         handler.path = path
         handler.body = body
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
@@ -186,9 +187,18 @@ class GardeningServerTest(unittest.TestCase):
             "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
             "MOCK builder (Debug)": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier", "debug"])},
         }
-        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', u'%s', u'%s', u'user-scripts/another-test.html'], cwd=/mock-checkout\nMOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'%s', u'user-scripts/another-test.html'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', '--print-scm-changes', '--suffixes', u'%s', u'%s', u'user-scripts/another-test.html'], cwd=/mock-checkout\nMOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'%s', u'user-scripts/another-test.html'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
-        self._post_to_path("/rebaselineall", body='{"user-scripts/another-test.html":{"MOCK builder": ["txt","png"]}}', expected_stderr=expected_stderr % ('txt,png', 'MOCK builder', 'txt,png'), expected_stdout=expected_stdout)
+        server = MockServer()
+
+        self.output = ['{"add": [], "rm": []}', '']
+
+        def run_command(args, cwd=None, **kwargs):
+            print >> sys.stderr, "MOCK run_command: %s, cwd=%s" % (args, cwd)
+            return self.output.pop(0)
+
+        server.tool.executive.run_command = run_command
+        self._post_to_path("/rebaselineall", body='{"user-scripts/another-test.html":{"MOCK builder": ["txt","png"]}}', expected_stderr=expected_stderr % ('txt,png', 'MOCK builder', 'txt,png'), expected_stdout=expected_stdout, server=server)
 
         self._post_to_path("/rebaselineall", body='{"user-scripts/another-test.html":{"MOCK builder (Debug)": ["txt","png"]}}', expected_stderr=expected_stderr % ('txt,png', 'MOCK builder (Debug)', 'txt,png'), expected_stdout=expected_stdout)
 
