@@ -1,5 +1,12 @@
 2012-05-29  Stephanie Lewis  <slewis@apple.com>
 
+        Unreviewed, skipping failing test
+        See https://bugs.webkit.org/show_bug.cgi?id=87728
+
+        * platform/mac/Skipped:
+
+2012-05-29  Stephanie Lewis  <slewis@apple.com>
+
         Unreviewed, updating results after http://trac.webkit.org/projects/webkit/changeset/118733
 
         * platform/mac/fast/css/text-overflow-input-expected.txt:
