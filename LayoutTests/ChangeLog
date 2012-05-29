@@ -1,3 +1,15 @@
+2012-05-29  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=87754
+
+        Unreviewed gardening.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/efl/fast/forms/select/optgroup-rendering-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118620.
