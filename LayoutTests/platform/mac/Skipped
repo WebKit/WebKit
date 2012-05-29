@@ -876,7 +876,7 @@ http/tests/cache/cancel-in-progress-load.html
 
 # Asserts in MessagePort::contextDestroyed
 # https://bugs.webkit.org/show_bug.cgi?id=85811
-fast/events/message-port-constructor-for-deleted-document.html
+fast/events/message-port-clone.html
 
 # Times out without keyboard interaction
 # https://bugs.webkit.org/show_bug.cgi?id=87748

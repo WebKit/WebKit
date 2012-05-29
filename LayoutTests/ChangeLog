@@ -1,3 +1,11 @@
+2012-05-29  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/events/message-port-close.html hits ASSERT in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=85811
+
+        * platform/mac/Skipped: I think that it's just this one test with a delayed effect. Skipping
+        it, and unskipping a victim.
+
 2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Updating chromium test_expectations (svg/dom/viewspec-parser timeouts)
