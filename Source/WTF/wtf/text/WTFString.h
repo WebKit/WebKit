@@ -131,6 +131,15 @@ public:
     String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
     String(RefPtr<StringImpl> impl) : m_impl(impl) { }
 
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    // We have to declare the copy constructor and copy assignment operator as well, otherwise
+    // they'll be implicitly deleted by adding the move constructor and move assignment operator.
+    String(const String& other) : m_impl(other.m_impl) { }
+    String(String&& other) : m_impl(other.m_impl.release()) { }
+    String& operator=(const String& other) { m_impl = other.m_impl; return *this; }
+    String& operator=(String&& other) { m_impl = other.m_impl.release(); return *this; }
+#endif
+
     // Inline the destructor.
     ALWAYS_INLINE ~String() { }
 

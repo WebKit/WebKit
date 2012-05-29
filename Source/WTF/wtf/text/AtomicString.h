@@ -51,6 +51,17 @@ public:
     ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
     AtomicString(StringImpl* baseString, unsigned start, unsigned length) : m_string(add(baseString, start, length)) { }
 
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    // We have to declare the copy constructor and copy assignment operator as well, otherwise
+    // they'll be implicitly deleted by adding the move constructor and move assignment operator.
+    // FIXME: Instead of explicitly casting to String&& here, we should use std::move, but that requires us to
+    // have a standard library that supports move semantics.
+    AtomicString(const AtomicString& other) : m_string(other.m_string) { }
+    AtomicString(AtomicString&& other) : m_string(static_cast<String&&>(other.m_string)) { }
+    AtomicString& operator=(const AtomicString& other) { m_string = other.m_string; return *this; }
+    AtomicString& operator=(AtomicString&& other) { m_string = static_cast<String&&>(other.m_string); return *this; }
+#endif
+
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }

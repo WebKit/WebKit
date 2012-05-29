@@ -1,3 +1,23 @@
+2012-05-29  Anders Carlsson  <andersca@apple.com>
+
+        String should be move enabled/optimized
+        https://bugs.webkit.org/show_bug.cgi?id=87596
+
+        Reviewed by Andreas Kling.
+
+        Add move constructors and move assignment operators to String and AtomicString when building with
+        compilers that support rvalue references. This gets rid of ref-churn when the source of the 
+        constructor or assignment is a temporary object.
+
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        (WTF::AtomicString::AtomicString):
+        (WTF::AtomicString::operator=):
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::String):
+        (WTF::String::operator=):
+
 2012-05-29  Alexandre Elias  <aelias@google.com>
 
         Support WebKit log messages on Android
