@@ -1,3 +1,17 @@
+2012-05-29  Stephanie Lewis  <slewis@apple.com>
+
+        Unreviewed, updating results after http://trac.webkit.org/projects/webkit/changeset/118733
+
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
 2012-05-29  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectations
