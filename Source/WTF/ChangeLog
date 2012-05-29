@@ -1,3 +1,13 @@
+2012-05-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove duplication of logic for disabling selected warnings related to C++11
+
+        This is already handled in unix/default_post.prf
+
+        Reviewed by Simon Hausmann.
+
+        * WTF.pro:
+
 2012-05-27  Darin Adler  <darin@apple.com>
 
         Fix an incorrect assertion in Vector::remove
