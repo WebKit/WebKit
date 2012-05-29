@@ -1,3 +1,22 @@
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
+        2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] OpenGL content is not rendered on simulator
+        https://bugs.webkit.org/show_bug.cgi?id=87721
+
+        Reviewed by George Staikos.
+
+        Fixed by enabling GLES2 support in simulator builds.
+
+        To experiment with building without OpenGL support, you can set the
+        DISABLE_GLES2 environment variable to a non-empty string and rebuild.
+
+        PR #150695
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments):
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag
