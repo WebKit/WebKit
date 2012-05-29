@@ -1,3 +1,14 @@
+2012-05-29  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87711
+
+        Reviewed by Jessie Berlin.
+
+        Remove Snowleopard testers so the hardware can be repurposed.  The lion bots
+        are better maintained.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-05-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch optimize-baselines should add/delete files in batches from the vcs

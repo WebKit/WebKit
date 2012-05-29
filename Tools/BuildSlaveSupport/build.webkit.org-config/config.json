@@ -3,12 +3,7 @@
 
                   
                     { "name": "apple-xserve-4", "platform": "mac-snowleopard" },
-                    { "name": "apple-xserve-5", "platform": "mac-snowleopard" },
-                    { "name": "apple-xserve-6", "platform": "mac-snowleopard" },
-                    { "name": "apple-xserve-7", "platform": "mac-snowleopard" },
-                    { "name": "apple-xserve-8", "platform": "mac-snowleopard" },	
                     { "name": "apple-xserve-9", "platform": "mac-snowleopard" },	
-                    { "name": "apple-macpro-7", "platform": "mac-snowleopard" },
 
                     { "name": "apple-macpro-3", "platform": "mac-lion" },
                     { "name": "apple-macpro-4", "platform": "mac-lion" },
@@ -75,33 +70,15 @@
 
     "builders":   [ { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["snowleopard-intel-release-tests", "snowleopard-intel-release-tests-wk2"],
                       "slavenames": ["apple-xserve-4", "test-slave"]
                     },
                     { "name": "SnowLeopard Intel Debug (Build)", "type": "Build", "builddir": "snowleopard-intel-debug",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["snowleopard-intel-debug-tests", "snowleopard-intel-debug-tests-wk2"],
                       "slavenames": ["apple-xserve-9"]
-                    },
-                    { "name": "SnowLeopard Intel Release (Tests)", "type": "Test", "builddir": "snowleopard-intel-release-tests",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-5", "apple-xserve-6", "test-slave"]
-                    },
-                    { "name": "SnowLeopard Intel Debug (Tests)", "type": "Test", "builddir": "snowleopard-intel-debug-tests",
-                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-8"]
                     },
                     { "name": "Lion Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-3"]
-                    },
-                    { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-7", "test-slave"]
-                    },
-                    { "name": "SnowLeopard Intel Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-debug-tests-wk2",
-                      "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-7"]
                     },
                     { "name": "Lion Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
@@ -339,18 +316,6 @@
                     },
                     { "type": "Triggerable", "name": "lion-intel-debug-tests-wk2",
                       "builderNames": ["Lion Debug (WebKit2 Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "snowleopard-intel-release-tests",
-                      "builderNames": ["SnowLeopard Intel Release (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "snowleopard-intel-release-tests-wk2",
-                      "builderNames": ["SnowLeopard Intel Release (WebKit2 Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "snowleopard-intel-debug-tests",
-                      "builderNames": ["SnowLeopard Intel Debug (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "snowleopard-intel-debug-tests-wk2",
-                      "builderNames": ["SnowLeopard Intel Debug (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Windows 7 Release (Tests)"]
