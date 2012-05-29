@@ -1,3 +1,13 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        [Mac] fast/forms/select/optgroup-rendering.html "failing" since introduction in r118772
+        https://bugs.webkit.org/show_bug.cgi?id=87752
+
+        Add expected (failing?) results to get the bots green.
+
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.txt: Added.
+
 2012-05-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r118776. The failing test was split into
