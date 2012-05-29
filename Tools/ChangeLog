@@ -1,3 +1,14 @@
+2012-05-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the type of dispatch_time() offset
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        In r118631, I erroneously used the type NSTimeInterval for the delta of dispatch_time().
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
         2012-05-29  Arvid Nilsson  <anilsson@rim.com>
