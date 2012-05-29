@@ -1,3 +1,18 @@
+2012-05-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Refactoring. Get rid of unnecessary singleCharacterString() function
+        https://bugs.webkit.org/show_bug.cgi?id=87654
+
+        Reviewed by Csaba Osztrogonác.
+
+        Evas key events already provide key string, so no practical need for singleCharacterString() 
+        evaluating the event string from keyname.
+        Modified code related functionality is already covered with fast/events and fast/forms tests.
+
+        * platform/efl/EflKeyboardUtilities.cpp:
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: Web Inspector: single line fix after r118742.

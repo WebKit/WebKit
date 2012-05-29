@@ -112,7 +112,7 @@ enum EventQueueStrategy {
 };
 
 struct KeyEventInfo {
-    KeyEventInfo(const CString& keyName, const CString& keyString, unsigned modifiers)
+    KeyEventInfo(const CString& keyName, unsigned modifiers, const CString& keyString = CString())
         : keyName(keyName)
         , keyString(keyString)
         , modifiers(modifiers)
@@ -389,108 +389,108 @@ static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObject
 static KeyEventInfo* keyPadNameFromJSValue(JSStringRef character, unsigned modifiers)
 {
     if (equals(character, "leftArrow"))
-        return new KeyEventInfo("KP_Left", "", modifiers);
+        return new KeyEventInfo("KP_Left", modifiers);
     if (equals(character, "rightArrow"))
-        return new KeyEventInfo("KP_Right", "", modifiers);
+        return new KeyEventInfo("KP_Right", modifiers);
     if (equals(character, "upArrow"))
-        return new KeyEventInfo("KP_Up", "", modifiers);
+        return new KeyEventInfo("KP_Up", modifiers);
     if (equals(character, "downArrow"))
-        return new KeyEventInfo("KP_Down", "", modifiers);
+        return new KeyEventInfo("KP_Down", modifiers);
     if (equals(character, "pageUp"))
-        return new KeyEventInfo("KP_Prior", "", modifiers);
+        return new KeyEventInfo("KP_Prior", modifiers);
     if (equals(character, "pageDown"))
-        return new KeyEventInfo("KP_Next", "", modifiers);
+        return new KeyEventInfo("KP_Next", modifiers);
     if (equals(character, "home"))
-        return new KeyEventInfo("KP_Home", "", modifiers);
+        return new KeyEventInfo("KP_Home", modifiers);
     if (equals(character, "end"))
-        return new KeyEventInfo("KP_End", "", modifiers);
+        return new KeyEventInfo("KP_End", modifiers);
     if (equals(character, "insert"))
-        return new KeyEventInfo("KP_Insert", "", modifiers);
+        return new KeyEventInfo("KP_Insert", modifiers);
     if (equals(character, "delete"))
-        return new KeyEventInfo("KP_Delete", "", modifiers);
+        return new KeyEventInfo("KP_Delete", modifiers);
 
-    return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
+    return new KeyEventInfo(character->ustring().utf8(), modifiers, character->ustring().utf8());
 }
 
 static KeyEventInfo* keyNameFromJSValue(JSStringRef character, unsigned modifiers)
 {
     if (equals(character, "leftArrow"))
-        return new KeyEventInfo("Left", "", modifiers);
+        return new KeyEventInfo("Left", modifiers);
     if (equals(character, "rightArrow"))
-        return new KeyEventInfo("Right", "", modifiers);
+        return new KeyEventInfo("Right", modifiers);
     if (equals(character, "upArrow"))
-        return new KeyEventInfo("Up", "", modifiers);
+        return new KeyEventInfo("Up", modifiers);
     if (equals(character, "downArrow"))
-        return new KeyEventInfo("Down", "", modifiers);
+        return new KeyEventInfo("Down", modifiers);
     if (equals(character, "pageUp"))
-        return new KeyEventInfo("Prior", "", modifiers);
+        return new KeyEventInfo("Prior", modifiers);
     if (equals(character, "pageDown"))
-        return new KeyEventInfo("Next", "", modifiers);
+        return new KeyEventInfo("Next", modifiers);
     if (equals(character, "home"))
-        return new KeyEventInfo("Home", "", modifiers);
+        return new KeyEventInfo("Home", modifiers);
     if (equals(character, "end"))
-        return new KeyEventInfo("End", "", modifiers);
+        return new KeyEventInfo("End", modifiers);
     if (equals(character, "insert"))
-        return new KeyEventInfo("Insert", "", modifiers);
+        return new KeyEventInfo("Insert", modifiers);
     if (equals(character, "delete"))
-        return new KeyEventInfo("Delete", "", modifiers);
+        return new KeyEventInfo("Delete", modifiers);
     if (equals(character, "printScreen"))
-        return new KeyEventInfo("Print", "", modifiers);
+        return new KeyEventInfo("Print", modifiers);
     if (equals(character, "menu"))
-        return new KeyEventInfo("Menu", "", modifiers);
+        return new KeyEventInfo("Menu", modifiers);
     if (equals(character, "leftControl"))
-        return new KeyEventInfo("Control_L", "", modifiers);
+        return new KeyEventInfo("Control_L", modifiers);
     if (equals(character, "rightControl"))
-        return new KeyEventInfo("Control_R", "", modifiers);
+        return new KeyEventInfo("Control_R", modifiers);
     if (equals(character, "leftShift"))
-        return new KeyEventInfo("Shift_L", "", modifiers);
+        return new KeyEventInfo("Shift_L", modifiers);
     if (equals(character, "rightShift"))
-        return new KeyEventInfo("Shift_R", "", modifiers);
+        return new KeyEventInfo("Shift_R", modifiers);
     if (equals(character, "leftAlt"))
-        return new KeyEventInfo("Alt_L", "", modifiers);
+        return new KeyEventInfo("Alt_L", modifiers);
     if (equals(character, "rightAlt"))
-        return new KeyEventInfo("Alt_R", "", modifiers);
+        return new KeyEventInfo("Alt_R", modifiers);
     if (equals(character, "F1"))
-        return new KeyEventInfo("F1", "", modifiers);
+        return new KeyEventInfo("F1", modifiers);
     if (equals(character, "F2"))
-        return new KeyEventInfo("F2", "", modifiers);
+        return new KeyEventInfo("F2", modifiers);
     if (equals(character, "F3"))
-        return new KeyEventInfo("F3", "", modifiers);
+        return new KeyEventInfo("F3", modifiers);
     if (equals(character, "F4"))
-        return new KeyEventInfo("F4", "", modifiers);
+        return new KeyEventInfo("F4", modifiers);
     if (equals(character, "F5"))
-        return new KeyEventInfo("F5", "", modifiers);
+        return new KeyEventInfo("F5", modifiers);
     if (equals(character, "F6"))
-        return new KeyEventInfo("F6", "", modifiers);
+        return new KeyEventInfo("F6", modifiers);
     if (equals(character, "F7"))
-        return new KeyEventInfo("F7", "", modifiers);
+        return new KeyEventInfo("F7", modifiers);
     if (equals(character, "F8"))
-        return new KeyEventInfo("F8", "", modifiers);
+        return new KeyEventInfo("F8", modifiers);
     if (equals(character, "F9"))
-        return new KeyEventInfo("F9", "", modifiers);
+        return new KeyEventInfo("F9", modifiers);
     if (equals(character, "F10"))
-        return new KeyEventInfo("F10", "", modifiers);
+        return new KeyEventInfo("F10", modifiers);
     if (equals(character, "F11"))
-        return new KeyEventInfo("F11", "", modifiers);
+        return new KeyEventInfo("F11", modifiers);
     if (equals(character, "F12"))
-        return new KeyEventInfo("F12", "", modifiers);
+        return new KeyEventInfo("F12", modifiers);
 
     int charCode = JSStringGetCharactersPtr(character)[0];
     if (charCode == '\n' || charCode == '\r')
-        return new KeyEventInfo("Return", "Return", modifiers);
+        return new KeyEventInfo("Return", modifiers, "\r");
     if (charCode == '\t')
-        return new KeyEventInfo("Tab", "Tab", modifiers);
+        return new KeyEventInfo("Tab", modifiers, "\t");
     if (charCode == '\x8')
-        return new KeyEventInfo("BackSpace", "BackSpace", modifiers);
+        return new KeyEventInfo("BackSpace", modifiers, "\x8");
     if (charCode == ' ')
-        return new KeyEventInfo("space", " ", modifiers);
+        return new KeyEventInfo("space", modifiers, " ");
     if (charCode == '\x1B')
-        return new KeyEventInfo("Escape", "Escape", modifiers);
+        return new KeyEventInfo("Escape", modifiers, "\x1B");
 
     if ((character->length() == 1) && (charCode >= 'A' && charCode <= 'Z'))
         modifiers |= EvasKeyModifierShift;
 
-    return new KeyEventInfo(character->ustring().utf8(), character->ustring().utf8(), modifiers);
+    return new KeyEventInfo(character->ustring().utf8(), modifiers, character->ustring().utf8());
 }
 
 static KeyEventInfo* createKeyEventInfo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

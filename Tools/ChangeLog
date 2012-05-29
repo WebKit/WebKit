@@ -1,3 +1,19 @@
+2012-05-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Refactoring. Get rid of unnecessary singleCharacterString() function
+        https://bugs.webkit.org/show_bug.cgi?id=87654
+
+        Reviewed by Csaba Osztrogonác.
+
+        Event sender provides strings for all the key events.
+        Also KeyEventInfo constructor parameters order was changed to simplify the case when
+        a key event has empty string.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (KeyEventInfo::KeyEventInfo):
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+
 2012-05-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Cancel potential url-edit when going back/forward
