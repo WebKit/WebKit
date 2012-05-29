@@ -30,6 +30,9 @@ namespace WebCore {
 
 RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThread)
     : RenderRegionSet(node, flowThread)
+    , m_columnCount(1)
+    , m_columnWidth(ZERO_LAYOUT_UNIT)
+    , m_columnHeight(ZERO_LAYOUT_UNIT)
 {
 }
 

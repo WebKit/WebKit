@@ -40,6 +40,9 @@ public:
     LayoutUnit columnHeight() const { return m_columnHeight; }
     void setColumnHeight(LayoutUnit columnHeight) { m_columnHeight = columnHeight; }
 
+    LayoutUnit columnWidth() const { return m_columnWidth; }
+    unsigned columnCount() const { return m_columnCount; }
+
 private:
     virtual const char* renderName() const;
 

@@ -1,3 +1,28 @@
+2012-05-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87775
+
+        [New Multicolumn] Make sure RenderMultiColumnSets have their own copy of the count, width and height of their columns. 
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        (WebCore::RenderMultiColumnBlock::ensureColumnSets):
+        * rendering/RenderMultiColumnBlock.h:
+        (WebCore::RenderMultiColumnBlock::columnWidth):
+        (WebCore::RenderMultiColumnBlock::columnCount):
+        (RenderMultiColumnBlock):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::columnCount):
+        (WebCore::RenderMultiColumnSet::columnWidth):
+        (WebCore::RenderMultiColumnSet::columnHeight):
+        (RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::setColumnWidthAndCount):
+        (WebCore::RenderMultiColumnSet::setColumnHeight):
+
 2012-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Incomplete repaint on twitter.com when replying to a tweet

@@ -47,8 +47,26 @@ public:
     
     virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
 
+    unsigned columnCount() const { return m_columnCount; }
+    LayoutUnit columnWidth() const { return m_columnWidth; }
+    LayoutUnit columnHeight() const { return m_columnHeight; }
+
+    void setColumnWidthAndCount(unsigned count, LayoutUnit width)
+    {
+        m_columnCount = count;
+        m_columnWidth = width;
+    }
+    void setColumnHeight(LayoutUnit height)
+    {
+        m_columnHeight = height;
+    }
+
 private:
     virtual const char* renderName() const;
+    
+    unsigned m_columnCount;
+    LayoutUnit m_columnWidth;
+    LayoutUnit m_columnHeight;
 };
 
 } // namespace WebCore
