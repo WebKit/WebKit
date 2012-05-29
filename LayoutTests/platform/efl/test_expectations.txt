@@ -74,10 +74,10 @@ BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
 
-// Perf tests are way too slow on debug builds.
-WONTFIX DEBUG : perf/adding-radio-buttons.html = FAIL PASS
-WONTFIX DEBUG : perf/array-binary-search.html = FAIL PASS
-WONTFIX DEBUG : perf/mouse-event.html = FAIL PASS
+// Perf tests are way too slow and some may fail due to timeout.
+WONTFIX : perf/adding-radio-buttons.html = FAIL PASS
+WONTFIX : perf/array-binary-search.html = FAIL PASS
+WONTFIX : perf/mouse-event.html = FAIL PASS
 
 // Newly added test which fails on other bots too
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
@@ -117,6 +117,10 @@ BUGWK87088 : fast/js/names.html = TEXT
 
 // The EFL port uses different keyboard accelerators than Safari (via Chromium).
 BUGWKEFL SKIP : fast/events/option-tab.html = FAIL
+
+// These tests are valid for ports where RenderTheme::shouldShowPlaceholderWhenFocused() returns true.
+BUGWKEFL : fast/forms/input-placeholder-paint-order.html = MISSING
+BUGWKEFL : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
@@ -559,7 +563,7 @@ BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = TEXT
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 
 // Tests imported in r116658
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE CRASH
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // New test introduced in r116694 fails

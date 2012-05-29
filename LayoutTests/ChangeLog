@@ -1,3 +1,15 @@
+2012-05-29  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Tests needs gardening after r118733
+        https://bugs.webkit.org/show_bug.cgi?id=87733
+
+        Unreviewed gardening.
+
+        * platform/efl/fast/css/text-overflow-input-expected.txt:
+        * platform/efl/fast/forms/search-styled-expected.png:
+        * platform/efl/fast/forms/search-styled-expected.txt:
+        * platform/efl/test_expectations.txt:
+
 2012-05-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset
