@@ -51,6 +51,7 @@ my (
     $css3FlexboxSupport,
     $cssExclusionsSupport,
     $cssFiltersSupport,
+    $cssImageResolutionSupport,
     $cssRegionsSupport,
     $cssShadersSupport,
     $cssVariablesSupport,
@@ -153,6 +154,9 @@ my @features = (
 
     { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
       define => "ENABLE_CSS3_FLEXBOX", default => 1, value => \$css3FlexboxSupport },
+
+    { option => "css-image-resolution", desc => "Toggle CSS image-resolution support",
+      define => "ENABLE_CSS_IMAGE_RESOLUTION", default => 0, value => \$cssImageResolutionSupport },
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },

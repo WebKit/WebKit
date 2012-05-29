@@ -1,3 +1,14 @@
+2012-05-29  David Barr  <davidbarr@chromium.org>
+
+        Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=87685
+
+        Reviewed by Eric Seidel.
+
+        Add a configuration option for CSS image-resolution support, disabling it by default.
+
+        * features.gypi:
+
 2012-05-29  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
