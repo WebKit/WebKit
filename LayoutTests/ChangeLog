@@ -1,5 +1,13 @@
 2012-05-29  Jessie Berlin  <jberlin@apple.com>
 
+        Clean up the Windows WK2 Skipped list.
+
+        Update it for the moves / renames in r96918, r102226, and r108612.
+
+        * platform/win-wk2/Skipped:
+
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
         JSC doesn't support heap profiling.
         https://bugs.webkit.org/show_bug.cgi?id=50485
 

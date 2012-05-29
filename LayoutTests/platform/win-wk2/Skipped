@@ -270,12 +270,12 @@ fast/forms/focus-change-on-keypress.html
 fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html
-fast/forms/get-file-upload.html
+fast/forms/file/get-file-upload.html
 fast/forms/implicit-submission.html
-fast/forms/input-file-re-render.html
+fast/forms/file/input-file-re-render.html
 fast/forms/input-live-pseudo-selectors.html
-fast/forms/input-number-keyoperation.html
-fast/forms/input-radio-checked-tab.html
+fast/forms/number/input-number-keyoperation.html
+fast/forms/radio/input-radio-checked-tab.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-double-click.html
 fast/forms/input-text-drag-down.html
@@ -295,7 +295,7 @@ fast/forms/onchange-enter-submit.html
 fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
 fast/forms/option-mouseevents.html
-fast/forms/radio_checked_name.html
+fast/forms/radio/radio_checked_name.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/forms/range/slider-mouse-events.html
 fast/forms/range/slider-onchange-event.html
@@ -894,7 +894,7 @@ css2.1/t090501-c5525-flt-l-00-b-g.html
 css2.1/t090501-c5525-flt-r-00-b-g.html
 css2.1/t100304-c43-rpl-bbx-01-d-g.html
 fast/canvas/set-colors.html
-fast/forms/file-input-disabled.html
+fast/forms/file/file-input-disabled.html
 fast/lists/inlineBoxWrapperNullCheck.html
 fast/media/mq-transform-02.html
 fast/media/mq-transform-03.html
