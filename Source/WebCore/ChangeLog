@@ -1,5 +1,39 @@
 2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
+        [BlackBerry] Refactoring http/proxy authentication to use authcallback mechanism introduced with libcurl
+        https://bugs.webkit.org/show_bug.cgi?id=87706
+
+        Reviewed by Antonio Gomes.
+
+        Because we use authentication callback mechanism of libcurl,
+        which will take care of all the authentication communication
+        between UA and server, so the only thing we need to do is to
+        provide credential information when authentication callback
+        is triggered. By using this we don't need to process
+        intermediate headers for each http authentication scheme.
+
+        Implemented interface function notifyAuthReceived() in
+        NetworkJob to handle the authentication notification from
+        networking thread.
+        When the authentication callback is triggered, we should
+        cancel the current loading request and restart a new one with
+        credential information attached which comes from
+        credentialStorage or user input.
+
+        Internally reviewed by Joe Mason <jmason@rim.com>.
+
+        No new tests since there is no behavior change.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyAuthReceived):
+        (WebCore):
+        (WebCore::NetworkJob::handleNotifyHeaderReceived):
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+
+2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
         [BlackBerry] http authentication challenge issue when loading subresource
         https://bugs.webkit.org/show_bug.cgi?id=87660
 

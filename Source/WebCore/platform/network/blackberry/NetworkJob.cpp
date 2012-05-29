@@ -254,6 +254,36 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
+void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm)
+{
+    using BlackBerry::Platform::NetworkRequest;
+
+    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
+    ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
+    switch (authType) {
+    case NetworkRequest::AuthHTTPBasic:
+        scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        break;
+    case NetworkRequest::AuthHTTPDigest:
+        scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        break;
+    case NetworkRequest::AuthHTTPNTLM:
+        scheme = ProtectionSpaceAuthenticationSchemeNTLM;
+        break;
+    case NetworkRequest::AuthFTP:
+        serverType = ProtectionSpaceServerFTP;
+        break;
+    case NetworkRequest::AuthProxy:
+        serverType = ProtectionSpaceProxyHTTP;
+        break;
+    case NetworkRequest::AuthNone:
+    default:
+        return;
+    }
+
+    sendRequestWithCredentials(serverType, scheme, realm);
+}
+
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
 {
     if (shouldDeferLoading())
@@ -286,11 +316,7 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
             m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + "\r\n" + value);
             return;
         }
-    } else if (m_extendedStatusCode == 401 && lowerKey == "www-authenticate")
-        handleAuthHeader(ProtectionSpaceServerHTTP, value);
-    else if (m_extendedStatusCode == 407 && lowerKey == "proxy-authenticate" && !BlackBerry::Platform::Client::get()->getProxyAddress().empty())
-        handleAuthHeader(ProtectionSpaceProxyHTTP, value);
-    else if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
+    } else if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
         handleFTPHeader(value);
 
     m_response.setHTTPHeaderField(key, value);
@@ -647,62 +673,6 @@ void NetworkJob::sendMultipartResponseIfNeeded()
     }
 }
 
-bool NetworkJob::handleAuthHeader(const ProtectionSpaceServerType space, const String& header)
-{
-    if (!m_handle)
-        return false;
-
-    if (!m_handle->getInternal()->m_currentWebChallenge.isNull())
-        return false;
-
-    if (header.isEmpty())
-        return false;
-
-    if (equalIgnoringCase(header, "ntlm"))
-        sendRequestWithCredentials(space, ProtectionSpaceAuthenticationSchemeNTLM, "NTLM");
-
-    // Extract the auth scheme and realm from the header.
-    size_t spacePos = header.find(' ');
-    if (spacePos == notFound) {
-        LOG(Network, "%s-Authenticate field '%s' badly formatted: missing scheme.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
-        return false;
-    }
-
-    String scheme = header.left(spacePos);
-
-    ProtectionSpaceAuthenticationScheme protectionSpaceScheme = ProtectionSpaceAuthenticationSchemeDefault;
-    if (equalIgnoringCase(scheme, "basic"))
-        protectionSpaceScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-    else if (equalIgnoringCase(scheme, "digest"))
-        protectionSpaceScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
-    else {
-        notImplemented();
-        return false;
-    }
-
-    size_t realmPos = header.findIgnoringCase("realm=", spacePos);
-    if (realmPos == notFound) {
-        LOG(Network, "%s-Authenticate field '%s' badly formatted: missing realm.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
-        return false;
-    }
-    size_t beginPos = realmPos + 6;
-    String realm  = header.right(header.length() - beginPos);
-    if (realm.startsWith("\"")) {
-        beginPos += 1;
-        size_t endPos = header.find("\"", beginPos);
-        if (endPos == notFound) {
-            LOG(Network, "%s-Authenticate field '%s' badly formatted: invalid realm.", space == ProtectionSpaceServerHTTP ? "WWW" : "Proxy", header.utf8().data());
-            return false;
-        }
-        realm = header.substring(beginPos, endPos - beginPos);
-    }
-
-    // Get the user's credentials and resend the request.
-    sendRequestWithCredentials(space, protectionSpaceScheme, realm);
-
-    return true;
-}
-
 bool NetworkJob::handleFTPHeader(const String& header)
 {
     size_t spacePos = header.find(' ');
@@ -800,8 +770,6 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
     }
 
-    // FIXME: Resend the resource request. Cloned from handleRedirect(). Not sure
-    // if we need everything that follows...
     ResourceRequest newRequest = m_handle->firstRequest();
     newRequest.setURL(newURL);
     newRequest.setMustHandleInternally(true);

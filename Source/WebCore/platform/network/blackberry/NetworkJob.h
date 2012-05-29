@@ -69,6 +69,7 @@ public:
     virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
     // Exists only to resolve ambiguity between char* and String parameters
+    virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType, const char* realm);
     void notifyStringHeaderReceived(const String& key, const String& value);
     void handleNotifyHeaderReceived(const String& key, const String& value);
     void handleNotifyMultipartHeaderReceived(const String& key, const String& value);
@@ -122,12 +123,10 @@ private:
 
     void handleAbout();
 
-    // The server needs authentication credentials. Search in the
-    // CredentialStorage or prompt the user via dialog.
-    bool handleAuthHeader(const ProtectionSpaceServerType, const String& header);
-
     bool handleFTPHeader(const String& header);
 
+    // The server needs authentication credentials. Search in the CredentialStorage
+    // or prompt the user via dialog, then resend the request with the credentials.
     bool sendRequestWithCredentials(ProtectionSpaceServerType, ProtectionSpaceAuthenticationScheme, const String& realm);
 
     void storeCredentials();
