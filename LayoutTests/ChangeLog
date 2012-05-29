@@ -1,3 +1,19 @@
+2012-05-29  Simon Pena  <spena@igalia.com>
+
+        [GTK] fast tests needs rebaseline after r118733
+        https://bugs.webkit.org/show_bug.cgi?id=87729
+
+        Unreviewed GTK gardening, updated fast pngs.
+
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/gtk/fast/forms/placeholder-position-expected.png:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/gtk/fast/forms/search-styled-expected.png:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.png:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.png:
+
 2012-05-29  Jessie Berlin  <jberlin@apple.com>
 
         [Mac] fast/forms/select/optgroup-rendering.html "failing" since introduction in r118772
