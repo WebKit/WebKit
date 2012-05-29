@@ -1,3 +1,25 @@
+2012-05-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118646.
+        http://trac.webkit.org/changeset/118646
+        https://bugs.webkit.org/show_bug.cgi?id=87691
+
+        broke V8 raytrace benchmark (Requested by pizlo_ on #webkit).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::sweepWeakSet):
+        (JSC):
+        * heap/MarkedSpace.cpp:
+        (JSC::SweepWeakSet::operator()):
+        (JSC):
+        (JSC::MarkedSpace::sweepWeakSets):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+
 2012-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not generate code for code that the CFA proves to be unreachable
