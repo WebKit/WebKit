@@ -1,3 +1,78 @@
+2012-05-29  Kentaro Hara  <haraken@chromium.org>
+
+        [Performance] Optimize querySelector() and querySelectorAll() by removing
+        redundant dummy style sheet creations
+        https://bugs.webkit.org/show_bug.cgi?id=87627
+
+        Reviewed by Antti Koivisto.
+
+        This patch improves performance of querySelector("#id") by 4.2% ~ 17.7%
+        in Safari and Chromium.
+
+        Performance tests: https://bugs.webkit.org/attachment.cgi?id=144288
+
+        The performance test results in my desktop:
+
+        [Safari/Mac]
+        document.querySelector("#headId") :               13.60 ms =>  12.40 ms  +9.68%
+        document.querySelector("#duplicatedId") :         14.80 ms =>  14.20 ms  +4.23%
+        document.querySelector("#tailId") :               13.80 ms =>  12.20 ms  +13.11%
+        document.querySelectorAll("#headId") :            17.80 ms =>  14.60 ms  +21.92%
+        document.querySelectorAll("#duplicatedId") :     513.80 ms => 471.60 ms  +8.95%
+        document.querySelectorAll("#tailId") :            19.20 ms =>  16.40 ms  +17.07%
+        document.querySelector("h1") :                    14.40 ms =>  13.60 ms  +5.88%
+        document.querySelector("h2") :                    14.80 ms =>  13.80 ms  +7.25%
+        document.querySelector("h3") :                   312.00 ms => 306.60 ms  +1.76%
+        document.querySelectorAll("h1") :                322.00 ms => 314.60 ms  +2.35%
+        document.querySelectorAll("h2") :                481.00 ms => 420.60 ms  +14.36%
+        document.querySelectorAll("h3") :                326.80 ms => 315.80 ms  +3.48%
+        document.querySelector(".headClass") :            16.20 ms =>  15.40 ms  +5.19%
+        document.querySelector(".duplicatedClass") :      17.00 ms =>  15.40 ms  +10.39%
+        document.querySelector(".tailClass") :           369.60 ms => 362.60 ms  +1.93%
+        document.querySelectorAll(".headClass") :        388.20 ms => 377.60 ms  +2.81%
+        document.querySelectorAll(".duplicatedClass") :  605.00 ms => 581.20 ms  +4.09%
+        document.querySelectorAll(".tailClass") :        401.60 ms => 391.40 ms  +2.61%
+
+        [Chromium/Linux]
+        ocument.querySelector("#headId") :                16.00 ms =>  13.60 ms  +17.65%
+        document.querySelector("#duplicatedId") :         16.80 ms =>  15.40 ms  +9.09%
+        document.querySelector("#tailId") :               16.00 ms =>  13.60 ms  +17.65%
+        document.querySelectorAll("#headId") :            29.00 ms =>  25.00 ms  +16.00%
+        document.querySelectorAll("#duplicatedId") :     561.40 ms => 505.20 ms  +11.12%
+        document.querySelectorAll("#tailId") :            34.00 ms =>  26.80 ms  +26.87%
+        document.querySelector("h1") :                    18.20 ms =>  15.80 ms  +15.19%
+        document.querySelector("h2") :                    19.00 ms =>  16.60 ms  +14.46%
+        document.querySelector("h3") :                   280.40 ms => 274.00 ms  +2.34%
+        document.querySelectorAll("h1") :                300.20 ms => 365.20 ms  -17.80%
+        document.querySelectorAll("h2") :                487.60 ms => 504.20 ms  -3.29%
+        document.querySelectorAll("h3") :                349.40 ms => 324.00 ms  +7.84%
+        document.querySelector(".headClass") :            18.40 ms =>  16.00 ms  +15.00%
+        document.querySelector(".duplicatedClass") :      19.40 ms =>  16.20 ms  +19.75%
+        document.querySelector(".tailClass") :           349.60 ms => 345.40 ms  +1.22%
+        document.querySelectorAll(".headClass") :        382.80 ms => 378.20 ms  +1.22%
+        document.querySelectorAll(".duplicatedClass") :  550.80 ms => 574.20 ms  -4.08%
+        document.querySelectorAll(".tailClass") :        381.00 ms => 387.00 ms  -1.55%
+
+        I've found that StyleSheetInternal::create() in CSSParser::parseSelector()
+        is a bottleneck of querySelector() and querySelectorAll().
+
+        void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
+        {
+            RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
+            setStyleSheet(dummyStyleSheet.get());
+            ...;
+        }
+
+        This patch removes a dummy style sheet. Previously the dummy style sheet
+        was needed to avoid null checks of m_styleSheet in CSSGrammer.y.
+        This patch fixes CSSGrammer.y so that it works fine with a null m_styleSheet.
+
+        Tests: fast/dom/SelectorAPI/*. No change in the test results.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSelector):
+
 2012-05-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVGViewSpec DOM bindings aka SVGSVGElement.currentView is unimplemented

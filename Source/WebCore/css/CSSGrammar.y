@@ -958,10 +958,9 @@ simple_selector:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         if (p->m_styleSheet)
-            $$->setTag(QualifiedName(namespacePrefix, $2,
-                                      p->m_styleSheet->determineNamespace(namespacePrefix)));
-        else // FIXME: Shouldn't this case be an error?
-            $$->setTag(QualifiedName(nullAtom, $2, p->m_defaultNamespace));
+            $$->setTag(QualifiedName(namespacePrefix, $2, p->m_styleSheet->determineNamespace(namespacePrefix)));
+        else
+            $$->setTag(QualifiedName(namespacePrefix, $2, p->m_defaultNamespace));
     }
     | namespace_selector element_name specifier_list {
         $$ = $3;
@@ -1090,16 +1089,20 @@ attrib:
         AtomicString namespacePrefix = $3;
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->setAttribute(QualifiedName(namespacePrefix, $4,
-                                   p->m_styleSheet->determineNamespace(namespacePrefix)));
+        if (p->m_styleSheet)
+            $$->setAttribute(QualifiedName(namespacePrefix, $4, p->m_styleSheet->determineNamespace(namespacePrefix)));
+        else
+            $$->setAttribute(QualifiedName(namespacePrefix, $4, p->m_defaultNamespace));
         $$->setMatch(CSSSelector::Set);
     }
     | '[' maybe_space namespace_selector attr_name match maybe_space ident_or_string maybe_space ']' {
         AtomicString namespacePrefix = $3;
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->setAttribute(QualifiedName(namespacePrefix, $4,
-                                   p->m_styleSheet->determineNamespace(namespacePrefix)));
+        if (p->m_styleSheet)
+            $$->setAttribute(QualifiedName(namespacePrefix, $4, p->m_styleSheet->determineNamespace(namespacePrefix)));
+        else
+            $$->setAttribute(QualifiedName(namespacePrefix, $4, p->m_defaultNamespace));
         $$->setMatch((CSSSelector::Match)$5);
         $$->setValue($7);
     }

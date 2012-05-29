@@ -1105,8 +1105,6 @@ bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* 
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    RefPtr<StyleSheetContents> dummyStyleSheet = StyleSheetContents::create();
-    setStyleSheet(dummyStyleSheet.get());
     m_selectorListForParseSelector = &selectorList;
 
     setupParser("@-webkit-selector{", string, "}");
@@ -1114,9 +1112,6 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
     cssyyparse(this);
 
     m_selectorListForParseSelector = 0;
-
-    // The style sheet will be deleted right away, so it won't outlive the document.
-    ASSERT(dummyStyleSheet->hasOneRef());
 }
 
 bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& string, RefPtr<CSSStyleSourceData>* styleSourceData, StyleSheetContents* contextStyleSheet)
