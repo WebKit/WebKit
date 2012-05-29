@@ -1,3 +1,13 @@
+2012-05-29  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Adjust expectations for fast/layers/clip-rects-assertion-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=87671
+
+        Unreviewed gardening.
+        Test has been fixed by r118724, remove expectation.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r90971): the cursor is painted “behind” the placeholder text
