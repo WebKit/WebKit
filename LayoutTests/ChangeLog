@@ -1,3 +1,12 @@
+2012-05-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        REGRESSION(r118742): It made inspector/profiler/heap-snapshot-loader.html fail on Lion, Qt
+        https://bugs.webkit.org/show_bug.cgi?id=87741
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped: Skip the failing test.
+
 2012-05-29  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Tests needs gardening after r118733
