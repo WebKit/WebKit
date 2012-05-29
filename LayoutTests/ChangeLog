@@ -1,3 +1,12 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        [Mac] fast/events/message-port-constructor-for-deleted-document.html ASSERTS in Debug.
+
+        This is happening often enough that it is necessary to add the test to the Mac Skipped list
+        in order to keep the bots green.
+
+        * platform/mac/Skipped:
+
 2012-05-29  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][DRT] move idn encoding test to test_expectations.txt
