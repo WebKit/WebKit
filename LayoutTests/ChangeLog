@@ -1,3 +1,11 @@
+2012-05-29  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r118618. http/tests/cache/cancel-in-progress-load.html
+        fails with code 5.
+        https://bugs.webkit.org/show_bug.cgi?id=35377
+
+        * platform/qt/Skipped:
+
 2012-05-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: REGRESSION: load heap snapshot doesn't work.
