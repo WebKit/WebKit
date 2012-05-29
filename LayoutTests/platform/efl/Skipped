@@ -553,11 +553,6 @@ fast/forms/focus2.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
 
-# BUG: not scrolling correctly
-fast/events/mousedown-in-subframe-scrollbar.html
-fast/events/scroll-after-click-on-tab-index.html
-fast/events/scroll-in-scaled-page-with-overflow-hidden.html
-
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
 
