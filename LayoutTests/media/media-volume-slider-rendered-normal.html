@@ -31,22 +31,22 @@
                     layoutTestController.notifyDone();
                     return;
                 }
-
-                eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
             }
 
             panel = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
             volumeSliderElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-volume-slider-container");
             muteButtonElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-mute-button");
 
-
-            // Ensure paint with display property set to "none".
-            panel.style.display = "none";
+            // Ensure paint without controls.
+            video.controls = false;
             document.body.offsetTop;
 
-            // Ensure (re)paint with default display property.
-            panel.style.removeProperty("display");
+            // Ensure (re)paint with controls displayed.
+            video.controls = true;
             document.body.offsetTop;
+
+            // Move the mouse back over the mute button.
+            eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
 
             // Test that the left offset of both controls is equal.
             consoleWrite("");

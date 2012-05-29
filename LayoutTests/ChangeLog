@@ -1,3 +1,16 @@
+2012-05-29  Victor Carbune  <victor@rosedu.org>
+
+        Display cues in the controls area
+        https://bugs.webkit.org/show_bug.cgi?id=87591
+
+        Reviewed by Eric Carlson.
+
+        * media/media-volume-slider-rendered-normal-expected.txt: Renamed from LayoutTests/media/video-controls-rendering-toggle-display-none-expected.txt.
+        * media/media-volume-slider-rendered-normal.html: Renamed from LayoutTests/media/video-controls-rendering-toggle-display-none.html.
+        * platform/chromium/test_expectations.txt: Unmarked tests.
+        * platform/efl/test_expectations.txt: Unmarked tests.
+        * platform/mac/test_expectations.txt: Unmarked tests.
+
 2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening. Unskip passing test.

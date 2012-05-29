@@ -301,6 +301,7 @@ void MediaControlRootElement::hide()
 {
     m_panel->setIsDisplayed(false);
     m_panel->hide();
+    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElement::makeOpaque()
@@ -311,6 +312,7 @@ void MediaControlRootElement::makeOpaque()
 void MediaControlRootElement::makeTransparent()
 {
     m_panel->makeTransparent();
+    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElement::reset()

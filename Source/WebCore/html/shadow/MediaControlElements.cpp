@@ -256,6 +256,7 @@ void MediaControlPanelElement::makeTransparent()
     setInlineStyleProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
 
     m_opaque = false;
+    startTimer();
 }
 
 void MediaControlPanelElement::defaultEventHandler(Event* event)

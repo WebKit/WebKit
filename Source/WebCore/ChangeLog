@@ -1,3 +1,31 @@
+2012-05-29  Victor Carbune  <victor@rosedu.org>
+
+        Display cues in the controls area
+        https://bugs.webkit.org/show_bug.cgi?id=87591
+
+        Reviewed by Eric Carlson.
+
+        Changed the behaviour to implicitly hide the volume slidebar
+        if the controls are hidden (due mouse moving out of the video
+        area or controls are toggled through JS).
+
+        This seems to be the simplest fix to this issue, otherwise
+        on toggling the display:none property on the controls the
+        volume slidebar might appear below the video.
+
+        Re-enabled failing tests for this functionality.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::makeTransparent): Re-enabled
+        timer to set the display:none property on the controls.
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::hide): Added a call to hide
+        the volume slider.
+        (WebCore::MediaControlRootElement::makeTransparent): Same.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::hide): Same.
+        (WebCore::MediaControlRootElementChromium::makeTransparent): Same.
+
 2012-05-29  Adrienne Walker  <enne@google.com>
 
         Fix transparent iframes with composited contents in WK1 on Mac

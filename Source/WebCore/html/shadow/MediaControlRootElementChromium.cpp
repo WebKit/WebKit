@@ -178,6 +178,7 @@ void MediaControlRootElementChromium::hide()
 {
     m_panel->setIsDisplayed(false);
     m_panel->hide();
+    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElementChromium::makeOpaque()
@@ -188,6 +189,7 @@ void MediaControlRootElementChromium::makeOpaque()
 void MediaControlRootElementChromium::makeTransparent()
 {
     m_panel->makeTransparent();
+    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElementChromium::reset()

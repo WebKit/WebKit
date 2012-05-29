@@ -70,10 +70,6 @@ BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
 BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
 BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
 
-// Seems to fail on mac as well
-BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
-BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
-
 // Perf tests are way too slow and some may fail due to timeout.
 WONTFIX : perf/adding-radio-buttons.html = FAIL PASS
 WONTFIX : perf/array-binary-search.html = FAIL PASS
