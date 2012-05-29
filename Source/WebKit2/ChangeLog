@@ -1,3 +1,21 @@
+2012-05-29  Simon Pena  <spena@igalia.com>
+
+        [GTK] Missing field initializers for WKPageLoaderClient and WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=87745
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing initializers for WKPageLoaderClient and
+        WKPageUIClient, for callbacks WKPagePluginDidFailCallback and
+        WKPageUnavailablePluginButtonClickedCallback, introduced in
+        revision r116716.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView): Initialize WKPagePluginDidFailCallback
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (attachUIClientToView): Initialize callback
+        WKPageUnavailablePluginButtonClickedCallback
+
 2012-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Policy decision headers are not included in the main webkit2.h header

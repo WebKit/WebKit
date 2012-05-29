@@ -147,7 +147,8 @@ void attachLoaderClientToView(WebKitWebView* webView)
         0, // didDetectXSSForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // willGoToBackForwardListItem
-        0 // interactionOccurredWhileProcessUnresponsive
+        0, // interactionOccurredWhileProcessUnresponsive
+        0, // pluginDidFail
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);
