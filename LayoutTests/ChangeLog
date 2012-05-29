@@ -1,3 +1,11 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        Merge r118078, which skips the test added in r118039, onto the 536 branch.
+
+        WTR does not have support for layoutTestController.setPrinting yet.
+
+        * platform/wk2/Skipped:
+
 2012-05-28  Lucas Forschler  <lforschler@apple.com>
 
     Merge 118039
