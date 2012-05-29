@@ -1,3 +1,22 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        <progress> element is unsupported on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=49769
+
+        Add platform-specific results for tests that use the progress element on Windows.
+
+        * platform/win/fast/forms/label: Added.
+        * platform/win/fast/forms/label/labelable-elements-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-add-htmlFor-label-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-add-parent-label-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-change-htmlFor-attribute-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-multiple-sibling-labels-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-parent-and-sibling-labels-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-remove-htmlFor-attribute-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-remove-htmlFor-label-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-remove-parent-label-expected.txt: Added.
+        * platform/win/fast/forms/label/labels-set-htmlFor-attribute-expected.txt: Added.
+
 2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Updating test expectation (media/track/track-cues-missed CRASH).
