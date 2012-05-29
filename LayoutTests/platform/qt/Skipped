@@ -581,7 +581,6 @@ http/tests/media
 # --- Failing navigation tests
 #CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: fillTestForm
 #CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: scrollDocDown
-http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
 

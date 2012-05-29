@@ -53,7 +53,6 @@ fast/dom/Range/surround-contents-font-face-crash.svg
 fast/dom/xml-parser-error-message-crash.svg
 fast/encoding/dumpAsText/utf-16-no-bom.xml
 fast/events/xsl-onload.xhtml
-fast/parser/innerhtml-with-prefixed-elements.xhtml
 fast/parser/xml-colon-entity.html
 fast/parser/xml-declaration-missing-ending-mark.html
 fast/parser/xslt-with-html.xml

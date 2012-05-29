@@ -1,9 +1,8 @@
-CONSOLE MESSAGE: line 11: INVALID_STATE_ERR: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x126
   RenderBlock {html} at (0,0) size 800x126
     RenderBody {body} at (8,8) size 784x110
       RenderBlock {div} at (0,0) size 784x110
-        RenderText {#text} at (0,0) size 103x21
-          text run at (0,0) width 103: "TEST FAILED"
+        RenderSVGRoot {svg:svg} at (13,13) size 100x100
+          RenderSVGRect {svg:rect} at (13,13) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=5.00] [y=5.00] [width=100.00] [height=100.00]

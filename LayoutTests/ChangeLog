@@ -1,3 +1,13 @@
+2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Skip fast/parser/innerhtml-with-prefixed-elements.xhtml because of buggy QtXmlPatterns.
+        * platform/qt-5.0/Skipped: Unskip fast/parser/innerhtml-with-prefixed-elements.xhtml, because libxslt works fine.
+        * platform/qt/Skipped: Unskip a non-existing test.
+        * platform/qt/fast/parser/innerhtml-with-prefixed-elements-expected.png: Added.
+        * platform/qt/fast/parser/innerhtml-with-prefixed-elements-expected.txt: Updated.
+
 2012-05-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r118733 and r118735.
