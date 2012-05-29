@@ -1,5 +1,14 @@
 2012-05-29  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=87155
+
+        More placehodler tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-29  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update test expectations.
         https://bugs.webkit.org/show_bug.cgi?id=87155
 
