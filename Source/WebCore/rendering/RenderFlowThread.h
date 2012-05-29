@@ -124,7 +124,7 @@ public:
     
     void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
-    bool overflow() const { return m_overflow; }
+    bool overset() const { return m_overset; }
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
@@ -172,7 +172,7 @@ protected:
     bool m_regionsInvalidated;
     bool m_regionsHaveUniformLogicalWidth;
     bool m_regionsHaveUniformLogicalHeight;
-    bool m_overflow;
+    bool m_overset;
     bool m_hasRegionsWithStyling;
     Timer<RenderFlowThread> m_regionLayoutUpdateEventTimer;
 };

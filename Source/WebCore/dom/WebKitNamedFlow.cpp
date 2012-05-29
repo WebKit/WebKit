@@ -50,10 +50,10 @@ String WebKitNamedFlow::name() const
     return m_parentFlowThread->flowThreadName();
 }
 
-bool WebKitNamedFlow::overflow() const
+bool WebKitNamedFlow::overset() const
 {
     m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
-    return m_parentFlowThread->overflow();
+    return m_parentFlowThread->overset();
 }
 
 PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContentNode(Node* contentNode)

@@ -1,3 +1,20 @@
+2012-05-29  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset
+        https://bugs.webkit.org/show_bug.cgi?id=87491
+
+        This patch updates the CSSOM property name overflow to overset. There are no changes in functionality.
+        Link to spec: http://www.w3.org/TR/2012/WD-css3-regions-20120503/
+
+        The test was refactored to be more similar to the other script tests (by using make-new-script-test)
+
+        Reviewed by Andreas Kling.
+
+        * fast/regions/webkit-named-flow-overflow-expected.txt: Removed.
+        * fast/regions/webkit-named-flow-overflow.html: Removed.
+        * fast/regions/webkit-named-flow-overset-expected.txt: Added.
+        * fast/regions/webkit-named-flow-overset.html: Added.
+
 2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8

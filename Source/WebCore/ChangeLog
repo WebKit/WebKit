@@ -1,3 +1,25 @@
+2012-05-29  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset
+        https://bugs.webkit.org/show_bug.cgi?id=87491
+
+        This patch updates the CSSOM property name overflow to overset. There are no changes in functionality.
+        Link to spec: http://www.w3.org/TR/2012/WD-css3-regions-20120503/
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/regions/webkit-named-flow-overset.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::overset):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        * rendering/RenderFlowThread.h:
+
 2012-05-29  Andreas Kling  <kling@webkit.org>
 
         Give StylePropertySet a proper mutability flag.
