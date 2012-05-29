@@ -2146,10 +2146,11 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
         send(Messages::WebPageProxy::DidPerformDragControllerAction(WebCore::DragSession()));
 #if PLATFORM(QT)
         QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+        delete data;
 #elif PLATFORM(GTK)
         DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
+        data->deref();
 #endif
-        delete data;
         return;
     }
 
@@ -2177,10 +2178,11 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
     // DragData does not delete its platformData so we need to do that here.
 #if PLATFORM(QT)
     QMimeData* data = const_cast<QMimeData*>(dragData.platformData());
+    delete data;
 #elif PLATFORM(GTK)
     DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
+    data->deref();
 #endif
-    delete data;
 }
 
 #else
