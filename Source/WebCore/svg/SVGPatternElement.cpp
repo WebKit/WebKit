@@ -34,6 +34,7 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGElementInstance.h"
+#include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
@@ -143,7 +144,7 @@ void SVGPatternElement::parseAttribute(const Attribute& attribute)
              || SVGTests::parseAttribute(attribute)
              || SVGLangSpace::parseAttribute(attribute)
              || SVGExternalResourcesRequired::parseAttribute(attribute)
-             || SVGFitToViewBox::parseAttribute(document(), attribute)) {
+             || SVGFitToViewBox::parseAttribute(this, attribute)) {
     } else
         ASSERT_NOT_REACHED();
 

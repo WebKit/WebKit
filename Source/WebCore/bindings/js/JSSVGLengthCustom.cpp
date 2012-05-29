@@ -48,7 +48,7 @@ JSValue JSSVGLength::value(ExecState* exec) const
 
 void JSSVGLength::setValue(ExecState* exec, JSValue value)
 {
-    if (impl()->role() == AnimValRole) {
+    if (impl()->isReadOnly()) {
         setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
         return;
     }
@@ -73,7 +73,7 @@ void JSSVGLength::setValue(ExecState* exec, JSValue value)
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
-    if (impl()->role() == AnimValRole) {
+    if (impl()->isReadOnly()) {
         setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
         return jsUndefined();
     }

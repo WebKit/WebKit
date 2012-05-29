@@ -48,9 +48,8 @@ module svg {
         readonly attribute float pixelUnitToMillimeterY;
         readonly attribute float screenPixelToMillimeterX;
         readonly attribute float screenPixelToMillimeterY;
-                 attribute boolean useCurrentView
-                     /*setter raises(DOMException)*/;
-        // TODO    readonly attribute SVGViewSpec currentView;
+        readonly attribute boolean useCurrentView;
+        readonly attribute SVGViewSpec currentView;
                  attribute float currentScale
                      /*setter raises(DOMException)*/;
         readonly attribute SVGPoint currentTranslate;

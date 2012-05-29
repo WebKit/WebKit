@@ -415,8 +415,6 @@ public:
         return newItem.release();
     }
 
-    virtual SVGPropertyRole role() const { return m_role; }
-
     PropertyType& values()
     {
         ASSERT(m_values);

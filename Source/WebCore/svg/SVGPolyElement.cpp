@@ -41,6 +41,7 @@ const SVGPropertyInfo* SVGPolyElement::pointsPropertyInfo()
     static const SVGPropertyInfo* s_propertyInfo = 0;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedPoints,
+                                             PropertyIsReadWrite,
                                              SVGNames::pointsAttr,
                                              SVGNames::pointsAttr.localName(),
                                              &SVGPolyElement::synchronizePoints,
@@ -90,7 +91,7 @@ void SVGPolyElement::parseAttribute(const Attribute& attribute)
         if (!pointsListFromSVGData(newList, value))
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
 
-        if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGPolyElement, SVGAnimatedPointList, true>(this, pointsPropertyInfo()))
+        if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGPolyElement, SVGAnimatedPointList>(this, pointsPropertyInfo()))
             static_cast<SVGAnimatedPointList*>(wrapper)->detachListWrappers(newList.size());
 
         m_points.value = newList;
@@ -143,14 +144,14 @@ void SVGPolyElement::synchronizePoints(void* contextElement)
     SVGPolyElement* ownerType = static_cast<SVGPolyElement*>(contextElement);
     if (!ownerType->m_points.shouldSynchronize)
         return;
-    SVGAnimatedPropertySynchronizer<true>::synchronize(ownerType, pointsPropertyInfo()->attributeName, ownerType->m_points.value.valueAsString());
+    ownerType->m_points.synchronize(ownerType, pointsPropertyInfo()->attributeName, ownerType->m_points.value.valueAsString());
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(void* contextElement)
 {
     ASSERT(contextElement);
     SVGPolyElement* ownerType = static_cast<SVGPolyElement*>(contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointList, true>
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointList>
            (ownerType, pointsPropertyInfo(), ownerType->m_points.value);
 }
 

@@ -76,7 +76,7 @@ void SVGSymbolElement::parseAttribute(const Attribute& attribute)
         return;
     if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
-    if (SVGFitToViewBox::parseAttribute(document(), attribute))
+    if (SVGFitToViewBox::parseAttribute(this, attribute))
         return;
 
     ASSERT_NOT_REACHED();

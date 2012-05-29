@@ -30,42 +30,91 @@
 namespace WebCore {
 
 class SVGElement;
+class SVGTransformListPropertyTearOff;
 
-class SVGViewSpec : public SVGZoomAndPan,
-                    public SVGFitToViewBox {
-    WTF_MAKE_NONCOPYABLE(SVGViewSpec);
+class SVGViewSpec : public RefCounted<SVGViewSpec>
+                  , public SVGZoomAndPan
+                  , public SVGFitToViewBox {
 public:
-    SVGViewSpec(SVGElement*);
+    virtual ~SVGViewSpec() { }
+
+    using RefCounted<SVGViewSpec>::ref;
+    using RefCounted<SVGViewSpec>::deref;
+
+    static PassRefPtr<SVGViewSpec> create(SVGElement* contextElement)
+    {
+        return adoptRef(new SVGViewSpec(contextElement));
+    }
 
     bool parseViewSpec(const String&);
+    void reset();
 
-    void setTransformString(const String&);
-    SVGTransformList transform() const { return m_transform; }
-    SVGTransformList transformBaseValue() const { return m_transform; }
-
-    void setViewBoxString(const String&);
+    SVGElement* viewTarget() const;
+    String viewBoxString() const;
 
     void setPreserveAspectRatioString(const String&);
+    String preserveAspectRatioString() const;
 
-    void setViewTargetString(const String&);
+    void setTransformString(const String&);
+    String transformString() const;
+
+    void setViewTargetString(const String& string) { m_viewTargetString = string; }
     String viewTargetString() const { return m_viewTargetString; }
-    SVGElement* viewTarget() const;
 
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
+    void setZoomAndPan(unsigned short zoomAndPan) { setZoomAndPanBaseValue(zoomAndPan); }
     void setZoomAndPan(unsigned short, ExceptionCode&);
     void setZoomAndPanBaseValue(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
-private:
-    SVGElement* m_contextElement;
+    SVGElement* contextElement() const { return m_contextElement; }
+    void resetContextElement() { m_contextElement = 0; }
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGViewSpec)
-        DECLARE_ANIMATED_RECT(ViewBox, viewBox)
-        DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
-    END_DECLARE_ANIMATED_PROPERTIES
+    // Custom non-animated 'transform' property.
+    SVGTransformListPropertyTearOff* transform();
+    SVGTransformList transformBaseValue() const { return m_transform; }
+
+    // Custom animated 'viewBox' property.
+    PassRefPtr<SVGAnimatedRect> viewBoxAnimated()
+    {
+        return static_pointer_cast<SVGAnimatedRect>(lookupOrCreateViewBoxWrapper(this));
+    }
+
+    FloatRect& viewBox() { return m_viewBox; }
+    FloatRect viewBoxBaseValue() const { return m_viewBox; }
+    void setViewBoxBaseValue(const FloatRect& viewBox) { m_viewBox = viewBox; }
+
+    // Custom animated 'preserveAspectRatio' property.
+    PassRefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated()
+    {
+        return static_pointer_cast<SVGAnimatedPreserveAspectRatio>(lookupOrCreatePreserveAspectRatioWrapper(this));
+    }
+
+    SVGPreserveAspectRatio& preserveAspectRatio() { return m_preserveAspectRatio; }
+    SVGPreserveAspectRatio preserveAspectRatioBaseValue() const { return m_preserveAspectRatio; }
+    void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
+
+private:
+    SVGViewSpec(SVGElement*);
+
+    static const SVGPropertyInfo* transformPropertyInfo();
+    static const SVGPropertyInfo* viewBoxPropertyInfo();
+    static const SVGPropertyInfo* preserveAspectRatioPropertyInfo();
+
+    static const AtomicString& transformIdentifier();
+    static const AtomicString& viewBoxIdentifier();
+    static const AtomicString& preserveAspectRatioIdentifier();
+
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTransformWrapper(void* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(void* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(void* contextElement);
+
+    SVGElement* m_contextElement;
+    SVGZoomAndPanType m_zoomAndPan;
 
     SVGTransformList m_transform;
+    FloatRect m_viewBox;
+    SVGPreserveAspectRatio m_preserveAspectRatio;
     String m_viewTargetString;
-    SVGZoomAndPanType m_zoomAndPan;
 };
 
 } // namespace WebCore

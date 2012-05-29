@@ -2634,7 +2634,6 @@ HEADERS += \
     svg/properties/SVGAnimatedProperty.h \
     svg/properties/SVGAnimatedPropertyDescription.h \
     svg/properties/SVGAnimatedPropertyMacros.h \
-    svg/properties/SVGAnimatedPropertySynchronizer.h \
     svg/properties/SVGAnimatedPropertyTearOff.h \
     svg/properties/SVGAnimatedStaticPropertyTearOff.h \
     svg/properties/SVGAnimatedTransformListPropertyTearOff.h \

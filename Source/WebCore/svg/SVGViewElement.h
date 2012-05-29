@@ -44,7 +44,6 @@ public:
     using SVGStyledElement::deref;
 
     SVGStringList& viewTarget() { return m_viewTarget; }
-
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 

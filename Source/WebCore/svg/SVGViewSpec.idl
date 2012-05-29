@@ -25,16 +25,26 @@
 
 module svg {
 
+    // SVGViewSpec intentionally doesn't inherit from SVGZoomAndPan & SVGFitToViewBox on the IDLs.
+    // It would require that any of those classes would be RefCounted, and we want to avoid that.
     interface [
-        Conditional=SVG
-    ] SVGViewSpec : SVGZoomAndPan, SVGFitToViewBox
-    {
+        Conditional=SVG,
+        JSGenerateToJSObject
+    ] SVGViewSpec {
           readonly attribute SVGTransformList transform;
-          readonly attribute SVGElement       viewTarget;
-          readonly attribute DOMString        viewBoxString;
-          readonly attribute DOMString        preserveAspectRatioString;
-          readonly attribute DOMString        transformString;
-          readonly attribute DOMString        viewTargetString;
+          readonly attribute SVGElement viewTarget;
+          readonly attribute DOMString viewBoxString;
+          readonly attribute DOMString preserveAspectRatioString;
+          readonly attribute DOMString transformString;
+          readonly attribute DOMString viewTargetString;
+
+          // SVGZoomAndPan
+          attribute unsigned short zoomAndPan
+              setter raises(DOMException);
+
+          // SVGFitToViewBox
+          readonly attribute SVGAnimatedRect viewBox;
+          readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
     };
 
 }

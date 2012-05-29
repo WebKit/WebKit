@@ -126,6 +126,17 @@ private:
 
     SVGPathElement* contextElement() const;
 
+    using Base::m_role;
+
+    virtual bool isReadOnly() const
+    {
+        if (m_role == AnimValRole)
+            return true;
+        if (m_animatedProperty && m_animatedProperty->isReadOnly())
+            return true;
+        return false;
+    }
+
     virtual void commitChange()
     {
         ASSERT(m_values);

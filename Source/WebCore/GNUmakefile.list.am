@@ -4202,7 +4202,6 @@ webcore_sources += \
 	Source/WebCore/svg/properties/SVGAnimatedProperty.h \
 	Source/WebCore/svg/properties/SVGAnimatedPropertyDescription.h \
 	Source/WebCore/svg/properties/SVGAnimatedPropertyMacros.h \
-	Source/WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
 	Source/WebCore/svg/properties/SVGAnimatedPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedStaticPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedTransformListPropertyTearOff.h \
@@ -5392,6 +5391,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGUseElement.h \
 	DerivedSources/WebCore/JSSVGViewElement.cpp \
 	DerivedSources/WebCore/JSSVGViewElement.h \
+	DerivedSources/WebCore/JSSVGViewSpec.cpp \
 	DerivedSources/WebCore/JSSVGViewSpec.h \
 	DerivedSources/WebCore/JSSVGVKernElement.cpp \
 	DerivedSources/WebCore/JSSVGVKernElement.h \
@@ -5541,6 +5541,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGUseElement.idl \
 	$(WebCore)/svg/SVGVKernElement.idl \
 	$(WebCore)/svg/SVGViewElement.idl \
+	$(WebCore)/svg/SVGViewSpec.idl \
 	$(WebCore)/svg/SVGZoomAndPan.idl \
 	$(WebCore)/svg/SVGZoomEvent.idl
 endif # END ENABLE_SVG

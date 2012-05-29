@@ -606,6 +606,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     $$PWD/svg/SVGUseElement.idl \
     $$PWD/svg/SVGViewElement.idl \
     $$PWD/svg/SVGVKernElement.idl \
+    $$PWD/svg/SVGViewSpec.idl \
     $$PWD/svg/SVGZoomAndPan.idl \
     $$PWD/svg/SVGZoomEvent.idl
 }

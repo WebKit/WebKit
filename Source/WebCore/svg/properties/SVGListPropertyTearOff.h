@@ -37,6 +37,7 @@ public:
     typedef SVGAnimatedListPropertyTearOff<PropertyType> AnimatedListPropertyTearOff;
     typedef typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache ListWrapperCache;
 
+    using Base::m_role;
     using Base::m_values;
     using Base::m_wrappers;
 
@@ -113,6 +114,15 @@ protected:
         : SVGListProperty<PropertyType>(role, values, &wrappers)
         , m_animatedProperty(animatedProperty)
     {
+    }
+
+    virtual bool isReadOnly() const
+    {
+        if (m_role == AnimValRole)
+            return true;
+        if (m_animatedProperty && m_animatedProperty->isReadOnly())
+            return true;
+        return false;
     }
 
     virtual void commitChange()

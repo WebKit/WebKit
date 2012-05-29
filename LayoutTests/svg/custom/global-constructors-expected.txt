@@ -32,7 +32,7 @@ FAIL SVGLangSpace.toString() should be [object SVGLangSpaceConstructor]. Threw e
 FAIL SVGExternalResourcesRequired.toString() should be [object SVGExternalResourcesRequiredConstructor]. Threw exception ReferenceError: Can't find variable: SVGExternalResourcesRequired
 FAIL SVGFitToViewBox.toString() should be [object SVGFitToViewBoxConstructor]. Threw exception ReferenceError: Can't find variable: SVGFitToViewBox
 PASS SVGZoomAndPan.toString() is '[object SVGZoomAndPanConstructor]'
-FAIL SVGViewSpec.toString() should be [object SVGViewSpecConstructor]. Threw exception ReferenceError: Can't find variable: SVGViewSpec
+PASS SVGViewSpec.toString() is '[object SVGViewSpecConstructor]'
 FAIL SVGURIReference.toString() should be [object SVGURIReferenceConstructor]. Threw exception ReferenceError: Can't find variable: SVGURIReference
 FAIL SVGCSSRule.toString() should be [object SVGCSSRuleConstructor]. Threw exception ReferenceError: Can't find variable: SVGCSSRule
 PASS SVGDocument.toString() is '[object SVGDocumentConstructor]'

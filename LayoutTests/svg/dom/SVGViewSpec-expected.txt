@@ -1,0 +1,51 @@
+This test checks the SVGViewSpec API, operating on a parsed viewSpec
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Loading external SVG resources/viewspec-target.svg
+Passing SVGViewSpec: svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7));viewTarget(blub);zoomAndPan(disable))
+
+
+Check transform value
+PASS currentView.transformString is "translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7)"
+PASS currentView.transform.numberOfItems is 5
+PASS currentView.transform.getItem(0).type is SVGTransform.SVG_TRANSFORM_TRANSLATE
+PASS currentView.transform.getItem(0).angle is 0
+PASS matrixToString(currentView.transform.getItem(0).matrix) is "[1.00 0.00 0.00 1.00 0.00 10.00]"
+PASS currentView.transform.getItem(1).type is SVGTransform.SVG_TRANSFORM_TRANSLATE
+PASS currentView.transform.getItem(1).angle is 0
+PASS matrixToString(currentView.transform.getItem(1).matrix) is "[1.00 0.00 0.00 1.00 25.00 25.00]"
+PASS currentView.transform.getItem(2).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS currentView.transform.getItem(2).angle is 45
+PASS matrixToString(currentView.transform.getItem(2).matrix) is "[0.71 0.71 -0.71 0.71 0.00 0.00]"
+PASS currentView.transform.getItem(3).type is SVGTransform.SVG_TRANSFORM_TRANSLATE
+PASS currentView.transform.getItem(3).angle is 0
+PASS matrixToString(currentView.transform.getItem(3).matrix) is "[1.00 0.00 0.00 1.00 -25.00 -25.00]"
+PASS currentView.transform.getItem(4).type is SVGTransform.SVG_TRANSFORM_SCALE
+PASS currentView.transform.getItem(4).angle is 0
+PASS matrixToString(currentView.transform.getItem(4).matrix) is "[0.70 0.00 0.00 0.70 0.00 0.00]"
+
+Check viewTarget value
+PASS currentView.viewTargetString is "blub"
+PASS currentView.viewTarget is null
+
+Check zoomAndPan value
+PASS currentView.zoomAndPan is SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE
+
+Check viewBox value
+PASS currentView.viewBox.baseVal.x is 0
+PASS currentView.viewBox.baseVal.y is 0
+PASS currentView.viewBox.baseVal.width is 100
+PASS currentView.viewBox.baseVal.height is 50
+PASS currentView.viewBoxString is "0 0 100 50"
+
+Check preserveAspectRatio value
+PASS currentView.preserveAspectRatioString is "xMinYMid slice"
+PASS currentView.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMID
+PASS currentView.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

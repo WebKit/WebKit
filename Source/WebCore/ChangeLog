@@ -1,3 +1,180 @@
+2012-05-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVGViewSpec DOM bindings aka SVGSVGElement.currentView is unimplemented
+        https://bugs.webkit.org/show_bug.cgi?id=15495
+
+        Reviewed by Rob Buis.
+
+        Finish SVGViewSpec implementation and expose it to the Web. Numerous smaller bugs are fixed:
+        - SVGViewSpec and all of its contents should be read-only. Enforce that and test it.
+          Add a new enum to SVGPropertyInfo so that each SVGAnimatedProperty knows if its content is supposed to be read-write or read-only.
+        - Make the 'transform' attribute of SVGViewSpec exposable by switching to a SVGTransformListProperty - it can now be accessed from JS.
+        - Assure that following XXXString methods are in sync with the corresponding SVG DOM interfaces
+            readonly attribute DOMString viewBoxString;
+            readonly attribute DOMString preserveAspectRatioString;
+            readonly attribute DOMString transformString;
+            readonly attribute DOMString viewTargetString;
+        - Cleanup code in svg/properties that was intended to handle SVGViewSpec. Turns out lot of the complexity was unncessary, and can be removed.
+        - Move SVGFitToViewBox to the same pattern SVGZoomAndPan uses since two days, that avoids any virtual function calls for attribute parsing.
+        - Create/expose ObjectiveC/JS bindings for SVGViewSpec.
+        - Enable SVGViewSpec constructor.
+
+        Tests: svg/custom/linking-a-03-b-all-expected.svg
+               svg/dom/SVGViewSpec-defaults.html
+               svg/dom/SVGViewSpec.html
+               svg/dom/complex-svgView-specification.html
+               svg/dom/viewspec-parser.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::setValue):
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/objc/DOMSVG.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateFunctionCallback):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::valueAccessorSetter):
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * page/DOMWindow.idl:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        * svg/SVGFitToViewBox.cpp:
+        * svg/SVGFitToViewBox.h:
+        (SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::parseAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientTypePropertyInfo):
+        (WebCore::SVGMarkerElement::parseAttribute):
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+        (WebCore::SVGMarkerElement::lookupOrCreateOrientTypeWrapper):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::dPropertyInfo):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::pathByteStream):
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        (WebCore::SVGPathElement::synchronizeD):
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::animatedProperty):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseAttribute):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::pointsPropertyInfo):
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::synchronizePoints):
+        (WebCore::SVGPolyElement::lookupOrCreatePointsWrapper):
+        * svg/SVGRect.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::currentView):
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::currentViewBoxRect):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        (WebCore::SVGSVGElement::setupInitialView):
+        (WebCore::SVGSVGElement::inheritViewAttributes):
+        * svg/SVGSVGElement.h:
+        (SVGSVGElement):
+        * svg/SVGSVGElement.idl:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::parseAttribute):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::requiredFeaturesPropertyInfo):
+        (WebCore::SVGTests::requiredExtensionsPropertyInfo):
+        (WebCore::SVGTests::systemLanguagePropertyInfo):
+        (WebCore::SVGTests::synchronizeRequiredFeatures):
+        (WebCore::SVGTests::synchronizeRequiredExtensions):
+        (WebCore::SVGTests::synchronizeSystemLanguage):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::textLengthPropertyInfo):
+        (WebCore::SVGTextContentElement::synchronizeTextLength):
+        (WebCore::SVGTextContentElement::lookupOrCreateTextLengthWrapper):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::viewBoxPropertyInfo):
+        (WebCore::SVGViewSpec::preserveAspectRatioPropertyInfo):
+        (WebCore::SVGViewSpec::transformPropertyInfo):
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::viewBoxIdentifier):
+        (WebCore::SVGViewSpec::preserveAspectRatioIdentifier):
+        (WebCore::SVGViewSpec::transformIdentifier):
+        (WebCore::SVGViewSpec::setZoomAndPan):
+        (WebCore::SVGViewSpec::setTransformString):
+        (WebCore::SVGViewSpec::transformString):
+        (WebCore::SVGViewSpec::viewBoxString):
+        (WebCore::SVGViewSpec::preserveAspectRatioString):
+        (WebCore::SVGViewSpec::viewTarget):
+        (WebCore::SVGViewSpec::transform):
+        (WebCore::SVGViewSpec::lookupOrCreateViewBoxWrapper):
+        (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper):
+        (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper):
+        (WebCore::SVGViewSpec::reset):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGViewSpec.h:
+        (WebCore::SVGViewSpec::~SVGViewSpec):
+        (SVGViewSpec):
+        (WebCore::SVGViewSpec::create):
+        (WebCore::SVGViewSpec::setViewTargetString):
+        (WebCore::SVGViewSpec::setZoomAndPan):
+        (WebCore::SVGViewSpec::contextElement):
+        (WebCore::SVGViewSpec::resetContextElement):
+        (WebCore::SVGViewSpec::transformBaseValue):
+        (WebCore::SVGViewSpec::viewBoxAnimated):
+        (WebCore::SVGViewSpec::viewBox):
+        (WebCore::SVGViewSpec::viewBoxBaseValue):
+        (WebCore::SVGViewSpec::setViewBoxBaseValue):
+        (WebCore::SVGViewSpec::preserveAspectRatioAnimated):
+        (WebCore::SVGViewSpec::preserveAspectRatio):
+        (WebCore::SVGViewSpec::preserveAspectRatioBaseValue):
+        (WebCore::SVGViewSpec::setPreserveAspectRatioBaseValue):
+        * svg/SVGViewSpec.idl:
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::isReadOnly):
+        (WebCore::SVGAnimatedProperty::setIsReadOnly):
+        (SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper):
+        (WebCore::SVGAnimatedProperty::lookupWrapper):
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        (WebCore::SVGSynchronizableAnimatedProperty::synchronize):
+        (SVGSynchronizableAnimatedProperty):
+        * svg/properties/SVGAnimatedPropertySynchronizer.h: Removed.
+        * svg/properties/SVGAttributeToPropertyMap.h:
+        * svg/properties/SVGListProperty.h:
+        * svg/properties/SVGListPropertyTearOff.h:
+        (SVGListPropertyTearOff):
+        (WebCore::SVGListPropertyTearOff::isReadOnly):
+        * svg/properties/SVGPathSegListPropertyTearOff.h:
+        (SVGPathSegListPropertyTearOff):
+        (WebCore::SVGPathSegListPropertyTearOff::isReadOnly):
+        * svg/properties/SVGProperty.h:
+        (SVGProperty):
+        * svg/properties/SVGPropertyInfo.h:
+        (WebCore::SVGPropertyInfo::SVGPropertyInfo):
+        (SVGPropertyInfo):
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::isReadOnly):
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        (SVGStaticListPropertyTearOff):
+        (WebCore::SVGStaticListPropertyTearOff::isReadOnly):
+
 2012-05-29  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r90971): the cursor is painted “behind” the placeholder text

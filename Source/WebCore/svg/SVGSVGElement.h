@@ -72,9 +72,7 @@ public:
     float screenPixelToMillimeterY() const;
 
     bool useCurrentView() const { return m_useCurrentView; }
-    void setUseCurrentView(bool currentView) { m_useCurrentView = currentView; }
-
-    SVGViewSpec* currentView() const;
+    SVGViewSpec* currentView();
 
     enum ConsiderCSSMode {
         RespectCSSProperties,
@@ -191,7 +189,7 @@ private:
     SVGZoomAndPanType m_zoomAndPan;
     RefPtr<SMILTimeContainer> m_timeContainer;
     FloatPoint m_translation;
-    mutable OwnPtr<SVGViewSpec> m_viewSpec;
+    RefPtr<SVGViewSpec> m_viewSpec;
 };
 
 } // namespace WebCore

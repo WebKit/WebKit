@@ -1976,8 +1976,8 @@ IF (ENABLE_SVG)
         svg/SVGURIReference.cpp
         svg/SVGUseElement.cpp
         svg/SVGViewElement.cpp
-        svg/SVGVKernElement.cpp
         svg/SVGViewSpec.cpp
+        svg/SVGVKernElement.cpp
         svg/SVGZoomAndPan.cpp
         svg/SVGZoomEvent.cpp
         svg/animation/SMILTime.cpp
@@ -2135,6 +2135,7 @@ IF (ENABLE_SVG)
         svg/SVGUnitTypes.idl
         svg/SVGUseElement.idl
         svg/SVGViewElement.idl
+        svg/SVGViewSpec.idl
         svg/SVGVKernElement.idl
         svg/SVGZoomAndPan.idl
         svg/SVGZoomEvent.idl

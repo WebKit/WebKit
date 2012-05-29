@@ -463,6 +463,8 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGUseElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGViewElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGViewElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGViewSpec.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGViewSpecInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGZoomAndPan.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGZoomEvent.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGZoomEventInternal.h \

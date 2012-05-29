@@ -22,33 +22,52 @@
 #define SVGFitToViewBox_h
 
 #if ENABLE(SVG)
+#include "Attribute.h"
+#include "FloatRect.h"
 #include "QualifiedName.h"
+#include "SVGNames.h"
+#include "SVGPreserveAspectRatio.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
 
 class AffineTransform;
-class Attribute;
 class Document;
-class FloatRect;
-class SVGPreserveAspectRatio;
 
 class SVGFitToViewBox {
 public:
-    virtual ~SVGFitToViewBox() { }
-
-    bool parseViewBox(Document*, const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatio&, float viewWidth, float viewHeight);
 
-    bool parseAttribute(Document*, const Attribute&);
-    bool isKnownAttribute(const QualifiedName&);
-    void addSupportedAttributes(HashSet<QualifiedName>&);
+    static bool isKnownAttribute(const QualifiedName&);
+    static void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    virtual void setViewBoxBaseValue(const FloatRect&) = 0;
-    virtual void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&) = 0;
+    template<class SVGElementTarget>
+    static bool parseAttribute(SVGElementTarget* target, const Attribute& attribute)
+    {
+        ASSERT(target);
+        ASSERT(target->document());
+        if (attribute.name() == SVGNames::viewBoxAttr) {
+            FloatRect viewBox;
+            if (!attribute.isNull())
+                parseViewBox(target->document(), attribute.value(), viewBox);
+            target->setViewBoxBaseValue(viewBox);
+            return true;
+        }
+
+        if (attribute.name() == SVGNames::preserveAspectRatioAttr) {
+            SVGPreserveAspectRatio preserveAspectRatio;
+            preserveAspectRatio.parse(attribute.value());
+            target->setPreserveAspectRatioBaseValue(preserveAspectRatio);
+            return true;
+        }
+
+        return false;
+    }
+
+    static bool parseViewBox(Document*, const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
 
 private:
-    bool parseViewBox(Document*, const String&, FloatRect&);
+    static bool parseViewBox(Document*, const String&, FloatRect&);
 };
 
 } // namespace WebCore

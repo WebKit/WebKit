@@ -39,7 +39,7 @@ public:
         case PathSegUndefinedRole:
             return 0;
         case PathSegUnalteredRole:
-            return SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, true>(m_element.get(), SVGPathElement::dPropertyInfo());
+            return SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(m_element.get(), SVGPathElement::dPropertyInfo());
         case PathSegNormalizedRole:
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
             return 0;

@@ -40,7 +40,6 @@ struct SVGPropertyTraits<FloatRect> {
         builder.append(String::number(type.width()));
         builder.append(' ');
         builder.append(String::number(type.height()));
-        builder.append(' ');
         return builder.toString();
     }
 };

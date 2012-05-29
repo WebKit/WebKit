@@ -83,7 +83,7 @@ void SVGViewElement::parseAttribute(const Attribute& attribute)
 
     if (SVGExternalResourcesRequired::parseAttribute(attribute))
         return;
-    if (SVGFitToViewBox::parseAttribute(document(), attribute))
+    if (SVGFitToViewBox::parseAttribute(this, attribute))
         return;
     if (SVGZoomAndPan::parseAttribute(this, attribute))
         return;

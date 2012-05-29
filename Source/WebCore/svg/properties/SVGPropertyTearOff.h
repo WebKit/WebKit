@@ -96,7 +96,14 @@ public:
         m_animatedProperty->commitChange();
     }
 
-    virtual SVGPropertyRole role() const { return m_role; }
+    virtual bool isReadOnly() const
+    {
+        if (m_role == AnimValRole)
+            return true;
+        if (m_animatedProperty && m_animatedProperty->isReadOnly())
+            return true;
+        return false;
+    }
 
 protected:
     SVGPropertyTearOff(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, PropertyType& value)

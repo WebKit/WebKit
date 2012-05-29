@@ -44,6 +44,7 @@ const SVGPropertyInfo* SVGTextContentElement::textLengthPropertyInfo()
     static const SVGPropertyInfo* s_propertyInfo = 0;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedLength,
+                                             PropertyIsReadWrite,
                                              SVGNames::textLengthAttr,
                                              SVGNames::textLengthAttr.localName(),
                                              &SVGTextContentElement::synchronizeTextLength,
@@ -80,14 +81,14 @@ void SVGTextContentElement::synchronizeTextLength(void* contextElement)
     if (!ownerType->m_textLength.shouldSynchronize)
         return;
     AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType->m_specifiedTextLength));
-    SVGAnimatedPropertySynchronizer<true>::synchronize(ownerType, textLengthPropertyInfo()->attributeName, value);
+    ownerType->m_textLength.synchronize(ownerType, textLengthPropertyInfo()->attributeName, value);
 }
 
 PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(void* contextElement)
 {
     ASSERT(contextElement);
     SVGTextContentElement* ownerType = static_cast<SVGTextContentElement*>(contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength, true>
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength>
            (ownerType, textLengthPropertyInfo(), ownerType->m_textLength.value);
 }
 

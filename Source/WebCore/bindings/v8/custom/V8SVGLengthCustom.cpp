@@ -58,7 +58,7 @@ void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
 {
     INC_STATS("DOM.SVGLength.value._set");
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(info.Holder());
-    if (wrapper->role() == AnimValRole) {
+    if (wrapper->isReadOnly()) {
         V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, info.GetIsolate());
         return;
     }
@@ -82,7 +82,7 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
 {
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
-    if (wrapper->role() == AnimValRole)
+    if (wrapper->isReadOnly())
         return V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());
 
     if (args.Length() < 1)

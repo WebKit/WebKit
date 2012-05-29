@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "PatternAttributes.h"
 #include "RenderSVGRoot.h"
+#include "SVGFitToViewBox.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 
@@ -215,7 +216,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
     if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
         return false;
 
-    AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(attributes.viewBox(), attributes.preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
+    AffineTransform viewBoxCTM = SVGFitToViewBox::viewBoxToViewTransform(attributes.viewBox(), attributes.preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
 
     // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())

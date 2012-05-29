@@ -21,15 +21,13 @@
 #define SVGAttributeToPropertyMap_h
 
 #if ENABLE(SVG)
-#include "QualifiedName.h"
-#include "SVGAnimatedPropertySynchronizer.h"
+#include "SVGPropertyInfo.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class SVGAnimatedProperty;
 class SVGElement;
-struct SVGPropertyInfo;
 
 class SVGAttributeToPropertyMap {
 public:

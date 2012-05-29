@@ -33,6 +33,7 @@ public:
     typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
     typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
 
+    using Base::m_role;
     using Base::m_values;
 
     static PassRefPtr<SVGStaticListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, PropertyType& values)
@@ -82,6 +83,11 @@ private:
         : SVGListProperty<PropertyType>(UndefinedRole, values, 0)
         , m_contextElement(contextElement)
     {
+    }
+
+    virtual bool isReadOnly() const
+    {
+        return m_role == AnimValRole;
     }
 
     virtual void commitChange()

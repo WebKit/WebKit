@@ -169,5 +169,6 @@
 #import <WebCore/DOMSVGUnitTypes.h>
 #import <WebCore/DOMSVGUseElement.h>
 #import <WebCore/DOMSVGViewElement.h>
+#import <WebCore/DOMSVGViewSpec.h>
 #import <WebCore/DOMSVGZoomAndPan.h>
 #import <WebCore/DOMSVGZoomEvent.h>
