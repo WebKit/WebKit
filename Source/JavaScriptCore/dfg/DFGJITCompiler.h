@@ -304,6 +304,10 @@ public:
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
     {
 #if DFG_ENABLE(OSR_ENTRY)
+        // OSR entry is not allowed into blocks deemed unreachable by control flow analysis.
+        if (!basicBlock.cfaHasVisited)
+            return;
+        
         OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
         
         entry->m_expectedValues = basicBlock.valuesAtHead;

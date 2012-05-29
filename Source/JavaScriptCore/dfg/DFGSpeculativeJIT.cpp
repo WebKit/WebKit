@@ -967,6 +967,16 @@ void SpeculativeJIT::compile(BasicBlock& block)
     
     if (!block.isReachable)
         return;
+    
+    if (!block.cfaHasVisited) {
+        // Don't generate code for basic blocks that are unreachable according to CFA.
+        // But to be sure that nobody has generated a jump to this block, drop in a
+        // breakpoint here.
+#if !ASSERT_DISABLED
+        m_jit.breakpoint();
+#endif
+        return;
+    }
 
     m_blockHeads[m_block] = m_jit.label();
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)

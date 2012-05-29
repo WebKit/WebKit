@@ -279,6 +279,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             AbstractValue value = m_variables.operand(variableAccessData->local());
             if (value.isClear())
                 canExit |= true;
+            if (value.value())
+                m_foundConstants = true;
             forNode(nodeIndex) = value;
         }
         node.setCanExit(canExit);

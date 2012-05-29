@@ -77,13 +77,42 @@ public:
                     ASSERT(m_graph[node.child1()].op() == Phi);
                     ASSERT(!m_graph[node.child1()].hasResult());
                     
-                    ASSERT(block->variablesAtHead.operand(node.local()) == nodeIndex);
-                    ASSERT(block->isInPhis(node.child1().index()));
-                    block->variablesAtHead.operand(node.local()) = node.child1().index();
+                    NodeIndex previousLocalAccess = NoNode;
+                    if (block->variablesAtHead.operand(node.local()) == nodeIndex) {
+                        // We expect this to be the common case.
+                        ASSERT(block->isInPhis(node.child1().index()));
+                        previousLocalAccess = node.child1().index();
+                        block->variablesAtHead.operand(node.local()) = previousLocalAccess;
+                    } else {
+                        ASSERT(indexInBlock > 0);
+                        // Must search for the previous access to this local.
+                        for (BlockIndex subIndexInBlock = indexInBlock - 1; subIndexInBlock--;) {
+                            NodeIndex subNodeIndex = block->at(subIndexInBlock);
+                            Node& subNode = m_graph[subNodeIndex];
+                            if (!subNode.shouldGenerate())
+                                continue;
+                            if (!subNode.hasVariableAccessData())
+                                continue;
+                            if (subNode.local() != node.local())
+                                continue;
+                            // The two must have been unified.
+                            ASSERT(subNode.variableAccessData() == node.variableAccessData());
+                            // Currently, the previous node must be a flush.
+                            // NOTE: This assertion should be removed if we ever do
+                            // constant folding on captured variables. In particular,
+                            // this code does not require the previous node to be a flush,
+                            // but we are asserting this anyway because it is a constraint
+                            // of the IR and this is as good a place as any to assert it.
+                            ASSERT(subNode.op() == Flush);
+                            previousLocalAccess = subNodeIndex;
+                            break;
+                        }
+                        ASSERT(previousLocalAccess != NoNode);
+                    }
                     
                     NodeIndex tailNodeIndex = block->variablesAtTail.operand(node.local());
                     if (tailNodeIndex == nodeIndex)
-                        block->variablesAtTail.operand(node.local()) = node.child1().index();
+                        block->variablesAtTail.operand(node.local()) = previousLocalAccess;
                     else {
                         ASSERT(m_graph[tailNodeIndex].op() == Flush
                                || m_graph[tailNodeIndex].op() == SetLocal);

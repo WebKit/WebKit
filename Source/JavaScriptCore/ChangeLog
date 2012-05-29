@@ -1,3 +1,29 @@
+2012-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not generate code for code that the CFA proves to be unreachable
+        https://bugs.webkit.org/show_bug.cgi?id=87682
+
+        Reviewed by Sam Weinig.
+        
+        This also fixes a small performance bug where CFA was not marking blocks
+        as having constants (and hence not triggering constant folding) if the only
+        constants were on GetLocals.
+        
+        And fixing that bug revealed another bug: constant folding was assuming that
+        a GetLocal must be the first access to a local in a basic block. This isn't
+        true. The first access may be a Flush. This patch fixes that issue using the
+        safest approach possible, since we don't need to be clever for something that
+        only happens in one of our benchmarks.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
