@@ -185,13 +185,10 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
                 else
                     m_listBox->setMaxHeight(spaceBelow);
                 layoutAndGetRTLOffset();
-                // Our height has changed, so recompute only Y axis of widgetRect.
-                // We don't have to recompute X axis, so we only replace Y axis
-                // in widgetRect.
-                IntRect frameInScreen = chromeClient->rootViewToScreen(frameRect());
-                widgetRectInScreen.setY(frameInScreen.y());
-                widgetRectInScreen.setHeight(frameInScreen.height());
-                // And move upwards if necessary.
+                // Container height may have changed in layoutAndGetRTLOffset(),
+                // so set the WebWidget height to the container height.
+                widgetRectInScreen.setHeight(height());
+                // Move WebWidget upwards if necessary.
                 if (spaceAbove > spaceBelow)
                     widgetRectInScreen.move(0, -(widgetRectInScreen.height() + targetControlHeight));
             }

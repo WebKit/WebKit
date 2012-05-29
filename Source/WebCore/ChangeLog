@@ -1,3 +1,17 @@
+2012-05-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] [Regression] SELECT popup misplaced when there is not enough vertical space
+        https://bugs.webkit.org/show_bug.cgi?id=87735
+
+        Reviewed by Kent Tamura.
+
+        This change fixes the obsolete WebWidget Y-repositioning code for the insufficient vertical space case, not removed in r113418.
+
+        No new tests, as popups are not testable in Chromium.
+
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect):
+
 2012-05-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset
