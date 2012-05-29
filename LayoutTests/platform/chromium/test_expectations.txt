@@ -3794,3 +3794,9 @@ BUGWK87657 : http/tests/cache/cancel-in-progress-load.html = PASS TEXT MISSING
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT
+
+BUGWK87772 : svg/dom/viewspec-parser-1.html = TEXT TIMEOUT
+BUGWK87772 : svg/dom/viewspec-parser-2.html = TEXT TIMEOUT
+BUGWK87772 : svg/dom/viewspec-parser-3.html = TEXT TIMEOUT
+BUGWK87772 : svg/dom/viewspec-parser-4.html = TEXT TIMEOUT
+BUGWK87772 : svg/dom/viewspec-parser-5.html = TEXT TIMEOUT

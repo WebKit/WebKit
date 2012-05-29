@@ -1,3 +1,9 @@
+2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Updating chromium test_expectations (svg/dom/viewspec-parser timeouts)
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Jessie Berlin  <jberlin@apple.com>
 
         JSC doesn't support heap profiling.
