@@ -1,3 +1,14 @@
+2012-05-29  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Regression: fast/forms/select/optgroup-clicking.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=87748
+
+        Unreviewed gardening.
+
+        This test was added by r118772 and it fails with a mismatch in menulist.selectedIndex.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Tony Payne  <tpayne@chromium.org>
 
         Fix new layout tests for images with color profiles by using fixed size

@@ -3786,3 +3786,6 @@ BUGWK87653 : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Flaky: sometimes it dumps the render tree, but it expects just text.
 BUGWK87657 : http/tests/cache/cancel-in-progress-load.html = PASS TEXT MISSING
+
+// Fails with a mismatch in $("menulist").selectedIndex
+BUGWK87748 : fast/forms/select/optgroup-clicking.html = TEXT
