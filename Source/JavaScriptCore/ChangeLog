@@ -1,3 +1,15 @@
+2012-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        WeakGCMap should be lazy-finalization-safe
+        https://bugs.webkit.org/show_bug.cgi?id=87784
+
+        Reviewed by Darin Adler.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::get): Since this is a map of raw WeakImpl pointers, and
+        not Weak<T>, we need to verify manually that the WeakImpl is live before
+        we return its payload.
+
 2012-05-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CopiedSpace::doneCopying could start another collection

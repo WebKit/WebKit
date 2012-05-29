@@ -69,7 +69,10 @@ public:
 
     ExternalType get(const KeyType& key) const
     {
-        return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_map.get(key)->jsValue()));
+        WeakImpl* impl = m_map.get(key);
+        if (!impl || impl->state() != WeakImpl::Live)
+            return ExternalType();
+        return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&impl->jsValue()));
     }
 
     void set(JSGlobalData&, const KeyType& key, ExternalType value)
