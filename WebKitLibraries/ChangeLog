@@ -1,3 +1,14 @@
+2012-05-29  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] ~1/2 of all the iframe seamless tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=87543
+
+        Rubber-stamped by Eric Seidel.
+
+        Finish enabling IFRAME_SEAMLESS on Windows.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-05-28  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Remove obsolete feature define ENABLE_3D_CANVAS from FeatureDefines.vsprops for windows

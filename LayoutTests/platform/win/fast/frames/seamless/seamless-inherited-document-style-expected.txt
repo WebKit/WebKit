@@ -1,8 +1,0 @@
-Test that seamless iframes inherit styles from their parent iframe instead of using StyleResolver::styleForDocument defaults.
-FAIL window.getComputedStyle(rootElement)['-webkit-rtl-ordering'] should be visual. Was logical.
-FAIL window.getComputedStyle(rootElement)['-webkit-user-modify'] should be read-write. Was read-only.
-FAIL window.getComputedStyle(rootElement)['-webkit-locale'] should be en_US. Was auto.
-FAIL window.getComputedStyle(rootElement)['writing-mode'] should be lr. Was lr-tb.
-FAIL window.getComputedStyle(rootElement)['direction'] should be rtl. Was ltr.
-FAIL window.getComputedStyle(rootElement)['font'] should be normal normal normal 18px/normal Ahem. Was normal normal normal 16px/normal Times.
-
