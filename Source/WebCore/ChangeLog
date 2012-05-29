@@ -1,5 +1,32 @@
 2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
+        [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 145660
+        Fixed a regression introduced by r111810, we should cancel the new
+        request when user press cancel button in http authentication challenge
+        dialog, and we should also allow sending empty username and password
+        with the request.
+        Also removed redundant codes which checked the existence of the
+        FrameLoaderClient pointer, as we've already moved authenticationChallenge()
+        out of class FrameLoaderClient, it is not needed.
+
+        Manual test added. Testing http authentication dialog relies on user interaction.
+
+        Resubmit the patch reverted by r115104 after the digest infinite loop
+        issue for BlackBerry porting get identified and fixed.
+
+        Internally reviewed by Joe Mason <jmason@rim.com>
+
+        * platform/blackberry/PageClientBlackBerry.h:
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
+2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
         [BlackBerry] http authentication challenge issue when loading favicon
         https://bugs.webkit.org/show_bug.cgi?id=87665
 

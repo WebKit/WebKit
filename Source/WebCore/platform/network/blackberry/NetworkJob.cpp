@@ -772,9 +772,6 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        if (!m_frame || !m_frame->loader() || !m_frame->loader()->client())
-            return false;
-
         if (type == ProtectionSpaceProxyHTTP) {
             username = BlackBerry::Platform::Client::get()->getProxyUsername().c_str();
             password = BlackBerry::Platform::Client::get()->getProxyPassword().c_str();
@@ -791,14 +788,13 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
                 m_handle->getInternal()->m_user = "";
                 m_handle->getInternal()->m_pass = "";
             } else {
-                Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
+                Credential inputCredential;
+                if (!m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential))
+                    return false;
                 username = inputCredential.user();
                 password = inputCredential.password();
             }
         }
-
-        if (username.isEmpty() && password.isEmpty())
-            return false;
 
         credential = Credential(username, password, CredentialPersistenceForSession);
 

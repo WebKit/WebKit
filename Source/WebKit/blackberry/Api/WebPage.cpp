@@ -2135,26 +2135,32 @@ bool WebPagePrivate::isActive() const
     return m_client->isActive();
 }
 
-Credential WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSpace& protectionSpace)
+bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSpace& protectionSpace, Credential& inputCredential)
 {
     WebString username;
     WebString password;
+
+#if ENABLE_DRT
+    if (m_dumpRenderTree)
+        return m_dumpRenderTree->didReceiveAuthenticationChallenge(inputCredential);
+#endif
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     if (!m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillAuthenticationChallenge(protectionSpace, username, password);
 #endif
 
-    m_client->authenticationChallenge(protectionSpace.realm().characters(), protectionSpace.realm().length(), username, password);
+    bool isConfirmed = m_client->authenticationChallenge(protectionSpace.realm().characters(), protectionSpace.realm().length(), username, password);
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    Credential inputCredential(username, password, CredentialPersistencePermanent);
-    if (!m_webSettings->isPrivateBrowsingEnabled())
-        credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(url, protectionSpace, inputCredential));
+    Credential credential(username, password, CredentialPersistencePermanent);
+    if (!m_webSettings->isPrivateBrowsingEnabled() && isConfirmed)
+        credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(url, protectionSpace, credential));
 #else
-    Credential inputCredential(username, password, CredentialPersistenceNone);
+    Credential credential(username, password, CredentialPersistenceNone);
 #endif
-    return inputCredential;
+    inputCredential = credential;
+    return isConfirmed;
 }
 
 PageClientBlackBerry::SaveCredentialType WebPagePrivate::notifyShouldSaveCredential(bool isNew)

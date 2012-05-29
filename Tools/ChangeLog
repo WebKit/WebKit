@@ -1,3 +1,26 @@
+2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authenticate dialog popup only once no matter authentication pass or fail
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Rob Buis.
+
+        Implemented interface function didReceiveAuthenticationChallenge in class
+        DumpRenderTree.
+
+        Resubmit the patch reverted by r115104 after the digest infinite loop
+        issue for BlackBerry porting get identified and fixed.
+
+        Internally reviewed by Joe Mason <jmason@rim.com>
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (drtCredentialDescription):
+        (BlackBerry::WebKit::DumpRenderTree::didReceiveAuthenticationChallenge):
+        (WebKit):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (WebCore):
+        (DumpRenderTree):
+
 2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled
