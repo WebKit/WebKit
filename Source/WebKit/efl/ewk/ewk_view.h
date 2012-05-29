@@ -177,7 +177,7 @@ struct _Ewk_View_Smart_Class {
     Eina_Bool (*run_javascript_confirm)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message);
     Eina_Bool (*run_javascript_prompt)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message, const char *defaultValue, char **value);
     Eina_Bool (*should_interrupt_javascript)(Ewk_View_Smart_Data *sd);
-    uint64_t (*exceeded_application_cache_quota)(Ewk_View_Smart_Data *sd, Ewk_Security_Origin* origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
+    int64_t (*exceeded_application_cache_quota)(Ewk_View_Smart_Data *sd, Ewk_Security_Origin* origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
     uint64_t (*exceeded_database_quota)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *databaseName, uint64_t current_size, uint64_t expected_size);
 
     Eina_Bool (*run_open_panel)(Ewk_View_Smart_Data *sd, Evas_Object *frame, Eina_Bool allows_multiple_files, Eina_List *accept_types, Eina_List **selected_filenames);

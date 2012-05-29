@@ -1,3 +1,17 @@
+2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Compilation warning in DumpRenderTreeView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87636
+
+        Reviewed by Filip Pizlo.
+
+        Fix compilation error in DumpRenderTreeView.cpp due to wrong format
+        specifier in printf. Also fix the return type for
+        onExceededApplicationCacheQuota callback.
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededApplicationCacheQuota):
+
 2012-05-29  Hironori Bono  <hbono@chromium.org>
 
         Adding Hironori Bono to committers.py.

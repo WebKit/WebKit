@@ -1,3 +1,15 @@
+2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Compilation warning in DumpRenderTreeView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87636
+
+        Reviewed by Filip Pizlo.
+
+        Fix return type of exceeded_application_cache_quota callback, it
+        should be int64_t, not uint64_t.
+
+        * ewk/ewk_view.h:
+
 2012-05-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled

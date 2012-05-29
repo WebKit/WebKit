@@ -120,7 +120,7 @@ static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Obj
     return 5 * 1024 * 1024;
 }
 
-static uint64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)
+static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)
 {
     if (gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
         // For example, numbers from 30000 - 39999 will output as 30000.
@@ -128,7 +128,7 @@ static uint64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Securi
         // sufficient to just get a range of 10000 to determine if we were
         // above or below a threshold.
         int64_t truncatedSpaceNeeded = (totalSpaceNeeded / 10000) * 10000;
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%llu\n",
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%lld\n",
                ewk_security_origin_protocol_get(origin),
                ewk_security_origin_host_get(origin),
                ewk_security_origin_port_get(origin),
