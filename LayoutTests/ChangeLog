@@ -1,3 +1,11 @@
+2012-05-29  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r118585. Added Qt platform specific expected files.
+        https://bugs.webkit.org/show_bug.cgi?id=86848
+
+        * platform/qt/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Added.
+        * platform/qt/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Added.
+
 2012-05-29  Eric Seidel  <eric@webkit.org>
 
         Add HTMLIFrameElement.seamless property accessor now that seamless is enabled and works
