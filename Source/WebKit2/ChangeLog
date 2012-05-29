@@ -1,5 +1,15 @@
 2012-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add return value information to WebKitWebView::load-failed signal documentation
+        https://bugs.webkit.org/show_bug.cgi?id=87704
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+
+2012-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitWebInspector.h to the list of WebKit2 GTK public headers
         https://bugs.webkit.org/show_bug.cgi?id=87703
 

@@ -509,6 +509,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * By default, if the signal is not handled, a stock error page will be displayed.
      * You need to handle the signal if you want to provide your own error page.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
      */
     signals[LOAD_FAILED] =
         g_signal_new("load-failed",
