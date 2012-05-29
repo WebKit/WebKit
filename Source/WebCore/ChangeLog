@@ -1,3 +1,27 @@
+2012-05-28  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] http authentication challenge issue when loading favicon
+        https://bugs.webkit.org/show_bug.cgi?id=87665
+
+        Reviewed by Rob Buis.
+
+        Provide the TargetType when generating a favicon loading
+        request. Loading favicons is triggered after the main resource
+        has been loaded and parsed, so if we cancel the authentication
+        challenge when loading main resource, we should also cancel
+        loading the favicon when it starts to load. If not we will
+        receive another challenge after we canceled the main resource
+        loading, which may confuse the user.
+
+        Internally reviewed by Joe Mason <jmason@rim.com>
+
+        No new tests because of no behavior changes.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-05-28  MORITA Hajime  <morrita@google.com>
 
         Rename FrameLoaderClient::shadowDOMAllowed() to allowShadowDOM()

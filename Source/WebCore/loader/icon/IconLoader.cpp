@@ -60,6 +60,9 @@ void IconLoader::startLoading()
         return;
 
     ResourceRequest resourceRequest(m_frame->loader()->icon()->url());
+#if PLATFORM(BLACKBERRY)
+    resourceRequest.setTargetType(ResourceRequest::TargetIsFavicon);
+#endif
     resourceRequest.setPriority(ResourceLoadPriorityLow);
 
     m_resource = m_frame->document()->cachedResourceLoader()->requestRawResource(resourceRequest,

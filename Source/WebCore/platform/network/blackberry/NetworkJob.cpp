@@ -760,6 +760,14 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
         m_handle->getInternal()->m_currentWebChallenge.setStored(true);
     } else {
+        if (m_handle->firstRequest().targetType() == ResourceRequest::TargetIsFavicon) {
+            // The favicon loading is triggerred after the main resource has been loaded
+            // and parsed, so if we cancel the authentication challenge when loading the main
+            // resource, we should also cancel loading the favicon when it starts to
+            // load. If not we will receive another challenge which may confuse the user.
+            return false;
+        }
+
         // CredentialStore is empty. Ask the user via dialog.
         String username;
         String password;
