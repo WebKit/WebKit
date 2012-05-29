@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderMultiColumnBlock.h"
 #include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnSet.h"
 
 using namespace std;
 
@@ -115,7 +116,6 @@ void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* befo
 
 void RenderMultiColumnBlock::ensureColumnSets()
 {
-    // FIXME: Implement.
     // This function ensures we have the correct column set information before we get into layout.
     // For a simple multi-column layout in continuous media, only one column set child is required.
     // Once a column is nested inside an enclosing pagination context, the number of column sets
@@ -130,6 +130,16 @@ void RenderMultiColumnBlock::ensureColumnSets()
     // Finally, we will need to deal with columns inside regions. If regions have variable widths, then there will need
     // to be unique column sets created inside any region whose width is different from its surrounding regions. This is
     // actually pretty similar to the spanning case, in that we break up the column sets whenever the width varies.
+    //
+    // FIXME: For now just make one column set. This matches the old multi-column code.
+    // Right now our goal is just feature parity with the old multi-column code so that we can switch over to the
+    // new code as soon as possible.
+    if (flowThread() && !firstChild()->isRenderMultiColumnSet()) {
+        RenderMultiColumnSet* columnSet = new (renderArena()) RenderMultiColumnSet(document(), flowThread());
+        columnSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
+        RenderBlock::addChild(columnSet, firstChild());
+        flowThread()->addRegionToThread(columnSet);
+    }
 }
 
 const char* RenderMultiColumnBlock::renderName() const

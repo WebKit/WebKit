@@ -51,7 +51,6 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_regionState(RegionUndefined)
     , m_dispatchRegionLayoutUpdateEvent(false)
 {
-    ASSERT(node->document()->cssRegionsEnabled());
 }
 
 LayoutRect RenderRegion::regionOverflowRect() const

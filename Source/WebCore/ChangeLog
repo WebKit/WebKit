@@ -1,3 +1,16 @@
+2012-05-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87771
+        
+        [New Multicolumn] Make sure we have one column set by default and add it to the flow thread's region list.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::ensureColumnSets):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+
 2012-05-29  John Sullivan  <sullivan@apple.com>
 
         Update label for blacklisted plug-in
