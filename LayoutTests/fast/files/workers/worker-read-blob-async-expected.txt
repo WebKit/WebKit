@@ -18,7 +18,8 @@ Received loadstart event
 readyState: 1
 Received load event
 readyState: 2
-result: null
+result size: 0
+result: 
 Received loadend event
 Test reading a blob containing empty text
 readyState: 0
@@ -26,7 +27,8 @@ Received loadstart event
 readyState: 1
 Received load event
 readyState: 2
-result: null
+result size: 0
+result: 
 Received loadend event
 Test reading a blob containing empty files and empty texts
 readyState: 0
@@ -34,7 +36,8 @@ Received loadstart event
 readyState: 1
 Received load event
 readyState: 2
-result: null
+result size: 0
+result: 
 Received loadend event
 Test reading a blob containing single file
 readyState: 0
