@@ -44,6 +44,35 @@ namespace FileSystemAgentState {
 static const char fileSystemAgentEnabled[] = "fileSystemAgentEnabled";
 }
 
+class InspectorFileSystemAgent::FrontendProvider : public RefCounted<FrontendProvider> {
+  public:
+    static PassRefPtr<FrontendProvider> create(InspectorFileSystemAgent* agent, InspectorFrontend::FileSystem* frontend)
+    {
+        return adoptRef(new FrontendProvider(agent, frontend));
+    }
+
+    InspectorFrontend::FileSystem* frontend() const
+    {
+        if (m_agent && m_agent->m_enabled)
+            return m_frontend;
+        return 0;
+    }
+
+    void clear()
+    {
+        m_agent = 0;
+        m_frontend = 0;
+    }
+
+  private:
+    FrontendProvider(InspectorFileSystemAgent* agent, InspectorFrontend::FileSystem* frontend)
+        : m_agent(agent)
+        , m_frontend(frontend) { }
+
+    InspectorFileSystemAgent* m_agent;
+    InspectorFrontend::FileSystem* m_frontend;
+};
+
 // static
 PassOwnPtr<InspectorFileSystemAgent> InspectorFileSystemAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
 {
@@ -52,6 +81,8 @@ PassOwnPtr<InspectorFileSystemAgent> InspectorFileSystemAgent::create(Instrument
 
 InspectorFileSystemAgent::~InspectorFileSystemAgent()
 {
+    if (m_frontendProvider)
+        m_frontendProvider->clear();
     m_instrumentingAgents->setInspectorFileSystemAgent(0);
 }
 
@@ -74,12 +105,15 @@ void InspectorFileSystemAgent::disable(ErrorString*)
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)
 {
     ASSERT(frontend);
-    m_frontend = frontend->filesystem();
+    m_frontendProvider = FrontendProvider::create(this, frontend->filesystem());
 }
 
 void InspectorFileSystemAgent::clearFrontend()
 {
-    m_frontend = 0;
+    if (m_frontendProvider) {
+        m_frontendProvider->clear();
+        m_frontendProvider = 0;
+    }
     m_enabled = false;
     m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
@@ -90,9 +124,8 @@ void InspectorFileSystemAgent::restore()
 }
 
 InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
-    : InspectorBaseAgent<InspectorFileSystemAgent>("FileSystem", instrumentingAgents, state),
-      m_frontend(0),
-      m_enabled(false)
+    : InspectorBaseAgent<InspectorFileSystemAgent>("FileSystem", instrumentingAgents, state)
+    , m_enabled(false)
 {
     ASSERT(instrumentingAgents);
     ASSERT(state);

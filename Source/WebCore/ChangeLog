@@ -1,3 +1,26 @@
+2012-05-29  Taiju Tsuiki  <tzik@chromium.org>
+
+        Add InspectorFileSystemAgent::FrontendProvider
+        https://bugs.webkit.org/show_bug.cgi?id=87635
+
+        InspectorFileSystemAgent needs weak reference to its frontend to perform
+        asynchronous operation.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorFileSystemAgent.cpp:
+        (InspectorFileSystemAgent::FrontendProvider):
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::~InspectorFileSystemAgent):
+        (WebCore::InspectorFileSystemAgent::enable):
+        (WebCore::InspectorFileSystemAgent::disable):
+        (WebCore::InspectorFileSystemAgent::setFrontend):
+        (WebCore::InspectorFileSystemAgent::clearFrontend):
+        (WebCore::InspectorFileSystemAgent::restore):
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        * inspector/InspectorFileSystemAgent.h:
+        (InspectorFileSystemAgent):
+
 2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r109729): The optgroup element's "disabled" attribute has no effect to rendering and selection
