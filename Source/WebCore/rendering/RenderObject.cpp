@@ -1788,9 +1788,15 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
         toRenderView(document()->renderer())->setMaximalOutlineSize(m_style->outlineSize());
 
+    bool doesNotNeedLayout = !m_parent || isText();
+
     styleDidChange(diff, oldStyle.get());
 
-    if (!m_parent || isText())
+    // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
+    // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
+    // we will safely bail out with the doesNotNeedLayout flag. We might want to broaden this condition
+    // in the future as we move renderer changes out of layout and into style changes.
+    if (doesNotNeedLayout)
         return;
 
     // Now that the layer (if any) has been updated, we need to adjust the diff again,

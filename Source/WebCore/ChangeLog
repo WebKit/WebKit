@@ -1,3 +1,15 @@
+2012-05-29  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to text fragment destruction when updating first-letter block.
+        https://bugs.webkit.org/show_bug.cgi?id=87751
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/text/text-fragment-first-letter-update-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+
 2012-05-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87764
