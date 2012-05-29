@@ -146,22 +146,24 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
     }
 }
 
-SelectorQuery::SelectorQuery(Node* rootNode, const CSSSelectorList& selectorList)
-    : m_rootNode(rootNode)
-    , m_selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode())
-    , m_selectors(selectorList)
+SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
+    : m_selectors(selectorList)
 {
-    m_selectorChecker.setMode(SelectorChecker::QueryingRules);
 }
 
-PassRefPtr<NodeList> SelectorQuery::queryAll() const
+
+PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
-    return m_selectors.queryAll(m_selectorChecker, m_rootNode);
+    SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());
+    selectorChecker.setMode(SelectorChecker::QueryingRules);
+    return m_selectors.queryAll(selectorChecker, rootNode);
 }
 
-PassRefPtr<Element> SelectorQuery::queryFirst() const
+PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
 {
-    return m_selectors.queryFirst(m_selectorChecker, m_rootNode);
+    SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());
+    selectorChecker.setMode(SelectorChecker::QueryingRules);
+    return m_selectors.queryFirst(selectorChecker, rootNode);
 }
 
 }

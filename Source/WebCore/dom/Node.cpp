@@ -1693,8 +1693,8 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
     
-    SelectorQuery selectorQuery(this, querySelectorList);
-    return selectorQuery.queryFirst();
+    SelectorQuery selectorQuery(querySelectorList);
+    return selectorQuery.queryFirst(this);
 }
 
 PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
@@ -1718,8 +1718,8 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         return 0;
     }
 
-    SelectorQuery selectorQuery(this, querySelectorList);
-    return selectorQuery.queryAll();
+    SelectorQuery selectorQuery(querySelectorList);
+    return selectorQuery.queryAll(this);
 }
 
 Document *Node::ownerDocument() const

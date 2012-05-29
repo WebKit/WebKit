@@ -67,13 +67,11 @@ private:
 class SelectorQuery {
     WTF_MAKE_NONCOPYABLE(SelectorQuery);
 public:
-    SelectorQuery(Node* rootNode, const CSSSelectorList&);
+    SelectorQuery(const CSSSelectorList&);
 
-    PassRefPtr<NodeList> queryAll() const;
-    PassRefPtr<Element> queryFirst() const;
+    PassRefPtr<NodeList> queryAll(Node* rootNode) const;
+    PassRefPtr<Element> queryFirst(Node* rootNode) const;
 private:
-    Node* m_rootNode;
-    SelectorChecker m_selectorChecker;
     SelectorDataList m_selectors;
 };
 

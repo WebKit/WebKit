@@ -1,3 +1,28 @@
+2012-05-29  Kentaro Hara  <haraken@chromium.org>
+
+        Remove m_rootNode and m_selectorChecker from SelectorQuery.h
+        https://bugs.webkit.org/show_bug.cgi?id=87650
+
+        Reviewed by Antti Koivisto.
+
+        To avoid parsing CSS selectors every time, I am planning to cache
+        SelectorQuery objects into a HashMap, which will be defined in
+        Node::querySelector(). To make the size of SelectorQuery small,
+        this patch removes m_rootNode and m_selectorChecker from SelectorQuery.h.
+
+        Tests: fast/dom/SelectorAPI/*. No change in test results.
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore):
+        (WebCore::SelectorQuery::queryAll):
+        (WebCore::SelectorQuery::queryFirst):
+        * dom/SelectorQuery.h:
+        (SelectorQuery):
+
 2012-05-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Tabbed Settings Screen
