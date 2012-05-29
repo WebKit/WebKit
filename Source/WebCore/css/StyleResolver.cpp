@@ -816,11 +816,11 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
     ASSERT(mathMLStyleSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
-void StyleResolver::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType, bool inRegionRule)
+void StyleResolver::addMatchedProperties(MatchResult& matchResult, const StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType, bool inRegionRule)
 {
     matchResult.matchedProperties.grow(matchResult.matchedProperties.size() + 1);
     MatchedProperties& newProperties = matchResult.matchedProperties.last();
-    newProperties.properties = properties;
+    newProperties.properties = const_cast<StylePropertySet*>(properties);
     newProperties.linkMatchType = linkMatchType;
     newProperties.isInRegionRule = inRegionRule;
     matchResult.matchedRules.append(rule);
@@ -1051,7 +1051,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
                 continue;
             }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            StylePropertySet* properties = rule->properties();
+            const StylePropertySet* properties = rule->properties();
             if (!properties || (properties->isEmpty() && !options.includeEmptyRules)) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
@@ -2911,7 +2911,7 @@ void StyleResolver::matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, 
             continue;
 
         // If the rule has no properties to apply, then ignore it.
-        StylePropertySet* properties = rule->properties();
+        const StylePropertySet* properties = rule->properties();
         if (!properties || properties->isEmpty())
             continue;
 

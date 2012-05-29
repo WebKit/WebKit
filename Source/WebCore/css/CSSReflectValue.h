@@ -49,7 +49,7 @@ public:
 
     String customCssText() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
 
 private:
     CSSReflectValue(CSSReflectionDirection direction, PassRefPtr<CSSPrimitiveValue> offset, PassRefPtr<CSSValue> mask)

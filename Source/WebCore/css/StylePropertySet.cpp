@@ -53,12 +53,14 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
+    , m_isMutable(true)
 {
 }
 
 StylePropertySet::StylePropertySet(StylePropertyVector& properties, CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
+    , m_isMutable(false)
 {
     m_properties.swap(properties);
 
@@ -71,6 +73,7 @@ StylePropertySet::StylePropertySet(const StylePropertySet& o)
     , m_properties(o.m_properties)
     , m_cssParserMode(o.m_cssParserMode)
     , m_ownsCSSOMWrapper(false)
+    , m_isMutable(true)
 {
 }
 
@@ -81,8 +84,15 @@ StylePropertySet::~StylePropertySet()
         propertySetCSSOMWrapperMap().remove(this);
 }
 
+void StylePropertySet::setCSSParserMode(CSSParserMode cssParserMode)
+{
+    ASSERT(isMutable());
+    m_cssParserMode = cssParserMode;
+}
+
 void StylePropertySet::copyPropertiesFrom(const StylePropertySet& other)
 {
+    ASSERT(isMutable());
     m_properties = other.m_properties;
 }
 
@@ -453,6 +463,7 @@ PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(CSSPropertyID propert
 
 bool StylePropertySet::removeShorthandProperty(CSSPropertyID propertyID)
 {
+    ASSERT(isMutable());
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length())
         return false;
@@ -461,6 +472,7 @@ bool StylePropertySet::removeShorthandProperty(CSSPropertyID propertyID)
 
 bool StylePropertySet::removeProperty(CSSPropertyID propertyID, String* returnText)
 {
+    ASSERT(isMutable());
     if (removeShorthandProperty(propertyID)) {
         // FIXME: Return an equivalent shorthand when possible.
         if (returnText)
@@ -516,6 +528,7 @@ bool StylePropertySet::isPropertyImplicit(CSSPropertyID propertyID) const
 
 bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value, bool important, StyleSheetContents* contextStyleSheet)
 {
+    ASSERT(isMutable());
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty()) {
@@ -530,6 +543,7 @@ bool StylePropertySet::setProperty(CSSPropertyID propertyID, const String& value
 
 void StylePropertySet::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)
 {
+    ASSERT(isMutable());
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length()) {
         setProperty(CSSProperty(propertyID, prpValue, important));
@@ -545,6 +559,7 @@ void StylePropertySet::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue
 
 void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
+    ASSERT(isMutable());
     if (!removeShorthandProperty(property.id())) {
         CSSProperty* toReplace = slot ? slot : findPropertyWithId(property.id());
         if (toReplace) {
@@ -557,12 +572,15 @@ void StylePropertySet::setProperty(const CSSProperty& property, CSSProperty* slo
 
 bool StylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, bool important)
 {
+    ASSERT(isMutable());
     setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
     return true;
 }
 
 void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)
 {
+    ASSERT(isMutable());
+
     m_properties.clear();
 
     CSSParserContext context(cssParserMode());
@@ -576,6 +594,7 @@ void StylePropertySet::parseDeclaration(const String& styleDeclaration, StyleShe
 
 void StylePropertySet::addParsedProperties(const Vector<CSSProperty>& properties)
 {
+    ASSERT(isMutable());
     m_properties.reserveCapacity(m_properties.size() + properties.size());
     for (unsigned i = 0; i < properties.size(); ++i)
         addParsedProperty(properties[i]);
@@ -583,6 +602,7 @@ void StylePropertySet::addParsedProperties(const Vector<CSSProperty>& properties
 
 void StylePropertySet::addParsedProperty(const CSSProperty& property)
 {
+    ASSERT(isMutable());
     // Only add properties that have no !important counterpart present
     if (!propertyIsImportant(property.id()) || property.isImportant())
         setProperty(property);
@@ -812,6 +832,7 @@ String StylePropertySet::asText() const
 
 void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnConflict)
 {
+    ASSERT(isMutable());
     unsigned size = other->m_properties.size();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& toMerge = other->m_properties[n];
@@ -825,7 +846,7 @@ void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnC
     }
 }
 
-void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet)
+void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const
 {
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i)
@@ -874,6 +895,7 @@ void StylePropertySet::removeBlockProperties()
 
 bool StylePropertySet::removePropertiesInSet(const CSSPropertyID* set, unsigned length)
 {
+    ASSERT(isMutable());
     if (m_properties.isEmpty())
         return false;
 
@@ -912,6 +934,7 @@ const CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID
 
 CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID)
 {
+    ASSERT(isMutable());
     for (int n = m_properties.size() - 1 ; n >= 0; --n) {
         if (propertyID == m_properties[n].id())
             return &m_properties[n];
@@ -927,6 +950,7 @@ bool StylePropertySet::propertyMatches(const CSSProperty* property) const
     
 void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
 {
+    ASSERT(isMutable());
     Vector<CSSPropertyID> propertiesToRemove;
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i) {
@@ -941,6 +965,7 @@ void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
 
 void StylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* style)
 {
+    ASSERT(isMutable());
     Vector<CSSPropertyID> propertiesToRemove;
     size_t size = m_properties.size();
     for (size_t i = 0; i < size; ++i) {
@@ -967,7 +992,7 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSProp
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return StylePropertySet::adopt(list);
+    return StylePropertySet::adoptMutable(list);
 }
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const

@@ -48,7 +48,7 @@ CSSPageRule::~CSSPageRule()
 CSSStyleDeclaration* CSSPageRule::style() const
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->properties(), const_cast<CSSPageRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->mutableProperties(), const_cast<CSSPageRule*>(this));
     return m_propertiesCSSOMWrapper.get();
 }
 
@@ -92,7 +92,7 @@ void CSSPageRule::reattach(StyleRulePage* rule)
     ASSERT(rule);
     m_pageRule = rule;
     if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_pageRule->properties());
+        m_propertiesCSSOMWrapper->reattach(m_pageRule->mutableProperties());
 }
 
 } // namespace WebCore

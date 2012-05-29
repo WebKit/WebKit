@@ -136,8 +136,7 @@ StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element
 {
     if (!m_inlineStyleDecl) {
         ASSERT(element->isStyledElement());
-        m_inlineStyleDecl = StylePropertySet::create();
-        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
+        m_inlineStyleDecl = StylePropertySet::create(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     }
     return m_inlineStyleDecl.get();
 }
@@ -157,10 +156,8 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
     // This makes wrapperless property sets immutable and so cacheable.
     if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable())
         m_inlineStyleDecl.clear();
-    if (!m_inlineStyleDecl) {
-        m_inlineStyleDecl = StylePropertySet::create();
-        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
-    }
+    if (!m_inlineStyleDecl)
+        m_inlineStyleDecl = StylePropertySet::create(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
     m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
 }
 

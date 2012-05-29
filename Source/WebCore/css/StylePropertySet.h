@@ -49,9 +49,15 @@ public:
     {
         return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> adopt(StylePropertyVector& properties, CSSParserMode cssParserMode = CSSStrictMode)
+    static PassRefPtr<StylePropertySet> adopt(StylePropertyVector& properties, CSSParserMode cssParserMode)
     {
         return adoptRef(new StylePropertySet(properties, cssParserMode));
+    }
+    static PassRefPtr<StylePropertySet> adoptMutable(StylePropertyVector& properties)
+    {
+        RefPtr<StylePropertySet> result = adoptRef(new StylePropertySet(properties, CSSStrictMode));
+        result->m_isMutable = true;
+        return result.release();
     }
 
     unsigned propertyCount() const { return m_properties.size(); }
@@ -87,12 +93,13 @@ public:
 
     void merge(const StylePropertySet*, bool argOverridesOnConflict = true);
 
-    void setCSSParserMode(CSSParserMode cssParserMode) { m_cssParserMode = cssParserMode; }
+    void setCSSParserMode(CSSParserMode);
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet) const;
 
     PassRefPtr<StylePropertySet> copy() const;
+
     // Used by StyledElement::copyNonAttributeProperties().
     void copyPropertiesFrom(const StylePropertySet&);
 
@@ -107,9 +114,8 @@ public:
 
     CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const;
-    
-    // FIXME: Expand the concept of mutable/immutable StylePropertySet.
-    bool isMutable() const { return m_ownsCSSOMWrapper; }
+
+    bool isMutable() const { return m_isMutable; }
 
     static unsigned averageSizeInBytes();
 
@@ -144,6 +150,7 @@ private:
 
     unsigned m_cssParserMode : 2;
     mutable unsigned m_ownsCSSOMWrapper : 1;
+    mutable unsigned m_isMutable : 1;
     
     friend class PropertySetCSSStyleDeclaration;
 };

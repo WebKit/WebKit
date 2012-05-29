@@ -2641,7 +2641,7 @@ PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(co
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return StylePropertySet::adopt(list);
+    return StylePropertySet::adoptMutable(list);
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

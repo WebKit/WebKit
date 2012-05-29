@@ -1,3 +1,102 @@
+2012-05-29  Andreas Kling  <kling@webkit.org>
+
+        Give StylePropertySet a proper mutability flag.
+        <http://webkit.org/b/87675>
+
+        Reviewed by Antti Koivisto.
+
+        Add a flag to StylePropertySet that determines whether it's mutable or not. Only objects
+        constructed from the CSS parser (by way of StylePropertySet::adopt()) are made immutable.
+        This is clean-up and prep work for implementing a more efficient storage scheme for immutable
+        StylePropertySets (fixed-size array instead of vector) as the vast majority of them are
+        unlikely to ever mutate during their lifetime.
+
+        Sprinkled ASSERT(isMutable()) all over StylePropertySet to catch any attempts to modify
+        an immutable object.
+
+        Also made properties() const on StyleRule and friends, which brought some additional code
+        churn along with it.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::style):
+        (WebCore::CSSFontFaceRule::reattach):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::style):
+        (WebCore::CSSPageRule::reattach):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs):
+        * css/CSSReflectValue.h:
+        (CSSReflectValue):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::style):
+        (WebCore::CSSStyleRule::reattach):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        * css/CSSValue.h:
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::addSubresourceStyleURLs):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::setCSSParserMode):
+        (WebCore):
+        (WebCore::StylePropertySet::copyPropertiesFrom):
+        (WebCore::StylePropertySet::removeShorthandProperty):
+        (WebCore::StylePropertySet::removeProperty):
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::parseDeclaration):
+        (WebCore::StylePropertySet::addParsedProperties):
+        (WebCore::StylePropertySet::addParsedProperty):
+        (WebCore::StylePropertySet::merge):
+        (WebCore::StylePropertySet::addSubresourceStyleURLs):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::findPropertyWithId):
+        (WebCore::StylePropertySet::removeEquivalentProperties):
+        (WebCore::StylePropertySet::copyPropertiesInSet):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::adopt):
+        (WebCore::StylePropertySet::adoptMutable):
+        (StylePropertySet):
+        (WebCore::StylePropertySet::isMutable):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addMatchedProperties):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::mutableProperties):
+        (WebCore):
+        (WebCore::StyleRulePage::mutableProperties):
+        (WebCore::StyleRuleFontFace::mutableProperties):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::properties):
+        (StyleRule):
+        (WebCore::StyleRuleFontFace::properties):
+        (StyleRuleFontFace):
+        (WebCore::StyleRulePage::properties):
+        (StyleRulePage):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ensureInlineStyle):
+        (WebCore::ElementAttributeData::updateInlineStyleAvoidingMutation):
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::parseAttribute):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::removedFrom):
+
 2012-05-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Refactoring. Get rid of unnecessary singleCharacterString() function

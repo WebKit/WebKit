@@ -180,6 +180,13 @@ StyleRule::~StyleRule()
 {
 }
 
+StylePropertySet* StyleRule::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
+}
+
 void StyleRule::setProperties(PassRefPtr<StylePropertySet> properties)
 { 
     m_properties = properties;
@@ -201,6 +208,13 @@ StyleRulePage::~StyleRulePage()
 {
 }
 
+StylePropertySet* StyleRulePage::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
+}
+
 void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
 { 
     m_properties = properties;
@@ -219,6 +233,13 @@ StyleRuleFontFace::StyleRuleFontFace(const StyleRuleFontFace& o)
 
 StyleRuleFontFace::~StyleRuleFontFace()
 {
+}
+
+StylePropertySet* StyleRuleFontFace::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
 }
 
 void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
