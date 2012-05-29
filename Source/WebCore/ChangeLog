@@ -1,3 +1,25 @@
+2012-05-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r111742): box-sizing: border-box doesn't work on fixed table layout
+        https://bugs.webkit.org/show_bug.cgi?id=87536
+
+        Reviewed by Tony Chang.
+
+        Tests: fast/table/fixed-table-layout/cell-box-sizing-fixed-table-layout.html
+               fast/table/fixed-table-layout/column-box-sizing-fixed-table-layout.html
+               fast/table/fixed-table-layout/column-group-box-sizing-fixed-table-layout.html
+               fast/table/fixed-table-layout/column-in-column-group-box-sizing-fixed-table-layout.html
+
+        The change in r111742 completely ignored border-sizing (following the table's code lead unfortunately).
+        The issue is that we would count the borders and paddings twice for the border-box case which would lead
+        to the content-box including them too. From a web-author, this behavior is equivalent to ignoring box-sizing.
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        Reworked the function to properly use computeBorderBoxLogicalWidth() for correctness. This matches
+        what RenderBox and the rendering code does generally. Also refactored the code to avoid the need
+        for local variables and make it more readable.
+
 2012-05-25  Ojan Vafai  <ojan@chromium.org>
 
         Absolute positioned elements in a relative positioned CSS3 Flexbox fail to display properly
