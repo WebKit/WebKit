@@ -19,7 +19,7 @@
                     return;
 
                 testTrack = document.getElementById("testTrack");
-                testExpected("testTrack.track.cues.length", 6);
+                testExpected("testTrack.track.cues.length", 7);
 
                 for (cueCount = 2; cueCount < testTrack.track.cues.length; cueCount++) {
                     var cue = testTrack.track.cues[cueCount];
@@ -34,10 +34,11 @@
 
             function cueEnteredOrExited()
             {
+                consoleWrite("");
                 consoleWrite("EVENT(" + event.type + ")");
 
                 currentCue = event.target;
-                testExpected("testTrack.track.cues.getCueById(cueCount)", currentCue);
+                testExpected("testTrack.track.cues.getCueById(cueCount).text", currentCue.text, "==");
                 testExpected("currentCue.id", cueCount);
 
                 if (event.type == 'exit') {

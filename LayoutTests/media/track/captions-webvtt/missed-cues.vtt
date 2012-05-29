@@ -19,9 +19,13 @@ I said Bear is coming now!!!!
 This is the second missed cue in the test.
 
 5
-00:00:05.800 --> 00:00:05.801 align:start position:20%
-Maybe a third missed cue.
+00:00:05.800 --> 00:00:05.800 align:start position:20%
+Third missed cue - zero-length cue.
 
 6
-00:00:05.992 --> 00:00:05.993 align:start position:20%
+00:00:05.850 --> 00:00:05.851 align:start position:20%
 Fourth missed cue.
+
+7
+00:00:05.950 --> 00:00:01.100
+Negative length cue. Should be treated correctly.

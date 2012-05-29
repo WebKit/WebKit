@@ -1,3 +1,20 @@
+2012-05-29  Victor Carbune  <victor@rosedu.org>
+
+        Update cue event dispatching for zero and negative duration cues
+        https://bugs.webkit.org/show_bug.cgi?id=85143
+
+        Reviewed by Eric Carlson.
+
+        Updated existing test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Explicitly
+        treated event dispatching for zero and negative duration cues.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Interval tree doesn't
+        handle invalid cues with intervals - negative cues need to be treated
+        as zero-length cues as they are always missed cues anyway.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Same.
+
 2012-05-29  MORITA Hajime  <morrita@google.com>
 
         ShadowRoot.getElementById() returns removed node.
