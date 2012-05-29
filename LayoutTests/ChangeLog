@@ -1,5 +1,14 @@
 2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=87740
+
+        Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Skip fast/forms/textarea-maxlength.html until proper fix.
+
+2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         * platform/qt-4.8/Skipped: Skip fast/parser/innerhtml-with-prefixed-elements.xhtml because of buggy QtXmlPatterns.
