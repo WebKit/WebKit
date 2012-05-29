@@ -1,3 +1,15 @@
+2012-05-29  Adrienne Walker  <enne@google.com>
+
+        Fix transparent iframes with composited contents in WK1 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=76478
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/iframes/repaint-after-losing-scrollbars.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaints):
+
 2012-05-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87787

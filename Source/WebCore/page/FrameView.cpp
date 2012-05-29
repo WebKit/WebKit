@@ -1259,7 +1259,11 @@ bool FrameView::useSlowRepaints(bool considerOverlap) const
 {
     bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0);
 
-    if (contentsInCompositedLayer())
+    // FIXME: WidgetMac.mm makes the assumption that useSlowRepaints ==
+    // m_contentIsOpaque, so don't take the fast path for composited layers
+    // if they are a platform widget in order to get painting correctness
+    // for transparent layers. See the comment in WidgetMac::paint.
+    if (contentsInCompositedLayer() && !platformWidget())
         return mustBeSlow;
 
 #if PLATFORM(CHROMIUM)
