@@ -18,9 +18,7 @@ linux-g++* {
     greaterThan(QT_GCC_MAJOR_VERSION, 3):greaterThan(QT_GCC_MINOR_VERSION, 5) {
         !contains(QMAKE_CXXFLAGS, -std=(c|gnu)\\+\\+(0x|11)) {
             # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
-            QMAKE_CFLAGS_WARN_ON += -Wno-c++0x-compat
             QMAKE_CXXFLAGS_WARN_ON += -Wno-c++0x-compat
-            QMAKE_CFLAGS += -Wno-c++0x-compat
             QMAKE_CXXFLAGS += -Wno-c++0x-compat
         }
     }
