@@ -1,3 +1,10 @@
+2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip failing tests.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r109729): The optgroup element's "disabled" attribute has no effect to rendering and selection

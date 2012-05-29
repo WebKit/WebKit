@@ -270,6 +270,7 @@ inspector/debugger/xhr-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=50485
 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+inspector/profiler/heap-snapshot-loader.html
 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
 inspector/profiler/heap-snapshot-summary-show-ranges.html
 
@@ -282,10 +283,6 @@ http/tests/inspector/compiler-source-mapping-debug.html
 #[Qt] inspector/styles/svg-style.xhtml fails
 # https://bugs.webkit.org/show_bug.cgi?id=79068
 inspector/styles/svg-style.xhtml
-
-# REGRESSION(r118742): It made inspector/profiler/heap-snapshot-loader.html fail on Lion, Qt
-# https://bugs.webkit.org/show_bug.cgi?id=87741
-inspector/profiler/heap-snapshot-loader.html
 
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886
@@ -585,6 +582,7 @@ http/tests/media
 # --- Failing navigation tests
 #CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: fillTestForm
 #CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: scrollDocDown
+http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
 
