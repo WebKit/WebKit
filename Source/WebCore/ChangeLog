@@ -1,3 +1,16 @@
+2012-05-29  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        [Qt] Uninitialized shader compiler when GLES is used
+        https://bugs.webkit.org/show_bug.cgi?id=87712
+
+        The '#if !defined(QT_OPENGL_ES_2)' has been removed before the initialization
+        of shader compiler to compile shader codes for ES-platforms as well.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-05-29  Taiju Tsuiki  <tzik@chromium.org>
 
         Add InspectorFileSystemAgent::FrontendProvider

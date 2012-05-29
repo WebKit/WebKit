@@ -322,7 +322,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 #endif
     }
 
-#if !defined(QT_OPENGL_ES_2)
     // ANGLE initialization.
     ShBuiltInResources ANGLEResources;
     ShInitBuiltInResources(&ANGLEResources);
@@ -339,6 +338,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     ANGLEResources.MaxDrawBuffers = 1;
     m_compiler.setResources(ANGLEResources);
 
+#if !defined(QT_OPENGL_ES_2)
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
