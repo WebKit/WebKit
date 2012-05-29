@@ -1,5 +1,47 @@
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] WebKit-side implementation of SelectionOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=87605
+
+        Reviewed by Rob Buis.
+
+        Leverage the new WebOverlay API to move SelectionOverlay to the WebKit
+        library, so we always draw selection regardless of which embedder is
+        integrating WebKit.
+
+        PR #160263
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::selectionOverlay):
+        (WebKit):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSelectionOverlay.h: Added.
+        (WebKit):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionOverlay.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::SelectionOverlay::SelectionOverlay):
+        (BlackBerry::WebKit::SelectionOverlay::~SelectionOverlay):
+        (BlackBerry::WebKit::SelectionOverlay::draw):
+        (BlackBerry::WebKit::SelectionOverlay::hide):
+        (BlackBerry::WebKit::SelectionOverlay::notifySyncRequired):
+        (BlackBerry::WebKit::SelectionOverlay::paintContents):
+        * WebKitSupport/SelectionOverlay.h: Added.
+        (WebKit):
+        (SelectionOverlay):
+        (BlackBerry::WebKit::SelectionOverlay::create):
+        (BlackBerry::WebKit::SelectionOverlay::notifyAnimationStarted):
+        (BlackBerry::WebKit::SelectionOverlay::showDebugBorders):
+        (BlackBerry::WebKit::SelectionOverlay::showRepaintCounter):
+        (BlackBerry::WebKit::SelectionOverlay::contentsVisible):
+
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] WebOverlay API
         https://bugs.webkit.org/show_bug.cgi?id=87603
 

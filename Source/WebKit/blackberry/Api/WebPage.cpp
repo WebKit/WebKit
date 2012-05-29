@@ -42,6 +42,7 @@
 #include "Database.h"
 #include "DatabaseSync.h"
 #include "DatabaseTracker.h"
+#include "DefaultTapHighlight.h"
 #include "DeviceMotionClientBlackBerry.h"
 #include "DeviceOrientationClientBlackBerry.h"
 #include "DragClientBlackBerry.h"
@@ -100,6 +101,7 @@
 #include "ScriptValue.h"
 #include "ScrollTypes.h"
 #include "SelectionHandler.h"
+#include "SelectionOverlay.h"
 #include "Settings.h"
 #include "Storage.h"
 #include "StorageNamespace.h"
@@ -134,7 +136,6 @@
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "DefaultTapHighlight.h"
 #include "FrameLayers.h"
 #include "WebPageCompositor_p.h"
 #endif
@@ -509,6 +510,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
 #if USE(ACCELERATED_COMPOSITING)
     m_tapHighlight = DefaultTapHighlight::create(this);
+    m_selectionOverlay = SelectionOverlay::create(this);
 #endif
 
     // FIXME: We explicitly call setDelegate() instead of passing ourself in createFromStandardSettings()
@@ -6206,6 +6208,11 @@ WebTapHighlight* WebPage::tapHighlight() const
 void WebPage::setTapHighlight(WebTapHighlight* tapHighlight)
 {
     d->m_tapHighlight = adoptPtr(tapHighlight);
+}
+
+WebSelectionOverlay* WebPage::selectionOverlay() const
+{
+    return d->m_selectionOverlay.get();
 }
 
 void WebPage::addOverlay(WebOverlay* overlay)

@@ -90,6 +90,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
+    blackberry/WebKitSupport/SelectionOverlay.cpp
     blackberry/WebKitSupport/SurfacePool.cpp
     blackberry/WebKitSupport/TouchEventHandler.cpp
     blackberry/WebKitSupport/FatFingers.cpp

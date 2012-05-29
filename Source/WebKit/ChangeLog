@@ -1,5 +1,18 @@
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] WebKit-side implementation of SelectionOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=87605
+
+        Reviewed by Rob Buis.
+
+        Add SelectionOverlay to the build system.
+
+        PR #160263
+
+        * PlatformBlackBerry.cmake:
+
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] WebOverlay API
         https://bugs.webkit.org/show_bug.cgi?id=87603
 

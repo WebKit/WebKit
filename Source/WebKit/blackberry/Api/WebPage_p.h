@@ -432,6 +432,7 @@ public:
     RefPtr<WebCore::Node> m_currentContextNode;
     WebSettings* m_webSettings;
     OwnPtr<WebTapHighlight> m_tapHighlight;
+    OwnPtr<WebSelectionOverlay> m_selectionOverlay;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<WebCore::JavaScriptDebuggerBlackBerry> m_scriptDebugger;
