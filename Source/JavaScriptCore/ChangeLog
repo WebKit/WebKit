@@ -1,3 +1,25 @@
+2012-05-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CopiedSpace::doneCopying could start another collection
+        https://bugs.webkit.org/show_bug.cgi?id=86538
+
+        Reviewed by Geoffrey Garen.
+
+        It's possible that if we don't have anything at the head of to-space 
+        after a collection and the BlockAllocator doesn't have any fresh blocks 
+        to give us right now we could start another collection while still in 
+        the middle of the first collection when we call CopiedSpace::addNewBlock(). 
+
+        One way to resolve this would be to have Heap::shouldCollect() check that 
+        m_operationInProgress is NoOperation. This would prevent the path in 
+        getFreshBlock() that starts the collection if we're already in the middle of one.
+
+        I could not come up with a test case to reproduce this crash on ToT.
+
+        * heap/Heap.h:
+        (JSC::Heap::shouldCollect): We shouldn't collect if we're already in the middle
+        of a collection, i.e. the current operation should be NoOperation.
+
 2012-05-29  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_RESOLUTION compile flag

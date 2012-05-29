@@ -240,9 +240,9 @@ namespace JSC {
     inline bool Heap::shouldCollect()
     {
 #if ENABLE(GGC)
-        return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect;
+        return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect && m_operationInProgress == NoOperation;
 #else
-        return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect;
+        return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect && m_operationInProgress == NoOperation;
 #endif
     }
 
