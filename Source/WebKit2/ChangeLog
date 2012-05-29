@@ -1,3 +1,25 @@
+2012-05-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118752.
+        http://trac.webkit.org/changeset/118752
+        https://bugs.webkit.org/show_bug.cgi?id=87731
+
+        incomplete patch (Requested by cmarcelo on #webkit).
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+
 2012-05-21  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Allow user to inject JS scripts when the page loads

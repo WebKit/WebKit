@@ -54,7 +54,6 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <QDateTime>
-#include <QtCore/QFile>
 #include <QtQml/QJSValue>
 #include <WKOpenPanelResultListener.h>
 #include <WKSerializedScriptValue.h>
@@ -62,7 +61,6 @@
 #include <WebCore/IntRect.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -454,7 +452,6 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 
     webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
     updateViewportSize();
-    updateUserScripts();
 }
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
@@ -680,52 +677,6 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
     m_navigatorQtObjectEnabled = enabled;
     context->setNavigatorQtObjectEnabled(webPageProxy.get(), enabled);
-}
-
-static QString readUserScript(const QUrl& url)
-{
-    QString path;
-    if (url.isLocalFile())
-        path = url.toLocalFile();
-    else if (url.scheme() == QLatin1String("qrc"))
-        path = QStringLiteral(":") + url.path();
-    else {
-        qWarning("QQuickWebView: Couldn't open '%s' as user script because only file:/// and qrc:/// URLs are supported.", qPrintable(url.toString()));
-        return QString();
-    }
-
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning("QQuickWebView: Couldn't open '%s' as user script due to error '%s'.", qPrintable(url.toString()), qPrintable(file.errorString()));
-        return QString();
-    }
-
-    QString contents = QString::fromUtf8(file.readAll());
-    if (contents.isEmpty())
-        qWarning("QQuickWebView: Ignoring '%s' as user script because file is empty.", qPrintable(url.toString()));
-
-    return contents;
-}
-
-void QQuickWebViewPrivate::updateUserScripts()
-{
-    Vector<String> scripts;
-    scripts.reserveCapacity(userScripts.size());
-
-    for (unsigned i = 0; i < userScripts.size(); ++i) {
-        const QUrl& url = userScripts.at(i);
-        if (!url.isValid()) {
-            qWarning("QQuickWebView: Couldn't open '%s' as user script because URL is invalid.", qPrintable(url.toString()));
-            continue;
-        }
-
-        QString contents = readUserScript(url);
-        if (contents.isEmpty())
-            continue;
-        scripts.append(String(contents));
-    }
-
-    webPageProxy->setUserScripts(scripts);
 }
 
 QPointF QQuickWebViewPrivate::contentPos() const
@@ -1343,22 +1294,6 @@ void QQuickWebViewExperimental::evaluateJavaScript(const QString& script, const 
     closure->value = value;
 
     d_ptr->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
-}
-
-QList<QUrl> QQuickWebViewExperimental::userScripts() const
-{
-    Q_D(const QQuickWebView);
-    return d->userScripts;
-}
-
-void QQuickWebViewExperimental::setUserScripts(const QList<QUrl>& userScripts)
-{
-    Q_D(QQuickWebView);
-    if (d->userScripts == userScripts)
-        return;
-    d->userScripts = userScripts;
-    d->updateUserScripts();
-    emit userScriptsChanged();
 }
 
 QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QQmlListProperty<QQuickUrlSchemeDelegate>* property, int index)
