@@ -189,7 +189,7 @@ void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactio
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
     if (!objectStore) {
-        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -213,7 +213,8 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
     if (!m_databaseCallbacksSet.contains(databaseCallbacks)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ABORT_ERR, "Connection was closed before set version transaction was created"));
+        // FIXME: IDBDatabaseError doesn't yet do proper translation of IDB-specific uses of error codes, this should be IDB_ABORT_ERR
+        callbacks->onError(IDBDatabaseError::createWithoutOffset(ABORT_ERR, "Connection was closed before set version transaction was created"));
         return;
     }
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
@@ -312,7 +313,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
 {
     for (size_t i = 0; i < objectStoreNames->length(); ++i) {
         if (!m_objectStores.contains(objectStoreNames->item(i))) {
-            ec = IDBDatabaseException::NOT_FOUND_ERR;
+            ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
             return 0;
         }
     }

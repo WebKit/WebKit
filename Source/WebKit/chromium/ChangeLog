@@ -1,3 +1,13 @@
+2012-05-29  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Align codes and names for IDB-specific and DOM-specific errors/exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=87276
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBDatabaseException.h:
+        * src/AssertMatchingEnums.cpp:
+
 2012-05-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Unreviewed.  Rolled DEPS.

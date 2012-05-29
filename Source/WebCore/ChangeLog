@@ -1,3 +1,45 @@
+2012-05-29  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Align codes and names for IDB-specific and DOM-specific errors/exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=87276
+
+        Reviewed by Tony Chang.
+
+        No new tests. Existing tests have been updated to use the new
+        exception constant values.
+
+        The IDB spec has evolved to DOM4-style DOMExceptions, which are
+        referred to with MixedCase, string-based style names for
+        exceptions rather than UNDERSCORE_CONSTANT_ERR codes. Change to
+        use MixedCase error/exception names, and tease out the
+        IDB-specific exception/error codes/names from the system-level
+        codes. Make sure that the legacy IDB-masked exception code values
+        match the DOM exception values. Make sure that
+        IDBDatabaseException[exception.name] still works.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (IDBDatabaseExceptionNameDescription):
+        (WebCore):
+        (WebCore::IDBDatabaseException::initializeDescription):
+        * Modules/indexeddb/IDBDatabaseException.h:
+        * Modules/indexeddb/IDBDatabaseException.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::index):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::abort):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+
 2012-05-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87775

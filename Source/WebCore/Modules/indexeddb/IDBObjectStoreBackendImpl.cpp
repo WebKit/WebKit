@@ -554,7 +554,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(const Stri
 {
     RefPtr<IDBIndexBackendInterface> index = m_indexes.get(name);
     if (!index) {
-        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
     }
     return index.release();
@@ -569,7 +569,7 @@ void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBa
 
     RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
     if (!index) {
-        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
 

@@ -125,13 +125,13 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
     IDB_TRACE("IDBCursor::update");
 
     if (!m_gotValue) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
     RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
-        ec = DATA_CLONE_ERR;
+        ec = IDBDatabaseException::IDB_DATA_CLONE_ERR;
         return 0;
     }
 
@@ -148,7 +148,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::advance");
     if (!m_gotValue) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
     }
 
@@ -186,7 +186,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
     }
 
     if (!m_gotValue) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
     }
 
@@ -204,7 +204,7 @@ PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context
 {
     IDB_TRACE("IDBCursor::delete");
     if (!m_gotValue) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());

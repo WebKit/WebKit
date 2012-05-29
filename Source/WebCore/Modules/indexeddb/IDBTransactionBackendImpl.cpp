@@ -72,7 +72,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStor
 
     // Does a linear search, but it really shouldn't be that slow in practice.
     if (m_mode != IDBTransaction::VERSION_CHANGE && !m_objectStoreNames->contains(name)) {
-        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
     }
 
@@ -82,7 +82,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStor
     //        There's a bug to make this impossible in the spec. When we make it impossible here, we
     //        can remove this check.
     if (!objectStore) {
-        ec = IDBDatabaseException::NOT_FOUND_ERR;
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
     }
     return objectStore.release();

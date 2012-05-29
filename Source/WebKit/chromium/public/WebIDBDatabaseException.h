@@ -35,7 +35,7 @@ namespace WebKit {
 
 enum WebIDBDatabaseException {
     WebIDBDatabaseExceptionDataError = 1205,
-    WebIDBDatabaseExceptionQuotaError = 1211,
+    WebIDBDatabaseExceptionQuotaError = 1218,
 };
 
 } // namespace WebKit

@@ -174,7 +174,7 @@ void IDBRequest::abort()
     m_errorCode = 0;
     m_errorMessage = String();
     m_result.clear();
-    onError(IDBDatabaseError::create(IDBDatabaseException::ABORT_ERR, "The transaction was aborted, so the request cannot be fulfilled."));
+    onError(IDBDatabaseError::createWithoutOffset(ABORT_ERR, "The transaction was aborted, so the request cannot be fulfilled."));
 }
 
 void IDBRequest::setCursorType(IDBCursorBackendInterface::CursorType cursorType)

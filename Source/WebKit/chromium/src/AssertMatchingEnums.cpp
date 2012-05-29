@@ -458,7 +458,7 @@ COMPILE_ASSERT_MATCHING_ENUM(WebView::UserStyleInjectInExistingDocuments, Inject
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserStyleInjectInSubsequentDocuments, InjectInSubsequentDocuments);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabaseExceptionDataError, IDBDatabaseException::DATA_ERR);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabaseExceptionQuotaError, IDBDatabaseException::QUOTA_ERR);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabaseExceptionQuotaError, IDBDatabaseException::IDB_QUOTA_EXCEEDED_ERR);
 
 #if ENABLE(INDEXED_DATABASE)
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::InvalidType, IDBKey::InvalidType);

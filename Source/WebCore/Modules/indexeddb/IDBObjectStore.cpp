@@ -126,7 +126,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
     RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
-        ec = DATA_CLONE_ERR;
+        ec = IDBDatabaseException::IDB_DATA_CLONE_ERR;
         return 0;
     }
 
@@ -150,7 +150,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
     RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
-        ec = DATA_CLONE_ERR;
+        ec = IDBDatabaseException::IDB_DATA_CLONE_ERR;
         return 0;
     }
 
@@ -227,7 +227,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKe
 {
     IDB_TRACE("IDBObjectStore::createIndex");
     if (!keyPath.isValid()) {
-        ec = SYNTAX_ERR;
+        ec = IDBDatabaseException::IDB_SYNTAX_ERR;
         return 0;
     }
 

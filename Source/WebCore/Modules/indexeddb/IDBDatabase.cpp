@@ -103,7 +103,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     }
 
     if (!keyPath.isNull() && !keyPath.isValid()) {
-        ec = SYNTAX_ERR;
+        ec = IDBDatabaseException::IDB_SYNTAX_ERR;
         return 0;
     }
 
@@ -112,7 +112,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
         options.get("autoIncrement", autoIncrement);
 
     if (autoIncrement && ((keyPath.type() == IDBKeyPath::StringType && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::ArrayType)) {
-        ec = INVALID_ACCESS_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_ACCESS_ERR;
         return 0;
     }
 
@@ -154,7 +154,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 {
     RefPtr<DOMStringList> storeNames = prpStoreNames;
     if (!storeNames || storeNames->isEmpty()) {
-        ec = INVALID_ACCESS_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_ACCESS_ERR;
         return 0;
     }
 
