@@ -1,3 +1,16 @@
+2012-05-29  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Add malloc info to about:memory page
+        https://bugs.webkit.org/show_bug.cgi?id=87676
+
+        Reviewed by Rob Buis.
+
+        Detailed malloc info can tell us how much memory
+        in the heaps is being in use.
+
+        * WebCoreSupport/AboutData.cpp:
+        (WebCore::memoryPage):
+
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Make DefaultTapHighlight use the new WebOverlay API
