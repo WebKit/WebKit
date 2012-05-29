@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x392
-  RenderBlock {HTML} at (0,0) size 800x392
-    RenderBody {BODY} at (8,8) size 784x376
+layer at (0,0) size 800x359
+  RenderBlock {HTML} at (0,0) size 800x359
+    RenderBody {BODY} at (8,8) size 784x343
       RenderMathMLMath {math} at (0,0) size 784x85
         RenderMathMLRow {mrow} at (303,0) size 179x85
           RenderMathMLRow {mrow} at (0,0) size 130x85
@@ -180,12 +180,12 @@ layer at (0,0) size 800x392
             RenderTableCell {TD} at (2,2) size 15x26 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 7x19
                 text run at (4,4) width 7: "a"
-      RenderTable {TABLE} at (0,263) size 133x113
-        RenderTableSection {TBODY} at (0,0) size 133x113
-          RenderTableRow {TR} at (0,2) size 133x109
-            RenderTableCell {TD} at (2,2) size 129x109 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderMathMLMath {math} at (4,4) size 121x101
-                RenderMathMLRow {mrow} at (1,0) size 119x101
+      RenderTable {TABLE} at (0,263) size 133x80
+        RenderTableSection {TBODY} at (0,0) size 133x80
+          RenderTableRow {TR} at (0,2) size 133x76
+            RenderTableCell {TD} at (2,2) size 129x76 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderMathMLMath {math} at (4,4) size 121x68
+                RenderMathMLRow {mrow} at (1,0) size 119x68
                   RenderMathMLRow {mrow} at (0,22) size 27x19
                     RenderMathMLOperator {mo} at (0,0) size 10x19
                       RenderMathMLBlock {mo} at (0,0) size 9x19
@@ -218,9 +218,9 @@ layer at (0,0) size 800x392
                     RenderMathMLBlock {mo} at (0,0) size 11x16
                       RenderText {mo} at (0,-4) size 11x25
                         text run at (0,-4) width 11: "+"
-                  RenderMathMLRow {mrow} at (83,0) size 36x101
+                  RenderMathMLRow {mrow} at (83,0) size 36x68
                     RenderMathMLOperator {mo} at (0,0) size 8x68
-                    RenderTable {mtable} at (8,45) size 20x56
+                    RenderTable {mtable} at (8,6) size 20x56
                       RenderTableSection (anonymous) at (0,0) size 20x56
                         RenderTableRow {mtr} at (0,2) size 20x16
                           RenderTableCell {mtd} at (2,2) size 16x16 [r=0 c=0 rs=1 cs=1]
