@@ -1,3 +1,10 @@
+2012-05-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r118776. The failing test was split into
+        5 separate tests, but we're still failing all of them.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-29  Li Yin  <li.yin@intel.com>
 
         [FileAPI] Miss FileList test

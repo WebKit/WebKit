@@ -1314,7 +1314,11 @@ BUGWK84102 : fast/profiler/stop-profiling-after-setTimeout.html = TEXT
 
 BUGWK87734 : svg/dom/complex-svgView-specification.html = IMAGE
 BUGWK87734 : svg/dom/SVGViewSpec.html = TEXT
-BUGWK87734 : svg/dom/viewspec-parser.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser-1.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser-2.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser-3.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser-4.html = TEXT
+BUGWK87734 : svg/dom/viewspec-parser-5.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
