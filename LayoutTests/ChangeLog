@@ -1,3 +1,17 @@
+2012-05-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed Gardening. Update test expectations after r118733.
+
+        * platform/qt/fast/css/text-overflow-input-expected.txt:
+        * platform/qt/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/qt/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/qt/fast/forms/placeholder-position-expected.txt:
+        * platform/qt/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
 2012-05-29  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed, skipping failing test

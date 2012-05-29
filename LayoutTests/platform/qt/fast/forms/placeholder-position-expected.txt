@@ -48,84 +48,84 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (576,340) size 0x0
       RenderBR {BR} at (188,369) size 0x0
 layer at (12,12) size 169x21
-  RenderBlock {DIV} at (0,0) size 169x21
-layer at (12,12) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x21
       text run at (0,0) width 84: "placeholder"
-layer at (12,41) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
+layer at (12,12) size 169x21
+  RenderBlock {DIV} at (0,0) size 169x21
 layer at (12,41) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x21
       text run at (0,0) width 84: "placeholder"
-layer at (12,70) size 169x21
-  RenderBlock {DIV} at (0,0) size 169x21
+layer at (12,41) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
 layer at (12,70) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#A9A9A9]
     RenderText {#text} at (85,0) size 84x21
       text run at (85,0) width 84: "placeholder"
-layer at (12,99) size 169x21
+layer at (12,70) size 169x21
   RenderBlock {DIV} at (0,0) size 169x21
 layer at (12,99) size 169x21
   RenderBlock {DIV} at (2,2) size 169x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x21
       text run at (0,0) width 84: "placeholder"
+layer at (12,99) size 169x21
+  RenderBlock {DIV} at (0,0) size 169x21
 layer at (10,126) size 200x46
   RenderTextControl {TEXTAREA} at (2,118) size 200x46
-    RenderBlock {DIV} at (2,2) size 196x21
     RenderBlock {DIV} at (2,2) size 196x21 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 84x21
         text run at (0,0) width 84: "placeholder"
-layer at (12,178) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
+    RenderBlock {DIV} at (2,2) size 196x21
 layer at (12,178) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x21
       text run at (0,0) width 84: "placeholder"
+layer at (12,178) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
 layer at (10,205) size 200x46
   RenderTextControl {TEXTAREA} at (2,197) size 200x46
-    RenderBlock {DIV} at (2,2) size 196x21
     RenderBlock {DIV} at (2,2) size 196x21 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 84x21
         text run at (0,0) width 84: "placeholder"
-layer at (19,264) size 160x20
-  RenderBlock {DIV} at (6,6) size 160x20
+    RenderBlock {DIV} at (2,2) size 196x21
 layer at (19,264) size 160x20
   RenderBlock {DIV} at (6,6) size 160x20 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 75x20
       text run at (0,0) width 75: "placeholder"
+layer at (19,264) size 160x20
+  RenderBlock {DIV} at (6,6) size 160x20
 layer at (12,299) size 180x25
   RenderBlock {DIV} at (2,2) size 180x25
     RenderText {#text} at (0,2) size 42x21
       text run at (0,2) width 42: "Value"
 layer at (204,299) size 180x25
-  RenderBlock {DIV} at (2,2) size 180x25
-layer at (204,299) size 180x25
   RenderBlock {DIV} at (2,2) size 180x25 [color=#A9A9A9]
     RenderText {#text} at (0,2) size 84x21
       text run at (0,2) width 84: "placeholder"
+layer at (204,299) size 180x25
+  RenderBlock {DIV} at (2,2) size 180x25
 layer at (12,332) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21
     RenderText {#text} at (69,0) size 42x21
       text run at (69,0) width 42: "Value"
 layer at (204,332) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
+    RenderText {#text} at (48,0) size 84x21
+      text run at (48,0) width 84: "placeholder"
 layer at (204,332) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
-    RenderText {#text} at (48,0) size 84x21
-      text run at (48,0) width 84: "placeholder"
-layer at (396,332) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21
 layer at (396,332) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
     RenderText {#text} at (48,0) size 84x21
       text run at (48,0) width 84: "placeholder"
+layer at (396,332) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
 layer at (10,359) size 184x25
   RenderTextControl {INPUT} at (2,351) size 184x25
-layer at (12,361) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
 layer at (12,361) size 180x21
   RenderBlock {DIV} at (2,2) size 180x21 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 84x21
       text run at (0,0) width 84: "placeholder"
+layer at (12,361) size 180x21
+  RenderBlock {DIV} at (2,2) size 180x21
