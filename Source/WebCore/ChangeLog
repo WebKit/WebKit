@@ -1,3 +1,29 @@
+2012-05-29  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Remove assertions on state in Prerender.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87746
+
+        Chrome was crashing in the new Prerender API on Google Web Search; this was because the DOM would stop(), setting the
+        state of the Prerenders in the document to Inactive, but an asyncronous GC would later come come along and trigger the
+        removedFromDocument behaviour on each element, including the <link> element launching the prerender.  This causes an
+        assertion failure.
+
+        I believe the late-deletion of the DOM, and the HTMLElement::removedFromDocument calls are legal, and it was the
+        overzealous assertions in Prerender that were inappropriate.
+
+        Reviewed by Adam Barth.
+
+        No new automated tests, working on a Chromium browser test. Manually test by entering many prerender and non-prerendered
+        queries into Google Web Search.
+
+        * platform/chromium/Prerender.cpp:
+        (WebCore::Prerender::Prerender):
+        (WebCore::Prerender::add):
+        (WebCore::Prerender::cancel):
+        (WebCore::Prerender::abandon):
+        * platform/chromium/Prerender.h:
+        (Prerender):
+
 2012-05-29  Victor Carbune  <victor@rosedu.org>
 
         Display cues in the controls area

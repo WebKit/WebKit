@@ -47,9 +47,6 @@ Prerender::Prerender(const KURL& url, const String& referrer, ReferrerPolicy pol
     : m_url(url)
     , m_referrer(referrer)
     , m_referrerPolicy(policy)
-#ifndef NDEBUG
-    , m_state(Inactive)
-#endif
 {
 }
 
@@ -57,24 +54,13 @@ Prerender::~Prerender()
 {
 }
 
-void Prerender::setState(State state)
-{
-#ifdef NDEBUG
-    UNUSED_PARAM(state);
-#else
-    m_state = state;
-#endif
-}
-
 void Prerender::add()
 {
-    ASSERT(m_state == Inactive);
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
     WebKit::WebPrerender webPrerender(this);
     platform->add(webPrerender);
-    setState(Active);
 }
 
 void Prerender::cancel()
@@ -83,10 +69,8 @@ void Prerender::cancel()
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
-    ASSERT(m_state == Active);
     WebKit::WebPrerender webPrerender(this);
     platform->cancel(webPrerender);
-    setState(Inactive);
 }
 
 void Prerender::abandon()
@@ -94,12 +78,8 @@ void Prerender::abandon()
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
-    // FIXME: Assert on the state as Inactive here. It is currently common to call abandon() on an Inactive
-    // prerender, as the Prerenderer doesn't keep track of which prerenders are active, and so any page that
-    // ever had a now-canceled Prerender will get this bogus stop() call.
     WebKit::WebPrerender webPrerender(this);
     platform->abandon(webPrerender);
-    setState(Inactive);
 }
 
 void Prerender::suspend()

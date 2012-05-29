@@ -71,22 +71,11 @@ public:
     ExtraData* extraData() { return m_extraData.get(); }
 
 private:
-    enum State {
-        Inactive,
-        Active,
-    };
-
-    void setState(State);
-
     const KURL m_url;
     const String m_referrer;
     const ReferrerPolicy m_referrerPolicy;
 
     RefPtr<ExtraData> m_extraData;
-
-#ifndef NDEBUG
-    State m_state;
-#endif
 };
 
 }
