@@ -1,3 +1,34 @@
+2012-05-29  Marcus Bulach  <bulach@chromium.org>
+
+        Split svg/dom/viewspec-parser.html in smaller tests
+        https://bugs.webkit.org/show_bug.cgi?id=87726
+
+        Reviewed by Andreas Kling.
+
+        This test was added by r118735.
+        Splits into smaller independent tests to avoid timeouts on ports such as chromium.
+
+        * svg/dom/resources/viewspec-parser.js: Added.
+        (buildTestsToRun):
+        (zoomAndPanToString):
+        (viewSpecToString):
+        (testString.string_appeared_here.makeURLRelative):
+        (testFragment):
+        (startNextTest):
+        (continueFuzzing.else.script.onload):
+        (continueFuzzing):
+        * svg/dom/viewspec-parser-1-expected.txt: Copied from LayoutTests/svg/dom/viewspec-parser-expected.txt.
+        * svg/dom/viewspec-parser-1.html: Added.
+        * svg/dom/viewspec-parser-2-expected.txt: Copied from LayoutTests/svg/dom/viewspec-parser-expected.txt.
+        * svg/dom/viewspec-parser-2.html: Added.
+        * svg/dom/viewspec-parser-3-expected.txt: Copied from LayoutTests/svg/dom/viewspec-parser-expected.txt.
+        * svg/dom/viewspec-parser-3.html: Added.
+        * svg/dom/viewspec-parser-4-expected.txt: Copied from LayoutTests/svg/dom/viewspec-parser-expected.txt.
+        * svg/dom/viewspec-parser-4.html: Added.
+        * svg/dom/viewspec-parser-5-expected.txt: Renamed from LayoutTests/svg/dom/viewspec-parser-expected.txt.
+        * svg/dom/viewspec-parser-5.html: Added.
+        * svg/dom/viewspec-parser.html: Removed.
+
 2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip failing tests.

@@ -6,42 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Loaded: resources/viewspec-target.svg#
 Parsed: [initial view] from: [initial view]
 
-Loaded: resources/viewspec-target.svg#svgView(viewBox(0,0,200,200)))
-Parsed: svgView(viewBox(0 0 200 200)) from: svgView(viewBox(0,0,200,200)))
-
-Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin slice))
-Parsed: svgView(preserveAspectRatio(xMaxYMin slice)) from: svgView(preserveAspectRatio(xMaxYMin slice))
-
-Loaded: resources/viewspec-target.svg#svgView(preserveAspectRatio(xMaxYMin))
-Parsed: svgView(preserveAspectRatio(xMaxYMin meet)) from: svgView(preserveAspectRatio(xMaxYMin))
-
-Loaded: resources/viewspec-target.svg#svgView(viewBox(1,2,3,4);preserveAspectRatio(xMaxYMin))
-Parsed: svgView(viewBox(1 2 3 4);preserveAspectRatio(xMaxYMin meet)) from: svgView(viewBox(1,2,3,4);preserveAspectRatio(xMaxYMin))
-
-Loaded: resources/viewspec-target.svg#svgView(zoomAndPan(disable))
-Parsed: svgView(zoomAndPan(disable)) from: svgView(zoomAndPan(disable))
-
-Loaded: resources/viewspec-target.svg#svgView(viewTarget(#myElementId))
-Parsed: svgView(viewTarget(#myElementId)) from: svgView(viewTarget(#myElementId))
-
-Loaded: resources/viewspec-target.svg#svgView
-Parsed: [initial view] from: svgView
-
-Loaded: resources/viewspec-target.svg#svgView(
-Parsed: [initial view] from: svgView(
-
-Loaded: resources/viewspec-target.svg#svgView()
-Parsed: [initial view] from: svgView()
-
-Loaded: resources/viewspec-target.svg#svgView(
-Parsed: [initial view] from: svgView(
-
-Loaded: resources/viewspec-target.svg#svgView(transform(scale(2));;)
-Parsed: [initial view] from: svgView(transform(scale(2));;)
-
-Loaded: resources/viewspec-target.svg#svgView(transform(scale(2));x
-Parsed: [initial view] from: svgView(transform(scale(2));x
-
 Loaded: resources/viewspec-target.svg#svgView(transform(scale(.5)))
 Parsed: svgView(transform(scale(0.5 0.5))) from: svgView(transform(scale(.5)))
 

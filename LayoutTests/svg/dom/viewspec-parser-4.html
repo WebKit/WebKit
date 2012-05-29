@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/scripted-random.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    var testsToRun = [
+      "svgView(" + String.fromCharCode(0),
+      "svgView(transform(scale(2));;)",
+      "svgView(transform(scale(2));x", // used to hang
+      ];
+</script>
+<script src="resources/viewspec-parser.js"></script>
+</html>
