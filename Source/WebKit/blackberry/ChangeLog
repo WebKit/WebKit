@@ -1,5 +1,28 @@
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Make DefaultTapHighlight use the new WebOverlay API
+        https://bugs.webkit.org/show_bug.cgi?id=87604
+
+        Reviewed by Antonio Gomes.
+
+        Also add a new method to allow the embedder to use the default tap
+        highlight instead of replacing it with a custom one just to keep track
+        of the "shouldHideAfterScroll" flag.
+
+        PR #160262.
+
+        * Api/WebTapHighlight.h:
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::DefaultTapHighlight):
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+        (BlackBerry::WebKit::DefaultTapHighlight::hide):
+        (BlackBerry::WebKit::DefaultTapHighlight::paintContents):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (BlackBerry::WebKit::DefaultTapHighlight::shouldHideAfterScroll):
+        (DefaultTapHighlight):
+
+2012-05-29  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] WebKit-side implementation of SelectionOverlay
         https://bugs.webkit.org/show_bug.cgi?id=87605
 

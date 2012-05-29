@@ -32,6 +32,8 @@ public:
 
     virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll) = 0;
     virtual void hide() = 0;
+
+    virtual bool shouldHideAfterScroll() const = 0;
 };
 
 } // namespace WebKit

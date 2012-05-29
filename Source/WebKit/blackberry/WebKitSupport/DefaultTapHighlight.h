@@ -24,10 +24,12 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "Color.h"
-#include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
+#include "WebOverlay.h"
 #include "WebTapHighlight.h"
+
 #include <BlackBerryPlatformIntRectRegion.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace BlackBerry {
@@ -47,26 +49,26 @@ public:
     virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll);
     virtual void hide();
 
+    virtual bool shouldHideAfterScroll() const { return m_shouldHideAfterScroll; }
+
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) { }
     virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const { return false; }
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
-
-#if PLATFORM(BLACKBERRY)
     virtual bool contentsVisible(const WebCore::GraphicsLayer*, const WebCore::IntRect& contentRect) const { return true; }
-#endif
 
 
 private:
     DefaultTapHighlight(WebPagePrivate*);
 
     WebPagePrivate* m_page;
-    OwnPtr<WebCore::GraphicsLayer> m_layer;
+    OwnPtr<WebOverlay> m_overlay;
     BlackBerry::Platform::IntRectRegion m_region;
     WebCore::Color m_color;
     bool m_visible;
+    bool m_shouldHideAfterScroll;
 };
 
 } // namespace WebKit

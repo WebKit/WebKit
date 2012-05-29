@@ -23,18 +23,12 @@
 #include "DefaultTapHighlight.h"
 
 #include "GraphicsContext.h"
-#include "GraphicsLayer.h"
-#include "LayerCompositingThread.h"
-#include "LayerWebKitThread.h"
 #include "Path.h"
 #include "PlatformContextSkia.h"
-#include "ScaleTransformOperation.h"
-#include "WebPageCompositorClient.h"
-#include "WebPageCompositor_p.h"
+#include "WebAnimation.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformMessageClient.h>
-#include <SkCornerPathEffect.h>
 
 using namespace WebCore;
 
@@ -48,6 +42,7 @@ static const char* fadeAnimationName() { return "fade"; }
 DefaultTapHighlight::DefaultTapHighlight(WebPagePrivate* page)
     : m_page(page)
     , m_visible(false)
+    , m_shouldHideAfterScroll(false)
 {
 }
 
@@ -61,37 +56,35 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
 
     m_region = region;
     m_color = Color(red, green, blue, std::min(128, alpha));
-    IntRect rect = m_region.extents();
+    m_shouldHideAfterScroll = hideAfterScroll;
+    FloatRect rect = IntRect(m_region.extents());
     if (rect.isEmpty())
         return;
 
     m_visible = true;
 
-    if (!m_layer) {
-        m_layer = GraphicsLayer::create(this);
-        m_page->overlayLayer()->addChild(m_layer.get());
+    if (!m_overlay) {
+        m_overlay = adoptPtr(new WebOverlay(this));
+        m_page->m_webPage->addOverlay(m_overlay.get());
     }
 
-    m_layer->setPosition(rect.location());
-    m_layer->setSize(rect.size());
-    m_layer->setDrawsContent(true);
-    m_layer->removeAnimation(fadeAnimationName());
-    m_layer->setOpacity(1.0);
-    m_layer->setNeedsDisplay();
+    m_overlay->resetOverrides();
+    m_overlay->setPosition(rect.location());
+    m_overlay->setSize(rect.size());
+    m_overlay->setDrawsContent(true);
+    m_overlay->removeAnimation(fadeAnimationName());
+    m_overlay->setOpacity(1.0);
+    m_overlay->invalidate();
 }
 
 void DefaultTapHighlight::hide()
 {
-    if (!m_layer)
+    if (!m_overlay)
         return;
 
-    // This animation needs to be created anew each time, since
-    // the method may be called on differend threads.
-    RefPtr<Animation> fadeAnimation = Animation::create();
-    fadeAnimation->setDuration(ActiveTextFadeAnimationDuration);
-    KeyframeValueList keyframes(AnimatedPropertyOpacity);
-    keyframes.insert(new FloatAnimationValue(0, 1.0));
-    keyframes.insert(new FloatAnimationValue(1.0, 0));
+    // Since WebAnimation is not thread safe, we create a new one each time instead of reusing the same object on different
+    // threads (that would introduce race conditions).
+    WebAnimation fadeAnimation = WebAnimation::fadeAnimation(fadeAnimationName(), 1.0, 0.0, ActiveTextFadeAnimationDuration);
 
     // Normally, this method is called on the WebKit thread, but it can also be
     // called from the compositing thread.
@@ -99,18 +92,9 @@ void DefaultTapHighlight::hide()
         if (!m_visible)
             return;
         m_visible = false;
-        m_layer->addAnimation(keyframes, m_region.extents().size(), fadeAnimation.get(), fadeAnimationName(), 0.0);
-    } else if (BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
-        RefPtr<LayerAnimation> animation = LayerAnimation::create(keyframes, m_region.extents().size(), fadeAnimation.get(), fadeAnimationName(), 0.0);
-        if (WebPageCompositorClient* compositorClient = m_page->compositor()->client()) {
-            double animationTime = compositorClient->requestAnimationFrame();
-            compositorClient->invalidate(animationTime);
-        }
-        // FIXME: Unfortunately WebPageCompositorClient::requestAnimationFrame uses a different time coordinate system
-        // than accelerated animations, so we can't use the time returned by RAF for starttime.
-        animation->setStartTime(currentTime());
-        m_layer->platformLayer()->layerCompositingThread()->addAnimation(animation.get());
-    }
+        m_overlay->addAnimation(fadeAnimation);
+    } else if (BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+        m_overlay->override()->addAnimation(fadeAnimation);
 }
 
 void DefaultTapHighlight::notifySyncRequired(const GraphicsLayer*)
@@ -122,7 +106,7 @@ void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c
 {
     std::vector<Platform::IntRect> rects = m_region.rects();
     Platform::IntRect rect = m_region.extents();
-    SkRegion windowRegion;
+    SkRegion overlayRegion;
 
     unsigned rectCount = m_region.numRects();
     if (!rectCount)
@@ -131,11 +115,11 @@ void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c
     for (unsigned i = 0; i < rectCount; ++i) {
         Platform::IntRect rectToPaint = rects[i];
         SkIRect r = SkIRect::MakeXYWH(rectToPaint.x(), rectToPaint.y(), rectToPaint.width(), rectToPaint.height());
-        windowRegion.op(r, SkRegion::kUnion_Op);
+        overlayRegion.op(r, SkRegion::kUnion_Op);
     }
 
     SkPath pathToPaint;
-    windowRegion.getBoundaryPath(&pathToPaint);
+    overlayRegion.getBoundaryPath(&pathToPaint);
 
     Path path(pathToPaint);
     c.save();
