@@ -1,3 +1,10 @@
+2012-05-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests
+        because of missing LayoutTestController implementation.
+
+        * platform/qt/Skipped:
+
 2012-05-29  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Unskip scroll related layout tests
