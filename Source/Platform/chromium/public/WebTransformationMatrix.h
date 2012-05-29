@@ -35,14 +35,11 @@
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatQuad.h"
+#include "TransformationMatrix.h"
 #endif
 
 #include "WebCommon.h"
 #include "WebPrivateOwnPtr.h"
-
-namespace WebCore {
-class TransformationMatrix;
-}
 
 namespace WebKit {
 
@@ -51,8 +48,7 @@ public:
     WebTransformationMatrix();
     WebTransformationMatrix(double a, double b, double c, double d, double e, double f);
     WebTransformationMatrix(const WebTransformationMatrix&);
-    ~WebTransformationMatrix() { reset(); }
-    void reset();
+    ~WebTransformationMatrix() { }
 
     // Operations that return a separate matrix and do not modify this one.
     WebTransformationMatrix inverse() const;
@@ -136,7 +132,7 @@ public:
 #if WEBKIT_IMPLEMENTATION
     // Conversions between WebKit::WebTransformationMatrix and WebCore::TransformationMatrix
     explicit WebTransformationMatrix(const WebCore::TransformationMatrix&);
-    WebCore::TransformationMatrix& toWebCoreTransform() const;
+    WebCore::TransformationMatrix toWebCoreTransform() const;
 
     // FIXME: these map functions should not exist, should be using CCMathUtil
     // instead. Eventually CCMathUtil functions could be merged here, but its
@@ -151,8 +147,26 @@ public:
 #endif
 
 protected:
-    WebPrivateOwnPtr<WebCore::TransformationMatrix> m_private;
+
+    // While migrating this code: Code that is external to WebKit should have no knowledge
+    // of WebCore::TransformationMatrix. But in those cases, this class still needs to
+    // be the same size so that the class can be passed back and forth between WebKit and
+    // non-WebKit code.
+    //
+    // The end goal is eventually for this class to only exist at the API boundary, as a
+    // conversion between WebCore TransformationMatrix and the compositor's internal
+    // implementation of matrix transforms.
+    //
+#if WEBKIT_IMPLEMENTATION
+    WebCore::TransformationMatrix m_private;
+#else
+    double m_matrix[4][4];
+#endif
 };
+
+#if WEBKIT_IMPLEMENTATION
+COMPILE_ASSERT(sizeof(WebCore::TransformationMatrix) == sizeof(double[4][4]), WebTransformationMatrix_has_unexpected_size);
+#endif
 
 } // namespace WebKit
 

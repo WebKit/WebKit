@@ -1,3 +1,89 @@
+2012-05-29  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] make WebTransformationMatrix object usable by non-webkit code
+        https://bugs.webkit.org/show_bug.cgi?id=87315
+
+        Reviewed by James Robinson.
+
+        This change is covered by existing tests and by whether it
+        compiles. There should be no changes in behavior.
+
+        * platform/chromium/support/WebTransformationMatrix.cpp:
+        (WebKit::WebTransformationMatrix::WebTransformationMatrix):
+        (WebKit::WebTransformationMatrix::operator=):
+        (WebKit::WebTransformationMatrix::operator==):
+        (WebKit::WebTransformationMatrix::inverse):
+        (WebKit::WebTransformationMatrix::to2dTransform):
+        (WebKit::WebTransformationMatrix::multiply):
+        (WebKit::WebTransformationMatrix::makeIdentity):
+        (WebKit::WebTransformationMatrix::translate):
+        (WebKit::WebTransformationMatrix::translate3d):
+        (WebKit::WebTransformationMatrix::translateRight3d):
+        (WebKit::WebTransformationMatrix::scale):
+        (WebKit::WebTransformationMatrix::scaleNonUniform):
+        (WebKit::WebTransformationMatrix::scale3d):
+        (WebKit::WebTransformationMatrix::rotate):
+        (WebKit::WebTransformationMatrix::rotate3d):
+        (WebKit::WebTransformationMatrix::skewX):
+        (WebKit::WebTransformationMatrix::skewY):
+        (WebKit::WebTransformationMatrix::applyPerspective):
+        (WebKit::WebTransformationMatrix::blend):
+        (WebKit::WebTransformationMatrix::hasPerspective):
+        (WebKit::WebTransformationMatrix::isInvertible):
+        (WebKit::WebTransformationMatrix::isBackFaceVisible):
+        (WebKit::WebTransformationMatrix::isIdentity):
+        (WebKit::WebTransformationMatrix::isIdentityOrTranslation):
+        (WebKit::WebTransformationMatrix::isIntegerTranslation):
+        (WebKit::WebTransformationMatrix::m11):
+        (WebKit::WebTransformationMatrix::setM11):
+        (WebKit::WebTransformationMatrix::m12):
+        (WebKit::WebTransformationMatrix::setM12):
+        (WebKit::WebTransformationMatrix::m13):
+        (WebKit::WebTransformationMatrix::setM13):
+        (WebKit::WebTransformationMatrix::m14):
+        (WebKit::WebTransformationMatrix::setM14):
+        (WebKit::WebTransformationMatrix::m21):
+        (WebKit::WebTransformationMatrix::setM21):
+        (WebKit::WebTransformationMatrix::m22):
+        (WebKit::WebTransformationMatrix::setM22):
+        (WebKit::WebTransformationMatrix::m23):
+        (WebKit::WebTransformationMatrix::setM23):
+        (WebKit::WebTransformationMatrix::m24):
+        (WebKit::WebTransformationMatrix::setM24):
+        (WebKit::WebTransformationMatrix::m31):
+        (WebKit::WebTransformationMatrix::setM31):
+        (WebKit::WebTransformationMatrix::m32):
+        (WebKit::WebTransformationMatrix::setM32):
+        (WebKit::WebTransformationMatrix::m33):
+        (WebKit::WebTransformationMatrix::setM33):
+        (WebKit::WebTransformationMatrix::m34):
+        (WebKit::WebTransformationMatrix::setM34):
+        (WebKit::WebTransformationMatrix::m41):
+        (WebKit::WebTransformationMatrix::setM41):
+        (WebKit::WebTransformationMatrix::m42):
+        (WebKit::WebTransformationMatrix::setM42):
+        (WebKit::WebTransformationMatrix::m43):
+        (WebKit::WebTransformationMatrix::setM43):
+        (WebKit::WebTransformationMatrix::m44):
+        (WebKit::WebTransformationMatrix::setM44):
+        (WebKit::WebTransformationMatrix::a):
+        (WebKit::WebTransformationMatrix::setA):
+        (WebKit::WebTransformationMatrix::b):
+        (WebKit::WebTransformationMatrix::setB):
+        (WebKit::WebTransformationMatrix::c):
+        (WebKit::WebTransformationMatrix::setC):
+        (WebKit::WebTransformationMatrix::d):
+        (WebKit::WebTransformationMatrix::setD):
+        (WebKit::WebTransformationMatrix::e):
+        (WebKit::WebTransformationMatrix::setE):
+        (WebKit::WebTransformationMatrix::f):
+        (WebKit::WebTransformationMatrix::setF):
+        (WebKit::WebTransformationMatrix::toWebCoreTransform):
+        (WebKit::WebTransformationMatrix::mapRect):
+        (WebKit::WebTransformationMatrix::mapPoint):
+        (WebKit::WebTransformationMatrix::mapQuad):
+        (WebKit::WebTransformationMatrix::projectPoint):
+
 2012-05-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Implement box-decoration-break parsing.

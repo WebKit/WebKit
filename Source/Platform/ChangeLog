@@ -1,3 +1,14 @@
+2012-05-29  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] make WebTransformationMatrix object usable by non-webkit code
+        https://bugs.webkit.org/show_bug.cgi?id=87315
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebKit::WebTransformationMatrix::~WebTransformationMatrix):
+        (WebTransformationMatrix):
+
 2012-05-25  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] Deprecate FileUtilities::getFileSize and getFileModifiedTime in favor of getFileMetadata
