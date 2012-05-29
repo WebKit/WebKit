@@ -1,3 +1,15 @@
+2012-05-29  Alexandre Elias  <aelias@google.com>
+
+        Support WebKit log messages on Android
+        https://bugs.webkit.org/show_bug.cgi?id=87773
+
+        Reviewed by Darin Adler.
+
+        This sends WebKit log messages to the Android "logcat" facility, as
+        Android sends stderr to /dev/null.
+
+        * wtf/Assertions.cpp:
+
 2012-05-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove duplication of logic for disabling selected warnings related to C++11

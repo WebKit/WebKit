@@ -58,6 +58,10 @@
 #include <execinfo.h>
 #endif
 
+#if OS(ANDROID)
+#include "android/log.h"
+#endif
+
 #if PLATFORM(BLACKBERRY)
 #include <BlackBerryPlatformLog.h>
 #endif
@@ -106,6 +110,8 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
 #elif PLATFORM(BLACKBERRY)
     BlackBerry::Platform::logStreamV(format, args);
+#elif OS(ANDROID)
+    __android_log_vprint(ANDROID_LOG_WARN, "WebKit", format, args);
 #elif HAVE(ISDEBUGGERPRESENT)
     if (IsDebuggerPresent()) {
         size_t size = 1024;
