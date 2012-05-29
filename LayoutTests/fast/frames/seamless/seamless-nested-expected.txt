@@ -1,6 +1,6 @@
 Test that nested seamless iframes size correctly.
-FAIL iframe.seamless should be true (of type boolean). Was undefined (of type undefined).
-FAIL nestedFrame.seamless should be true (of type boolean). Was undefined (of type undefined).
+PASS iframe.seamless is true
+PASS nestedFrame.seamless is true
 PASS window.getComputedStyle(iframe).width is "200px"
 PASS window.getComputedStyle(iframe).height is "100px"
 

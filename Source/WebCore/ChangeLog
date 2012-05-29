@@ -1,3 +1,14 @@
+2012-05-29  Eric Seidel  <eric@webkit.org>
+
+        Add HTMLIFrameElement.seamless property accessor now that seamless is enabled and works
+        https://bugs.webkit.org/show_bug.cgi?id=87708
+
+        Reviewed by Adam Barth.
+
+        Lots of tests in fast/frames/seamless cover this property.
+
+        * html/HTMLIFrameElement.idl:
+
 2012-05-29  Kentaro Hara  <haraken@chromium.org>
 
         [Performance] Optimize querySelector() and querySelectorAll() by removing

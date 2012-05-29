@@ -1,3 +1,19 @@
+2012-05-29  Eric Seidel  <eric@webkit.org>
+
+        Add HTMLIFrameElement.seamless property accessor now that seamless is enabled and works
+        https://bugs.webkit.org/show_bug.cgi?id=87708
+
+        Reviewed by Adam Barth.
+
+        * fast/frames/seamless/seamless-basic-expected.txt:
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt:
+        * fast/frames/seamless/seamless-nested-expected.txt:
+        * fast/frames/seamless/seamless-quirks-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-flag-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-srcdoc-expected.txt:
+        * http/tests/security/seamless/seamless-cross-origin-expected.txt:
+        * http/tests/security/seamless/seamless-sandbox-srcdoc-expected.txt:
+
 2012-05-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVGViewSpec DOM bindings aka SVGSVGElement.currentView is unimplemented

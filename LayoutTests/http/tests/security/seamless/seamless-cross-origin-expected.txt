@@ -1,5 +1,5 @@
-FAIL iframe1.seamless should be true (of type boolean). Was undefined (of type undefined).
-FAIL iframe2.seamless should be true (of type boolean). Was undefined (of type undefined).
+PASS iframe1.seamless is true
+PASS iframe2.seamless is true
 PASS window.getComputedStyle(iframe1).width is "200px"
 PASS window.getComputedStyle(iframe1).height is "100px"
 PASS window.getComputedStyle(iframe2).width is "300px"

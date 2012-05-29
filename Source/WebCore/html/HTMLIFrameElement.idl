@@ -29,6 +29,7 @@ module html {
         attribute [Reflect] DOMString marginWidth;
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString sandbox;
+        attribute [Reflect, Conditional=IFRAME_SEAMLESS] boolean seamless;
         attribute [Reflect] DOMString scrolling;
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString srcdoc;
