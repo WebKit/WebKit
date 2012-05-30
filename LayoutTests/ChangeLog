@@ -1,3 +1,12 @@
+2012-05-30  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Layout Test http/tests/media/media-source/webm/video-media-source-*.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=85952
+
+        Unreviewed Chromium expectations update to broaden expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-30  Jochen Eisinger  <jochen@chromium.org>
 
         Match Firefox restrictions to window.blur and window.focus
