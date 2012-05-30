@@ -1,3 +1,32 @@
+2012-05-30  David Barton  <dbarton@mathscribe.com>
+
+        mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86786
+
+        The test result files below contain slightly improved metrics (usually by a single
+        pixel) and some other very minor (visually undetectable) pixel changes. To be honest,
+        I'm not sure what caused all these changes, since a lot of mathml tests have been
+        skipped or failing for a while. The small metric improvements were not caused by changes
+        in mathml code - perhaps LayoutUnit rounding or other 1-pixel corrections in logical
+        width code? At any rate, I'd like to rebaseline these tests, and unskip them and other
+        mathml tests.
+
+        Unreviewed rebaselining/gardening.
+
+        * platform/mac-lion/Skipped:
+        * platform/mac/Skipped:
+        * platform/mac/mathml/presentation/attributes-expected.png:
+        * platform/mac/mathml/presentation/fenced-mi-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] http/tests/navigation/new-window-redirect-history.html does not pass
