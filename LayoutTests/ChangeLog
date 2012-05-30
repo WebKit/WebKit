@@ -1,3 +1,11 @@
+2012-05-30  Stephen Chenney  <schenney@chromium.org>
+
+        http/tests/cache/subresource-expiration-2.html is slow on Linux
+
+        Unreviewed Chromium test expectations expansion.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-30  Tim Horton  <timothy_horton@apple.com>
 
         fast/dom/Window/mozilla-focus-blur.html is failing on Mac
