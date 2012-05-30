@@ -46,6 +46,11 @@ uint32_t GraphicsSurface::exportToken()
     return platformExport();
 }
 
+uint32_t GraphicsSurface::getTextureID()
+{
+    return platformGetTextureID();
+}
+
 PassOwnPtr<GraphicsContext> GraphicsSurface::beginPaint(const IntRect& rect, LockOptions lockOptions)
 {
     int stride = 0;
@@ -57,6 +62,11 @@ PassOwnPtr<GraphicsContext> GraphicsSurface::beginPaint(const IntRect& rect, Loc
 void GraphicsSurface::copyToGLTexture(uint32_t target, uint32_t texture, const IntRect& targetRect, const IntPoint& offset)
 {
     platformCopyToGLTexture(target, texture, targetRect, offset);
+}
+
+void GraphicsSurface::copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect)
+{
+    platformCopyFromFramebuffer(fbo, sourceRect);
 }
 
 GraphicsSurface::GraphicsSurface(const IntSize& size, Flags flags)

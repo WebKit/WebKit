@@ -64,6 +64,13 @@ static uint32_t createTexture(IOSurfaceRef handle)
     return texture;
 }
 
+uint32_t GraphicsSurface::platformGetTextureID()
+{
+    if (!m_texture)
+        m_texture = createTexture(m_platformSurface);
+    return m_texture;
+}
+
 void GraphicsSurface::platformCopyToGLTexture(uint32_t target, uint32_t id, const IntRect& targetRect, const IntPoint& offset)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -81,6 +88,28 @@ void GraphicsSurface::platformCopyToGLTexture(uint32_t target, uint32_t id, cons
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, 0, 0);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     glPopAttrib();
+}
+
+void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntRect& sourceRect)
+{
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    if (!m_texture)
+        m_texture = createTexture(m_platformSurface);
+    if (!m_fbo)
+        glGenFramebuffers(1, &m_fbo);
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    glEnable(GL_TEXTURE_RECTANGLE_ARB);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, originFbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
+    glBlitFramebuffer(0, 0, sourceRect.width(), sourceRect.height(), 0, sourceRect.height(), sourceRect.width(), 0, GL_COLOR_BUFFER_BIT, GL_LINEAR); // Flip the texture upside down.
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, 0, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+    glPopAttrib();
+
+    // Flushing the gl command buffer is necessary to ensure the texture has correctly been bound to the IOSurface.
+    glFlush();
 }
 
 bool GraphicsSurface::platformCreate(const IntSize& size, Flags flags)

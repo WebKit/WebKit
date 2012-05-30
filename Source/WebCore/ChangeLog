@@ -1,3 +1,26 @@
+2012-05-30  Zeno Albisser  <zeno@webkit.org>
+
+        GraphicsSurface: allow importing and exporting of textures directly on GPU side.
+        https://bugs.webkit.org/show_bug.cgi?id=87725
+
+        Add copyFromFramebuffer function to copy a texture from an FBO
+        onto the GraphicsSurface.
+        Add getTextureID function to export the texture ID.
+        This allows binding/blitting the texture directly on the GPU.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::getTextureID):
+        (WebCore):
+        (WebCore::GraphicsSurface::copyFromFramebuffer):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        (GraphicsSurface):
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurface::platformGetTextureID):
+        (WebCore):
+        (WebCore::GraphicsSurface::platformCopyFromFramebuffer):
+
 2012-05-30  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement IDBTransaction.error and IDBRequest.error
