@@ -1,3 +1,9 @@
+2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening. Unskip test that is now passing.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium snowleopard rebaseline for background-position-parsing test following r118978.
