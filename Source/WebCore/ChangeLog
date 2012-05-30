@@ -1,3 +1,15 @@
+2012-05-30  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: disable ExactlyInt feature in InspectorTypeBuilder since it breaks release Windows 7 WK2
+        https://bugs.webkit.org/show_bug.cgi?id=87857
+
+        Reviewed by Yury Semikhatsky.
+
+        Code generator is patched to support old style of int parameter.
+
+        * inspector/CodeGeneratorInspector.py:
+        (TypeModel.init_class):
+
 2012-05-30  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Add trace() method to the WorkerConsole

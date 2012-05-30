@@ -67,6 +67,8 @@ TYPES_WITH_OPEN_FIELD_LIST_SET = frozenset(["Timeline.TimelineEvent",
                                             # InspectorResourceAgent needs to update mime-type.
                                             "Network.Response"])
 
+EXACTLY_INT_SUPPORTED = False
+
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
@@ -733,7 +735,10 @@ class TypeModel:
     @classmethod
     def init_class(cls):
         cls.Bool = cls.ValueType("bool", False)
-        cls.Int = cls.ExactlyInt()
+        if EXACTLY_INT_SUPPORTED:
+            cls.Int = cls.ExactlyInt()
+        else:
+            cls.Int = cls.ValueType("int", False)
         cls.Number = cls.ValueType("double", False)
         cls.String = cls.ValueType("String", True,)
         cls.Object = cls.RefPtrBased("InspectorObject")
