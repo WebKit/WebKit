@@ -1,3 +1,18 @@
+2012-05-30  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Remove useless string->char*->string conversion in NetworkJob.
+        https://bugs.webkit.org/show_bug.cgi?id=87861
+
+        Reviewed by Antonio Gomes.
+
+        RIM PR #152383: username is a WTF::String.  ResourceHandleInternal::m_user is a string.  Yet they're
+        assigned with "username = m_user.utf8().data()".  Pointless: "username = m_user" will do.
+
+        No new tests since there is no behaviour change.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-05-30  Dan Bernstein  <mitz@apple.com>
 
         [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8
