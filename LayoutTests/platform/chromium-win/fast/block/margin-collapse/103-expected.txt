@@ -1,5 +1,5 @@
-layer at (0,0) size 944x1750
-  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x1750
+  RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1750
   RenderBlock {HTML} at (0,0) size 785x1750
     RenderBody {BODY} at (8,20) size 769x1710 [bgcolor=#A6A972]
@@ -168,15 +168,15 @@ layer at (440,327) size 180x16
 layer at (113,791) size 506x106 clip at (114,792) size 504x104
   RenderTextControl {TEXTAREA} at (0,517) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x16
-layer at (438,1079) size 506x106 clip at (439,1080) size 504x104
-  RenderTextControl {TEXTAREA} at (325,805) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (113,1079) size 506x106 clip at (114,1080) size 504x104
+  RenderTextControl {TEXTAREA} at (0,805) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x16
-layer at (438,1210) size 506x106 clip at (439,1211) size 504x104
-  RenderTextControl {TEXTAREA} at (325,936) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (113,1210) size 506x106 clip at (114,1211) size 504x104
+  RenderTextControl {TEXTAREA} at (0,936) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x16
-layer at (438,1341) size 506x106 clip at (439,1342) size 504x104
-  RenderTextControl {TEXTAREA} at (325,1067) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (113,1341) size 506x106 clip at (114,1342) size 504x104
+  RenderTextControl {TEXTAREA} at (0,1067) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x16
-layer at (438,1519) size 506x106 clip at (439,1520) size 504x104
-  RenderTextControl {TEXTAREA} at (325,1245) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (113,1519) size 506x106 clip at (114,1520) size 504x104
+  RenderTextControl {TEXTAREA} at (0,1245) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x16

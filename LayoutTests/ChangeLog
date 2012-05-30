@@ -1,3 +1,13 @@
+2012-05-30  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed test expectations updates for window and mac now that we no longer skip a couple of tests on those platforms.
+
+        * platform/chromium-mac-leopard/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/chromium-win/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-win/fast/block/margin-collapse/103-expected.txt:
+
 2012-05-30  Dan Bernstein  <mitz@apple.com>
 
         [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8
