@@ -75,7 +75,7 @@ static bool isCharsetSpecifyingNode(Node* node)
         for (unsigned i = 0; i < element->attributeCount(); ++i) {
             Attribute* item = element->attributeItem(i);
             // FIXME: We should deal appropriately with the attribute if they have a namespace.
-            attributes.append(make_pair(item->name().toString(), item->value().string()));
+            attributes.append(std::make_pair(item->name().toString(), item->value().string()));
         }
     }
     TextEncoding textEncoding = HTMLMetaCharsetParser::encodingFromMetaAttributes(attributes);

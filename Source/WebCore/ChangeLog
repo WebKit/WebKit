@@ -1,3 +1,23 @@
+2012-05-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        HashTable.h has using directives for std::pair and std::make_pair
+        https://bugs.webkit.org/show_bug.cgi?id=29919
+
+        Reviewed by Darin Adler.
+
+        Change code to use std::pair and std::make_pair.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::postNotification):
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::processMeta):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::brokenImage):
+        * page/PageSerializer.cpp:
+        (WebCore::isCharsetSpecifyingNode):
+
 2012-05-30  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: disable ExactlyInt feature in InspectorTypeBuilder since it breaks release Windows 7 WK2

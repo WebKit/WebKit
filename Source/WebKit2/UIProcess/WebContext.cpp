@@ -451,7 +451,7 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
     if (!m_process || !m_process->canSendMessage()) {
-        m_pendingMessagesToPostToInjectedBundle.append(make_pair(messageName, messageBody));
+        m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
         return;
     }
 

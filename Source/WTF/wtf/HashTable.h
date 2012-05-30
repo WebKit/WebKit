@@ -285,7 +285,7 @@ namespace WTF {
     }
 
     // Swap pairs by component, in case of pair members that specialize swap.
-    template<typename T, typename U> inline void hashTableSwap(pair<T, U>& a, pair<T, U>& b)
+    template<typename T, typename U> inline void hashTableSwap(std::pair<T, U>& a, std::pair<T, U>& b)
     {
         swap(a.first, b.first);
         swap(a.second, b.second);
@@ -392,8 +392,8 @@ namespace WTF {
         static ValueType* allocateTable(int size);
         static void deallocateTable(ValueType* table, int size);
 
-        typedef pair<ValueType*, bool> LookupType;
-        typedef pair<LookupType, unsigned> FullLookupType;
+        typedef std::pair<ValueType*, bool> LookupType;
+        typedef std::pair<LookupType, unsigned> FullLookupType;
 
         LookupType lookupForWriting(const Key& key) { return lookupForWriting<IdentityTranslatorType>(key); };
         template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);

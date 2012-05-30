@@ -525,7 +525,7 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         return;
 
     if (postType == PostAsynchronously) {
-        m_notificationsToPost.append(make_pair(object, notification));
+        m_notificationsToPost.append(std::make_pair(object, notification));
         if (!m_notificationPostTimer.isActive())
             m_notificationPostTimer.startOneShot(0);
     } else

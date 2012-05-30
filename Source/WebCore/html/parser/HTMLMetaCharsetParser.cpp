@@ -107,7 +107,7 @@ bool HTMLMetaCharsetParser::processMeta()
     for (HTMLToken::AttributeList::const_iterator iter = tokenAttributes.begin(); iter != tokenAttributes.end(); ++iter) {
         String attributeName(iter->m_name.data(), iter->m_name.size());
         String attributeValue(iter->m_value.data(), iter->m_value.size());
-        attributes.append(make_pair(attributeName, attributeValue));
+        attributes.append(std::make_pair(attributeName, attributeValue));
     }
 
     m_encoding = encodingFromMetaAttributes(attributes);

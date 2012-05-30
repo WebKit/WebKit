@@ -151,7 +151,7 @@ void MediaFragmentURIParser::parseFragments()
         }
         
         if (validUTF8)
-            m_fragments.append(make_pair(name, value));
+            m_fragments.append(std::make_pair(name, value));
 
         offset = parameterEnd + 1;
     }
