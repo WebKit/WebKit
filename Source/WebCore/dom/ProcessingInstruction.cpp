@@ -280,7 +280,7 @@ int ProcessingInstruction::maxCharacterOffset() const
     return static_cast<int>(m_data.length());
 }
 
-void ProcessingInstruction::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (!sheet())
         return;

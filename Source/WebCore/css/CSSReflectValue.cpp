@@ -59,10 +59,10 @@ String CSSReflectValue::customCssText() const
     return result;
 }
 
-void CSSReflectValue::collectSubresourceURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
 {
     if (m_mask)
-        m_mask->collectSubresourceURLs(urls, styleSheet);
+        m_mask->addSubresourceStyleURLs(urls, styleSheet);
 }
 
 } // namespace WebCore

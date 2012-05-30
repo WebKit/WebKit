@@ -1378,9 +1378,9 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);
 }
 
-void HTMLInputElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    HTMLTextFormControlElement::collectSubresourceURLsFromAttributes(urls);
+    HTMLTextFormControlElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, src());
 }

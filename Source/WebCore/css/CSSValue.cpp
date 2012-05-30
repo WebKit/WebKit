@@ -99,19 +99,19 @@ CSSValue::Type CSSValue::cssValueType() const
     return CSS_CUSTOM;
 }
 
-void CSSValue::collectSubresourceURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
 {
     // This should get called for internal instances only.
     ASSERT(!isCSSOMSafe());
 
     if (isPrimitiveValue())
-        static_cast<const CSSPrimitiveValue*>(this)->collectSubresourceURLs(urls, styleSheet);
+        static_cast<const CSSPrimitiveValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (isValueList())
-        static_cast<const CSSValueList*>(this)->collectSubresourceURLs(urls, styleSheet);
+        static_cast<const CSSValueList*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (classType() == FontFaceSrcClass)
-        static_cast<const CSSFontFaceSrcValue*>(this)->collectSubresourceURLs(urls, styleSheet);
+        static_cast<const CSSFontFaceSrcValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (classType() == ReflectClass)
-        static_cast<const CSSReflectValue*>(this)->collectSubresourceURLs(urls, styleSheet);
+        static_cast<const CSSReflectValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
 }
 
 String CSSValue::cssText() const

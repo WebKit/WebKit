@@ -60,7 +60,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
  
     virtual const QualifiedName& imageSourceAttributeName() const;       
-    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual bool haveLoadedRequiredResources();
 

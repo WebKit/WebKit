@@ -80,7 +80,7 @@ public:
     bool loadCompleted() const { return m_loadCompleted; }
 
     KURL completeURL(const String& url) const;
-    void collectSubresourceURLs(ListHashSet<KURL>&);
+    void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }

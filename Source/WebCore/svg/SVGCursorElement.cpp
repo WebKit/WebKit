@@ -134,9 +134,9 @@ void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
         (*it)->setNeedsStyleRecalc();
 }
 
-void SVGCursorElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void SVGCursorElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    SVGElement::collectSubresourceURLsFromAttributes(urls);
+    SVGElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(href()));
 }

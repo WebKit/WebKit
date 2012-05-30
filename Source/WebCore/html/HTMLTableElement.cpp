@@ -582,9 +582,9 @@ String HTMLTableElement::summary() const
     return getAttribute(summaryAttr);
 }
 
-void HTMLTableElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    HTMLElement::collectSubresourceURLsFromAttributes(urls);
+    HTMLElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }

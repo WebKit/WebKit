@@ -210,9 +210,9 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* fil
     return FEImage::createWithIRIReference(filter, document(), href(), preserveAspectRatio());
 }
 
-void SVGFEImageElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    SVGFilterPrimitiveStandardAttributes::collectSubresourceURLsFromAttributes(urls);
+    SVGFilterPrimitiveStandardAttributes::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(href()));
 }

@@ -74,7 +74,7 @@ protected:
     void addPropertyToAttributeStyle(StylePropertySet*, CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes);
     void addPropertyToAttributeStyle(StylePropertySet*, CSSPropertyID, const String& value);
 
-    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     // classAttributeChanged() exists to share code between
     // parseAttribute (called via setAttribute()) and

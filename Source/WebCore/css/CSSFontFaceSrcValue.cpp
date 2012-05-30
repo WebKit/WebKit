@@ -73,7 +73,7 @@ String CSSFontFaceSrcValue::customCssText() const
     return result;
 }
 
-void CSSFontFaceSrcValue::collectSubresourceURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
 {
     if (!isLocal())
         addSubresourceURL(urls, styleSheet->completeURL(m_resource));

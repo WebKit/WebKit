@@ -79,7 +79,7 @@ private:
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
     virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
-    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     enum TableRules { UnsetRules, NoneRules, GroupsRules, RowsRules, ColsRules, AllRules };
     enum CellBorders { NoBorders, SolidBorders, InsetBorders, SolidBordersColsOnly, SolidBordersRowsOnly };

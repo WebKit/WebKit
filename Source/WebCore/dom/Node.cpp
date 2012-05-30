@@ -2423,9 +2423,7 @@ bool NodeListsNodeData::isEmpty() const
 
 void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
 {
-    if (!isElementNode())
-        return;
-    static_cast<const Element*>(this)->collectSubresourceURLsFromAttributes(urls);
+    addSubresourceAttributeURLs(urls);
 }
 
 Node* Node::enclosingLinkEventParentOrSelf()

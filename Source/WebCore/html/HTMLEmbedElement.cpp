@@ -216,9 +216,9 @@ const QualifiedName& HTMLEmbedElement::imageSourceAttributeName() const
     return srcAttr;
 }
 
-void HTMLEmbedElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    HTMLPlugInImageElement::collectSubresourceURLsFromAttributes(urls);
+    HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(getAttribute(srcAttr)));
 }

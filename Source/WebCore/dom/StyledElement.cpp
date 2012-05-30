@@ -239,10 +239,10 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
     return changes;
 }
 
-void StyledElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
+void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)
-        inlineStyle->collectSubresourceURLs(urls, document()->elementSheet()->contents());
+        inlineStyle->addSubresourceStyleURLs(urls, document()->elementSheet()->contents());
 }
 
 static inline bool attributeNameSort(const pair<AtomicStringImpl*, AtomicString>& p1, const pair<AtomicStringImpl*, AtomicString>& p2)

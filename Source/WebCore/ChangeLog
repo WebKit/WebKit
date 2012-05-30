@@ -1,3 +1,116 @@
+2012-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118913.
+        http://trac.webkit.org/changeset/118913
+        https://bugs.webkit.org/show_bug.cgi?id=87891
+
+        patch is incorrect (see comments in
+        https://bugs.webkit.org/show_bug.cgi?id=87889) (Requested by
+        thorton on #webkit).
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::addSubresourceStyleURLs):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::addSubresourceStyleURLs):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::addSubresourceStyleURLs):
+        * css/CSSReflectValue.h:
+        (CSSReflectValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        * css/CSSValue.h:
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::addSubresourceStyleURLs):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::addSubresourceStyleURLs):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::addSubresourceStyleURLs):
+        * css/StyleSheetContents.h:
+        (StyleSheetContents):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::getSubresourceURLs):
+        * dom/Node.h:
+        (WebCore::Node::addSubresourceAttributeURLs):
+        (WebCore):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::addSubresourceAttributeURLs):
+        * dom/ProcessingInstruction.h:
+        (ProcessingInstruction):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs):
+        * html/HTMLBodyElement.h:
+        (HTMLBodyElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::addSubresourceAttributeURLs):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::addSubresourceAttributeURLs):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs):
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::addSubresourceAttributeURLs):
+        * html/HTMLObjectElement.h:
+        (HTMLObjectElement):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::addSubresourceAttributeURLs):
+        * html/HTMLParamElement.h:
+        (HTMLParamElement):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::addSubresourceAttributeURLs):
+        * html/HTMLScriptElement.h:
+        (HTMLScriptElement):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs):
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::addSubresourceAttributeURLs):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::addSubresourceAttributeURLs):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::addSubresourceAttributeURLs):
+        * svg/SVGCursorElement.h:
+        (SVGCursorElement):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::addSubresourceAttributeURLs):
+        * svg/SVGFEImageElement.h:
+        (SVGFEImageElement):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::addSubresourceAttributeURLs):
+        * svg/SVGImageElement.h:
+        (SVGImageElement):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::addSubresourceAttributeURLs):
+        * svg/SVGScriptElement.h:
+        (SVGScriptElement):
+
 2012-05-30  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Rename offsetTopLeft in RenderBoxModelObject to something better

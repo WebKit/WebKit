@@ -107,7 +107,7 @@ public:
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 
-    void collectSubresourceURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
+    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
 
 protected:
 

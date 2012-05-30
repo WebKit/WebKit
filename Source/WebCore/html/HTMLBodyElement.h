@@ -90,7 +90,7 @@ private:
     virtual int scrollHeight();
     virtual int scrollWidth();
     
-    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 };
 
 } //namespace

@@ -76,7 +76,7 @@ private:
     bool isLoading() const;
     virtual bool sheetLoaded();
 
-    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     void parseStyleSheet(const String& sheet);
 
