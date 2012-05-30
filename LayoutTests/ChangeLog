@@ -1,3 +1,12 @@
+2012-05-30  David Barr  <davidbarr@chromium.org>
+
+        [GTK] Update test expectations after r118841.
+        https://bugs.webkit.org/show_bug.cgi?id=87827
+
+        Unreviewed gardening; updating test expectations
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-30  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM] HTMLContentElement and HTMLShadowElement constructors should be visible.

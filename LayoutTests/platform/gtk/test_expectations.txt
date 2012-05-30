@@ -1280,7 +1280,6 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = FAIL
 
 BUGWK86328 : media/video-controls-toggling.html = FAIL
-BUGWK86328 : media/video-controls-rendering-toggle-display-none.html = FAIL
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-false.html = FAIL
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-true.html = FAIL
