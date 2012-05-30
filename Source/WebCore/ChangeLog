@@ -1,3 +1,20 @@
+2012-05-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 108550
+
+    2012-02-22  Anders Carlsson  <andersca@apple.com>
+
+            Crash when marking cached pages for full style recalc
+            https://bugs.webkit.org/show_bug.cgi?id=79276
+            <rdar://problem/10884036>
+
+            Reviewed by Beth Dakin.
+
+            Guard against a null history item.
+
+            * history/BackForwardController.cpp:
+            (WebCore::BackForwardController::markPagesForFullStyleRecalc):
+
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
     Merge 109480
