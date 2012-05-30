@@ -122,7 +122,7 @@ void HTMLIFrameElement::removedFrom(ContainerNode* insertionPoint)
 
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const
 {
-    return contentDocument() && contentDocument()->mayDisplaySeamlessWithParent() && hasAttribute(seamlessAttr);
+    return contentDocument() && contentDocument()->shouldDisplaySeamlesslyWithParent();
 }
 
 void HTMLIFrameElement::didRecalcStyle(StyleChange styleChange)

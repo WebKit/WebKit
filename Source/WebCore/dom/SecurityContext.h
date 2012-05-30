@@ -67,8 +67,6 @@ public:
 
     static SandboxFlags parseSandboxPolicy(const String& policy);
 
-    bool mayDisplaySeamlessWithParent() const { return m_mayDisplaySeamlessWithParent; }
-
 protected:
     SecurityContext();
     ~SecurityContext();

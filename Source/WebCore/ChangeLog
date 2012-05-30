@@ -1,3 +1,26 @@
+2012-05-29  Eric Seidel  <eric@webkit.org>
+
+        Fix ENABLE_IFRAME_SEAMLESS to actually fully disable <iframe seamless>
+        https://bugs.webkit.org/show_bug.cgi?id=87646
+
+        Reviewed by Adam Barth.
+
+        In the process of moving the seamless feature out of github and into bugs.webkit.org
+        multiple versions of the shouldDisplaySeamlessly function got written
+        (and moved from HTMLIFrameElement to Document), but only one of them was wrapped
+        in ENABLE_IFRAME_SEAMLESS.  HTMLIFrameElement was checking mayDisplaySeamlessly
+        directly (as was my original design), which got around the ENABLE_IFRAME_SEAMLESS check.
+        I've fixed this oversight, and the feature is now off when we tell it to be off.
+
+        This is covered by many existing tests.  I've verified locally that
+        all tests fail when ENABLE_IFRAME_SEAMLESS is disabled instead of
+        only some of them.
+
+        * dom/SecurityContext.h:
+        (SecurityContext):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::shouldDisplaySeamlessly):
+
 2012-05-29  Scott Graham  <scottmg@chromium.org>
 
         Fix warning in preprocessing Source/WebCore/dom/DOMError.idl
