@@ -1,3 +1,11 @@
+2012-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Gardening. Shadow DOM is disabled on Qt.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped: Skip fast/dom/shadow/shadow-element.html.
+
 2012-05-30  David Barr  <davidbarr@chromium.org>
 
         Update test expectations for tests duplicated in Skipped

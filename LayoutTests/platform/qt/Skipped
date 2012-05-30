@@ -197,6 +197,7 @@ fast/dom/shadow/shadow-contents-fallback.html
 fast/dom/shadow/shadow-dom-event-dispatching.html
 fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html
 fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-element.html
 fast/dom/shadow/shadow-element-rendering-single.html
 fast/dom/shadow/shadow-element-rendering-multiple.html
 fast/dom/shadow/shadow-on-image.html
