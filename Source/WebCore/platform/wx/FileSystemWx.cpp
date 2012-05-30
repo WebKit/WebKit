@@ -91,7 +91,7 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     if (!wxFileExists(path))
         return false;
     wxFileName fileName(path);
-    metadata.length = fileName.GetSize();
+    metadata.length = fileName.GetSize().GetValue();
     metadata.modificationTime = fileName.GetModificationTime().GetTicks();
     metadata.type = fileName.IsDir() ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
     return true;
