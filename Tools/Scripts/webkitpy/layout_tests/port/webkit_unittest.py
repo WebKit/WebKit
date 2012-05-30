@@ -277,6 +277,7 @@ class WebKitDriverTest(unittest.TestCase):
         self.assertEquals(content_block.content_type, 'my_type')
         self.assertEquals(content_block.encoding, 'none')
         self.assertEquals(content_block.content_hash, 'foobar')
+        driver._server_process = None
 
     def test_read_binary_block(self):
         port = TestWebKitPort()
@@ -294,6 +295,7 @@ class WebKitDriverTest(unittest.TestCase):
         self.assertEquals(content_block.content_hash, 'actual')
         self.assertEquals(content_block.content, '12345678')
         self.assertEquals(content_block.decoded_content, '12345678')
+        driver._server_process = None
 
     def test_no_timeout(self):
         port = TestWebKitPort()
@@ -317,10 +319,14 @@ class WebKitDriverTest(unittest.TestCase):
             def has_crashed(self):
                 return self.crashed
 
+            def stop(self):
+                pass
+
         def assert_crash(driver, error_line, crashed, name, pid):
             self.assertEquals(driver._check_for_driver_crash(error_line), crashed)
             self.assertEquals(driver._crashed_process_name, name)
             self.assertEquals(driver._crashed_pid, pid)
+            driver.stop()
 
         driver._server_process = FakeServerProcess(False)
         assert_crash(driver, '', False, None, None)
@@ -344,3 +350,18 @@ class WebKitDriverTest(unittest.TestCase):
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(True)
         assert_crash(driver, '', True, 'FakeServerProcess', 1234)
+
+    def test_creating_a_port_does_not_write_to_the_filesystem(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0, pixel_tests=True)
+        self.assertEquals(port._filesystem.written_files, {})
+        self.assertEquals(port._filesystem.last_tmpdir, None)
+
+    def test_stop_cleans_up_properly(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0, pixel_tests=True)
+        driver.start(True, [])
+        last_tmpdir = port._filesystem.last_tmpdir
+        self.assertNotEquals(last_tmpdir, None)
+        driver.stop()
+        self.assertFalse(port._filesystem.isdir(last_tmpdir))

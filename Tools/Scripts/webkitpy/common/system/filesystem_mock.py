@@ -47,6 +47,7 @@ class MockFileSystem(object):
         """
         self.files = files or {}
         self.written_files = {}
+        self.last_tmpdir = None
         self._sep = '/'
         self.current_tmpno = 0
         self.cwd = cwd
@@ -233,7 +234,8 @@ class MockFileSystem(object):
             dir = self.sep + '__im_tmp'
         curno = self.current_tmpno
         self.current_tmpno += 1
-        return self.join(dir, "%s_%u_%s" % (prefix, curno, suffix))
+        self.last_tmpdir = self.join(dir, '%s_%u_%s' % (prefix, curno, suffix))
+        return self.last_tmpdir
 
     def mkdtemp(self, **kwargs):
         class TemporaryDirectory(object):

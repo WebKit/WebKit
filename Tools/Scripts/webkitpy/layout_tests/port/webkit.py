@@ -441,7 +441,7 @@ class WebKitDriver(Driver):
 
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         Driver.__init__(self, port, worker_number, pixel_tests, no_timeout)
-        self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
+        self._driver_tempdir = None
         # WebKitTestRunner can report back subprocess crashes by printing
         # "#CRASHED - PROCESSNAME".  Since those can happen at any time
         # and ServerProcess won't be aware of them (since the actual tool
@@ -457,10 +457,9 @@ class WebKitDriver(Driver):
         self.err_seen_eof = False
         self._server_process = None
 
-    # FIXME: This may be unsafe, as python does not guarentee any ordering of __del__ calls
-    # I believe it's possible that self._port or self._port._filesystem may already be destroyed.
     def __del__(self):
-        self._port._filesystem.rmtree(str(self._driver_tempdir))
+        assert(self._server_process is None)
+        assert(self._driver_tempdir is None)
 
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
@@ -485,6 +484,7 @@ class WebKitDriver(Driver):
         return cmd
 
     def _start(self, pixel_tests, per_test_args):
+        self._driver_tempdir = self._port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         environment['DYLD_LIBRARY_PATH'] = self._port._build_path()
@@ -667,6 +667,10 @@ class WebKitDriver(Driver):
         if self._server_process:
             self._server_process.stop()
             self._server_process = None
+
+        if self._driver_tempdir:
+            self._port._filesystem.rmtree(str(self._driver_tempdir))
+            self._driver_tempdir = None
 
 
 class ContentBlock(object):

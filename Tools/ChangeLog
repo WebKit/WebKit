@@ -1,3 +1,35 @@
+2012-05-30  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: seems to leak temp dirs
+        https://bugs.webkit.org/show_bug.cgi?id=87795
+
+        Reviewed by Ojan Vafai.
+
+        There appears to be a bug where the chromium bots are creating
+        temporary directories and not cleaning them up that started
+        after the switch to WebKitDriver. It's possible that __del__
+        wasn't getting called in a timely manner (or at all), and it's
+        generally bad style to rely on __del__ being called, so this
+        code changes things so that we create a temp dir in
+        driver.start() and remove it in driver.stop(). We could be
+        paranoid and leave the __del__ code in, but there doesn't seem
+        to be much advantage to it. If there are bugs that result in
+        drivers being started but not stopped, we have other problems.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.__init__):
+        (MockFileSystem._mktemp):
+        (MockFileSystem.mkdtemp):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver._start):
+        (WebKitDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_check_for_driver_crash):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_creating_a_port_does_not_write_to_the_filesystem):
+        (WebKitDriverTest.test_stop_cleans_up_properly):
+
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT should print the number of MessagePorts for new each new intent
