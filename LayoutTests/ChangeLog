@@ -1,3 +1,9 @@
+2012-05-30  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed Chromium test expectations for fast/layers/scroll-with-transform-composited-layer.html
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
 
         The tests listed in win/Skipped should be removed after this change, but some of these need to rebaseline in Windows, we do that in bug#87610.
