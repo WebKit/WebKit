@@ -282,7 +282,7 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
 
     QRectF endVisibleContentRect(endPosition / endItemScale, m_viewport->boundingRect().size() / endItemScale);
 
-    ViewportUpdateDeferrer(this);
+    ViewportUpdateDeferrer guard(this);
     setItemRectVisible(endVisibleContentRect);
 }
 
@@ -547,7 +547,7 @@ void QtViewportInteractionEngine::cancelScrollAnimation()
     // immediately positioned back to valid boundaries.
 
     m_viewport->cancelFlick();
-    ViewportUpdateDeferrer(this);
+    ViewportUpdateDeferrer guard(this);
     setItemRectVisible(nearestValidBounds());
 }
 
@@ -631,7 +631,7 @@ void QtViewportInteractionEngine::itemSizeChanged()
     if (m_suspendCount)
         return;
 
-    ViewportUpdateDeferrer(this);
+    ViewportUpdateDeferrer guard(this);
     setItemRectVisible(nearestValidBounds());
 }
 

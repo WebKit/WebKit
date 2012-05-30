@@ -1,3 +1,15 @@
+2012-05-30  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Do not use anonymous variables for ViewportUpdateDeferrer.
+        https://bugs.webkit.org/show_bug.cgi?id=87831
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::itemSizeChanged):
+
 2012-05-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2GTK+ API tests in the bots.
