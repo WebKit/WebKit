@@ -627,10 +627,6 @@ media/audio-garbage-collect.html
 # http://bugs.webkit.org/show_bug.cgi?id=81618
 fast/workers/storage/use-same-database-in-page-and-workers.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=81276
-# Allowed to regress to fix a crash.
-fast/inline/continuation-outlines-with-layers.html
-
 # Not possible to set UA string for media requests with all Mac media engines.
 http/tests/media/video-useragent.html
 
@@ -792,9 +788,6 @@ fast/dom/inline-event-attributes-release.html
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
 
-# Requires rebaseline after bug 83978
-tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
-
 # The Mac port does not support the legacy WebKitBlobBuilder class.
 fast/files/blob-builder-crash.html
 
@@ -837,9 +830,6 @@ http/tests/loading/post-in-iframe-with-back-navigation.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=86000
 http/tests/security/referrer-policy-redirect-link.html
-
-# Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
-ietestcenter/css3/valuesandunits/units-000.htm
 
 # Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
 inspector/extensions/extensions-eval-content-script.html

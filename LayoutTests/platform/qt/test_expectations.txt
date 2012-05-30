@@ -17,7 +17,9 @@ BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
-BUGWK82886 : inspector/styles/override-screen-size.html = TEXT
+// Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
+// https://bugs.webkit.org/show_bug.cgi?id=82886
+BUGWK82886 SKIP : inspector/styles/override-screen-size.html = TEXT
 
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
@@ -59,7 +61,9 @@ BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 // Interferes with the tests that should pass
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+// ietestcenter/css3/valuesandunits/units-000.htm asserts
+// https://bugs.webkit.org/show_bug.cgi?id=86176
+BUGWK85308 SKIP : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures
@@ -71,11 +75,12 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 
 // Needs rebaseline after bug 86441
-BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
+// failing new tests
+BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
-BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
+BUGWK85405 SKIP: tables/mozilla/bugs/bug10296-1.html = TEXT
 
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL

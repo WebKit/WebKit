@@ -286,10 +286,6 @@ http/tests/inspector/compiler-source-mapping-debug.html
 # https://bugs.webkit.org/show_bug.cgi?id=79068
 inspector/styles/svg-style.xhtml
 
-# Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
-# https://bugs.webkit.org/show_bug.cgi?id=82886
-inspector/styles/override-screen-size.html
-
 # Microdata DOM API is not yet enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=68610
 fast/dom/MicroData
@@ -2094,7 +2090,6 @@ transitions/default-timing-function.html
 http/tests/inspector/console-websocket-error.html
 
 # failing new tests
-fast/borders/border-antialiasing.html
 fast/box-shadow/single-pixel-shadow.html
 fast/text/selection-rect-rounding.html
 svg/custom/painting-marker-07-f-inherit.svg
@@ -2449,10 +2444,6 @@ inspector/debugger/source-frame.html
 # https://bugs.webkit.org/show_bug.cgi?id=86066
 http/tests/cookies/single-quoted-value.html
 
-# ietestcenter/css3/valuesandunits/units-000.htm asserts
-# https://bugs.webkit.org/show_bug.cgi?id=86176
-ietestcenter/css3/valuesandunits/units-000.htm
-
 # Viewport attribute values are leaked when document.write() is used.
 # https://bugs.webkit.org/show_bug.cgi?id=86077
 html5lib/runner.html
@@ -2472,9 +2463,6 @@ inspector/extensions/extensions-audits-content-script.html
 # [Qt][GTK] New fast/multicol/split-in-top-margin.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=86445
 fast/multicol/split-in-top-margin.html
-
-# LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
-editing/inserting/typing-space-to-trigger-smart-link.html
 
 # [Qt] new test fast/block/positioning/fixed-position-stacking-context.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=87367

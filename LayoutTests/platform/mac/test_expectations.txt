@@ -155,10 +155,12 @@ BUGWK74874 : fast/table/027-vertical.html = TEXT
 
 // Need rebaselining. Only TEXT is suppressed because that is all the buildbots check, however
 // images need to be rebaselined too.
-BUGWK69210: fast/encoding/utf-16-big-endian.html = TEXT
+BUGWK69210 SKIP: fast/encoding/utf-16-big-endian.html = TEXT
 BUGWK69210: fast/encoding/utf-16-little-endian.html = TEXT
 BUGWK69210: fast/inline/continuation-outlines-with-layers-2.html = TEXT
-BUGWK69210: fast/inline/continuation-outlines-with-layers.html = TEXT
+// https://bugs.webkit.org/show_bug.cgi?id=81276
+// Allowed to regress to fix a crash.
+BUGWK69210 SKIP: fast/inline/continuation-outlines-with-layers.html = TEXT
 BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 
 // Tiled-layer compositing tests are flakey.
@@ -167,7 +169,7 @@ BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
 BUGWK84604 FUTURE : fast/js/global-constructors.html = TEXT
 
 // Requires rebaseline after bug 83978
-BUGWK83978 : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
+BUGWK83978 SKIP : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
@@ -213,7 +215,8 @@ BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 // Interferes with the tests that should pass
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+// Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
+BUGWK85308 SKIP : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures
