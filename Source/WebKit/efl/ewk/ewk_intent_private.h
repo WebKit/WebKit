@@ -29,11 +29,15 @@
 namespace WebCore {
 class Intent;
 class IntentRequest;
+class SerializedScriptValue;
 }
 
 Ewk_Intent* ewk_intent_new(WebCore::Intent* core);
 void ewk_intent_free(Ewk_Intent* intent);
 Ewk_Intent_Request* ewk_intent_request_new(PassRefPtr<WebCore::IntentRequest> core);
+
+void ewk_intent_request_result_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> result);
+void ewk_intent_request_failure_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> failure);
 #endif
 
 #endif // ewk_intent_private_h

@@ -1,3 +1,18 @@
+2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Ewk_Intent_Request's postResult/postFailure should take serialized script values in argument
+        https://bugs.webkit.org/show_bug.cgi?id=87829
+
+        Reviewed by Adam Barth.
+
+        EFL's LayoutTestController now makes uses of the new helper method in
+        DumpRenderTreeSupportEfl in order to send the intent response. This is
+        now needed because the Ewk_Intent_Request postResult / postFailure
+        methods were made private.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::sendWebIntentResponse):
+
 2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
 
         eventSender.beginDragWithFiles should be implemented in Windows, which blocked drag and drop related tests.

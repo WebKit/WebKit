@@ -31,6 +31,7 @@
 
 typedef struct _Evas_Object Evas_Object;
 typedef struct _Ewk_History_Item Ewk_History_Item;
+typedef struct _Ewk_Intent_Request Ewk_Intent_Request;
 
 typedef Vector<Ewk_History_Item*> HistoryItemChildrenVector;
 
@@ -104,6 +105,7 @@ public:
     static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
     static void setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool);
     static void setSerializeHTTPLoads(bool);
+    static void sendWebIntentResponse(Ewk_Intent_Request*, JSStringRef response);
 
     // TextInputController
     static void setComposition(Evas_Object*, const char*, int, int);

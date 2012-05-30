@@ -80,27 +80,43 @@ Ewk_Intent* ewk_intent_request_intent_get(const Ewk_Intent_Request* request)
 #endif
 }
 
-void ewk_intent_request_result_post(Ewk_Intent_Request* request, const char* result)
-{
 #if ENABLE(WEB_INTENTS)
+/**
+ * @internal
+ *
+ * Report request success.
+ *
+ * The serialized payload data will be passed to the success callback registered by the
+ * client.
+ *
+ * @param request request item.
+ * @param result serialized payload data.
+ */
+void ewk_intent_request_result_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> result)
+{
     EWK_INTENT_REQUEST_CORE_GET_OR_RETURN(request, core);
 
-    RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::create(String::fromUTF8(result));
-    core->postResult(value.release().leakRef());
-#endif
+    core->postResult(result.get());
 }
 
-void ewk_intent_request_failure_post(Ewk_Intent_Request* request, const char* failure)
+/**
+ * @internal
+ *
+ * Report request failure.
+ *
+ * The serialized payload data will be passed to the error callback registered by the
+ * client.
+ *
+ * @param request request item.
+ * @param failure serialized payload data.
+ */
+void ewk_intent_request_failure_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> failure)
 {
-#if ENABLE(WEB_INTENTS)
     EWK_INTENT_REQUEST_CORE_GET_OR_RETURN(request, core);
 
-    RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::create(String::fromUTF8(failure));
-    core->postFailure(value.release().leakRef());
-#endif
+    core->postFailure(failure.get());
 }
 
-#if ENABLE(WEB_INTENTS)
 /**
  * @internal
  *

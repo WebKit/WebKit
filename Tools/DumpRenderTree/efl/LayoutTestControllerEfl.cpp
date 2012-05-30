@@ -883,9 +883,5 @@ void LayoutTestController::sendWebIntentResponse(JSStringRef response)
     if (!request)
         return;
 
-    JSC::UString responseString = response->ustring();
-    if (responseString.isNull())
-        ewk_intent_request_failure_post(request, "ERROR");
-    else
-        ewk_intent_request_result_post(request, responseString.utf8().data());
+    DumpRenderTreeSupportEfl::sendWebIntentResponse(request, response);
 }

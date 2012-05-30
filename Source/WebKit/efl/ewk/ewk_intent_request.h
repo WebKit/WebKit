@@ -56,26 +56,6 @@ EAPI void ewk_intent_request_unref(Ewk_Intent_Request *request);
  */
 EAPI Ewk_Intent *ewk_intent_request_intent_get(const Ewk_Intent_Request *request);
 
-/**
- * Report request success.
- *
- * The payload data will be passed to the success callback registered by the client.
- *
- * @param request request item.
- * @param result payload data.
- */
-EAPI void ewk_intent_request_result_post(Ewk_Intent_Request *request, const char *result);
-
-/**
- * Report request failure.
- *
- * The payload data will be passed to the error callback registered by the client.
- *
- * @param request request item.
- * @param failure payload data.
- */
-EAPI void ewk_intent_request_failure_post(Ewk_Intent_Request *request, const char *failure);
-
 #ifdef __cplusplus
 }
 #endif

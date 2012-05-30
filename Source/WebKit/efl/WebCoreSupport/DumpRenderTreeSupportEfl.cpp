@@ -24,6 +24,7 @@
 #include "FrameLoaderClientEfl.h"
 #include "ewk_frame_private.h"
 #include "ewk_history_private.h"
+#include "ewk_intent_private.h"
 #include "ewk_private.h"
 #include "ewk_view_private.h"
 
@@ -43,6 +44,7 @@
 #include <IntRect.h>
 #include <JSCSSStyleDeclaration.h>
 #include <JSElement.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <MemoryCache.h>
 #include <PageGroup.h>
 #include <PrintContext.h>
@@ -664,6 +666,17 @@ void DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(Evas_Object* ewkVie
 void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)
 {
     WebCore::resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
+}
+
+void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request, JSStringRef response)
+{
+#if ENABLE(WEB_INTENTS)
+    JSC::UString responseString = response->ustring();
+    if (responseString.isNull())
+        ewk_intent_request_failure_post(request, WebCore::SerializedScriptValue::create(String::fromUTF8("ERROR")));
+    else
+        ewk_intent_request_result_post(request, WebCore::SerializedScriptValue::create(String(responseString.impl())));
+#endif
 }
 
 void DumpRenderTreeSupportEfl::setComposition(Evas_Object* ewkView, const char* text, int start, int length)

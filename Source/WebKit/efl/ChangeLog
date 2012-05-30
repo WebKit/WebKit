@@ -1,3 +1,27 @@
+2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Ewk_Intent_Request's postResult/postFailure should take serialized script values in argument
+        https://bugs.webkit.org/show_bug.cgi?id=87829
+
+        Reviewed by Adam Barth.
+
+        Ewk_Intent_Request's postResult/postFailure methods now take
+        SerializedScriptValues in argument instead of strings. The client can
+        now post results of any type, not just strings, which is according to
+        spec. Those methods are now moved to private header and a helper
+        function was added to DumpRenderTreeSupportEfl so that the DRT can
+        still send intent results.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::sendWebIntentResponse):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+        * ewk/ewk_intent_private.h:
+        (WebCore):
+        * ewk/ewk_intent_request.cpp:
+        (ewk_intent_request_result_post):
+        (ewk_intent_request_failure_post):
+        * ewk/ewk_intent_request.h:
+
 2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Compilation warning in DumpRenderTreeView.cpp
