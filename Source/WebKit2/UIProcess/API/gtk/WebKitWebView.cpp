@@ -1939,13 +1939,13 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  *     context = webkit_javascript_result_get_global_context (js_result);
  *     value = webkit_javascript_result_get_value (js_result);
  *     if (JSValueIsString (context, value)) {
- *         JSStringRef *js_str_value;
- *         gchar       *str_value;
- *         gsize        str_length;
+ *         JSStringRef js_str_value;
+ *         gchar      *str_value;
+ *         gsize       str_length;
  *
- *         js_str_value = JSValueToStringCopy (context, value, NULL));
+ *         js_str_value = JSValueToStringCopy (context, value, NULL);
  *         str_length = JSStringGetMaximumUTF8CStringSize (js_str_value);
- *         str_value = (gchar *)g_malloc (str_length));
+ *         str_value = (gchar *)g_malloc (str_length);
  *         JSStringGetUTF8CString (js_str_value, str_value, str_length);
  *         JSStringRelease (js_str_value);
  *         g_print ("Script result: %s\n", str_value);
@@ -1963,7 +1963,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  *     gchar *script;
  *
  *     script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
- *     webkit_web_view_run_javascript (web_view, script, web_view_javascript_finished, NULL);
+ *     webkit_web_view_run_javascript (web_view, script, NULL, web_view_javascript_finished, NULL);
  *     g_free (script);
  * }
  * </programlisting></informalexample>
