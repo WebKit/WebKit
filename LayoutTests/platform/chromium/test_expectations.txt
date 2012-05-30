@@ -3660,6 +3660,7 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
+BUGWK85952 : http/tests/media/media-source/video-media-source-errors.html = PASS CRASH
 BUGWK85952 : http/tests/media/media-source/video-media-source-play.html = PASS TIMEOUT
 BUGWK85952 : http/tests/media/media-source/video-media-source-seek.html = PASS TIMEOUT
 BUGWK85952 : http/tests/media/media-source/video-media-source-state-changes.html = PASS TIMEOUT TEXT
