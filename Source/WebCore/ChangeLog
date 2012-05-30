@@ -1,3 +1,32 @@
+2012-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        Factor DeferrableOneShotTimer out of GraphicsContextCG/GeneratorGeneratedImage
+        https://bugs.webkit.org/show_bug.cgi?id=87824
+
+        Reviewed by Simon Fraser.
+
+        DeferrableOneShotTimer is a timer which takes a class and method to call (as Timer does),
+        and a delay. It exposes restart(), stop(), and isActive(), and none of the rest of
+        the TimerBase interface. On restart(), the timer is started with the given delay,
+        unless it's already running, in which case a flag is set to automatically restart
+        the timer when it fires instead of calling the given method. This provides a
+        low-overhead way to implement a deferrable timer.
+
+        No new tests, refactoring.
+
+        * platform/Timer.h:
+        (DeferrableOneShotTimer):
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer): New class.
+        (WebCore::DeferrableOneShotTimer::restart):
+        (WebCore::DeferrableOneShotTimer::fired):
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::invalidateCacheTimerFired):
+        * platform/graphics/GeneratorGeneratedImage.h:
+        (WebCore::GeneratorGeneratedImage::GeneratorGeneratedImage): Make use of DeferrableOneShotTimer.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::SubimageCacheWithTimer::SubimageCacheWithTimer): Make use of DeferrableOneShotTimer.
+        (WebCore::SubimageCacheWithTimer::invalidateCacheTimerFired):
+
 2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
 
         eventSender.beginDragWithFiles should be implemented in Windows, which blocked drag and drop related tests.

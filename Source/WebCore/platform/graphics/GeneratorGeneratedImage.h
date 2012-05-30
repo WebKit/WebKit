@@ -58,49 +58,19 @@ protected:
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 
+    void invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*);
+
     GeneratorGeneratedImage(PassRefPtr<Generator> generator, const IntSize& size)
         : m_generator(generator)
-        , m_cacheTimer(this)
+        , m_cacheTimer(this, &GeneratorGeneratedImage::invalidateCacheTimerFired, generatedImageCacheClearDelay)
     {
         m_size = size;
     }
-    
-    class GeneratedImageCacheTimer : public TimerBase {
-    public:
-        GeneratedImageCacheTimer(GeneratorGeneratedImage * parent)
-        : m_shouldRestartWhenTimerFires(false)
-        , m_parent(parent) { }
-        
-        void restart()
-        {
-            if (isActive()) {
-                m_shouldRestartWhenTimerFires = true;
-                return;
-            }
-            startOneShot(generatedImageCacheClearDelay);
-        };
-    private:
-        virtual void fired() OVERRIDE
-        {
-            if (m_shouldRestartWhenTimerFires) {
-                m_shouldRestartWhenTimerFires = false;
-                startOneShot(generatedImageCacheClearDelay);
-                return;
-            }
-            
-            if (m_parent) {
-                m_parent->m_cachedImageBuffer.clear();
-                m_parent->m_cachedAdjustedSize = IntSize();
-            }
-        };
-        bool m_shouldRestartWhenTimerFires;
-        GeneratorGeneratedImage* m_parent;
-    };
 
     RefPtr<Generator> m_generator;
 
     OwnPtr<ImageBuffer> m_cachedImageBuffer;
-    GeneratedImageCacheTimer m_cacheTimer;
+    DeferrableOneShotTimer<GeneratorGeneratedImage> m_cacheTimer;
     IntSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;
 };

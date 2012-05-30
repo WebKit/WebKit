@@ -132,18 +132,16 @@ struct SubimageCacheHash {
 
 typedef HashSet<SubimageCacheEntry, SubimageCacheHash, SubimageCacheEntryTraits> SubimageCache;
 
-class SubimageCacheTimer : private TimerBase {
-public:
-    SubimageCacheTimer() : m_shouldRestartWhenTimerFires(false) { }
-    void restart();
-private:
-    virtual void fired() OVERRIDE;
-    bool m_shouldRestartWhenTimerFires;
-};
-
 struct SubimageCacheWithTimer {
     SubimageCache cache;
-    SubimageCacheTimer timer;
+    DeferrableOneShotTimer<SubimageCacheWithTimer> timer;
+
+    SubimageCacheWithTimer()
+        : timer(this, &SubimageCacheWithTimer::invalidateCacheTimerFired, subimageCacheClearDelay)
+    {
+    }
+
+    void invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>*);
 };
 
 static SubimageCacheWithTimer& subimageCache()
@@ -152,25 +150,8 @@ static SubimageCacheWithTimer& subimageCache()
     return cache;
 }
 
-inline void SubimageCacheTimer::restart()
+void SubimageCacheWithTimer::invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>*)
 {
-    // Setting this boolean is much more efficient than calling startOneShot
-    // again, which might result in rescheduling the system timer and that
-    // can be quite expensive.
-    if (isActive()) {
-        m_shouldRestartWhenTimerFires = true;
-        return;
-    }
-    startOneShot(subimageCacheClearDelay);
-}
-
-void SubimageCacheTimer::fired()
-{
-    if (m_shouldRestartWhenTimerFires) {
-        m_shouldRestartWhenTimerFires = false;
-        startOneShot(subimageCacheClearDelay);
-        return;
-    }
     subimageCache().cache.clear();
 }
 

@@ -109,6 +109,52 @@ inline bool TimerBase::isActive() const
     return m_nextFireTime;
 }
 
+template <typename TimerFiredClass> class DeferrableOneShotTimer : private TimerBase {
+public:
+    typedef void (TimerFiredClass::*TimerFiredFunction)(DeferrableOneShotTimer*);
+
+    DeferrableOneShotTimer(TimerFiredClass* o, TimerFiredFunction f, double delay)
+        : m_object(o)
+        , m_function(f)
+        , m_delay(delay)
+        , m_shouldRestartWhenTimerFires(false)
+    {
+    }
+
+    void restart()
+    {
+        // Setting this boolean is much more efficient than calling startOneShot
+        // again, which might result in rescheduling the system timer which
+        // can be quite expensive.
+
+        if (isActive()) {
+            m_shouldRestartWhenTimerFires = true;
+            return;
+        }
+        startOneShot(m_delay);
+    }
+
+    using TimerBase::stop;
+    using TimerBase::isActive;
+private:
+    virtual void fired()
+    {
+        if (m_shouldRestartWhenTimerFires) {
+            m_shouldRestartWhenTimerFires = false;
+            startOneShot(m_delay);
+            return;
+        }
+
+        (m_object->*m_function)(this);
+    }
+
+    TimerFiredClass* m_object;
+    TimerFiredFunction m_function;
+
+    double m_delay;
+    bool m_shouldRestartWhenTimerFires;
+};
+
 }
 
 #endif

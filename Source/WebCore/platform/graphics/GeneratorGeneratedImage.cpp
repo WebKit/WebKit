@@ -90,4 +90,10 @@ void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& 
     intrinsicRatio = FloatSize();
 }
 
+void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*)
+{
+    m_cachedImageBuffer.clear();
+    m_cachedAdjustedSize = IntSize();
+}
+
 }
