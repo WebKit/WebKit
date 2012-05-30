@@ -1,3 +1,17 @@
+2012-05-30  Oliver Hunt  <oliver@apple.com>
+
+        Really provide error information with the inspector disabled
+        https://bugs.webkit.org/show_bug.cgi?id=87910
+
+        Reviewed by Filip Pizlo.
+
+        Don't bother checking for anything other than pre-existing error info.
+        In the absence of complete line number information you'll only get the
+        line a function starts on, but at least it's something.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+
 2012-05-30  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt broken on x86-32 with JIT turned off
