@@ -27,6 +27,7 @@
 #include "cc/CCOcclusionTracker.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCLayerTreeTestCommon.h"
 #include "CCOcclusionTrackerTestCommon.h"
 #include "LayerChromium.h"
 #include "Region.h"
@@ -44,12 +45,6 @@
 using namespace WebCore;
 using namespace WebKit;
 using namespace WebKitTests;
-
-#define EXPECT_EQ_RECT(a, b) \
-    EXPECT_EQ(a.x(), b.x()); \
-    EXPECT_EQ(a.y(), b.y()); \
-    EXPECT_EQ(a.width(), b.width()); \
-    EXPECT_EQ(a.height(), b.height());
 
 namespace {
 
@@ -449,9 +444,9 @@ protected:
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(30, 30, 70, 70)));
@@ -469,14 +464,14 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 30, 70, 70)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(29, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(30, 29, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(31, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(100, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(31, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 31, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 31, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 29, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(31, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(31, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 31, 70, 70)));
     }
 };
 
@@ -502,9 +497,9 @@ protected:
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(30, 30, 70, 70)));
@@ -522,14 +517,14 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 30, 70, 70)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(29, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(30, 29, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(31, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 29, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(100, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(31, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 31, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 31, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 29, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(31, 29, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 30, 1, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(31, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(31, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 31, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent, IntRect(29, 31, 70, 70)));
     }
 };
 
@@ -553,9 +548,9 @@ protected:
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(50, 50, 50, 50)));
@@ -573,25 +568,25 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(50, 50, 50, 50)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 50, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 49, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(50, 49, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 49, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(51, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 49, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(100, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 50, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(51, 51, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 51, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(50, 100, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 51, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(49, 51, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 51, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 50, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 49, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(51, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 50, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(51, 51, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(51, 51, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 100, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 51, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 51, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 51, 50, 50)));
 
         occlusion.useDefaultLayerScissorRect();
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(50, 50, 50, 50)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 50, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 49, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(50, 49, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 49, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(51, 49, 49, 1), occlusion.unoccludedContentRect(parent, IntRect(51, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 50, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(49, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 49, 50, 1), occlusion.unoccludedContentRect(parent, IntRect(50, 49, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(51, 49, 49, 1), occlusion.unoccludedContentRect(parent, IntRect(51, 49, 50, 50)));
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(51, 50, 50, 50)).isEmpty());
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(51, 51, 50, 50)).isEmpty());
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(50, 51, 50, 50)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(49, 51, 1, 49), occlusion.unoccludedContentRect(parent, IntRect(49, 51, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(49, 51, 1, 49), occlusion.unoccludedContentRect(parent, IntRect(49, 51, 50, 50)));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
     }
 };
@@ -620,9 +615,9 @@ protected:
         this->visitLayer(layer, occlusion);
         this->enterContributingSurface(child, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
@@ -642,9 +637,9 @@ protected:
         this->leaveContributingSurface(child, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(30, 40, 70, 60)));
@@ -715,16 +710,16 @@ protected:
 
         this->visitLayer(child2, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 60, 20), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 60, 20), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 60, 20), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 60, 20), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(layer, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->enterContributingSurface(child, occlusion);
@@ -745,18 +740,18 @@ protected:
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 430, 60, 70)).isEmpty());
         // This is the little piece not occluded by child2
-        EXPECT_EQ_RECT(IntRect(9, 430, 1, 10), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(9, 430, 1, 10), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)));
         // This extends past both sides of child2, so it will be the original rect.
-        EXPECT_EQ_RECT(IntRect(9, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(9, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 80)));
         // This extends past two adjacent sides of child2, and should included the unoccluded parts of each side.
         // This also demonstrates that the rect can be arbitrary and does not get clipped to the layer's visibleLayerRect().
-        EXPECT_EQ_RECT(IntRect(-10, 430, 20, 70), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 20, 70), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 70)));
         // This extends past three adjacent sides of child2, so it should contain the unoccluded parts of each side. The left
         // and bottom edges are completely unoccluded for some row/column so we get back the original query rect.
-        EXPECT_EQ_RECT(IntRect(-10, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 80)));
-        EXPECT_EQ_RECT(IntRect(10, 429, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)));
-        EXPECT_EQ_RECT(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
-        EXPECT_EQ_RECT(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(10, 429, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
 
         occlusion.useDefaultLayerScissorRect();
         EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 430, 60, 70)).isEmpty());
@@ -773,13 +768,13 @@ protected:
         this->leaveContributingSurface(child, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(30, 30, 70, 70)));
-        EXPECT_EQ_RECT(IntRect(90, 30, 10, 10), occlusion.unoccludedContentRect(parent, IntRect(30, 30, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(90, 30, 10, 10), occlusion.unoccludedContentRect(parent, IntRect(30, 30, 70, 70)));
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(30, 30, 60, 10)));
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(29, 30, 60, 10)));
@@ -792,21 +787,21 @@ protected:
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(30, 39, 70, 60)));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 30, 60, 10)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(29, 30, 1, 10), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 60, 10)));
-        EXPECT_EQ_RECT(IntRect(30, 29, 60, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 60, 10)));
-        EXPECT_EQ_RECT(IntRect(90, 30, 1, 10), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 60, 10)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 30, 1, 10), occlusion.unoccludedContentRect(parent, IntRect(29, 30, 60, 10)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 29, 60, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 60, 10)));
+        EXPECT_INT_RECT_EQ(IntRect(90, 30, 1, 10), occlusion.unoccludedContentRect(parent, IntRect(31, 30, 60, 10)));
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 31, 60, 10)).isEmpty());
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 40, 70, 60)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(29, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(29, 40, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(29, 40, 70, 60)));
         // This rect is mostly occluded by |child2|.
-        EXPECT_EQ_RECT(IntRect(90, 39, 10, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 39, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(90, 39, 10, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 39, 70, 60)));
         // This rect extends past top/right ends of |child2|.
-        EXPECT_EQ_RECT(IntRect(30, 29, 70, 11), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 29, 70, 11), occlusion.unoccludedContentRect(parent, IntRect(30, 29, 70, 70)));
         // This rect extends past left/right ends of |child2|.
-        EXPECT_EQ_RECT(IntRect(20, 39, 80, 60), occlusion.unoccludedContentRect(parent, IntRect(20, 39, 80, 60)));
-        EXPECT_EQ_RECT(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(31, 40, 70, 60)));
-        EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 41, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(20, 39, 80, 60), occlusion.unoccludedContentRect(parent, IntRect(20, 39, 80, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(31, 40, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 41, 70, 60)));
 
         /* Justification for the above occlusion from |layer|:
                    100
@@ -864,9 +859,9 @@ protected:
         this->visitLayer(layer, occlusion);
         this->enterContributingSurface(child, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(clippedLayerInChild, occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(clippedLayerInChild, occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child, clippedLayerInChild));
@@ -891,13 +886,13 @@ protected:
         this->leaveContributingSurface(child, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(75, 55, 1, 1)));
-        EXPECT_EQ_RECT(IntRect(75, 55, 1, 1), occlusion.unoccludedContentRect(parent, IntRect(75, 55, 1, 1)));
+        EXPECT_INT_RECT_EQ(IntRect(75, 55, 1, 1), occlusion.unoccludedContentRect(parent, IntRect(75, 55, 1, 1)));
     }
 };
 
@@ -927,9 +922,9 @@ protected:
         this->visitLayer(layer1, occlusion);
         this->enterContributingSurface(child, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
@@ -939,17 +934,17 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 431, 60, 70)));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 430, 60, 70)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(9, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)));
-        EXPECT_EQ_RECT(IntRect(10, 429, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)));
-        EXPECT_EQ_RECT(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
-        EXPECT_EQ_RECT(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(9, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(10, 429, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
 
         this->leaveContributingSurface(child, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 40, 70, 60), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(30, 40, 70, 60)));
@@ -957,10 +952,10 @@ protected:
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(30, 39, 70, 60)));
 
         EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(30, 40, 70, 60)).isEmpty());
-        EXPECT_EQ_RECT(IntRect(29, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(29, 40, 70, 60)));
-        EXPECT_EQ_RECT(IntRect(30, 39, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 39, 70, 60)));
-        EXPECT_EQ_RECT(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(31, 40, 70, 60)));
-        EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 41, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(29, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(29, 40, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 39, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 39, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent, IntRect(31, 40, 70, 60)));
+        EXPECT_INT_RECT_EQ(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent, IntRect(30, 41, 70, 60)));
 
         /* Justification for the above occlusion from |layer1| and |layer2|:
 
@@ -1014,9 +1009,9 @@ protected:
         this->visitLayer(layer2, occlusion);
         this->enterContributingSurface(child2, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child2, IntRect(-10, 420, 70, 80)));
@@ -1034,15 +1029,15 @@ protected:
         occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
 
         // There is nothing above child2's surface in the z-order.
-        EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
 
         this->leaveContributingSurface(child2, occlusion);
         this->visitLayer(layer1, occlusion);
         this->enterContributingSurface(child1, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(-10, 430, 80, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 80, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child1, IntRect(-10, 430, 80, 70)));
@@ -1052,14 +1047,14 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(-10, 430, 80, 71)));
 
         // child2's contents will occlude child1 below it.
-        EXPECT_EQ_RECT(IntRect(-10, 430, 10, 70), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(-10, 430, 80, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 10, 70), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(-10, 430, 80, 70)));
 
         this->leaveContributingSurface(child1, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(20, 20, 80, 80), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(20, 20, 80, 80)));
@@ -1128,9 +1123,9 @@ protected:
         this->visitLayer(layer2, occlusion);
         this->enterLayer(child2, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child2, IntRect(-10, 420, 70, 80)));
@@ -1143,15 +1138,15 @@ protected:
         this->enterContributingSurface(child2, occlusion);
 
         // There is nothing above child2's surface in the z-order.
-        EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
 
         this->leaveContributingSurface(child2, occlusion);
         this->visitLayer(layer1, occlusion);
         this->enterContributingSurface(child1, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(420, -20, 80, 90), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child1, IntRect(420, -20, 80, 90)));
@@ -1161,16 +1156,16 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(421, -20, 80, 90)));
 
         // child2's contents will occlude child1 below it.
-        EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 80, 90)));
-        EXPECT_EQ_RECT(IntRect(490, -10, 10, 80), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -10, 80, 90)));
-        EXPECT_EQ_RECT(IntRect(420, -20, 70, 10), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 70, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(420, -20, 80, 90), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 80, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(490, -10, 10, 80), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -10, 80, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(420, -20, 70, 10), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 70, 90)));
 
         this->leaveContributingSurface(child1, occlusion);
         this->enterLayer(parent, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(10, 20, 90, 80), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(10, 20, 90, 80)));
@@ -1255,16 +1250,16 @@ protected:
         this->visitLayer(opaqueLayer, occlusion);
         this->enterContributingSurface(opaqueLayer, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 430, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 430, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // And it gets translated to the parent surface.
         this->leaveContributingSurface(opaqueLayer, occlusion);
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The blur layer needs to throw away any occlusion from outside its subtree.
@@ -1281,9 +1276,9 @@ protected:
         // But the opaque layer's occlusion is preserved on the parent. 
         this->leaveContributingSurface(blurLayer, occlusion);
         this->enterLayer(parent, occlusion);
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -1305,16 +1300,16 @@ protected:
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitContributingSurface(surface, occlusion);
         this->enterLayer(parent, occlusion);
 
         // The surface and replica should both be occluding the parent.
-        EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -1336,16 +1331,16 @@ protected:
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitContributingSurface(surface, occlusion);
         this->enterLayer(parent, occlusion);
 
         // The surface and replica should both be occluding the parent.
-        EXPECT_EQ_RECT(IntRect(0, 100, 100, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 100, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -1368,16 +1363,16 @@ protected:
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitContributingSurface(surface, occlusion);
         this->enterLayer(parent, occlusion);
 
         // The replica should not be occluding the parent, since it has a mask applied to it.
-        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -1422,7 +1417,7 @@ protected:
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(100, 200, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(200, 200, 100, 100)));
 
-        EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
 
@@ -1466,7 +1461,7 @@ protected:
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(100, 200, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(200, 200, 100, 100)));
 
-        EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
 
@@ -1583,11 +1578,11 @@ protected:
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(100, 200, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(200, 200, 100, 100)));
 
-        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
-        EXPECT_EQ_RECT(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 100)));
-        EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 100, 300, 100)));
-        EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(200, 100, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent, IntRect(100, 200, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 100, 300, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(200, 100, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent, IntRect(100, 200, 100, 100)));
     }
 };
 
@@ -1626,11 +1621,11 @@ protected:
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(100, 200, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(parent, IntRect(200, 200, 100, 100)));
 
-        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
-        EXPECT_EQ_RECT(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 100)));
-        EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 100, 300, 100)));
-        EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(200, 100, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent, IntRect(100, 200, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 100, 300, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent, IntRect(200, 100, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent, IntRect(100, 200, 100, 100)));
     }
 };
 
@@ -1799,7 +1794,7 @@ protected:
             this->visitLayer(layer, occlusion);
             this->enterLayer(parent, occlusion);
 
-            EXPECT_EQ_RECT(IntRect(100, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
+            EXPECT_INT_RECT_EQ(IntRect(100, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
 
             EXPECT_FALSE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1815,7 +1810,7 @@ protected:
             this->visitLayer(layer, occlusion);
             this->enterLayer(parent, occlusion);
 
-            EXPECT_EQ_RECT(IntRect(120, 120, 180, 180), occlusion.occlusionInScreenSpace().bounds());
+            EXPECT_INT_RECT_EQ(IntRect(120, 120, 180, 180), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
 
             EXPECT_FALSE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1831,7 +1826,7 @@ protected:
             this->visitLayer(layer, occlusion);
             this->enterLayer(parent, occlusion);
 
-            EXPECT_EQ_RECT(IntRect(250, 250, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+            EXPECT_INT_RECT_EQ(IntRect(250, 250, 50, 50), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
 
             EXPECT_FALSE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1860,7 +1855,7 @@ protected:
         this->enterLayer(layer, occlusion);
 
         // The layer is rotated in 3d but without preserving 3d, so it only gets resized.
-        EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
     }
 };
 
@@ -1887,7 +1882,7 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         this->enterLayer(layer, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
     }
 };
 
@@ -2012,27 +2007,27 @@ protected:
         this->visitLayer(topmost, occlusion);
         this->enterLayer(parent2, occlusion);
         // This occlusion will affect all surfaces.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent2, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent2, IntRect(0, 0, 300, 300)));
         this->leaveLayer(parent2, occlusion);
 
         this->visitLayer(surfaceChild2, occlusion);
         this->enterLayer(surfaceChild, occlusion);
-        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surfaceChild, occlusion);
         this->enterLayer(surface, occlusion);
-        EXPECT_EQ_RECT(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surface, occlusion);
 
         this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
 
         // Occlusion is not added for the animating |layer|.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
 
@@ -2064,27 +2059,27 @@ protected:
         this->visitLayer(topmost, occlusion);
         this->enterLayer(parent2, occlusion);
         // This occlusion will affect all surfaces.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
         this->leaveLayer(parent2, occlusion);
 
         this->visitLayer(surfaceChild2, occlusion);
         this->enterLayer(surfaceChild, occlusion);
-        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surfaceChild, occlusion);
         this->enterLayer(surface, occlusion);
-        EXPECT_EQ_RECT(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surface, occlusion);
 
         this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
 
         // Occlusion is not added for the animating |layer|.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
 
@@ -2122,7 +2117,7 @@ protected:
         this->visitLayer(surface2, occlusion);
         this->enterContributingSurface(surface2, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
 
         this->leaveContributingSurface(surface2, occlusion);
@@ -2130,53 +2125,53 @@ protected:
 
         // surfaceChild2 is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
         // It also means that things occluding in screen space (e.g. surface2) cannot occlude this layer.
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild2, IntRect(0, 0, 100, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild2, IntRect(0, 0, 100, 300)));
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
 
         this->leaveLayer(surfaceChild2, occlusion);
         this->enterLayer(surfaceChild, occlusion);
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 100, 300)));
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
         // The surfaceChild is occluded by the surfaceChild2, but is moving relative its target and the screen, so it
         // can't be occluded.
-        EXPECT_EQ_RECT(IntRect(0, 0, 200, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 200, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 200, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 200, 300)));
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
 
         this->leaveLayer(surfaceChild, occlusion);
         this->enterLayer(surface, occlusion);
         // The surfaceChild is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
         this->leaveLayer(surface, occlusion);
         // The surface's owning layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 300), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
         this->enterContributingSurface(surface, occlusion);
         // The contributing |surface| is animating so it can't be occluded.
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->enterLayer(layer, occlusion);
         // The |surface| is moving in the screen and in its target, so all occlusion within the surface is lost when leaving it.
-        EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
         this->leaveLayer(layer, occlusion);
 
         this->enterLayer(parent, occlusion);
         // The |layer| is animating in the screen and in its target, so no occlusion is added.
-        EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
 
@@ -2204,9 +2199,9 @@ protected:
         this->visitLayer(surface2, occlusion);
         this->visitContributingSurface(surface2, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 200, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(50, 50, 200, 200), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // Clear any stored occlusion.
@@ -2216,9 +2211,9 @@ protected:
         this->visitLayer(surface, occlusion);
         this->visitContributingSurface(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 400, 400), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 400, 400), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -2240,9 +2235,9 @@ protected:
         this->visitLayer(surface, occlusion);
         this->visitContributingSurface(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 200), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 200), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -2266,22 +2261,22 @@ protected:
         // |topmost| occludes the replica, but not the surface itself.
         this->visitLayer(topmost, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->enterContributingSurface(surface, occlusion);
 
         // Surface is not occluded so it shouldn't think it is.
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2304,23 +2299,23 @@ protected:
         // |topmost| occludes the surface, but not the entire surface's replica.
         this->visitLayer(topmost, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 110), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->enterContributingSurface(surface, occlusion);
 
         // Surface is occluded, but only the top 10px of the replica.
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(0, 10, 100, 90), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 10, 100, 90), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2345,23 +2340,23 @@ protected:
         this->visitLayer(overReplica, occlusion);
         this->visitLayer(overSurface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 200), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 200), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(surface, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->enterContributingSurface(surface, occlusion);
 
         // Surface and replica are occluded different amounts.
-        EXPECT_EQ_RECT(IntRect(40, 0, 60, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(50, 0, 50, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(40, 0, 60, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 0, 50, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2385,18 +2380,18 @@ protected:
         // |topmost| occludes everything partially so we know occlusion is happening at all.
         this->visitLayer(topmost, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(surfaceChild, occlusion);
 
         // surfaceChild increases the occlusion in the screen by a narrow sliver.
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         // In its own surface, surfaceChild is at 0,0 as is its occlusion.
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The root layer always has a clipRect. So the parent of |surface| has a clipRect. However, the owning layer for |surface| does not
@@ -2406,20 +2401,20 @@ protected:
         this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface. Make sure the unoccluded rect
         // does not get clipped away inappropriately.
-        EXPECT_EQ_RECT(IntRect(0, 40, 100, 10), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 40, 100, 10), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 50)));
         this->leaveContributingSurface(surfaceChild, occlusion);
 
         // When the surfaceChild's occlusion is transformed up to its parent, make sure it is not clipped away inappropriately also.
         this->enterLayer(surface, occlusion);
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 10, 100, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 10, 100, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
         this->leaveLayer(surface, occlusion);
 
         this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
-        EXPECT_EQ_RECT(IntRect(0, 50, 100, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 100, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2445,7 +2440,7 @@ protected:
             // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
             this->enterContributingSurface(surface, occlusion);
             // Make sure the parent's clipRect clips the unoccluded region of the child surface.
-            EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 200), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
         }
         this->resetLayerIterator();
         {
@@ -2457,7 +2452,7 @@ protected:
             // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
             this->enterContributingSurface(surface, occlusion);
             // Make sure the screen scissor rect clips the unoccluded region of the child surface.
-            EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
         }
     }
 };
@@ -2483,17 +2478,17 @@ protected:
         // |topmost| occludes everything partially so we know occlusion is happening at all.
         this->visitLayer(topmost, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 80, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // surfaceChild is not opaque and does not occlude, so we have a non-empty unoccluded area on surface.
         this->visitLayer(surfaceChild, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The root layer always has a clipRect. So the parent of |surface| has a clipRect. However, the owning layer for |surface| does not
@@ -2502,13 +2497,13 @@ protected:
 
         this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface.
-        EXPECT_EQ_RECT(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 100)));
         this->leaveContributingSurface(surfaceChild, occlusion);
 
         this->visitLayer(surface, occlusion);
         this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
-        EXPECT_EQ_RECT(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2556,28 +2551,28 @@ protected:
         this->visitLayer(occludingLayer2, occlusion);
         this->visitLayer(occludingLayer1, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInTargetSurface().rects().size());
 
         // Everything outside the surface/replica is occluded but the surface/replica itself is not.
         this->enterLayer(filteredSurface, occlusion);
-        EXPECT_EQ_RECT(IntRect(1, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(1, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(0, 1, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, 1, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(0, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(-1, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(0, 0, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, -1, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(1, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(1, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 1, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, 1, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(-1, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, -1, 100, 100)));
 
-        EXPECT_EQ_RECT(IntRect(300 + 1, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 1, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(300 + 0, 1, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 0, 1, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(300 + 0, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 - 1, 0, 100, 100)));
-        EXPECT_EQ_RECT(IntRect(300 + 0, 0, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 0, -1, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(300 + 1, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 1, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(300 + 0, 1, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 0, 1, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(300 + 0, 0, 99, 100), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 - 1, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(300 + 0, 0, 100, 99), occlusion.unoccludedContentRect(filteredSurface, IntRect(300 + 0, -1, 100, 100)));
         this->leaveLayer(filteredSurface, occlusion);
 
         // The filtered layer/replica does not occlude.
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The surface has a background blur, so it needs pixels that are currently considered occluded in order to be drawn. So the pixels
@@ -2585,9 +2580,9 @@ protected:
         this->visitContributingSurface(filteredSurface, occlusion);
 
         this->enterLayer(parent, occlusion);
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInTargetSurface().rects().size());
 
         IntRect outsetRect;
@@ -2596,44 +2591,44 @@ protected:
         // Nothing in the blur outsets for the filteredSurface is occluded.
         outsetRect = IntRect(50 - outsetLeft, 50 - outsetTop, 50 + outsetLeft + outsetRight, 50 + outsetTop + outsetBottom);
         testRect = outsetRect;
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
 
         // Stuff outside the blur outsets is still occluded though.
         testRect = outsetRect;
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.move(-1, 0);
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.move(0, -1);
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
 
         // Nothing in the blur outsets for the filteredSurface's replica is occluded.
         outsetRect = IntRect(200 - outsetLeft, 50 - outsetTop, 50 + outsetLeft + outsetRight, 50 + outsetTop + outsetBottom);
         testRect = outsetRect;
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
 
         // Stuff outside the blur outsets is still occluded though.
         testRect = outsetRect;
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.move(-1, 0);
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
         testRect = outsetRect;
         testRect.move(0, -1);
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
+        EXPECT_INT_RECT_EQ(outsetRect, occlusion.unoccludedContentRect(parent, testRect));
     }
 };
 
@@ -2671,9 +2666,9 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         this->visitLayer(occludingLayerAbove, occlusion);
-        EXPECT_EQ_RECT(IntRect(100 / 2, 100 / 2, 50 / 2, 50 / 2), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(100 / 2, 100 / 2, 50 / 2, 50 / 2), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(100, 100, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(100, 100, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         this->visitLayer(filteredSurface2, occlusion);
@@ -2686,7 +2681,7 @@ protected:
 
         // Test expectations in the target.
         IntRect expectedOcclusion = IntRect(100 + outsetRight * 2, 100 + outsetBottom * 2, 50 - (outsetLeft + outsetRight) * 2, 50 - (outsetTop + outsetBottom) * 2);
-        EXPECT_EQ_RECT(expectedOcclusion, occlusion.occlusionInTargetSurface().rects()[0]);
+        EXPECT_INT_RECT_EQ(expectedOcclusion, occlusion.occlusionInTargetSurface().rects()[0]);
 
         // Test expectations in the screen. Take the ceiling of half of the outsets.
         outsetTop = (outsetTop + 1) / 2;
@@ -2695,7 +2690,7 @@ protected:
         outsetLeft = (outsetLeft + 1) / 2;
         expectedOcclusion = IntRect(100 / 2 + outsetRight * 2, 100 / 2 + outsetBottom * 2, 50 / 2 - (outsetLeft + outsetRight) * 2, 50 /2 - (outsetTop + outsetBottom) * 2);
 
-        EXPECT_EQ_RECT(expectedOcclusion, occlusion.occlusionInScreenSpace().rects()[0]);
+        EXPECT_INT_RECT_EQ(expectedOcclusion, occlusion.occlusionInScreenSpace().rects()[0]);
     }
 };
 
@@ -2742,28 +2737,28 @@ protected:
         this->visitLayer(occludingLayer2, occlusion);
         this->visitLayer(occludingLayer1, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInTargetSurface().rects().size());
 
         // Everything outside the surface/replica is occluded but the surface/replica itself is not.
         this->enterLayer(filteredSurface, occlusion);
-        EXPECT_EQ_RECT(IntRect(1, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(1, 0, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(0, 1, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, 1, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(0, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(-1, 0, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(0, 0, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, -1, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(1, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(1, 0, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 1, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, 1, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(-1, 0, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(0, -1, 50, 50)));
 
-        EXPECT_EQ_RECT(IntRect(150 + 1, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 1, 0, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(150 + 0, 1, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 0, 1, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(150 + 0, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 - 1, 0, 50, 50)));
-        EXPECT_EQ_RECT(IntRect(150 + 0, 0, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 0, -1, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(150 + 1, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 1, 0, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(150 + 0, 1, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 0, 1, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(150 + 0, 0, 49, 50), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 - 1, 0, 50, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(150 + 0, 0, 50, 49), occlusion.unoccludedContentRect(filteredSurface, IntRect(150 + 0, -1, 50, 50)));
         this->leaveLayer(filteredSurface, occlusion);
 
         // The filtered layer/replica does not occlude.
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The surface has a background blur, so it needs pixels that are currently considered occluded in order to be drawn. So the pixels
@@ -2771,7 +2766,7 @@ protected:
         this->visitContributingSurface(filteredSurface, occlusion);
 
         this->enterContributingSurface(clippingSurface, occlusion);
-        EXPECT_EQ_RECT(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 150), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(5u, occlusion.occlusionInScreenSpace().rects().size());
 
         IntRect outsetRect;
@@ -2782,45 +2777,45 @@ protected:
         outsetRect = IntRect(50 - outsetLeft, 50 - outsetTop, 50 + outsetLeft + outsetRight, 50 + outsetTop + outsetBottom);
         clippedOutsetRect = intersection(outsetRect, IntRect(0 - outsetLeft, 0 - outsetTop, 300 + outsetLeft + outsetRight, 70 + outsetTop + outsetBottom));
         testRect = outsetRect;
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
 
         // Stuff outside the (clipped) blur outsets is still occluded though.
         testRect = outsetRect;
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.move(-1, 0);
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.move(0, -1);
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
 
         // Nothing in the (clipped) blur outsets for the filteredSurface's replica is occluded.
         outsetRect = IntRect(200 - outsetLeft, 50 - outsetTop, 50 + outsetLeft + outsetRight, 50 + outsetTop + outsetBottom);
         clippedOutsetRect = intersection(outsetRect, IntRect(0 - outsetLeft, 0 - outsetTop, 300 + outsetLeft + outsetRight, 70 + outsetTop + outsetBottom));
         testRect = outsetRect;
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
 
         // Stuff outside the (clipped) blur outsets is still occluded though.
         testRect = outsetRect;
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.move(-1, 0);
         testRect.expand(1, 0);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
         testRect = outsetRect;
         testRect.move(0, -1);
         testRect.expand(0, 1);
-        EXPECT_EQ_RECT(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
+        EXPECT_INT_RECT_EQ(clippedOutsetRect, occlusion.unoccludedContentRect(clippingSurface, testRect));
     }
 };
 
@@ -2866,9 +2861,9 @@ protected:
         IntRect occlusionBehindReplica = IntRect(210, 60, 30, 30);
 
         IntRect expectedOpaqueBounds = unionRect(occlusionBehindSurface, occlusionBehindReplica);
-        EXPECT_EQ_RECT(expectedOpaqueBounds, occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(expectedOpaqueBounds, occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(expectedOpaqueBounds, occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(expectedOpaqueBounds, occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -2914,9 +2909,9 @@ protected:
         IntRect occlusionAboveReplica = IntRect(200, 50, 50, 50);
 
         IntRect expectedOpaqueBounds = unionRect(occlusionAboveSurface, occlusionAboveReplica);
-        EXPECT_EQ_RECT(expectedOpaqueBounds, occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(expectedOpaqueBounds, occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(expectedOpaqueBounds, occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(expectedOpaqueBounds, occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
@@ -3015,17 +3010,17 @@ protected:
         // The small layer is not tracked because it is too small.
         this->visitLayer(small, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The large layer is tracked as it is large enough.
         this->visitLayer(large, occlusion);
 
-        EXPECT_EQ_RECT(IntRect(IntPoint(), trackingSize), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(IntPoint(), trackingSize), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
-        EXPECT_EQ_RECT(IntRect(IntPoint(), trackingSize), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(IntPoint(), trackingSize), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
     }
 };
