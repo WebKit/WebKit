@@ -1,3 +1,19 @@
+2012-05-29  Kentaro Hara  <haraken@chromium.org>
+
+        Remove a dummy style sheet from CSSParser::parseFlowThread()
+        https://bugs.webkit.org/show_bug.cgi?id=87715
+
+        Reviewed by Darin Adler.
+
+        r118736 changed CSSGrammar.y so that it works fine with no style sheet.
+        r118736 removed a dummy style sheet from CSSParser::parserSelector().
+        Now we can safely remove a dummy style sheet from parserFlowThread().
+
+        Tests: fast/regions. No change in test results.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFlowThread):
+
 2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r111497): The "option" element doesn't match CSS pseudo class :enabled

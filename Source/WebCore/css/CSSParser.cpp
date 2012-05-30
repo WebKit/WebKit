@@ -7364,9 +7364,6 @@ bool CSSParser::cssGridLayoutEnabled() const
 #if ENABLE(CSS_REGIONS)
 bool CSSParser::parseFlowThread(const String& flowName)
 {
-    RefPtr<StyleSheetContents> dummyStyleSheet = StyleSheetContents::create();
-    setStyleSheet(dummyStyleSheet.get());
-
     setupParser("@-webkit-decls{-webkit-flow-into:", flowName, "}");
     cssyyparse(this);
 
