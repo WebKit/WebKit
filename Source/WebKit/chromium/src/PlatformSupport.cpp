@@ -302,11 +302,6 @@ bool PlatformSupport::cookiesEnabled(const Document* document)
 
 // File ------------------------------------------------------------------------
 
-bool PlatformSupport::fileExists(const String& path)
-{
-    return WebKit::Platform::current()->fileUtilities()->fileExists(path);
-}
-
 bool PlatformSupport::deleteFile(const String& path)
 {
     return WebKit::Platform::current()->fileUtilities()->deleteFile(path);

@@ -36,6 +36,8 @@
 #include "PlatformString.h"
 #include "PlatformSupport.h"
 
+#include <public/Platform.h>
+
 namespace WebCore {
 
 bool deleteFile(const String& path)
@@ -88,7 +90,7 @@ bool makeAllDirectories(const String& path)
 
 bool fileExists(const String& path)
 {
-    return PlatformSupport::fileExists(path);
+    return WebKit::Platform::current()->fileExists(path);
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)

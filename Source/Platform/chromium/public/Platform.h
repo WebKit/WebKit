@@ -106,6 +106,9 @@ public:
     // Must return non-null.
     virtual WebFileSystem* fileSystem() { return 0; }
 
+    virtual bool fileExists(const WebString&) { return false; }
+
+
     // Gamepad -------------------------------------------------------------
 
     virtual void sampleGamepads(WebGamepads& into) { into.length = 0; }

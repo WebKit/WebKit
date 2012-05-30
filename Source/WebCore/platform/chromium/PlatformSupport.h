@@ -123,7 +123,6 @@ public:
     static bool cookiesEnabled(const Document*);
 
     // File ---------------------------------------------------------------
-    static bool fileExists(const String&);
     static bool deleteFile(const String&);
     static bool deleteEmptyDirectory(const String&);
     static bool getFileMetadata(const String&, FileMetadata& result);
