@@ -1,3 +1,10 @@
+2012-05-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, removed some tests from the test_expectations file as
+        they have been regularly passing in the 3 GTK bots for some time.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         [Win] REGRESSION(r118018) fast/js/names.html failing due to JavaScriptExperiments not being

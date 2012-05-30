@@ -576,10 +576,6 @@ BUGWK53964 : fast/forms/listbox-onchange.html = FAIL
 BUGWK53964 : fast/forms/listbox-selection-2.html = FAIL
 BUGWK53964 : fast/forms/option-mouseevents.html = FAIL
 
-// The test below is not scrolled to the proper position. Perhaps because of
-// asynchronous scrollbar behavior.
-BUGWKGTK : fast/css/font-weight-1.html = FAIL
-
 // Probably failing because resizing is asynchronous.
 BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = FAIL
 BUGWK53959 : fast/dom/Window/window-resize.html = FAIL
@@ -705,8 +701,6 @@ BUGWKGTK : editing/selection/mixed-editability-10.html = FAIL
 BUGWKGTK : editing/selection/5825350-1.html = FAIL
 BUGWKGTK : editing/selection/5825350-2.html = FAIL
 
-BUGWK55682 : fast/images/support-broken-image-delegate.html = FAIL
-
 // Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 BUGWKGTK : http/tests/misc/will-send-request-returns-null-on-redirect.html = FAIL
 
@@ -828,7 +822,6 @@ BUGWK40601 : fast/events/mouse-click-events.html = FAIL
 BUGWK40601 : fast/events/mouseup-from-button2.html = FAIL
 BUGWK40601 : fast/events/right-click-focus.html = FAIL
 BUGWK40601 : editing/selection/5354455-1.html = FAIL
-BUGWK40601 : media/controls-right-click-on-timebar.html = FAIL
 
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
 BUGWK58222 : fast/preloader = FAIL
@@ -1142,9 +1135,6 @@ BUGWK72248 : editing/spelling/spelling-unified-emulation.html = FAIL
 
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
 
-// failing after enabling reftests
-BUGWK72569 : fast/forms/checkbox-appearance-change-by-checked.html = FAIL
-
 BUGWK73003 : editing/spelling/spellcheck-async.html = FAIL
 
 // 1 pixel difference between 64-bits and 32-bits
@@ -1168,8 +1158,6 @@ BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
 BUGWK73653 : fast/forms/number/spin-in-multi-column.html = FAIL
 BUGWK73653 : fast/forms/range/slider-in-multi-column.html = FAIL
 
-BUGWK73768 : fast/forms/file/file-input-reset.html = FAIL
-
 BUGWK74276 : fast/events/dont-loose-last-event.html = FAIL
 
 BUGWK74282 : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
@@ -1187,7 +1175,6 @@ BUGWK77015 : fast/events/clear-edit-drag-state.html = FAIL
 BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = FAIL
 
 BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = FAIL
-BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = FAIL
 
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = FAIL
@@ -1279,17 +1266,11 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = FAIL
 
-BUGWK86328 : media/video-controls-toggling.html = FAIL
-
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-false.html = FAIL
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-true.html = FAIL
 BUGWK86443 : plugins/npruntime/delete-plugin-within-setProperty.html = FAIL
 
 BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE
-
-// Needs rebaseline after bug 86441
-BUGWK86441 : fast/borders/border-antialiasing.html = IMAGE
-BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
 BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
