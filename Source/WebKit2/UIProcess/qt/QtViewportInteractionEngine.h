@@ -116,8 +116,8 @@ private:
     friend class ViewportUpdateDeferrer;
     friend class ::QWebKitTest;
 
-    QQuickWebView* const m_viewport;
-    QQuickWebPage* const m_content;
+    QQuickWebView* const m_viewportItem;
+    QQuickWebPage* const m_pageItem;
 
     qreal cssScaleFromItem(qreal) const;
     qreal itemScaleFromCSS(qreal) const;

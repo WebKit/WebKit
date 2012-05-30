@@ -1,3 +1,40 @@
+2012-05-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Variable renaming as preparation of further refactoring.
+
+        Rubberstamped by Simon Hausmann.
+
+        Change m_viewport to m_viewportItem and m_content to m_pageItem.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::flickableMoveStarted):
+        (WebKit::QtViewportInteractionEngine::flickableMoveEnded):
+        (WebKit::QtViewportInteractionEngine::flickableMovingPositionUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemAtScale):
+        (WebKit::QtViewportInteractionEngine::focusEditableArea):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        (WebKit::QtViewportInteractionEngine::nearestValidBounds):
+        (WebKit::QtViewportInteractionEngine::reset):
+        (WebKit::QtViewportInteractionEngine::setCSSScale):
+        (WebKit::QtViewportInteractionEngine::currentCSSScale):
+        (WebKit::QtViewportInteractionEngine::scrollAnimationActive):
+        (WebKit::QtViewportInteractionEngine::panGestureActive):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::panGestureCancelled):
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-05-30  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Do not use anonymous variables for ViewportUpdateDeferrer.
