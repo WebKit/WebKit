@@ -1,6 +1,15 @@
 2012-05-30  Stephen Chenney  <schenney@chromium.org>
 
-        Unreviewed Chromium epxectations update for http/tests/media/media-source/video-media-source-errors.html
+        Layout Test perf/mouse-event.html is flaky on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=87886
+
+        Unreviewed Chromium expectations update for perf/mouse-event.html
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-30  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed Chromium expectations update for http/tests/media/media-source/video-media-source-errors.html
 
         * platform/chromium/test_expectations.txt:
 

@@ -3788,3 +3788,6 @@ BUGWK87789 : media/track/track-cues-missed.html = PASS CRASH
 BUGWK87870 MAC DEBUG : css3/filters/custom/custom-filter-property-computed-style.html = TEXT PASS 
 
 BUGWK87880 : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
+
+BUGWK87886 LINUX : perf/mouse-event.html = PASS TEXT
+
