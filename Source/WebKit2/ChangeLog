@@ -1,3 +1,39 @@
+2012-05-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Do renames in ViewportInteractionEngine as agreed upon
+        https://bugs.webkit.org/show_bug.cgi?id=87845
+
+        Reviewed by Simon Hausmann.
+
+        Mostly moving methods around and renaming them to be more
+        consistent and avoid terminology clashes.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::boundPosition):
+        (WebKit):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setPageItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::animatePageItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::flickMoveStarted):
+        (WebKit::QtViewportInteractionEngine::flickMoveEnded):
+        (WebKit::QtViewportInteractionEngine::pageItemPositionChanged):
+        (WebKit::QtViewportInteractionEngine::pageContentPositionRequest):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationValueChanged):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForPageItemAtScale):
+        (WebKit::QtViewportInteractionEngine::focusEditableArea):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        (WebKit::QtViewportInteractionEngine::nearestValidBounds):
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pageItemSizeChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit::QtViewportInteractionEngine::setDevicePixelRatio):
+        (QtViewportInteractionEngine):
+
 2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Fix WebKit2-EFL build

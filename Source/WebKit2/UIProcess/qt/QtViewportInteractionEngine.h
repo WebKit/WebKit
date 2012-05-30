@@ -58,14 +58,15 @@ public:
     qreal currentCSSScale() const;
 
     void setAllowsUserScaling(bool allow) { m_allowsUserScaling = allow; }
-    void setContentToDevicePixelRatio(qreal ratio) {m_devicePixelRatio = ratio; }
+    void setDevicePixelRatio(qreal ratio) { m_devicePixelRatio = ratio; }
 
-    void setItemRectVisible(const QRectF&);
-    void animateItemRectVisible(const QRectF&);
+    void setPageItemRectVisible(const QRectF&);
+    void animatePageItemRectVisible(const QRectF&);
 
     QRectF nearestValidBounds() const;
 
-    void pagePositionRequest(const QPoint& pos);
+    void pageContentPositionRequest(const QPoint& pos);
+
     void touchBegin();
     void touchEnd();
 
@@ -73,11 +74,9 @@ public:
     void cancelScrollAnimation();
 
     bool panGestureActive() const;
-
     void panGestureStarted(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureEnded(const QPointF& position, qint64 eventTimestampMillis);
-
     void panGestureCancelled();
 
     bool scaleAnimationActive() const;
@@ -98,19 +97,16 @@ Q_SIGNALS:
 
     void informVisibleContentChange(const QPointF& trajectory = QPointF());
 
-    void visibleContentRectAndScaleChanged();
-
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
-    void itemSizeChanged();
-
-    void flickableMovingPositionUpdate();
+    void pageItemSizeChanged();
+    void pageItemPositionChanged();
 
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
-    void scaleAnimationValueChanged(QVariant value) { setItemRectVisible(value.toRectF()); }
+    void scaleAnimationValueChanged(QVariant value);
 
-    void flickableMoveStarted(); // Called when panning starts.
-    void flickableMoveEnded(); //   Called when panning (+ kinetic animation) ends.
+    void flickMoveStarted(); // Called when panning starts.
+    void flickMoveEnded(); //   Called when panning (+ kinetic animation) ends.
 
 private:
     friend class ViewportUpdateDeferrer;
@@ -127,6 +123,9 @@ private:
     qreal innerBoundedCSSScale(qreal) const;
     qreal outerBoundedCSSScale(qreal) const;
 
+    QRectF computePosRangeForPageItemAtScale(qreal itemScale) const;
+    void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
+
     bool m_allowsUserScaling;
     qreal m_minimumScale;
     qreal m_maximumScale;
@@ -134,12 +133,9 @@ private:
 
     QSize m_layoutSize;
 
-    QRectF computePosRangeForItemAtScale(qreal itemScale) const;
-
-    void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
-
     int m_suspendCount;
     bool m_hasSuspendedContent;
+
     OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_touchUpdateDeferrer;

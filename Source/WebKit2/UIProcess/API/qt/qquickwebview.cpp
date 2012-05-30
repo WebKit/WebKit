@@ -877,7 +877,7 @@ void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::V
     // This needs to be revised at some point.
     interactionEngine->reset();
 
-    interactionEngine->setContentToDevicePixelRatio(attr.devicePixelRatio);
+    interactionEngine->setDevicePixelRatio(attr.devicePixelRatio);
 
     interactionEngine->setAllowsUserScaling(!!attr.userScalable);
     interactionEngine->setCSSScaleBounds(attr.minimumScale, attr.maximumScale);
@@ -890,7 +890,7 @@ void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::V
 
     // If the web app successively changes the viewport on purpose
     // it wants to be in control and we should disable animations.
-    interactionEngine->setItemRectVisible(interactionEngine->nearestValidBounds());
+    interactionEngine->setPageItemRectVisible(interactionEngine->nearestValidBounds());
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
@@ -957,7 +957,7 @@ void QQuickWebViewFlickablePrivate::_q_resume()
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    interactionEngine->pagePositionRequest(pos);
+    interactionEngine->pageContentPositionRequest(pos);
 }
 
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
@@ -981,7 +981,7 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 
     // Emit for testing purposes, so that it can be verified that
     // we didn't do scale adjustment.
-    interactionEngine->setItemRectVisible(interactionEngine->nearestValidBounds());
+    interactionEngine->setPageItemRectVisible(interactionEngine->nearestValidBounds());
     emit q->experimental()->test()->contentsScaleCommitted();
 }
 
