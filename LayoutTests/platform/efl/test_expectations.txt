@@ -690,3 +690,6 @@ BUGWK86637 : editing/spelling/spellcheck-paste-disabled.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK86637 : editing/spelling/spelling-marker-description.html = TEXT
+
+// It is unclear whether a new baseline is needed or it is a JSC failure
+BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = TEXT

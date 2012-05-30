@@ -1,3 +1,26 @@
+2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening in fast/parser.
+
+        Unskip a passing test that just needed a baseline and update the
+        PNGs for a few ones which were already passing.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/parser/001-expected.png:
+        * platform/efl/fast/parser/bad-xml-slash-expected.png:
+        * platform/efl/fast/parser/broken-comments-vs-parsing-mode-expected.png:
+        * platform/efl/fast/parser/document-write-option-expected.png:
+        * platform/efl/fast/parser/entity-comment-in-style-expected.png:
+        * platform/efl/fast/parser/entity-comment-in-style-expected.txt:
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.png:
+        * platform/efl/fast/parser/fonts-expected.png:
+        * platform/efl/fast/parser/nofoo-tags-inside-paragraph-expected.png:
+        * platform/efl/fast/parser/open-comment-in-style-expected.png:
+        * platform/efl/fast/parser/open-comment-in-textarea-expected.png:
+        * platform/efl/fast/parser/title-error-test-expected.png:
+        * platform/efl/fast/parser/xhtml-alternate-entities-expected.png:
+        * platform/efl/test_expectations.txt:
+
 2012-05-30  Tony Chang  <tony@chromium.org>
 
         rename flexbox css values from justify and distribute to space-between and space-around

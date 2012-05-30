@@ -920,8 +920,6 @@ fast/loader/local-image-from-local.html
 fast/multicol
 fast/overflow/overflow-float-stacking.html
 fast/overflow/overflow-stacking.html
-fast/parser/entity-comment-in-style.html
-fast/parser/nested-fragment-parser-crash.html
 fast/preloader/first-base-tag-scanned-wins.html
 fast/preloader/first-base-tag-wins.html
 fast/preloader/understands-base-tag.html
