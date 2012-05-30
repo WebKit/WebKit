@@ -1,3 +1,9 @@
+2012-05-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add needed file back to the wx build.
+
+        * wscript:
+
 2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Fix WebKit2-EFL build
