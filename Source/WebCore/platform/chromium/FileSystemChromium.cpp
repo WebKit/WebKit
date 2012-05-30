@@ -37,6 +37,7 @@
 #include "PlatformSupport.h"
 
 #include <public/Platform.h>
+#include <public/WebFileUtilities.h>
 
 namespace WebCore {
 
@@ -90,7 +91,7 @@ bool makeAllDirectories(const String& path)
 
 bool fileExists(const String& path)
 {
-    return WebKit::Platform::current()->fileExists(path);
+    return WebKit::Platform::current()->fileUtilities()->fileExists(path);
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
