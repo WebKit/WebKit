@@ -60,9 +60,21 @@ class PrettyPatch_test < Test::Unit::TestCase
         assert_equal(info[Info::SHARED], $last_prettify_part_count["shared"], "Wrong number of 'shared' parts in " + description)
         assert_equal(0, $last_prettify_part_count["binary"], "Wrong number of 'binary' parts in " + description)
         assert_equal(0, $last_prettify_part_count["extract-error"], "Wrong number of 'extract-error' parts in " + description)
+        return pretty
     end
 
     def test_patches
         PATCHES.each { |id, info| check_one_patch(id, info) }
+    end
+
+    def test_images_without_checksum
+        pretty = check_one_patch(144064, ["Images without checksums", 10, 5, 4, 8])
+        puts pretty
+        matches = pretty.match("INVALID: Image lacks a checksum.")
+        assert(matches, "Should have invalid checksums")
+        # FIXME: This should only have 4 invalid images, but git apply needs an actual copy of the before binary
+        # in order to apply diffs correctly. The end result is that all images in the patch are empty and thus
+        # thought to have no checksum, instead of the 4 images that actually don't have a checksum.
+        assert_equal(10, pretty.scan(/INVALID\: Image lacks a checksum\./).size)
     end
 end

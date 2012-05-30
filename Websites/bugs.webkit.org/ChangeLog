@@ -1,3 +1,13 @@
+2012-05-29  Ojan Vafai  <ojan@chromium.org>
+
+        Show an error in the pretty diff when an image lacks a checksum
+        https://bugs.webkit.org/show_bug.cgi?id=87791
+
+        Reviewed by Dirk Pranke.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
 2012-04-01  Adam Barth  <abarth@webkit.org>
 
         Code review tool no longer needs to work around position:fixed handling on iPad

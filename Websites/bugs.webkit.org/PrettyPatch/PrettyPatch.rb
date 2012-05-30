@@ -98,6 +98,8 @@ private
         Websites
     ]
 
+    IMAGE_CHECKSUM_ERROR = "<p>INVALID: Image lacks a checksum. This will fail with a MISSING error in run-webkit-tests. Always generate new png files using run-webkit-tests.</p>"
+
     def self.normalize_line_ending(s)
         s.gsub /\r\n?/, "\n"
     end
@@ -578,7 +580,7 @@ EOF
             end
             image_snippet = "<img class='image' src='" + @image_url + "' />"
             if not @image_checksum then
-                return image_snippet
+                return IMAGE_CHECKSUM_ERROR + image_snippet
             end
             return "<p>" + @image_checksum + "</p>" + image_snippet
         end
@@ -601,6 +603,8 @@ EOF
 
                         if image_checksum
                             str += image_checksum + "<br>"
+                        else
+                            str += IMAGE_CHECKSUM_ERROR + "<br>"
                         end
                         if image_url
                             str += "<img class='image' src='" + image_url + "' />"
