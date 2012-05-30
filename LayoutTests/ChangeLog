@@ -1,3 +1,23 @@
+2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening after r118845 and r118851.
+
+        Apparently some baselines were not updated as expected, fixing
+        that now.
+
+        * platform/efl/fast/ruby/ruby-text-before-after-content-expected.png: Added.
+        * platform/efl/fast/ruby/ruby-text-before-after-content-expected.txt:
+        * platform/efl/fast/selectors/166-expected.png:
+        * platform/efl/fast/selectors/166-expected.txt:
+        * platform/efl/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/efl/fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * platform/efl/svg/batik/text/textAnchor-expected.txt:
+        * platform/efl/svg/batik/text/textOnPath3-expected.txt:
+        * platform/efl/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/efl/svg/carto.net/tabgroup-expected.txt:
+        * platform/efl/transitions/cross-fade-background-image-expected.txt: Added.
+        * platform/efl/transitions/cross-fade-border-image-expected.txt: Added.
+
 2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         Some Content Security Policy console messages are missing line numbers in JSC

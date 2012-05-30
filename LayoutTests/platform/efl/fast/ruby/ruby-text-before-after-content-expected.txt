@@ -5,7 +5,7 @@ layer at (0,0) size 800x88
     RenderBody {BODY} at (16,16) size 768x56 [color=#0000FF]
       RenderRuby (inline) {RUBY} at (0,0) size 213x36
         RenderRubyRun (anonymous) at (0,19) size 192x37
-          RenderRubyText {RT} at (0,-19) size 192x19
+          RenderRubyText {RT} at (0,-19) size 192x18
             RenderInline (generated) at (0,0) size 63x19
               RenderText at (0,0) size 63x19
                 text run at (0,0) width 63: "BEFORE"
