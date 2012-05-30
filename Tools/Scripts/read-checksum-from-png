@@ -30,7 +30,7 @@
 from __future__ import with_statement
 import sys
 
-from webkitpy.layout_tests import read_checksum_from_png
+from webkitpy.common import read_checksum_from_png
 
 
 if '__main__' == __name__:

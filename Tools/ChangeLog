@@ -1,3 +1,22 @@
+2012-05-29  Ojan Vafai  <ojan@chromium.org>
+
+        Add a linter error for pngs that lack an embedded checksum
+        https://bugs.webkit.org/show_bug.cgi?id=87793
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/read-checksum-from-png:
+        * Scripts/webkitpy/common/read_checksum_from_png.py: Renamed from Tools/Scripts/webkitpy/layout_tests/read_checksum_from_png.py.
+        (read_checksum):
+        * Scripts/webkitpy/common/read_checksum_from_png_unittest.py: Renamed from Tools/Scripts/webkitpy/layout_tests/read_checksum_from_png_unittest.py.
+        (ReadChecksumFromPngTest):
+        (ReadChecksumFromPngTest.test_read_checksum):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.check):
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        (PNGCheckerTest.test_check):
+
 2012-05-29  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87720

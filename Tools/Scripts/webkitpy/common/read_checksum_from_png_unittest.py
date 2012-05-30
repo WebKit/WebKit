@@ -24,7 +24,7 @@
 
 import StringIO
 import unittest
-from webkitpy.layout_tests import read_checksum_from_png
+from webkitpy.common import read_checksum_from_png
 
 
 class ReadChecksumFromPngTest(unittest.TestCase):
