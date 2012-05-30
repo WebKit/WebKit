@@ -1,3 +1,12 @@
+2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] http/tests/navigation/new-window-redirect-history.html does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=87848
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/efl/Skipped: Unskipped http/tests/navigation/new-window-redirect-history.html.
+
 2012-05-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, removed some tests from the test_expectations file as

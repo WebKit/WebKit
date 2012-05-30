@@ -1118,7 +1118,6 @@ http/tests/misc/SVGFont-delayed-load.html
 http/tests/misc/iframe-invalid-source-crash.html
 http/tests/misc/submit-post-keygen.html
 http/tests/navigation/forward-and-cancel.html
-http/tests/navigation/new-window-redirect-history.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
 http/tests/navigation/ping-cross-origin-from-https.html

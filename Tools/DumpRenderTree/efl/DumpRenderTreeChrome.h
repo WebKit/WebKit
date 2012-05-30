@@ -48,7 +48,7 @@ public:
     Evas_Object* createNewWindow();
     void removeWindow(Evas_Object*);
 
-    Vector<Evas_Object*> extraViews() const;
+    const Vector<Evas_Object*>& extraViews() const;
     void clearExtraViews();
 
     Evas_Object* mainFrame() const;

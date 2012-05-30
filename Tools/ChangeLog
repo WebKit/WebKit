@@ -1,5 +1,21 @@
 2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL][DRT] http/tests/navigation/new-window-redirect-history.html does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=87848
+
+        Reviewed by Csaba Osztrogonác.
+
+        The reason was that DumpRenderTreeChrome::extraViews() returned copy of the vector
+        and dumpBackForwardListForWebViews() used iterators belonging actually to different vectors
+        (browser->extraViews().begin() and browser->extraViews().end()) as if they had belonged to the same vector.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::extraViews):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
+2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [EFL][DRT] EFL's DRT needs "postProgressFinishedNotification" message
         https://bugs.webkit.org/show_bug.cgi?id=87833
 

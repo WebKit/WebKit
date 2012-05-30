@@ -174,7 +174,7 @@ bool DumpRenderTreeChrome::initialize()
     return true;
 }
 
-Vector<Evas_Object*> DumpRenderTreeChrome::extraViews() const
+const Vector<Evas_Object*>& DumpRenderTreeChrome::extraViews() const
 {
     return m_extraViews;
 }
