@@ -1,3 +1,17 @@
+2012-05-30  Oliver Hunt  <oliver@apple.com>
+
+        DFG does not correctly handle exceptions caught in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=87885
+
+        Reviewed by Filip Pizlo.
+
+        Make the DFG use genericThrow, rather than reimplementing a small portion of it.
+        Also make the LLInt slow paths validate that their PC is correct.
+
+        * dfg/DFGOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+
 2012-05-29  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should infer types and values of captured variables

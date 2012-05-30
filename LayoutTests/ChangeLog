@@ -1,3 +1,22 @@
+2012-05-30  Oliver Hunt  <oliver@apple.com>
+
+        DFG does not correctly handle exceptions caught in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=87885
+
+        Reviewed by Filip Pizlo.
+
+        Pile of code to convince the DFG to throw an exception that ends up being caught
+        in the LLInt
+
+        * fast/js/exception-propagate-from-dfg-to-llint-expected.txt: Added.
+        * fast/js/exception-propagate-from-dfg-to-llint.html: Added.
+        * fast/js/script-tests/exception-propagate-from-dfg-to-llint.js: Added.
+        (o.toString):
+        (h):
+        (g):
+        (f1):
+        (f2):
+
 2012-05-30  Ulan Degenbaev  <ulan@chromium.org>
 
         [v8] Crash after redefining setter on typed array to a number

@@ -34,6 +34,7 @@
 #include "GetterSetter.h"
 #include <wtf/InlineASM.h>
 #include "Interpreter.h"
+#include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSGlobalData.h"
 #include "JSStaticScopeObject.h"
@@ -1149,35 +1150,31 @@ DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
+
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
-
+    
     unsigned vPCIndex = exec->codeBlock()->bytecodeOffsetForCallAtIndex(callIndex);
-    HandlerInfo* handler = exec->globalData().interpreter->throwException(exec, exceptionValue, vPCIndex);
-
-    void* catchRoutine = handler ? handler->nativeCode.executableAddress() : (void*)ctiOpThrowNotCaught;
-    ASSERT(catchRoutine);
-    return dfgHandlerEncoded(exec, catchRoutine);
+    ExceptionHandler handler = genericThrow(globalData, exec, exceptionValue, vPCIndex);
+    ASSERT(handler.catchRoutine);
+    return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
 
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState* exec, StructureStubInfo* stubInfo)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
+
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
     
     CodeOrigin codeOrigin = stubInfo->codeOrigin;
     while (codeOrigin.inlineCallFrame)
         codeOrigin = codeOrigin.inlineCallFrame->caller;
-
-    HandlerInfo* handler = exec->globalData().interpreter->throwException(exec, exceptionValue, codeOrigin.bytecodeIndex);
-
-    void* catchRoutine = handler ? handler->nativeCode.executableAddress() : (void*)ctiOpThrowNotCaught;
-    ASSERT(catchRoutine);
-    return dfgHandlerEncoded(exec, catchRoutine);
+    
+    ExceptionHandler handler = genericThrow(globalData, exec, exceptionValue, codeOrigin.bytecodeIndex);
+    ASSERT(handler.catchRoutine);
+    return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
 
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
