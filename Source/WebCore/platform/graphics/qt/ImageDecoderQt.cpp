@@ -156,6 +156,12 @@ void ImageDecoderQt::internalDecodeSize()
     }
 
     setSize(size.width(), size.height());
+
+    // We don't need the tables set by prepareScaleDataIfNecessary,
+    // but their dimensions are used by ImageDecoder::scaledSize().
+    prepareScaleDataIfNecessary();
+    if (m_scaled)
+        m_reader->setScaledSize(scaledSize());
 }
 
 void ImageDecoderQt::internalReadImage(size_t frameIndex)
@@ -184,7 +190,9 @@ void ImageDecoderQt::internalReadImage(size_t frameIndex)
 bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 {
     ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
-    QSize imageSize = m_reader->size();
+    QSize imageSize = m_reader->scaledSize();
+    if (imageSize.isEmpty())
+        imageSize = m_reader->size();
 
     if (!buffer->setSize(imageSize.width(), imageSize.height()))
         return false;
@@ -193,6 +201,20 @@ bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 
     buffer->setDuration(m_reader->nextImageDelay());
     m_reader->read(&image);
+
+    // ImageFrame expects ARGB32.
+    if (buffer->premultiplyAlpha()) {
+        if (image.format() != QImage::Format_ARGB32_Premultiplied)
+            image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    } else {
+        if (image.format() != QImage::Format_ARGB32)
+            image = image.convertToFormat(QImage::Format_ARGB32);
+    }
+
+    if (reinterpret_cast<const uchar*>(image.constBits()) != reinterpret_cast<const uchar*>(buffer->getAddr(0, 0))) {
+        // The in-buffer was replaced during decoding with another, so copy into it manually.
+        memcpy(buffer->getAddr(0, 0), image.constBits(),  image.byteCount());
+    }
 
     if (image.isNull()) {
         frameCount();

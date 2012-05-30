@@ -1,3 +1,22 @@
+2012-05-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] ImageDecoderQt doesn't support some decoders.
+        https://bugs.webkit.org/show_bug.cgi?id=87851
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If forced to decode GIF and JPEG, ImageDecoderQt show several
+        artifacts. This is caused by mismatched decoded image-formats.
+
+        Convert mismatched color spaces into ARGB color space, and perform
+        manual mem-copy when the image has been decoded into a new buffer.
+
+        This patch also add support for down-scaling in the decoder.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::internalDecodeSize):
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
         Floats wraps incorrectly when top edge has subpixel precision
