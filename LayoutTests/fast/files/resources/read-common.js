@@ -171,6 +171,10 @@ function createReaderSync()
 // 'result' can be either an ArrayBuffer object or a string.
 function logResult(result)
 {
+    if (result === null) {
+        log("result: null");
+        return;
+    }
     if (typeof result == 'object') {
         log("result size: " + result.byteLength);
         result = new Uint8Array(result, 0, result.byteLength);
@@ -206,6 +210,7 @@ function loadFailed(event)
     logEvent(event);
     log("readyState: " + event.target.readyState);
     log("error code: " + event.target.error.code);
+    logResult(event.target.result);
 }
 
 function loadEnded(testFiles, event)

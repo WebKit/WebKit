@@ -4,24 +4,28 @@ readyState: 0
 Received error event
 readyState: 2
 error code: 1
+result: null
 Received loadend event
 Test reading a non-existent file as binary string
 readyState: 0
 Received error event
 readyState: 2
 error code: 1
+result: null
 Received loadend event
 Test reading a non-existent file as text
 readyState: 0
 Received error event
 readyState: 2
 error code: 1
+result: null
 Received loadend event
 Test reading a non-existent file as data URL
 readyState: 0
 Received error event
 readyState: 2
 error code: 1
+result: null
 Received loadend event
 Test reading an empty file as array buffer
 readyState: 0
@@ -204,6 +208,7 @@ readyState: 0
 Received error event
 readyState: 2
 error code: 1
+result: null
 Received loadend event
 readyState after recalling read method: 1
 result after recalling read method: 
@@ -214,6 +219,16 @@ Received load event
 readyState: 2
 result size: 31
 result: data:text/plain;base64,SGVsbG8=
+Received loadend event
+Test result before reading method
+readyState: 0
+result before reading method: null
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 0
+result: 
 Received loadend event
 DONE
 

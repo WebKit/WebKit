@@ -25,7 +25,8 @@ var asyncTestCases = [
     "testReadAgainAfterSuccessfulReadStep1",
     "testReadAgainAfterSuccessfulReadStep2",
     "testReadAgainAfterFailedReadStep1",
-    "testReadAgainAfterFailedReadStep2"
+    "testReadAgainAfterFailedReadStep2",
+    "testResultBeforeRead"
 ];
 var testIndex = 0;
 var initialized = false;
@@ -229,4 +230,10 @@ function testReadAgainAfterFailedReadStep2(testFiles)
     log("error after recalling read method: " + readerToTestReread.error);
 }
 
-
+function testResultBeforeRead(testFiles)
+{
+    log("Test result before reading method");
+    var reader = createReaderAsync(testFiles);
+    log("result before reading method: " + reader.result);
+    reader.readAsBinaryString(testFiles['empty-file']);
+}
