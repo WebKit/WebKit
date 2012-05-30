@@ -153,9 +153,9 @@ void SVGScriptElement::setType(const String& type)
     m_type = type;
 }
 
-void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void SVGScriptElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    SVGElement::addSubresourceAttributeURLs(urls);
+    SVGElement::collectSubresourceURLsFromAttributes(urls);
 
     addSubresourceURL(urls, document()->completeURL(href()));
 }

@@ -246,12 +246,12 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
     m_firedLoad = true;
 }
 
-void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLStyleElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {    
-    HTMLElement::addSubresourceAttributeURLs(urls);
+    HTMLElement::collectSubresourceURLsFromAttributes(urls);
 
     if (CSSStyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
-        styleSheet->contents()->addSubresourceStyleURLs(urls);
+        styleSheet->contents()->collectSubresourceURLs(urls);
 }
 
 bool HTMLStyleElement::disabled() const

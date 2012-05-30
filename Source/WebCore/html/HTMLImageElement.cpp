@@ -325,9 +325,9 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
-void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLImageElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    HTMLElement::addSubresourceAttributeURLs(urls);
+    HTMLElement::collectSubresourceURLsFromAttributes(urls);
 
     addSubresourceURL(urls, src());
     // FIXME: What about when the usemap attribute begins with "#"?

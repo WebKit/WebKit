@@ -227,9 +227,9 @@ const QualifiedName& SVGImageElement::imageSourceAttributeName() const
     return XLinkNames::hrefAttr;
 }
 
-void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void SVGImageElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    SVGStyledTransformableElement::addSubresourceAttributeURLs(urls);
+    SVGStyledTransformableElement::collectSubresourceURLsFromAttributes(urls);
 
     addSubresourceURL(urls, document()->completeURL(href()));
 }

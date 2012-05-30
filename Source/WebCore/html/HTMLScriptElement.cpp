@@ -113,9 +113,9 @@ KURL HTMLScriptElement::src() const
     return document()->completeURL(sourceAttributeValue());
 }
 
-void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLScriptElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    HTMLElement::addSubresourceAttributeURLs(urls);
+    HTMLElement::collectSubresourceURLsFromAttributes(urls);
 
     addSubresourceURL(urls, src());
 }

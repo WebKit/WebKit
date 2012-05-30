@@ -875,11 +875,11 @@ void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnC
     }
 }
 
-void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const
+void StylePropertySet::collectSubresourceURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const
 {
     unsigned size = propertyCount();
     for (unsigned i = 0; i < size; ++i)
-        propertyAt(i).value()->addSubresourceStyleURLs(urls, contextStyleSheet);
+        propertyAt(i).value()->collectSubresourceURLs(urls, contextStyleSheet);
 }
 
 // This is the list of properties we want to copy in the copyBlockProperties() function.

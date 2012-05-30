@@ -384,7 +384,7 @@ KURL StyleSheetContents::completeURL(const String& url) const
     return CSSParser::completeURL(m_parserContext, url);
 }
 
-void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+void StyleSheetContents::collectSubresourceURLs(ListHashSet<KURL>& urls)
 {
     Deque<StyleSheetContents*> styleSheetQueue;
     styleSheetQueue.append(this);
@@ -402,9 +402,9 @@ void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
         for (unsigned i = 0; i < styleSheet->m_childRules.size(); ++i) {
             StyleRuleBase* rule = styleSheet->m_childRules[i].get();
             if (rule->isStyleRule())
-                static_cast<StyleRule*>(rule)->properties()->addSubresourceStyleURLs(urls, this);
+                static_cast<StyleRule*>(rule)->properties()->collectSubresourceURLs(urls, this);
             else if (rule->isFontFaceRule())
-                static_cast<StyleRuleFontFace*>(rule)->properties()->addSubresourceStyleURLs(urls, this);
+                static_cast<StyleRuleFontFace*>(rule)->properties()->collectSubresourceURLs(urls, this);
         }
     }
 }

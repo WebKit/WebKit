@@ -418,9 +418,9 @@ String HTMLLinkElement::type() const
     return getAttribute(typeAttr);
 }
 
-void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLLinkElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    HTMLElement::addSubresourceAttributeURLs(urls);
+    HTMLElement::collectSubresourceURLsFromAttributes(urls);
 
     // Favicons are handled by a special case in LegacyWebArchive::create()
     if (m_relAttribute.m_iconType != InvalidIcon)
@@ -434,7 +434,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     
     // Walk the URLs linked by the linked-to stylesheet.
     if (CSSStyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet())
-        styleSheet->contents()->addSubresourceStyleURLs(urls);
+        styleSheet->contents()->collectSubresourceURLs(urls);
 }
 
 void HTMLLinkElement::addPendingSheet(PendingSheetType type)

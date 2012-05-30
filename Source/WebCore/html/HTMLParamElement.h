@@ -41,7 +41,7 @@ private:
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
 };
 
 } // namespace WebCore

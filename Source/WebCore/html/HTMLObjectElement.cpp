@@ -467,9 +467,9 @@ bool HTMLObjectElement::containsJavaApplet() const
     return false;
 }
 
-void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLObjectElement::collectSubresourceURLsFromAttributes(ListHashSet<KURL>& urls) const
 {
-    HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
+    HTMLPlugInImageElement::collectSubresourceURLsFromAttributes(urls);
 
     addSubresourceURL(urls, document()->completeURL(getAttribute(dataAttr)));
 

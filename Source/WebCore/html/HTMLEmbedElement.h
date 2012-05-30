@@ -47,7 +47,7 @@ private:
 
     virtual void updateWidget(PluginCreationOption);
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
 
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 

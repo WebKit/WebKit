@@ -316,7 +316,7 @@ private:
 
     virtual void documentDidResumeFromPageCache();
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
 
     bool needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();

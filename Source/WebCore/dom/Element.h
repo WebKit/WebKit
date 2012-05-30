@@ -418,6 +418,8 @@ public:
     IntSize savedLayerScrollOffset() const;
     void setSavedLayerScrollOffset(const IntSize&);
 
+    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const { }
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)

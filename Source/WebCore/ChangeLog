@@ -1,3 +1,119 @@
+2012-05-29  Antti Koivisto  <antti@apple.com>
+
+        Rename Foo::addSubresourceStyleURLs and Node::addSubresourceAttributeURLs
+        https://bugs.webkit.org/show_bug.cgi?id=87739
+
+        Rubber-stamped by Andreas Kling.
+
+        Rename them to collectSubresourceURLs and collectSubresourceURLsFromAttributes to match
+        the naming conventions.
+        
+        Move collectSubresourceURLsFromAttributes from Node to Element as only elements have attributes.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::collectSubresourceURLs):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::collectSubresourceURLs):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::collectSubresourceURLs):
+        * css/CSSReflectValue.h:
+        (CSSReflectValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::collectSubresourceURLs):
+        * css/CSSValue.h:
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::collectSubresourceURLs):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::collectSubresourceURLs):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::collectSubresourceURLs):
+        * css/StyleSheetContents.h:
+        (StyleSheetContents):
+        * dom/Element.h:
+        (WebCore::Element::collectSubresourceURLsFromAttributes):
+        (Element):
+        * dom/Node.cpp:
+        (WebCore::Node::getSubresourceURLs):
+        * dom/Node.h:
+        (WebCore):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::collectSubresourceURLsFromAttributes):
+        * dom/ProcessingInstruction.h:
+        (ProcessingInstruction):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::collectSubresourceURLsFromAttributes):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLBodyElement.h:
+        (HTMLBodyElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLObjectElement.h:
+        (HTMLObjectElement):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLParamElement.h:
+        (HTMLParamElement):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLScriptElement.h:
+        (HTMLScriptElement):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectSubresourceURLsFromAttributes):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::collectSubresourceURLsFromAttributes):
+        * svg/SVGCursorElement.h:
+        (SVGCursorElement):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::collectSubresourceURLsFromAttributes):
+        * svg/SVGFEImageElement.h:
+        (SVGFEImageElement):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::collectSubresourceURLsFromAttributes):
+        * svg/SVGImageElement.h:
+        (SVGImageElement):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::collectSubresourceURLsFromAttributes):
+        * svg/SVGScriptElement.h:
+        (SVGScriptElement):
+
 2012-05-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix JS compiler warning

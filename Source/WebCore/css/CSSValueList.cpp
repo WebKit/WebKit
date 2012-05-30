@@ -136,11 +136,11 @@ String CSSValueList::customCssText() const
     return result.toString();
 }
 
-void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSValueList::collectSubresourceURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
 {
     size_t size = m_values.size();
     for (size_t i = 0; i < size; ++i)
-        m_values[i]->addSubresourceStyleURLs(urls, styleSheet);
+        m_values[i]->collectSubresourceURLs(urls, styleSheet);
 }
 
 CSSValueList::CSSValueList(const CSSValueList& cloneFrom)

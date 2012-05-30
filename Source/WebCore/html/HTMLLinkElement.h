@@ -94,7 +94,7 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 private:
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void collectSubresourceURLsFromAttributes(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
     

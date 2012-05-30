@@ -727,7 +727,6 @@ protected:
 
     virtual void didMoveToNewDocument(Document* oldDocument);
     
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
     void setTabIndexExplicitly(short);
     void clearTabIndexExplicitly();
     
@@ -822,7 +821,7 @@ protected:
 #endif
 };
 
-// Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
+// Used in Node::collectSubresourceURLsFromAttributes() and in collectSubresourceURLs()
 inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 {
     if (!url.isNull())
