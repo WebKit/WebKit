@@ -49,7 +49,7 @@
 namespace WTR {
 
 static const double defaultLongTimeout = 30;
-static const double defaultShortTimeout = 5;
+static const double defaultShortTimeout = 15;
 static const double defaultNoTimeout = -1;
 
 static WKURLRef blankURL()

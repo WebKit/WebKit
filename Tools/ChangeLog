@@ -1,3 +1,18 @@
+2012-05-29  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87720
+        WebProcess is often killed due to being unresponsive on the bots
+
+        Reviewed by Alexey Proskuryakov.
+
+        Blind attempt to improve flakiness on the bots by reducing the number
+        of crashes due to an unresponsive process.  This helped on my personal machine
+        under stress conditions.  I don't have enough cores to hit the problem
+        under normal conditions.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR):
+
 2012-05-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: rename 'rm' to 'delete' in rebaseline scm output
