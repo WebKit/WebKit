@@ -1399,7 +1399,7 @@ namespace JSC {
 
         const SourceCode& source() const { return m_source; }
         const UString& sourceURL() const { return m_source.provider()->url(); }
-        intptr_t sourceID() const { return m_source.provider()->asID(); }
+        intptr_t sourceID() const { return m_source.providerID(); }
 
         void setFeatures(CodeFeatures features) { m_features = features; }
         CodeFeatures features() { return m_features; }

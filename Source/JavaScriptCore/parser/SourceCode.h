@@ -67,6 +67,13 @@ namespace JSC {
             return m_provider->getRange(m_startChar, m_endChar);
         }
         
+        intptr_t providerID() const
+        {
+            if (!m_provider)
+                return SourceProvider::nullID;
+            return m_provider->asID();
+        }
+        
         bool isNull() const { return !m_provider; }
         SourceProvider* provider() const { return m_provider.get(); }
         int firstLine() const { return m_firstLine; }

@@ -285,7 +285,7 @@ namespace JSC {
 #endif
 
         const SourceCode& source() { return m_source; }
-        intptr_t sourceID() const { return m_source.provider()->asID(); }
+        intptr_t sourceID() const { return m_source.providerID(); }
         const UString& sourceURL() const { return m_source.provider()->url(); }
         int lineNo() const { return m_firstLine; }
         int lastLine() const { return m_lastLine; }
