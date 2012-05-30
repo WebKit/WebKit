@@ -41,6 +41,8 @@ EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> curren
     , m_target(target)
     , m_relatedTarget(0)
 {
+    ASSERT(m_node);
+    ASSERT(!m_target || m_target->toNode() || accessible(m_target->toNode()));
 }
 
 void EventContext::handleLocalEvents(Event* event) const

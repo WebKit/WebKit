@@ -1,3 +1,20 @@
+2012-05-29  Hayato Ito  <hayato@chromium.org>
+
+        Add assertions to make sure that event's target and relatedTarget are accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=87641
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests. No new functionality except for assertions.
+
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::EventContext):
+        * dom/EventContext.h:
+        (WebCore):
+        (EventContext):
+        (WebCore::EventContext::setRelatedTarget):
+        (WebCore::EventContext::accessible):
+
 2012-05-29  Kent Tamura  <tkent@chromium.org>
 
         Fix inefficient usage of traverseNextNode()
