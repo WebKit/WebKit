@@ -1,3 +1,12 @@
+2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
+
+        The tests listed in win/Skipped should be removed after this change, but some of these need to rebaseline in Windows, we do that in bug#87610.
+        https://bugs.webkit.org/show_bug.cgi?id=86296
+
+        Reviewed by Tony Chang.
+
+        * platform/win/Skipped:
+
 2012-05-30  Alexey Proskuryakov  <ap@apple.com>
 
         * fast/files/read-blob-async-expected.txt: Updating results to what Mac WK1 bot sees

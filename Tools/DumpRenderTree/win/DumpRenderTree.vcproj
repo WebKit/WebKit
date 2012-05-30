@@ -402,6 +402,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DRTDataObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DRTDataObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DRTDropSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DRTDropSource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EventSender.cpp"
 				>
 			</File>

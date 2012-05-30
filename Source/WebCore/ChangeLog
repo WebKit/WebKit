@@ -1,3 +1,15 @@
+2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
+
+        eventSender.beginDragWithFiles should be implemented in Windows, which blocked drag and drop related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=86296
+
+        Reviewed by Tony Chang.
+
+        Test: This change was requirement for eventSender.beginDragWithFiles, update win/Skipped file to remove drag and drop related tests will valiate it. 
+
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::numberOfFiles):
+
 2012-05-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         HashTable.h has using directives for std::pair and std::make_pair

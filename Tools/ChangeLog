@@ -1,3 +1,57 @@
+2012-05-30  Xueqing Huang  <huangxueqing@baidu.com>
+
+        eventSender.beginDragWithFiles should be implemented in Windows, which blocked drag and drop related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=86296
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/win/DRTDataObject.cpp: Added.
+        (cfHDropFormat):
+        (cfFileNameWFormat):
+        (cfUrlWFormat):
+        (WCEnumFormatEtc):
+        (WCEnumFormatEtc::WCEnumFormatEtc):
+        (WCEnumFormatEtc::QueryInterface):
+        (WCEnumFormatEtc::AddRef):
+        (WCEnumFormatEtc::Release):
+        (WCEnumFormatEtc::Next):
+        (WCEnumFormatEtc::Skip):
+        (WCEnumFormatEtc::Reset):
+        (WCEnumFormatEtc::Clone):
+        (DRTDataObject::createInstance):
+        (DRTDataObject::DRTDataObject):
+        (DRTDataObject::~DRTDataObject):
+        (DRTDataObject::QueryInterface):
+        (DRTDataObject::AddRef):
+        (DRTDataObject::Release):
+        (DRTDataObject::GetData):
+        (DRTDataObject::GetDataHere):
+        (DRTDataObject::QueryGetData):
+        (DRTDataObject::GetCanonicalFormatEtc):
+        (DRTDataObject::SetData):
+        (DRTDataObject::CopyMedium):
+        (DRTDataObject::EnumFormatEtc):
+        (DRTDataObject::DAdvise):
+        (DRTDataObject::DUnadvise):
+        (DRTDataObject::EnumDAdvise):
+        (DRTDataObject::clearData):
+        * DumpRenderTree/win/DRTDataObject.h: Added.
+        (DRTDataObject):
+        * DumpRenderTree/win/DRTDropSource.cpp: Added.
+        (DRTDropSource::DRTDropSource):
+        (DRTDropSource::~DRTDropSource):
+        (DRTDropSource::QueryInterface):
+        (DRTDropSource::AddRef):
+        (DRTDropSource::Release):
+        (DRTDropSource::createInstance):
+        (DRTDropSource::QueryContinueDrag):
+        (DRTDropSource::GiveFeedback):
+        * DumpRenderTree/win/DRTDropSource.h: Added.
+        (DRTDropSource):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/EventSender.cpp:
+        (beginDragWithFilesCallback):
+
 2012-05-30  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         WebKit2: Implement layoutTestController.setPluginsEnabled() in WebKitTestRunner.

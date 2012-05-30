@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Baidu Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,7 +112,24 @@ bool DragData::containsFiles() const
 
 unsigned DragData::numberOfFiles() const
 {
-    return 0;
+    if (!m_platformDragData)
+        return 0;
+
+    STGMEDIUM medium;
+    if (FAILED(m_platformDragData->GetData(cfHDropFormat(), &medium)))
+        return 0;
+
+    HDROP hdrop = static_cast<HDROP>(GlobalLock(medium.hGlobal));
+
+    if (!hdrop)
+        return 0;
+
+    unsigned numFiles = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
+
+    DragFinish(hdrop);
+    GlobalUnlock(medium.hGlobal);
+
+    return numFiles;
 }
 
 void DragData::asFilenames(Vector<String>& result) const
