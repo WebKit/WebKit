@@ -1,3 +1,16 @@
+2012-05-30  Tony Chang  <tony@chromium.org>
+
+        [chromium] port webframe_unittest.cc to webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=87796
+
+        Reviewed by James Robinson.
+
+        Move WebFrameTest.GetContentAsPlainText and WebFrameTest.GetFullHtmlOfPage to webkit_unit_tests.
+
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit): Add tests.
+
 2012-05-30  Jochen Eisinger  <jochen@chromium.org>
 
         Match Firefox restrictions to window.blur and window.focus
