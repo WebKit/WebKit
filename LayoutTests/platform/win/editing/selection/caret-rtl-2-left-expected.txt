@@ -14,5 +14,6 @@ layer at (0,0) size 800x139
         RenderText {#text} at (0,0) size 186x18
           text run at (0,0) width 186: "FAIL: selection not collapsed"
         RenderBR {BR} at (186,0) size 0x18
+        RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 3 {DIV} of body

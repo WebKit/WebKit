@@ -1,3 +1,26 @@
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] Many editing tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=87890
+
+        Add/updated expected (failing?) results for Windows editing tests.
+
+        * platform/win/editing/deleting/delete-start-block-expected.txt: Added.
+        * platform/win/editing/deleting/regional-indicators-expected.txt: Added.
+        * platform/win/editing/input: Added.
+        * platform/win/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Added.
+        * platform/win/editing/input/reveal-caret-of-multiline-input-expected.txt: Added.
+        * platform/win/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
+        * platform/win/editing/selection/caret-ltr-right-expected.txt:
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/win/editing/selection/caret-rtl-right-expected.txt:
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/win/editing/selection/transformed-selection-rects-expected.txt:
+        * platform/win/editing/spelling/grammar-paste-expected.txt: Added.
+        * platform/win/editing/spelling/spellcheck-async-mutation-expected.txt: Added.
+        * platform/win/editing/spelling/spellcheck-queue-expected.txt: Added.
+        * platform/win/editing/spelling/spellcheck-sequencenum-expected.txt: Added.
+
 2012-05-29  Adrienne Walker  <enne@google.com>
 
         Transformed fixed position layers have an incorrect overlap map entry
