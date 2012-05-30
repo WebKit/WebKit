@@ -22,6 +22,8 @@
 #include "MediaPlayerPrivateBlackBerry.h"
 
 #include "CookieManager.h"
+#include "Credential.h"
+#include "CredentialStorage.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -30,6 +32,7 @@
 #include "HostWindow.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
+#include "ProtectionSpace.h"
 #include "RenderBox.h"
 #include "TimeRanges.h"
 #include "WebPageClient.h"
@@ -656,6 +659,50 @@ void MediaPlayerPrivate::onBuffering(bool flag)
     setBuffering(flag);
 }
 #endif
+
+static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuthChallenge& authChallenge)
+{
+    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    ASSERT(url.isValid());
+
+    return ProtectionSpace(url.host(), url.port(),
+                           static_cast<ProtectionSpaceServerType>(authChallenge.serverType()),
+                           authChallenge.realm().c_str(),
+                           static_cast<ProtectionSpaceAuthenticationScheme>(authChallenge.authScheme()));
+}
+
+bool MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
+{
+    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    if (!url.isValid())
+        return false;
+
+    ProtectionSpace protectionSpace = generateProtectionSpaceFromMMRAuthChallenge(authChallenge);
+    Credential credential = CredentialStorage::get(protectionSpace);
+    bool isConfirmed = false;
+    if (credential.isEmpty()) {
+        if (frameView() && frameView()->hostWindow())
+            isConfirmed = frameView()->hostWindow()->platformPageClient()->authenticationChallenge(url, protectionSpace, credential);
+    } else
+        isConfirmed = true;
+
+    if (isConfirmed)
+        authChallenge.setCredential(credential.user().utf8().data(), credential.password().utf8().data(), static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
+
+    return isConfirmed;
+}
+
+void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const
+{
+    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    if (!url.isValid())
+        return;
+
+    ProtectionSpace protectionSpace = generateProtectionSpaceFromMMRAuthChallenge(authChallenge);
+    Credential savedCredential = CredentialStorage::get(protectionSpace);
+    if (savedCredential.isEmpty())
+        CredentialStorage::set(Credential(authChallenge.username().c_str(), authChallenge.password().c_str(), static_cast<CredentialPersistence>(authChallenge.persistence())), protectionSpace, url);
+}
 
 int MediaPlayerPrivate::showErrorDialog(MMRPlayer::Error type)
 {

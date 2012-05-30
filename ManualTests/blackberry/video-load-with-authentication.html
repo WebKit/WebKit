@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>video-load-with-authentication</title>
+    <script src="../../LayoutTests/media/video-test.js" type="text/javascript"></script>
+</head>
+<body>
+<p>
+  This test case is for <a href="https://bugs.webkit.org/show_bug.cgi?id=84214">https://bugs.webkit.org/show_bug.cgi?id=84214</a><br>
+  This test case is aming at testing video loading with http authentication challenge. To use this test case you should setup your apache2 http server
+  with http authentication support first.<br>
+  <p>
+    <h3>Ways to setup the apache2 http server with http authentication support</h3>
+    <ol>
+      <li>Add "AllowOverride AuthConfig" to &lt;Directory&gt; setting in your site configuration file;</li>
+      <li>Create the password file using command: <code>htpasswd -c &lt;passord_filename&gt; &lt;username&gt;</code>, and put this file into &lt;ServerRoot&gt;;</li>
+      <li>Create a directory under your server &lt;Directory&gt;, and create the file .htaccess in this directory;</li>
+      <li>Configure the .htaccess file with the following content:
+        <pre>AuthType &lt;Basic|Digest&gt;
+AuthName "Video HTTP Authentication"
+AuthUserFile &lt;/path/to/the/password/file&gt;
+Require user &lt;username&gt;</pre>
+      </li>
+      <li>Put your test video file into this directory, and restart your apache2 http server.</li>
+    </ol>
+    <p>More information about configuring apache2 http authentication, please refer to apache 2.0 document: <a href="http://httpd.apache.org/docs/2.0/howto/auth.html">Authentication, Authorization and Access Control</a>.</p>
+  </p>
+  <p>
+    <h3>Ways to test</h3>
+    <ol>
+      <li>Setup your apache2 http server and prepare the video file as mentioned above;</li>
+      <li>Enter the link pointing to the video file in the "Video Source" text area below;</li>
+      <li>Then press load button, and fill the authentication challenge pop up dialog with the credential information created before, then wait for the result.</li>
+    </ol>
+  </p>
+</p>
+<hr />
+<div>
+    Video Source:
+    <input type="url" id="url" name="videoSrc" size="100"></input><br>
+    <input type="button" value="Load" onclick="load()" />
+</div>
+<video id="video" hidden="hidden"></video>
+<script type="text/javascript">
+    function onLoaded()
+    {
+        logResult(true, "Video file successfully loaded, test case passed.");
+        endTest();
+    }
+
+    function onError()
+    {
+        failTest("Load video file error, test case failed.");
+    }
+
+    function load()
+    {
+        findMediaElement();
+        waitForEvent("loadstart");
+        waitForEvent("loadeddata", onLoaded);
+        waitForEvent("error", onError);
+
+        mediaElement.src = document.getElementById("url").value;
+        mediaElement.load();
+    }
+</script>
+</body>
+</html>

@@ -1,3 +1,17 @@
+2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Loading media data with http authentication
+        https://bugs.webkit.org/show_bug.cgi?id=84214
+
+        Reviewed by George Staikos.
+
+        Added a manual test case which needs user to provide a HTTP server
+        with HTTP authentication support when loading the specified media
+        resource. The test case will test if the media resource is successfully
+        loaded.
+
+        * ManualTests/blackberry/video-load-with-authentication.html: Added.
+
 2012-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Incomplete repaint on twitter.com when replying to a tweet

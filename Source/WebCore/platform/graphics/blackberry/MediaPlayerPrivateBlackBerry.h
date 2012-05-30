@@ -130,6 +130,8 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void onBuffering(bool);
 #endif
+    virtual bool onAuthenticationNeeded(BlackBerry::Platform::MMRAuthChallenge&);
+    virtual void onAuthenticationAccepted(const BlackBerry::Platform::MMRAuthChallenge&) const;
 
     virtual bool isFullscreen() const;
     virtual bool isElementPaused() const;
