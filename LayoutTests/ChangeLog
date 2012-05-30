@@ -1,5 +1,29 @@
 2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unreviewed gardening in fast/transforms.
+
+        Unskip passing tests that just needed baselines and update the
+        PNGs for a few ones which were already passing.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/efl/fast/transforms/diamond-expected.png:
+        * platform/efl/fast/transforms/identity-matrix-expected.png:
+        * platform/efl/fast/transforms/overflow-with-transform-expected.png:
+        * platform/efl/fast/transforms/rotated-transform-affects-scrolling-1-expected.png:
+        * platform/efl/fast/transforms/rotated-transform-affects-scrolling-2-expected.png:
+        * platform/efl/fast/transforms/skew-with-unitless-zero-expected.png:
+        * platform/efl/fast/transforms/transform-on-inline-expected.png:
+        * platform/efl/fast/transforms/transform-positioned-ancestor-expected.png:
+        * platform/efl/fast/transforms/transform-table-row-expected.png:
+        * platform/efl/fast/transforms/transformed-caret-expected.png:
+        * platform/efl/fast/transforms/transformed-caret-expected.txt:
+        * platform/efl/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/efl/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/efl/fast/transforms/transforms-with-opacity-expected.png:
+
+2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed gardening in fast/parser.
 
         Unskip a passing test that just needed a baseline and update the
