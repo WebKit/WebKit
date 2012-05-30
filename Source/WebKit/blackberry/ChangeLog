@@ -1,3 +1,22 @@
+2012-05-29  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] The Page's deviceScaleFactor() is not being properly maintained
+        https://bugs.webkit.org/show_bug.cgi?id=87817
+
+        Reviewed by Antonio Gomes.
+
+        This bug fix in WebKit/blackberry is needed by the changes for
+        fullscreen media control sizing in WebCore (bug 87551). The sizing
+        of controls depends on the page's deviceScaleFactor(), which was
+        not being maintained properly due to errors in logic. Viewport
+        changes from non-default to default were being erroneously
+        thrown out. Also, when the viewport did change back to default
+        the deviceScaleFactor was not being updated.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] WebOverlay build fixes and bug fixes

@@ -3358,8 +3358,10 @@ void WebPage::resetVirtualViewportOnCommitted(bool reset)
 IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
 {
     static const ViewportArguments defaultViewportArguments;
-    if (m_viewportArguments == defaultViewportArguments)
+    if (m_viewportArguments == defaultViewportArguments) {
+        m_page->setDeviceScaleFactor(1.0);
         return IntSize();
+    }
 
     int desktopWidth = defaultMaxLayoutSize().width();
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
@@ -3397,8 +3399,7 @@ void WebPagePrivate::didReceiveTouchEventMode(TouchEventMode mode)
 
 void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments)
 {
-    static ViewportArguments defaultViewportArguments;
-    if (arguments == defaultViewportArguments)
+    if (arguments == m_viewportArguments)
         return;
 
     m_viewportArguments = arguments;
