@@ -1,3 +1,16 @@
+2012-05-29  Hayato Ito  <hayato@chromium.org>
+
+        Refactor shadow-dom-event-dispatching.html.
+        https://bugs.webkit.org/show_bug.cgi?id=87626
+
+        Reviewed by Dimitri Glazkov.
+
+        There are badly named functions in shadow-dom-event-dispatching.html.
+        e.g. prepareDOMTree1, prepareDOMTree2 and so on.
+        That should have better namings which make the intention of each test clear.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+
 2012-05-29  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening after r118845 and r118851.

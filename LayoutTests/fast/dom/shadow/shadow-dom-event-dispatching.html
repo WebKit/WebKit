@@ -94,10 +94,40 @@ function addEventListeners(nodes)
     }
 }
 
-// FIXME: More meaningful function names instead of sequence numbers.
-function prepareDOMTree1(parent)
+function debugDispatchedEvent(eventType)
 {
-    parent.appendChild(
+    debug('\n  ' + eventType);
+    var events = dispatchedEvent(eventType);
+    for (var i = 0; i < events.length; ++i)
+        debug('    ' + events[i])
+}
+
+function moveMouse(oldElementId, newElementId)
+{
+    clearEventRecords();
+    debug('\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
+    moveMouseOver(getNodeInShadowTreeStack(oldElementId));
+
+    clearEventRecords();
+    moveMouseOver(getNodeInShadowTreeStack(newElementId));
+
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
+}
+
+var sandbox = document.getElementById('sandbox');
+
+function showSandboxTree()
+{
+    var sandbox = document.getElementById('sandbox');
+    sandbox.offsetLeft;
+    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(sandbox));
+}
+
+function testEventsOnDistributedChild()
+{
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'shadow-host'},
                             createShadowRoot(
@@ -109,26 +139,38 @@ function prepareDOMTree1(parent)
     addEventListeners(['top', 'shadow-host', 'shadow-host/', 'shadow-host/content', 'shadow-host/shadow-root-child',
                        'distributed-light-child', 'non-distributed-light-child']);
     getNodeInShadowTreeStack('shadow-host/').id = 'shadow-root';
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    moveMouse('shadow-host', 'shadow-host/shadow-root-child');
+    moveMouse('shadow-host/shadow-root-child', 'shadow-host');
+
+    moveMouse('shadow-host', 'distributed-light-child');
+    moveMouse('distributed-light-child', 'shadow-host');
+
+    moveMouse('shadow-host/shadow-root-child', 'distributed-light-child');
+    moveMouse('distributed-light-child', 'shadow-host/shadow-root-child');
 }
 
-function prepareDOMTree2(parent)
+function testEventsOnDetailsSummary()
 {
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   // 'details/summary' elements use Shadow DOM in its implementation.
                   createDOM('details', {'id': 'details', 'open': true},
                             createDOM('summary', {'id': 'summary'}))));
 
     addEventListeners(['top', 'details', 'summary']);
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    moveMouse('details', 'summary');
+    moveMouse('summary', 'details');
 }
 
-function prepareDOMTree3(parent)
+function testEventsOnNestedShadowRoots()
 {
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'A'},
                             createDOM('div', {'id': 'B'},
@@ -156,14 +198,20 @@ function prepareDOMTree3(parent)
     getNodeInShadowTreeStack('B/G/').id = 'shadow-root-G';
     getNodeInShadowTreeStack('B/G/J/').id = 'shadow-root-J';
     getNodeInShadowTreeStack('B/G/L/').id = 'shadow-root-L';
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    moveMouse('F', 'D');
+    moveMouse('B/G/L', 'D');
+    moveMouse('B/G/L', 'B/G/J');
+    moveMouse('A', 'D');
+    moveMouse('D', 'A');
 }
 
-function prepareDOMTree4(parent)
+function testEventsOnSVGInShadowSubtree()
 {
     // Makes sure that <svg> in shadow DOM subtree, which is not supported at this time, does not crash.
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'shadow-host'},
                             createShadowRoot())));
@@ -173,13 +221,15 @@ function prepareDOMTree4(parent)
 
     addEventListeners(['top', 'shadow-host/', 'shadow-host/svg-in-shadow-tree']);
     getNodeInShadowTreeStack('shadow-host/').id = 'shadow-root';
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    moveMouse('shadow-host/svg-in-shadow-tree', 'top');
 }
 
-function prepareDOMTree5(parent)
+function testEventsOnTextNodeOfShadowRoot()
 {
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'shadow-host'},
                             createShadowRoot())));
@@ -187,14 +237,25 @@ function prepareDOMTree5(parent)
     shadowRoot.id = 'shadow-root';
     shadowRoot.innerHTML = 'Text Nodes';
     addEventListeners(['top', 'shadow-host', 'shadow-host/']);
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    // Calculates the position of the text node in the shadow root.
+    var host = document.getElementById('shadow-host');
+    var x = host.offsetLeft + 5;
+    var y = host.offsetTop + defaultPaddingSize + 5;
+    debug('\n' + 'Moving mouse from a direct child text node of the shadow root to top');
+    eventSender.mouseMoveTo(x, y);
+    clearEventRecords();
+    moveMouseOver(document.getElementById('top'));
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
 }
 
-function prepareDOMTree6(parent)
+function testEventsOnDistributedTextNode()
 {
     // Makes sure an insertion point can receive a event when a distributed text node is clicked.
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'shadow-host'},
                             createShadowRoot(
@@ -202,13 +263,24 @@ function prepareDOMTree6(parent)
                             document.createTextNode('Text Node'))));
     var shadowRoot = getNodeInShadowTreeStack('shadow-host/').id = 'shadow-root';
     addEventListeners(['top', 'shadow-host', 'shadow-host/', 'shadow-host/content']);
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+
+    // Calculates the position of the text node.
+    var host = document.getElementById('shadow-host');
+    var x = host.offsetLeft + 5;
+    var y = host.offsetTop + defaultPaddingSize + 5;
+    debug('\n' + 'Moving mouse from a distributed text node to top');
+    eventSender.mouseMoveTo(x, y);
+    clearEventRecords();
+    moveMouseOver(document.getElementById('top'));
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
 }
 
-function prepareDOMTree7(parent)
+function testEventsOnChildOfInactiveContent()
 {
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'A'}),
                   createDOM('div', {'id': 'B'},
@@ -221,14 +293,14 @@ function prepareDOMTree7(parent)
     addEventListeners(['top', 'A', 'B', 'B/', 'B/active-content',
                        'parent-of-inactive-content', 'inactive-content', 'child-of-inactive-content']);
     getNodeInShadowTreeStack('B/').id = 'shadow-root-B';
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
+    showSandboxTree();
+    moveMouse('A', 'child-of-inactive-content');
 }
 
-// Hosting multiple shadow roots
-function prepareDOMTree8(parent)
+function testEventsOnMultipleShadowRoots()
 {
-    parent.appendChild(
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'A'},
                             createShadowRoot(
@@ -242,29 +314,11 @@ function prepareDOMTree8(parent)
     addEventListeners(['top', 'A', 'B', 'A/', 'A/C', 'A/D', 'A//', 'A//E', 'A//F']);
     getNodeInShadowTreeStack('A/').id = 'older-shadow-root';
     getNodeInShadowTreeStack('A//').id = 'younger-shadow-root';
-    parent.offsetLeft;
-    debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(parent));
-}
+    showSandboxTree();
 
-function debugDispatchedEvent(eventType)
-{
-    debug('\n  ' + eventType);
-    var events = dispatchedEvent(eventType);
-    for (var i = 0; i < events.length; ++i)
-        debug('    ' + events[i])
-}
-
-function moveMouse(oldElementId, newElementId)
-{
-    clearEventRecords();
-    debug('\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
-    moveMouseOver(getNodeInShadowTreeStack(oldElementId));
-
-    clearEventRecords();
-    moveMouseOver(getNodeInShadowTreeStack(newElementId));
-
-    debugDispatchedEvent('mouseout');
-    debugDispatchedEvent('mouseover');
+    moveMouse('B', 'A');
+    moveMouse('A/D', 'A//F');
+    moveMouse('B', 'A//F');
 }
 
 function test()
@@ -272,77 +326,14 @@ function test()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    var sandbox = document.getElementById('sandbox');
-    prepareDOMTree1(sandbox);
-
-    moveMouse('shadow-host', 'shadow-host/shadow-root-child');
-    moveMouse('shadow-host/shadow-root-child', 'shadow-host');
-
-    moveMouse('shadow-host', 'distributed-light-child');
-    moveMouse('distributed-light-child', 'shadow-host');
-
-    moveMouse('shadow-host/shadow-root-child', 'distributed-light-child');
-    moveMouse('distributed-light-child', 'shadow-host/shadow-root-child');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree2(sandbox);
-
-    moveMouse('details', 'summary');
-    moveMouse('summary', 'details');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree3(sandbox);
-
-    moveMouse('F', 'D');
-    moveMouse('B/G/L', 'D');
-    moveMouse('B/G/L', 'B/G/J');
-    moveMouse('A', 'D');
-    moveMouse('D', 'A');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree4(sandbox);
-
-    moveMouse('shadow-host/svg-in-shadow-tree', 'top');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree5(sandbox);
-
-    // Calculates the position of the text node in the shadow root.
-    var host = document.getElementById('shadow-host');
-    var x = host.offsetLeft + 5;
-    var y = host.offsetTop + defaultPaddingSize + 5;
-    debug('\n' + 'Moving mouse from a direct child text node of the shadow root to top');
-    eventSender.mouseMoveTo(x, y);
-    clearEventRecords();
-    moveMouseOver(document.getElementById('top'));
-    debugDispatchedEvent('mouseout');
-    debugDispatchedEvent('mouseover');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree6(sandbox);
-
-    // Calculates the position of the text node.
-    var host = document.getElementById('shadow-host');
-    var x = host.offsetLeft + 5;
-    var y = host.offsetTop + defaultPaddingSize + 5;
-    debug('\n' + 'Moving mouse from a distributed text node to top');
-    eventSender.mouseMoveTo(x, y);
-    clearEventRecords();
-    moveMouseOver(document.getElementById('top'));
-    debugDispatchedEvent('mouseout');
-    debugDispatchedEvent('mouseover');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree7(sandbox);
-
-    moveMouse('A', 'child-of-inactive-content');
-
-    sandbox.innerHTML = '';
-    prepareDOMTree8(sandbox);
-
-    moveMouse('B', 'A');
-    moveMouse('A/D', 'A//F');
-    moveMouse('B', 'A//F');
+    testEventsOnDistributedChild();
+    testEventsOnDetailsSummary();
+    testEventsOnNestedShadowRoots();
+    testEventsOnSVGInShadowSubtree();
+    testEventsOnTextNodeOfShadowRoot();
+    testEventsOnDistributedTextNode();
+    testEventsOnChildOfInactiveContent();
+    testEventsOnMultipleShadowRoots();
 }
 
 test();
