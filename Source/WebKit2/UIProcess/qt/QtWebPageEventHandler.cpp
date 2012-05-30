@@ -436,7 +436,10 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         return;
 
     if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
-        resetGestureRecognizers();
+        m_panGestureRecognizer.cancel();
+        m_pinchGestureRecognizer.cancel();
+        if (event.type() != WebEvent::TouchMove)
+            m_tapGestureRecognizer.cancel();
         return;
     }
 
