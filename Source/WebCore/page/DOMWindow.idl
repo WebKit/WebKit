@@ -388,6 +388,8 @@ module window {
         attribute EntityReferenceConstructor EntityReference;
         attribute ProcessingInstructionConstructor ProcessingInstruction;
         attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] ShadowRootConstructor WebKitShadowRoot;
+        attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] HTMLContentElementConstructor HTMLContentElement;
+        attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] HTMLShadowElementConstructor HTMLShadowElement;
 
         attribute DOMSelectionConstructor Selection;
         attribute DOMWindowConstructor Window;

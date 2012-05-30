@@ -1,3 +1,17 @@
+2012-05-30  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] HTMLContentElement and HTMLShadowElement constructors should be visible.
+        https://bugs.webkit.org/show_bug.cgi?id=87818
+
+        Added constructor checks.
+        
+        Reviewed by Kentaro Hara.
+
+        * fast/dom/shadow/content-element-api-expected.txt:
+        * fast/dom/shadow/content-element-api.html:
+        * fast/dom/shadow/shadow-element-expected.txt:
+        * fast/dom/shadow/shadow-element.html:
+
 2012-05-30  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: Implement CSSOM support
