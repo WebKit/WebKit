@@ -41,28 +41,22 @@ public:
     {
         ASSERT(code >= IDBDatabaseException::IDBDatabaseExceptionOffset);
         ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionMax);
-        return adoptRef(new IDBDatabaseError(code - IDBDatabaseException::IDBDatabaseExceptionOffset, message));
-    }
-
-    static PassRefPtr<IDBDatabaseError> createWithoutOffset(unsigned short code, const String& message)
-    {
-        ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionOffset);
         return adoptRef(new IDBDatabaseError(code, message));
     }
 
     ~IDBDatabaseError() { }
 
-    unsigned short code() const { return m_code; }
-    void setCode(unsigned short value) { m_code = value; }
+    unsigned short code() const { return IDBDatabaseException::getLegacyErrorCode(m_code); }
+    unsigned short idbCode() const { return m_code; }
     const String& message() const { return m_message; }
-    void setMessage(const String& value) { m_message = value; }
+    const String name() const { return IDBDatabaseException::getErrorName(m_code); };
 
 private:
     IDBDatabaseError(unsigned short code, const String& message)
-        : m_code(code), m_message(message) { }
+            : m_code(code), m_message(message) { }
 
-    unsigned short m_code;
-    String m_message;
+    const unsigned short m_code;
+    const String m_message;
 };
 
 } // namespace WebCore

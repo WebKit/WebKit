@@ -36,10 +36,10 @@ function cleanDatabase()
 function setVersionDone()
 {
     trans = evalAndLog("trans = db.transaction('store')");
-    evalAndExpectException("trans.objectStore('store').put('a', 'b')", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("trans.objectStore('store').put('a', 'b')", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
 
     trans = evalAndLog("trans = db.transaction('store')");
-    evalAndExpectException("trans.objectStore('store').delete('x')", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("trans.objectStore('store').delete('x')", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
 
     trans = evalAndLog("trans = db.transaction('store')");
     cur = evalAndLog("cur = trans.objectStore('store').openCursor()");
@@ -50,7 +50,7 @@ function setVersionDone()
 function gotCursor()
 {
     shouldBeFalse("!event.target.result");
-    evalAndExpectException("event.target.result.delete()", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("event.target.result.delete()", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
 
     finishJSTest();
 }

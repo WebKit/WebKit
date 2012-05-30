@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
+#include "DOMError.h"
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -70,6 +71,9 @@ public:
 
     const String& mode() const;
     IDBDatabase* db() const;
+    PassRefPtr<DOMError> error(ExceptionCode&) const;
+    void setError(PassRefPtr<DOMError>);
+
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
 
@@ -129,6 +133,7 @@ private:
     const unsigned short m_mode;
     bool m_transactionFinished; // Is it possible that we'll fire any more events or allow any new requests? If not, we're finished.
     bool m_contextStopped;
+    RefPtr<DOMError> m_error;
 
     ListHashSet<IDBRequest*> m_childRequests;
 

@@ -62,6 +62,7 @@ Try adding with no key to object store without auto increment.
 Expecting exception from store.add({name: 'Adam'})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
+PASS name is 'DataError'
 store.add({name: 'Adam'}, 1)
 addAdamSuccess():
 PASS event.target.result is 1

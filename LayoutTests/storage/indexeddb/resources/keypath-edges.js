@@ -44,15 +44,15 @@ function testKeyPaths()
 
     debug("");
     debug("Key path doesn't resolve to a value; should yield null, should throw DATA_ERR");
-    evalAndExpectException("store.put(null)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put(null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("");
     debug("Key path doesn't resolve to a value; should yield null, should throw DATA_ERR");
-    evalAndExpectException("store.put({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("");
     debug("Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR");
-    evalAndExpectException("store.put({foo: null})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put({foo: null})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("");
     debug("Key path resolves to a value that is valid key; should yield 'string' key, should succeed");
@@ -76,11 +76,11 @@ function testKeyPathsAndGenerator()
 
     debug("");
     debug("Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception");
-    evalAndExpectException("store.put(null)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put(null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("");
     debug("Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception");
-    evalAndExpectException("store.put('string')", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put('string')", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("");
     debug("Key path doesn't resolve to a value; should yield null, key should be generated, put request should succeed");
@@ -91,7 +91,7 @@ function testKeyPathsAndGenerator()
 
         debug("");
         debug("Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR");
-        evalAndExpectException("store.put({foo: null})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("store.put({foo: null})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("");
         debug("Key path resolves to a value that is valid key; should yield 'string' key, should succeed");

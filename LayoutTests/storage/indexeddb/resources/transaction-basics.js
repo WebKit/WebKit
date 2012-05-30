@@ -111,18 +111,18 @@ function testInactiveAbortedTransaction()
 {
     debug("");
     debug("testInactiveAbortedTransaction():");
-    evalAndExpectException("index.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.openKeyCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.getKey(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("index.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.openKeyCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.getKey(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
 
-    evalAndExpectException("store.put(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.delete(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.clear()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("store.put(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.delete(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.clear()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
 
     testSetVersionAbort4();
 }
@@ -153,18 +153,18 @@ function testInactiveCompletedTransaction()
 {
     debug("");
     debug("testInactiveCompletedTransaction():");
-    evalAndExpectException("index.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.openKeyCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.getKey(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("index.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("index.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.openKeyCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.getKey(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("index.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
 
-    evalAndExpectException("store.put(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.delete(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.clear()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    evalAndExpectException("store.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("store.put(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.delete(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.clear()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
 
     testSetVersionAbort5();
 }
@@ -279,7 +279,7 @@ function testInvalidMode()
 {
     debug("");
     debug("Verify that specifying an invalid mode raises an exception");
-    evalAndExpectException("db.transaction(['storeName'], 'lsakjdf')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.transaction(['storeName'], 'lsakjdf')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     finishJSTest();
 }
 

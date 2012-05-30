@@ -106,7 +106,7 @@ function testClose()
 {
     evalAndLog("db.close()");
     debug("Now that the connection is closed, transaction creation should fail");
-    evalAndExpectException("db.transaction('test123')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.transaction('test123')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     debug("Call twice, make sure it's harmless");
     evalAndLog("db.close()");
     finishJSTest();

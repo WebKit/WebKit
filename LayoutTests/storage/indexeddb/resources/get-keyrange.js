@@ -175,7 +175,7 @@ function getBadOnlyTest(store, method, resultPath, finish)
 
 function getNullTest(store, method, resultPath, finish)
 {
-    evalAndExpectException(store + "." + method + "(null)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException(store + "." + method + "(null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
     evalAndLog(finish);
 }
 

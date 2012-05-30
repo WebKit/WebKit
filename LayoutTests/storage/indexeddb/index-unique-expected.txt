@@ -22,6 +22,7 @@ transaction.objectStore('store').put({x: 1}, 'bar')
 addMoreDataFailed():
 event.preventDefault()
 PASS event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS event.target.error.name is 'ConstraintError'
 transaction.objectStore('store').put({x: 0}, 'foo')
 changeDataSuccess():
 transaction.objectStore('store').index('index').openCursor(IDBKeyRange.lowerBound(1))

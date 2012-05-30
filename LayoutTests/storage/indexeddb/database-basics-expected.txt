@@ -50,6 +50,7 @@ Now that the connection is closed, transaction creation should fail
 Expecting exception from db.transaction('test123')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS name is 'NotAllowedError'
 Call twice, make sure it's harmless
 db.close()
 PASS successfullyParsed is true

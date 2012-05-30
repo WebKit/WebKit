@@ -39,6 +39,9 @@ module storage {
         // Properties
         readonly attribute DOMString mode;
         readonly attribute IDBDatabase db;
+        readonly attribute DOMError error 
+            getter raises (IDBDatabaseException);
+
         // Methods
         IDBObjectStore objectStore (in DOMString name)
             raises (IDBDatabaseException);

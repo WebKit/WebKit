@@ -61,28 +61,55 @@ static const struct IDBDatabaseExceptionNameDescription {
     { "TimeoutError", "A lock for the transaction could not be obtained in a reasonable time.", TIMEOUT_ERR }, // FIXME: This isn't used yet.
     { "QuotaExceededError", "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", QUOTA_EXCEEDED_ERR }, // FIXME: This isn't used yet
     { "SyntaxError", "The keypath argument contains an invalid key path.", SYNTAX_ERR },
-    { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR }
+    { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR },
+    // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
+    { "TypeMismatchError", "This should be a TypeError", TYPE_MISMATCH_ERR },
+    { "NotSupportedError", "Cannot use multiEntry indexed with an array keypath", NOT_SUPPORTED_ERR },
 };
 
-bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
+static const IDBDatabaseExceptionNameDescription* getErrorEntry(ExceptionCode ec)
 {
-    if (ec < IDBDatabaseExceptionOffset || ec > IDBDatabaseExceptionMax)
-        return false;
+    if (ec < IDBDatabaseException::IDBDatabaseExceptionOffset || ec > IDBDatabaseException::IDBDatabaseExceptionMax)
+        return 0;
 
     size_t tableSize = WTF_ARRAY_LENGTH(idbDatabaseExceptions);
     size_t tableIndex = ec - IDBDatabaseException::UNKNOWN_ERR;
 
-    const IDBDatabaseExceptionNameDescription* entry = tableIndex < tableSize ? &idbDatabaseExceptions[tableIndex] : 0;
+    return tableIndex < tableSize ? &idbDatabaseExceptions[tableIndex] : 0;
+}
+
+bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
+{
+    const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
+    if (!entry)
+        return false;
 
     description->typeName = "DOM IDBDatabase";
     description->code = (entry && entry->legacyCode) ? entry->legacyCode : ec - IDBDatabaseExceptionOffset;
     description->type = IDBDatabaseExceptionType;
 
-
     description->name = entry ? entry->name : 0;
     description->description = entry ? entry->description : 0;
 
     return true;
+}
+
+String IDBDatabaseException::getErrorName(ExceptionCode ec)
+{
+    const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
+    ASSERT(entry);
+    if (!entry)
+        return "UnknownError";
+
+    return entry->name;
+}
+
+ExceptionCode IDBDatabaseException::getLegacyErrorCode(ExceptionCode ec)
+{
+    const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
+    ASSERT(entry);
+
+    return (entry && entry->legacyCode) ? entry->legacyCode : ec - IDBDatabaseExceptionOffset;
 }
 
 } // namespace WebCore

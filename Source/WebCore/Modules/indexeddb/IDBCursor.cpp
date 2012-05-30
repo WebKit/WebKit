@@ -158,8 +158,8 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     }
 
     if (!count) {
-        // FIXME: spec says we should throw a JavaScript TypeError
-        ec = TYPE_MISMATCH_ERR;
+        // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
+        ec = IDBDatabaseException::IDB_TYPE_MISMATCH_ERR;
         return;
     }
 

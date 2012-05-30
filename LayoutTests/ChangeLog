@@ -1,3 +1,127 @@
+2012-05-30  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement IDBTransaction.error and IDBRequest.error
+        https://bugs.webkit.org/show_bug.cgi?id=87865
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/cursor-continue-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/deleteIndex-expected.txt:
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/get-keyrange-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics-workers-expected.txt:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/invalid-keys-expected.txt:
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-count-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/resources/basics.js:
+        (test):
+        (openCallback):
+        * storage/indexeddb/resources/create-and-remove-object-store.js:
+        (testCreateAndRemove):
+        (cleanDatabase):
+        (tryOnceMore):
+        * storage/indexeddb/resources/cursor-continue.js:
+        (ascendingErrorTestLessThan.request.onsuccess):
+        (ascendingErrorTestLessThan):
+        (ascendingErrorTestEqual.request.onsuccess):
+        (ascendingErrorTestEqual):
+        (descendingErrorTestGreaterThan.request.onsuccess):
+        (descendingErrorTestGreaterThan):
+        (descendingErrorTestEqual.request.onsuccess):
+        (descendingErrorTestEqual):
+        (onTransactionComplete):
+        * storage/indexeddb/resources/cursor-update.js:
+        (keyCursor):
+        * storage/indexeddb/resources/database-basics.js:
+        (testClose):
+        * storage/indexeddb/resources/database-quota.js:
+        (logError):
+        * storage/indexeddb/resources/deleteIndex.js:
+        (twiddleIndexes):
+        (postTwiddling):
+        * storage/indexeddb/resources/factory-cmp.js:
+        (testValidKeys):
+        (testInvalidKeys):
+        * storage/indexeddb/resources/get-keyrange.js:
+        (getNullTest):
+        * storage/indexeddb/resources/index-basics.js:
+        (index3Count):
+        * storage/indexeddb/resources/index-count.js:
+        * storage/indexeddb/resources/index-unique.js:
+        (addMoreDataFailed):
+        * storage/indexeddb/resources/invalid-keys.js:
+        * storage/indexeddb/resources/key-generator.js:
+        * storage/indexeddb/resources/key-type-array.js:
+        (testDepthLimits):
+        * storage/indexeddb/resources/keypath-edges.js:
+        * storage/indexeddb/resources/keyrange.js:
+        (test):
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+        (getAbrahamSuccess):
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (setVersionSuccess):
+        (createIndex):
+        (addAgainFailure):
+        (removeSuccessButNotThere):
+        (testPreConditions.request.onsuccess):
+        (testPreConditions):
+        * storage/indexeddb/resources/objectstore-count.js:
+        * storage/indexeddb/resources/open-cursor.js:
+        (cursorWithKeySuccess):
+        (cursorSuccess):
+        * storage/indexeddb/resources/readonly.js:
+        (openSuccess):
+        * storage/indexeddb/resources/set_version_queue.js:
+        (connectionError):
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedErrorCallback):
+        (evalAndExpectException):
+        * storage/indexeddb/resources/transaction-abort-workers.js:
+        (transactionAborted):
+        (transactionCompleted):
+        (timeoutTest.transaction.onabort):
+        (timeoutTest):
+        (errorTransactionAborted):
+        * storage/indexeddb/resources/transaction-abort.js:
+        (firstAdd):
+        (secondAdd):
+        (transactionAborted):
+        * storage/indexeddb/resources/transaction-after-close.js:
+        (firstTransactionComplete):
+        * storage/indexeddb/resources/transaction-and-objectstore-calls.js:
+        (created):
+        (afterComplete):
+        * storage/indexeddb/resources/transaction-basics.js:
+        (testInactiveAbortedTransaction):
+        (testInactiveCompletedTransaction):
+        (testInvalidMode):
+        * storage/indexeddb/resources/transaction-read-only.js:
+        (setVersionDone):
+        (gotCursor):
+        * storage/indexeddb/set_version_queue-expected.txt:
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-abort-workers-expected.txt:
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-read-only-expected.txt:
+
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium mac rebaseline for changes in r118978.

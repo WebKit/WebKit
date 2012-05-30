@@ -32,6 +32,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
+#include "DOMError.h"
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -53,6 +54,7 @@ public:
 
     PassRefPtr<IDBAny> result(ExceptionCode&) const;
     unsigned short errorCode(ExceptionCode&) const;
+    PassRefPtr<DOMError> error(ExceptionCode&) const;
     String webkitErrorMessage(ExceptionCode&) const;
     PassRefPtr<IDBAny> source() const;
     PassRefPtr<IDBTransaction> transaction() const;
@@ -109,6 +111,7 @@ protected:
     RefPtr<IDBAny> m_result;
     unsigned short m_errorCode;
     String m_errorMessage;
+    RefPtr<DOMError> m_error;
 
 private:
     // EventTarget

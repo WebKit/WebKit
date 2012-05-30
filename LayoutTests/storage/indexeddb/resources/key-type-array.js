@@ -161,7 +161,7 @@ function testInvalidArrayKeys()
 
     invalidKeys.forEach(function (key) {
         debug("testing invalid array key: " + key);
-        evalAndExpectException("store.put('value', " + key + ");", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("store.put('value', " + key + ");", "IDBDatabaseException.DATA_ERR", "'DataError'");
         debug("");
     });
 
@@ -181,7 +181,7 @@ function testDepthLimits()
 {
     shouldBe("indexedDB.cmp(makeArrayOfDepth(25), 0)", "1");
     shouldBe("indexedDB.cmp(makeArrayOfDepth(250), 0)", "1");
-    evalAndExpectException("indexedDB.cmp(makeArrayOfDepth(2500), 0)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("indexedDB.cmp(makeArrayOfDepth(2500), 0)", "IDBDatabaseException.DATA_ERR", "'DataError'");
     debug("");
 
     finishJSTest();

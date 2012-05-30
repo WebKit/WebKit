@@ -11,14 +11,21 @@ PASS [Worker] 'result' in request is true
 [Worker] Expecting exception from request.result
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] name is 'NotAllowedError'
 PASS [Worker] 'errorCode' in request is true
 [Worker] Expecting exception from request.errorCode
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] name is 'NotAllowedError'
 PASS [Worker] 'webkitErrorMessage' in request is true
 [Worker] Expecting exception from request.webkitErrorMessage
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS [Worker] name is 'NotAllowedError'
+[Worker] Expecting exception from request.error
+PASS [Worker] Exception was thrown.
+PASS [Worker] code is DOMException.INVALID_STATE_ERR
+PASS [Worker] name is 'InvalidStateError'
 PASS [Worker] 'source' in request is true
 PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in request is true
@@ -35,6 +42,8 @@ PASS [Worker] 'errorCode' in event.target is true
 PASS [Worker] event.target.errorCode is 0
 PASS [Worker] 'webkitErrorMessage' in event.target is true
 PASS [Worker] event.target.webkitErrorMessage is undefined.
+PASS [Worker] 'error' in event.target is true
+PASS [Worker] event.target.error is null
 PASS [Worker] 'source' in event.target is true
 PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in event.target is true
