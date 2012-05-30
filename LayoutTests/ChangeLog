@@ -1,3 +1,13 @@
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
+        More Windows test cleanup.
+
+        Update the Skipped list and tests for features turned on/off on Windows.
+
+        * platform/win/Skipped:
+        * platform/win/fast/dom/constructed-objects-prototypes-expected.txt: Added.
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2012-05-30  Kinuko Yasuda  <kinuko@chromium.org>
 
         File.lastModifiedDate must return null if the modified time info is not available
