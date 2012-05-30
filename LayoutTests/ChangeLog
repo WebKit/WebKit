@@ -1,3 +1,8 @@
+2012-05-30  Alexey Proskuryakov  <ap@apple.com>
+
+        * fast/files/read-blob-async-expected.txt: Updating results to what Mac WK1 bot sees
+        (two additional "result: null" lines).
+
 2012-05-30  David Barton  <dbarton@mathscribe.com>
 
         mathml/presentation/mo-stretch.html and mroot-pref-width.html tests fail on Mac
