@@ -52,8 +52,10 @@ ComposedShadowTreeWalker::ComposedShadowTreeWalker(const Node* node, Policy poli
     : m_node(node)
     , m_policy(policy)
 {
-    // FIXME: Refactor ComposedShadowTreeWalker so that we can assert node here.
-    // https://bugs.webkit.org/show_bug.cgi?id=87004
+#ifndef NDEBUG
+    if (m_node)
+        assertPrecondition();
+#endif
 }
 
 ComposedShadowTreeWalker ComposedShadowTreeWalker::fromFirstChild(const Node* node, Policy policy)
@@ -198,28 +200,6 @@ void ComposedShadowTreeWalker::parent()
     assertPostcondition();
 }
 
-void ComposedShadowTreeWalker::parentIncludingInsertionPointAndShadowRoot()
-{
-    ASSERT(m_node);
-    m_node = traverseParentIncludingInsertionPointAndShadowRoot(m_node);
-}
-
-Node* ComposedShadowTreeWalker::traverseParentIncludingInsertionPointAndShadowRoot(const Node* node) const
-{
-    if (ElementShadow* shadow = shadowOfParent(node)) {
-        if (InsertionPoint* insertionPoint = shadow->insertionPointFor(node))
-            return insertionPoint;
-    }
-    if (!node->isShadowRoot())
-        return node->parentNode();
-    const ShadowRoot* shadowRoot = toShadowRoot(node);
-    if (shadowRoot->isYoungest())
-        return shadowRoot->host();
-    InsertionPoint* assignedInsertionPoint = shadowRoot->assignedTo();
-    ASSERT(assignedInsertionPoint);
-    return assignedInsertionPoint;
-}
-
 Node* ComposedShadowTreeWalker::traverseParent(const Node* node) const
 {
     if (!canCrossUpperBoundary() && node->isShadowRoot()) {
@@ -291,6 +271,33 @@ void ComposedShadowTreeWalker::previous()
     } else
         parent();
     assertPostcondition();
+}
+
+ComposedShadowTreeParentWalker::ComposedShadowTreeParentWalker(const Node* node)
+    : m_node(node)
+{
+}
+
+void ComposedShadowTreeParentWalker::parentIncludingInsertionPointAndShadowRoot()
+{
+    ASSERT(m_node);
+    m_node = traverseParentIncludingInsertionPointAndShadowRoot(m_node);
+}
+
+Node* ComposedShadowTreeParentWalker::traverseParentIncludingInsertionPointAndShadowRoot(const Node* node) const
+{
+    if (ElementShadow* shadow = shadowOfParent(node)) {
+        if (InsertionPoint* insertionPoint = shadow->insertionPointFor(node))
+            return insertionPoint;
+    }
+    if (!node->isShadowRoot())
+        return node->parentNode();
+    const ShadowRoot* shadowRoot = toShadowRoot(node);
+    if (shadowRoot->isYoungest())
+        return shadowRoot->host();
+    InsertionPoint* assignedInsertionPoint = shadowRoot->assignedTo();
+    ASSERT(assignedInsertionPoint);
+    return assignedInsertionPoint;
 }
 
 } // namespace

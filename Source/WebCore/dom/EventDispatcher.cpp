@@ -62,7 +62,7 @@ EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, Pa
 void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
 {
     TreeScope* lastTreeScope = 0;
-    for (ComposedShadowTreeWalker walker(m_relatedTarget.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
+    for (ComposedShadowTreeParentWalker walker(m_relatedTarget.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
         TreeScope* scope = walker.get()->treeScope();
         // Skips adding a node to the map if treeScope does not change.
         if (scope != lastTreeScope)
@@ -203,7 +203,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     bool inDocument = m_node->inDocument();
     bool isSVGElement = m_node->isSVGElement();
     Vector<EventTarget*> targetStack;
-    for (ComposedShadowTreeWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
+    for (ComposedShadowTreeParentWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
         Node* node = walker.get();
         if (isActiveInsertionPoint(node) || targetStack.isEmpty())
             targetStack.append(eventTargetRespectingSVGTargetRules(node));

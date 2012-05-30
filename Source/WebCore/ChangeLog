@@ -1,5 +1,47 @@
 2012-05-29  Hayato Ito  <hayato@chromium.org>
 
+        Introduces ComposedShadowTreeParentWalker, extracted from ComposedShadowTreeWalker.
+        https://bugs.webkit.org/show_bug.cgi?id=87004
+
+        Reviewed by Dimitri Glazkov.
+
+        Introduces a ComposedShadowTreeParentWalker, which is only used
+        for traversing a parent node (including shadow roots and insertion
+        points) and get rid of an equivalent function from
+        ComposedShadowTreeWalker.
+
+        Before this patch, there is an inconsistency inside of
+        ComposedShadowTreeWalker. The Walker uses 'Policy' to decide
+        whether it should visit shadow roots or not, but
+        parentIncludingInsertionPointAndShadowRoot() member function
+        ignores the policy.  We can not add an assertion in its
+        constructor due to this inconsistency.  To resolve it, we could
+        add yet another special policy, but that makes the implementation
+        complex and may add some overhead in runtime.  So separate the
+        functionality into another class as ComposedShadowTreeParentWalker.
+
+        No new tests, no new functionality except for assertion.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::ComposedShadowTreeWalker):
+        (WebCore::ComposedShadowTreeParentWalker::ComposedShadowTreeParentWalker):
+        (WebCore):
+        (WebCore::ComposedShadowTreeParentWalker::parentIncludingInsertionPointAndShadowRoot):
+        (WebCore::ComposedShadowTreeParentWalker::traverseParentIncludingInsertionPointAndShadowRoot):
+        * dom/ComposedShadowTreeWalker.h:
+        (ComposedShadowTreeWalker):
+        (WebCore::ComposedShadowTreeWalker::assertPrecondition):
+        (WebCore):
+        (ComposedShadowTreeParentWalker):
+        (WebCore::ComposedShadowTreeParentWalker::get):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+2012-05-29  Hayato Ito  <hayato@chromium.org>
+
         Add assertions to make sure that event's target and relatedTarget are accessible.
         https://bugs.webkit.org/show_bug.cgi?id=87641
 

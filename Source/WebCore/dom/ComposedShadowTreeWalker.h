@@ -59,8 +59,6 @@ public:
     void previousSibling();
 
     void parent();
-    // This function ignores policy and always crosses an upper boundary.
-    void parentIncludingInsertionPointAndShadowRoot();
 
     void next();
     void previous();
@@ -81,7 +79,7 @@ private:
             ASSERT(!m_node->isShadowRoot());
         else
             ASSERT(!m_node->isShadowRoot() || toShadowRoot(m_node)->isYoungest());
-        ASSERT(!isInsertionPoint(m_node) || !toInsertionPoint(m_node)->isActive());
+        ASSERT(!isActiveInsertionPoint(m_node));
 #endif
     }
 
@@ -100,7 +98,6 @@ private:
     Node* traverseLastChild(const Node*) const;
     Node* traverseChild(const Node*, TraversalDirection) const;
     Node* traverseParent(const Node*) const;
-    Node* traverseParentIncludingInsertionPointAndShadowRoot(const Node*) const;
 
     static Node* traverseNextSibling(const Node*);
     static Node* traversePreviousSibling(const Node*);
@@ -117,6 +114,18 @@ private:
 
     const Node* m_node;
     Policy m_policy;
+};
+
+// A special walker class which is only used for traversing a parent node, including
+// insertion points and shadow roots.
+class ComposedShadowTreeParentWalker {
+public:
+    ComposedShadowTreeParentWalker(const Node*);
+    void parentIncludingInsertionPointAndShadowRoot();
+    Node* get() const { return const_cast<Node*>(m_node); }
+private:
+    Node* traverseParentIncludingInsertionPointAndShadowRoot(const Node*) const;
+    const Node* m_node;
 };
 
 } // namespace

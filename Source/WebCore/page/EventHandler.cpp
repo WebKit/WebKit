@@ -2118,7 +2118,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     else {
         // If the target node is a text node, dispatch on the parent node - rdar://4196646
         if (result && result->isTextNode()) {
-            ComposedShadowTreeWalker walker(result);
+            ComposedShadowTreeParentWalker walker(result);
             walker.parentIncludingInsertionPointAndShadowRoot();
             result = walker.get();
         }
