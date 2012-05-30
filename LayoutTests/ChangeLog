@@ -1,3 +1,10 @@
+2012-05-30  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [Chromium] rebaseline fast/dom/Window/mozilla-focus-blur.html
+
+
+        * platform/chromium/fast/dom/Window/mozilla-focus-blur-expected.txt: Added.
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         [Win] Many editing tests failing
