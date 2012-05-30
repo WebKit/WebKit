@@ -1,3 +1,12 @@
+2012-05-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2GTK+ API tests in the bots.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewCanShowMIMEType): Remove the check for multimedia and
+        plugins MIME types since they depend on the configuration and they
+        are not available in the bots.
+
 2012-05-29  Jer Noble  <jer.noble@apple.com>
 
         Noticeable delay taking an HTML5 trailer fullscreen.

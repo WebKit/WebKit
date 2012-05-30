@@ -712,9 +712,6 @@ static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "text/html"));
     g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "text/plain"));
     g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "image/jpeg"));
-    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "audio/ogg"));
-    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "video/ogg"));
-    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "application/x-shockwave-flash"));
 
     // Unsupported MIME types.
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "text/vcard"));
