@@ -76,7 +76,10 @@ namespace WebCore {
         bool createdIterator = m_iterator && weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), m_iterator, 0);
         if (!createdIterator)
             m_iterator = new TextBreakIterator();
-        setUpIterator(*m_iterator, QTextBoundaryFinder::Grapheme, buffer, length);
+        if (!setUpIterator(*m_iterator, QTextBoundaryFinder::Grapheme, buffer, length)) {
+            delete m_iterator;
+            m_iterator = 0;
+        }
     }
 
     NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()

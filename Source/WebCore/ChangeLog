@@ -1,3 +1,14 @@
+2012-05-30  Dan Bernstein  <mitz@apple.com>
+
+        [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=87740
+
+        Reviewed by Darin Adler.
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator): Changed to use
+        the return value of setUpIterator.
+
 2012-05-30  Zeno Albisser  <zeno@webkit.org>
 
         GraphicsSurface: allow importing and exporting of textures directly on GPU side.

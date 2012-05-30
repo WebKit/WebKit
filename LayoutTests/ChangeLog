@@ -1,3 +1,12 @@
+2012-05-30  Dan Bernstein  <mitz@apple.com>
+
+        [Qt] REGRESSION(r118568): It broke fast/forms/textarea-maxlength.html on Qt 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=87740
+
+        Reviewed by Darin Adler.
+
+        * platform/qt-4.8/Skipped: Removed fast/forms/textarea-maxlength.html.
+
 2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening. Unskip test that is now passing.
