@@ -121,7 +121,11 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 #if OS(WINDOWS)
 inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, unsigned newValue)
 {
+#if OS(WINCE)
+    return InterlockedCompareExchange(reinterpret_cast<LONG*>(const_cast<unsigned*>(location)), static_cast<LONG>(newValue), static_cast<LONG>(expected)) == static_cast<LONG>(expected);
+#else
     return InterlockedCompareExchange(reinterpret_cast<LONG volatile*>(location), static_cast<LONG>(newValue), static_cast<LONG>(expected)) == static_cast<LONG>(expected);
+#endif
 }
 
 inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* newValue)

@@ -1,3 +1,10 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r118603.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+
 2012-05-29  Anders Carlsson  <andersca@apple.com>
 
         String should be move enabled/optimized
