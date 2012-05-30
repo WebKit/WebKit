@@ -492,7 +492,10 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
     getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping);
-    HitTestResult result(contentPos, topPadding, rightPadding, bottomPadding, leftPadding, HitTestShadowDOM);
+    // The user functions checkForText() and findIntersectingRegions() uses the Node.wholeText() to checkFingerIntersection()
+    // not the text in its shadow tree.
+    ShadowContentFilterPolicy allowShadow = m_targetType == Text ? DoNotAllowShadowContent : AllowShadowContent;
+    HitTestResult result(contentPos, topPadding, rightPadding, bottomPadding, leftPadding, allowShadow);
 
     document->renderView()->layer()->hitTest(request, result);
     intersectedNodes = result.rectBasedTestResult();

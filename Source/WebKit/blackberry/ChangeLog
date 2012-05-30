@@ -1,3 +1,18 @@
+2012-05-30  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Browser crashed when selecting in textarea
+        https://bugs.webkit.org/show_bug.cgi?id=87484
+
+        The function FatFingers::checkForText() uses host node's whole text
+        to checkFingerIntersection(). We should not give the text of shadow
+        nodes to it.
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect): Avoid returning
+        shadow nodes when the context is Text node.
+
 2012-05-30  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder
