@@ -248,10 +248,10 @@ namespace WebCore {
     StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external);
 
     // Since v8::Null(isolate) crashes if we pass a null isolate,
-    // we need to instead use v8Null(isolate).
+    // we need to instead use v8NullWithCheck(isolate).
     //
-    // FIXME: Remove all null isolates from V8 bindings, and remove v8Null(isolate).
-    inline v8::Handle<v8::Value> v8Null(v8::Isolate* isolate)
+    // FIXME: Remove all null isolates from V8 bindings, and remove v8NullWithCheck(isolate).
+    inline v8::Handle<v8::Value> v8NullWithCheck(v8::Isolate* isolate)
     {
         return isolate ? v8::Null(isolate) : v8::Null();
     }
@@ -459,7 +459,7 @@ namespace WebCore {
 
     inline v8::Handle<v8::Value> v8DateOrNull(double value, v8::Isolate* isolate = 0)
     {
-        return isfinite(value) ? v8::Date::New(value) : v8Null(isolate);
+        return isfinite(value) ? v8::Date::New(value) : v8NullWithCheck(isolate);
     }
 
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();

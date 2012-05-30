@@ -67,7 +67,7 @@ v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, 
 inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8Null(isolate);
+        return v8NullWithCheck(isolate);
     return V8TestNamedConstructor::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl, v8::Isolate* isolate = 0)

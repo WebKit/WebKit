@@ -456,7 +456,7 @@ END
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Isolate* isolate = 0${forceNewObjectParameter})
 {
     if (!impl)
-        return v8Null(isolate);
+        return v8NullWithCheck(isolate);
     return ${className}::wrap(impl, isolate${forceNewObjectCall});
 }
 END
@@ -473,7 +473,7 @@ v8::Handle<v8::Value> toV8Slow(Node*, v8::Isolate*, bool);
 inline v8::Handle<v8::Value> toV8(Node* impl, v8::Isolate* isolate = 0, bool forceNewObject = false)
 {
     if (UNLIKELY(!impl))
-        return v8Null(isolate);
+        return v8NullWithCheck(isolate);
     if (UNLIKELY(forceNewObject))
         return toV8Slow(impl, isolate, forceNewObject);
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);

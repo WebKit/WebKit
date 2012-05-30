@@ -65,7 +65,7 @@ v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl, v8::Isolate* i
 inline v8::Handle<v8::Value> toV8(TestInterface* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8Null(isolate);
+        return v8NullWithCheck(isolate);
     return V8TestInterface::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestInterface > impl, v8::Isolate* isolate = 0)

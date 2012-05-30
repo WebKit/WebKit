@@ -1,3 +1,43 @@
+2012-05-29  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename v8Null() to v8NullWithCheck()
+        https://bugs.webkit.org/show_bug.cgi?id=87713
+
+        Reviewed by Adam Barth.
+
+        In IRC, cmarcelo@ pointed out that v8::Null() and v8Null()
+        are confusing. This patch renames v8Null() to v8NullWithCheck().
+
+        No tests. No behavior change.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::toV8):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8NullWithCheck):
+        (WebCore::v8DateOrNull):
+
 2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         Some Content Security Policy console messages are missing line numbers in JSC

@@ -61,7 +61,7 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl
 inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
-        return v8Null(isolate);
+        return v8NullWithCheck(isolate);
     return V8TestCustomNamedGetter::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Isolate* isolate = 0)
