@@ -1,5 +1,23 @@
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
+        Floats wraps incorrectly when top edge has subpixel precision
+        https://bugs.webkit.org/show_bug.cgi?id=87688
+
+        Reviewed by Levi Weintraub.
+        
+        When computing the logical left and right offsets for a float we
+        incorrectly floored the logical top when passing it to the float search
+        adapter. This caused it to return incorrect values where the floored and
+        pixel snapped values are not the same.
+
+        Test: fast/sub-pixel/float-wrap-with-subpixel-top.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
+2012-05-30  Emil A Eklund  <eae@chromium.org>
+
         Inline blocks with margin wrap incorrectly with subpixel layout turned on
         https://bugs.webkit.org/show_bug.cgi?id=87897
 

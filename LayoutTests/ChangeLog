@@ -1,3 +1,35 @@
+2012-05-30  Emil A Eklund  <eae@chromium.org>
+
+        Floats wraps incorrectly when top edge has subpixel precision
+        https://bugs.webkit.org/show_bug.cgi?id=87688
+
+        Reviewed by Levi Weintraub.
+        
+        When computing the logical left and right offsets for a float we
+        incorrectly floored the logical top when passing it to the float search
+        adapter. This caused it to return incorrect values where the floored and
+        pixel snapped values are not the same.
+
+        * fast/sub-pixel/float-wrap-with-subpixel-top-expected.html: Added.
+        * fast/sub-pixel/float-wrap-with-subpixel-top.html: Added.
+        * platform/chromium-linux/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/chromium-linux/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's DRT should print the number of MessagePorts for new each new intent
