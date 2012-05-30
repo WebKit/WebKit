@@ -2988,7 +2988,7 @@ BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSI
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-nonexistence-form-id.html = MISSING PASS
 BUGWK72039 DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
-BUGWK78620 LINUX WIN : fast/forms/formaction-attribute.html = MISSING PASS
+BUGWK78620 : fast/forms/formaction-attribute.html = MISSING PASS
 BUGWK78620 LINUX : fast/forms/formmethod-attribute-button-html.html = MISSING PASS
 BUGWK78620 LINUX : fast/forms/formmethod-attribute-input-html.html = MISSING PASS
 
@@ -3153,15 +3153,15 @@ BUGWK77047 BUGWK79013 WIN DEBUG : http/tests/workers/terminate-during-sync-opera
 BUGWK77047 BUGWK79013 LEOPARD DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH TIMEOUT
 BUGWK79013 WIN RELEASE : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
 BUGWK79013 LEOPARD RELEASE : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
-BUGWK79013 SNOWLEOPARD LINUX : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
+BUGWK79013 LION SNOWLEOPARD LINUX : http/tests/workers/terminate-during-sync-operation.html = PASS CRASH
 
 BUGCR115055 : fast/js/cyclic-prototypes.html = TEXT
 
 BUGCR113063 DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
 BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.html = PASS CRASH
 
-BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
-BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
+BUGWK79224 WIN : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
+BUGWK79224 WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
 BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT

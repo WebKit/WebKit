@@ -1,3 +1,14 @@
+2012-05-30  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
+        tex-image-with-format-and-type.html
+        tex-image-with-format-and-type.html
+        formaction-attribute.html
+        terminate-during-sync-operation.html
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-30  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         WebKit2: Implement layoutTestController.setPluginsEnabled() in WebKitTestRunner.
