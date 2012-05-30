@@ -1,3 +1,13 @@
+2012-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        fast/dom/Window/mozilla-focus-blur.html is failing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=87884
+        <rdar://problem/11558864>
+
+        Unreviewed failing baselines after http://trac.webkit.org/changeset/118916.
+
+        * platform/mac/fast/dom/Window/mozilla-focus-blur-expected.txt: Added.
+
 2012-05-30  Stephen Chenney  <schenney@chromium.org>
 
         Layout Test perf/mouse-event.html is flaky on Linux
