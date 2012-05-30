@@ -155,10 +155,6 @@ void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
     // FIXME: implement
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
-{
-}
-
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
     static const int timeoutSeconds = 10;

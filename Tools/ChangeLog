@@ -1,3 +1,9 @@
+2012-05-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix after removal of setJavaScriptProfilingEnabled.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Ewk_Intent_Request's postResult/postFailure should take serialized script values in argument
