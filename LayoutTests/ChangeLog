@@ -1,5 +1,15 @@
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
+        [Win] REGRESSION(r118018) fast/js/names.html failing due to JavaScriptExperiments not being
+        enabled on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=87858
+
+        Skip the test on Windows to get the bots greener.
+
+        * platform/win/Skipped:
+
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
         More Windows test cleanup.
 
         Update the Skipped list and tests for features turned on/off on Windows.
