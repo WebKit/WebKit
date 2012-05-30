@@ -581,6 +581,9 @@ void DumpRenderTreeChrome::onFrameLoadFinished(void*, Evas_Object* frame, void* 
     if (error)
         return;
 
+    if (!done && gLayoutTestController->dumpProgressFinishedCallback())
+        printf("postProgressFinishedNotification\n");
+
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
         printf("%s - didFinishLoadForFrame\n", frameName.utf8().data());

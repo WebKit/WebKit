@@ -1112,7 +1112,6 @@ http/tests/cache/subresource-failover-to-network.html
 http/tests/cache/subresource-multiple-instances.html
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
 http/tests/loading/nested_bad_objects.php
-http/tests/loading/progress-finished-callback.html
 http/tests/misc/401-alternative-content.php
 http/tests/misc/copy-resolves-urls.html
 http/tests/misc/SVGFont-delayed-load.html

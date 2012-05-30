@@ -1,3 +1,16 @@
+2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] EFL's DRT needs "postProgressFinishedNotification" message
+        https://bugs.webkit.org/show_bug.cgi?id=87833
+
+        Reviewed by Tor Arne Vestbø.
+
+        Print "postProgressFinishedNotification" message if frame load finished 
+        to unskip http/tests/loading/progress-finished-callback.html.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onFrameLoadFinished):
+
 2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Fix WebKit2-EFL build
