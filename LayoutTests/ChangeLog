@@ -1,3 +1,13 @@
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
+        [Qt][GTK][Mac][Win] New plugins/npruntime/delete-plugin-within-* tests introduced in r117012
+        fail/crash
+        https://bugs.webkit.org/show_bug.cgi?id=86443
+
+        Skip these tests on Windows because they crash.
+
+        * platform/win/Skipped:
+
 2012-05-30  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed gardening in fast/transforms.
