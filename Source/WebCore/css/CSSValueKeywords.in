@@ -499,8 +499,8 @@ multiple
 // start
 // end
 // center
-// justify
-distribute
+space-between
+space-around
 
 // CSS_PROP_FLEX_FLOW
 row
@@ -515,8 +515,8 @@ wrap-reverse
 // start
 // end
 // center
-// justify
-// distribute
+// space-between
+// space-around
 // stretch
 #endif
 

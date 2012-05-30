@@ -100,14 +100,14 @@ if (window.layoutTestController)
   <div data-offset-x="0" data-offset-y="70" data-expected-height="20"></div>
 </div>
 
-<div data-expected-height="120" class="flexbox horizontal" style="-webkit-flex-line-pack: justify">
+<div data-expected-height="120" class="flexbox horizontal" style="-webkit-flex-line-pack: space-between">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="50" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="100" data-expected-height="20"></div>
 </div>
 
-<div data-expected-height="120" class="flexbox horizontal" style="-webkit-flex-line-pack: distribute">
+<div data-expected-height="120" class="flexbox horizontal" style="-webkit-flex-line-pack: space-around">
   <div data-offset-x="0" data-offset-y="10" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="10" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="50" data-expected-height="20"></div>
@@ -138,7 +138,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- If we overflow, we should be the same as start. -->
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: justify; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-between; height: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="20" data-expected-height="20"></div>
@@ -146,7 +146,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- If we overflow, we should true center. -->
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: distribute; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-around; height: 30px">
   <div data-offset-x="0" data-offset-y="-15" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="-15" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="5" data-expected-height="20"></div>
@@ -162,18 +162,18 @@ if (window.layoutTestController)
 </div>
 
 <!-- 0 lines should not crash. -->
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: justify; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-between; height: 30px">
 </div>
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: distribute; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-around; height: 30px">
 </div>
 <div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: stretch; height: 30px">
 </div>
 
 <!-- 1 line should not crash. -->
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: justify; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-between; height: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="10"></div>
 </div>
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: distribute; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: space-around; height: 30px">
   <div data-offset-x="0" data-offset-y="10" data-expected-height="10"></div>
 </div>
 <div data-expected-height="30" class="flexbox horizontal" style="-webkit-flex-line-pack: stretch; height: 30px">
@@ -209,14 +209,14 @@ if (window.layoutTestController)
   <div data-offset-x="30" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
-<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-flex-line-pack: justify">
+<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-between">
   <div data-offset-x="100" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="100" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="50" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="0" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
-<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-flex-line-pack: distribute">
+<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-around">
   <div data-offset-x="90" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="90" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="50" data-offset-y="0" data-expected-width="20"></div>
@@ -247,7 +247,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- If we overflow, we should be the same as start. -->
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: justify; width: 30px;">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-between; width: 30px;">
   <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="10" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="-10" data-offset-y="0" data-expected-width="20"></div>
@@ -255,7 +255,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- If we overflow, we should true center. -->
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: distribute; width: 30px;">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-around; width: 30px;">
   <div data-offset-x="25" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="25" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="5" data-offset-y="0" data-expected-width="20"></div>
@@ -271,18 +271,18 @@ if (window.layoutTestController)
 </div>
 
 <!-- 0 lines should not crash. -->
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: justify; width: 30px">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-between; width: 30px">
 </div>
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: distribute; width: 30px">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-around; width: 30px">
 </div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: stretch; width: 30px">
 </div>
 
 <!-- 1 line should not crash. -->
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: justify; width: 30px">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-between; width: 30px">
   <div data-offset-x="20" data-offset-y="0" data-expected-width="10"></div>
 </div>
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: distribute; width: 30px">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: space-around; width: 30px">
   <div data-offset-x="10" data-offset-y="0" data-expected-width="10"></div>
 </div>
 <div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-flex-line-pack: stretch; width: 30px">

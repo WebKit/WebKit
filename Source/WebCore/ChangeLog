@@ -1,3 +1,29 @@
+2012-05-30  Tony Chang  <tony@chromium.org>
+
+        rename flexbox css values from justify and distribute to space-between and space-around
+        https://bugs.webkit.org/show_bug.cgi?id=87867
+
+        Reviewed by Ojan Vafai.
+
+        This was recently changed in the spec:
+        http://dev.w3.org/csswg/css3-flexbox/#justify-content
+
+        No new tests, updated existing tests and expectations.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexPack):
+        (WebCore::CSSPrimitiveValue::operator EFlexLinePack):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialPackingOffset):
+        (WebCore::packingSpaceBetweenChildren):
+        (WebCore::initialLinePackingOffset):
+        (WebCore::linePackingSpaceBetweenChildren):
+        * rendering/style/RenderStyleConstants.h:
+
 2012-05-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Make sure we get the file size with the proper native type.

@@ -905,7 +905,7 @@ static LayoutUnit initialPackingOffset(LayoutUnit availableFreeSpace, EFlexPack 
         return availableFreeSpace;
     if (flexPack == PackCenter)
         return availableFreeSpace / 2;
-    if (flexPack == PackDistribute) {
+    if (flexPack == PackSpaceAround) {
         if (availableFreeSpace > 0 && numberOfChildren)
             return availableFreeSpace / (2 * numberOfChildren);
         if (availableFreeSpace < 0)
@@ -917,9 +917,9 @@ static LayoutUnit initialPackingOffset(LayoutUnit availableFreeSpace, EFlexPack 
 static LayoutUnit packingSpaceBetweenChildren(LayoutUnit availableFreeSpace, EFlexPack flexPack, unsigned numberOfChildren)
 {
     if (availableFreeSpace > 0 && numberOfChildren > 1) {
-        if (flexPack == PackJustify)
+        if (flexPack == PackSpaceBetween)
             return availableFreeSpace / (numberOfChildren - 1);
-        if (flexPack == PackDistribute)
+        if (flexPack == PackSpaceAround)
             return availableFreeSpace / numberOfChildren;
     }
     return 0;
@@ -1072,7 +1072,7 @@ static LayoutUnit initialLinePackingOffset(LayoutUnit availableFreeSpace, EFlexL
         return availableFreeSpace;
     if (linePack == LinePackCenter)
         return availableFreeSpace / 2;
-    if (linePack == LinePackDistribute) {
+    if (linePack == LinePackSpaceAround) {
         if (availableFreeSpace > 0 && numberOfLines)
             return availableFreeSpace / (2 * numberOfLines);
         if (availableFreeSpace < 0)
@@ -1084,9 +1084,9 @@ static LayoutUnit initialLinePackingOffset(LayoutUnit availableFreeSpace, EFlexL
 static LayoutUnit linePackingSpaceBetweenChildren(LayoutUnit availableFreeSpace, EFlexLinePack linePack, unsigned numberOfLines)
 {
     if (availableFreeSpace > 0 && numberOfLines > 1) {
-        if (linePack == LinePackJustify)
+        if (linePack == LinePackSpaceBetween)
             return availableFreeSpace / (numberOfLines - 1);
-        if (linePack == LinePackDistribute || linePack == LinePackStretch)
+        if (linePack == LinePackSpaceAround || linePack == LinePackStretch)
             return availableFreeSpace / numberOfLines;
     }
     return 0;

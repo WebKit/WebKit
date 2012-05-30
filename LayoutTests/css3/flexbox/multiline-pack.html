@@ -56,11 +56,11 @@
 .pack-center {
     -webkit-flex-pack: center;
 }
-.pack-justify {
-    -webkit-flex-pack: justify;
+.pack-space-between {
+    -webkit-flex-pack: space-between;
 }
-.pack-distribute {
-    -webkit-flex-pack: distribute;
+.pack-space-around {
+    -webkit-flex-pack: space-around;
 }
 .flexbox > :nth-child(1) {
     background-color: #0f0;
@@ -109,14 +109,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -146,14 +146,14 @@ var expectations = {
                         'child3': [40, 10, 10, 0],
                         'child4': [20, 10, 50, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 10],
                         'child2': [20, 10, 60, 10],
                         'child3': [40, 10, 0, 0],
                         'child4': [20, 10, 60, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 10],
                         'child2': [20, 10, 55, 10],
@@ -185,14 +185,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -222,14 +222,14 @@ var expectations = {
                         'child3': [40, 10, 30, 0],
                         'child4': [20, 10, 10, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 10],
                         'child2': [20, 10, 0, 10],
                         'child3': [40, 10, 40, 0],
                         'child4': [20, 10, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 10],
                         'child2': [20, 10, 5, 10],
@@ -263,14 +263,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -300,14 +300,14 @@ var expectations = {
                         'child3': [10, 40, 80, 10],
                         'child4': [10, 20, 80, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 0],
                         'child2': [10, 20, 90, 60],
                         'child3': [10, 40, 80, 0],
                         'child4': [10, 20, 80, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 5],
                         'child2': [10, 20, 90, 55],
@@ -339,14 +339,14 @@ var expectations = {
                         'child3': [10, 40, 80, 10],
                         'child4': [10, 20, 80, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 0],
                         'child2': [10, 20, 90, 60],
                         'child3': [10, 40, 80, 0],
                         'child4': [10, 20, 80, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 5],
                         'child2': [10, 20, 90, 55],
@@ -376,14 +376,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -417,14 +417,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -454,14 +454,14 @@ var expectations = {
                         'child3': [40, 10, 30, 0],
                         'child4': [20, 10, 10, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 10],
                         'child2': [20, 10, 0, 10],
                         'child3': [40, 10, 40, 0],
                         'child4': [20, 10, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 10],
                         'child2': [20, 10, 5, 10],
@@ -493,14 +493,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -530,14 +530,14 @@ var expectations = {
                         'child3': [40, 10, 10, 0],
                         'child4': [20, 10, 50, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 10],
                         'child2': [20, 10, 60, 10],
                         'child3': [40, 10, 0, 0],
                         'child4': [20, 10, 60, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 10],
                         'child2': [20, 10, 55, 10],
@@ -571,14 +571,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -608,14 +608,14 @@ var expectations = {
                         'child3': [10, 40, 80, 30],
                         'child4': [10, 20, 80, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 40],
                         'child2': [10, 20, 90, 0],
                         'child3': [10, 40, 80, 40],
                         'child4': [10, 20, 80, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 35],
                         'child2': [10, 20, 90, 5],
@@ -647,14 +647,14 @@ var expectations = {
                         'child3': [10, 40, 80, 30],
                         'child4': [10, 20, 80, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 40],
                         'child2': [10, 20, 90, 0],
                         'child3': [10, 40, 80, 40],
                         'child4': [10, 20, 80, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 35],
                         'child2': [10, 20, 90, 5],
@@ -684,14 +684,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -727,14 +727,14 @@ var expectations = {
                         'child3': [40, 10, 10, 0],
                         'child4': [20, 10, 50, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 10],
                         'child2': [20, 10, 60, 10],
                         'child3': [40, 10, 0, 0],
                         'child4': [20, 10, 60, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 10],
                         'child2': [20, 10, 55, 10],
@@ -764,14 +764,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -803,14 +803,14 @@ var expectations = {
                         'child3': [40, 10, 30, 0],
                         'child4': [20, 10, 10, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 10],
                         'child2': [20, 10, 0, 10],
                         'child3': [40, 10, 40, 0],
                         'child4': [20, 10, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 10],
                         'child2': [20, 10, 5, 10],
@@ -840,14 +840,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -881,14 +881,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -918,14 +918,14 @@ var expectations = {
                         'child3': [10, 40, 80, 30],
                         'child4': [10, 20, 80, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 40],
                         'child2': [10, 20, 90, 0],
                         'child3': [10, 40, 80, 40],
                         'child4': [10, 20, 80, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 35],
                         'child2': [10, 20, 90, 5],
@@ -957,14 +957,14 @@ var expectations = {
                         'child3': [10, 40, 80, 30],
                         'child4': [10, 20, 80, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 40],
                         'child2': [10, 20, 90, 0],
                         'child3': [10, 40, 80, 40],
                         'child4': [10, 20, 80, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 35],
                         'child2': [10, 20, 90, 5],
@@ -994,14 +994,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -1035,14 +1035,14 @@ var expectations = {
                         'child3': [40, 10, 30, 0],
                         'child4': [20, 10, 10, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 10],
                         'child2': [20, 10, 0, 10],
                         'child3': [40, 10, 40, 0],
                         'child4': [20, 10, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 10],
                         'child2': [20, 10, 5, 10],
@@ -1072,14 +1072,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -1111,14 +1111,14 @@ var expectations = {
                         'child3': [40, 10, 10, 0],
                         'child4': [20, 10, 50, 0],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 10],
                         'child2': [20, 10, 60, 10],
                         'child3': [40, 10, 0, 0],
                         'child4': [20, 10, 60, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 10],
                         'child2': [20, 10, 55, 10],
@@ -1148,14 +1148,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 20],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -1189,14 +1189,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -1226,14 +1226,14 @@ var expectations = {
                         'child3': [10, 40, 80, 10],
                         'child4': [10, 20, 80, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 0],
                         'child2': [10, 20, 90, 60],
                         'child3': [10, 40, 80, 0],
                         'child4': [10, 20, 80, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 5],
                         'child2': [10, 20, 90, 55],
@@ -1265,14 +1265,14 @@ var expectations = {
                         'child3': [10, 40, 80, 10],
                         'child4': [10, 20, 80, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 0],
                         'child2': [10, 20, 90, 60],
                         'child3': [10, 40, 80, 0],
                         'child4': [10, 20, 80, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 90, 5],
                         'child2': [10, 20, 90, 55],
@@ -1302,14 +1302,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [100, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -1345,14 +1345,14 @@ var expectations = {
                         'child3': [10, 40, 0, 10],
                         'child4': [10, 20, 0, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 0],
                         'child2': [10, 20, 10, 60],
                         'child3': [10, 40, 0, 0],
                         'child4': [10, 20, 0, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 5],
                         'child2': [10, 20, 10, 55],
@@ -1382,14 +1382,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -1421,14 +1421,14 @@ var expectations = {
                         'child3': [10, 40, 0, 30],
                         'child4': [10, 20, 0, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 40],
                         'child2': [10, 20, 10, 0],
                         'child3': [10, 40, 0, 40],
                         'child4': [10, 20, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 35],
                         'child2': [10, 20, 10, 5],
@@ -1458,14 +1458,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -1499,14 +1499,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -1536,14 +1536,14 @@ var expectations = {
                         'child3': [40, 10, 30, 20],
                         'child4': [20, 10, 10, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 30],
                         'child2': [20, 10, 0, 30],
                         'child3': [40, 10, 40, 20],
                         'child4': [20, 10, 0, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 30],
                         'child2': [20, 10, 5, 30],
@@ -1575,14 +1575,14 @@ var expectations = {
                         'child3': [40, 10, 30, 20],
                         'child4': [20, 10, 10, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 30],
                         'child2': [20, 10, 0, 30],
                         'child3': [40, 10, 40, 20],
                         'child4': [20, 10, 0, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 30],
                         'child2': [20, 10, 5, 30],
@@ -1612,14 +1612,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -1653,14 +1653,14 @@ var expectations = {
                         'child3': [10, 40, 0, 30],
                         'child4': [10, 20, 0, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 40],
                         'child2': [10, 20, 10, 0],
                         'child3': [10, 40, 0, 40],
                         'child4': [10, 20, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 35],
                         'child2': [10, 20, 10, 5],
@@ -1690,14 +1690,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -1729,14 +1729,14 @@ var expectations = {
                         'child3': [10, 40, 0, 10],
                         'child4': [10, 20, 0, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 0],
                         'child2': [10, 20, 10, 60],
                         'child3': [10, 40, 0, 0],
                         'child4': [10, 20, 0, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 5],
                         'child2': [10, 20, 10, 55],
@@ -1766,14 +1766,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -1807,14 +1807,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -1844,14 +1844,14 @@ var expectations = {
                         'child3': [40, 10, 10, 20],
                         'child4': [20, 10, 50, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 30],
                         'child2': [20, 10, 60, 30],
                         'child3': [40, 10, 0, 20],
                         'child4': [20, 10, 60, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 30],
                         'child2': [20, 10, 55, 30],
@@ -1883,14 +1883,14 @@ var expectations = {
                         'child3': [40, 10, 10, 20],
                         'child4': [20, 10, 50, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 30],
                         'child2': [20, 10, 60, 30],
                         'child3': [40, 10, 0, 20],
                         'child4': [20, 10, 60, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 30],
                         'child2': [20, 10, 55, 30],
@@ -1920,14 +1920,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -1963,14 +1963,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -2000,14 +2000,14 @@ var expectations = {
                         'child3': [10, 40, 0, 10],
                         'child4': [10, 20, 0, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 0],
                         'child2': [10, 20, 10, 60],
                         'child3': [10, 40, 0, 0],
                         'child4': [10, 20, 0, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 5],
                         'child2': [10, 20, 10, 55],
@@ -2039,14 +2039,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -2076,14 +2076,14 @@ var expectations = {
                         'child3': [10, 40, 0, 30],
                         'child4': [10, 20, 0, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 40],
                         'child2': [10, 20, 10, 0],
                         'child3': [10, 40, 0, 40],
                         'child4': [10, 20, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 35],
                         'child2': [10, 20, 10, 5],
@@ -2117,14 +2117,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -2154,14 +2154,14 @@ var expectations = {
                         'child3': [40, 10, 10, 20],
                         'child4': [20, 10, 50, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 30],
                         'child2': [20, 10, 60, 30],
                         'child3': [40, 10, 0, 20],
                         'child4': [20, 10, 60, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 30],
                         'child2': [20, 10, 55, 30],
@@ -2193,14 +2193,14 @@ var expectations = {
                         'child3': [40, 10, 10, 20],
                         'child4': [20, 10, 50, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 30],
                         'child2': [20, 10, 60, 30],
                         'child3': [40, 10, 0, 20],
                         'child4': [20, 10, 60, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 30],
                         'child2': [20, 10, 55, 30],
@@ -2230,14 +2230,14 @@ var expectations = {
                         'child3': [40, 10, 10, 10],
                         'child4': [20, 10, 50, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 0, 0],
                         'child2': [20, 10, 60, 0],
                         'child3': [40, 10, 0, 10],
                         'child4': [20, 10, 60, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 5, 0],
                         'child2': [20, 10, 55, 0],
@@ -2271,14 +2271,14 @@ var expectations = {
                         'child3': [10, 40, 10, 30],
                         'child4': [10, 20, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 40],
                         'child2': [10, 20, 0, 0],
                         'child3': [10, 40, 10, 40],
                         'child4': [10, 20, 10, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 35],
                         'child2': [10, 20, 0, 5],
@@ -2308,14 +2308,14 @@ var expectations = {
                         'child3': [10, 40, 0, 30],
                         'child4': [10, 20, 0, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 40],
                         'child2': [10, 20, 10, 0],
                         'child3': [10, 40, 0, 40],
                         'child4': [10, 20, 0, 0],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 35],
                         'child2': [10, 20, 10, 5],
@@ -2347,14 +2347,14 @@ var expectations = {
                         'child3': [10, 40, 10, 10],
                         'child4': [10, 20, 10, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 0],
                         'child2': [10, 20, 0, 60],
                         'child3': [10, 40, 10, 0],
                         'child4': [10, 20, 10, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 0, 5],
                         'child2': [10, 20, 0, 55],
@@ -2384,14 +2384,14 @@ var expectations = {
                         'child3': [10, 40, 0, 10],
                         'child4': [10, 20, 0, 50],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 0],
                         'child2': [10, 20, 10, 60],
                         'child3': [10, 40, 0, 0],
                         'child4': [10, 20, 0, 60],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [20, 80],
                         'child1': [10, 40, 10, 5],
                         'child2': [10, 20, 10, 55],
@@ -2425,14 +2425,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -2462,14 +2462,14 @@ var expectations = {
                         'child3': [40, 10, 30, 20],
                         'child4': [20, 10, 10, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 30],
                         'child2': [20, 10, 0, 30],
                         'child3': [40, 10, 40, 20],
                         'child4': [20, 10, 0, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 30],
                         'child2': [20, 10, 5, 30],
@@ -2501,14 +2501,14 @@ var expectations = {
                         'child3': [40, 10, 30, 20],
                         'child4': [20, 10, 10, 20],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 30],
                         'child2': [20, 10, 0, 30],
                         'child3': [40, 10, 40, 20],
                         'child4': [20, 10, 0, 20],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 30],
                         'child2': [20, 10, 5, 30],
@@ -2538,14 +2538,14 @@ var expectations = {
                         'child3': [40, 10, 30, 10],
                         'child4': [20, 10, 10, 10],
                     },
-                    'justify': {
+                    'space-between': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 40, 0],
                         'child2': [20, 10, 0, 0],
                         'child3': [40, 10, 40, 10],
                         'child4': [20, 10, 0, 10],
                     },
-                    'distribute': {
+                    'space-around': {
                         'flexbox': [80, 40],
                         'child1': [40, 10, 35, 0],
                         'child2': [20, 10, 5, 0],
@@ -2584,7 +2584,7 @@ var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-l
 var flexDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];
-var packs = ['start', 'end', 'center', 'justify', 'distribute'];
+var packs = ['start', 'end', 'center', 'space-between', 'space-around'];
 
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {

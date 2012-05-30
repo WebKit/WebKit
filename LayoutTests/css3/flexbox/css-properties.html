@@ -70,9 +70,9 @@ flexbox.style.webkitFlexPack = 'center';
 shouldBeEqualToString('flexbox.style.webkitFlexPack', 'center');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'center');
 
-flexbox.style.webkitFlexPack = 'justify';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', 'justify');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'justify');
+flexbox.style.webkitFlexPack = 'space-between';
+shouldBeEqualToString('flexbox.style.webkitFlexPack', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'space-between');
 
 flexbox.style.webkitFlexPack = '';
 shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
@@ -276,13 +276,13 @@ flexbox.style.webkitFlexLinePack = 'center';
 shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'center');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'center');
 
-flexbox.style.webkitFlexLinePack = 'justify';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'justify');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'justify');
+flexbox.style.webkitFlexLinePack = 'space-between';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'space-between');
 
-flexbox.style.webkitFlexLinePack = 'distribute';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'distribute');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'distribute');
+flexbox.style.webkitFlexLinePack = 'space-around';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'space-around');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'space-around');
 
 flexbox.style.webkitFlexLinePack = 'stretch';
 shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'stretch');

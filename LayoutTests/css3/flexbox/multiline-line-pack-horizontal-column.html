@@ -44,11 +44,11 @@
 .line-pack-center {
     -webkit-flex-line-pack: center;
 }
-.line-pack-justify {
-    -webkit-flex-line-pack: justify;
+.line-pack-space-between {
+    -webkit-flex-line-pack: space-between;
 }
-.line-pack-distribute {
-    -webkit-flex-line-pack: distribute;
+.line-pack-space-around {
+    -webkit-flex-line-pack: space-around;
 }
 .line-pack-stretch {
     -webkit-flex-line-pack: stretch;
@@ -76,16 +76,16 @@ var expectations = {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
             },
@@ -94,16 +94,16 @@ var expectations = {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
             },
@@ -115,16 +115,16 @@ var expectations = {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
             },
@@ -133,16 +133,16 @@ var expectations = {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
             },
@@ -156,16 +156,16 @@ var expectations = {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
             },
@@ -174,16 +174,16 @@ var expectations = {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
             },
@@ -194,16 +194,16 @@ var expectations = {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
             },
@@ -212,16 +212,16 @@ var expectations = {
                     'start': [500, 400],
                     'end': [100, 0],
                     'center': [300, 200],
-                    'justify': [500, 0],
-                    'distribute': [400, 100],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
                     'start': [0, 100],
                     'end': [400, 500],
                     'center': [200, 300],
-                    'justify': [0, 500],
-                    'distribute': [100, 400],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
             },
@@ -255,7 +255,7 @@ var writingModes = ['horizontal-tb', 'horizontal-bt'];
 var flexDirections = ['column', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];
-var linePacks = ['start', 'end', 'center', 'justify', 'distribute', 'stretch'];
+var linePacks = ['start', 'end', 'center', 'space-between', 'space-around', 'stretch'];
 
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {

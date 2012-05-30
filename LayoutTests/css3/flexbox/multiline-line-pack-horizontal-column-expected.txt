@@ -4,9 +4,9 @@ horizontal-tb ltr column wrap line-pack-end
 PASS
 horizontal-tb ltr column wrap line-pack-center
 PASS
-horizontal-tb ltr column wrap line-pack-justify
+horizontal-tb ltr column wrap line-pack-space-between
 PASS
-horizontal-tb ltr column wrap line-pack-distribute
+horizontal-tb ltr column wrap line-pack-space-around
 PASS
 horizontal-tb ltr column wrap line-pack-stretch
 PASS
@@ -16,9 +16,9 @@ horizontal-tb ltr column wrap-reverse line-pack-end
 PASS
 horizontal-tb ltr column wrap-reverse line-pack-center
 PASS
-horizontal-tb ltr column wrap-reverse line-pack-justify
+horizontal-tb ltr column wrap-reverse line-pack-space-between
 PASS
-horizontal-tb ltr column wrap-reverse line-pack-distribute
+horizontal-tb ltr column wrap-reverse line-pack-space-around
 PASS
 horizontal-tb ltr column wrap-reverse line-pack-stretch
 PASS
@@ -28,9 +28,9 @@ horizontal-tb rtl column wrap line-pack-end
 PASS
 horizontal-tb rtl column wrap line-pack-center
 PASS
-horizontal-tb rtl column wrap line-pack-justify
+horizontal-tb rtl column wrap line-pack-space-between
 PASS
-horizontal-tb rtl column wrap line-pack-distribute
+horizontal-tb rtl column wrap line-pack-space-around
 PASS
 horizontal-tb rtl column wrap line-pack-stretch
 PASS
@@ -40,9 +40,9 @@ horizontal-tb rtl column wrap-reverse line-pack-end
 PASS
 horizontal-tb rtl column wrap-reverse line-pack-center
 PASS
-horizontal-tb rtl column wrap-reverse line-pack-justify
+horizontal-tb rtl column wrap-reverse line-pack-space-between
 PASS
-horizontal-tb rtl column wrap-reverse line-pack-distribute
+horizontal-tb rtl column wrap-reverse line-pack-space-around
 PASS
 horizontal-tb rtl column wrap-reverse line-pack-stretch
 PASS
@@ -52,9 +52,9 @@ horizontal-tb ltr column-reverse wrap line-pack-end
 PASS
 horizontal-tb ltr column-reverse wrap line-pack-center
 PASS
-horizontal-tb ltr column-reverse wrap line-pack-justify
+horizontal-tb ltr column-reverse wrap line-pack-space-between
 PASS
-horizontal-tb ltr column-reverse wrap line-pack-distribute
+horizontal-tb ltr column-reverse wrap line-pack-space-around
 PASS
 horizontal-tb ltr column-reverse wrap line-pack-stretch
 PASS
@@ -64,9 +64,9 @@ horizontal-tb ltr column-reverse wrap-reverse line-pack-end
 PASS
 horizontal-tb ltr column-reverse wrap-reverse line-pack-center
 PASS
-horizontal-tb ltr column-reverse wrap-reverse line-pack-justify
+horizontal-tb ltr column-reverse wrap-reverse line-pack-space-between
 PASS
-horizontal-tb ltr column-reverse wrap-reverse line-pack-distribute
+horizontal-tb ltr column-reverse wrap-reverse line-pack-space-around
 PASS
 horizontal-tb ltr column-reverse wrap-reverse line-pack-stretch
 PASS
@@ -76,9 +76,9 @@ horizontal-tb rtl column-reverse wrap line-pack-end
 PASS
 horizontal-tb rtl column-reverse wrap line-pack-center
 PASS
-horizontal-tb rtl column-reverse wrap line-pack-justify
+horizontal-tb rtl column-reverse wrap line-pack-space-between
 PASS
-horizontal-tb rtl column-reverse wrap line-pack-distribute
+horizontal-tb rtl column-reverse wrap line-pack-space-around
 PASS
 horizontal-tb rtl column-reverse wrap line-pack-stretch
 PASS
@@ -88,9 +88,9 @@ horizontal-tb rtl column-reverse wrap-reverse line-pack-end
 PASS
 horizontal-tb rtl column-reverse wrap-reverse line-pack-center
 PASS
-horizontal-tb rtl column-reverse wrap-reverse line-pack-justify
+horizontal-tb rtl column-reverse wrap-reverse line-pack-space-between
 PASS
-horizontal-tb rtl column-reverse wrap-reverse line-pack-distribute
+horizontal-tb rtl column-reverse wrap-reverse line-pack-space-around
 PASS
 horizontal-tb rtl column-reverse wrap-reverse line-pack-stretch
 PASS
@@ -100,9 +100,9 @@ horizontal-bt ltr column wrap line-pack-end
 PASS
 horizontal-bt ltr column wrap line-pack-center
 PASS
-horizontal-bt ltr column wrap line-pack-justify
+horizontal-bt ltr column wrap line-pack-space-between
 PASS
-horizontal-bt ltr column wrap line-pack-distribute
+horizontal-bt ltr column wrap line-pack-space-around
 PASS
 horizontal-bt ltr column wrap line-pack-stretch
 PASS
@@ -112,9 +112,9 @@ horizontal-bt ltr column wrap-reverse line-pack-end
 PASS
 horizontal-bt ltr column wrap-reverse line-pack-center
 PASS
-horizontal-bt ltr column wrap-reverse line-pack-justify
+horizontal-bt ltr column wrap-reverse line-pack-space-between
 PASS
-horizontal-bt ltr column wrap-reverse line-pack-distribute
+horizontal-bt ltr column wrap-reverse line-pack-space-around
 PASS
 horizontal-bt ltr column wrap-reverse line-pack-stretch
 PASS
@@ -124,9 +124,9 @@ horizontal-bt rtl column wrap line-pack-end
 PASS
 horizontal-bt rtl column wrap line-pack-center
 PASS
-horizontal-bt rtl column wrap line-pack-justify
+horizontal-bt rtl column wrap line-pack-space-between
 PASS
-horizontal-bt rtl column wrap line-pack-distribute
+horizontal-bt rtl column wrap line-pack-space-around
 PASS
 horizontal-bt rtl column wrap line-pack-stretch
 PASS
@@ -136,9 +136,9 @@ horizontal-bt rtl column wrap-reverse line-pack-end
 PASS
 horizontal-bt rtl column wrap-reverse line-pack-center
 PASS
-horizontal-bt rtl column wrap-reverse line-pack-justify
+horizontal-bt rtl column wrap-reverse line-pack-space-between
 PASS
-horizontal-bt rtl column wrap-reverse line-pack-distribute
+horizontal-bt rtl column wrap-reverse line-pack-space-around
 PASS
 horizontal-bt rtl column wrap-reverse line-pack-stretch
 PASS
@@ -148,9 +148,9 @@ horizontal-bt ltr column-reverse wrap line-pack-end
 PASS
 horizontal-bt ltr column-reverse wrap line-pack-center
 PASS
-horizontal-bt ltr column-reverse wrap line-pack-justify
+horizontal-bt ltr column-reverse wrap line-pack-space-between
 PASS
-horizontal-bt ltr column-reverse wrap line-pack-distribute
+horizontal-bt ltr column-reverse wrap line-pack-space-around
 PASS
 horizontal-bt ltr column-reverse wrap line-pack-stretch
 PASS
@@ -160,9 +160,9 @@ horizontal-bt ltr column-reverse wrap-reverse line-pack-end
 PASS
 horizontal-bt ltr column-reverse wrap-reverse line-pack-center
 PASS
-horizontal-bt ltr column-reverse wrap-reverse line-pack-justify
+horizontal-bt ltr column-reverse wrap-reverse line-pack-space-between
 PASS
-horizontal-bt ltr column-reverse wrap-reverse line-pack-distribute
+horizontal-bt ltr column-reverse wrap-reverse line-pack-space-around
 PASS
 horizontal-bt ltr column-reverse wrap-reverse line-pack-stretch
 PASS
@@ -172,9 +172,9 @@ horizontal-bt rtl column-reverse wrap line-pack-end
 PASS
 horizontal-bt rtl column-reverse wrap line-pack-center
 PASS
-horizontal-bt rtl column-reverse wrap line-pack-justify
+horizontal-bt rtl column-reverse wrap line-pack-space-between
 PASS
-horizontal-bt rtl column-reverse wrap line-pack-distribute
+horizontal-bt rtl column-reverse wrap line-pack-space-around
 PASS
 horizontal-bt rtl column-reverse wrap line-pack-stretch
 PASS
@@ -184,9 +184,9 @@ horizontal-bt rtl column-reverse wrap-reverse line-pack-end
 PASS
 horizontal-bt rtl column-reverse wrap-reverse line-pack-center
 PASS
-horizontal-bt rtl column-reverse wrap-reverse line-pack-justify
+horizontal-bt rtl column-reverse wrap-reverse line-pack-space-between
 PASS
-horizontal-bt rtl column-reverse wrap-reverse line-pack-distribute
+horizontal-bt rtl column-reverse wrap-reverse line-pack-space-around
 PASS
 horizontal-bt rtl column-reverse wrap-reverse line-pack-stretch
 PASS

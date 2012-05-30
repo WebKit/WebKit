@@ -1258,11 +1258,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
     case PackCenter:
         m_value.ident = CSSValueCenter;
         break;
-    case PackJustify:
-        m_value.ident = CSSValueJustify;
+    case PackSpaceBetween:
+        m_value.ident = CSSValueSpaceBetween;
         break;
-    case PackDistribute:
-        m_value.ident = CSSValueDistribute;
+    case PackSpaceAround:
+        m_value.ident = CSSValueSpaceAround;
         break;
     }
 }
@@ -1276,10 +1276,10 @@ template<> inline CSSPrimitiveValue::operator EFlexPack() const
         return PackEnd;
     case CSSValueCenter:
         return PackCenter;
-    case CSSValueJustify:
-        return PackJustify;
-    case CSSValueDistribute:
-        return PackDistribute;
+    case CSSValueSpaceBetween:
+        return PackSpaceBetween;
+    case CSSValueSpaceAround:
+        return PackSpaceAround;
     default:
         ASSERT_NOT_REACHED();
         return PackStart;
@@ -1337,11 +1337,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexLinePack e)
     case LinePackCenter:
         m_value.ident = CSSValueCenter;
         break;
-    case LinePackJustify:
-        m_value.ident = CSSValueJustify;
+    case LinePackSpaceBetween:
+        m_value.ident = CSSValueSpaceBetween;
         break;
-    case LinePackDistribute:
-        m_value.ident = CSSValueDistribute;
+    case LinePackSpaceAround:
+        m_value.ident = CSSValueSpaceAround;
         break;
     case LinePackStretch:
         m_value.ident = CSSValueStretch;
@@ -1358,10 +1358,10 @@ template<> inline CSSPrimitiveValue::operator EFlexLinePack() const
         return LinePackEnd;
     case CSSValueCenter:
         return LinePackCenter;
-    case CSSValueJustify:
-        return LinePackJustify;
-    case CSSValueDistribute:
-        return LinePackDistribute;
+    case CSSValueSpaceBetween:
+        return LinePackSpaceBetween;
+    case CSSValueSpaceAround:
+        return LinePackSpaceAround;
     case CSSValueStretch:
         return LinePackStretch;
     default:

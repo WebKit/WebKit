@@ -505,7 +505,7 @@ function addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection
         var flexbox = document.createElement('div');
         flexbox.className = 'flexbox ' + flexboxClassName;
         setFlexboxSize(flexbox, flexDirection);
-        flexbox.style.webkitFlexPack = 'justify';
+        flexbox.style.webkitFlexPack = 'space-between';
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
             var child = document.createElement('div');
             child.style[flexDirection] = '40px';
