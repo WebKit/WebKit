@@ -143,12 +143,13 @@ void RenderGeometryMap::mapToAbsolute(TransformState& transformState) const
     for (int i = m_mapping.size() - 1; i >= 0; --i) {
         const RenderGeometryMapStep* currStep = m_mapping[i].get();
 
-        if (currStep->m_hasTransform) {
-            // If this box has a transform, it acts as a fixed position container for fixed descendants,
-            // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-            inFixed &= currStep->m_isFixedPosition;
-        } else
-            inFixed |= currStep->m_isFixedPosition;
+        // If this box has a transform, it acts as a fixed position container
+        // for fixed descendants, which prevents the propagation of 'fixed'
+        // unless the layer itself is also fixed position.
+        if (currStep->m_hasTransform && !currStep->m_isFixedPosition)
+            inFixed = false;
+        else if (currStep->m_isFixedPosition)
+            inFixed = true;
 
         if (!i) {
             if (currStep->m_transform)

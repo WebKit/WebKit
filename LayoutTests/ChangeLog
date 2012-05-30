@@ -1,3 +1,25 @@
+2012-05-29  Adrienne Walker  <enne@google.com>
+
+        Transformed fixed position layers have an incorrect overlap map entry
+        https://bugs.webkit.org/show_bug.cgi?id=64201
+
+        Reviewed by Darin Adler.
+
+        Add a test for a layer with both fixed position and a transform to
+        verify that this is considered as fixed position with respect to the
+        root.
+
+        Also, add a test with a child layer with fixed position and a parent
+        with a transform to verify that the child is not considered as fixed
+        position with respect to the root.
+
+        * compositing/layer-creation/fixed-position-and-transform-expected.png: Added.
+        * compositing/layer-creation/fixed-position-and-transform-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-and-transform.html: Added.
+        * compositing/layer-creation/fixed-position-under-transform-expected.png: Added.
+        * compositing/layer-creation/fixed-position-under-transform-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-under-transform.html: Added.
+
 2012-05-30  Oliver Hunt  <oliver@apple.com>
 
         DFG does not correctly handle exceptions caught in the LLInt

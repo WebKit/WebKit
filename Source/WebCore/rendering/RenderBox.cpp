@@ -1279,12 +1279,13 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
 
     bool isFixedPos = style()->position() == FixedPosition;
     bool hasTransform = hasLayer() && layer()->transform();
-    if (hasTransform) {
-        // If this box has a transform, it acts as a fixed position container for fixed descendants,
-        // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-        fixed &= isFixedPos;
-    } else
-        fixed |= isFixedPos;
+    // If this box has a transform, it acts as a fixed position container for fixed descendants,
+    // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
+    if (hasTransform && !isFixedPos)
+        fixed = false;
+    else if (isFixedPos)
+        fixed = true;
+
     if (wasFixed)
         *wasFixed = fixed;
     

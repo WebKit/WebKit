@@ -1,3 +1,23 @@
+2012-05-29  Adrienne Walker  <enne@google.com>
+
+        Transformed fixed position layers have an incorrect overlap map entry
+        https://bugs.webkit.org/show_bug.cgi?id=64201
+
+        Reviewed by Darin Adler.
+
+        Previously, layers that both had a transform and were fixed position
+        were not considered as being fixed position in RenderGeometryMap or in
+        RenderBox::mapLocalToContainer (although this case is not incorrect in
+        the case of painting, so an external caller likely adjusts for this).
+
+        Tests: compositing/layer-creation/fixed-position-and-transform.html
+               compositing/layer-creation/fixed-position-under-transform.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+
 2012-05-30  Ulan Degenbaev  <ulan@chromium.org>
 
         [v8] Crash after redefining setter on typed array to a number
