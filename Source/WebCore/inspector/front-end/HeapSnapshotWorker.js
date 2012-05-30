@@ -64,6 +64,11 @@ WebInspector.WorkerConsole.prototype = {
         this._postMessage("info", Array.prototype.slice.call(arguments));
     },
 
+    trace: function()
+    {
+        this.log(new Error().stack);
+    },
+
     _postMessage: function(method, args)
     {
         var rawMessage = {
