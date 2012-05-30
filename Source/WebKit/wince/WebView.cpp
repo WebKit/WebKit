@@ -36,6 +36,7 @@
 #include "FrameLoaderClientWinCE.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLFormElement.h"
 #include "InitializeThreading.h"
 #include "InspectorClientWinCE.h"
 #include "IntSize.h"

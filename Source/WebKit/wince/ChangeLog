@@ -1,5 +1,11 @@
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed WinCE build fix after r115926.
+
+        * WebView.cpp:
+
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix after r117470.
 
         * WebCoreSupport/EditorClientWinCE.h:
