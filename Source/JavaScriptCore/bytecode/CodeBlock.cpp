@@ -1021,6 +1021,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_method_check: {
             dataLog("[%4d] method_check", location);
+#if ENABLE(JIT)
             if (numberOfMethodCallLinkInfos()) {
                 MethodCallLinkInfo& methodCall = getMethodCallLinkInfo(location);
                 dataLog(" jit(");
@@ -1046,6 +1047,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
                 }
                 dataLog(")");
             }
+#endif
             dataLog("\n");
             ++it;
             printGetByIdOp(exec, location, it);

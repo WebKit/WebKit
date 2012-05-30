@@ -1,3 +1,10 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r117823.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+
 2012-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118868.
