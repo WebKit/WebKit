@@ -1,3 +1,12 @@
+2012-05-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Fix JS compiler warning
+        https://bugs.webkit.org/show_bug.cgi?id=87836
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/SettingsScreen.js: Fix method annotation.
+
 2012-05-30  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder

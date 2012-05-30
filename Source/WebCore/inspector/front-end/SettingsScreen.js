@@ -688,7 +688,7 @@ WebInspector.SettingsController.prototype =
     },
 
     /**
-     * @param {tabId=}
+     * @param {string=} tabId
      */
     showSettingsScreen: function(tabId)
     {
