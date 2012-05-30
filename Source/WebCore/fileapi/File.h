@@ -54,7 +54,7 @@ public:
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-    // If filesystem files live in the remote filesystem, the port might pass the valid metadata (non-zero modificationTime and non-negative file size) and cache in the File object.
+    // If filesystem files live in the remote filesystem, the port might pass the valid metadata (whose length field is non-negative) and cache in the File object.
     //
     // Otherwise calling size(), lastModifiedTime() and webkitSlice() will synchronously query the file metadata.
     static PassRefPtr<File> createForFileSystemFile(const String& name, const FileMetadata& metadata)
@@ -76,7 +76,10 @@ public:
 
     const String& path() const { return m_path; }
     const String& name() const { return m_name; }
+
+    // This may return zero if getFileModificationTime() platform call has failed or zero snapshot lastModifiedTime is given at construction time.
     double lastModifiedDate() const;
+
 #if ENABLE(DIRECTORY_UPLOAD)
     // Returns the relative path of this file in the context of a directory selection.
     const String& webkitRelativePath() const { return m_relativePath; }
@@ -94,14 +97,17 @@ private:
 
 # if ENABLE(FILE_SYSTEM)
     File(const String& name, const FileMetadata&);
+
+    // Returns true if this has a valid snapshot metadata (i.e. m_snapshotSize >= 0).
+    bool hasValidSnapshotMetadata() const { return m_snapshotSize >= 0; }
 #endif
 
     String m_path;
     String m_name;
 
 #if ENABLE(FILE_SYSTEM)
-    // If non-zero modificationTime and non-negative file size are given at construction time we use them in size(), lastModifiedTime() and webkitSlice().
-    // By default we initialize m_snapshotSize to -1 and m_snapshotModificationTime to 0 (so that we don't use them unless they are given).
+    // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and webkitSlice().
+    // Otherwise, the snapshot metadata are used directly in those methods.
     const long long m_snapshotSize;
     const double m_snapshotModificationTime;
 #endif

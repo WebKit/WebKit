@@ -1,3 +1,33 @@
+2012-05-23  Kinuko Yasuda  <kinuko@chromium.org>
+
+        REGRESSION: We should allow null modificationTime when snapshot metadata is given
+        https://bugs.webkit.org/show_bug.cgi?id=86811
+
+        Reviewed by Jian Li.
+
+        r117432 has introduced a new File constructor which allows the caller
+        to pass in a snapshot file metadata. In the change we had considered the
+        given metadata is valid if "metadata.length >= 0 AND metadata.lastModifiedDate != 0",
+        but we should drop the latter condition (lastModifiedDate != 0) because
+
+        1. the value 0 is used to indicate the time information is unavailable in File, and
+        2. it is valid per spec (http://dev.w3.org/2006/webapi/FileAPI/#dfn-lastModifiedDate says the UA must return null if the information is not available).
+
+        (Note: the current js/v8 binding returns Date(0) for the time value 0,
+        which is still valid as epoch time but would fail to indicate the
+        unavailability of the information. In this patch I added FIXME in
+        File.idl and filed a separate issue http://webkit.org/b/87709)
+
+        No new tests as this change does not affect regular files/filesystems behavior.
+        (Tests in Chrome OS port should be able to verify this)
+
+        * fileapi/File.cpp:
+        (WebCore::File::lastModifiedDate):
+        (WebCore::File::size):
+        (WebCore::File::captureSnapshot):
+        * fileapi/File.h:
+        (File):
+
 2012-05-30  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM] HTMLContentElement and HTMLShadowElement constructors should be visible.

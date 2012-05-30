@@ -130,7 +130,7 @@ File::File(const String& name, const FileMetadata& metadata)
 double File::lastModifiedDate() const
 {
 #if ENABLE(FILE_SYSTEM)
-    if (m_snapshotSize >= 0 && m_snapshotModificationTime)
+    if (hasValidSnapshotMetadata())
         return m_snapshotModificationTime * 1000.0;
 #endif
 
@@ -145,7 +145,7 @@ double File::lastModifiedDate() const
 unsigned long long File::size() const
 {
 #if ENABLE(FILE_SYSTEM)
-    if (m_snapshotSize >= 0 && m_snapshotModificationTime)
+    if (hasValidSnapshotMetadata())
         return m_snapshotSize;
 #endif
 
@@ -160,7 +160,7 @@ unsigned long long File::size() const
 void File::captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const
 {
 #if ENABLE(FILE_SYSTEM)
-    if (m_snapshotSize >= 0 && m_snapshotModificationTime) {
+    if (hasValidSnapshotMetadata()) {
         snapshotSize = m_snapshotSize;
         snapshotModificationTime = m_snapshotModificationTime;
         return;
