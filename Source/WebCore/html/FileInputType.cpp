@@ -320,6 +320,9 @@ void FileInputType::requestIcon(const Vector<String>& paths)
 
 void FileInputType::setFiles(PassRefPtr<FileList> files)
 {
+    if (!files)
+        return;
+
     RefPtr<HTMLInputElement> input = element();
 
     bool pathsChanged = false;

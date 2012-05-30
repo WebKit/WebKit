@@ -58,6 +58,7 @@ private:
     virtual bool canSetStringValue() const OVERRIDE;
     virtual bool canChangeFromAnotherType() const OVERRIDE;
     virtual FileList* files() OVERRIDE;
+    virtual void setFiles(PassRefPtr<FileList>) OVERRIDE;
     virtual bool canSetValue(const String&) OVERRIDE;
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
@@ -74,7 +75,6 @@ private:
     // FileIconLoaderClient implementation.
     virtual void updateRendering(PassRefPtr<Icon>) OVERRIDE;
 
-    void setFiles(PassRefPtr<FileList>);
     PassRefPtr<FileList> createFileList(const Vector<FileChooserFileInfo>& files) const;
 #if ENABLE(DIRECTORY_UPLOAD)
     void receiveDropForDirectoryUpload(const Vector<String>&);

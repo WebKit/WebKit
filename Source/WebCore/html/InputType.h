@@ -229,6 +229,7 @@ public:
     virtual void willMoveToNewOwnerDocument();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
+    virtual void setFiles(PassRefPtr<FileList>);
     virtual void receiveDroppedFiles(const Vector<String>&);
     virtual Icon* icon() const;
     // Should return true if the corresponding renderer for a type can display a suggested value.

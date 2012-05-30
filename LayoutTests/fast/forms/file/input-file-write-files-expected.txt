@@ -1,0 +1,6 @@
+Test drops files here
+
+PASS: 1 file after drag
+PASS: writing nonempty string to value had no effect
+PASS: writing empty string to value cleared files
+

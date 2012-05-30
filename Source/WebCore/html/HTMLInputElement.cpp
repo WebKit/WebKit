@@ -1220,6 +1220,11 @@ FileList* HTMLInputElement::files()
     return m_inputType->files();
 }
 
+void HTMLInputElement::setFiles(PassRefPtr<FileList> files)
+{
+    m_inputType->setFiles(files);
+}
+
 void HTMLInputElement::receiveDroppedFiles(const Vector<String>& filenames)
 {
     m_inputType->receiveDroppedFiles(filenames);

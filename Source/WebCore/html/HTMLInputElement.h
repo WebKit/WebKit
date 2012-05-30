@@ -211,6 +211,7 @@ public:
     void setAutofilled(bool = true);
 
     FileList* files();
+    void setFiles(PassRefPtr<FileList>);
     void receiveDroppedFiles(const Vector<String>&);
     Icon* icon() const;
     // These functions are used for rendering the input active during a

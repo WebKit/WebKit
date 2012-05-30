@@ -41,6 +41,7 @@
 #include "EmailInputType.h"
 #include "ExceptionCode.h"
 #include "FileInputType.h"
+#include "FileList.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -575,6 +576,10 @@ bool InputType::rendererIsNeeded()
 FileList* InputType::files()
 {
     return 0;
+}
+
+void InputType::setFiles(PassRefPtr<FileList>)
+{
 }
 
 bool InputType::getTypeSpecificValue(String&)

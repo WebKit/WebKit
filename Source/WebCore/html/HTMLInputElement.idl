@@ -31,7 +31,7 @@ module html {
         attribute [Reflect] DOMString dirName;
         attribute [Reflect] boolean disabled;
         readonly attribute HTMLFormElement form;
-        readonly attribute FileList files;
+        attribute FileList files;
         attribute [Reflect, URL] DOMString formAction;
         attribute [TreatNullAs=NullString] DOMString formEnctype;
         attribute [TreatNullAs=NullString] DOMString formMethod;
