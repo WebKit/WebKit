@@ -167,6 +167,23 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     startAnimation();
 }
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+FloatRect Image::adjustSourceRectForDownSampling(const FloatRect& srcRect, const IntSize& scaledSize) const
+{
+    const IntSize unscaledSize = size();
+    if (unscaledSize == scaledSize)
+        return srcRect;
+
+    // Image has been down-sampled.
+    float xscale = static_cast<float>(scaledSize.width()) / unscaledSize.width();
+    float yscale = static_cast<float>(scaledSize.height()) / unscaledSize.height();
+    FloatRect scaledSrcRect = srcRect;
+    scaledSrcRect.scale(xscale, yscale);
+
+    return scaledSrcRect;
+}
+#endif
+
 void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     intrinsicRatio = size();

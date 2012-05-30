@@ -105,24 +105,6 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-static void adjustSourceRectForDownSampling(FloatRect& srcRect, const IntSize& origSize, const IntSize& scaledSize)
-{
-    // We assume down-sampling zoom rates in X direction and in Y direction are same.
-    if (origSize.width() == scaledSize.width())
-        return;
-
-    // Image has been down sampled.
-    double rate = static_cast<double>(scaledSize.width()) / origSize.width();
-    double temp = srcRect.right() * rate;
-    srcRect.setX(srcRect.x() * rate);
-    srcRect.setWidth(temp - srcRect.x());
-    temp = srcRect.bottom() * rate;
-    srcRect.setY(srcRect.y() * rate);
-    srcRect.setHeight(temp - srcRect.y());
-}
-#endif
-
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
     if (dst.isEmpty() || src.isEmpty())
@@ -147,9 +129,10 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     else
         context->setCompositeOperation(op);
 
-    FloatRect srcRectLocal(src);
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    adjustSourceRectForDownSampling(srcRectLocal, size(), image->size());
+    FloatRect srcRectLocal = adjustSourceRectForDownSampling(src, image->size());
+#else
+    FloatRect srcRectLocal(src);
 #endif
 
     context->platformContext()->activePainter()->drawImage(image, dst, srcRectLocal);

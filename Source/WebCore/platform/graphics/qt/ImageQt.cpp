@@ -132,9 +132,15 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!framePixmap) // If it's too early we won't have an image yet.
         return;
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    FloatRect tileRectAdjusted = adjustSourceRectForDownSampling(tileRect, framePixmap->size());
+#else
+    FloatRect tileRectAdjusted = tileRect;
+#endif
+
     // Qt interprets 0 width/height as full width/height so just short circuit.
     QRectF dr = QRectF(destRect).normalized();
-    QRect tr = QRectF(tileRect).toRect().normalized();
+    QRect tr = QRectF(tileRectAdjusted).toRect().normalized();
     if (!dr.width() || !dr.height() || !tr.width() || !tr.height())
         return;
 
@@ -238,6 +244,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         fillWithSolidColor(ctxt, normalizedDst, solidColor(), styleColorSpace, op);
         return;
     }
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    normalizedSrc = adjustSourceRectForDownSampling(normalizedSrc, image->size());
+#endif
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(!image->hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
