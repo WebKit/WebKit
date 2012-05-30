@@ -754,7 +754,7 @@ Element* SVGSVGElement::getElementById(const AtomicString& id) const
 
     // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
     // be returned.
-    for (Node* node = traverseNextNode(this); node; node = node->traverseNextNode(this)) {
+    for (Node* node = firstChild(); node; node = node->traverseNextNode(this)) {
         if (!node->isElementNode())
             continue;
 

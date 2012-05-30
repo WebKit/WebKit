@@ -1,3 +1,22 @@
+2012-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Fix inefficient usage of traverseNextNode()
+        https://bugs.webkit.org/show_bug.cgi?id=87804
+
+        Reviewed by Ryosuke Niwa.
+
+        foo->traverseNextNode(foo) is equivalent to foo->firstChild(), and
+        firstChild() is more efficient.
+
+        No new tests because of no behavior change.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::invalidateDisabledStateUnder):
+        Replace traverseNextNode() with firstChild(), and shorten a variable name.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        Replace traverseNextNode() with firstChild().
+
 2012-05-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Loading media data with http authentication

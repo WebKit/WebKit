@@ -49,9 +49,9 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    for (Node* currentNode = base->traverseNextNode(base); currentNode; currentNode = currentNode->traverseNextNode(base)) {
-        if (currentNode && currentNode->isElementNode() && toElement(currentNode)->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(currentNode)->ancestorDisabledStateWasChanged();
+    for (Node* node = base->firstChild(); node; node = node->traverseNextNode(base)) {
+        if (node->isElementNode() && toElement(node)->isFormControlElement())
+            static_cast<HTMLFormControlElement*>(node)->ancestorDisabledStateWasChanged();
     }
 }
 
