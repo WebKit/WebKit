@@ -108,6 +108,7 @@ public:
     void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
+    void setPluginsEnabled(WebPageGroupProxy*, bool);
     void setGeoLocationPermission(WebPageGroupProxy*, bool);
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
     void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);

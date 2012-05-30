@@ -839,12 +839,6 @@ http/tests/appcache/origins-with-appcache.html
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html
 
-# WebKitTestRunner needs layoutTestController.setPluginsEnabled
-# https://bugs.webkit.org/show_bug.cgi?id=58593
-platform/mac/plugins/disable-plugins.html
-fast/images/embed-image.html
-fast/images/move-image-to-new-document.html
-
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html

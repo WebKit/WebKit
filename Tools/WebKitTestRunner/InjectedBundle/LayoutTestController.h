@@ -88,6 +88,7 @@ public:
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
     void setFrameFlatteningEnabled(bool);
+    void setPluginsEnabled(bool);
     void setGeolocationPermission(bool);
     void setJavaScriptCanAccessClipboard(bool);
     void setPrivateBrowsingEnabled(bool);
