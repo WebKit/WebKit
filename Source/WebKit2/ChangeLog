@@ -1,3 +1,20 @@
+2012-05-29  Jer Noble  <jer.noble@apple.com>
+
+        Noticeable delay taking an HTML5 trailer fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=87794
+
+        Reviewed by Darin Adler.
+
+        Work around a not-entirely understood delay when using the results of a CGWindowListCreateImage()
+        call as the contents of a placeholder view.  The backing of the resulting CGImageRef resides on
+        the WindowServer, and drawing that image requires synchronous calls to the WindowServer process.
+        By copying the image data, up front, into our own process, we can avoid those synchronous calls
+        later and avoid the delay-causing drawing behavior.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (CGImageDeepCopy): Added a helper function which copies the image data into a new CGImage.
+        (-[WKFullScreenWindowController enterFullScreen:]): Use the above.
+
 2012-05-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] [WK2] Reproducible crash in performDragControllerAction

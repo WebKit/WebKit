@@ -183,6 +183,28 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 #pragma mark -
 #pragma mark Exposed Interface
 
+static RetainPtr<CGDataProviderRef> createImageProviderWithCopiedData(CGDataProviderRef sourceProvider)
+{
+    RetainPtr<CFDataRef> data = adoptCF(CGDataProviderCopyData(sourceProvider));
+    return adoptCF(CGDataProviderCreateWithCFData(data.get()));
+}
+
+static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
+{
+    size_t width = CGImageGetWidth(sourceImage);
+    size_t height = CGImageGetHeight(sourceImage);
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(sourceImage);
+    size_t bitsPerPixel = CGImageGetBitsPerPixel(sourceImage);
+    size_t bytesPerRow = CGImageGetBytesPerRow(sourceImage);
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(sourceImage);
+    CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceImage);
+    RetainPtr<CGDataProviderRef> provider = createImageProviderWithCopiedData(CGImageGetDataProvider(sourceImage));
+    bool shouldInterpolate = CGImageGetShouldInterpolate(sourceImage);
+    CGColorRenderingIntent intent = CGImageGetRenderingIntent(sourceImage);
+
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider.get(), 0, shouldInterpolate, intent));
+}
+
 - (void)enterFullScreen:(NSScreen *)screen
 {
     if (_isFullScreen)
@@ -203,6 +225,11 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
     CGWindowID windowID = [[_webView window] windowNumber];
     RetainPtr<CGImageRef> webViewContents(AdoptCF, CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
+
+    // Using the returned CGImage directly would result in calls to the WindowServer every time
+    // the image was painted. Instead, copy the image data into our own process to eliminate that
+    // future overhead.
+    webViewContents = createImageWithCopiedData(webViewContents.get());
 
     // Screen updates to be re-enabled in beganEnterFullScreenWithInitialFrame:finalFrame:
     NSDisableScreenUpdates();
