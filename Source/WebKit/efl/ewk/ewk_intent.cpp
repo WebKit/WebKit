@@ -159,7 +159,7 @@ Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
  * Creates a new Ewk_Intent object.
  *
  * @param core WebCore::Intent instance to use internally.
- * @return a new allocated the Ewk_Intent object on sucess or @c 0 on failure
+ * @return a new allocated the Ewk_Intent object on success or @c 0 on failure
  */
 Ewk_Intent* ewk_intent_new(WebCore::Intent* core)
 {
@@ -188,4 +188,14 @@ void ewk_intent_free(Ewk_Intent* intent)
     eina_stringshare_del(intent->service);
     delete intent;
 }
+
+namespace EWKPrivate {
+
+WebCore::Intent* coreIntent(const Ewk_Intent* intent)
+{
+    EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
+    return core;
+}
+
+} // namespace EWKPrivate
 #endif

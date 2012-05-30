@@ -42,6 +42,7 @@
 #include <HTMLInputElement.h>
 #include <InspectorController.h>
 #include <IntRect.h>
+#include <Intent.h>
 #include <JSCSSStyleDeclaration.h>
 #include <JSElement.h>
 #include <JavaScriptCore/OpaqueJSString.h>
@@ -676,6 +677,16 @@ void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request
         ewk_intent_request_failure_post(request, WebCore::SerializedScriptValue::create(String::fromUTF8("ERROR")));
     else
         ewk_intent_request_result_post(request, WebCore::SerializedScriptValue::create(String(responseString.impl())));
+#endif
+}
+
+WebCore::MessagePortChannelArray* DumpRenderTreeSupportEfl::intentMessagePorts(const Ewk_Intent* intent)
+{
+#if ENABLE(WEB_INTENTS)
+    const WebCore::Intent* coreIntent = EWKPrivate::coreIntent(intent);
+    return coreIntent ? coreIntent->messagePorts() : 0;
+#else
+    return 0;
 #endif
 }
 

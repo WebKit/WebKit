@@ -38,6 +38,11 @@ Ewk_Intent_Request* ewk_intent_request_new(PassRefPtr<WebCore::IntentRequest> co
 
 void ewk_intent_request_result_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> result);
 void ewk_intent_request_failure_post(Ewk_Intent_Request* request, PassRefPtr<WebCore::SerializedScriptValue> failure);
+
+namespace EWKPrivate {
+WebCore::Intent* coreIntent(const Ewk_Intent* intent);
+} // namespace EWKPrivate
+
 #endif
 
 #endif // ewk_intent_private_h

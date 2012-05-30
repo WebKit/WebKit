@@ -1,5 +1,26 @@
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's DRT should print the number of MessagePorts for new each new intent
+        https://bugs.webkit.org/show_bug.cgi?id=86841
+
+        Reviewed by Adam Barth.
+
+        Add EWKPrivate method to retrieve the internal WebCore object for a Ewk_Intent.
+        Add helper function to DumpRenderTreeSupportEfl that returns the MessagePorts 
+        for a Ewk_Intent object so that the DRT can print information about them.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::intentMessagePorts):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+        (WebCore):
+        * ewk/ewk_intent.cpp:
+        (EWKPrivate):
+        (EWKPrivate::coreIntent):
+        * ewk/ewk_intent_private.h:
+        (EWKPrivate):
+
+2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Ewk_Intent_Request's postResult/postFailure should take serialized script values in argument
         https://bugs.webkit.org/show_bug.cgi?id=87829
 

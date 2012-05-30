@@ -703,7 +703,9 @@ void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo
            ewk_intent_action_get(intent),
            ewk_intent_type_get(intent));
 
-    // TODO: Display number of ports once Ewk_Intent exposes this information.
+    const MessagePortChannelArray* messagePorts = DumpRenderTreeSupportEfl::intentMessagePorts(intent);
+    if (messagePorts)
+        printf("Have %d ports\n", static_cast<int>(messagePorts->size()));
 
     const char* service = ewk_intent_service_get(intent);
     if (service && strcmp(service, ""))
