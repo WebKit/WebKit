@@ -90,7 +90,7 @@ public:
     virtual void textWillBeDeletedInTextField(WebCore::Element*);
     virtual void textDidChangeInTextArea(WebCore::Element*);
 
-    virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const;
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
     virtual void ignoreWordInSpellDocument(const WTF::String&);
     virtual void learnWord(const WTF::String&);
     virtual void checkSpellingOfString(const UChar*, int, int*, int*);
