@@ -64,7 +64,7 @@ module window {
 
         readonly attribute [CheckSecurityForNode] Element frameElement;
 
-        [DoNotCheckSecurity] void focus();
+        [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void focus();
         [DoNotCheckSecurity] void blur();
         [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void close();
 

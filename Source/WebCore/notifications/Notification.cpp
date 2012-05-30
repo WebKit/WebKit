@@ -48,6 +48,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
+#include "WindowFocusAllowedIndicator.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
@@ -222,6 +223,7 @@ void Notification::dispatchShowEvent()
 
 void Notification::dispatchClickEvent()
 {
+    WindowFocusAllowedIndicator windowFocusAllowed;
     dispatchEvent(Event::create(eventNames().clickEvent, false, false));
 }
 

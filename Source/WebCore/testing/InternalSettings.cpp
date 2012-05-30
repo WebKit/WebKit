@@ -104,6 +104,7 @@ InternalSettings::InternalSettings(Frame* frame)
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
     , m_originalJavaScriptProfilingEnabled(page() && page()->inspectorController() && page()->inspectorController()->profilerEnabled())
 #endif
+    , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
 {
 }
 
@@ -122,6 +123,7 @@ void InternalSettings::restoreTo(Settings* settings)
     if (page() && page()->inspectorController())
         page()->inspectorController()->setProfilerEnabled(m_originalJavaScriptProfilingEnabled);
 #endif
+    settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
 }
 
 Settings* InternalSettings::settings() const
@@ -381,6 +383,12 @@ void InternalSettings::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode
     UNUSED_PARAM(ec);
     return;
 #endif
+}
+
+void InternalSettings::setWindowFocusRestricted(bool restricted, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setWindowFocusRestricted(restricted);
 }
 
 }

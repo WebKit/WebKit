@@ -144,7 +144,7 @@ namespace WebCore {
 
         Element* frameElement() const;
 
-        void focus();
+        void focus(ScriptExecutionContext* = 0);
         void blur();
         void close(ScriptExecutionContext* = 0);
         void print();

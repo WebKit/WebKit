@@ -78,6 +78,7 @@ public:
     void setEditingBehavior(const String&, ExceptionCode&);
     void setFixedPositionCreatesStackingContext(bool, ExceptionCode&);
     void setSyncXHRInDocumentsEnabled(bool, ExceptionCode&);
+    void setWindowFocusRestricted(bool, ExceptionCode&);
 
     void restoreTo(Settings*);
 
@@ -102,6 +103,7 @@ private:
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_originalJavaScriptProfilingEnabled;
 #endif
+    bool m_originalWindowFocusRestricted;
 };
 
 } // namespace WebCore

@@ -26947,6 +26947,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\WindowFocusAllowedIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\WindowFocusAllowedIndicator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\WorkerNavigator.cpp"
 				>
 			</File>

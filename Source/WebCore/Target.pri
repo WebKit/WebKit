@@ -1061,6 +1061,7 @@ SOURCES += \
     page/SuspendableTimer.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
+    page/WindowFocusAllowedIndicator.cpp \
     plugins/PluginData.cpp \
     plugins/DOMPluginArray.cpp \
     plugins/DOMPlugin.cpp \
@@ -2192,6 +2193,7 @@ HEADERS += \
     page/WebKitAnimation.h \
     page/WebKitAnimationList.h \
     page/WindowFeatures.h \
+    page/WindowFocusAllowedIndicator.h \
     page/WorkerNavigator.h \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \

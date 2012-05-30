@@ -95,6 +95,7 @@
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include "WindowFeatures.h"
+#include "WindowFocusAllowedIndicator.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -899,7 +900,7 @@ Element* DOMWindow::frameElement() const
     return m_frame->ownerElement();
 }
 
-void DOMWindow::focus()
+void DOMWindow::focus(ScriptExecutionContext* context)
 {
     if (!m_frame)
         return;
@@ -908,8 +909,16 @@ void DOMWindow::focus()
     if (!page)
         return;
 
+    bool allowFocus = WindowFocusAllowedIndicator::windowFocusAllowed() || !m_frame->settings()->windowFocusRestricted();
+    if (context) {
+        ASSERT(isMainThread());
+        Document* activeDocument = static_cast<Document*>(context);
+        if (opener() && activeDocument->domWindow() == opener())
+            allowFocus = true;
+    }
+
     // If we're a top level window, bring the window to the front.
-    if (m_frame == page->mainFrame())
+    if (m_frame == page->mainFrame() && allowFocus)
         page->chrome()->focus();
 
     if (!m_frame)
@@ -920,11 +929,15 @@ void DOMWindow::focus()
 
 void DOMWindow::blur()
 {
+
     if (!m_frame)
         return;
 
     Page* page = m_frame->page();
     if (!page)
+        return;
+
+    if (m_frame->settings()->windowFocusRestricted())
         return;
 
     if (m_frame != page->mainFrame())

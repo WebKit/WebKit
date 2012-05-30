@@ -587,6 +587,12 @@ namespace WebCore {
         void setSyncXHRInDocumentsEnabled(bool enabled) { m_syncXHRInDocumentsEnabled = enabled; }
         bool syncXHRInDocumentsEnabled() const { return m_syncXHRInDocumentsEnabled; }
 
+        // When enabled, window.blur() does not change focus, and
+        // window.focus() only changes focus when invoked from the context that
+        // created the window.
+        void setWindowFocusRestricted(bool restricted) { m_windowFocusRestricted = restricted; }
+        bool windowFocusRestricted() const { return m_windowFocusRestricted; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -761,6 +767,8 @@ namespace WebCore {
 
         bool m_fixedPositionCreatesStackingContext : 1;
         bool m_syncXHRInDocumentsEnabled : 1;
+
+        bool m_windowFocusRestricted : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

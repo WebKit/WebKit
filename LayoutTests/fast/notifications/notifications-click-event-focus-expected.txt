@@ -1,0 +1,9 @@
+DESKTOP NOTIFICATION: icon , title New E-mail, text Meet me tonight at 8!
+DESKTOP NOTIFICATION CLOSED: New E-mail
+Check that window.focus() is not restricted during notification click events.
+
+To exercise manually, disable pop-up blocking, grant notification permissions and load this page, then click on the notification. You should see two "PASS" messages and this window should be focused.
+
+PASS: click event fired.
+PASS: focus event fired.
+

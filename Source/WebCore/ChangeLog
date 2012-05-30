@@ -1,3 +1,64 @@
+2012-05-30  Jochen Eisinger  <jochen@chromium.org>
+
+        Match Firefox restrictions to window.blur and window.focus
+        https://bugs.webkit.org/show_bug.cgi?id=86969
+
+        Reviewed by Adam Barth.
+
+        Disallow window.blur altogether, and only allow window.focus to be
+        invoked from the context that created this very window.
+
+        There's a new setting (windowFocusRestricted) that defaults to true. If
+        false, the new restrictions are lifted. This can be used by ports that
+        would prefer to stick with the old behavior.
+
+        For tests, this setting is accessible in window.internals.settings
+
+        To temporarily allow window.focus(), an object of type
+        WindowFocusAllowedIndicator can be created. It is currently used to
+        enable window.focus() during dispatch of the click event for
+        notifications.
+
+        Tests: fast/dom/Window/mozilla-focus-blur.html
+               fast/notifications/notifications-click-event-focus.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * notifications/Notification.cpp:
+        (WebCore::Notification::dispatchClickEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::blur):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/DOMWindow.idl:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::setWindowFocusRestricted):
+        (WebCore::Settings::windowFocusRestricted):
+        * page/WindowFocusAllowedIndicator.cpp: Added.
+        (WebCore):
+        (WebCore::WindowFocusAllowedIndicator::windowFocusAllowed):
+        (WebCore::WindowFocusAllowedIndicator::WindowFocusAllowedIndicator):
+        (WebCore::WindowFocusAllowedIndicator::~WindowFocusAllowedIndicator):
+        * page/WindowFocusAllowedIndicator.h: Added.
+        (WebCore):
+        (WindowFocusAllowedIndicator):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::restoreTo):
+        (WebCore::InternalSettings::setWindowFocusRestricted):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Fix WebKit2-EFL build

@@ -1089,6 +1089,7 @@ SET(WebCore_SOURCES
     page/WebKitAnimation.cpp
     page/WebKitAnimationList.cpp
     page/WindowFeatures.cpp
+    page/WindowFocusAllowedIndicator.cpp
 
     page/animation/AnimationBase.cpp
     page/animation/AnimationController.cpp

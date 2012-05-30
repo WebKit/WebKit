@@ -3077,6 +3077,8 @@ webcore_sources += \
 	Source/WebCore/page/WebKitPoint.h \
 	Source/WebCore/page/WindowFeatures.cpp \
 	Source/WebCore/page/WindowFeatures.h \
+	Source/WebCore/page/WindowFocusAllowedIndicator.cpp \
+	Source/WebCore/page/WindowFocusAllowedIndicator.h \
 	Source/WebCore/page/WorkerNavigator.cpp \
 	Source/WebCore/page/WorkerNavigator.h \
 	Source/WebCore/platform/animation/Animation.cpp \

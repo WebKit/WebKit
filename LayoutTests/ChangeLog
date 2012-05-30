@@ -1,3 +1,16 @@
+2012-05-30  Jochen Eisinger  <jochen@chromium.org>
+
+        Match Firefox restrictions to window.blur and window.focus
+        https://bugs.webkit.org/show_bug.cgi?id=86969
+
+        Reviewed by Adam Barth.
+
+        * fast/dom/HTMLDocument/hasFocus.html:
+        * fast/dom/Window/mozilla-focus-blur-expected.txt: Added.
+        * fast/dom/Window/mozilla-focus-blur.html: Added.
+        * fast/notifications/notifications-click-event-focus-expected.txt: Added.
+        * fast/notifications/notifications-click-event-focus.html: Added.
+
 2012-05-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating platform-specific baselines after r118902.

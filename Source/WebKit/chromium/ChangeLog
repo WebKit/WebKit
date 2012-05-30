@@ -1,3 +1,16 @@
+2012-05-30  Jochen Eisinger  <jochen@chromium.org>
+
+        Match Firefox restrictions to window.blur and window.focus
+        https://bugs.webkit.org/show_bug.cgi?id=86969
+
+        Reviewed by Adam Barth.
+
+        Allow window.focus() during the dispatch of the click event on
+        notifications.
+
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::dispatchClickEvent):
+
 2012-05-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileExists to Platform.h

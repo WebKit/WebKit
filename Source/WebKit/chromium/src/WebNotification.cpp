@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "Notification.h"
 #include "UserGestureIndicator.h"
+#include "WindowFocusAllowedIndicator.h"
 
 #include "platform/WebString.h"
 #include "WebTextDirection.h"
@@ -136,8 +137,8 @@ void WebNotification::dispatchCloseEvent(bool /* byUser */)
 
 void WebNotification::dispatchClickEvent()
 {
-    // Make sure clicks on notifications are treated as user gestures.
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    WindowFocusAllowedIndicator windowFocusAllowed;
     dispatchEvent(eventNames().clickEvent);
 }
 

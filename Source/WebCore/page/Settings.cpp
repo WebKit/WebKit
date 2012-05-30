@@ -274,6 +274,7 @@ Settings::Settings(Page* page)
     , m_needsDidFinishLoadOrderQuirk(false)
     , m_fixedPositionCreatesStackingContext(false)
     , m_syncXHRInDocumentsEnabled(true)
+    , m_windowFocusRestricted(true)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {
