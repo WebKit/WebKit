@@ -61,7 +61,12 @@ namespace JSC {
         
         const UString& url() { return m_url; }
         TextPosition startPosition() const { return m_startPosition; }
-        intptr_t asID() { return reinterpret_cast<intptr_t>(this); }
+        intptr_t asID()
+        {
+            if (!this)
+                return 1;
+            return reinterpret_cast<intptr_t>(this);
+        }
 
         bool isValid() const { return m_validated; }
         void setValid() { m_validated = true; }

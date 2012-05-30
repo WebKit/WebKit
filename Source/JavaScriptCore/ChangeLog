@@ -1,3 +1,13 @@
+2012-05-30  Filip Pizlo  <fpizlo@apple.com>
+
+        ScriptDebugServer wants sourceIDs that are non-zero because that's what HashMaps want, so JSC should placate it
+        https://bugs.webkit.org/show_bug.cgi?id=87887
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::asID):
+
 2012-05-30  Oliver Hunt  <oliver@apple.com>
 
         DFG does not correctly handle exceptions caught in the LLInt
