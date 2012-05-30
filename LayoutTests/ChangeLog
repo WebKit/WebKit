@@ -1,3 +1,16 @@
+2012-05-30  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Clean up V8LazyEventListener to use one less function call
+        https://bugs.webkit.org/show_bug.cgi?id=87785
+
+        Reviewed by Kentaro Hara.
+
+        Instead of relying on 'arguments' we rely on 'this'. 'this' cannot be intercepted by a
+        with-statement so it is safe to use that to bind the context objects. This allows us to
+        remove one layer of function indirection in the generated code.
+
+        * platform/chromium-win/inspector/debugger/debugger-scripts-expected.txt:
+
 2012-05-30  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed Chromium test expectations for fast/layers/scroll-with-transform-composited-layer.html

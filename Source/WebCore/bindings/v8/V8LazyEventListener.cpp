@@ -141,7 +141,6 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     // By calling the function with 4 arguments, we create a setter on arguments object
     // which would shadow property "3" on the prototype.
     String code = "(function() {" \
-        "arguments[3] = function() {" \
         "with (this[2]) {" \
         "with (this[1]) {" \
         "with (this[0]) {";
@@ -150,8 +149,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     code.append(") {");
     code.append(m_code);
     // Insert '\n' otherwise //-style comments could break the handler.
-    code.append("\n};}}}};");
-    code.append("return arguments[3]();})");
+    code.append("\n};}}}})");
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
 
     v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_position);
@@ -179,13 +177,21 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(formElement);
     v8::Handle<v8::Object> documentWrapper = toObjectWrapper<Document>(m_node ? m_node->ownerDocument() : 0);
 
-    v8::Handle<v8::Value> parameters[4] = { nodeWrapper, formWrapper, documentWrapper, v8::Handle<v8::Value>(v8::Null()) };
+    v8::Local<v8::Object> thisObject = v8::Object::New();
+    if (thisObject.IsEmpty())
+        return;
+    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(0), nodeWrapper))
+        return;
+    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(1), formWrapper))
+        return;
+    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(2), documentWrapper))
+        return;
 
     // FIXME: Remove this code when we stop doing the 'with' hack above.
     v8::Local<v8::Value> innerValue;
     {
         V8RecursionScope::MicrotaskSuppression scope;
-        innerValue = intermediateFunction->Call(v8Context->Global(), 3, parameters);
+        innerValue = intermediateFunction->Call(thisObject, 0, 0);
     }
     if (innerValue.IsEmpty() || !innerValue->IsFunction())
         return;

@@ -1,3 +1,19 @@
+2012-05-30  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Clean up V8LazyEventListener to use one less function call
+        https://bugs.webkit.org/show_bug.cgi?id=87785
+
+        Reviewed by Kentaro Hara.
+
+        Instead of relying on 'arguments' we rely on 'this'. 'this' cannot be intercepted by a
+        with-statement so it is safe to use that to bind the context objects. This allows us to
+        remove one layer of function indirection in the generated code.
+
+        Covered by existing tests.
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+
 2012-05-30  Tim Horton  <timothy_horton@apple.com>
 
         Factor DeferrableOneShotTimer out of GraphicsContextCG/GeneratorGeneratedImage
