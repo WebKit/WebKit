@@ -1,5 +1,15 @@
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium mac rebaseline for changes in r118978.
+
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2012-05-30  Emil A Eklund  <eae@chromium.org>
+
         Floats wraps incorrectly when top edge has subpixel precision
         https://bugs.webkit.org/show_bug.cgi?id=87688
 
