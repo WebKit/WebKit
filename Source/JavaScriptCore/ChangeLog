@@ -1,5 +1,16 @@
 2012-05-30  Filip Pizlo  <fpizlo@apple.com>
 
+        LLInt broken on x86-32 with JIT turned off
+        https://bugs.webkit.org/show_bug.cgi?id=87906
+
+        Reviewed by Geoffrey Garen.
+        
+        Fixed the code to not clobber registers that contain important things, like the call frame.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
+2012-05-30  Filip Pizlo  <fpizlo@apple.com>
+
         ScriptDebugServer wants sourceIDs that are non-zero because that's what HashMaps want, so JSC should placate it
         https://bugs.webkit.org/show_bug.cgi?id=87887
 
