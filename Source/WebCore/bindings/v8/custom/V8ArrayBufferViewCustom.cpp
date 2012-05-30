@@ -27,51 +27,51 @@
 #include "V8ArrayBufferViewCustom.h"
 
 #include "V8ArrayBufferViewCustomScript.h"
+
 #include <v8.h>
 
 
 namespace WebCore {
 
 // The random suffix helps to avoid name collision.
-const char fastSetFlagName[] = "TypedArray::FastSet::8NkZVq";
+const char hiddenCopyMethodName[] = "TypedArray::HiddenCopy::8NkZVq";
 
-bool fastSetInstalled(v8::Handle<v8::Object> array)
+v8::Handle<v8::Value> getHiddenCopyMethod(v8::Handle<v8::Object> prototype)
 {
-    // Use a hidden flag in the global object an indicator of whether the fast
-    // 'set' is installed or not.
-    v8::Handle<v8::Object> global = array->CreationContext()->Global();
-    v8::Handle<v8::String> key = v8::String::New(fastSetFlagName);
-    v8::Handle<v8::Value> fastSetFlag = global->GetHiddenValue(key);
-    return !fastSetFlag.IsEmpty();
+    v8::Handle<v8::String> key = v8::String::New(hiddenCopyMethodName);
+    return prototype->GetHiddenValue(key);
 }
 
-void installFastSet(v8::Handle<v8::Object> array)
-{
+v8::Handle<v8::Value> installHiddenCopyMethod(v8::Handle<v8::Object> prototype) {
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
-    v8::Handle<v8::Object> global = array->CreationContext()->Global();
-    v8::Handle<v8::String> key = v8::String::New(fastSetFlagName);
-    global->SetHiddenValue(key, v8::Boolean::New(true));
-
     String source(reinterpret_cast<const char*>(V8ArrayBufferViewCustomScript_js),
                   sizeof(V8ArrayBufferViewCustomScript_js));
     v8::Handle<v8::Script> script = v8::Script::Compile(v8String(source));
-    script->Run();
+    v8::Handle<v8::Value> value = script->Run();
+    v8::Handle<v8::String> key = v8::String::New(hiddenCopyMethodName);
+    prototype->SetHiddenValue(key, value);
+    return value;
 }
 
-
-void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t offset)
+bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset)
 {
-    v8::Handle<v8::String> key = v8::String::New("set");
-    v8::Handle<v8::Function> set = destArray->Get(key).As<v8::Function>();
-    v8::Handle<v8::Value> arguments[2];
-    int numberOfArguments = 1;
+    v8::Handle<v8::Value> prototype_value = destArray->GetPrototype();
+    if (prototype_value.IsEmpty() || !prototype_value->IsObject())
+        return false;
+    v8::Handle<v8::Object> prototype = prototype_value.As<v8::Object>();
+    v8::Handle<v8::Value> value = getHiddenCopyMethod(prototype);
+    if (value.IsEmpty())
+        value = installHiddenCopyMethod(prototype);
+    if (value.IsEmpty() || !value->IsFunction())
+        return false;
+    v8::Handle<v8::Function> copy_method = value.As<v8::Function>();
+    v8::Handle<v8::Value> arguments[3];
     arguments[0] = srcArray;
-    if (offset) {
-        arguments[1] = v8::Uint32::New(offset);
-        numberOfArguments = 2;
-    }
-    set->Call(destArray, numberOfArguments, arguments);
+    arguments[1] = v8::Uint32::New(length);
+    arguments[2] = v8::Uint32::New(offset);
+    copy_method->Call(destArray, 3, arguments);
+    return true;
 }
 
 }

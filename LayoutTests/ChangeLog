@@ -1,3 +1,16 @@
+2012-05-30  Ulan Degenbaev  <ulan@chromium.org>
+
+        [v8] Crash after redefining setter on typed array to a number
+        https://bugs.webkit.org/show_bug.cgi?id=87862
+
+        Reviewed by Kenneth Russell.
+
+        Remove calls to typed array set() method from C++.
+        Store the copying script as a hidden property of a typed array prototype.
+
+        * fast/canvas/webgl/array-override-set-expected.txt: Added.
+        * fast/canvas/webgl/array-override-set.html: Added.
+
 2012-05-30  Stephen Chenney  <schenney@chromium.org>
 
         http/tests/cache/subresource-expiration-2.html is slow on Linux

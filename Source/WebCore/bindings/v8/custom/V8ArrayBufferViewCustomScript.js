@@ -23,42 +23,14 @@
  */
 
 (function() {
-
-var optimizeSetMethod = function(type)
-{
-    if (typeof type === 'function' &&
-        typeof type.prototype !== 'undefined' && 
-        typeof type.prototype.set === 'function') {
-        type.prototype.set = (function() {
-            var nativeSet = type.prototype.set;
-            var f = function(source, offset)
-            {
-                if (source.constructor === Array) {
-                    var length = source.length;
-                    offset = offset || 0;
-                    if (offset < 0 || offset + length > this.length) {
-                        return nativeSet.call(this, source, offset);
-                    }
-                    for (var i = 0; i < length; i++)
-                        this[i + offset] = source[i];
-                } else
-                    return nativeSet.call(this, source, offset);
-            }
-            f.name = "set";
-            return f;
-        })();
+    return function(source, length, offset) {
+        if (offset == 0) {
+            for (var i = 0; i < length; i++)
+                this[i] = source[i];
+        } else {
+            for (var i = 0; i < length; i++)
+                this[i + offset] = source[i];
+        }
     }
-};
-
-optimizeSetMethod(Float32Array);
-optimizeSetMethod(Float64Array);
-optimizeSetMethod(Int8Array);
-optimizeSetMethod(Int16Array);
-optimizeSetMethod(Int32Array);
-optimizeSetMethod(Uint8Array);
-optimizeSetMethod(Uint8ClampedArray);
-optimizeSetMethod(Uint16Array);
-optimizeSetMethod(Uint32Array);
-
 })();
 

@@ -1,3 +1,26 @@
+2012-05-30  Ulan Degenbaev  <ulan@chromium.org>
+
+        [v8] Crash after redefining setter on typed array to a number
+        https://bugs.webkit.org/show_bug.cgi?id=87862
+
+        Reviewed by Kenneth Russell.
+
+        Remove calls to typed array set() method from C++.
+        Store the copying script as a hidden property of a typed array prototype.
+
+        Test: fast/canvas/webgl/array-override-set.html
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        (WebCore):
+        (WebCore::getHiddenCopyMethod):
+        (WebCore::installHiddenCopyMethod):
+        (WebCore::copyElements):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore):
+        (WebCore::constructWebGLArray):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8ArrayBufferViewCustomScript.js:
+
 2012-05-30  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87882

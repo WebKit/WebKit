@@ -40,18 +40,9 @@
 
 namespace WebCore {
 
-
-// Check if the JavaScript 'set' method was already installed
-// on the prototype of the given typed array.
-bool fastSetInstalled(v8::Handle<v8::Object> array);
-
-// Install the JavaScript 'set' method on the prototype of
-// the given typed array.
-void installFastSet(v8::Handle<v8::Object> array);
-
-// Copy the elements from the source array to the typed destination array by
-// invoking the 'set' method of the destination array in JS.
-void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t offset);
+// Copy the elements from the source array to the typed destination array.
+// Returns true if it succeeded, otherwise returns false.
+bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset);
 
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
@@ -173,8 +164,13 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
 
-    if (!srcArray.IsEmpty())
-        copyElements(args.Holder(), srcArray, 0);
+    if (!srcArray.IsEmpty()) {
+        bool copied = copyElements(args.Holder(), srcArray, len, 0);
+        if (!copied) {
+            for (unsigned i = 0; i < len; i++)
+                array->set(i, srcArray->Get(i)->NumberValue());
+        }
+    }
 
     v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
     wrapper.MarkIndependent();
@@ -214,11 +210,8 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             // Out of range offset or overflow
             return V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
         }
-
-        if (!fastSetInstalled(args.Holder())) {
-            installFastSet(args.Holder());
-            copyElements(args.Holder(), array, offset);
-        } else {
+        bool copied = copyElements(args.Holder(), array, length, offset);
+        if (!copied) {
             for (uint32_t i = 0; i < length; i++)
                 impl->set(offset + i, array->Get(i)->NumberValue());
         }
