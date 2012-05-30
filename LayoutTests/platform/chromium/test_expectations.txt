@@ -1820,6 +1820,7 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 // Expectations from roll to 53171:53194
 // As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
 BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
+BUGCR32308 WIN RELEASE SLOW : fast/frames/cached-frame-counter.html = PASS
 
 // WebKit roll 53341:53451
 BUGCR32673 LINUX WIN : fast/forms/textarea-scrollbar-height.html = TEXT
@@ -3783,3 +3784,4 @@ BUGWK87772 : svg/dom/viewspec-parser-5.html = TEXT TIMEOUT
 
 BUGWK87789 : media/track/track-cues-missed.html = PASS CRASH
 
+BUGWK87870 MAC DEBUG : css3/filters/custom/custom-filter-property-computed-style.html = TEXT PASS 
