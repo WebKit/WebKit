@@ -28,38 +28,38 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (657,20) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 117x13
-  RenderBlock {DIV} at (3,3) size 117x13
-layer at (13,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#640000]
     RenderText {#text} at (0,0) size 22x13
       text run at (0,0) width 22: "text"
-layer at (152,31) size 96x13
-  RenderBlock {DIV} at (0,0) size 96x13
+layer at (13,31) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13
 layer at (152,31) size 96x13
   RenderBlock {DIV} at (11,3) size 96x13 [color=#640000]
     RenderText {#text} at (0,0) size 35x13
       text run at (0,0) width 35: "search"
-layer at (275,31) size 117x13
-  RenderBlock {DIV} at (3,3) size 117x13
+layer at (152,31) size 96x13
+  RenderBlock {DIV} at (0,0) size 96x13
 layer at (275,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#640000]
     RenderText {#text} at (0,0) size 51x13
       text run at (0,0) width 51: "password"
-layer at (406,31) size 117x13
+layer at (275,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
 layer at (406,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#640000]
     RenderText {#text} at (0,0) size 70x13
       text run at (0,0) width 70: "disabled text"
-layer at (537,31) size 117x13
+layer at (406,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
 layer at (537,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 38x13
       text run at (0,0) width 38: "default"
-layer at (668,31) size 117x13
+layer at (537,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
 layer at (668,31) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 86x13
       text run at (0,0) width 86: "default disabled"
+layer at (668,31) size 117x13
+  RenderBlock {DIV} at (3,3) size 117x13

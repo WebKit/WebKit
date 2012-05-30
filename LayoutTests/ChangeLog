@@ -1,3 +1,39 @@
+2012-05-29  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        Rebaseline for placeholder-related tests.
+
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-linux/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/forms/search-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-paint-order-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/textarea/textarea-placeholder-paint-order-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-mac/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/chromium-mac/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/css/text-overflow-input-expected.txt:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/chromium-win/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r111497): The "option" element doesn't match CSS pseudo class :enabled

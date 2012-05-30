@@ -2136,11 +2136,11 @@ BUGWK45652 : fast/viewport/viewport-126.html = MISSING
 BUGWK45652 : fast/viewport/viewport-127.html = MISSING
 BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
-BUGWK87757 VISTA: fast/viewport/viewport-130.html = TIMEOUT TEXT
-BUGWK87757 VISTA: fast/viewport/viewport-131.html = TIMEOUT TEXT
-BUGWK87757 VISTA: fast/viewport/viewport-132.html = TIMEOUT TEXT
-BUGWK87757 VISTA: fast/viewport/viewport-133.html = TIMEOUT TEXT
-BUGWK87757 VISTA: fast/viewport/viewport-legacy-xhtmlmp-misplaced-doctype.html = TIMEOUT TEXT
+BUGWK87757 VISTA : fast/viewport/viewport-130.html = TIMEOUT TEXT
+BUGWK87757 VISTA : fast/viewport/viewport-131.html = TIMEOUT TEXT
+BUGWK87757 VISTA : fast/viewport/viewport-132.html = TIMEOUT TEXT
+BUGWK87757 VISTA : fast/viewport/viewport-133.html = TIMEOUT TEXT
+BUGWK87757 VISTA : fast/viewport/viewport-legacy-xhtmlmp-misplaced-doctype.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html = PASS
 
 BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
@@ -3439,21 +3439,6 @@ BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL P
 BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
-// New tests.  Need expectations.
-BUGWK87155 : fast/forms/input-placeholder-paint-order.html = MISSING FAIL
-BUGWK87155 : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING FAIL
-
-BUGWK87155 WIN MAC : fast/forms/placeholder-position.html = TEXT
-BUGWK87155 : fast/forms/input-placeholder-visibility-1.html = TEXT
-BUGWK87155 : fast/forms/input-placeholder-visibility-3.html = TEXT
-BUGWK87155 : fast/forms/textarea-placeholder-visibility-1.html = TEXT
-BUGWK87155 : fast/forms/placeholder-pseudo-style.html = TEXT
-BUGWK87155 : fast/forms/textarea-placeholder-pseudo-style.html = TEXT
-BUGWK87155 : fast/forms/textarea-placeholder-visibility-2.html = TEXT
-BUGWK87155 : fast/forms/search-styled.html = TEXT
-BUGWK87155 : fast/css/text-overflow-input.html = TEXT
-BUGWK87155 : fast/forms/date/date-appearance.html = TEXT
-
 // Flaky/crashing on a single platform every 30 tries or so
 BUGWK82230 LINUX DEBUG : http/tests/cache/post-redirect-get.php = PASS CRASH
 BUGWK82231 WIN DEBUG : fast/canvas/webgl/program-test.html = PASS CRASH
@@ -3581,8 +3566,6 @@ BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
 
 BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
-
-BUGWK84698 LINUX : fast/forms/placeholder-position.html = FAIL PASS
 
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
 

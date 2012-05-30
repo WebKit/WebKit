@@ -49,14 +49,10 @@ layer at (0,0) size 800x289
             RenderBlock {DIV} at (0,0) size 266x35
             RenderDetailsMarker {DIV} at (265,2) size 41x31: down
 layer at (13,13) size 102x13
-  RenderBlock {DIV} at (0,0) size 103x13
-    RenderText {#text} at (0,0) size 40x13
-      text run at (0,0) width 40: "4/2/12"
+  RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 90x13
+      text run at (0,0) width 90: "Month/Day/Year"
 layer at (13,13) size 102x13
-  RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 90x13
-      text run at (0,0) width 90: "Month/Day/Year"
-layer at (13,36) size 102x13
   RenderBlock {DIV} at (0,0) size 103x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "4/2/12"
@@ -64,7 +60,7 @@ layer at (13,36) size 102x13
   RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 90x13
       text run at (0,0) width 90: "Month/Day/Year"
-layer at (13,59) size 102x13
+layer at (13,36) size 102x13
   RenderBlock {DIV} at (0,0) size 103x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "4/2/12"
@@ -72,7 +68,7 @@ layer at (13,59) size 102x13
   RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 90x13
       text run at (0,0) width 90: "Month/Day/Year"
-layer at (13,82) size 102x13
+layer at (13,59) size 102x13
   RenderBlock {DIV} at (0,0) size 103x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "4/2/12"
@@ -80,7 +76,7 @@ layer at (13,82) size 102x13
   RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 90x13
       text run at (0,0) width 90: "Month/Day/Year"
-layer at (13,105) size 102x13
+layer at (13,82) size 102x13
   RenderBlock {DIV} at (0,0) size 103x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "4/2/12"
@@ -88,7 +84,7 @@ layer at (13,105) size 102x13
   RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 90x13
       text run at (0,0) width 90: "Month/Day/Year"
-layer at (13,128) size 102x13
+layer at (13,105) size 102x13
   RenderBlock {DIV} at (0,0) size 103x13
     RenderText {#text} at (0,0) size 40x13
       text run at (0,0) width 40: "4/2/12"
@@ -96,11 +92,19 @@ layer at (13,128) size 102x13
   RenderBlock {DIV} at (3,3) size 103x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 90x13
       text run at (0,0) width 90: "Month/Day/Year"
+layer at (13,128) size 102x13
+  RenderBlock {DIV} at (0,0) size 103x13
+    RenderText {#text} at (0,0) size 40x13
+      text run at (0,0) width 40: "4/2/12"
+layer at (13,151) size 266x35
+  RenderBlock {DIV} at (3,3) size 266x35 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 244x35
+      text run at (0,0) width 244: "Month/Day/Year"
 layer at (13,151) size 266x35
   RenderBlock {DIV} at (0,0) size 266x35
     RenderText {#text} at (0,0) size 108x35
       text run at (0,0) width 108: "4/2/12"
-layer at (13,151) size 266x35
+layer at (13,196) size 266x35
   RenderBlock {DIV} at (3,3) size 266x35 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 244x35
       text run at (0,0) width 244: "Month/Day/Year"
@@ -108,7 +112,7 @@ layer at (13,196) size 266x35
   RenderBlock {DIV} at (0,0) size 266x35
     RenderText {#text} at (0,0) size 108x35
       text run at (0,0) width 108: "4/2/12"
-layer at (13,196) size 266x35
+layer at (13,241) size 266x35
   RenderBlock {DIV} at (3,3) size 266x35 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 244x35
       text run at (0,0) width 244: "Month/Day/Year"
@@ -116,7 +120,3 @@ layer at (13,241) size 266x35
   RenderBlock {DIV} at (0,0) size 266x35
     RenderText {#text} at (0,0) size 108x35
       text run at (0,0) width 108: "4/2/12"
-layer at (13,241) size 266x35
-  RenderBlock {DIV} at (3,3) size 266x35 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 244x35
-      text run at (0,0) width 244: "Month/Day/Year"
