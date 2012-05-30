@@ -225,7 +225,7 @@ protected:
         IntSize m_tileSize;
     };
 
-    LayoutPoint offsetTopLeft(const LayoutPoint&) const;
+    LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
     void calculateBackgroundImageGeometry(const FillLayer*, const LayoutRect& paintRect, BackgroundImageGeometry&);
     void getBorderEdgeInfo(class BorderEdge[], const RenderStyle*, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;

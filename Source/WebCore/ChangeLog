@@ -1,3 +1,33 @@
+2012-05-30  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Rename offsetTopLeft in RenderBoxModelObject to something better
+        https://bugs.webkit.org/show_bug.cgi?id=85915
+
+        Reviewed by Darin Adler.
+
+        Renamed offsetTopLeft in RenderBoxModelObject to
+        adjustedPositionRelativeToOffsetParent, because it returns the given
+        startPoint after adjusting it to be relative to the top-left corner of
+        the offsetParent.  The definition of offsetParent itself is non-trivial
+        and is documented within the body of RenderObject::offsetParent,
+        therefore I decided to reuse this term, as-is, in the name of this
+        function.
+
+        No new tests; no functional or visible changes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetLeft):
+        (WebCore::RenderBox::offsetTop):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderBoxModelObject::offsetLeft):
+        (WebCore::RenderBoxModelObject::offsetTop):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetLeft):
+        (WebCore::RenderInline::offsetTop):
+
 2012-05-29  Adrienne Walker  <enne@google.com>
 
         Transformed fixed position layers have an incorrect overlap map entry

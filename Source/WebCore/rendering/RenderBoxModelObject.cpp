@@ -515,7 +515,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     return offset;
 }
 
-LayoutPoint RenderBoxModelObject::offsetTopLeft(const LayoutPoint& startPoint) const
+LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const LayoutPoint& startPoint) const
 {
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
@@ -553,15 +553,15 @@ LayoutPoint RenderBoxModelObject::offsetTopLeft(const LayoutPoint& startPoint) c
 LayoutUnit RenderBoxModelObject::offsetLeft() const
 {
     // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to offsetTopLeft.
-    return offsetTopLeft(LayoutPoint()).x();
+    // startPoint to adjustedPositionRelativeToOffsetParent.
+    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).x();
 }
 
 LayoutUnit RenderBoxModelObject::offsetTop() const
 {
     // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to offsetTopLeft.
-    return offsetTopLeft(LayoutPoint()).y();
+    // startPoint to adjustedPositionRelativeToOffsetParent.
+    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).y();
 }
 
 int RenderBoxModelObject::pixelSnappedOffsetWidth() const

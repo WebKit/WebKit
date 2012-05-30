@@ -653,7 +653,7 @@ LayoutUnit RenderInline::offsetLeft() const
     LayoutPoint topLeft;
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
-    return offsetTopLeft(topLeft).x();
+    return adjustedPositionRelativeToOffsetParent(topLeft).x();
 }
 
 LayoutUnit RenderInline::offsetTop() const
@@ -661,7 +661,7 @@ LayoutUnit RenderInline::offsetTop() const
     LayoutPoint topLeft;
     if (InlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
-    return offsetTopLeft(topLeft).y();
+    return adjustedPositionRelativeToOffsetParent(topLeft).y();
 }
 
 static LayoutUnit computeMargin(const RenderInline* renderer, const Length& margin)
