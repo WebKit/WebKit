@@ -98,6 +98,12 @@ void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& p
     ensureColumnSets();
 }
 
+bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutStateMaintainer&)
+{
+    // FIXME: Implement.
+    return false;
+}
+
 void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_flowThread) {

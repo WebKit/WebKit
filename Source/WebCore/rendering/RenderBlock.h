@@ -817,7 +817,6 @@ private:
     void offsetForContents(LayoutPoint&) const;
 
     virtual void calcColumnWidth();
-    bool layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
@@ -933,6 +932,7 @@ private:
 
 protected:
     // Pagination routines.
+    virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
     
     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
     // then nextPageLogicalTop with ExcludePageBoundary will still move to the top of the next page. nextPageLogicalTop with

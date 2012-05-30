@@ -1478,7 +1478,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && expandsToEncloseOverhangingFloats())
         setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
     
-    if (layoutColumns(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher))
+    if (relayoutForPagination(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher))
         return;
  
     // Calculate our new height.
@@ -5017,7 +5017,7 @@ LayoutRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
     return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
 }
 
-bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer& statePusher)
+bool RenderBlock::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer& statePusher)
 {
     if (!hasColumns())
         return false;
