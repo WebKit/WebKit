@@ -192,8 +192,6 @@ protected:
     QQmlComponent* filePicker;
     QQmlComponent* databaseQuotaDialog;
 
-    WebCore::ViewportAttributes attributes;
-
     QList<QUrl> userScripts;
 
     bool m_useDefaultContentItemSize;

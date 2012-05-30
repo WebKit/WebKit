@@ -770,12 +770,6 @@ void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& 
 QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
 {
-    // Default values for the Legacy view.
-    attributes.devicePixelRatio = 1;
-    attributes.initialScale = 1;
-    attributes.minimumScale = 1;
-    attributes.maximumScale = 1;
-    attributes.userScalable = 0;
 }
 
 void QQuickWebViewLegacyPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -867,30 +861,7 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
 {
-    Q_Q(QQuickWebView);
-
-    // FIXME: Revise these when implementing fit-to-width.
-    WebCore::ViewportAttributes attr = newAttributes;
-    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
-
-    // FIXME: Resetting here can reset more than needed. For instance it will end deferrers.
-    // This needs to be revised at some point.
-    interactionEngine->reset();
-
-    interactionEngine->setDevicePixelRatio(attr.devicePixelRatio);
-
-    interactionEngine->setAllowsUserScaling(!!attr.userScalable);
-    interactionEngine->setCSSScaleBounds(attr.minimumScale, attr.maximumScale);
-
-    if (!interactionEngine->hadUserInteraction() && !pageIsSuspended)
-        interactionEngine->setCSSScale(attr.initialScale);
-
-    this->attributes = attr;
-    emit q->experimental()->test()->viewportChanged();
-
-    // If the web app successively changes the viewport on purpose
-    // it wants to be in control and we should disable animations.
-    interactionEngine->setPageItemRectVisible(interactionEngine->nearestValidBounds());
+    interactionEngine->viewportAttributesChanged(newAttributes);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
@@ -963,26 +934,9 @@ void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 {
     Q_Q(QQuickWebView);
-    QSize viewportSize = q->boundingRect().size().toSize();
 
     pageView->setContentsSize(newSize); // emits contentsSizeChanged()
-
-    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(attributes, viewportSize, newSize);
-
-    if (!qFuzzyCompare(minimumScale, attributes.minimumScale)) {
-        interactionEngine->setCSSScaleBounds(minimumScale, attributes.maximumScale);
-        emit q->experimental()->test()->viewportChanged();
-
-        if (!interactionEngine->hadUserInteraction() && !pageIsSuspended) {
-            // Emits contentsScaleChanged();
-            interactionEngine->setCSSScale(minimumScale);
-        }
-    }
-
-    // Emit for testing purposes, so that it can be verified that
-    // we didn't do scale adjustment.
-    interactionEngine->setPageItemRectVisible(interactionEngine->nearestValidBounds());
-    emit q->experimental()->test()->contentsScaleCommitted();
+    interactionEngine->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
 }
 
 /*!

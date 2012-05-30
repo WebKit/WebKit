@@ -26,6 +26,7 @@
 #include <QtCore/QRectF>
 #include <QtCore/QVariant>
 #include <QtCore/QVariantAnimation>
+#include <WebCore/ViewportArguments.h>
 #include <wtf/OwnPtr.h>
 
 QT_BEGIN_NAMESPACE
@@ -91,6 +92,9 @@ public:
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
+    void viewportAttributesChanged(const WebCore::ViewportAttributes&);
+    void pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize);
+
 Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();
@@ -125,6 +129,8 @@ private:
 
     QRectF computePosRangeForPageItemAtScale(qreal itemScale) const;
     void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
+
+    WebCore::ViewportAttributes m_rawAttributes;
 
     bool m_allowsUserScaling;
     qreal m_minimumScale;

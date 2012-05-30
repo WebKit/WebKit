@@ -24,6 +24,7 @@
 
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
+#include "qwebkittest_p.h"
 #include <QPointF>
 #include <QTransform>
 #include <QWheelEvent>
@@ -172,6 +173,55 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale) const
         return qBound(hardMin, cssScale, hardMax);
     }
     return innerBoundedCSSScale(cssScale);
+}
+
+void QtViewportInteractionEngine::viewportAttributesChanged(const WebCore::ViewportAttributes& newAttributes)
+{
+    m_rawAttributes = newAttributes;
+    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
+
+    // FIXME: Resetting here can reset more than needed. For instance it will end deferrers.
+    // This needs to be revised at some point.
+    reset();
+
+
+    // FIXME: Should get directly from the webPageProxy.
+    setDevicePixelRatio(m_rawAttributes.devicePixelRatio);
+
+    setAllowsUserScaling(!!m_rawAttributes.userScalable);
+    setCSSScaleBounds(m_rawAttributes.minimumScale, m_rawAttributes.maximumScale);
+
+    if (!m_hadUserInteraction && !m_hasSuspendedContent) {
+        // Emits contentsScaleChanged();
+        setCSSScale(m_rawAttributes.initialScale);
+    }
+
+    emit m_viewportItem->experimental()->test()->viewportChanged();
+
+    // If the web app successively changes the viewport on purpose
+    // it wants to be in control and we should disable animations.
+    setPageItemRectVisible(nearestValidBounds());
+}
+
+void QtViewportInteractionEngine::pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize)
+{
+    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, viewportSize, newSize);
+
+    if (!qFuzzyCompare(minimumScale, m_rawAttributes.minimumScale)) {
+        setCSSScaleBounds(minimumScale, m_rawAttributes.maximumScale);
+        emit m_viewportItem->experimental()->test()->viewportChanged();
+
+        if (!m_hadUserInteraction && !m_hasSuspendedContent) {
+            // Emits contentsScaleChanged();
+            setCSSScale(minimumScale);
+        }
+    }
+
+    // Emit for testing purposes, so that it can be verified that
+    // we didn't do scale adjustment.
+    emit m_viewportItem->experimental()->test()->contentsScaleCommitted();
+
+    setPageItemRectVisible(nearestValidBounds());
 }
 
 void QtViewportInteractionEngine::setPageItemRectVisible(const QRectF& itemRect)

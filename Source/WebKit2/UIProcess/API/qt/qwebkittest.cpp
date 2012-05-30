@@ -120,44 +120,49 @@ QSize QWebKitTest::contentsSize() const
 
 QVariant QWebKitTest::contentsScale() const
 {
-    if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
-        return interactionEngine->currentCSSScale();
-
-    return m_webViewPrivate->attributes.initialScale;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return viewport->currentCSSScale();
+    return QVariant();
 }
 
 QVariant QWebKitTest::devicePixelRatio() const
 {
-    return m_webViewPrivate->attributes.devicePixelRatio;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return viewport->m_devicePixelRatio;
+    return QVariant();
 }
 
 QVariant QWebKitTest::initialScale() const
 {
-    return m_webViewPrivate->attributes.initialScale;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return viewport->m_rawAttributes.initialScale;
+    return QVariant();
 }
 
 QVariant QWebKitTest::minimumScale() const
 {
-    if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
-        return interactionEngine->m_minimumScale;
-
-    return m_webViewPrivate->attributes.minimumScale;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return viewport->m_minimumScale;
+    return QVariant();
 }
 
 QVariant QWebKitTest::maximumScale() const
 {
-    if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
-        return interactionEngine->m_maximumScale;
-
-    return m_webViewPrivate->attributes.maximumScale;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return viewport->m_maximumScale;
+    return QVariant();
 }
 
 QVariant QWebKitTest::isScalable() const
 {
-    return !!m_webViewPrivate->attributes.userScalable;
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return !!viewport->m_rawAttributes.userScalable;
+    return QVariant();
 }
 
 QVariant QWebKitTest::layoutSize() const
 {
-    return QSizeF(m_webViewPrivate->attributes.layoutSize);
+    if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
+        return QSizeF(viewport->m_rawAttributes.layoutSize);
+    return QVariant();
 }
