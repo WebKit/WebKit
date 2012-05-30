@@ -1,3 +1,9 @@
+2012-05-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating platform-specific baselines after r118902.
+
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2012-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Gardening. Shadow DOM is disabled on Qt.
