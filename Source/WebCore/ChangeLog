@@ -1,3 +1,46 @@
+2012-05-30  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=80400
+
+        This change modifies the default ImageDecoder for Qt-port from QImageDecoder to WebCore ImageDecoder.
+        The new behavior is to use QImageDecoder only if WebCoreImageDecoder - and the platform - doesn't support 
+        the requested image type.
+        The WTF_USE_QT_IMAGE_DECODER macro has been removed, since it is no longer needed.
+
+        This change adds build depedency (except Qt-MAC and Qt-WIN platform) for libpng-dev and libjpeg-dev packages, 
+        because PNG and JPEG imagedecoders need not only these libraries, but their headers also. Qmake-config 
+        tests for these libraries were introduced in r110045.
+
+        Notice: with using libjpeg-turbo as a system library I measured 10% performance improvement on Methanol benchmark
+        (collection of popular sites, page-loading benchmark) with this patch.
+
+        Reviewed by Simon Hausmann.
+
+        No new tests needed.
+
+        * Target.pri: Move WebCore ImageDecoder files out of guards. Remove ImageFrameQt.cpp from sources.
+        * WebCore.pri: Move WebCore ImageDecoder include paths out of guards.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes): Add WebCore supported and Qt supported MIME types.
+        (WebCore::initializeSupportedImageMIMETypesForEncoding): Use Qt supported MIME types.
+        * platform/graphics/ImageSource.cpp: Remove unnecessary includes.
+        * platform/graphics/ImageSource.h: Remove unnecessary typedefs.
+        (WebCore):
+        * platform/graphics/qt/ImageDecoderQt.cpp: Remove ImageDecoder::create, since it is no longer needed.
+        (WebCore::ImageDecoderQt::filenameExtension): Remove unnecessary semicolon.
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage): Use QImage and ImageFrame instead of QPixmap.
+        (WebCore):
+        (WebCore::ImageFrame::asNewNativeImage): Moved here from removed ImageFrameQt.cpp.
+        * platform/image-decoders/ImageDecoder.cpp: Reorganize the includes of the header.
+        (WebCore::ImageDecoder::create): Add platform macro guarded fallback case for QImageDecoder. Add guards
+        for JPEG, PNG, ICO decoder for Qt-MAC and Qt-WIN platform.
+        * platform/image-decoders/ImageDecoder.h: Remove Qt-specific codes.
+        (WebCore::ImageFrame::getAddr): Remove Qt-specific case, since it is no longer needed.
+        (ImageFrame):
+        * platform/image-decoders/qt/ImageFrameQt.cpp: Removed. Dead code, other code has been moved to
+        ImageDecoderQt.cpp.
+
 2012-05-23  Kinuko Yasuda  <kinuko@chromium.org>
 
         REGRESSION: We should allow null modificationTime when snapshot metadata is given
