@@ -1,3 +1,12 @@
+2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Fix WebKit2-EFL build
+        https://bugs.webkit.org/show_bug.cgi?id=83693
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt: Add GestureTapHighlighter.cpp.
+
 2012-05-29  Antti Koivisto  <antti@apple.com>
 
         Rename Foo::addSubresourceStyleURLs and Node::addSubresourceAttributeURLs

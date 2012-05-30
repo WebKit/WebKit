@@ -22,11 +22,11 @@
 
 #include "DataReference.h"
 #include "MessageID.h"
+#include "WebErrors.h"
 #include "WebKitSoupRequestGeneric.h"
 #include "WebKitSoupRequestInputStream.h"
 #include "WebProcess.h"
 #include "WebSoupRequestManagerProxyMessages.h"
-#include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <libsoup/soup-requester.h>
@@ -99,7 +99,7 @@ void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& re
     } else {
         GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(SOUP_REQUEST(request.get())), FALSE));
         WebCore::ResourceRequest resourceRequest(String::fromUTF8(uriString.get()));
-        WebCore::ResourceError resourceError(WebCore::cannotShowURLError(resourceRequest));
+        WebCore::ResourceError resourceError(cannotShowURLError(resourceRequest));
         g_simple_async_result_set_error(result.get(), g_quark_from_string(resourceError.domain().utf8().data()),
                                         resourceError.errorCode(), "%s", resourceError.localizedDescription().utf8().data());
     }

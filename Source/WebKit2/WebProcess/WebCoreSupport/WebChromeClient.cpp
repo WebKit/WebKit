@@ -45,6 +45,7 @@
 #include "WebProcess.h"
 #include "WebSearchPopupMenu.h"
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/ColorChooser.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
@@ -594,6 +595,14 @@ bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const In
     m_page->injectedBundleUIClient().paintCustomOverhangArea(m_page, context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
     return true;
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+{
+    notImplemented();
+    return nullptr;
+}
+#endif
 
 void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {

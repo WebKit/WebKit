@@ -24,6 +24,9 @@ LIST(APPEND WebKit2_SOURCES
     Shared/efl/WebEventFactory.cpp
     Shared/efl/WebCoreArgumentCodersEfl.cpp
 
+    UIProcess/API/C/soup/WKContextSoup.cpp
+    UIProcess/API/C/soup/WKSoupRequestManager.cpp
+
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/ewk_view.cpp
 
@@ -36,11 +39,13 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
 
+    UIProcess/soup/WebSoupRequestManagerClient.cpp
+    UIProcess/soup/WebSoupRequestManagerProxy.cpp
+
     UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
     UIProcess/Launcher/efl/ThreadLauncherEfl.cpp
 
-    UIProcess/Plugins/efl/PluginInfoStoreEfl.cpp
-    UIProcess/Plugins/efl/PluginProcessProxyEfl.cpp
+    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
@@ -59,18 +64,32 @@ LIST(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
+
+    WebProcess/soup/WebSoupRequestManager.cpp
+    WebProcess/soup/WebKitSoupRequestGeneric.cpp
+    WebProcess/soup/WebKitSoupRequestInputStream.cpp
+)
+
+LIST(APPEND WebKit2_MESSAGES_IN_FILES
+    UIProcess/soup/WebSoupRequestManagerProxy.messages.in
+    WebProcess/soup/WebSoupRequestManager.messages.in
 )
 
 LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}/wtf/gobject"
+    "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/network/soup"
+    "${WEBCORE_DIR}/svg/graphics"
     "${WEBKIT2_DIR}/Shared/efl"
-    "${WEBKIT2_DIR}/UIProcess/API/efl/"
+    "${WEBKIT2_DIR}/UIProcess/API/C/soup"
+    "${WEBKIT2_DIR}/UIProcess/API/efl"
+    "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/Downloads/efl"
     "${WEBKIT2_DIR}/WebProcess/efl"
+    "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
+    "${WTF_DIR}/wtf/gobject"
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_X_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
@@ -81,6 +100,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${SQLITE_INCLUDE_DIRS}
     ${Glib_INCLUDE_DIRS}
     ${LIBSOUP24_INCLUDE_DIRS}
+    ${WTF_DIR}
 )
 
 LIST(APPEND WebKit2_LIBRARIES

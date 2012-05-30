@@ -1059,6 +1059,7 @@ SET(WebCore_SOURCES
     page/FrameTree.cpp
     page/FrameView.cpp
     page/GroupSettings.cpp
+    page/GestureTapHighlighter.cpp
     page/History.cpp
     page/Location.cpp
     page/MemoryInfo.cpp

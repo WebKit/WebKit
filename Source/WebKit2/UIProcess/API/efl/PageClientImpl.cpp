@@ -186,6 +186,13 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
     notImplemented();
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled)
+{
+    notImplemented();
+}
+#endif
+
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();

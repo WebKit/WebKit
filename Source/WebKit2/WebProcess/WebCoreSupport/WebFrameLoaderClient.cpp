@@ -73,6 +73,10 @@
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
 
+#if ENABLE(WEB_INTENTS)
+#include <WebCore/IntentRequest.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -1514,6 +1518,13 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long id
     return webPage->injectedBundleResourceLoadClient().shouldCacheResponse(webPage, m_frame, identifier);
 }
 #endif // PLATFORM(WIN) && USE(CFNETWORK)
+
+#if ENABLE(WEB_INTENTS)
+void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest>)
+{
+    notImplemented();
+}
+#endif
 
 bool WebFrameLoaderClient::shouldUsePluginDocument(const String& /*mimeType*/) const
 {

@@ -1,3 +1,33 @@
+2012-05-30  Mariusz Grzegorczyk  <mariusz.g@samsung.com>, Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Fix WebKit2-EFL build
+        https://bugs.webkit.org/show_bug.cgi?id=83693
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt: Move IDL generator codes to generate port specific *.messages.in.
+        * PlatformEfl.cmake: Add soup related files after r115411 and includes to fix build break.
+        * UIProcess/API/efl/PageClientImpl.cpp: Fix build break with ENABLE_TOUCH_EVENTS.
+        (WebKit):
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Fix build break with ENABLE_INPUT_TYPE_COLOR and ENABLE_REGISTER_PROTOCOL_HANDLER.
+        (WebKit):
+        (WebKit::WebChromeClient::createColorChooser):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Fix build break with ENABLE_WEB_INTENTS
+        (WebKit):
+        (WebKit::WebFrameLoaderClient::dispatchIntent):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebCore):
+        (WebFrameLoaderClient):
+        * WebProcess/WebProcess.cpp: Guard PLATFORM_STRATEGIES codes.
+        (WebKit::WebProcess::didGetPlugins):
+        * WebProcess/soup/WebSoupRequestManager.cpp: Try to share with EFL port.
+        (WebKit::WebSoupRequestManager::didHandleURIRequest):
+
 2012-05-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Variable renaming as preparation of further refactoring.

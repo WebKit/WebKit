@@ -41,6 +41,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/intents"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bindings"
@@ -51,6 +52,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/editing"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
+    "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/icon"
@@ -492,6 +494,16 @@ SET(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/WebPage.messages.in
 )
 
+SET(WebProcess_NAME bin/WebProcess)
+
+SET(WebProcess_LIBRARIES
+    ${JavaScriptCore_LIBRARY_NAME}
+    ${WebCore_LIBRARY_NAME}
+    ${WebKit2_LIBRARY_NAME}
+)
+
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
 # Create JavaScript C++ code given an IDL input
 FOREACH (_file ${WebKit2_MESSAGES_IN_FILES})
     GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
@@ -510,19 +522,6 @@ SET(WebKit2_LIBRARIES
     ${WebCore_LIBRARY_NAME}
 )
 
-SET(WebProcess_NAME ../bin/WebProcess)
-SET(WebProcess_SOURCES "")
-
-SET(WebProcess_LIBRARIES
-    ${JavaScriptCore_LIBRARY_NAME}
-    ${WebCore_LIBRARY_NAME}
-    ${WebKit2_LIBRARY_NAME}
-)
-
-SET(ForwardingHeaders_NAME )
-SET(ForwardingNetworkHeaders_NAME )
-WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
 ADD_DEFINITIONS(-DBUILDING_WEBKIT)
 INCLUDE_DIRECTORIES(${WebKit2_INCLUDE_DIRECTORIES})
 ADD_LIBRARY(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
@@ -537,6 +536,7 @@ SET_TARGET_PROPERTIES(${WebKit2_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIE
 ADD_EXECUTABLE(${WebProcess_NAME} ${WebProcess_SOURCES})
 TARGET_LINK_LIBRARIES(${WebProcess_NAME} ${WebProcess_LIBRARIES})
 SET_TARGET_PROPERTIES(${WebProcess_NAME} PROPERTIES FOLDER "WebKit")
+SET_TARGET_PROPERTIES(${WebProcess_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 SET_TARGET_PROPERTIES(${WebKit2_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 IF (WebKit2_LINK_FLAGS)

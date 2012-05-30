@@ -1044,8 +1044,10 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 
 void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>& plugins)
 {
+#if USE(PLATFORM_STRATEGIES)
     // Pass this to WebPlatformStrategies.cpp.
     handleDidGetPlugins(requestID, plugins);
+#endif
 }
 
 } // namespace WebKit
