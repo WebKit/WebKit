@@ -1,3 +1,16 @@
+2012-05-29  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Modified ORWT and NRWT to check for test expectations in platform/qt-5.0-wk1 too
+        (They only used to check for Skipped in platform/qt-5.0-wk1)
+        https://bugs.webkit.org/show_bug.cgi?id=87376
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/old-run-webkit-tests:
+        (buildPlatformResultHierarchy):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.baseline_search_path):
+
 2012-05-29  Ojan Vafai  <ojan@chromium.org>
 
         Add a linter error for pngs that lack an embedded checksum

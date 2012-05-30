@@ -2158,8 +2158,11 @@ sub buildPlatformResultHierarchy()
             @platforms = $platform;
         }
     } elsif ($platform =~ /^qt/) {
-        if ($platform eq "qt-5.0-wk2") {
-            push @platforms, $platform;
+        if ($platform eq "qt-5.0-wk2" || getQtVersion() eq "5.0" && $useWebKitTestRunner) {
+            push @platforms, "qt-5.0-wk2";
+        }
+        elsif ($platform eq "qt-5.0-wk1" || getQtVersion() eq "5.0" && !$useWebKitTestRunner) {
+            push @platforms, "qt-5.0-wk1"
         }
 
         if (isARM() || $platform eq "qt-arm") {
@@ -2487,9 +2490,6 @@ sub readSkippedFiles($)
     # cross-platform issues, the Windows and Qt ports use the Mac skipped list
     # additionally to their own to avoid maintaining separate lists.
     push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "qt-5.0-wk2" || $platform eq "mac-wk2" || $platform eq "gtk-wk2");
-
-    # Add Qt WK1-only skipped tests.
-    push(@skippedFileDirectories, catdir($platformBaseDirectory, "qt-5.0-wk1")) if (isQt() && !$useWebKitTestRunner);
 
     if ($verbose) {
         foreach my $skippedPath (@skippedFileDirectories) {

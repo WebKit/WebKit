@@ -111,10 +111,13 @@ class QtPort(WebKitPort):
 
     def baseline_search_path(self):
         search_paths = []
-        if self.get_option('webkit_test_runner'):
-            search_paths.append(self._wk2_port_name())
-        search_paths.append(self.name())
         version = self.qt_version()
+        if '5.0' in version:
+            if self.get_option('webkit_test_runner'):
+                search_paths.append('qt-5.0-wk2')
+            else:
+                search_paths.append('qt-5.0-wk1')
+        search_paths.append(self.name())
         if '4.8' in version:
             search_paths.append('qt-4.8')
         elif version:
