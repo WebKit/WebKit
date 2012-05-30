@@ -144,8 +144,8 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
 {
     reset();
 
-    connect(m_pageItem, SIGNAL(widthChanged()), SLOT(pageSizeChanged()), Qt::DirectConnection);
-    connect(m_pageItem, SIGNAL(heightChanged()), SLOT(pageSizeChanged()), Qt::DirectConnection);
+    connect(m_pageItem, SIGNAL(widthChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
+    connect(m_pageItem, SIGNAL(heightChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementStarted()), SLOT(flickMoveStarted()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementEnded()), SLOT(flickMoveEnded()), Qt::DirectConnection);
 
