@@ -32,7 +32,6 @@
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
 #import <WebCore/RunLoop.h>
-#import <WebKit2/WKView.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
 #import <objc/objc-auto.h>

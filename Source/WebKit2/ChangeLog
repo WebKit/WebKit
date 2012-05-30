@@ -1,3 +1,11 @@
+2012-05-30  Andy Estes  <aestes@apple.com>
+
+        WebProcessMainMac.mm doesn't need to import WKView.h.
+
+        Rubber-stamped by Anders Carlsson. 
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+
 2012-05-30  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         WebKit2: Implement layoutTestController.setPluginsEnabled() in WebKitTestRunner.
