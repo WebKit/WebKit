@@ -1,3 +1,54 @@
+2012-05-30  Kentaro Hara  <haraken@chromium.org>
+
+        [perf-test] Add a benchmark for querySelector()
+        https://bugs.webkit.org/show_bug.cgi?id=87742
+
+        Reviewed by Ryosuke Niwa.
+
+        Now I am optimizing querySelector() (bug 87625).
+        This patch adds a performance test for querySelector().
+        query-selector-first.html queries an element that appears
+        at the head of the document. On the other hand,
+        query-selector-last.html queries an element that appears
+        at the tail of the document.
+
+        Test results in my desktop:
+
+        [query-selector-first.html]
+        RESULT Parser: query-selector-first= 252.339803014 runs/s
+        median= 253.646265594 runs/s, stdev= 2.32610873209 runs/s, min= 248.138957816 runs/s, max= 254.777070064 runs/s
+
+        RESULT Parser: query-selector-first= 252.688468897 runs/s
+        median= 252.684876579 runs/s, stdev= 3.60008778708 runs/s, min= 246.002460025 runs/s, max= 258.397932817 runs/s
+
+        RESULT Parser: query-selector-first= 253.466019656 runs/s
+        median= 254.129606099 runs/s, stdev= 1.78002675664 runs/s, min= 247.831474597 runs/s, max= 254.777070064 runs/s
+
+        RESULT Parser: query-selector-first= 256.245078189 runs/s
+        median= 257.06940874 runs/s, stdev= 2.84722072201 runs/s, min= 249.687890137 runs/s, max= 259.74025974 runs/s
+
+        RESULT Parser: query-selector-first= 252.203100497 runs/s
+        median= 252.047989175 runs/s, stdev= 1.75233446036 runs/s, min= 248.138957816 runs/s, max= 255.427841635 runs/s
+
+        [query-selector-last.html]
+        RESULT Parser: query-selector-last= 356.009616076 runs/s
+        median= 355.781448539 runs/s, stdev= 0.841519086864 runs/s, min= 354.430379747 runs/s, max= 358.056265985 runs/s
+
+        RESULT Parser: query-selector-last= 360.735271001 runs/s
+        median= 361.057532424 runs/s, stdev= 1.12253219867 runs/s, min= 358.514724712 runs/s, max= 362.225097025 runs/s
+
+        RESULT Parser: query-selector-last= 359.598592463 runs/s
+        median= 359.435173299 runs/s, stdev= 0.816538258728 runs/s, min= 358.056265985 runs/s, max= 360.824742268 runs/s
+
+        RESULT Parser: query-selector-last= 357.260651715 runs/s
+        median= 357.598978289 runs/s, stdev= 1.17393159885 runs/s, min= 353.982300885 runs/s, max= 358.974358974 runs/s
+
+        RESULT Parser: query-selector-last= 351.696240713 runs/s
+        median= 351.980025916 runs/s, stdev= 1.14200564038 runs/s, min= 348.692403487 runs/s, max= 353.535353535 runs/s
+
+        * Parser/query-selector-first.html: Added.
+        * Parser/query-selector-last.html: Added.
+
 2012-05-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: HeapSnapshot: introduce performance counter for HeapSnapshotConstructorsDataGrid._aggregatesReceived method.
