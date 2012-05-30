@@ -1,3 +1,20 @@
+2012-05-29  Luke Macpherson  <macpherson@chromium.org>
+
+        Implement post-landing feedback for WebKitCSSTransformValue::customCSSText().
+        https://bugs.webkit.org/show_bug.cgi?id=87684
+
+        Reviewed by Darin Adler.
+
+        Darin provided some style suggesting on https://bugs.webkit.org/show_bug.cgi?id=87462 after it landed.
+        This patch incorporates those suggestions, namely using 0 instead of empty string for UnknownTransformOperation
+        and WTF_ARRAY_LENGTH instead of hard coding the array length.
+
+        Covered by existing transform tests.
+
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore):
+        (WebCore::WebKitCSSTransformValue::customCssText):
+
 2012-05-29  Eric Seidel  <eric@webkit.org>
 
         Fix ENABLE_IFRAME_SEAMLESS to actually fully disable <iframe seamless>
