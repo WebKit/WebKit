@@ -1,3 +1,22 @@
+2012-05-30  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: Implement CSSOM support
+        https://bugs.webkit.org/show_bug.cgi?id=84551
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a pretty printer for the calc expression tree. 
+
+        Test: css3/calc/cssom.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::customCssText):
+        (WebCore::CSSCalcPrimitiveValue::customCssText):
+        (WebCore::CSSCalcBinaryOperation::customCssText):
+        (CSSCalcBinaryOperation):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+
 2012-05-29  Li Yin  <li.yin@intel.com>
 
         [FileAPI] The result attribute of FileReader shuold use null to replace empty string

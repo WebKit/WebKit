@@ -1,3 +1,13 @@
+2012-05-30  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: Implement CSSOM support
+        https://bugs.webkit.org/show_bug.cgi?id=84551
+
+        Reviewed by Ryosuke Niwa.
+
+        * css3/calc/cssom-expected.txt: Added.
+        * css3/calc/cssom.html: Added.
+
 2012-05-29  Li Yin  <li.yin@intel.com>
 
         [FileAPI] The result attribute of FileReader shuold use null to replace empty string

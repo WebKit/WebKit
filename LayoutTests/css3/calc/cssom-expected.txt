@@ -1,0 +1,15 @@
+This tests calc() and the CSSOM
+
+10px => -webkit-calc(10px)
+10px + 15px => -webkit-calc(10px + 15px)
+100% => -webkit-calc(100%)
+100% - 10px => -webkit-calc(100% - 10px)
+10px + 10px * 5 => -webkit-calc(10px + (10px * 5))
+5px + 2em + 6in => -webkit-calc((5px + 2em) + 6in)
+100% - 10px / 2 => -webkit-calc(100% - (10px / 2))
+1px + 2em - 3rem + 4in => -webkit-calc(((1px + 2em) - 3rem) + 4in)
+100px * (1 + 2 * 3 - 4 / 5) => -webkit-calc(100px * ((1 + (2 * 3)) - (4 / 5)))
+(100px) + 200px => -webkit-calc(100px + 200px)
+((((((((((100px)))))))))) => -webkit-calc(100px)
+flimstix => -webkit-calc(100px)
+

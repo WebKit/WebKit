@@ -74,7 +74,17 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     
 String CSSCalcValue::customCssText() const
 {
-    return "";
+    StringBuilder result;
+    
+    result.append("-webkit-calc");
+    String expression = m_expression->customCssText();
+    bool expressionHasSingleTerm = expression[0] != '(';
+    if (expressionHasSingleTerm)
+        result.append('(');
+    result.append(expression);
+    if (expressionHasSingleTerm)
+        result.append(')');
+    return result.toString(); 
 }
     
 double CSSCalcValue::clampToPermittedRange(double value) const
@@ -109,7 +119,7 @@ public:
         return !m_value->getDoubleValue();
     }
 
-    virtual String cssText() const
+    virtual String customCssText() const
     {
         return m_value->cssText();
     }
@@ -248,6 +258,20 @@ public:
         const double leftValue = m_leftSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         const double rightValue = m_rightSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         return evaluate(leftValue, rightValue);
+    }
+
+    virtual String customCssText() const
+    {
+        StringBuilder result;
+        result.append('(');
+        result.append(m_leftSide->customCssText());
+        result.append(' ');
+        result.append(static_cast<char>(m_operator));
+        result.append(' ');
+        result.append(m_rightSide->customCssText());
+        result.append(')');
+    
+        return result.toString();    
     }
 
 private:

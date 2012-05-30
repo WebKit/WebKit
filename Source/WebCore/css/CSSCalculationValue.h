@@ -63,6 +63,7 @@ public:
     virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle*, RenderStyle* rootStyle, double zoom = 1.0) const = 0;    
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
+    virtual String customCssText() const = 0;
     
     CalculationCategory category() const { return m_category; }    
     bool isInteger() const { return m_isInteger; }
