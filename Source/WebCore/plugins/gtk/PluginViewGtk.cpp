@@ -834,25 +834,10 @@ void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
     view->updateWidgetAllocationAndClip();
 }
 
-static bool moduleMixesGtkSymbols(GModule* module)
-{
-    gpointer symbol;
-#ifdef GTK_API_VERSION_2
-    return g_module_symbol(module, "gtk_application_get_type", &symbol);
-#else
-    return g_module_symbol(module, "gtk_object_get_type", &symbol);
-#endif
-}
-
 bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
-
-    if (moduleMixesGtkSymbols(m_plugin->module())) {
-        LOG(Plugins, "Module '%s' mixes GTK+ 2 and GTK+ 3 symbols, ignoring plugin.\n", m_plugin->path().utf8().data());
-        return false;
-    }
 
 #if defined(XP_UNIX)
     if (m_plugin->pluginFuncs()->getvalue) {

@@ -1,3 +1,23 @@
+2012-05-30  Daniel Drake  <dsd@laptop.org>
+
+        Check for GTK2/GTK3 symbol mismatch earlier
+        https://bugs.webkit.org/show_bug.cgi?id=87687
+
+        Reviewed by Martin Robinson.
+
+        No new tests. Regressions in core behavior are covered by existing
+        plugin tests and the fix deals with particular aspects of the system
+        environment that are difficult to test.
+
+        Detect plugins that would mix GTK+ symbols earlier, so that the
+        WebKit can skip them and choose a more appropriate plugin module.
+
+        * plugins/gtk/PluginPackageGtk.cpp: Move this code from PluginViewGtk.
+        (WebCore::moduleMixesGtkSymbols):
+        (WebCore::PluginPackage::load):
+        * plugins/gtk/PluginViewGtk.cpp: Move this code to PluginPackageGtk.
+        (WebCore::PluginView::platformStart):
+
 2012-05-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Support IMAGE_DECODER_DOWN_SAMPLING flag.
