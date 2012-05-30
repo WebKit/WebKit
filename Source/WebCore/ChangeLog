@@ -1,3 +1,22 @@
+2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Some Content Security Policy console messages are missing line numbers in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=87558
+
+        Reviewed by Adam Barth.
+
+        Make ScriptController::eventHandlerPosition() behave the same way on
+        JSC than V8. This means that TextPosition::minimumPosition() is
+        returned if parser is null, instead of
+        TextPosition::belowRangePosition(). The line numbers are now correctly
+        printed in the output of Content Security Policy tests.
+
+        Tests: http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url.html
+               http/tests/security/contentSecurityPolicy/javascript-url-blocked.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerPosition):
+
 2012-05-29  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] make WebTransformationMatrix object usable by non-webkit code

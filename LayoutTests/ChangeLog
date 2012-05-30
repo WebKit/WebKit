@@ -1,3 +1,22 @@
+2012-05-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Some Content Security Policy console messages are missing line numbers in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=87558
+
+        Reviewed by Adam Barth.
+
+        Remove Mac/EFL/GTK/Qt-specific expectations for Content Security Policy
+        tests now that the line numbers are correctly printed.
+
+        * platform/efl/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Removed.
+        * platform/efl/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Removed.
+        * platform/mac/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Removed.
+        * platform/mac/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Removed.
+        * platform/qt/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt: Removed.
+        * platform/qt/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt: Removed.
+
 2012-05-29  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should keep captured variables alive until the (inline) return.
