@@ -33,21 +33,6 @@
 
 namespace JSC { namespace DFG {
 
-#define CFA_PROFILING 0
-
-#if CFA_PROFILING
-#define PROFILE(flag) SamplingFlags::ScopedFlag scopedFlag(flag)
-#else
-#define PROFILE(flag) do { } while (false)
-#endif
-
-// Profiling flags
-#define FLAG_FOR_BLOCK_INITIALIZATION  17
-#define FLAG_FOR_BLOCK_END             18
-#define FLAG_FOR_EXECUTION             19
-#define FLAG_FOR_MERGE_TO_SUCCESSORS   20
-#define FLAG_FOR_STRUCTURE_CLOBBERING  21
-
 AbstractState::AbstractState(Graph& graph)
     : m_codeBlock(graph.m_codeBlock)
     , m_graph(graph)
@@ -61,8 +46,6 @@ AbstractState::~AbstractState() { }
 
 void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
 {
-    PROFILE(FLAG_FOR_BLOCK_INITIALIZATION);
-    
     ASSERT(!m_block);
     
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
@@ -97,7 +80,6 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
 
 void AbstractState::initialize(Graph& graph)
 {
-    PROFILE(FLAG_FOR_BLOCK_INITIALIZATION);
     BasicBlock* root = graph.m_blocks[0].get();
     root->cfaShouldRevisit = true;
     root->cfaHasVisited = false;
@@ -177,7 +159,6 @@ void AbstractState::initialize(Graph& graph)
 
 bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDirectionPtr)
 {
-    PROFILE(FLAG_FOR_BLOCK_END);
     ASSERT(m_block);
     
     BasicBlock* block = m_block; // Save the block for successor merging.
@@ -197,14 +178,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDi
             dataLog("        Merging state for argument %zu.\n", argument);
 #endif
             AbstractValue& destination = block->valuesAtTail.argument(argument);
-            NodeIndex nodeIndex = block->variablesAtTail.argument(argument);
-            if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
-                if (!destination.isTop()) {
-                    destination.makeTop();
-                    changed = true;
-                }
-            } else
-                changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
+            changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
         }
         
         for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
@@ -212,14 +186,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDi
             dataLog("        Merging state for local %zu.\n", local);
 #endif
             AbstractValue& destination = block->valuesAtTail.local(local);
-            NodeIndex nodeIndex = block->variablesAtTail.local(local);
-            if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
-                if (!destination.isTop()) {
-                    destination.makeTop();
-                    changed = true;
-                }
-            } else
-                changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
+            changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
         }
     }
     
@@ -250,7 +217,6 @@ void AbstractState::reset()
 
 bool AbstractState::execute(unsigned indexInBlock)
 {
-    PROFILE(FLAG_FOR_EXECUTION);
     ASSERT(m_block);
     ASSERT(m_isValid);
         
@@ -274,7 +240,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         bool canExit = false;
         canExit |= variableAccessData->prediction() == PredictNone;
         if (variableAccessData->isCaptured())
-            forNode(nodeIndex).makeTop();
+            forNode(nodeIndex) = m_variables.operand(variableAccessData->local());
         else {
             AbstractValue value = m_variables.operand(variableAccessData->local());
             if (value.isClear())
@@ -288,13 +254,14 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
         
     case GetLocalUnlinked: {
-        forNode(nodeIndex).makeTop();
+        forNode(nodeIndex) = m_variables.operand(node.unlinkedLocal());
         node.setCanExit(false);
         break;
     }
         
     case SetLocal: {
         if (node.variableAccessData()->isCaptured()) {
+            m_variables.operand(node.local()) = forNode(node.child1());
             node.setCanExit(false);
             break;
         }
@@ -468,7 +435,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         if (node.op() == ValueAdd) {
-            clobberStructures(indexInBlock);
+            clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
             node.setCanExit(false);
             break;
@@ -774,12 +741,12 @@ bool AbstractState::execute(unsigned indexInBlock)
             } else {
                 filter = PredictTop;
                 checker = isAnyPrediction;
-                clobberStructures(indexInBlock);
+                clobberWorld(node.codeOrigin, indexInBlock);
             }
         } else {
             filter = PredictTop;
             checker = isAnyPrediction;
-            clobberStructures(indexInBlock);
+            clobberWorld(node.codeOrigin, indexInBlock);
         }
         node.setCanExit(
             !checker(forNode(node.child1()).m_type)
@@ -866,7 +833,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         if (!isActionableArrayPrediction(m_graph[node.child1()].prediction()) || !m_graph[node.child2()].shouldSpeculateInteger()) {
-            clobberStructures(indexInBlock);
+            clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         }
@@ -960,7 +927,7 @@ bool AbstractState::execute(unsigned indexInBlock)
 #endif
             ) {
             ASSERT(node.op() == PutByVal);
-            clobberStructures(indexInBlock);
+            clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         }
@@ -1243,7 +1210,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
 
     case CheckArgumentsNotCreated:
-        node.setCanExit(true);
+        node.setCanExit(
+            !isEmptyPrediction(
+                m_variables.operand(
+                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type));
         break;
         
     case GetMyArgumentsLength:
@@ -1251,20 +1221,21 @@ bool AbstractState::execute(unsigned indexInBlock)
         // the arguments a bit. Note that this is not sufficient to force constant folding
         // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
         // We perform further optimizations on this later on.
-        if (node.codeOrigin.inlineCallFrame) {
+        if (node.codeOrigin.inlineCallFrame)
             forNode(nodeIndex).set(jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1));
-            node.setCanExit(false);
-            break;
-        }
-        node.setCanExit(true);
-        forNode(nodeIndex).set(PredictInt32);
+        else
+            forNode(nodeIndex).set(PredictInt32);
+        node.setCanExit(
+            !isEmptyPrediction(
+                m_variables.operand(
+                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type));
         break;
         
     case GetMyArgumentsLengthSafe:
         node.setCanExit(false);
         // This potentially clobbers all structures if the arguments object had a getter
         // installed on the length property.
-        clobberStructures(indexInBlock);
+        clobberWorld(node.codeOrigin, indexInBlock);
         // We currently make no guarantee about what this returns because it does not
         // speculate that the length property is actually a length.
         forNode(nodeIndex).makeTop();
@@ -1280,10 +1251,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
         
     case GetMyArgumentByValSafe:
-        node.setCanExit(false);
+        node.setCanExit(true);
         // This potentially clobbers all structures if the property we're accessing has
         // a getter. We don't speculate against this.
-        clobberStructures(indexInBlock);
+        clobberWorld(node.codeOrigin, indexInBlock);
         // But we do speculate that the index is an integer.
         forNode(node.child1()).filter(PredictInt32);
         // And the result is unknown.
@@ -1326,7 +1297,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         if (isCellPrediction(m_graph[node.child1()].prediction()))
             forNode(node.child1()).filter(PredictCell);
-        clobberStructures(indexInBlock);
+        clobberWorld(node.codeOrigin, indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             
@@ -1504,7 +1475,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case PutByIdDirect:
         node.setCanExit(true);
         forNode(node.child1()).filter(PredictCell);
-        clobberStructures(indexInBlock);
+        clobberWorld(node.codeOrigin, indexInBlock);
         break;
             
     case GetGlobalVar:
@@ -1547,7 +1518,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ResolveBaseStrictPut:
     case ResolveGlobal:
         node.setCanExit(true);
-        clobberStructures(indexInBlock);
+        clobberWorld(node.codeOrigin, indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             
@@ -1570,16 +1541,35 @@ bool AbstractState::execute(unsigned indexInBlock)
     return m_isValid;
 }
 
+inline void AbstractState::clobberWorld(const CodeOrigin& codeOrigin, unsigned indexInBlock)
+{
+    if (codeOrigin.inlineCallFrame) {
+        const BitVector& capturedVars = codeOrigin.inlineCallFrame->capturedVars;
+        for (size_t i = capturedVars.size(); i--;) {
+            if (!capturedVars.quickGet(i))
+                continue;
+            m_variables.local(i).makeTop();
+        }
+    } else {
+        for (size_t i = m_codeBlock->m_numCapturedVars; i--;)
+            m_variables.local(i).makeTop();
+    }
+    if (m_codeBlock->argumentsAreCaptured()) {
+        for (size_t i = m_variables.numberOfArguments(); i--;)
+            m_variables.argument(i).makeTop();
+    }
+    clobberStructures(indexInBlock);
+}
+
 inline void AbstractState::clobberStructures(unsigned indexInBlock)
 {
-    PROFILE(FLAG_FOR_STRUCTURE_CLOBBERING);
     if (!m_haveStructures)
         return;
     for (size_t i = indexInBlock + 1; i--;)
         forNode(m_block->at(i)).clobberStructures();
-    for (size_t i = 0; i < m_variables.numberOfArguments(); ++i)
+    for (size_t i = m_variables.numberOfArguments(); i--;)
         m_variables.argument(i).clobberStructures();
-    for (size_t i = 0; i < m_variables.numberOfLocals(); ++i)
+    for (size_t i = m_variables.numberOfLocals(); i--;)
         m_variables.local(i).clobberStructures();
     m_haveStructures = false;
 }
@@ -1599,46 +1589,56 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     dataLog("          It's live, node @%u.\n", nodeIndex);
 #endif
     
-    switch (node.op()) {
-    case Phi:
-    case SetArgument:
-    case Flush:
-        // The block transfers the value from head to tail.
+    if (node.variableAccessData()->isCaptured()) {
         source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("          Transfering ");
         source.dump(WTF::dataFile());
-        dataLog(" from head to tail.\n");
+        dataLog(" from last access due to captured variable.\n");
 #endif
-        break;
-            
-    case GetLocal:
-        // The block refines the value with additional speculations.
-        source = forNode(nodeIndex);
+    } else {
+        switch (node.op()) {
+        case Phi:
+        case SetArgument:
+        case Flush:
+            // The block transfers the value from head to tail.
+            source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Refining to ");
-        source.dump(WTF::dataFile());
-        dataLog("\n");
+            dataLog("          Transfering ");
+            source.dump(WTF::dataFile());
+            dataLog(" from head to tail.\n");
 #endif
-        break;
+            break;
             
-    case SetLocal:
-        // The block sets the variable, and potentially refines it, both
-        // before and after setting it.
-        if (node.variableAccessData()->shouldUseDoubleFormat())
-            source.set(PredictDouble);
-        else
-            source = forNode(node.child1());
+        case GetLocal:
+            // The block refines the value with additional speculations.
+            source = forNode(nodeIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Setting to ");
-        source.dump(WTF::dataFile());
-        dataLog("\n");
+            dataLog("          Refining to ");
+            source.dump(WTF::dataFile());
+            dataLog("\n");
 #endif
-        break;
+            break;
+            
+        case SetLocal:
+            // The block sets the variable, and potentially refines it, both
+            // before and after setting it.
+            if (node.variableAccessData()->shouldUseDoubleFormat()) {
+                // FIXME: This unnecessarily loses precision.
+                source.set(PredictDouble);
+            } else
+                source = forNode(node.child1());
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("          Setting to ");
+            source.dump(WTF::dataFile());
+            dataLog("\n");
+#endif
+            break;
         
-    default:
-        ASSERT_NOT_REACHED();
-        break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     if (destination == source) {
@@ -1669,27 +1669,11 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     
     for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
         AbstractValue& destination = to->valuesAtHead.argument(argument);
-        NodeIndex nodeIndex = from->variablesAtTail.argument(argument);
-        if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
-            if (destination.isTop())
-                continue;
-            destination.makeTop();
-            changed = true;
-            continue;
-        }
         changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
     }
     
     for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
         AbstractValue& destination = to->valuesAtHead.local(local);
-        NodeIndex nodeIndex = from->variablesAtTail.local(local);
-        if (nodeIndex != NoNode && m_graph[nodeIndex].variableAccessData()->isCaptured()) {
-            if (destination.isTop())
-                continue;
-            destination.makeTop();
-            changed = true;
-            continue;
-        }
         changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
     }
 
@@ -1704,8 +1688,6 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
 inline bool AbstractState::mergeToSuccessors(
     Graph& graph, BasicBlock* basicBlock, BranchDirection branchDirection)
 {
-    PROFILE(FLAG_FOR_MERGE_TO_SUCCESSORS);
-
     Node& terminal = graph[basicBlock->last()];
     
     ASSERT(terminal.isTerminal());

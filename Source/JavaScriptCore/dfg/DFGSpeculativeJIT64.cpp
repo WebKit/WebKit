@@ -3880,12 +3880,16 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
         
-        speculationCheck(
-            ArgumentsEscaped, JSValueRegs(), NoNode,
-            m_jit.branchTestPtr(
-                JITCompiler::NonZero,
-                JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node.codeOrigin))));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branchTestPtr(
+                    JITCompiler::NonZero,
+                    JITCompiler::addressFor(
+                        m_jit.argumentsRegisterFor(node.codeOrigin))));
+        }
         
         ASSERT(!node.codeOrigin.inlineCallFrame);
         m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
@@ -3935,12 +3939,16 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg indexGPR = index.gpr();
         GPRReg resultGPR = result.gpr();
         
-        speculationCheck(
-            ArgumentsEscaped, JSValueRegs(), NoNode,
-            m_jit.branchTestPtr(
-                JITCompiler::NonZero,
-                JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node.codeOrigin))));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branchTestPtr(
+                    JITCompiler::NonZero,
+                    JITCompiler::addressFor(
+                        m_jit.argumentsRegisterFor(node.codeOrigin))));
+        }
 
         m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
         if (node.codeOrigin.inlineCallFrame) {
@@ -4024,12 +4032,16 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckArgumentsNotCreated: {
-        speculationCheck(
-            ArgumentsEscaped, JSValueRegs(), NoNode,
-            m_jit.branchTestPtr(
-                JITCompiler::NonZero,
-                JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node.codeOrigin))));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branchTestPtr(
+                    JITCompiler::NonZero,
+                    JITCompiler::addressFor(
+                        m_jit.argumentsRegisterFor(node.codeOrigin))));
+        }
         noResult(m_compileIndex);
         break;
     }

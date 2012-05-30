@@ -1,3 +1,35 @@
+2012-05-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA should infer types and values of captured variables
+        https://bugs.webkit.org/show_bug.cgi?id=87813
+
+        Reviewed by Gavin Barraclough.
+        
+        Slight speed-up in V8/earley-boyer (~1%).
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::argumentsAreCaptured):
+        (JSC::CodeBlock::argumentIsCaptured):
+        (CodeBlock):
+        * dfg/DFGAbstractState.cpp:
+        (DFG):
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::clobberWorld):
+        (JSC::DFG::AbstractState::clobberStructures):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::merge):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::variables):
+        (AbstractState):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r117823.

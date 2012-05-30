@@ -136,6 +136,11 @@ public:
         return forNode(nodeUse.index());
     }
     
+    Operands<AbstractValue>& variables()
+    {
+        return m_variables;
+    }
+    
     // Call this before beginning CFA to initialize the abstract values of
     // arguments, and to indicate which blocks should be listed for CFA
     // execution.
@@ -208,7 +213,8 @@ public:
     void dump(FILE* out);
     
 private:
-    void clobberStructures(unsigned);
+    void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
+    void clobberStructures(unsigned indexInBlock);
     
     bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex);
     

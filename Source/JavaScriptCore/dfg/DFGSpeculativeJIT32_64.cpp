@@ -3858,12 +3858,16 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckArgumentsNotCreated: {
-        speculationCheck(
-            Uncountable, JSValueRegs(), NoNode,
-            m_jit.branch32(
-                JITCompiler::NotEqual,
-                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                TrustedImm32(JSValue::EmptyValueTag)));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                Uncountable, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::NotEqual,
+                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                    TrustedImm32(JSValue::EmptyValueTag)));
+        }
         noResult(m_compileIndex);
         break;
     }
@@ -3872,12 +3876,16 @@ void SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
         
-        speculationCheck(
-            ArgumentsEscaped, JSValueRegs(), NoNode,
-            m_jit.branch32(
-                JITCompiler::NotEqual,
-                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                TrustedImm32(JSValue::EmptyValueTag)));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::NotEqual,
+                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                    TrustedImm32(JSValue::EmptyValueTag)));
+        }
         
         ASSERT(!node.codeOrigin.inlineCallFrame);
         m_jit.load32(JITCompiler::payloadFor(RegisterFile::ArgumentCount), resultGPR);
@@ -3929,12 +3937,16 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultPayloadGPR = resultPayload.gpr();
         GPRReg resultTagGPR = resultTag.gpr();
         
-        speculationCheck(
-            ArgumentsEscaped, JSValueRegs(), NoNode,
-            m_jit.branch32(
-                JITCompiler::NotEqual,
-                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                TrustedImm32(JSValue::EmptyValueTag)));
+        if (!isEmptyPrediction(
+                m_state.variables().operand(
+                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            speculationCheck(
+                ArgumentsEscaped, JSValueRegs(), NoNode,
+                m_jit.branch32(
+                    JITCompiler::NotEqual,
+                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                    TrustedImm32(JSValue::EmptyValueTag)));
+        }
             
         m_jit.add32(TrustedImm32(1), indexGPR, resultPayloadGPR);
             

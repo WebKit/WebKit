@@ -462,9 +462,14 @@ namespace JSC {
             return needsFullScopeChain() && codeType() != GlobalCode;
         }
         
-        bool argumentIsCaptured(int) const
+        bool argumentsAreCaptured() const
         {
             return needsActivation() || usesArguments();
+        }
+        
+        bool argumentIsCaptured(int) const
+        {
+            return argumentsAreCaptured();
         }
         
         bool localIsCaptured(InlineCallFrame* inlineCallFrame, int operand) const
