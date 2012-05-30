@@ -44,7 +44,7 @@ ElementShadow::ElementShadow()
 
 ElementShadow::~ElementShadow()
 {
-    removeAllShadowRoots();
+    ASSERT(m_shadowRoots.isEmpty());
 }
 
 static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
@@ -74,15 +74,13 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
         return;
 
     shadowRoot->setHost(shadowHost);
+    m_shadowRoots.push(shadowRoot.get());
+    invalidateDistribution(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
-    if (shadowHost->attached()) {
-        shadowRoot->lazyAttach();
-        detach();
-        shadowHost->detachChildren();
-    }
+    if (shadowHost->attached() && !shadowRoot->attached())
+        shadowRoot->attach();
 
-    m_shadowRoots.push(shadowRoot.get());
     InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
 }
 
@@ -91,13 +89,14 @@ void ElementShadow::removeAllShadowRoots()
     // Dont protect this ref count.
     Element* shadowHost = host();
 
-    while (RefPtr<ShadowRoot> oldRoot = m_shadowRoots.removeHead()) {
+    while (RefPtr<ShadowRoot> oldRoot = m_shadowRoots.head()) {
         InspectorInstrumentation::willPopShadowRoot(shadowHost, oldRoot.get());
         shadowHost->document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
         if (oldRoot->attached())
             oldRoot->detach();
 
+        m_shadowRoots.removeHead();
         oldRoot->setHost(0);
         oldRoot->setPrev(0);
         oldRoot->setNext(0);
@@ -105,22 +104,16 @@ void ElementShadow::removeAllShadowRoots()
         ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 
-    if (shadowHost->attached())
-        shadowHost->attachChildrenLazily();
+    invalidateDistribution(shadowHost);
 }
 
 void ElementShadow::attach()
 {
-    // The pool nodes are populated lazily in
-    // ensureDistributor(), and here we just ensure that it is in clean state.
-    ASSERT(!distributor().poolIsReady());
-
-    distributor().willDistribute();
+    ensureDistribution();
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (!root->attached())
             root->attach();
     }
-    distributor().didDistribute();
 }
 
 void ElementShadow::detach()
@@ -167,63 +160,46 @@ bool ElementShadow::needsStyleRecalc()
 
 void ElementShadow::recalcStyle(Node::StyleChange change)
 {
-    ShadowRoot* youngest = youngestShadowRoot();
-    if (!youngest)
-        return;
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        StyleResolver* styleResolver = root->document()->styleResolver();
+        styleResolver->pushParentShadowRoot(root);
 
-    if (needsRedistributing())
-        reattachHostChildrenAndShadow();
-    else {
-        StyleResolver* styleResolver = youngest->document()->styleResolver();
-
-        styleResolver->pushParentShadowRoot(youngest);
-        for (Node* n = youngest->firstChild(); n; n = n->nextSibling()) {
+        for (Node* n = root->firstChild(); n; n = n->nextSibling()) {
             if (n->isElementNode())
                 static_cast<Element*>(n)->recalcStyle(change);
             else if (n->isTextNode())
                 toText(n)->recalcTextStyle(change);
         }
-        styleResolver->popParentShadowRoot(youngest);
-    }
 
-    m_distributor.clearNeedsRedistributing();
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        styleResolver->popParentShadowRoot(root);
         root->clearNeedsStyleRecalc();
         root->clearChildNeedsStyleRecalc();
     }
 }
 
-bool ElementShadow::needsRedistributing()
+void ElementShadow::ensureDistribution()
 {
-    return m_distributor.needsRedistributing() || (youngestShadowRoot() && youngestShadowRoot()->hasInsertionPoint());
-}
-
-void ElementShadow::hostChildrenChanged()
-{
-    ASSERT(youngestShadowRoot());
-
-    if (!youngestShadowRoot()->hasInsertionPoint())
+    if (!m_distributor.needsDistribution())
         return;
-
-    // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
-    setNeedsRedistributing();
+    m_distributor.distribute(host());
 }
 
-void ElementShadow::setNeedsRedistributing()
+void ElementShadow::invalidateDistribution()
 {
-    m_distributor.setNeedsRedistributing();
-    host()->setNeedsStyleRecalc();
+    invalidateDistribution(host());
 }
 
-void ElementShadow::reattachHostChildrenAndShadow()
+void ElementShadow::invalidateDistribution(Element* host)
 {
-    ASSERT(youngestShadowRoot());
+    if (!m_distributor.needsInvalidation())
+        return;
+    bool needsReattach = m_distributor.invalidate(host);
+    if (needsReattach && host->attached()) {
+        host->detach();
+        host->lazyAttach(Node::DoNotSetAttached);
+    }
 
-    Element* hostNode = youngestShadowRoot()->host();
-    hostNode->detachChildrenIfNeeded();
-    detach();
-    attach();
-    hostNode->attachChildrenIfNeeded();
+    m_distributor.finishInivalidation();
 }
 
 } // namespace

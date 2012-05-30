@@ -60,8 +60,6 @@ public:
 
     bool shouldCreateRenderer() const;
 
-    void hostChildrenChanged();
-
     bool isOnUpperEncapsulationBoundary() const;
     bool isOnEncapsulationBoundary() const;
     bool hasFlowThreadParent() const { return m_parentFlowRenderer; }

@@ -1,3 +1,106 @@
+2012-05-29  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] Node distribution should be orthogonal from node attachment
+        https://bugs.webkit.org/show_bug.cgi?id=87223
+
+        Reviewed by Dimitri Glazkov.
+
+        This chagne reorganizes Shadow DOM subtree distribution implementation.
+
+        Originally, it was interleaved across attach() of several classes like
+        InsertionPoint and ShadowRoot. Its invalidation was also mixed as a part of
+        the style recalculation and detach()-es.
+
+        This change extracts these bits of code to a set of ContentDistributor methods, which are
+        facaded by two ElementShadow API. Following two API are the primary entry points:
+
+        - ElementShadow::ensureDistribution()
+        - ElementShadow::invalidateDistribution()
+
+        The actual implementations are ContentDistributor::distribute() and
+        ContentDistributor::invalidate() respectively.
+
+        When clients need to traverse composed tree, before attach() for
+        example, they should call ensureDistribution() to make sure that
+        the traversal data structure ("the distribution") is ready.  When
+        there is any DOM mutation which can result a composed tree
+        mutation, then clients should call invalidateDistribution() to
+        mark the distribution being dated.
+
+        Here are such DOM mutations:
+
+        - The children of any ShadowRoots are changed,
+        - The children of any InsertionPoints are changed,
+        - The children of any host elements are changed,
+        - Any insertion point is inserted to or removed from the shadow tree,
+        - @select attribute of <content> is modified and
+        - New ShadowRoot is added to the shadow tree.
+
+        Note that the validity of the distribution is tracked and
+        unnecessary distribution requests are ignored.
+
+        After the invalidation, that shadow subtrees are detached once and
+        request  their  re-attachment  through  the  style  recalculation.
+        Then,  on the  responding  style recalculation  and attach(),  new
+        distribution will be computed.
+
+        No new tests. Covered by existing tests.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::childrenChanged):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::~ElementShadow):
+        (WebCore::ElementShadow::addShadowRoot):
+        (WebCore::ElementShadow::removeAllShadowRoots):
+        (WebCore::ElementShadow::attach):
+        (WebCore::ElementShadow::recalcStyle):
+        (WebCore::ElementShadow::ensureDistribution):
+        (WebCore::ElementShadow::invalidateDistribution):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setApplyAuthorStyles):
+        (WebCore::ShadowRoot::attach):
+        (WebCore::ShadowRoot::childrenChanged):
+        (WebCore):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * html/HTMLFormControlElement.cpp:
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ContentDistributor):
+        (WebCore::ContentDistributor::~ContentDistributor):
+        (WebCore::ContentDistributor::findInsertionPointFor):
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::invalidate):
+        (WebCore::ContentDistributor::finishInivalidation):
+        (WebCore::ContentDistributor::distributeSelectionsTo):
+        (WebCore::ContentDistributor::distributeShadowChildrenTo):
+        (WebCore::ContentDistributor::invalidateDistributionIn):
+        * html/shadow/ContentDistributor.h:
+        (WebCore::ContentDistributor::needsInvalidation):
+        (ContentDistributor):
+        (WebCore::ContentDistributor::needsDistribution):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::parseAttribute):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::attach):
+        (WebCore::InsertionPoint::detach):
+        (WebCore::InsertionPoint::nextTo):
+        (WebCore::InsertionPoint::previousTo):
+        (WebCore::InsertionPoint::childrenChanged):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::InsertionPoint::setDistribution):
+        (WebCore::InsertionPoint::clearDistribution):
+        (InsertionPoint):
+
 2012-05-29  Luke Macpherson  <macpherson@chromium.org>
 
         Implement post-landing feedback for WebKitCSSTransformValue::customCSSText().

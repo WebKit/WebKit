@@ -132,8 +132,10 @@ Element::~Element()
     }
 #endif
 
-    if (shadow())
+    if (ElementShadow* elementShadow = shadow()) {
+        elementShadow->removeAllShadowRoots();
         rareData()->m_shadow.clear();
+    }
 
     if (hasAttrList()) {
         ASSERT(m_attributeData);
@@ -1330,7 +1332,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 
     if (ElementShadow * shadow = this->shadow())
-        shadow->hostChildrenChanged();
+        shadow->invalidateDistribution();
 }
 
 void Element::beginParsingChildren()

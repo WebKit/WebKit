@@ -189,8 +189,7 @@ void ShadowRoot::setApplyAuthorStyles(bool value)
 {
     if (m_applyAuthorStyles != value) {
         m_applyAuthorStyles = value;
-        if (attached() && owner())
-            owner()->setNeedsRedistributing();
+        host()->setNeedsStyleRecalc();
     }
 }
 
@@ -198,8 +197,15 @@ void ShadowRoot::attach()
 {
     StyleResolver* styleResolver = document()->styleResolver();
     styleResolver->pushParentShadowRoot(this);
-    DocumentFragment::attach();
+    attachChildrenIfNeeded();
+    attachAsNode();
     styleResolver->popParentShadowRoot(this);
+}
+
+void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    owner()->invalidateDistribution();
 }
 
 }

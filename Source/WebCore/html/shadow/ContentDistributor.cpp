@@ -28,6 +28,7 @@
 #include "ContentDistributor.h"
 
 #include "ContentSelectorQuery.h"
+#include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "ShadowRoot.h"
 
@@ -35,41 +36,12 @@
 namespace WebCore {
 
 ContentDistributor::ContentDistributor()
-    : m_phase(Prevented)
-    , m_needsRedistributing(false)
+    : m_validity(Undetermined)
 {
 }
 
 ContentDistributor::~ContentDistributor()
 {
-    ASSERT(m_pool.isEmpty());
-}
-
-void ContentDistributor::distribute(InsertionPoint* insertionPoint, ContentDistribution* distribution)
-{
-    ASSERT(m_phase == Prepared);
-    ASSERT(distribution->isEmpty());
-
-    ContentSelectorQuery query(insertionPoint);
-
-    for (size_t i = 0; i < m_pool.size(); ++i) {
-        Node* child = m_pool[i].get();
-        if (!child)
-            continue;
-        if (!query.matches(child))
-            continue;
-
-        distribution->append(child);
-        m_nodeToInsertionPoint.add(child, insertionPoint);
-        m_pool[i] = 0;
-    }
-}
-
-void ContentDistributor::clearDistribution(ContentDistribution* list)
-{
-    for (size_t i = 0; i < list->size(); ++i)
-        m_nodeToInsertionPoint.remove(list->at(i).get());
-    list->clear();
 }
 
 InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
@@ -77,30 +49,100 @@ InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
     return m_nodeToInsertionPoint.get(key);
 }
 
-void ContentDistributor::willDistribute()
+
+void ContentDistributor::distribute(Element* host)
 {
-    m_phase = Started;
+    ASSERT(needsDistribution());
+    ASSERT(m_nodeToInsertionPoint.isEmpty());
+
+    m_validity = Valid;
+
+    ContentDistribution pool;
+    for (Node* node = host->firstChild(); node; node = node->nextSibling())
+        pool.append(node);
+
+    for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        for (Node* node = root; node; node = node->traverseNextNode(root)) {
+            if (!isInsertionPoint(node))
+                continue;
+            InsertionPoint* point = toInsertionPoint(node);
+            if (!point->isActive())
+                continue;
+            ShadowRoot* older = root->olderShadowRoot();
+            if (point->doesSelectFromHostChildren())
+                distributeSelectionsTo(point, pool);
+            else if (older && !older->assignedTo()) {
+                distributeShadowChildrenTo(point, older);
+                older->setAssignedTo(point);
+            }
+        }
+    }
 }
 
-void ContentDistributor::didDistribute()
+bool ContentDistributor::invalidate(Element* host)
 {
-    ASSERT(m_phase != Prevented);
-    m_phase = Prevented;
-    m_pool.clear();
+    ASSERT(needsInvalidation());
+    bool needsReattach = (m_validity == Undetermined) || !m_nodeToInsertionPoint.isEmpty();
+
+    for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        root->setAssignedTo(0);
+
+        for (Node* node = root; node; node = node->traverseNextNode(root)) {
+            if (!isInsertionPoint(node))
+                continue;
+            needsReattach = needsReattach || true;
+            InsertionPoint* point = toInsertionPoint(node);
+            point->clearDistribution();
+        }
+    }
+
+    m_validity = Invalidating;
+    m_nodeToInsertionPoint.clear();
+    return needsReattach;
 }
 
-void ContentDistributor::preparePoolFor(Element* shadowHost)
+void ContentDistributor::finishInivalidation()
 {
-    if (poolIsReady())
-        return;
+    ASSERT(m_validity == Invalidating);
+    m_validity = Invalidated;
+}
 
-    ASSERT(m_pool.isEmpty());
-    ASSERT(shadowHost);
-    ASSERT(m_phase == Started);
+void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, ContentDistribution& pool)
+{
+    ContentDistribution distribution;
+    ContentSelectorQuery query(insertionPoint);
 
-    m_phase = Prepared;
-    for (Node* node = shadowHost->firstChild(); node; node = node->nextSibling())
-        m_pool.append(node);
+    for (size_t i = 0; i < pool.size(); ++i) {
+        Node* child = pool[i].get();
+        if (!child)
+            continue;
+        if (!query.matches(child))
+            continue;
+
+        distribution.append(child);
+        m_nodeToInsertionPoint.add(child, insertionPoint);
+        pool[i] = 0;
+    }
+
+    insertionPoint->setDistribution(distribution);
+}
+
+void ContentDistributor::distributeShadowChildrenTo(InsertionPoint* insertionPoint, ShadowRoot* root)
+{
+    ContentDistribution distribution;
+    for (Node* node = root->firstChild(); node; node = node->nextSibling()) {
+        distribution.append(node);
+        m_nodeToInsertionPoint.add(node, insertionPoint);
+    }
+
+    insertionPoint->setDistribution(distribution);
+}
+
+void ContentDistributor::invalidateDistributionIn(ContentDistribution* list)
+{
+    for (size_t i = 0; i < list->size(); ++i)
+        m_nodeToInsertionPoint.remove(list->at(i).get());
+    list->clear();
 }
 
 }

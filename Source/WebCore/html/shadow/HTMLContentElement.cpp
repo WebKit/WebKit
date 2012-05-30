@@ -91,7 +91,7 @@ void HTMLContentElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == selectAttr) {
         if (ShadowRoot* root = shadowRoot())
-            root->owner()->setNeedsRedistributing();
+            root->owner()->invalidateDistribution();
     } else
         InsertionPoint::parseAttribute(attribute);
 }

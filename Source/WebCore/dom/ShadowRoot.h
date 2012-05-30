@@ -60,7 +60,6 @@ public:
     void recalcShadowTreeStyle(StyleChange);
 
     InsertionPoint* insertionPointFor(Node*) const;
-    void hostChildrenChanged();
 
     virtual bool applyAuthorStyles() const OVERRIDE;
     void setApplyAuthorStyles(bool);
@@ -91,10 +90,10 @@ public:
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();
-
     virtual String nodeName() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
+    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
 
     ShadowRoot* m_prev;
     ShadowRoot* m_next;

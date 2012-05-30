@@ -48,43 +48,37 @@ typedef Vector<RefPtr<Node> > ContentDistribution;
 class ContentDistributor {
     WTF_MAKE_NONCOPYABLE(ContentDistributor);
 public:
+    enum Validity {
+        Valid = 0,
+        Invalidated = 1,
+        Invalidating = 2,
+        Undetermined = 3
+    };
+
     ContentDistributor();
     ~ContentDistributor();
 
-    void distribute(InsertionPoint*, ContentDistribution*);
-    void clearDistribution(ContentDistribution*);
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
-    void willDistribute();
-    bool inDistribution() const;
-    void didDistribute();
+    void distribute(Element* host);
+    bool invalidate(Element* host);
+    void finishInivalidation();
+    bool needsDistribution() const;
+    bool needsInvalidation() const { return m_validity != Invalidated; }
 
-    void preparePoolFor(Element* shadowHost);
-    bool poolIsReady() const;
-    bool needsRedistributing() const { return m_needsRedistributing; }
-    void setNeedsRedistributing() { m_needsRedistributing = true; }
-    void clearNeedsRedistributing() { m_needsRedistributing = false; }
+    void distributeSelectionsTo(InsertionPoint*, ContentDistribution& pool);
+    void distributeShadowChildrenTo(InsertionPoint*, ShadowRoot*);
+    void invalidateDistributionIn(ContentDistribution*);
+
 private:
-    enum DistributionPhase {
-        Prevented,
-        Started,
-        Prepared,
-    };
-
-    Vector<RefPtr<Node> > m_pool;
-    DistributionPhase m_phase;
     HashMap<const Node*, InsertionPoint*> m_nodeToInsertionPoint;
-    bool m_needsRedistributing : 1;
+    unsigned m_validity : 2;
 };
 
-inline bool ContentDistributor::inDistribution() const
+inline bool ContentDistributor::needsDistribution() const
 {
-    return m_phase != Prevented;
-}
-
-inline bool ContentDistributor::poolIsReady() const
-{
-    return m_phase == Prepared;
+    // During the invalidation, re-distribution should be supressed.
+    return m_validity != Valid && m_validity != Invalidating;
 }
 
 }

@@ -132,6 +132,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
     HTMLElement* host = toHTMLElement(m_element);
+
     Document* doc = host->document();
     m_bubble = HTMLDivElement::create(doc);
     m_bubble->setShadowPseudoId("-webkit-validation-bubble");
@@ -141,6 +142,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     ExceptionCode ec = 0;
     host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
     ASSERT(!ec);
+    host->document()->updateLayout();
     adjustBubblePosition(host->getRect(), m_bubble.get());
 
     RefPtr<HTMLDivElement> clipper = HTMLDivElement::create(doc);

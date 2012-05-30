@@ -43,6 +43,8 @@ public:
     virtual ~InsertionPoint();
 
     bool hasDistribution() const { return !m_distribution.isEmpty(); }
+    void setDistribution(ContentDistribution& distribution) { m_distribution.swap(distribution); }
+    void clearDistribution() { m_distribution.clear(); }
     bool isShadowBoundary() const;
     bool isActive() const;
 
@@ -52,9 +54,7 @@ public:
 
     virtual void attach();
     virtual void detach();
-
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
-    ShadowRoot* assignedFrom() const;
 
     size_t indexOf(Node* node) const { return m_distribution.find(node); }
     size_t size() const { return m_distribution.size(); }
@@ -67,15 +67,11 @@ public:
 protected:
     InsertionPoint(const QualifiedName&, Document*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
+    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
 
 private:
-    void distributeHostChildren(ElementShadow*);
-    void clearDistribution(ElementShadow*);
-    void attachDistributedNode();
-
-    void assignShadowRoot(ShadowRoot*);
-    void clearAssignment(ShadowRoot*);
-
     ContentDistribution m_distribution;
 };
 

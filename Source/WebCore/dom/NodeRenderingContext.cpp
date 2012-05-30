@@ -77,6 +77,8 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             m_visualParentShadow = toShadowRoot(parent)->owner();
 
         if (m_visualParentShadow) {
+            m_visualParentShadow->ensureDistribution();
+
             if ((m_insertionPoint = m_visualParentShadow->insertionPointFor(m_node))) {
                 if (m_insertionPoint->shadowRoot()->isUsedForRendering()) {
                     m_phase = AttachingDistributed;
@@ -91,7 +93,10 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         }
 
         if (isShadowBoundary(parent)) {
-            if (!parent->shadowRoot()->isUsedForRendering()) {
+            ShadowRoot* parentShadowRoot = parent->shadowRoot();
+            parentShadowRoot->owner()->ensureDistribution();
+
+            if (!parentShadowRoot->isUsedForRendering()) {
                 m_phase = AttachingNotDistributed;
                 m_parentNodeForRenderingAndStyle = parent;
                 return;
@@ -285,12 +290,6 @@ RenderObject* NodeRenderingContext::parentRenderer() const
     return m_parentNodeForRenderingAndStyle ? m_parentNodeForRenderingAndStyle->renderer() : 0;
 }
 
-void NodeRenderingContext::hostChildrenChanged()
-{
-    if (m_phase == AttachingNotDistributed && m_visualParentShadow)
-        m_visualParentShadow->hostChildrenChanged();
-}
-
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
     ASSERT(m_phase != Calculating);
@@ -365,9 +364,6 @@ void NodeRendererFactory::createRendererIfNeeded()
 
     ASSERT(!node->renderer());
     ASSERT(document->shouldCreateRenderers());
-
-    // FIXME: This side effect should be visible from attach() code.
-    m_context.hostChildrenChanged();
 
     if (!m_context.shouldCreateRenderer())
         return;
