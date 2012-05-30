@@ -142,6 +142,12 @@ double File::lastModifiedDate() const
     return modificationTime * 1000.0;
 }
 
+double File::lastModifiedDateForBinding() const
+{
+    double value = lastModifiedDate();
+    return (!value) ? std::numeric_limits<double>::quiet_NaN() : value;
+}
+
 unsigned long long File::size() const
 {
 #if ENABLE(FILE_SYSTEM)

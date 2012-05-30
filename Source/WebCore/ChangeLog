@@ -1,3 +1,23 @@
+2012-05-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        File.lastModifiedDate must return null if the modified time info is not available
+        https://bugs.webkit.org/show_bug.cgi?id=87709
+
+        Reviewed by Kentaro Hara.
+
+        Per File API spec, File.lastModifiedDate must return null if the
+        modified time info is not available.
+        http://dev.w3.org/2006/webapi/FileAPI/#dfn-lastModifiedDate
+
+        Test: http/tests/local/fileapi/file-last-modified-after-delete.html
+
+        * fileapi/File.cpp:
+        (WebCore::File::lastModifiedDateForBinding): Added.
+        (WebCore):
+        * fileapi/File.h:
+        (File):
+        * fileapi/File.idl: Added ImplementedAs=lastModifiedDateForBinding.
+
 2012-05-30  Jochen Eisinger  <jochen@chromium.org>
 
         Match Firefox restrictions to window.blur and window.focus

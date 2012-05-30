@@ -80,6 +80,9 @@ public:
     // This may return zero if getFileModificationTime() platform call has failed or zero snapshot lastModifiedTime is given at construction time.
     double lastModifiedDate() const;
 
+    // For binding. We want to return null Date if we get the value 0 Date (which is used to indicate the information is unavailable).
+    double lastModifiedDateForBinding() const;
+
 #if ENABLE(DIRECTORY_UPLOAD)
     // Returns the relative path of this file in the context of a directory selection.
     const String& webkitRelativePath() const { return m_relativePath; }

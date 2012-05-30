@@ -41,39 +41,6 @@ function uploadFile(file, filePath, start, length, expectedException)
         testFailed(message);
 }
 
-function createTempFile(fileData)
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/resources/write-temp-file.php?filename=" + tempFileName + "&data=" + fileData, false);
-    xhr.send();
-    if (xhr.status != 200) {
-        testFailed("Unexpected response status received: " + xhr.status);
-        return;
-    }
-
-    var values = xhr.responseText.split('\n');
-    if (xhr.responseText.indexOf("FAIL") == 0) {
-        testFailed("Unexpected response text received: " + xhr.responseText);
-        return;
-    }
-
-    return xhr.responseText;
-}
-
-function touchTempFile()
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/resources/touch-temp-file.php?filename=" + tempFileName, false);
-    xhr.send();
-}
-
-function removeTempFile()
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/resources/reset-temp-file.php?filename=" + tempFileName, false);
-    xhr.send();
-}
-
 function computeExpectedLength(fileLength, start, length)
 {
     var expectedLength = length;
@@ -116,18 +83,18 @@ function onUnstableFileDrop(file, filePath, fileLength, start, length, contentTy
     uploadFile(subfile, filePath, start, length, false);
 
     // Touch the underlying temp file.
-    touchTempFile();
+    touchTempFile(tempFileName);
     
     // Upload the sliced file. We should receive an exception since the file has been changed.
     uploadFile(subfile, filePath, start, length, true);
 
     // Remove the temp file.
-    removeTempFile();
+    removeTempFile(tempFileName);
 }
 
 function dragAndSliceUnstableFile(start, length, contentType)
 {
-    var tempFilePath = createTempFile(tempFileContent);
+    var tempFilePath = createTempFile(tempFileName, tempFileContent);
     if (tempFilePath.length == 0)
         return;
 

@@ -1,3 +1,17 @@
+2012-05-30  Kinuko Yasuda  <kinuko@chromium.org>
+
+        File.lastModifiedDate must return null if the modified time info is not available
+        https://bugs.webkit.org/show_bug.cgi?id=87709
+
+        Reviewed by Kentaro Hara.
+
+        * http/tests/local/fileapi/file-last-modified-after-delete-expected.txt: Added.
+        * http/tests/local/fileapi/file-last-modified-after-delete.html: Added.
+        * http/tests/local/fileapi/resources/temp-file-utils.js: Added.
+        * http/tests/local/fileapi/script-tests/file-last-modified-after-delete.js: Added.
+        * http/tests/local/fileapi/script-tests/send-sliced-dragged-file.js: Factored out common temp-file related functions into temp-file-utils.js.
+        * http/tests/local/fileapi/send-sliced-dragged-file.html:
+
 2012-05-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] EFL's DRT needs "postProgressFinishedNotification" message
