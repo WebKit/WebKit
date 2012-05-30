@@ -1,3 +1,13 @@
+2012-05-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r111497): The "option" element doesn't match CSS pseudo class :enabled
+        https://bugs.webkit.org/show_bug.cgi?id=87719
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-linux/fast/forms/select/optgroup-rendering-expected.png: Updated. Text color of option element is bule from CSS pseudo class option:enabled.
+        * platform/chromium/test_expectations.txt: Update comment.
+
 2012-05-29  Hayato Ito  <hayato@chromium.org>
 
         Refactor shadow-dom-event-dispatching.html.

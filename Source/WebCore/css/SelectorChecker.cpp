@@ -1051,7 +1051,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             }
             break;
         case CSSSelector::PseudoEnabled:
-            if (element && (element->isFormControlElement() ||  element->hasTagName(optgroupTag)))
+            if (element && (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag)))
                 return element->isEnabledFormControl();
             break;
         case CSSSelector::PseudoFullPageMedia:
