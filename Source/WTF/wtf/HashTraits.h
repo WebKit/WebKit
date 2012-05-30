@@ -34,9 +34,6 @@ namespace WTF {
     template<typename T> class OwnPtr;
     template<typename T> class PassOwnPtr;
 
-    using std::pair;
-    using std::make_pair;
-
     template<typename T> struct HashTraits;
 
     template<bool isInteger, typename T> struct GenericHashTraitsBase;

@@ -5,6 +5,16 @@
 
         Reviewed by Darin Adler.
 
+        * wtf/HashTraits.h:
+        (WTF): Remove the directives.
+
+2012-05-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        HashTable.h has using directives for std::pair and std::make_pair
+        https://bugs.webkit.org/show_bug.cgi?id=29919
+
+        Reviewed by Darin Adler.
+
         Change code to use std::pair and std::make_pair. Later patch will remove the
         'using' directives.
 
