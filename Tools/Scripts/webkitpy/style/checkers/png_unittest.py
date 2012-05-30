@@ -119,6 +119,14 @@ class PNGCheckerTest(unittest.TestCase):
         errors = []
         checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
+        self.assertEquals(len(errors), 1)
+
+        file_path = "foo-expected.png"
+        fs.write_binary_file(file_path, "Dummy binary data")
+        scm = MockSCMDetector('git')
+        errors = []
+        checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
+        checker.check()
         self.assertEquals(len(errors), 2)
         self.assertEquals(errors[0], (0, 'image/png', 5, 'Image lacks a checksum. Generate pngs using run-webkit-tests to ensure they have a checksum.'))
 

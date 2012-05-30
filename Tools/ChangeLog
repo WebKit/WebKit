@@ -1,3 +1,18 @@
+2012-05-30  Ojan Vafai  <ojan@chromium.org>
+
+        Only give lint errors for -expected.png png files that lack a checksum
+        https://bugs.webkit.org/show_bug.cgi?id=87875
+
+        Reviewed by Tony Chang.
+
+        We have other pngs in the tree, e.g. for the inspector, that legitimately
+        lack a checksum.
+
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.check):
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        (PNGCheckerTest.test_check):
+
 2012-05-30  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: seems to leak temp dirs
