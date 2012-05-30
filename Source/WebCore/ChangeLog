@@ -1,3 +1,15 @@
+2012-05-29  Scott Graham  <scottmg@chromium.org>
+
+        Fix warning in preprocessing Source/WebCore/dom/DOMError.idl
+        https://bugs.webkit.org/show_bug.cgi?id=87763
+
+        Reviewed by Adam Barth.
+
+        Add newline at end of file to avoid warning:
+        ../dom/DOMError.idl:35:2: warning: no newline at end of file
+
+        * dom/DOMError.idl:
+
 2012-05-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileExists to Platform.h
