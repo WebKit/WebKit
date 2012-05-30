@@ -1,3 +1,28 @@
+2012-05-30  Shinya Kawanaka  <shinyak@chromium.org>
+
+        comparePositions in htmlediting should consider nested Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87623
+
+        Reviewed by Ryosuke Niwa.
+
+        comparePositions in htmlediting.cpp didn't consider nested Shadow DOM.
+        This patch makes it possible to compare the nodes in nested Shadow DOM.
+
+        The algorithm is: we calculate the common tree scope of node A and B, and
+        adjust the nodes to the treeScope, then compare them. If the adjusted nodes
+        are the same, we check the shadow descendent of each node.
+
+        Test: editing/shadow/compare-positions-in-nested-shadow.html
+
+        * dom/TreeScope.cpp:
+        (WebCore::listTreeScopes):
+        (WebCore):
+        (WebCore::commonTreeScope):
+        * dom/TreeScope.h:
+        (WebCore):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions):
+
 2012-05-30  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Clean up V8LazyEventListener to use one less function call

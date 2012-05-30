@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "ShadowRoot.h"
 #include "TreeScopeAdopter.h"
+#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
@@ -229,6 +230,39 @@ Node* TreeScope::focusedNode()
         return 0;
 
     return node;
+}
+
+static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
+{
+    while (true) {
+        treeScopes.append(node->treeScope());
+        Node* ancestor = node->shadowAncestorNode();
+        if (node == ancestor)
+            break;
+        node = ancestor;
+    }
+}
+
+TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
+{
+    if (!nodeA || !nodeB)
+        return 0;
+
+    if (nodeA->treeScope() == nodeB->treeScope())
+        return nodeA->treeScope();
+
+    Vector<TreeScope*, 5> treeScopesA;
+    listTreeScopes(nodeA, treeScopesA);
+
+    Vector<TreeScope*, 5> treeScopesB;
+    listTreeScopes(nodeB, treeScopesB);
+
+    size_t indexA = treeScopesA.size();
+    size_t indexB = treeScopesB.size();
+
+    for (; indexA > 0 && indexB > 0 && treeScopesA[indexA - 1] == treeScopesB[indexB - 1]; --indexA, --indexB) { }
+
+    return treeScopesA[indexA] == treeScopesB[indexB] ? treeScopesA[indexA] : 0;
 }
 
 } // namespace WebCore

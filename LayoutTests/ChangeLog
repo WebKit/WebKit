@@ -1,3 +1,13 @@
+2012-05-30  Shinya Kawanaka  <shinyak@chromium.org>
+
+        comparePositions in htmlediting should consider nested Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=87623
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/compare-positions-in-nested-shadow-expected.txt: Added.
+        * editing/shadow/compare-positions-in-nested-shadow.html: Added.
+
 2012-05-30  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Clean up V8LazyEventListener to use one less function call

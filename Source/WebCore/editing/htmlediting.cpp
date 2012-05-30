@@ -72,32 +72,28 @@ bool isAtomicNode(const Node *node)
 // could be inside a shadow tree. Only works for non-null values.
 int comparePositions(const Position& a, const Position& b)
 {
-    Node* nodeA = a.deprecatedNode();
-    ASSERT(nodeA);
-    Node* nodeB = b.deprecatedNode();
-    ASSERT(nodeB);
-    int offsetA = a.deprecatedEditingOffset();
-    int offsetB = b.deprecatedEditingOffset();
+    TreeScope* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
 
-    Node* shadowAncestorA = nodeA->shadowAncestorNode();
-    if (shadowAncestorA == nodeA)
-        shadowAncestorA = 0;
-    Node* shadowAncestorB = nodeB->shadowAncestorNode();
-    if (shadowAncestorB == nodeB)
-        shadowAncestorB = 0;
+    ASSERT(commonScope);
+    if (!commonScope)
+        return 0;
+
+    Node* nodeA = commonScope->ancestorInThisScope(a.deprecatedNode());
+    ASSERT(nodeA);
+    bool hasDescendentA = nodeA != a.deprecatedNode();
+    int offsetA = hasDescendentA ? 0 : a.deprecatedEditingOffset();
+
+    Node* nodeB = commonScope->ancestorInThisScope(b.deprecatedNode());
+    ASSERT(nodeB);
+    bool hasDescendentB = nodeB != b.deprecatedNode();
+    int offsetB = hasDescendentB ? 0 : b.deprecatedEditingOffset();
 
     int bias = 0;
-    if (shadowAncestorA != shadowAncestorB) {
-        if (shadowAncestorA) {
-            nodeA = shadowAncestorA;
-            offsetA = 0;
-            bias = 1;
-        }
-        if (shadowAncestorB) {
-            nodeB = shadowAncestorB;
-            offsetB = 0;
+    if (nodeA == nodeB) {
+        if (hasDescendentA)
             bias = -1;
-        }
+        else if (hasDescendentB)
+            bias = 1;
     }
 
     ExceptionCode ec;

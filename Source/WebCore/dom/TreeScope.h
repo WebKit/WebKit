@@ -110,6 +110,8 @@ inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) co
     return m_elementsById.containsMultiple(id.impl());
 }
 
+TreeScope* commonTreeScope(Node*, Node*);
+
 } // namespace WebCore
 
 #endif // TreeScope_h
