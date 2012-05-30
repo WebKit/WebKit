@@ -1,3 +1,30 @@
+2012-05-30  Emil A Eklund  <eae@chromium.org>
+
+        Inline blocks with margin wrap incorrectly with subpixel layout turned on
+        https://bugs.webkit.org/show_bug.cgi?id=87897
+
+        Reviewed by Levi Weintraub.
+
+        Add test for inline blocks with a subpixel margin. Marked as skipped on
+        all platforms but chromium as subpixel layout has not yet been enabled
+        for any other platform.
+
+        * fast/sub-pixel/inline-block-with-margin-expected.html: Added.
+        * fast/sub-pixel/inline-block-with-margin.html: Added.
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         [Qt][GTK][Mac][Win] New plugins/npruntime/delete-plugin-within-* tests introduced in r117012

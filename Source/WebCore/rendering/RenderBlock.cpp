@@ -5393,14 +5393,14 @@ RenderObject* InlineMinMaxIterator::next()
     return current;
 }
 
-static int getBPMWidth(int childValue, Length cssUnit)
+static LayoutUnit getBPMWidth(LayoutUnit childValue, Length cssUnit)
 {
     if (cssUnit.type() != Auto)
-        return (cssUnit.isFixed() ? cssUnit.value() : childValue);
+        return (cssUnit.isFixed() ? static_cast<LayoutUnit>(cssUnit.value()) : childValue);
     return 0;
 }
 
-static int getBorderPaddingMargin(const RenderBoxModelObject* child, bool endOfInline)
+static LayoutUnit getBorderPaddingMargin(const RenderBoxModelObject* child, bool endOfInline)
 {
     RenderStyle* childStyle = child->style();
     if (endOfInline)
