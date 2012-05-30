@@ -1,3 +1,8 @@
+2012-05-30  Alexey Proskuryakov  <ap@apple.com>
+
+        * platform/wk2/Skipped: Skipping newly added file-last-modified-after-delete.html,
+        because WTR doesn't implement beginDragWithFiles.
+
 2012-05-30  Shinya Kawanaka  <shinyak@chromium.org>
 
         comparePositions in htmlediting should consider nested Shadow DOM.
