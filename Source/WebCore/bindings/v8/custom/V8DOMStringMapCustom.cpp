@@ -71,7 +71,7 @@ v8::Handle<v8::Boolean> V8DOMStringMap::namedPropertyDeleter(v8::Local<v8::Strin
     INC_STATS("DOM.DOMStringMap.NamedPropertyDeleter");
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->deleteItem(toWebCoreString(name), ec);
-    return v8Boolean(!ec);
+    return v8Boolean(!ec, info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

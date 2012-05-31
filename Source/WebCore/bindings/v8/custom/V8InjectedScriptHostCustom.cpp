@@ -110,7 +110,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallback(const v8
         return v8::Undefined();
 
     if (!args[0]->IsObject())
-        return v8Boolean(false);
+        return v8Boolean(false, args.GetIsolate());
 
     v8::HandleScope handleScope;
     return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0]));

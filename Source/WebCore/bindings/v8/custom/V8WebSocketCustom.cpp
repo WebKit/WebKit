@@ -141,7 +141,7 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
     if (ec)
         return throwError(ec, args.GetIsolate());
 
-    return v8Boolean(result);
+    return v8Boolean(result, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebSocket::closeCallback(const v8::Arguments& args)
