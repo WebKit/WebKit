@@ -4099,6 +4099,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitBorderVerticalSpacing:
     case CSSPropertyWebkitBoxAlign:
+    case CSSPropertyWebkitBoxDecorationBreak:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxFlex:
     case CSSPropertyWebkitBoxFlexGroup:

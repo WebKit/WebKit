@@ -2543,6 +2543,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBoxAlign:
+    case CSSPropertyWebkitBoxDecorationBreak:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:

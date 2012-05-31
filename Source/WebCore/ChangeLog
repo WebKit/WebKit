@@ -1,3 +1,19 @@
+2012-05-31  Mike West  <mkwst@chromium.org>
+
+        Fixing compilation with SVG disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=87944
+
+        This patch adds the missing enumeration value
+        'CSSPropertyWebkitBoxDecorationBreak' into switch statements to make
+        clang happy.
+
+        Reviewed by Alexis Menard.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-05-31  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Implementation of Decimal(int32_t) isn't portable.
