@@ -1896,6 +1896,19 @@ fast/events/keydown-leftright-keys.html
 # https://bugs.webkit.org/show_bug.cgi?id=87469
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
 
+# [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
+# Restore original value of mock scrollbars enabled in InternalSettings
+# https://bugs.webkit.org/show_bug.cgi?id=87680
+fast/dom/window-scroll-scaling.html
+
+# New fast/dom/Window/mozilla-focus-blur.html introduced in r118916 fails
+# https://bugs.webkit.org/show_bug.cgi?id=87951
+fast/dom/Window/mozilla-focus-blur.html
+
+# [Qt] New fast/notifications/notifications-click-event-focus.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=87956
+fast/notifications/notifications-click-event-focus.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
@@ -2480,14 +2493,3 @@ fast/frames/flattening/iframe-tiny.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
-
-# [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
-# https://bugs.webkit.org/show_bug.cgi?id=87700
-fast/dom/window-scroll-scaling.html
-
-# [Qt] window.focus() fails on some test after r118916, https://bugs.webkit.org/show_bug.cgi?id=86969
-fast/dom/Window/mozilla-focus-blur.html
-fast/notifications/notifications-click-event-focus.html
-
-# [Qt] fails after r119027, https://bugs.webkit.org/show_bug.cgi?id=87118
-fast/events/message-port-multi.html
