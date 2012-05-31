@@ -1,3 +1,19 @@
+2012-05-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Chromium] Chromium DRT should be able to load external resources
+        https://bugs.webkit.org/show_bug.cgi?id=87893
+
+        Reviewed by Dirk Pranke.
+
+        Allow external resources to be loaded when the main frame's URL is also an external resource.
+        This change is analogous to r118231 for Mac port.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (blockRequest):
+        (isLocalhost):
+        (hostIsUsedBySomeTestsToGenerateError):
+        (WebViewHost::willSendRequest):
+
 2012-05-31  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.

@@ -1215,6 +1215,21 @@ void WebViewHost::removeIdentifierForRequest(unsigned identifier)
     m_resourceIdentifierMap.remove(identifier);
 }
 
+static void blockRequest(WebURLRequest& request)
+{
+    request.setURL(WebURL());
+}
+
+static bool isLocalhost(const string& host)
+{
+    return host == "127.0.0.1" || host == "localhost";
+}
+
+static bool hostIsUsedBySomeTestsToGenerateError(const string& host)
+{
+    return host == "255.255.255.255";
+}
+
 void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
 {
     // Need to use GURL for host() and SchemeIs()
@@ -1237,29 +1252,25 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
 
     if (!redirectResponse.isNull() && m_blocksRedirects) {
         fputs("Returning null for this redirect\n", stdout);
-        // To block the request, we set its URL to an empty one.
-        request.setURL(WebURL());
+        blockRequest(request);
         return;
     }
 
     if (m_requestReturnNull) {
-        // To block the request, we set its URL to an empty one.
-        request.setURL(WebURL());
+        blockRequest(request);
         return;
     }
 
     string host = url.host();
-    // 255.255.255.255 is used in some tests that expect to get back an error.
-    if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))
-        && host != "127.0.0.1"
-        && host != "255.255.255.255"
-        && host != "localhost"
-        && !m_shell->allowExternalPages()) {
-        printf("Blocked access to external URL %s\n", requestURL.c_str());
-
-        // To block the request, we set its URL to an empty one.
-        request.setURL(WebURL());
-        return;
+    if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))) {
+        GURL testURL = webView()->mainFrame()->document().url();
+        const string& testHost = testURL.host();
+        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && ((!testURL.SchemeIs("http") && !testURL.SchemeIs("https")) || isLocalhost(testHost))
+            && !m_shell->allowExternalPages()) {
+            printf("Blocked access to external URL %s\n", requestURL.c_str());
+            blockRequest(request);
+            return;
+        }
     }
 
     HashSet<String>::const_iterator end = m_clearHeaders.end();
