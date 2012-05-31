@@ -1,5 +1,25 @@
 2012-05-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 118615
+
+    2012-05-25  Maciej Stachowiak  <mjs@apple.com>
+
+            REGRESSION (r116720): Subframe PDF scrolls extremely slowly
+            https://bugs.webkit.org/show_bug.cgi?id=87557
+            <rdar://problem/11499408>
+
+            Reviewed by Anders Carlsson.
+
+            It's not possible to make an automated test for this.
+
+            * WebProcess/Plugins/PDF/BuiltInPDFView.mm:
+            (WebKit::BuiltInPDFView::wantsWheelEvents): Return true instead of false and delete
+            misleading comment. While the built-in PDF view would get added to the set of scrollable
+            areas anyway, there are some code paths that check wantsWheelEvents explicitly, so it seems
+            necessary to reutrn true.
+
+2012-05-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 118559
 
     2012-05-25  Beth Dakin  <bdakin@apple.com>
