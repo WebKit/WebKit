@@ -1,3 +1,21 @@
+2012-05-31  Andras Becsi  <andras.becsi@nokia.com>
+
+        Test expectation pngs missing checksums
+        https://bugs.webkit.org/show_bug.cgi?id=87947
+
+        Reviewed by Ojan Vafai.
+
+        Add proper platform independent png expectation with checksum and revert chromium
+        expectations since layoutTestController.keepWebHistory() seems to have no effect
+        on chromium, and the test is still failing (See bug 87839).
+
+        * http/tests/misc/acid3-expected.png: Add png with embedded checksum.
+        * platform/chromium-mac-leopard/http/tests/misc/acid3-expected.png: Revert to prior r118566.
+        * platform/chromium-mac-snowleopard/http/tests/misc/acid3-expected.png: Revert to prior r118566.
+        * platform/chromium-mac/http/tests/misc/acid3-expected.png: Revert to prior r118566.
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt: Revert to prior r118566.
+        * platform/chromium/test_expectations.txt: Revert to prior r118566.
+
 2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r118957
