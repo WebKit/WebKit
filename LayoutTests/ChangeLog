@@ -1,3 +1,9 @@
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Added FAIL expectation for GTK due to missing feature in DRT.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-31  Keyar Hood  <keyar@chromium.org>
 
         the imageSmoothingEnabled flag needs to be in the state object

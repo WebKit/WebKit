@@ -1282,6 +1282,8 @@ BUGWK87575 : http/tests/media/video-buffered-range-contains-currentTime.html = F
 
 BUGWK87593 : http/tests/cache/cancel-in-progress-load.html = FAIL
 
+BUGWK87973 : http/tests/misc/favicon-loads-with-images-disabled.html = FAIL
+
 BUGWK84102 : fast/profiler/dead-time.html = TEXT
 BUGWK84102 : fast/profiler/stop-profiling-after-setTimeout.html = TEXT
 
