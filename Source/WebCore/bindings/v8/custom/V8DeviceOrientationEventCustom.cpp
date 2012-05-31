@@ -43,7 +43,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::alphaAccessorGetter(v8::Local<v8
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideAlpha())
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
     return v8::Number::New(imp->orientation()->alpha());
 }
 
@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::betaAccessorGetter(v8::Local<v8:
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideBeta())
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
     return v8::Number::New(imp->orientation()->beta());
 }
 
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::gammaAccessorGetter(v8::Local<v8
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideGamma())
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
     return v8::Number::New(imp->orientation()->gamma());
 }
 
@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::absoluteAccessorGetter(v8::Local
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
     if (!imp->orientation()->canProvideAbsolute())
-        return v8::Null();
+        return v8::Null(info.GetIsolate());
     return v8::Boolean::New(imp->orientation()->absolute());
 }
 
