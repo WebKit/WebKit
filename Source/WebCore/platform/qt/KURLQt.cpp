@@ -34,7 +34,7 @@ KURL::KURL(const QUrl& url)
 
 KURL::operator QUrl() const
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     QString str = QString::fromRawData(reinterpret_cast<const QChar*>(m_string.characters()), m_string.length());
     QByteArray ba = str.toUtf8();
 

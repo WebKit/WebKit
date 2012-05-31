@@ -79,8 +79,6 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
-#define HAVE_QT5 (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-
 #if HAVE(QT5)
 #include "QtX11ImageConversion.h"
 #include <QGuiApplication>

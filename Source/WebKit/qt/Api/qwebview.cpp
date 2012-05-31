@@ -704,7 +704,7 @@ bool QWebView::event(QEvent *e)
         } else if (e->type() == QEvent::TouchBegin 
                    || e->type() == QEvent::TouchEnd 
                    || e->type() == QEvent::TouchUpdate
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
                    || e->type() == QEvent::TouchCancel
 #endif
                   ) {

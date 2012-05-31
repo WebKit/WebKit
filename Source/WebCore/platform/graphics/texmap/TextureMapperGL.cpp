@@ -505,7 +505,7 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 
 #if PLATFORM(QT)
     QImage qtImage;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     // With QPA, we can avoid a deep copy.
     qtImage = *frameImage->handle()->buffer();
 #else

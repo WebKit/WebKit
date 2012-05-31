@@ -243,7 +243,7 @@ WebKitPlatformTouchEvent::WebKitPlatformTouchEvent(QTouchEvent* event)
     case QEvent::TouchEnd:
         m_type = PlatformEvent::TouchEnd;
         break;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     case QEvent::TouchCancel:
         m_type = PlatformEvent::TouchCancel;
         break;

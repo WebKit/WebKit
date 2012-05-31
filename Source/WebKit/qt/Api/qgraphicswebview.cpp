@@ -313,7 +313,7 @@ bool QGraphicsWebView::sceneEvent(QEvent* event)
     if (d->page && (event->type() == QEvent::TouchBegin
                 || event->type() == QEvent::TouchEnd
                 || event->type() == QEvent::TouchUpdate
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
                 || event->type() == QEvent::TouchCancel
 #endif
        )) {

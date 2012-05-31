@@ -511,7 +511,7 @@ void EventSender::cancelTouchPoint(int index)
 
 void EventSender::sendTouchEvent(QEvent::Type type)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     static QTouchDevice* device = 0;
     if (!device) {
         device = new QTouchDevice;

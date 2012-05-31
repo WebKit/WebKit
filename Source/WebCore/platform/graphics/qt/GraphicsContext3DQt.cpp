@@ -194,7 +194,7 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
     if (!m_context->m_attrs.antialias)
         return;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
     QSurface* currentSurface = 0;
     if (currentContext != m_platformContext) {
@@ -220,7 +220,7 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
 
 bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
     if (currentContext == m_platformContext)
         return true;

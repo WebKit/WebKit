@@ -148,7 +148,7 @@ void SimpleFontData::platformInit()
     float spaceWidth = fm.width(QLatin1Char(' '));
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     // Qt subtracts 1 from the descent to account for the baseline,
     // we add it back here to get correct metrics for WebKit.
     descent += 1;

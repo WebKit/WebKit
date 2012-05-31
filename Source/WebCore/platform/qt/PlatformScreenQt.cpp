@@ -38,7 +38,7 @@
 #include "NotImplemented.h"
 #include "Widget.h"
 #include "QWebPageClient.h"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
 #include <QGuiApplication>
 #include <QScreen>
 #else
@@ -71,7 +71,7 @@ static int screenNumber(Widget* w)
 
 int screenDepth(Widget* w)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     return QGuiApplication::screens().value(screenNumber(w))->depth();
 #else
     return QApplication::desktop()->screen(screenNumber(w))->depth();
@@ -80,7 +80,7 @@ int screenDepth(Widget* w)
 
 int screenDepthPerComponent(Widget* w)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     int depth = QGuiApplication::primaryScreen()->depth();
     // FIXME: Use widget's screen
     Q_UNUSED(w);
@@ -114,7 +114,7 @@ int screenDepthPerComponent(Widget* w)
 
 bool screenIsMonochrome(Widget* w)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     Q_UNUSED(w);
     // FIXME: In Qt 5 colorCount() isn't even implemented beyond returning 256 :)
     return false;
@@ -125,7 +125,7 @@ bool screenIsMonochrome(Widget* w)
 
 FloatRect screenRect(Widget* widget)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     QRect r = QGuiApplication::screens().value(screenNumber(widget))->geometry();
 #else
     QRect r = QApplication::desktop()->screenGeometry(screenNumber(widget));
@@ -135,7 +135,7 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     QRect r = QGuiApplication::screens().value(screenNumber(widget))->availableGeometry();
 #else
     QRect r = QApplication::desktop()->availableGeometry(screenNumber(widget));

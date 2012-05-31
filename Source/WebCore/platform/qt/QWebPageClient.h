@@ -110,7 +110,7 @@ public:
     virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
                                                  PlatformGraphicsSurface3D*) = 0;
 #endif
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     virtual QWindow* ownerWindow() const;
 #endif
 

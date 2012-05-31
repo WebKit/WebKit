@@ -99,7 +99,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
         if (m.access() == QMetaMethod::Private)
             continue;
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
         int iter = 0;
         const char* signature = m.signature();
         while (signature[iter] && signature[iter] != '(')

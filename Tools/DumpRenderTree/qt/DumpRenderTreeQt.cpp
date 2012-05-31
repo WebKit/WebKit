@@ -620,9 +620,7 @@ void DumpRenderTree::open(const QUrl& url)
     m_page->event(&ev);
 
     QWebSettings::clearMemoryCaches();
-#if !(QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
     QFontDatabase::removeAllApplicationFonts();
-#endif
     WebKit::initializeTestFonts();
 
     DumpRenderTreeSupportQt::dumpFrameLoader(url.toString().contains("loading/"));

@@ -21,6 +21,8 @@ isEmpty(OBJECTS_DIR): OBJECTS_DIR = obj/$$activeBuildConfig()
 DEFINES += \
     BUILDING_QT__=1
 
+haveQt(5): DEFINES += HAVE_QT5=1
+
 CONFIG(release, debug|release): DEFINES *= NDEBUG
 
 CONFIG += depend_includepath

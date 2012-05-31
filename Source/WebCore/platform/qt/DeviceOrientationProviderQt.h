@@ -25,7 +25,7 @@
 #include <QRotationFilter>
 #include <wtf/RefPtr.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
 using QTM_NAMESPACE::QRotationFilter;
 using QTM_NAMESPACE::QRotationReading;
 using QTM_NAMESPACE::QRotationSensor;

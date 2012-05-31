@@ -152,7 +152,9 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-#if QT_VERSION <= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
+    QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
+#else
 #ifdef Q_WS_X11
     QX11Info::setAppDpiY(0, 96);
     QX11Info::setAppDpiX(0, 96);
@@ -170,8 +172,6 @@ int main(int argc, char* argv[])
     * default font, but with the correct paint-device DPI.
    */
     QApplication::setFont(QWidget().font());
-#else
-    QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
 #endif
 
 #if HAVE(SIGNAL_H)

@@ -21,13 +21,13 @@
 #define WTF_UtilsQt_h
 
 #include <QString>
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
 #include <QTextDocument>
 #endif
 
 inline QString escapeHtml(const QString& string)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     return string.toHtmlEscaped();
 #else
     return Qt::escape(string);

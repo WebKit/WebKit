@@ -11,6 +11,7 @@ SOURCES += ../util.cpp \
 INCLUDEPATH += $$PWD
 
 QT += testlib qml quick quick-private webkit
+WEBKIT += wtf # For platform macros
 
 DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD\\\" \
            QWP_PATH=\\\"$${ROOT_BUILD_DIR}/bin\\\"

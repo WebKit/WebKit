@@ -237,7 +237,7 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
         for (i = 0; i < methodCount; i++) {
             QMetaMethod method = meta->method(i);
             if (method.access() != QMetaMethod::Private) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
                 QString sig = QString::fromLatin1(method.methodSignature());
                 array.add(Identifier(exec, UString(sig.utf16(), sig.length())));
 #else
@@ -289,7 +289,7 @@ JSValue QtInstance::stringValue(ExecState* exec) const
             // Check to see how much we can call it
             if (m.access() != QMetaMethod::Private
                 && m.methodType() != QMetaMethod::Signal
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
                 && m.parameterCount() == 0
                 && m.returnType() != QMetaType::Void) {
                 QVariant ret(m.returnType(), (void*)0);
@@ -403,7 +403,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
     if (obj) {
         QMetaType::Type argtype = QMetaType::Void;
         if (m_type == MetaProperty)
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
             argtype = (QMetaType::Type) m_property.userType();
 #else
             argtype = (QMetaType::Type) QMetaType::type(m_property.typeName());

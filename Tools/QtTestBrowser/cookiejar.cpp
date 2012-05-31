@@ -25,9 +25,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "cookiejar.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
 #include <QStandardPaths>
 #else
 #include <QDesktopServices>
@@ -46,7 +48,7 @@ TestBrowserCookieJar::TestBrowserCookieJar(QObject* parent)
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(saveToDisk()));
 
 #ifndef QT_NO_DESKTOPSERVICES
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     QString path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #else
     QString path = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);

@@ -25,7 +25,7 @@
 #if PLATFORM(QT)
 #include <qglobal.h>
 
-#if defined(QT_OPENGL_LIB) || (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if defined(QT_OPENGL_LIB) || HAVE(QT5)
     #if defined(QT_OPENGL_ES_2) && !defined(TEXMAP_OPENGL_ES_2)
         #define TEXMAP_OPENGL_ES_2
     #endif

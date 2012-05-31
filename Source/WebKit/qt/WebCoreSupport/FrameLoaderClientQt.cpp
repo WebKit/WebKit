@@ -1603,7 +1603,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         Vector<String> params = paramNames;
         Vector<String> values = paramValues;
         if (mimeType == "application/x-shockwave-flash") {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
             const bool shouldInjectWmode = true;
 #else
             // Inject wmode=opaque when there is no client or the client is not a QWebView.

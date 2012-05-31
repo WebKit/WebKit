@@ -1,3 +1,31 @@
+2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)
+        https://bugs.webkit.org/show_bug.cgi?id=87955
+
+        Reviewed by Simon Hausmann.
+
+        * bridge/qt/qt_class.cpp:
+        * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_runtime.h:
+        * page/qt/EventHandlerQt.cpp:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/OpenGLShims.cpp:
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/qt/DeviceMotionProviderQt.h:
+        * platform/qt/DeviceOrientationProviderQt.h:
+        * platform/qt/KURLQt.cpp:
+        * platform/qt/PlatformScreenQt.cpp:
+        * platform/qt/QWebPageClient.h:
+        * plugins/qt/PluginPackageQt.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+
 2012-05-30  Andreas Kling  <kling@webkit.org>
 
         Have StylePropertySet constructor take array/length instead of vector.

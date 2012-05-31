@@ -132,7 +132,7 @@ static void initializeGtk(QLibrary* module = 0)
 
 bool PluginPackage::isPluginBlacklisted()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
     // TODO: enumerate all plugins that are incompatible with Qt5.
     const QLatin1String pluginBlacklist[] = {
         QLatin1String("skypebuttons")

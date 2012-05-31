@@ -2033,7 +2033,7 @@ void tst_QWebFrame::enumerate_data()
         << "dp1" << "dp2" << "dp3"
         // inherited signals and slots
         << "destroyed(QObject*)" << "destroyed()"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if defined(HAVE_QT5) && HAVE_QT5
         << "objectNameChanged(QString)"
 #endif
         << "deleteLater()"

@@ -23,7 +23,7 @@
 #include <QEvent>
 #include <QTimer>
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if defined(HAVE_QT5) && HAVE_QT5
 #include <QWindow>
 #else
 #include <QWidget>
@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLVideoElement;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if defined(HAVE_QT5) && HAVE_QT5
 typedef QWindow Base;
 #else
 typedef QWidget Base;

@@ -25,7 +25,7 @@
 #include "qdeclarativewebview_p.h"
 #endif
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if (HAVE(QT5))
 #include <QtQml/qqml.h>
 #include <QtQml/qqmlextensionplugin.h>
 #else

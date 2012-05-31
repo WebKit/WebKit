@@ -1,3 +1,12 @@
+2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)
+        https://bugs.webkit.org/show_bug.cgi?id=87955
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+
 2012-05-31  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Add missing ViewportUpdateDeferrer guarding to setPageItemRectVisible() calls.

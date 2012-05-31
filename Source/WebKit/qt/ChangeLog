@@ -1,3 +1,28 @@
+2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)
+        https://bugs.webkit.org/show_bug.cgi?id=87955
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qgraphicswebview.h:
+        * Api/qwebframe.cpp:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebsettings.cpp:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        * WebCoreSupport/GeolocationClientQt.h:
+        * WebCoreSupport/PageClientQt.cpp:
+        * WebCoreSupport/WebEventConversion.cpp:
+        * declarative/plugin.cpp:
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/util.h:
+
 2012-05-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Sync up favicon-implementation with WebView url changes in r118158

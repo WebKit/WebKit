@@ -1,3 +1,12 @@
+2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)
+        https://bugs.webkit.org/show_bug.cgi?id=87955
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/qt/UtilsQt.h:
+
 2012-05-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         HashTable.h has using directives for std::pair and std::make_pair

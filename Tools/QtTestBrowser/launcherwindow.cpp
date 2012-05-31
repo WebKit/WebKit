@@ -32,6 +32,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "launcherwindow.h"
 #include "cookiejar.h"
 #include "urlloader.h"
@@ -64,7 +66,7 @@
 #endif
 
 #if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
 #include <QStandardPaths>
 #else
 #include <QDesktopServices>
@@ -806,7 +808,7 @@ void LauncherWindow::setDiskCache(bool enable)
     QNetworkDiskCache* cache = 0;
     if (enable) {
         cache = new QNetworkDiskCache();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if HAVE(QT5)
         QString cacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #else
         QString cacheLocation = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);

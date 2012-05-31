@@ -38,7 +38,7 @@ static const int gHideMouseCursorDelay = 3000;
 FullScreenVideoWindow::FullScreenVideoWindow()
     : m_mediaElement(0)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     setAttribute(Qt::WA_NativeWindow);
     setAttribute(Qt::WA_NoSystemBackground, true);
     setAttribute(Qt::WA_PaintOnScreen, true);
@@ -83,7 +83,7 @@ bool FullScreenVideoWindow::event(QEvent* ev)
 #ifndef QT_NO_CURSOR
         m_cursorTimer.stop();
 #endif
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
         setMouseTracking(false);
         releaseMouse();
 #endif
@@ -100,11 +100,11 @@ bool FullScreenVideoWindow::event(QEvent* ev)
 void FullScreenVideoWindow::showFullScreen()
 {
     Base::showFullScreen();
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     setMouseTracking(true);
 #endif
     raise();
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     setFocus();
 #endif
     hideCursor();
@@ -132,7 +132,7 @@ PlatformVideoWindow::PlatformVideoWindow()
     m_window = win;
     win->setWindowFlags(win->windowFlags() | Qt::FramelessWindowHint);
     // FIXME: Port to Qt 5.
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#if !HAVE(QT5)
     QPalette p;
     p.setColor(QPalette::Base, Qt::black);
     p.setColor(QPalette::Window, Qt::black);
