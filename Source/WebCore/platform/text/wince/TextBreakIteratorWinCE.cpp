@@ -245,7 +245,7 @@ NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(const UChar* bu
     bool createdIterator = m_iterator && weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), m_iterator, 0);
     if (!createdIterator)
         m_iterator = new CharBreakIterator;
-    m_iterator.reset(string, length);
+    m_iterator->reset(buffer, length);
 }
 
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()

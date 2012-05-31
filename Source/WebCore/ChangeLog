@@ -1,3 +1,10 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r118568.
+
+        * platform/text/wince/TextBreakIteratorWinCE.cpp:
+        (WebCore::NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator):
+
 2012-05-30  Abhishek Arya  <inferno@chromium.org>
 
         Crash in ContainerNode::parserAddChild.
