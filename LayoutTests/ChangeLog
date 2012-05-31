@@ -1,3 +1,16 @@
+2012-05-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Update test results for disabling CSS Exclusions.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/Skipped:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        * platform/win/Skipped:
+        * platform/win/fast/js/global-constructors-expected.txt:
+        * platform/wk2/Skipped:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-05-30  Lucas Forschler  <lforschler@apple.com>
 
     Merge 118891
