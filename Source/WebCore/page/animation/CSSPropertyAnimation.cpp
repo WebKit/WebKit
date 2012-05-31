@@ -901,6 +901,7 @@ private:
     Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
 };
 
+#if ENABLE(CSS3_FLEXBOX)
 class PropertyWrapperFlex : public AnimationPropertyWrapperBase {
 public:
     PropertyWrapperFlex() : AnimationPropertyWrapperBase(CSSPropertyWebkitFlex)
@@ -926,6 +927,7 @@ public:
         dst->setNegativeFlex(blendFunc(anim, a->negativeFlex(), b->negativeFlex(), progress));
     }
 };
+#endif
 
 #if ENABLE(SVG)
 class PropertyWrapperSVGPaint : public AnimationPropertyWrapperBase {
@@ -1044,7 +1046,9 @@ void CSSPropertyAnimation::ensurePropertyMap()
     gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight));
     gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight));
 
+#if ENABLE(CSS3_FLEXBOX)
     gPropertyWrappers->append(new PropertyWrapperFlex());
+#endif
 
     gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderLeftWidth, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth));
     gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderRightWidth, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth));

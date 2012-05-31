@@ -850,3 +850,8 @@ fast/repaint/line-flow-with-floats-in-regions.html
 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
 fast/repaint/region-painting-invalidation.html
 fast/repaint/region-painting-via-layout.html
+
+# CSS3 flexbox is disabled <rdar://problem/11524921>
+css3/flexbox
+transitions/flex-transitions.html
+fast/multicol/span/clone-flexbox.html

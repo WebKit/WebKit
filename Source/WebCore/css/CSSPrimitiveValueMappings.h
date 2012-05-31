@@ -1111,12 +1111,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case INLINE_BOX:
             m_value.ident = CSSValueWebkitInlineBox;
             break;
+#if ENABLE(CSS3_FLEXBOX)
         case FLEXBOX:
             m_value.ident = CSSValueWebkitFlexbox;
             break;
         case INLINE_FLEXBOX:
             m_value.ident = CSSValueWebkitInlineFlexbox;
             break;
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         case GRID:
             m_value.ident = CSSValueWebkitGrid;
@@ -1167,6 +1169,8 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
             return SHOW;
     }
 }
+
+#if ENABLE(CSS3_FLEXBOX)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
     : CSSValue(PrimitiveClass)
@@ -1372,6 +1376,8 @@ template<> inline CSSPrimitiveValue::operator EFlexWrap() const
         return FlexWrapNone;
     }
 }
+
+#endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
     : CSSValue(PrimitiveClass)

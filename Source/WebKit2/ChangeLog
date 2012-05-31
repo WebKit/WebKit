@@ -1,3 +1,21 @@
+2012-05-31  Ojan Vafai  <ojan@chromium.org>
+
+        add back the ability to disable flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=87147
+
+        Reviewed by Tony Chang.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2012-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        Disable CSS3 flexbox
+        <rdar://problem/11524921>
+
+        Reviewed by John Sullivan.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-05-31  Tim Horton  <timothy_horton@apple.com>
 
         Add feature defines for web-facing parts of CSS Regions and Exclusions

@@ -1,3 +1,15 @@
+012-05-31  Tim Horton  <timothy_horton@apple.com>
+
+        Disable CSS3 flexbox
+        <rdar://problem/11524921>
+
+        Reviewed by John Sullivan.
+
+        * platform/mac/Skipped
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+
 2012-05-31  Alexey Proskuryakov  <ap@apple.com>
 
         Updating results after r119051.

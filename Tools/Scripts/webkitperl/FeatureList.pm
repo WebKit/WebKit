@@ -48,6 +48,7 @@ my (
     $batteryStatusSupport,
     $blobSupport,
     $channelMessagingSupport,
+    $css3FlexboxSupport,
     $cssExclusionsSupport,
     $cssFiltersSupport,
     $cssRegionsSupport,
@@ -156,6 +157,9 @@ my @features = (
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
+
+    { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
+      define => "ENABLE_CSS3_FLEXBOX", default => 1, value => \$css3FlexboxSupport },
 
     { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },

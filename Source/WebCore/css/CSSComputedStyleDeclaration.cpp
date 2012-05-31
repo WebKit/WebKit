@@ -225,6 +225,7 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(CSS_FILTERS)
     CSSPropertyWebkitFilter,
 #endif
+#if ENABLE(CSS3_FLEXBOX)
     CSSPropertyWebkitFlex,
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
@@ -234,6 +235,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitFlexFlow,
     CSSPropertyWebkitFlexLinePack,
     CSSPropertyWebkitFlexWrap,
+#endif
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitFontVariantLigatures,
@@ -1628,6 +1630,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->display());
         case CSSPropertyEmptyCells:
             return cssValuePool().createValue(style->emptyCells());
+#if ENABLE(CSS3_FLEXBOX)
         case CSSPropertyWebkitFlex: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             list->append(cssValuePool().createValue(style->positiveFlex()));
@@ -1668,6 +1671,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             list->append(cssValuePool().createValue(style->flexWrap()));
             return list.release();
         }
+#endif
         case CSSPropertyFloat:
             return cssValuePool().createValue(style->floating());
         case CSSPropertyFont: {
