@@ -1,3 +1,10 @@
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Added new baselines for GTK after r118891.
+
+        * platform/gtk/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/gtk/fast/forms/select/optgroup-rendering-expected.txt: Added.
+
 2012-05-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         fast/events/message-port-multi.html needs new baseline after r119027
