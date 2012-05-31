@@ -1004,9 +1004,14 @@ fast/forms/multiple-form-submission-protection-mouse.html
 fast/events/remove-child-onscroll.html
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 fast/events/wheelevent-direction-inverted-from-device.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
+fast/repaint/overflow-auto-in-overflow-auto-scrolled.html
+fast/repaint/overflow-scroll-in-overflow-scroll-scrolled.html
+fast/repaint/table-overflow-auto-in-overflow-auto-scrolled.html
+fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled.html
 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 scrollbars/scroll-rtl-or-bt-layer.html
 
