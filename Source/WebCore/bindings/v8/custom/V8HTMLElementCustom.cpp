@@ -43,7 +43,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
-        return v8::Null();
+        return v8NullWithCheck(isolate);
     return createV8HTMLWrapper(impl, isolate, forceNewObject);
 }
 

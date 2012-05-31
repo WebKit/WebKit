@@ -131,7 +131,7 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
-        return v8::Null();
+        return v8NullWithCheck(isolate);
 
     if (!forceNewObject) {
         v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
