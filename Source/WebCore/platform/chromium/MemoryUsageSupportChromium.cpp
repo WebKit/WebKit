@@ -60,4 +60,9 @@ int MemoryUsageSupport::highUsageDeltaMB()
     return WebKit::Platform::current()->highUsageDeltaMB();
 }
 
+bool MemoryUsageSupport::processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes)
+{
+    return WebKit::Platform::current()->processMemorySizesInBytes(privateBytes, sharedBytes);
+}
+
 } // namespace WebCore

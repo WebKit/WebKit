@@ -1,3 +1,26 @@
+2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add MemoryUsageSupport::processMemorySizesInBytes
+        https://bugs.webkit.org/show_bug.cgi?id=87830
+
+        Reviewed by James Robinson.
+
+        Added a method for getting process memory usage in bytes. It is
+        used in the inspector memory instrumentation to get process total
+        memory usage.
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/MemoryUsageSupport.cpp:
+        (WebCore::MemoryUsageSupport::processMemorySizesInBytes):
+        (WebCore):
+        * platform/MemoryUsageSupport.h:
+        (MemoryUsageSupport): provided embedders with a way to report WebKit process
+        memory usage.
+        * platform/chromium/MemoryUsageSupportChromium.cpp:
+        (WebCore::MemoryUsageSupport::processMemorySizesInBytes):
+        (WebCore):
+
 2012-05-31  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r119062 and r119064.

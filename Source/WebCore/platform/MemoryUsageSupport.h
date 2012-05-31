@@ -52,6 +52,11 @@ public:
     // Delta of memory usage growth (vs. last actualMemoryUsageMB())
     // to force GC when memory usage is high.
     static int highUsageDeltaMB();
+
+    // Returns private and shared usage, in bytes. Private bytes is the amount of
+    // memory currently allocated to this process that cannot be shared. Returns
+    // false on platform specific error conditions.
+    static bool processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes);
 };
 
 } // namespace WebCore

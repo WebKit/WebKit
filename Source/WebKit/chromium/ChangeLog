@@ -1,3 +1,14 @@
+2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add MemoryUsageSupport::processMemorySizesInBytes
+        https://bugs.webkit.org/show_bug.cgi?id=87830
+
+        Reviewed by James Robinson.
+
+        * public/platform/WebKitPlatformSupport.h: pulled getProcessMemorySize up
+        to the Source/Platform/chromium/public/Platform.h
+        * src/PlatformSupport.cpp:
+
 2012-05-31  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r119062 and r119064.

@@ -1,3 +1,16 @@
+2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add MemoryUsageSupport::processMemorySizesInBytes
+        https://bugs.webkit.org/show_bug.cgi?id=87830
+
+        Reviewed by James Robinson.
+
+        * chromium/public/Platform.h:
+        (Platform):
+        (WebKit::Platform::processMemorySizesInBytes): moved this method from
+        Source/WebKit/chromium/public/platform/WebKitPlatformSupport.h, also
+        removed 'get' prefix.
+
 2012-05-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileExists to Platform.h

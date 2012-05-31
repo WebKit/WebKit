@@ -750,11 +750,6 @@ void PlatformSupport::notifyJSOutOfMemory(Frame* frame)
     webFrame->client()->didExhaustMemoryAvailableForScript(webFrame);
 }
 
-bool PlatformSupport::getProcessMemorySize(size_t* privateBytes, size_t* sharedBytes)
-{
-    return webKitPlatformSupport()->getProcessMemorySize(privateBytes, sharedBytes);
-}
-
 int PlatformSupport::screenHorizontalDPI(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);

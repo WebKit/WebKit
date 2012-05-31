@@ -43,11 +43,9 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "MemoryUsageSupport.h"
 #include "Node.h"
 #include "Page.h"
-#if PLATFORM(CHROMIUM)
-#include "PlatformSupport.h"
-#endif
 #include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
@@ -339,10 +337,8 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock>& processMemory)
 {
     size_t privateBytes = 0;
-#if PLATFORM(CHROMIUM)
     size_t sharedBytes = 0;
-    PlatformSupport::getProcessMemorySize(&privateBytes, &sharedBytes);
-#endif
+    MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
     processMemory = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
     processMemory->setSize(static_cast<int>(privateBytes));
 

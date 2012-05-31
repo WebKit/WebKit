@@ -58,4 +58,9 @@ int MemoryUsageSupport::highUsageDeltaMB()
     return 0;
 }
     
+bool MemoryUsageSupport::processMemorySizesInBytes(size_t*, size_t*)
+{
+    return false;
+}
+
 } // namespace WebCore

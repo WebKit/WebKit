@@ -115,11 +115,6 @@ public:
 
     virtual WebSharedWorkerRepository* sharedWorkerRepository() { return 0; }
 
-    // Returns private and shared usage, in bytes. Private bytes is the amount of
-    // memory currently allocated to this process that cannot be shared. Returns
-    // false on platform specific error conditions.
-    virtual bool getProcessMemorySize(size_t* privateBytes, size_t* sharedBytes) { return false; }
-
 protected:
     ~WebKitPlatformSupport() { }
 };
