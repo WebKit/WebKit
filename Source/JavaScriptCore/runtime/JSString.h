@@ -200,9 +200,7 @@ namespace JSC {
             {
                 if (m_index == JSRopeString::s_maxInternalRopeLength)
                     expand();
-                m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
-                m_jsString->m_length += jsString->m_length;
-                m_jsString->m_is8Bit = m_jsString->m_is8Bit && jsString->m_is8Bit;
+                m_jsString->append(m_globalData, m_index++, jsString);
             }
 
             JSRopeString* release()
@@ -250,6 +248,13 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             JSString::finishCreation(globalData);
+        }
+
+        void append(JSGlobalData& globalData, size_t index, JSString* jsString)
+        {
+            m_fibers[index].set(globalData, this, jsString);
+            m_length += jsString->m_length;
+            m_is8Bit = m_is8Bit && jsString->m_is8Bit;
         }
 
         static JSRopeString* createNull(JSGlobalData& globalData)

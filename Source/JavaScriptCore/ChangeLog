@@ -1,3 +1,19 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Fix JSString after r115516.
+        https://bugs.webkit.org/show_bug.cgi?id=87892
+
+        Reviewed by Geoffrey Garen.
+
+        r115516 splitted JSString into two classes, with addition nested classes.
+        Add a workaround for the WinCE compiler since it can't resolve the friend class
+        declerations corretly and denies the access to protected members of JSString.
+
+        * runtime/JSString.h:
+        (JSC::JSRopeString::RopeBuilder::append):
+        (JSC::JSRopeString::append):
+        (JSRopeString):
+
 2012-05-30  Oliver Hunt  <oliver@apple.com>
 
         Really provide error information with the inspector disabled
