@@ -1,3 +1,12 @@
+2012-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix webkit_web_view_can_execute_editing_command() API doc
+        https://bugs.webkit.org/show_bug.cgi?id=87930
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)

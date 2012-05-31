@@ -1775,7 +1775,7 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
  *
  * Finish an asynchronous operation started with webkit_web_view_can_execute_editing_command().
  *
- * Returns: %TRUE if a selection can be cut or %FALSE otherwise
+ * Returns: %TRUE if the editing command can be executed or %FALSE otherwise
  */
 gboolean webkit_web_view_can_execute_editing_command_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
