@@ -1,3 +1,17 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] 6 canvas tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=87983
+
+        Add Windows-specific expected (failing?) results to get the bots greener.
+
+        * platform/win/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt: Added.
+        * platform/win/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt: Added.
+        * platform/win/fast/canvas/canvas-scale-drawImage-shadow-expected.txt: Added.
+        * platform/win/fast/canvas/canvas-scale-fillPath-shadow-expected.txt: Added.
+        * platform/win/fast/canvas/canvas-scale-fillRect-shadow-expected.txt: Added.
+        * platform/win/fast/canvas/canvas-transforms-fillRect-shadow-expected.txt: Added.
+
 2012-05-31  Ulan Degenbaev  <ulan@chromium.org>
 
         [v8] Fix bug reference in array-override-set.html test
