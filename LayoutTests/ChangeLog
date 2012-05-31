@@ -1,3 +1,9 @@
+2012-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update Mac Leopard baselines for fast/muticol/span/span-as-immediate-columns-child.html.
+
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+
 2012-05-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests, unskip a now passing test.
