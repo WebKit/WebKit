@@ -1,3 +1,12 @@
+2012-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Enable support for rvalue references when building with a version of clang that supports them
+        https://bugs.webkit.org/show_bug.cgi?id=88018
+
+        Re-enable support for rvalue references when building with a version of Xcode newer than 4.2.
+
+        * wtf/Compiler.h:
+
 2012-05-31  Filip Pizlo  <fpizlo@apple.com>
 
         DataLog should be usable outside of JSC
