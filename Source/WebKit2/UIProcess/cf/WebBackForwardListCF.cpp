@@ -58,10 +58,14 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
     RetainPtr<CFMutableArrayRef> entries(AdoptCF, CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
 
     // We may need to update the current index to account for entries that are filtered by the callback.
-    int currentIndex = m_current;
+    CFIndex currentIndex = m_current;
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
-        RefPtr<WebURL> webURL = WebURL::create(m_entries[i]->url());
+        // If we somehow ended up with a null entry then we should consider the data invalid and not save session history at all.
+        ASSERT(m_entries[i]);
+        if (!m_entries[i])
+            return 0;
+
         if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
             if (i <= static_cast<size_t>(m_current))
                 currentIndex--;
@@ -82,9 +86,18 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
+        
+    // If all items before and including the current item were filtered then currentIndex will be -1.
+    // Assuming we didn't start out with NoCurrentItemIndex, we should store "current" to point at the first item.
+    if (currentIndex == -1 && m_current != NoCurrentItemIndex && CFArrayGetCount(entries.get()))
+        currentIndex = 0;
 
-    ASSERT(currentIndex < CFArrayGetCount(entries.get()) && currentIndex >= static_cast<int>(NoCurrentItemIndex));
-    RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &currentIndex));
+    // FIXME: We're relying on currentIndex == -1 to mean the exact same thing as NoCurrentItemIndex (UINT_MAX) in unsigned form.
+    // That seems implicit and fragile and we should find a better way of representing the NoCurrentItemIndex case.
+    if (m_current == NoCurrentItemIndex || !CFArrayGetCount(entries.get()))
+        currentIndex = -1;
+
+    RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberCFIndexType, &currentIndex));
 
     const void* keys[2] = { SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
     const void* values[2] = { currentIndexNumber.get(), entries.get() };
@@ -100,9 +113,14 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
         return false;
     }
 
-    CFIndex currentIndex;
-    if (!CFNumberGetValue(cfIndex, kCFNumberCFIndexType, &currentIndex)) {
+    CFIndex currentCFIndex;
+    if (!CFNumberGetValue(cfIndex, kCFNumberCFIndexType, &currentCFIndex)) {
         LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid integer current index");
+        return false;
+    }
+    
+    if (currentCFIndex < -1) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains a negative current index that is bogus (%ld)", currentCFIndex);
         return false;
     }
 
@@ -113,12 +131,16 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     }
 
     CFIndex size = CFArrayGetCount(cfEntries);
-    if (currentIndex != static_cast<CFIndex>(NoCurrentItemIndex) && currentIndex >= size) {
-        LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentIndex, size);
+    if (currentCFIndex != -1 && currentCFIndex >= size) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentCFIndex, size);
         return false;
     }
 
-    if (currentIndex == static_cast<CFIndex>(NoCurrentItemIndex) && size) {
+    // FIXME: We're relying on currentIndex == -1 to mean the exact same thing as NoCurrentItemIndex (UINT_MAX) in unsigned form.
+    // That seems implicit and fragile and we should find a better way of representing the NoCurrentItemIndex case.
+    uint32_t currentIndex = currentCFIndex == -1 ? NoCurrentItemIndex : currentCFIndex;
+
+    if (currentIndex == NoCurrentItemIndex && size) {
         LOG(SessionState, "WebBackForwardList dictionary representation says there is no current item index, but there is a list of %ld entries - this is bogus", size);
         return false;
     }
