@@ -74,6 +74,8 @@ AccessibilityObject::AccessibilityObject()
     , m_role(UnknownRole)
 #if PLATFORM(GTK)
     , m_wrapper(0)
+#elif PLATFORM(CHROMIUM)
+    , m_detached(false)
 #endif
 {
 }
@@ -85,8 +87,21 @@ AccessibilityObject::~AccessibilityObject()
 
 void AccessibilityObject::detach()
 {
-#if HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY) && PLATFORM(CHROMIUM)
+    m_detached = true;
+#elif HAVE(ACCESSIBILITY)
     setWrapper(0);
+#endif
+}
+
+bool AccessibilityObject::isDetached() const
+{
+#if HAVE(ACCESSIBILITY) && PLATFORM(CHROMIUM)
+    return m_detached;
+#elif HAVE(ACCESSIBILITY)
+    return !wrapper();
+#else
+    return true;
 #endif
 }
 

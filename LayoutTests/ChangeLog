@@ -1,3 +1,13 @@
+2012-05-30  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Chromium WebAccessibilityObject should check if an AccessibilityObject is detached
+        https://bugs.webkit.org/show_bug.cgi?id=87778
+
+        Reviewed by Adam Barth.
+
+        * accessibility/accessibility-object-detached-expected.txt: Added.
+        * accessibility/accessibility-object-detached.html: Added.
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         Enhance Windows DRT implementation to support platform scroll wheel events

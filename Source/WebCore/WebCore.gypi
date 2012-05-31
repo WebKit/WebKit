@@ -1780,7 +1780,6 @@
             'accessibility/AccessibilityTableRow.h',
             'accessibility/chromium/AXObjectCacheChromium.cpp',
             'accessibility/chromium/AccessibilityObjectChromium.cpp',
-            'accessibility/chromium/AccessibilityObjectWrapper.h',
             'accessibility/efl/AccessibilityObjectEfl.cpp',
             'accessibility/gtk/AXObjectCacheAtk.cpp',
             'accessibility/gtk/AccessibilityObjectAtk.cpp',

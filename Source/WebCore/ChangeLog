@@ -1,3 +1,32 @@
+2012-05-30  Dominic Mazzoni  <dmazzoni@chromium.org>
+
+        [Chromium] AX: WebAccessibilityObject should check if an AccessibilityObject is detached
+        https://bugs.webkit.org/show_bug.cgi?id=87778
+
+        Reviewed by Adam Barth.
+
+        Chromium was never actually using AccessibilityObjectWrapper, so
+        this change deletes it. Instead, it's replaced with a simple bool
+        that keeps track of whether an AccessibilityObject was detached or
+        not. WebKit/chromium/public/WebAccessibilityObject can then use this
+        to determine if an object is still valid.
+
+        Test: accessibility/accessibility-object-detached.html
+
+        * WebCore.gypi:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::detach):
+        (WebCore::AccessibilityObject::isDetached):
+        (WebCore):
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore):
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        * accessibility/chromium/AccessibilityObjectWrapper.h: Removed.
+
 2012-05-30  Shawn Singh  <shawnsingh@chromium.org>
 
         Simplify TransformationMatrix rotation code to improve precision

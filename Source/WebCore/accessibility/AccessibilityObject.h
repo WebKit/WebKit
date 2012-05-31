@@ -43,8 +43,6 @@
 #elif PLATFORM(WIN) && !OS(WINCE)
 #include "AccessibilityObjectWrapperWin.h"
 #include "COMPtr.h"
-#elif PLATFORM(CHROMIUM)
-#include "AccessibilityObjectWrapper.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -65,6 +63,8 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #elif PLATFORM(GTK)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
+#elif PLATFORM(CHROMIUM)
+// Chromium does not use a wrapper.
 #else
 class AccessibilityObjectWrapper;
 #endif
@@ -313,7 +313,7 @@ protected:
 public:
     virtual ~AccessibilityObject();
     virtual void detach();
-    virtual bool isDetached() const { return true; }
+    virtual bool isDetached() const;
 
     typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
     
@@ -669,7 +669,7 @@ public:
 #if PLATFORM(GTK)
     AccessibilityObjectWrapper* wrapper() const;
     void setWrapper(AccessibilityObjectWrapper*);
-#else
+#elif !PLATFORM(CHROMIUM)
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) 
     {
@@ -727,7 +727,7 @@ protected:
 #elif PLATFORM(GTK)
     AtkObject* m_wrapper;
 #elif PLATFORM(CHROMIUM)
-    RefPtr<AccessibilityObjectWrapper> m_wrapper;
+    bool m_detached;
 #endif
 };
 

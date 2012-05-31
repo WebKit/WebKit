@@ -69,6 +69,7 @@ public:
     WEBKIT_EXPORT bool equals(const WebAccessibilityObject&) const;
 
     bool isNull() const { return m_private.isNull(); }
+    WEBKIT_EXPORT bool isDetached() const;
 
     // Static methods for enabling accessibility.
     WEBKIT_EXPORT static void enableAccessibility();
