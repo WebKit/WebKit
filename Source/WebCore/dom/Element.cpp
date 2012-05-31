@@ -1143,7 +1143,7 @@ void Element::recalcStyle(StyleChange change)
         }
 
         if (change != Force) {
-            if (styleChangeType() == FullStyleChange)
+            if (styleChangeType() >= FullStyleChange)
                 change = Force;
             else
                 change = ch;
