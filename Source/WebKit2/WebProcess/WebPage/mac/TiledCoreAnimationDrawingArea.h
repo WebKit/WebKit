@@ -86,6 +86,8 @@ private:
     virtual void setDeviceScaleFactor(float) OVERRIDE;
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
 
+    void updateLayerHostingContext();
+
     void setRootCompositingLayer(CALayer *);
 
     void createPageOverlayLayer();
@@ -95,7 +97,6 @@ private:
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
     OwnPtr<LayerHostingContext> m_layerHostingContext;
-    LayerHostingMode m_layerHostingMode;
     
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
