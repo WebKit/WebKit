@@ -1,3 +1,9 @@
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Unreviewed. Added FAIL expectation due to failure after r119100.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 6 canvas tests failing

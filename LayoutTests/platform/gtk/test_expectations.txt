@@ -1033,6 +1033,8 @@ BUGWK57160 : fast/harness/override-preferences-2.html = FAIL
 
 BUGWK58309 : fast/canvas/DrawImageSinglePixelStretch.html = FAIL
 
+BUGWK87985 : fast/canvas/canvas-imageSmoothingEnabled.html = FAIL
+
 // Expose title direction in WebKit API
 BUGWK58845 : fast/dom/title-directionality.html = FAIL
 BUGWK58845 : fast/dom/title-directionality-removeChild.html = FAIL
