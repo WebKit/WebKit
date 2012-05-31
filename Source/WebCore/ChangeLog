@@ -1,3 +1,10 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r117697.
+
+        * page/wince/FrameWinCE.cpp:
+        (WebCore::computePageRectsForFrame):
+
 2012-05-30  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix min/max bounds error in CCMathUtil.cpp
