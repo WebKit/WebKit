@@ -477,6 +477,7 @@ SET(WebCore_SOURCES
     css/CSSFunctionValue.cpp
     css/CSSGradientValue.cpp
     css/CSSImageGeneratorValue.cpp
+    css/CSSImageSetValue.cpp
     css/CSSImageValue.cpp
     css/CSSImportRule.cpp
     css/CSSInheritedValue.cpp
@@ -1413,6 +1414,7 @@ SET(WebCore_SOURCES
     rendering/style/StyleBackgroundData.cpp
     rendering/style/StyleBoxData.cpp
     rendering/style/StyleCachedImage.cpp
+    rendering/style/StyleCachedImageSet.cpp
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp
     rendering/style/StyleFilterData.cpp
     rendering/style/StyleFlexibleBoxData.cpp

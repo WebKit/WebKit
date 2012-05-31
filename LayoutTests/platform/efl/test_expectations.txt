@@ -489,9 +489,6 @@ BUGWKEFL SKIP : fast/images/webp-image-decoding.html = FAIL
 // This tests fails by one on 32 bits machines due to rounding issues.
 BUGWKEFL : fast/css/percentage-non-integer.html = TEXT PASS
 
-// CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-BUGWKEFL : fast/css/image-set-parsing.html = TEXT
-
 // Test is timeouting, passes in all other platforms.
 BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = FAIL
 
