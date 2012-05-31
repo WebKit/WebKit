@@ -160,8 +160,8 @@
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#include "SharedGraphicsContext3D.h"
 #include "GrContext.h"
+#include "SharedGraphicsContext3D.h"
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -2260,7 +2260,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     }
 
     if (node->isTextNode()) {
-        Text* curText = static_cast<Text*>(node.get());
+        Text* curText = toText(node.get());
         if (!curText->wholeText().isEmpty())
             context.setText(curText->wholeText().utf8().data());
     }
@@ -5482,8 +5482,15 @@ void WebPage::notifyFullScreenVideoExited(bool done)
 {
     UNUSED_PARAM(done);
 #if ENABLE(VIDEO)
-    if (HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(d->m_fullscreenVideoNode.get()))
-        mediaElement->exitFullscreen();
+    if (d->m_webSettings->fullScreenVideoCapable()) {
+        if (HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(d->m_fullscreenVideoNode.get()))
+            mediaElement->exitFullscreen();
+    } else {
+#if ENABLE(FULLSCREEN_API)
+        if (Element* element = static_cast<Element*>(d->m_fullscreenVideoNode.get()))
+            element->document()->webkitCancelFullScreen();
+#endif
+    }
 #endif
 }
 
@@ -6036,6 +6043,60 @@ void WebPagePrivate::exitFullscreenForNode(Node* node)
     mmrPlayer->setFullscreenWebPageClient(0);
 #endif
 }
+
+#if ENABLE(FULLSCREEN_API)
+// TODO: We should remove this helper class when we decide to support all elements.
+static bool containsVideoTags(Element* element)
+{
+    for (Node* node = element->firstChild(); node; node = node->traverseNextNode(element)) {
+        if (node->hasTagName(HTMLNames::videoTag))
+            return true;
+    }
+    return false;
+}
+
+void WebPagePrivate::enterFullScreenForElement(Element* element)
+{
+#if ENABLE(VIDEO)
+    // TODO: We should not check video tag when we decide to support all elements.
+    if (!element || (!element->hasTagName(HTMLNames::videoTag) && !containsVideoTags(element)))
+        return;
+    if (m_webSettings->fullScreenVideoCapable()) {
+        // The Browser chrome has its own fullscreen video widget it wants to
+        // use, and this is a video element. The only reason that
+        // webkitWillEnterFullScreenForElement() and
+        // webkitDidEnterFullScreenForElement() are still called in this case
+        // is so that exitFullScreenForElement() gets called later.
+        enterFullscreenForNode(element);
+    } else {
+        // No fullscreen video widget has been made available by the Browser
+        // chrome, or this is not a video element. The webkitRequestFullScreen
+        // Javascript call is often made on a div element.
+        // This is where we would hide the browser's chrome if we wanted to.
+        client()->fullscreenStart();
+        m_fullscreenVideoNode = element;
+    }
+#endif
+}
+
+void WebPagePrivate::exitFullScreenForElement(Element* element)
+{
+#if ENABLE(VIDEO)
+    // TODO: We should not check video tag when we decide to support all elements.
+    if (!element || !element->hasTagName(HTMLNames::videoTag))
+        return;
+    if (m_webSettings->fullScreenVideoCapable()) {
+        // The Browser chrome has its own fullscreen video widget.
+        exitFullscreenForNode(element);
+    } else {
+        // This is where we would restore the browser's chrome
+        // if hidden above.
+        client()->fullscreenStop();
+        m_fullscreenVideoNode = 0;
+    }
+#endif
+}
+#endif
 
 void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 {

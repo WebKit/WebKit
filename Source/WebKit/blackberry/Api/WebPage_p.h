@@ -41,6 +41,7 @@ namespace WebCore {
 class AutofillManager;
 class DOMWrapperWorld;
 class Document;
+class Element;
 class Frame;
 class GeolocationControllerClientBlackBerry;
 class GraphicsLayerBlackBerry;
@@ -191,6 +192,10 @@ public:
     // Called from within WebKit via ChromeClientBlackBerry.
     void enterFullscreenForNode(WebCore::Node*);
     void exitFullscreenForNode(WebCore::Node*);
+#if ENABLE(FULLSCREEN_API)
+    void enterFullScreenForElement(WebCore::Element*);
+    void exitFullScreenForElement(WebCore::Element*);
+#endif
     void contentsSizeChanged(const WebCore::IntSize&);
     void overflowExceedsContentsSize() { m_overflowExceedsContentsSize = true; }
     void layoutFinished();

@@ -231,6 +231,7 @@ public:
     virtual bool downloadAllowed(const char* url) = 0;
     virtual void downloadRequested(Platform::FilterStream*, const WebString& suggestedFilename) = 0;
 
+    virtual int fullscreenStart() = 0;
     virtual int fullscreenStart(const char* contextName, Platform::Graphics::Window*, unsigned x, unsigned y, unsigned width, unsigned height) = 0;
 
     virtual int fullscreenStop() = 0;

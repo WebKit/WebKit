@@ -1,3 +1,32 @@
+2012-05-31  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] WebKit's fullscreen mode needs to notify page client.
+        https://bugs.webkit.org/show_bug.cgi?id=87337
+
+        Reviewed by Antonio Gomes.
+
+        Move "fullScreenVideoCapable" into webpagePrivate to make code
+        clean for "fullScreenForElement/Node" of cromeClientBlackberry,
+        All Video checks and code path selections are in webpagePrivate now.
+        For some UX and secure reasons, we could not apply fullscreen capacity
+        for all elements, So we use client's fullscreenStart/Stop only for
+        those video elements and those elements containing video tags.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPage::notifyFullScreenVideoExited):
+        (WebKit):
+        (BlackBerry::WebKit::containsVideoTags):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::enterFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::exitFullScreenForElement):
+
 2012-05-31  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Crash when closing web page if selection is active
