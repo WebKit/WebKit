@@ -9192,6 +9192,13 @@ void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri
         m_defaultNamespace = uri;
 }
 
+QualifiedName CSSParser::determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName)
+{
+    if (!m_styleSheet)
+        return QualifiedName(prefix, localName, m_defaultNamespace);
+    return QualifiedName(prefix, localName, m_styleSheet->determineNamespace(prefix));
+}
+
 void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector* specifiers)
 {
     AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;

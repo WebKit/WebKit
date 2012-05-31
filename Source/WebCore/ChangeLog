@@ -1,3 +1,29 @@
+2012-05-30  Kentaro Hara  <haraken@chromium.org>
+
+        Implement CSSParser::determineNameInNamespace() as a helper function for CSSGrammar.y
+        https://bugs.webkit.org/show_bug.cgi?id=87799
+
+        Reviewed by Darin Adler.
+
+        As pointed out by darin@ in https://bugs.webkit.org/show_bug.cgi?id=87627#c12,
+        we should avoid repeating the following code in CSSGrammar.y:
+
+            if (p->m_styleSheet)
+                $$->setTag(QualifiedName(namespacePrefix, $2, p->m_styleSheet->determineNamespace(namespacePrefix)));
+            else
+                $$->setTag(QualifiedName(namespacePrefix, $2, p->m_defaultNamespace));
+
+        This patch implements CSSParser::determineNameInNamespace() as a helper function
+        and replaces the above code.
+
+        Tests: fast/dom/SelectorAPI/*. No change in test results.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::determineNameInNamespace):
+        (WebCore):
+        * css/CSSParser.h:
+
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r117697.

@@ -267,6 +267,7 @@ public:
     PassOwnPtr<MediaQuery> sinkFloatingMediaQuery(MediaQuery*);
 
     void addNamespace(const AtomicString& prefix, const AtomicString& uri);
+    QualifiedName determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName);
     void updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector*);
     CSSParserSelector* updateSpecifiers(CSSParserSelector*, CSSParserSelector*);
 
