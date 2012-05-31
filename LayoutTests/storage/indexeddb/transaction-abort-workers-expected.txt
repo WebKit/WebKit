@@ -20,6 +20,7 @@ PASS [Worker] Transaction aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] recursionTest():
 [Worker] transaction = db.transaction('store')
@@ -48,6 +49,7 @@ PASS [Worker] transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] trying a timeout callback:
 [Worker] setTimeout(timeoutTest, 0)
@@ -59,6 +61,7 @@ PASS [Worker] transaction started in setTimeout() callback aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] errorTest():
 [Worker] self.old_onerror = self.onerror
@@ -74,6 +77,7 @@ PASS [Worker] Transaction aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] ename is 'TransactionInactiveError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

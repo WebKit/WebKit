@@ -103,9 +103,10 @@ function blocked3(event)
 
 function connectionError(event, connectionId)
 {
-    debug("")
+    debug("");
     testPassed("connection[" + connectionId + "] got error event");
-    shouldBe("event.target.errorCode", "IDBDatabaseException.ABORT_ERR")
+    shouldBe("event.target.errorCode", "DOMException.ABORT_ERR");
+    shouldBe("event.target.error.name", "'AbortError'");
     if ('webkitErrorMessage' in event.target) {
         shouldBe("event.target.webkitErrorMessage.length > 0", "true");
         debug(event.target.webkitErrorMessage);

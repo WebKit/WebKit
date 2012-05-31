@@ -10,11 +10,12 @@ function test()
     removeVendorPrefixes();
     request = evalAndLog("indexedDB.open('basics')");
     shouldBeTrue("'result' in request");
-    evalAndExpectException("request.result", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.result", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     shouldBeTrue("'errorCode' in request");
-    evalAndExpectException("request.errorCode", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.errorCode", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     shouldBeTrue("'webkitErrorMessage' in request");
-    evalAndExpectException("request.webkitErrorMessage", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.webkitErrorMessage", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'source' in request");
     shouldBe("request.source", "indexedDB");
     shouldBeTrue("'transaction' in request");
@@ -38,6 +39,8 @@ function openCallback(evt)
     shouldBe("event.target.errorCode", "0");
     shouldBeTrue("'webkitErrorMessage' in event.target");
     shouldBeUndefined("event.target.webkitErrorMessage");
+    shouldBeTrue("'error' in event.target");
+    shouldBeNull("event.target.error");
     shouldBeTrue("'source' in event.target");
     shouldBe("request.source", "indexedDB");
     shouldBeTrue("'transaction' in event.target");

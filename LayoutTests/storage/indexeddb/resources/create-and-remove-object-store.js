@@ -27,9 +27,9 @@ function openSuccess()
 function testCreateAndRemove()
 {
     debug("Trying create");
-    evalAndExpectException('db.createObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException('db.createObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     debug("Trying remove");
-    evalAndExpectException('db.deleteObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException('db.deleteObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
 }
 
 function cleanDatabase()
@@ -37,7 +37,7 @@ function cleanDatabase()
     deleteAllObjectStores(db);
 
     os = evalAndLog("db.createObjectStore('tmp')");
-    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR");
+    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
     event.target.result.oncomplete = setVersionComplete;
 }
 
@@ -56,9 +56,9 @@ function tryOnceMore()
     testCreateAndRemove();
 
     debug("Trying create with store that already exists");
-    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
     debug("Trying remove with store that already exists");
-    evalAndExpectException("db.deleteObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.deleteObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
 
     finishJSTest();
 }

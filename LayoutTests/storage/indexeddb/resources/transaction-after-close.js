@@ -54,7 +54,7 @@ function runFirstRegularTransaction()
 function firstTransactionComplete()
 {
     evalAndLog("db.close()");
-    evalAndExpectException("db.transaction(['store'], 'readwrite')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.transaction(['store'], 'readwrite')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
 
     debug("")
     debug("verify that we can reopen the db after calling close")

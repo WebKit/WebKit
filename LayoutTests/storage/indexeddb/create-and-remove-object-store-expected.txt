@@ -12,24 +12,29 @@ Trying create
 Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Trying remove
 Expecting exception from db.deleteObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 result = db.setVersion('version 1')
 Trying create
 Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Trying remove
 Expecting exception from db.deleteObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Deleted all object stores.
 db.createObjectStore('tmp')
 Expecting exception from db.createObjectStore('tmp')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.CONSTRAINT_ERR
+PASS ename is 'ConstraintError'
 trans = db.transaction(['tmp'])
 trans.objectStore('tmp').get(0)
 PASS event.target.result is undefined.
@@ -37,18 +42,22 @@ Trying create
 Expecting exception from db.createObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Trying remove
 Expecting exception from db.deleteObjectStore("some os")
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Trying create with store that already exists
 Expecting exception from db.createObjectStore('tmp')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Trying remove with store that already exists
 Expecting exception from db.deleteObjectStore('tmp')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

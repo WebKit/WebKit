@@ -36,7 +36,7 @@ function testValidKeys()
         "new Date(0)",
         "new Date(1000)",
         "new Date(1317399931023)",
-        
+
         "''",
         "'\x00'",
         "'a'",
@@ -64,7 +64,7 @@ function testValidKeys()
         "[new Date(0)]",
         "[new Date(1000)]",
         "[new Date(1317399931023)]",
-        
+
         "['']",
         "['\x00']",
         "['a']",
@@ -78,7 +78,7 @@ function testValidKeys()
         "['\uFFFD']", // U+FFFD REPLACEMENT CHARACTER
 
         "[[]]",
-        
+
         "[[], []]",
         "[[], [], []]",
 
@@ -121,12 +121,12 @@ function testInvalidKeys()
     for (i = 0; i < invalidKeys.length - 1; i += 1) {
         key1 = invalidKeys[i];
         key2 = invalidKeys[i + 1];
-        evalAndExpectException("indexedDB.cmp(" + key1 + ", " + key2 + ")", "IDBDatabaseException.DATA_ERR");
-        evalAndExpectException("indexedDB.cmp(" + key2 + ", " + key1 + ")", "IDBDatabaseException.DATA_ERR");
-        evalAndExpectException("indexedDB.cmp(" + key1 + ", 'valid')", "IDBDatabaseException.DATA_ERR");
-        evalAndExpectException("indexedDB.cmp('valid', " + key1 + ")", "IDBDatabaseException.DATA_ERR");
-        evalAndExpectException("indexedDB.cmp(" + key2 + ", 'valid')", "IDBDatabaseException.DATA_ERR");
-        evalAndExpectException("indexedDB.cmp('valid', " + key2 + ")", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("indexedDB.cmp(" + key1 + ", " + key2 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key2 + ", " + key1 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key1 + ", 'valid')", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp('valid', " + key1 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key2 + ", 'valid')", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp('valid', " + key2 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
     }
 }
 

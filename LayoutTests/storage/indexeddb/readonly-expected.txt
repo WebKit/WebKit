@@ -12,6 +12,9 @@ PASS request.result is still [object IDBDatabase]
 trying to set readonly property request.errorCode
 request.errorCode = 666
 PASS request.errorCode is still 0
+trying to set readonly property request.error
+request.error = {}
+PASS request.error is still null
 trying to set readonly property request.source
 request.source = this
 PASS request.source is still [object IDBFactory]

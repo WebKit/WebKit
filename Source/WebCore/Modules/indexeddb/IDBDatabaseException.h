@@ -65,6 +65,8 @@ public:
         IDB_QUOTA_EXCEEDED_ERR,
         IDB_SYNTAX_ERR,
         IDB_DATA_CLONE_ERR,
+        IDB_TYPE_MISMATCH_ERR,
+        IDB_NOT_SUPPORTED_ERR,
     };
 
     static int ErrorCodeToExceptionCode(int errorCode)
@@ -75,6 +77,8 @@ public:
     }
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+    static String getErrorName(ExceptionCode);
+    static ExceptionCode getLegacyErrorCode(ExceptionCode);
 
 private:
     IDBDatabaseException(const ExceptionCodeDescription& description)

@@ -213,8 +213,7 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
     if (!m_databaseCallbacksSet.contains(databaseCallbacks)) {
-        // FIXME: IDBDatabaseError doesn't yet do proper translation of IDB-specific uses of error codes, this should be IDB_ABORT_ERR
-        callbacks->onError(IDBDatabaseError::createWithoutOffset(ABORT_ERR, "Connection was closed before set version transaction was created"));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Connection was closed before set version transaction was created"));
         return;
     }
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {

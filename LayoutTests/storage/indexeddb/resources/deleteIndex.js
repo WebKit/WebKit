@@ -31,10 +31,10 @@ function twiddleIndexes()
     deleteAllObjectStores(db);
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
-    evalAndExpectException("objectStore.deleteIndex('first')", "IDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("objectStore.deleteIndex('first')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     shouldThrow("objectStore.deleteIndex()"); // TypeError: not enough arguments.
     index = evalAndLog("index = objectStore.createIndex('first', 'first');");
-    evalAndExpectException("objectStore.deleteIndex('FIRST')", "IDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("objectStore.deleteIndex('FIRST')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     index = evalAndLog("index = objectStore.createIndex('second', 'second');");
     returnValue = evalAndLog("returnValue = objectStore.deleteIndex('first');");
     shouldBe("returnValue", "undefined");
@@ -42,8 +42,8 @@ function twiddleIndexes()
 
 function postTwiddling()
 {
-    evalAndExpectException("db.createObjectStore('bar');", "IDBDatabaseException.NOT_ALLOWED_ERR");
-    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("db.createObjectStore('bar');", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
     finishJSTest();
 }
 

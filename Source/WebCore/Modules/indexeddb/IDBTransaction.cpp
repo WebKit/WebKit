@@ -118,6 +118,26 @@ IDBDatabase* IDBTransaction::db() const
     return m_database.get();
 }
 
+PassRefPtr<DOMError> IDBTransaction::error(ExceptionCode& ec) const
+{
+    if (!m_transactionFinished) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
+    return m_error;
+}
+
+void IDBTransaction::setError(PassRefPtr<DOMError> error)
+{
+    ASSERT(!m_transactionFinished);
+    ASSERT(error);
+
+    // The first error to be set is the true cause of the
+    // transaction abort.
+    if (!m_error)
+        m_error = error;
+}
+
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
     if (m_transactionFinished) {

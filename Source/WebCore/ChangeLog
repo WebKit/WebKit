@@ -1,3 +1,59 @@
+2012-05-31  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement IDBTransaction.error and IDBRequest.error
+        https://bugs.webkit.org/show_bug.cgi?id=87865
+
+        Reviewed by Tony Chang.
+
+        Added "error" attribute to IDBRequest and IDBTransaction. Update
+        IDBDatabaseError to honor the IDBDatabaseException behavior
+        of dealing with IDB-specific throws of DOMException codes,
+        as per the spec.
+
+        Existing tests which previously tested 'errorCode' and
+        'webkitErrorMessage' have been updated to use the new attribute.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::advance):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        * Modules/indexeddb/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        (WebCore::IDBDatabaseError::code):
+        (WebCore::IDBDatabaseError::idbCode):
+        (WebCore::IDBDatabaseError::name):
+        (WebCore::IDBDatabaseError::IDBDatabaseError):
+        (IDBDatabaseError):
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (WebCore):
+        (WebCore::getErrorEntry):
+        (WebCore::IDBDatabaseException::initializeDescription):
+        (WebCore::IDBDatabaseException::getErrorName):
+        (WebCore::IDBDatabaseException::getLegacyErrorCode):
+        * Modules/indexeddb/IDBDatabaseException.h:
+        (IDBDatabaseException):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::error):
+        (WebCore):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessWithContinuation):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::error):
+        (WebCore):
+        (WebCore::IDBTransaction::setError):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2012-05-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] Assertion failures during compositor startup in lost context situations

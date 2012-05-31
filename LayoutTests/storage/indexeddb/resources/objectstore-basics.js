@@ -76,7 +76,7 @@ function setVersionSuccess(evt)
     // FIXME: test all of object store's methods.
 
     debug("Ask for an index that doesn't exist:");
-    evalAndExpectException("store.index('asdf')", "IDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("store.index('asdf')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     createIndex();
 }
 
@@ -90,7 +90,7 @@ function createIndex()
     shouldBeNonNull("index");
 
     debug("Ask for an index that doesn't exist:");
-    evalAndExpectException("store.index('asdf')", "IDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("store.index('asdf')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     trans.oncomplete = testSetVersionAbort;
 }
 
@@ -176,6 +176,7 @@ function addAgainFailure(evt)
     event = evt;
     debug("addAgainFailure():");
     shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
+    shouldBe("event.target.error.name", "'ConstraintError'");
 
     evalAndLog("event.preventDefault()");
 
@@ -184,7 +185,7 @@ function addAgainFailure(evt)
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     evalAndLog("store.add({x: 'somevalue'}, 'somekey')");
-    evalAndExpectException("store.add({x: 'othervalue'}, null)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.add({x: 'othervalue'}, null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     transaction = evalAndLog("db.transaction(['storeName'], 'readwrite')");
     transaction.onabort = unexpectedErrorCallback;
@@ -244,16 +245,16 @@ function removeSuccessButNotThere(evt)
     var store = evalAndLog("store = event.target.source");
 
     debug("Passing an invalid key into store.get().");
-    evalAndExpectException("store.get({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.get({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("Passing an invalid key into store.delete().");
-    evalAndExpectException("store.delete({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.delete({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("Passing an invalid key into store.add().");
-    evalAndExpectException("store.add(null, {})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.add(null, {})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     debug("Passing an invalid key into store.put().");
-    evalAndExpectException("store.put(null, {})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.put(null, {})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     testPreConditions();
 }
@@ -273,30 +274,30 @@ function testPreConditions()
         debug("");
         debug("IDBObjectStore.put()");
         debug("The object store uses in-line keys and the key parameter was provided.");
-        evalAndExpectException("storeWithInLineKeys.put({key: 1}, 'key')", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithInLineKeys.put({key: 1}, 'key')", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
-        evalAndExpectException("storeWithOutOfLineKeys.put({})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithOutOfLineKeys.put({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.");
-        evalAndExpectException("storeWithInLineKeys.put({key: null})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithInLineKeys.put({key: null})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.");
-        evalAndExpectException("storeWithInLineKeys.put({})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithInLineKeys.put({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The key parameter was provided but does not contain a valid key.");
-        evalAndExpectException("storeWithOutOfLineKeys.put({}, null)", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithOutOfLineKeys.put({}, null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("");
         debug("IDBObjectStore.add()");
         debug("The object store uses in-line keys and the key parameter was provided.");
-        evalAndExpectException("storeWithInLineKeys.add({key: 1}, 'key')", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithInLineKeys.add({key: 1}, 'key')", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
-        evalAndExpectException("storeWithOutOfLineKeys.add({})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithOutOfLineKeys.add({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.");
-        evalAndExpectException("storeWithInLineKeys.add({key: null})", "IDBDatabaseException.DATA_ERR");
+        evalAndExpectException("storeWithInLineKeys.add({key: null})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
         debug("The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.");
         evalAndExpectException("storeWithInLineKeys.add({})", "IDBDatabaseException.DATA_ERR");

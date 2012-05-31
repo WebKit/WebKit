@@ -43,6 +43,7 @@ PASS result is undefined
 Expecting exception from objectStore.get(null)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
+PASS ename is 'DataError'
 runIndexStoreTests()
 index.get(IDBKeyRange.only(3))
 PASS result.x is 3
@@ -63,6 +64,7 @@ PASS result is undefined
 Expecting exception from index.get(null)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
+PASS ename is 'DataError'
 runIndexKeyTests()
 index.getKey(IDBKeyRange.only(3))
 PASS result is 3
@@ -83,6 +85,7 @@ PASS result is undefined
 Expecting exception from index.getKey(null)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
+PASS ename is 'DataError'
 finishJSTest()
 PASS successfullyParsed is true
 

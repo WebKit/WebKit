@@ -157,7 +157,7 @@ function keyPathUpdateCursor()
         return;
     }
 
-    evalAndExpectException("event.target.result.update({id: 100 + counter, number: 100 + counter})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("event.target.result.update({id: 100 + counter, number: 100 + counter})", "IDBDatabaseException.DATA_ERR", "'DataError'");
 
     request = evalAndLog("event.target.result.update({id: counter, number: 100 + counter++})");
     request.onsuccess = function() { evalAndLog("event.target.source.continue()"); };
@@ -197,7 +197,7 @@ function keyCursor()
     shouldBe("event.target.result.primaryKey", "counter");
 
     evalAndExpectException("event.target.result.update({id: counter, number: counter + 200})",
-                           "IDBDatabaseException.NOT_ALLOWED_ERR");
+                           "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
 
     counter++;
     event.target.result.continue();

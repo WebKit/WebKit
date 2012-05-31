@@ -20,6 +20,7 @@ db.close()
 Expecting exception from db.transaction(['store'], 'readwrite')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 
 verify that we can reopen the db after calling close
 indexedDB.open('transaction-after-close')

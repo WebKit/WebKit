@@ -1,3 +1,16 @@
+2012-05-31  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement IDBTransaction.error and IDBRequest.error
+        https://bugs.webkit.org/show_bug.cgi?id=87865
+
+        Reviewed by Tony Chang.
+
+        IDBDatabaseError now honors IDB-specific DOMException codes,
+        so make sure that's how they are passed to/from chromium.
+
+        * src/WebIDBDatabaseError.cpp:
+        (WebKit::WebIDBDatabaseError::assign):
+
 2012-05-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] Assertion failures during compositor startup in lost context situations

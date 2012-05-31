@@ -13,21 +13,25 @@ Deleted all object stores.
 objectStore = db.createObjectStore('foo');
 Expecting exception from objectStore.deleteIndex('first')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NOT_FOUND_ERR
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
 PASS objectStore.deleteIndex() threw exception TypeError: Not enough arguments.
 index = objectStore.createIndex('first', 'first');
 Expecting exception from objectStore.deleteIndex('FIRST')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NOT_FOUND_ERR
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
 index = objectStore.createIndex('second', 'second');
 returnValue = objectStore.deleteIndex('first');
 PASS returnValue is undefined
 Expecting exception from db.createObjectStore('bar');
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS ename is 'NotAllowedError'
 Expecting exception from objectStore.deleteIndex('second')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS ename is 'TransactionInactiveError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

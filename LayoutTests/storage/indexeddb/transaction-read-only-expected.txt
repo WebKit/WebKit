@@ -16,16 +16,19 @@ trans = db.transaction('store')
 Expecting exception from trans.objectStore('store').put('a', 'b')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS ename is 'ReadOnlyError'
 trans = db.transaction('store')
 Expecting exception from trans.objectStore('store').delete('x')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS ename is 'ReadOnlyError'
 trans = db.transaction('store')
 cur = trans.objectStore('store').openCursor()
 PASS !event.target.result is false
 Expecting exception from event.target.result.delete()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS ename is 'ReadOnlyError'
 PASS successfullyParsed is true
 
 TEST COMPLETE
