@@ -164,7 +164,11 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_pageScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    , m_layerHostingMode(LayerHostingModeInWindowServer)
+#else
     , m_layerHostingMode(LayerHostingModeDefault)
+#endif
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
