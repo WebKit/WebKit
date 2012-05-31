@@ -1,3 +1,26 @@
+2012-05-31  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Crash when destroying WebOverlay with active WebOverlayOverride
+        https://bugs.webkit.org/show_bug.cgi?id=87968
+
+        Reviewed by Rob Buis.
+
+        The override object is using a compositing thread WebOverlayPrivate
+        object with no client because the layer doesn't delegate drawing to the
+        WebOverlayPrivate, it's only used to modify the override properties on
+        the underlying compositing thread layer.
+
+        Since the m_layerCompositingThreadClient is optional, we have to add
+        null checks.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setClient):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setDrawsContent):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::invalidate):
+
 2012-05-31  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] WebKit's fullscreen mode needs to notify page client.

@@ -493,13 +493,15 @@ WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread()
 
 WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread()
 {
-    m_layerCompositingThreadClient->setClient(0, 0);
+    if (m_layerCompositingThreadClient)
+        m_layerCompositingThreadClient->setClient(0, 0);
 }
 
 void WebOverlayPrivateCompositingThread::setClient(WebOverlayClient* client)
 {
     WebOverlayPrivate::setClient(client);
-    m_layerCompositingThreadClient->setClient(q, client);
+    if (m_layerCompositingThreadClient)
+        m_layerCompositingThreadClient->setClient(q, client);
 }
 
 WebOverlayOverride* WebOverlayPrivateCompositingThread::override()
@@ -614,6 +616,9 @@ void WebOverlayPrivateCompositingThread::removeFromParent()
 
 void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char* data, const IntSize& imageSize)
 {
+    if (!m_layerCompositingThreadClient)
+        return;
+
     const SkBitmap& oldContents = m_layerCompositingThreadClient->contents();
     if (!oldContents.isNull()) {
         SkAutoLockPixels lock(oldContents);
@@ -631,12 +636,18 @@ void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char*
 
 void WebOverlayPrivateCompositingThread::setContentsToColor(const Color& color)
 {
+    if (!m_layerCompositingThreadClient)
+        return;
+
     m_layerCompositingThreadClient->setContentsToColor(color);
     m_layerCompositingThread->setNeedsTexture(true);
 }
 
 void WebOverlayPrivateCompositingThread::setDrawsContent(bool drawsContent)
 {
+    if (!m_layerCompositingThreadClient)
+        return;
+
     m_layerCompositingThreadClient->setDrawsContent(drawsContent);
     m_layerCompositingThread->setNeedsTexture(true);
 }
@@ -648,7 +659,7 @@ void WebOverlayPrivateCompositingThread::clear()
 
 void WebOverlayPrivateCompositingThread::invalidate()
 {
-    if (!m_layerCompositingThreadClient->drawsContent())
+    if (!m_layerCompositingThreadClient || !m_layerCompositingThreadClient->drawsContent())
         return;
 
     m_layerCompositingThreadClient->invalidate();
