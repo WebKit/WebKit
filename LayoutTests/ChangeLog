@@ -1,3 +1,13 @@
+2012-05-31  Ulan Degenbaev  <ulan@chromium.org>
+
+        [v8] Fix bug reference in array-override-set.html test
+        https://bugs.webkit.org/show_bug.cgi?id=87952
+
+        Reviewed by Abhishek Arya.
+
+        * fast/canvas/webgl/array-override-set-expected.txt:
+        * fast/canvas/webgl/array-override-set.html:
+
 2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Unreviewed. Added FAIL expectation due to test consistently failing.
