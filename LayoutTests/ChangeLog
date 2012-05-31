@@ -1,5 +1,15 @@
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
+        [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild
+        when running media/media-volume-slider-rendered-below.html
+        https://bugs.webkit.org/show_bug.cgi?id=87450
+
+        Add the test to the Windows Skipped list to get the bots greener.
+
+        * platform/win/Skipped:
+
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
         10 W3C video and audio canPlayType tests are failing on Mac and Win
         https://bugs.webkit.org/show_bug.cgi?id=75184
 

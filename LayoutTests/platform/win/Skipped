@@ -1808,3 +1808,7 @@ fast/js/names.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
 plugins/npruntime/delete-plugin-within-setProperty.html
+
+# [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild
+# https://bugs.webkit.org/show_bug.cgi?id=87450
+media/media-volume-slider-rendered-below.html
