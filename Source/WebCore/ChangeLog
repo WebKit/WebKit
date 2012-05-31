@@ -1,3 +1,58 @@
+2012-05-31  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Fix checkbox position on Settings screen.
+        https://bugs.webkit.org/show_bug.cgi?id=87007
+
+        Reviewed by Yury Semikhatsky.
+
+        Checkbox seems to be improperly aligned.
+        It is "shifted" up on 1px on Mac and 2px on Linux.
+        Also, keyboard-shortcuts screen has "wrapped" key descriptions on Mac.
+
+        UI changes, no new tests.
+
+        * inspector/front-end/helpScreen.css:
+        (.help-container): Fixed column width.
+        (.help-block): Ditto.
+        (.help-key-cell): Ditto.
+        (body.platform-mac .help-container): Ditto.
+        (body.platform-mac .help-block): Ditto.
+        (body.platform-mac .help-key-cell): Ditto.
+        (.help-content p): Ajdusted spacing between lines
+        (.help-content input[type=checkbox]): Fixed alignment.
+        (body.platform-mac .help-content input[type=checkbox]): Ditto.
+        (.help-content input[type=radio]): Fixed alignment.
+        (body.platform-mac .help-content input[type=radio]): Ditto.
+
+2012-05-30  Andreas Kling  <kling@webkit.org>
+
+        Have StylePropertySet constructor take array/length instead of vector.
+        <http://webkit.org/b/87876>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the StylePropertyVector typedef and have StylePropertySet constructors
+        take CSSProperty*/length since we are copying the data into a tightly packed
+        array anyway. This frees up the call sites to use whatever storage they please
+        rather than being restricted to a vector with inlineCapacity=4.
+
+        Change said call sites to use an arbitrary high inline capacity (256) for their
+        stack-allocated temporary vectors.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        * css/CSSParser.cpp:
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::createImmutable):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::copyPropertiesInSet):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::create):
+        (StylePropertySet):
+
 2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)

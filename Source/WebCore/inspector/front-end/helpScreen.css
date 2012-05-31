@@ -109,13 +109,21 @@ body:not(.platform-mac) .help-close-button {
 .help-container {
     width: 100%;
     -webkit-user-select: auto;
-    -webkit-column-width: 480px;
+    -webkit-column-width: 470px;
+}
+
+body.platform-mac .help-container {
+    -webkit-column-width: 330px;
 }
 
 .help-block {
     display: inline-block;
-    width: 480px;
+    width: 470px;
     padding-bottom: 9px;
+}
+
+body.platform-mac .help-block {
+    width: 330px;
 }
 
 #settings.help-container {
@@ -132,8 +140,12 @@ body:not(.platform-mac) .help-close-button {
 
 .help-key-cell {
     display: inline-block;
-    width: 280px;
+    width: 270px;
     text-align: right;
+}
+
+body.platform-mac .help-key-cell {
+    width: 120px;
 }
 
 .help-cell {
@@ -168,7 +180,7 @@ body.platform-mac .help-key {
 }
 
 .help-content p {
-    margin: 0 0 3px 0;
+    margin: 3px 0;
 }
 
 .help-content fieldset {
@@ -181,7 +193,6 @@ body.platform-mac .help-key {
     margin: 0 0 0 6px;
     padding-left: 3px;
 }
-
 
 .help-content fieldset label {
     padding-right: 4px;
@@ -206,8 +217,20 @@ body.platform-mac .help-key {
 .help-content input[type=checkbox] {
     height: 13px;
     width: 13px;
-    margin-left: 0;
-    margin-right: 4px;
+    margin: 0 4px 0 0;
+    vertical-align: -2px;
+}
+
+body.platform-mac .help-content input[type=checkbox] {
+    vertical-align: -1px;
+}
+
+.help-content input[type=radio] {
+    vertical-align: -2px;
+}
+
+body.platform-mac .help-content input[type=radio] {
+    vertical-align: -1px;
 }
 
 .help-content select {
@@ -252,7 +275,8 @@ body:not(.compact) #settings-screen .tabbed-pane {
 }
 
 #settings-screen .help-close-button {
-    margin: 6px 0;
+    margin-top: 6px;
+    margin-bottom: 6px;
 }
 
 #settings-screen .tabbed-pane-header-tab.selected {
