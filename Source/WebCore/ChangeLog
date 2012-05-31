@@ -1,3 +1,79 @@
+2012-05-31  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        The difference between a column and a column group renderer is badly drawn
+        https://bugs.webkit.org/show_bug.cgi?id=87556
+
+        Reviewed by Abhishek Arya.
+
+        No expected change in behavior.
+
+        This patch tries to draw a better line between those 3 concepts:
+        - renderer is a RenderTableCol (RenderObject::isRenderTableCol).
+        - renderer is a column (RenderTableCol::isTableColumn()).
+        - renderer is a column group (RenderTableCol::isTableColumnGroup()).
+        (most of the code that needs to know the difference manipulate a RenderTableCol
+        so there was no need to move the 2 last helpers into RenderObject)
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        Factored the code to use the column / column group iteration we
+        set up in the rest of the code. Made the code more self-describing
+        by using more RenderTableCol functions.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        Factored the code to use the isTableColumn() and isTableColumnGroup() to
+        better underline what we check.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderTableCol):
+        (WebCore::RenderObject::isTablePart):
+        Renamed isTableCol to isRenderTableCol to match the class as this doesn't
+        imply that the renderer is actually a column.
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::fullRecalc):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::firstColumn):
+        Updated after the isRenderTableCol rename.
+
+        * dom/Text.cpp:
+        (WebCore::Text::rendererIsNeeded):
+        * editing/htmlediting.cpp:
+        (WebCore::isTableStructureNode):
+        Ditto and renamed some variables.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::rendererIsNeeded):
+        Ditto and added a FIXME as the logic doesn't seem very bullet proof.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder):
+        Changed to use the enclosingColumnGroup* helpers.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintCell):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::isChildAllowed):
+        (WebCore::RenderTableCol::canHaveChildren):
+        (WebCore::RenderTableCol::enclosingColumnGroup):
+        (WebCore::RenderTableCol::nextColumn):
+        Updated to use the new functions.
+
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::isTableColumn):
+        (WebCore::RenderTableCol::isTableColumnGroup):
+        (WebCore::RenderTableCol::enclosingColumnGroupIfAdjacentBefore):
+        (WebCore::RenderTableCol::enclosingColumnGroupIfAdjacentAfter):
+        Added the following new helpers.
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         Fix Lion build after r119073.

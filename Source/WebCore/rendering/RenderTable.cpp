@@ -119,7 +119,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (child->isTableCaption()) {
         m_captions.append(toRenderTableCaption(child));
         wrapInAnonymousSection = false;
-    } else if (child->isTableCol()) {
+    } else if (child->isRenderTableCol()) {
         m_hasColElements = true;
         wrapInAnonymousSection = false;
     } else if (child->isTableSection()) {
@@ -360,7 +360,7 @@ void RenderTable::layout()
             if (collapsing)
                 section->recalcOuterBorder();
             ASSERT(!section->needsLayout());
-        } else if (child->isTableCol()) {
+        } else if (child->isRenderTableCol()) {
             child->layoutIfNeeded();
             ASSERT(!child->needsLayout());
         }
@@ -729,7 +729,7 @@ void RenderTable::appendColumn(unsigned span)
 RenderTableCol* RenderTable::firstColumn() const
 {
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableCol())
+        if (child->isRenderTableCol())
             return toRenderTableCol(child);
 
         // We allow only table-captions before columns or column-groups.

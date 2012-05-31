@@ -345,7 +345,7 @@ public:
     virtual bool isSliderThumb() const { return false; }
     virtual bool isTable() const { return false; }
     virtual bool isTableCell() const { return false; }
-    virtual bool isTableCol() const { return false; }
+    virtual bool isRenderTableCol() const { return false; }
     virtual bool isTableCaption() const { return false; }
     virtual bool isTableRow() const { return false; }
     virtual bool isTableSection() const { return false; }
@@ -376,7 +376,7 @@ public:
 
     bool isHTMLMarquee() const;
 
-    bool isTablePart() const { return isTableCell() || isTableCol() || isTableCaption() || isTableRow() || isTableSection(); }
+    bool isTablePart() const { return isTableCell() || isRenderTableCol() || isTableCaption() || isTableRow() || isTableSection(); }
 
     inline bool isBeforeContent() const;
     inline bool isAfterContent() const;

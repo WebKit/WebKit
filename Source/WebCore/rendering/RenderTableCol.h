@@ -45,6 +45,24 @@ public:
     void setSpan(unsigned span) { m_span = span; }
 
     bool isTableColumnGroupWithColumnChildren() { return firstChild(); }
+    bool isTableColumn() const { return style()->display() == TABLE_COLUMN; }
+    bool isTableColumnGroup() const { return style()->display() == TABLE_COLUMN_GROUP; }
+
+    RenderTableCol* enclosingColumnGroup() const;
+    RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const
+    {
+        if (previousSibling())
+            return 0;
+        return enclosingColumnGroup();
+    }
+
+    RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const
+    {
+        if (nextSibling())
+            return 0;
+        return enclosingColumnGroup();
+    }
+
 
     // Returns the next column or column-group.
     RenderTableCol* nextColumn() const;
@@ -54,7 +72,7 @@ private:
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
     virtual const char* renderName() const { return "RenderTableCol"; }
-    virtual bool isTableCol() const { return true; }
+    virtual bool isRenderTableCol() const OVERRIDE { return true; }
     virtual void updateFromElement();
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
@@ -74,13 +92,13 @@ private:
 
 inline RenderTableCol* toRenderTableCol(RenderObject* object)
 {
-    ASSERT(!object || object->isTableCol());
+    ASSERT(!object || object->isRenderTableCol());
     return static_cast<RenderTableCol*>(object);
 }
 
 inline const RenderTableCol* toRenderTableCol(const RenderObject* object)
 {
-    ASSERT(!object || object->isTableCol());
+    ASSERT(!object || object->isRenderTableCol());
     return static_cast<const RenderTableCol*>(object);
 }
 

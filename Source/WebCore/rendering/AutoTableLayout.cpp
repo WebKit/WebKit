@@ -50,7 +50,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* maxContributor = 0;
 
     for (RenderObject* child = m_table->firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableCol())
+        if (child->isRenderTableCol())
             toRenderTableCol(child)->computePreferredLogicalWidths();
         else if (child->isTableSection()) {
             RenderTableSection* section = toRenderTableSection(child);
@@ -148,21 +148,19 @@ void AutoTableLayout::fullRecalc()
     m_layoutStruct.fill(Layout());
     m_spanCells.fill(0);
 
-    RenderObject* child = m_table->firstChild();
     Length groupLogicalWidth;
     unsigned currentColumn = 0;
-    while (child && child->isTableCol()) {
-        RenderTableCol* col = toRenderTableCol(child);
-        unsigned span = col->span();
-        if (col->firstChild())
-            groupLogicalWidth = col->style()->logicalWidth();
+    for (RenderTableCol* column = m_table->firstColumn(); column; column = column->nextColumn()) {
+        if (column->isTableColumnGroupWithColumnChildren())
+            groupLogicalWidth = column->style()->logicalWidth();
         else {
-            Length colLogicalWidth = col->style()->logicalWidth();
+            Length colLogicalWidth = column->style()->logicalWidth();
             if (colLogicalWidth.isAuto())
                 colLogicalWidth = groupLogicalWidth;
             if ((colLogicalWidth.isFixed() || colLogicalWidth.isPercent()) && colLogicalWidth.isZero())
                 colLogicalWidth = Length();
             unsigned effCol = m_table->colToEffCol(currentColumn);
+            unsigned span = column->span();
             if (!colLogicalWidth.isAuto() && span == 1 && effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
                 m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
                 if (colLogicalWidth.isFixed() && m_layoutStruct[effCol].maxLogicalWidth < colLogicalWidth.value())
@@ -171,14 +169,9 @@ void AutoTableLayout::fullRecalc()
             currentColumn += span;
         }
 
-        RenderObject* next = child->firstChild();
-        if (!next)
-            next = child->nextSibling();
-        if (!next && child->parent()->isTableCol()) {
-            next = child->parent()->nextSibling();
+        // For the last column in a column-group, we invalidate our group logical width.
+        if (column->isTableColumn() && !column->nextSibling())
             groupLogicalWidth = Length();
-        }
-        child = next;
     }
 
     for (unsigned i = 0; i < nEffCols; i++)

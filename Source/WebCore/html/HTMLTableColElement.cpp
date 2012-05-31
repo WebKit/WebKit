@@ -66,11 +66,11 @@ void HTMLTableColElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == spanAttr) {
         m_span = !attribute.isNull() ? attribute.value().toInt() : 1;
-        if (renderer() && renderer()->isTableCol())
+        if (renderer() && renderer()->isRenderTableCol())
             renderer()->updateFromElement();
     } else if (attribute.name() == widthAttr) {
         if (!attribute.isEmpty()) {
-            if (renderer() && renderer()->isTableCol()) {
+            if (renderer() && renderer()->isRenderTableCol()) {
                 RenderTableCol* col = toRenderTableCol(renderer());
                 int newWidth = width().toInt();
                 if (newWidth != col->width())

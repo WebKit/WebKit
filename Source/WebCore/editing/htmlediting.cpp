@@ -371,8 +371,8 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
 
 bool isTableStructureNode(const Node *node)
 {
-    RenderObject *r = node->renderer();
-    return (r && (r->isTableCell() || r->isTableRow() || r->isTableSection() || r->isTableCol()));
+    RenderObject* renderer = node->renderer();
+    return (renderer && (renderer->isTableCell() || renderer->isTableRow() || renderer->isTableSection() || renderer->isRenderTableCol()));
 }
 
 const String& nonBreakingSpaceString()

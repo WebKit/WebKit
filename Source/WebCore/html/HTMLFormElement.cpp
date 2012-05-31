@@ -112,10 +112,11 @@ bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
 
     ContainerNode* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
+    // FIXME: Shouldn't we also check for table caption (see |formIsTablePart| below).
     bool parentIsTableElementPart = (parentRenderer->isTable() && node->hasTagName(tableTag))
         || (parentRenderer->isTableRow() && node->hasTagName(trTag))
         || (parentRenderer->isTableSection() && node->hasTagName(tbodyTag))
-        || (parentRenderer->isTableCol() && node->hasTagName(colTag))
+        || (parentRenderer->isRenderTableCol() && node->hasTagName(colTag))
         || (parentRenderer->isTableCell() && node->hasTagName(trTag));
 
     if (!parentIsTableElementPart)

@@ -450,8 +450,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
         result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderStart(), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
         if (!result.exists())
             return result;
-        if (colElt->parent()->isTableCol() && !colElt->previousSibling()) {
-            result = chooseBorder(result, CollapsedBorderValue(colElt->parent()->style()->borderStart(), includeColor ? colElt->parent()->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+        if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentBefore()) {
+            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderStart(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
         }
@@ -524,8 +524,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
         result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderEnd(), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL));
         if (!result.exists())
             return result;
-        if (colElt->parent()->isTableCol() && !colElt->nextSibling()) {
-            result = chooseBorder(result, CollapsedBorderValue(colElt->parent()->style()->borderEnd(), includeColor ? colElt->parent()->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
+        if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentAfter()) {
+            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderEnd(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
         }
@@ -620,8 +620,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
             result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderBefore(), includeColor ? colElt->style()->visitedDependentColor(beforeColorProperty) : Color(), BCOL));
             if (!result.exists())
                 return result;
-            if (colElt->parent()->isTableCol()) {
-                result = chooseBorder(result, CollapsedBorderValue(colElt->parent()->style()->borderBefore(), includeColor ? colElt->parent()->style()->visitedDependentColor(beforeColorProperty) : Color(), BCOLGROUP));
+            if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroup()) {
+                result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderBefore(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(beforeColorProperty) : Color(), BCOLGROUP));
                 if (!result.exists())
                     return result;
             }
@@ -697,8 +697,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
         if (colElt) {
             result = chooseBorder(result, CollapsedBorderValue(colElt->style()->borderAfter(), includeColor ? colElt->style()->visitedDependentColor(afterColorProperty) : Color(), BCOL));
             if (!result.exists()) return result;
-            if (colElt->parent()->isTableCol()) {
-                result = chooseBorder(result, CollapsedBorderValue(colElt->parent()->style()->borderAfter(), includeColor ? colElt->parent()->style()->visitedDependentColor(afterColorProperty) : Color(), BCOLGROUP));
+            if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroup()) {
+                result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->style()->borderAfter(), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(afterColorProperty) : Color(), BCOLGROUP));
                 if (!result.exists())
                     return result;
             }
