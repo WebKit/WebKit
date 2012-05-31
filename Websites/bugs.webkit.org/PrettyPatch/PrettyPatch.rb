@@ -98,7 +98,7 @@ private
         Websites
     ]
 
-    IMAGE_CHECKSUM_ERROR = "<p>INVALID: Image lacks a checksum. This will fail with a MISSING error in run-webkit-tests. Always generate new png files using run-webkit-tests.</p>"
+    IMAGE_CHECKSUM_ERROR = "INVALID: Image lacks a checksum. This will fail with a MISSING error in run-webkit-tests. Always generate new png files using run-webkit-tests."
 
     def self.normalize_line_ending(s)
         s.gsub /\r\n?/, "\n"
@@ -578,11 +578,15 @@ EOF
             if not @image_url then
                 return "<span class='text'>Image file removed</span>"
             end
-            image_snippet = "<img class='image' src='" + @image_url + "' />"
-            if not @image_checksum then
-                return IMAGE_CHECKSUM_ERROR + image_snippet
+
+            image_checksum = ""
+            if @image_checksum
+                image_checksum = @image_checksum
+            elsif @filename.include? "-expected.png"
+                image_checksum = IMAGE_CHECKSUM_ERROR
             end
-            return "<p>" + @image_checksum + "</p>" + image_snippet
+
+            return "<p>" + image_checksum + "</p><img class='image' src='" + @image_url + "' />"
         end
 
         def to_html
@@ -602,10 +606,13 @@ EOF
                         str += "<p class=\"#{style}\">"
 
                         if image_checksum
-                            str += image_checksum + "<br>"
-                        else
-                            str += IMAGE_CHECKSUM_ERROR + "<br>"
+                            str += image_checksum
+                        elsif @filename.include? "-expected.png"
+                            str += IMAGE_CHECKSUM_ERROR
                         end
+
+                        str += "<br>"
+
                         if image_url
                             str += "<img class='image' src='" + image_url + "' />"
                         else

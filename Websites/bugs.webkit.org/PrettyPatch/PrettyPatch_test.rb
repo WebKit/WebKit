@@ -69,7 +69,6 @@ class PrettyPatch_test < Test::Unit::TestCase
 
     def test_images_without_checksum
         pretty = check_one_patch(144064, ["Images without checksums", 10, 5, 4, 8])
-        puts pretty
         matches = pretty.match("INVALID: Image lacks a checksum.")
         assert(matches, "Should have invalid checksums")
         # FIXME: This should only have 4 invalid images, but git apply needs an actual copy of the before binary
@@ -77,4 +76,17 @@ class PrettyPatch_test < Test::Unit::TestCase
         # thought to have no checksum, instead of the 4 images that actually don't have a checksum.
         assert_equal(10, pretty.scan(/INVALID\: Image lacks a checksum\./).size)
     end
+
+    def test_images_correctly_without_checksum_git
+        pretty = check_one_patch(101620, ["Images correctly without checksums git", 7, 15, 10, 26])
+        matches = pretty.match("INVALID: Image lacks a checksum.")
+        assert(!matches, "Png should lack a checksum without an error.")
+    end
+
+    def test_images_correctly_without_checksum_svn
+        pretty = check_one_patch(31202, ["Images correctly without checksums svn", 4, 4, 1, 4])
+        matches = pretty.match("INVALID: Image lacks a checksum.")
+        assert(!matches, "Png should lack a checksum without an error.")
+    end
+
 end

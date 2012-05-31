@@ -1,3 +1,13 @@
+2012-05-30  Ojan Vafai  <ojan@chromium.org>
+
+        Only include the image checksum error in pretty-diffs for -expected.png files.
+        https://bugs.webkit.org/show_bug.cgi?id=87881
+
+        Reviewed by Tony Chang.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
 2012-05-29  Ojan Vafai  <ojan@chromium.org>
 
         Show an error in the pretty diff when an image lacks a checksum
