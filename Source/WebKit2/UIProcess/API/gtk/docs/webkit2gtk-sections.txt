@@ -348,6 +348,7 @@ webkit_window_properties_get_type
 <SECTION>
 <FILE>WebKitDownload</FILE>
 WebKitDownload
+webkit_download_get_request
 webkit_download_get_destination
 webkit_download_set_destination
 webkit_download_get_response

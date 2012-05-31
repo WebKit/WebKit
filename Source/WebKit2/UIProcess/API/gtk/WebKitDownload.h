@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitURIResponse.h>
 
 G_BEGIN_DECLS
@@ -56,6 +57,9 @@ struct _WebKitDownloadClass {
 
 WEBKIT_API GType
 webkit_download_get_type               (void);
+
+WEBKIT_API WebKitURIRequest *
+webkit_download_get_request            (WebKitDownload *download);
 
 WEBKIT_API const gchar *
 webkit_download_get_destination        (WebKitDownload *download);

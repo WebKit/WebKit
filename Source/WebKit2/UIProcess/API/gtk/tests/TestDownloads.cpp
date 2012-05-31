@@ -88,6 +88,7 @@ public:
 
     static void downloadStartedCallback(WebKitWebContext* context, WebKitDownload* download, DownloadTest* test)
     {
+        g_assert(webkit_download_get_request(download));
         test->started(download);
         g_signal_connect(download, "notify::response", G_CALLBACK(receivedResponseCallback), test);
         g_signal_connect(download, "created-destination", G_CALLBACK(createdDestinationCallback), test);
@@ -190,6 +191,10 @@ static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, DownloadTest::CreatedDestination);
     g_assert_cmpint(events[3], ==, DownloadTest::ReceivedData);
     g_assert_cmpint(events[4], ==, DownloadTest::Finished);
+
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    g_assert(request);
+    g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, sourceURI.get());
 
     g_assert_cmpint(test->m_downloadSize, ==, g_file_info_get_size(sourceInfo.get()));
     g_assert(webkit_download_get_destination(download.get()));
@@ -327,6 +332,11 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
     g_assert_cmpint(events[3], ==, DownloadTest::ReceivedData);
     g_assert_cmpint(events[4], ==, DownloadTest::Finished);
     events.clear();
+
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    g_assert(request);
+    CString requestURI = kServer->getURIForPath("/test.pdf");
+    g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, requestURI.data());
 
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);

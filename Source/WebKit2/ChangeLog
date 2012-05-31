@@ -1,5 +1,21 @@
 2012-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add webkit_download_get_request to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=87957
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_get_request): Return the WebKitURIRequest
+        representing the request that originated the download.
+        * UIProcess/API/gtk/WebKitDownload.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+        (testDownloadLocalFile):
+        (testDownloadRemoteFile):
+
+2012-05-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] WebProcess crashes when a download is started from an existing ResourceHandle
         https://bugs.webkit.org/show_bug.cgi?id=87953
 

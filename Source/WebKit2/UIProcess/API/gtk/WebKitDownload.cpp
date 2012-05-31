@@ -20,8 +20,10 @@
 #include "config.h"
 #include "WebKitDownload.h"
 
+#include "DownloadProxy.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitMarshal.h"
+#include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceResponse.h>
@@ -53,6 +55,7 @@ enum {
 struct _WebKitDownloadPrivate {
     WKRetainPtr<WKDownloadRef> wkDownload;
 
+    GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
     CString destinationURI;
     guint64 currentSize;
@@ -357,6 +360,25 @@ void webkitDownloadDestinationCreated(WebKitDownload* download, const CString& d
         return;
     gboolean returnValue;
     g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.data(), &returnValue);
+}
+
+/**
+ * webkit_download_get_request:
+ * @download: a #WebKitDownload
+ *
+ * Retrieves the #WebKitURIRequest object that backs the download
+ * process.
+ *
+ * Returns: (transfer none): the #WebKitURIRequest of @download
+ */
+WebKitURIRequest* webkit_download_get_request(WebKitDownload* download)
+{
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
+
+    WebKitDownloadPrivate* priv = download->priv;
+    if (!priv->request)
+        priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(priv->wkDownload.get())->request()));
+    return download->priv->request.get();
 }
 
 /**
