@@ -1,3 +1,17 @@
+2012-05-30  Kent Tamura  <tkent@chromium.org>
+
+        Form controls in <fieldset disabled> should not be focusable.
+        https://bugs.webkit.org/show_bug.cgi?id=87380
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/fieldset/fieldset-disabled-expected.txt:
+        * fast/forms/fieldset/fieldset-disabled.html:
+        Updated because disabled controls are not focusable.
+        Also, remove testing elements to remove unnecessary blank lines.
+        * fast/forms/fieldset/focus-in-fieldset-disabled-expected.txt: Added.
+        * fast/forms/fieldset/focus-in-fieldset-disabled.html: Added.
+
 2012-05-30  Hayato Ito  <hayato@chromium.org>
 
         Fix a composed-shadow-tree-walker.html so that it uses correct selectors.

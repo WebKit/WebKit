@@ -70,7 +70,7 @@ shouldBe('parserGeneratedInput1.value', '"L"');
 shouldBe('parserGeneratedInput2.value', '"M"');
 shouldBe('parserGeneratedInput3.value', '"NO"');
 shouldBe('parserGeneratedInput4.value', '""');
-shouldBe('parserGeneratedInput5.value', '"P"');
+shouldBe('parserGeneratedInput5.value', '"PQRST"');
 shouldBe('parserGeneratedInput6.value', '""');
 shouldBe('parserGeneratedInput7.value', '""');
 shouldBe('parserGeneratedInput8.value', '""');
@@ -197,7 +197,7 @@ outerTextInput.focus();
 document.execCommand('insertText', false, 'G');
 innerTextInput.focus();
 document.execCommand('insertText', false, 'G');
-shouldBe('outerTextInput.value', '"FG"');
+shouldBe('outerTextInput.value', '"FGG"');
 shouldBe('innerTextInput.value', '"F"');
 
 debug('Enabling the inner and disabling the outer fieldset.');
@@ -209,7 +209,7 @@ outerTextInput.focus();
 document.execCommand('insertText', false, 'H');
 innerTextInput.focus();
 document.execCommand('insertText', false, 'H');
-shouldBe('outerTextInput.value', '"FG"');
+shouldBe('outerTextInput.value', '"FGG"');
 shouldBe('innerTextInput.value', '"F"');
 
 debug('Disabling both fieldset elements.');
@@ -221,7 +221,7 @@ outerTextInput.focus();
 document.execCommand('insertText', false, 'H');
 innerTextInput.focus();
 document.execCommand('insertText', false, 'H');
-shouldBe('outerTextInput.value', '"FG"');
+shouldBe('outerTextInput.value', '"FGG"');
 shouldBe('innerTextInput.value', '"F"');
 
 debug('Enabling both fieldset elements.');
@@ -233,7 +233,7 @@ outerTextInput.focus();
 document.execCommand('insertText', false, 'H');
 innerTextInput.focus();
 document.execCommand('insertText', false, 'H');
-shouldBe('outerTextInput.value', '"FGH"');
+shouldBe('outerTextInput.value', '"FGGH"');
 shouldBe('innerTextInput.value', '"FH"');
 
 
@@ -260,7 +260,7 @@ firstLegendTextInput.focus();
 document.execCommand('insertText', false, 'I');
 secondLegendTextInput.focus()
 document.execCommand('insertText', false, 'I');
-shouldBe('firstLegendTextInput.value', '"I"');
+shouldBe('firstLegendTextInput.value', '"II"');
 shouldBe('secondLegendTextInput.value', '""');
 
 debug('Insert another legend element before the currently first one, and check again.');
@@ -275,8 +275,8 @@ firstLegendTextInput.focus();
 document.execCommand('insertText', false, 'J');
 secondLegendTextInput.focus()
 document.execCommand('insertText', false, 'J');
-shouldBe('insertedLegendTextInput.value', '"J"');
-shouldBe('firstLegendTextInput.value', '"I"');
+shouldBe('insertedLegendTextInput.value', '"JJJ"');
+shouldBe('firstLegendTextInput.value', '"II"');
 shouldBe('secondLegendTextInput.value', '""');
 
 debug('Enable the fieldset again and check for sanity.');
@@ -288,10 +288,14 @@ firstLegendTextInput.focus();
 document.execCommand('insertText', false, 'K');
 secondLegendTextInput.focus()
 document.execCommand('insertText', false, 'K');
-shouldBe('insertedLegendTextInput.value', '"JK"');
-shouldBe('firstLegendTextInput.value', '"IK"');
+shouldBe('insertedLegendTextInput.value', '"JJJK"');
+shouldBe('firstLegendTextInput.value', '"IIK"');
 shouldBe('secondLegendTextInput.value', '"K"');
 
+document.body.removeChild(document.getElementsByTagName('form')[0]);
+document.body.removeChild(fieldSet);
+document.body.removeChild(outerFieldSet);
+document.body.removeChild(legendFieldSet);
 var successfullyParsed = true;
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>

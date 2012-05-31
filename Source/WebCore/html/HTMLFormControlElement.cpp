@@ -318,7 +318,7 @@ void HTMLFormControlElement::didRecalcStyle(StyleChange)
 
 bool HTMLFormControlElement::supportsFocus() const
 {
-    return !m_disabled;
+    return !disabled();
 }
 
 bool HTMLFormControlElement::isFocusable() const

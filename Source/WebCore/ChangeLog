@@ -1,3 +1,17 @@
+2012-05-30  Kent Tamura  <tkent@chromium.org>
+
+        Form controls in <fieldset disabled> should not be focusable.
+        https://bugs.webkit.org/show_bug.cgi?id=87380
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/fieldset/focus-in-fieldset-disabled.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::supportsFocus):
+        Refer to disabled() instead of m_disabled to take account of wrapping
+        fieldset elements.
+
 2012-05-30  Robin Dunn  <robin@alldunn.com>
 
         [wx] Implement HTML clipboard support.
