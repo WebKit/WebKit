@@ -758,7 +758,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         if (overlapMap)
             overlapMap->pushCompositingContainer();
 
-        if (hasNonAffineTransform(layer->renderer()) || isRunningAcceleratedTransformAnimation(layer->renderer())) {
+        if (layer->has3DTransform() || isRunningAcceleratedTransformAnimation(layer->renderer())) {
             // If we have a 3D transform, or are animating transform, then turn overlap testing off.
             childState.m_testingOverlap = false;
         }
@@ -1748,17 +1748,6 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return false;
 
     return true;
-}
-
-bool RenderLayerCompositor::hasNonAffineTransform(RenderObject* renderer) const
-{
-    if (!renderer->hasTransform())
-        return false;
-    
-    if (TransformationMatrix* transform = toRenderBoxModelObject(renderer)->layer()->transform())
-        return !transform->isAffine();
-    
-    return false;
 }
 
 bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderObject* renderer) const
