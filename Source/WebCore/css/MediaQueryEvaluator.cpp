@@ -45,6 +45,7 @@
 #include "PlatformScreen.h"
 #include "RenderView.h"
 #include "RenderStyle.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include <wtf/HashMap.h>
 
@@ -534,6 +535,66 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     if (!value)
         return true;
     return Page::stringToViewMode(static_cast<CSSPrimitiveValue*>(value)->getStringValue()) == frame->page()->viewMode();
+}
+
+enum PointerDeviceType { TouchPointer, MousePointer, NoPointer, UnknownPointer };
+
+static PointerDeviceType leastCapablePrimaryPointerDeviceType(Frame* frame)
+{
+    if (frame->settings()->deviceSupportsTouch())
+        return TouchPointer;
+
+    // FIXME: We should also try to determine if we know we have a mouse.
+    // When we do this, we'll also need to differentiate between known not to
+    // have mouse or touch screen (NoPointer) and unknown (UnknownPointer).
+    // We could also take into account other preferences like accessibility
+    // settings to decide which of the available pointers should be considered
+    // "primary".
+
+    return UnknownPointer;
+}
+
+static bool hoverMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+{
+    PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
+
+    // If we're on a port that hasn't explicitly opted into providing pointer device information
+    // (or otherwise can't be confident in the pointer hardware available), then behave exactly
+    // as if this feature feature isn't supported.
+    if (pointer == UnknownPointer)
+        return false;
+
+    float number = 1;
+    if (value) {
+        if (!numberValue(value, number))
+            return false;
+    }
+
+    return (pointer == NoPointer && !number)
+        || (pointer == TouchPointer && !number)
+        || (pointer == MousePointer && number == 1);
+}
+
+static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+{
+    PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
+
+    // If we're on a port that hasn't explicitly opted into providing pointer device information
+    // (or otherwise can't be confident in the pointer hardware available), then behave exactly
+    // as if this feature feature isn't supported.
+    if (pointer == UnknownPointer)
+        return false;
+
+    if (!value)
+        return pointer != NoPointer;
+
+    if (!value->isPrimitiveValue())
+        return false;
+
+    String str = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
+    return (pointer == NoPointer && str == "none")
+        || (pointer == TouchPointer && str == "coarse")
+        || (pointer == MousePointer && str == "fine");
 }
 
 static void createFunctionMap()

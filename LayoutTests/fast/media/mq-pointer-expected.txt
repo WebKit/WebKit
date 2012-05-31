@@ -1,0 +1,27 @@
+Test the (pointer) and (hover) media features. See Bug 87403 for details.
+
+------------- default configuration -------------
+Query "(pointer)": false
+Query "(Pointer)": false
+Query "(pointer:none)": false
+Query "(pointer:coarse)": false
+Query "(pointer:coARse)": false
+Query "(pointer:bogusvalue)": false
+Query "(pointer:fine)": false
+Query "(hover)": false
+Query "(hover:0)": false
+Query "(hover:1)": false
+Query "(hover:bogusvalue)": false
+------------- with touch screen -------------
+Query "(pointer)": true
+Query "(Pointer)": true
+Query "(pointer:none)": false
+Query "(pointer:coarse)": true
+Query "(pointer:coARse)": true
+Query "(pointer:bogusvalue)": false
+Query "(pointer:fine)": false
+Query "(hover)": false
+Query "(hover:0)": true
+Query "(hover:1)": false
+Query "(hover:bogusvalue)": false
+

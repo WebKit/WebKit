@@ -105,6 +105,7 @@ InternalSettings::InternalSettings(Frame* frame)
     , m_originalJavaScriptProfilingEnabled(page() && page()->inspectorController() && page()->inspectorController()->profilerEnabled())
 #endif
     , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
+    , m_originalDeviceSupportsTouch(settings()->deviceSupportsTouch())
 {
 }
 
@@ -124,6 +125,7 @@ void InternalSettings::restoreTo(Settings* settings)
         page()->inspectorController()->setProfilerEnabled(m_originalJavaScriptProfilingEnabled);
 #endif
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
+    settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
 }
 
 Settings* InternalSettings::settings() const
@@ -258,6 +260,12 @@ void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode
     UNUSED_PARAM(enabled);
     UNUSED_PARAM(ec);
 #endif
+}
+
+void InternalSettings::setDeviceSupportsTouch(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setDeviceSupportsTouch(enabled);
 }
 
 typedef void (Settings::*SetFontFamilyFunction)(const AtomicString&, UScriptCode);

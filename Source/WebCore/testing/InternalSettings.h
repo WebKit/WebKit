@@ -63,6 +63,7 @@ public:
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
     void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
+    void setDeviceSupportsTouch(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
@@ -104,6 +105,7 @@ private:
     bool m_originalJavaScriptProfilingEnabled;
 #endif
     bool m_originalWindowFocusRestricted;
+    bool m_originalDeviceSupportsTouch;
 };
 
 } // namespace WebCore

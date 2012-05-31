@@ -30,6 +30,7 @@ namespace WebCore {
     macro(grid, "grid") \
     macro(monochrome, "monochrome") \
     macro(height, "height") \
+    macro(hover, "hover") \
     macro(width, "width") \
     macro(orientation, "orientation") \
     macro(aspect_ratio, "aspect-ratio") \
@@ -55,6 +56,7 @@ namespace WebCore {
     macro(min_height, "min-height") \
     macro(min_monochrome, "min-monochrome") \
     macro(min_width, "min-width") \
+    macro(pointer, "pointer") \
     macro(transform_2d, "-webkit-transform-2d") \
     macro(transform_3d, "-webkit-transform-3d") \
     macro(transition, "-webkit-transition") \

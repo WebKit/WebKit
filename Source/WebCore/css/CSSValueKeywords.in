@@ -905,6 +905,11 @@ wrap
 // -webkit-line-align
 edges
 
+// (pointer:) media feature
+// none
+coarse
+fine
+
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 // -webkit-filter
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS

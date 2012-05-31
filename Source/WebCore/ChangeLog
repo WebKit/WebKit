@@ -1,3 +1,40 @@
+2012-05-30  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] Implement pointer and hover CSS media features
+        https://bugs.webkit.org/show_bug.cgi?id=87403
+
+        Reviewed by Adam Barth.
+
+        Add initial support for the pointer and hover media features as defined
+        here:
+        http://dev.w3.org/csswg/css4-mediaqueries/#pointer
+        http://dev.w3.org/csswg/css4-mediaqueries/#hover
+
+        For now this only supports the case where we know a touch screen is
+        available (currently known only for the chromium port on certain
+        platforms).  All other cases continue to behave exactly as if the media
+        feature isn't supported.
+
+        Tests: fast/media/mq-pointer.html
+
+        * css/CSSValueKeywords.in:
+        * css/MediaFeatureNames.h:
+        (MediaFeatureNames):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::getLeastCapablePrimaryPointerDeviceType):
+        (WebCore):
+        (WebCore::hoverMediaFeatureEval):
+        (WebCore::pointerMediaFeatureEval):
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::restoreTo):
+        (WebCore::InternalSettings::setDeviceSupportsTouch):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-05-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add an helper function to get the style for a cell's flow computation

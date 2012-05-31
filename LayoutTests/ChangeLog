@@ -1,3 +1,16 @@
+2012-05-30  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] Implement pointer and hover CSS media features
+        https://bugs.webkit.org/show_bug.cgi?id=87403
+
+        Reviewed by Adam Barth.
+
+        Adds tests for pointer and hover media features, for the initial cases
+        with and without a touch screen.
+
+        * fast/media/mq-pointer-expected.txt: Added.
+        * fast/media/mq-pointer.html: Added.
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         [Win] Need implementation of layoutTestController.setBackingScaleFactor
