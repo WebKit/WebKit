@@ -23,9 +23,9 @@
 
 #include "JSDOMBinding.h"
 #include "TestException.h"
+#include <runtime/ErrorPrototype.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObject.h>
-#include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 

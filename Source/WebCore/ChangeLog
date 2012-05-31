@@ -1,3 +1,71 @@
+2012-05-31  Erik Arvidsson  <arv@chromium.org>
+
+        Make DOM Exceptions Errors
+        https://bugs.webkit.org/show_bug.cgi?id=85078
+
+        Reviewed by Oliver Hunt.
+
+        WebIDL mandates that exceptions should have Error.prototype on its prototype chain.
+
+        For JSC we have access to the Error.prototype from the binding code.
+
+        For V8 we set a field in the WrapperTypeInfo and when the constructor function is created we
+        set the prototype as needed.
+
+        Updated test: fast/dom/DOMException/prototype-object.html
+
+        * ForwardingHeaders/runtime/ErrorPrototype.h: Added.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNamedConstructorCallback):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::createPrototype):
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+        (WebCore::V8TestObj::installPerContextProperties):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo):
+        * bindings/v8/V8BindingPerContextData.cpp:
+        (WebCore):
+        (WebCore::V8BindingPerContextData::init):
+        (WebCore::V8BindingPerContextData::createWrapperFromCacheSlowCase):
+        (WebCore::V8BindingPerContextData::constructorForTypeSlowCase):
+        * bindings/v8/V8BindingPerContextData.h:
+        (V8BindingPerContextData):
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+        (WrapperTypeInfo):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore):
+
 2012-05-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] create WebTransformOperation interface for chromium platform

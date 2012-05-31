@@ -56,28 +56,38 @@ void V8BindingPerContextData::dispose()
     }
 }
 
+#define V8_STORE_PRIMORDIAL(name, Name) \
+{ \
+    ASSERT(m_##name##Prototype.get().IsEmpty()); \
+    v8::Handle<v8::String> symbol = v8::String::NewSymbol(#Name); \
+    if (symbol.IsEmpty()) \
+        return false; \
+    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(m_context->Global()->Get(symbol)); \
+    if (object.IsEmpty()) \
+        return false; \
+    v8::Handle<v8::Value> prototypeValue = object->Get(prototypeString); \
+    if (prototypeValue.IsEmpty()) \
+        return false; \
+    m_##name##Prototype.set(prototypeValue); \
+}
+
 bool V8BindingPerContextData::init()
 {
-    ASSERT(m_objectPrototype.get().IsEmpty());
-
-    v8::Handle<v8::String> objectString = v8::String::New("Object");
-    v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
-    if (objectString.IsEmpty() || prototypeString.IsEmpty())
+    v8::Handle<v8::String> prototypeString = v8::String::NewSymbol("prototype");
+    if (prototypeString.IsEmpty())
         return false;
 
-    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(m_context->Global()->Get(objectString));
-    if (object.IsEmpty())
-        return false;
-    v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
-    if (objectPrototype.IsEmpty())
-        return false;
+    V8_STORE_PRIMORDIAL(error, Error);
+    V8_STORE_PRIMORDIAL(object, Object);
 
-    m_objectPrototype.set(objectPrototype);
     return true;
 }
 
+#undef V8_STORE_PRIMORDIAL
+
 v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
+    ASSERT(!m_errorPrototype.get().IsEmpty());
     ASSERT(!m_objectPrototype.get().IsEmpty());
 
     v8::Context::Scope scope(m_context);
@@ -92,6 +102,7 @@ v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(Wr
 
 v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
 {
+    ASSERT(!m_errorPrototype.get().IsEmpty());
     ASSERT(!m_objectPrototype.get().IsEmpty());
 
     v8::Context::Scope scope(m_context);
@@ -103,6 +114,12 @@ v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(Wrap
         return v8::Local<v8::Function>();
 
     function->SetPrototype(m_objectPrototype.get());
+
+    if (type->wrapperTypePrototype == WrapperTypeErrorPrototype) {
+        v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
+        if (prototypeValue->IsObject())
+            v8::Local<v8::Object>::Cast(prototypeValue)->SetPrototype(m_errorPrototype.get());
+    }
 
     m_constructorMap.set(type, v8::Persistent<v8::Function>::New(function));
 

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestEventConstructor::info = { V8TestEventConstructor::GetTemplate, V8TestEventConstructor::derefObject, 0, 0 };
+WrapperTypeInfo V8TestEventConstructor::info = { V8TestEventConstructor::GetTemplate, V8TestEventConstructor::derefObject, 0, 0, WrapperTypeObjectPrototype };
 
 namespace TestEventConstructorV8Internal {
 

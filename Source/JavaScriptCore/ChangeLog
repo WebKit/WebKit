@@ -1,3 +1,27 @@
+2012-05-31  Erik Arvidsson  <arv@chromium.org>
+
+        Make DOM Exceptions Errors
+        https://bugs.webkit.org/show_bug.cgi?id=85078
+
+        Reviewed by Oliver Hunt.
+
+        WebIDL mandates that exceptions should have Error.prototype on its prototype chain.
+
+        For JSC we have access to the Error.prototype from the binding code.
+
+        For V8 we set a field in the WrapperTypeInfo and when the constructor function is created we
+        set the prototype as needed.
+
+        Updated test: fast/dom/DOMException/prototype-object.html
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC):
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::errorPrototype):
+
 2012-05-31  Andy Wingo  <wingo@igalia.com>
 
         Fix reference to unset variable in debug mode

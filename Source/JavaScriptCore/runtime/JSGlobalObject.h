@@ -41,6 +41,7 @@ namespace JSC {
     class DatePrototype;
     class Debugger;
     class ErrorConstructor;
+    class ErrorPrototype;
     class FunctionPrototype;
     class GetterSetter;
     class GlobalCodeBlock;
@@ -117,6 +118,7 @@ namespace JSC {
         WriteBarrier<NumberPrototype> m_numberPrototype;
         WriteBarrier<DatePrototype> m_datePrototype;
         WriteBarrier<RegExpPrototype> m_regExpPrototype;
+        WriteBarrier<ErrorPrototype> m_errorPrototype;
 
         WriteBarrier<Structure> m_argumentsStructure;
         WriteBarrier<Structure> m_arrayStructure;
@@ -252,6 +254,7 @@ namespace JSC {
         NumberPrototype* numberPrototype() const { return m_numberPrototype.get(); }
         DatePrototype* datePrototype() const { return m_datePrototype.get(); }
         RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
+        ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
 
         JSObject* methodCallDummy() const { return m_methodCallDummy.get(); }
 

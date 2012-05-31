@@ -1,10 +1,30 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html>
-<head>
+<!DOCTYPE html>
 <script src="../../js/resources/js-test-pre.js"></script>
-</head>
-<body>
-<script src="resources/prototype-object.js"></script>
+<script>
+
+description("This tests the prototype chain of DOMException objects.")
+
+var e;
+try {
+  document.appendChild(document);
+   // raises a HIERARCHY_REQUEST_ERR
+} catch (err) {
+  e = err;
+}
+
+shouldBeEqualToString("e.toString()", "Error: HIERARCHY_REQUEST_ERR: DOM Exception 3");
+shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
+shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMExceptionPrototype]");
+shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Error]");
+shouldBeEqualToString("e.constructor.toString()", "[object DOMExceptionConstructor]");
+shouldBeTrue("e instanceof DOMException");
+shouldBeTrue("e instanceof Error");
+shouldBe("e.constructor", "window.DOMException");
+shouldBe("e.HIERARCHY_REQUEST_ERR", "e.constructor.HIERARCHY_REQUEST_ERR");
+shouldBe("e.HIERARCHY_REQUEST_ERR", "3");
+shouldBe("e.code", "3");
+shouldBeEqualToString("e.name", "HIERARCHY_REQUEST_ERR");
+shouldBeEqualToString("e.message", "HIERARCHY_REQUEST_ERR: DOM Exception 3");
+
+</script>
 <script src="../../js/resources/js-test-post.js"></script>
-</body>
-</html>

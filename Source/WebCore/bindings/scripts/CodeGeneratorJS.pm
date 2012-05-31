@@ -661,7 +661,11 @@ sub GenerateHeader
     } else {
         $headerIncludes{"JSDOMBinding.h"} = 1;
         $headerIncludes{"<runtime/JSGlobalObject.h>"} = 1;
-        $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
+        if ($dataNode->isException) {
+            $headerIncludes{"<runtime/ErrorPrototype.h>"} = 1;
+        } else {
+            $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
+        }
     }
 
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
@@ -1612,7 +1616,8 @@ sub GenerateImplementation
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
             push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), globalObject, ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));\n");
+            my $prototype = $dataNode->isException ? "errorPrototype" : "objectPrototype";
+            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
     }

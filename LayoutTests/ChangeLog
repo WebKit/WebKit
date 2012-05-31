@@ -1,3 +1,32 @@
+2012-05-31  Erik Arvidsson  <arv@chromium.org>
+
+        Make DOM Exceptions Errors
+        https://bugs.webkit.org/show_bug.cgi?id=85078
+
+        Reviewed by Oliver Hunt.
+
+        WebIDL mandates that exceptions should have Error.prototype on its prototype chain.
+
+        For JSC we have access to the Error.prototype from the binding code.
+
+        For V8 we set a field in the WrapperTypeInfo and when the constructor function is created we
+        set the prototype as needed.
+
+        Updated test: fast/dom/DOMException/prototype-object.html
+
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/prototype-object.html:
+        * fast/dom/DOMException/resources/prototype-object.js: Removed.
+        * platform/chromium-win/fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feBlend-invalid-mode-expected.txt: Removed.
+        * platform/chromium/dom/xhtml/level3/core/documentnormalizedocument10-expected.txt: Added.
+        * platform/chromium/dom/xhtml/level3/core/documentsetxmlversion03-expected.txt: Added.
+        * platform/chromium/fast/dom/DOMException/prototype-object-expected.txt:
+        * platform/chromium/fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt.
+        * platform/chromium/fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt.
+        * platform/chromium/svg/filters/feBlend-invalid-mode-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/filters/feBlend-invalid-mode-expected.txt.
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild

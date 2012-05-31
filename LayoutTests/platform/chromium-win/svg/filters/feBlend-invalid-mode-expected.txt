@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 14: Uncaught Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1
-PASS: Invalid blend modes do not trigger a crash. 

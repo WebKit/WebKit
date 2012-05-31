@@ -104,7 +104,7 @@ void JSTestException::finishCreation(JSGlobalData& globalData)
 
 JSObject* JSTestException::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return JSTestExceptionPrototype::create(exec->globalData(), globalObject, JSTestExceptionPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
+    return JSTestExceptionPrototype::create(exec->globalData(), globalObject, JSTestExceptionPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->errorPrototype()));
 }
 
 void JSTestException::destroy(JSC::JSCell* cell)
