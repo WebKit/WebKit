@@ -233,10 +233,12 @@ public:
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
-#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+#if PLATFORM(MAC)
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void showSubstitutionsPanel();
     bool substitutionsPanelIsShowing();
     void toggleSmartInsertDelete();

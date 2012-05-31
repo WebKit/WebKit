@@ -1,3 +1,17 @@
+2012-05-31  Andy Estes  <aestes@apple.com>
+
+        Disentangle code that relies on USE(AUTOMATIC_TEXT_REPLACEMENT) from that which merely relies on PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=87933
+
+        Reviewed by Dan Bernstein.
+
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * loader/EmptyClients.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/EditorClient.h:
+
 2012-05-31  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Move drawing code for RenderSurfaces into LayerRendererChromium

@@ -1116,7 +1116,7 @@ int Editor::spellCheckerDocumentTag()
     return client() ? client()->spellCheckerDocumentTag() : 0;
 }
 
-#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+#if PLATFORM(MAC)
 
 void Editor::uppercaseWord()
 {
@@ -1135,6 +1135,10 @@ void Editor::capitalizeWord()
     if (client())
         client()->capitalizeWord();
 }
+    
+#endif
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 void Editor::showSubstitutionsPanel()
 {

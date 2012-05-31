@@ -446,6 +446,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagCapitalize:
         frame->editor()->capitalizeWord();
         break;
+    case ContextMenuItemTagChangeBack:
+        frame->editor()->changeBackToReplacedString(m_hitTestResult.replacedString());
+        break;
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     case ContextMenuItemTagShowSubstitutions:
         frame->editor()->showSubstitutionsPanel();
         break;
@@ -466,9 +471,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagCorrectSpellingAutomatically:
         frame->editor()->toggleAutomaticSpellingCorrection();
-        break;
-    case ContextMenuItemTagChangeBack:
-        frame->editor()->changeBackToReplacedString(m_hitTestResult.replacedString());
         break;
 #endif
 #if ENABLE(INSPECTOR)

@@ -30,6 +30,7 @@
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
 #include "TextAffinity.h"
+#include "TextChecking.h"
 #include "UndoStep.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -121,10 +122,12 @@ public:
     virtual NSURL* canonicalizeURLString(NSString*) = 0;
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC)
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool show) = 0;
     virtual bool substitutionsPanelIsShowing() = 0;
     virtual void toggleSmartInsertDelete() = 0;

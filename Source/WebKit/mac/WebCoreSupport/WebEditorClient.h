@@ -76,10 +76,11 @@ public:
     virtual NSURL* canonicalizeURL(NSURL*) OVERRIDE;
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
     
-#ifndef BUILDING_ON_LEOPARD
     virtual void uppercaseWord() OVERRIDE;
     virtual void lowercaseWord() OVERRIDE;
     virtual void capitalizeWord() OVERRIDE;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool show) OVERRIDE;
     virtual bool substitutionsPanelIsShowing() OVERRIDE;
     virtual void toggleSmartInsertDelete() OVERRIDE;

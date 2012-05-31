@@ -499,10 +499,13 @@ public:
     virtual NSURL* canonicalizeURL(NSURL*) { return 0; }
     virtual NSURL* canonicalizeURLString(NSString*) { return 0; }
 #endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+
+#if PLATFORM(MAC)
     virtual void uppercaseWord() { }
     virtual void lowercaseWord() { }
     virtual void capitalizeWord() { }
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool) { }
     virtual bool substitutionsPanelIsShowing() { return false; }
     virtual void toggleSmartInsertDelete() { }

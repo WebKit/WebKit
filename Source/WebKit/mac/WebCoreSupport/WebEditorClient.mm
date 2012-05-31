@@ -376,8 +376,6 @@ void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
     [m_webView _setInsertionPasteboard:pasteboard];
 }
 
-
-#ifndef BUILDING_ON_LEOPARD
 void WebEditorClient::uppercaseWord()
 {
     [m_webView uppercaseWord:nil];
@@ -393,6 +391,7 @@ void WebEditorClient::capitalizeWord()
     [m_webView capitalizeWord:nil];
 }
 
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
 void WebEditorClient::showSubstitutionsPanel(bool show)
 {
     NSPanel *spellingPanel = [[NSSpellChecker sharedSpellChecker] substitutionsPanel];
@@ -461,7 +460,7 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 {
     [m_webView toggleAutomaticSpellingCorrection:nil];
 }
-#endif
+#endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, EditorInsertAction givenAction)
 { 

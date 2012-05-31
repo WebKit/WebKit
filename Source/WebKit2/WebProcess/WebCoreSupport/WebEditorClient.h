@@ -100,10 +100,12 @@ private:
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC)
     virtual void uppercaseWord() OVERRIDE;
     virtual void lowercaseWord() OVERRIDE;
     virtual void capitalizeWord() OVERRIDE;
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool show) OVERRIDE;
     virtual bool substitutionsPanelIsShowing() OVERRIDE;
     virtual void toggleSmartInsertDelete() OVERRIDE;

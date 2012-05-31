@@ -160,6 +160,7 @@ void WebEditorClient::capitalizeWord()
     changeWordCase(m_page, @selector(capitalizedString));
 }
 
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
 void WebEditorClient::showSubstitutionsPanel(bool)
 {
     notImplemented();
@@ -231,6 +232,7 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 {
     notImplemented();
 }
+#endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
