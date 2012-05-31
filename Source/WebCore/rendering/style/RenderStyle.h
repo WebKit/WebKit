@@ -809,8 +809,8 @@ public:
     Length flexPreferredSize() const { return rareNonInheritedData->m_flexibleBox->m_preferredSize; }
     int flexOrder() const { return rareNonInheritedData->m_flexibleBox->m_flexOrder; }
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
-    EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
-    EFlexAlign flexItemAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexItemAlign); }
+    EAlignItems alignItems() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignItems); }
+    EAlignItems alignSelf() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignSelf); }
     EFlexDirection flexDirection() const { return static_cast<EFlexDirection>(rareNonInheritedData->m_flexibleBox->m_flexDirection); }
     bool isColumnFlexDirection() const { return flexDirection() == FlowColumn || flexDirection() == FlowColumnReverse; }
     bool isReverseFlexDirection() const { return flexDirection() == FlowRowReverse || flexDirection() == FlowColumnReverse; }
@@ -1251,8 +1251,8 @@ public:
     void setFlexPreferredSize(Length l) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_preferredSize, l); }
     void setFlexOrder(int o) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexOrder, o); }
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
-    void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
-    void setFlexItemAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexItemAlign, a); }
+    void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
+    void setAlignSelf(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setFlexLinePack(EFlexLinePack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexLinePack, p); }
@@ -1585,8 +1585,8 @@ public:
     static Length initialFlexPreferredSize() { return Length(Auto); }
     static int initialFlexOrder() { return 0; }
     static EFlexPack initialFlexPack() { return PackStart; }
-    static EFlexAlign initialFlexAlign() { return AlignStretch; }
-    static EFlexAlign initialFlexItemAlign() { return AlignAuto; }
+    static EAlignItems initialAlignItems() { return AlignStretch; }
+    static EAlignItems initialAlignSelf() { return AlignAuto; }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexWrapNone; }
     static EFlexLinePack initialFlexLinePack() { return LinePackStretch; }

@@ -953,11 +953,11 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, Layout
     }
 }
 
-static EFlexAlign flexAlignForChild(RenderBox* child)
+static EAlignItems alignmentForChild(RenderBox* child)
 {
-    EFlexAlign align = child->style()->flexItemAlign();
+    EAlignItems align = child->style()->alignSelf();
     if (align == AlignAuto)
-        align = child->parent()->style()->flexAlign();
+        align = child->parent()->style()->alignItems();
 
     if (child->parent()->style()->flexWrap() == FlexWrapReverse) {
         if (align == AlignStart)
@@ -980,7 +980,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit totalMainExtent = mainAxisExtent();
-    LayoutUnit maxAscent = 0, maxDescent = 0; // Used when flex-align: baseline.
+    LayoutUnit maxAscent = 0, maxDescent = 0; // Used when align-items: baseline.
     LayoutUnit maxChildCrossAxisExtent = 0;
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     for (size_t i = 0; i < children.size(); ++i) {
@@ -999,7 +999,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
         LayoutUnit childCrossAxisMarginBoxExtent;
-        if (flexAlignForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
+        if (alignmentForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
             LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
@@ -1155,7 +1155,7 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Ve
             if (updateAutoMarginsInCrossAxis(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child)))
                 continue;
 
-            switch (flexAlignForChild(child)) {
+            switch (alignmentForChild(child)) {
             case AlignAuto:
                 ASSERT_NOT_REACHED();
                 break;
@@ -1198,7 +1198,7 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Ve
         LayoutUnit minMarginAfterBaseline = minMarginAfterBaselines[lineNumber];
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = iterator.next()) {
             ASSERT(child);
-            if (flexAlignForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child) && minMarginAfterBaseline)
+            if (alignmentForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child) && minMarginAfterBaseline)
                 adjustAlignmentForChild(child, minMarginAfterBaseline);
         }
     }

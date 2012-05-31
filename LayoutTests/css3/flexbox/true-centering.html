@@ -57,37 +57,37 @@ if (window.layoutTestController)
 <script src="resources/flexbox.js"></script>
 <body onload="checkFlexBoxen()">
 
-<div class="flexbox" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
+<div class="flexbox" style="-webkit-align-items: center; -webkit-flex-pack: center;">
     <div data-offset-x="-10" data-offset-y="-5"></div>
     <div data-offset-x="50" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox row-reverse" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
+<div class="flexbox row-reverse" style="-webkit-align-items: center; -webkit-flex-pack: center;">
     <div data-offset-x="50" data-offset-y="-5"></div>
     <div data-offset-x="-10" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox column vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
+<div class="flexbox column vertical" style="-webkit-align-items: center; -webkit-flex-pack: center;">
     <div data-offset-x="-5" data-offset-y="-10"></div>
     <div data-offset-x="-5" data-offset-y="50"></div>
 </div>
 
-<div class="flexbox column-reverse vertical" style="-webkit-flex-align: center; -webkit-flex-pack: center;">
+<div class="flexbox column-reverse vertical" style="-webkit-align-items: center; -webkit-flex-pack: center;">
     <div data-offset-x="-5" data-offset-y="50"></div>
     <div data-offset-x="-5" data-offset-y="-10"></div>
 </div>
 
-<div class="flexbox" style="-webkit-flex-align: center; -webkit-flex-pack: space-around;">
+<div class="flexbox" style="-webkit-align-items: center; -webkit-flex-pack: space-around;">
     <div data-offset-x="-10" data-offset-y="-5"></div>
     <div data-offset-x="50" data-offset-y="-5"></div>
 </div>
 
-<div class="flexbox" style="-webkit-flex-align: start; -webkit-flex-pack: start;">
+<div class="flexbox" style="-webkit-align-items: start; -webkit-flex-pack: start;">
     <div data-offset-x=0 data-offset-y=0></div>
     <div data-offset-x=60 data-offset-y=0></div>
 </div>
 
-<div class="flexbox" style="-webkit-flex-align: start; -webkit-flex-pack: space-between;">
+<div class="flexbox" style="-webkit-align-items: start; -webkit-flex-pack: space-between;">
     <div data-offset-x=0 data-offset-y=0></div>
     <div data-offset-x=60 data-offset-y=0></div>
 </div>
@@ -143,7 +143,7 @@ writingModes.forEach(function(writingMode) {
             }
 
             var container = document.createElement('div');
-            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-flex-align: center; -webkit-flex-pack: center;">\n' +
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: center; -webkit-flex-pack: center;">\n' +
                 '<div ' + firstChildExpected + '></div>\n' +
                 '<div ' + lastChildExpected + '></div>\n' +
             '</div>';

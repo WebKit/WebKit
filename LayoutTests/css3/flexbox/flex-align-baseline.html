@@ -76,7 +76,7 @@ writingModes.forEach(function(writingMode) {
             var isHorizontal = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
 
             var container = document.createElement('div');
-            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-flex-align: baseline;">' +
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: baseline;">' +
                 '<div><div style="display:inline-block;"></div></div>' +
                 '<div style="margin-top:20px;"><div style="display:inline-block;"></div></div>' +
             '</div>';
@@ -87,7 +87,7 @@ writingModes.forEach(function(writingMode) {
     })
 })
 
-// Sanity check that the flex-align:baseline flex items align to the same cross-axis position.
+// Sanity check that the align-items:baseline flex items align to the same cross-axis position.
 var flexboxen = document.getElementsByClassName('flexbox');
 for (var i = 0, len = flexboxen.length; i < len; i++) {
     var flexbox = flexboxen[i];

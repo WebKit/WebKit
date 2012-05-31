@@ -143,11 +143,11 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-column-rule-width: 0px
     -webkit-column-span: 1
     -webkit-column-width: auto
+    -webkit-align-items: stretch
+    -webkit-align-self: stretch
     -webkit-flex: 0 0 auto
     -webkit-flex-order: 0
     -webkit-flex-pack: start
-    -webkit-flex-align: stretch
-    -webkit-flex-item-align: stretch
     -webkit-flex-direction: row
     -webkit-flex-flow: row none
     -webkit-flex-line-pack: stretch

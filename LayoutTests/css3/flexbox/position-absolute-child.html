@@ -528,7 +528,7 @@ function addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection
     }
 }
 
-function addFlexAlignCenterTests(writingMode, flexFlow, direction, flexDirection)
+function addAlignItemsCenterTests(writingMode, flexFlow, direction, flexDirection)
 {
     var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
     for (var absoluteIndex = 1; absoluteIndex <= 3; ++absoluteIndex) {
@@ -540,7 +540,7 @@ function addFlexAlignCenterTests(writingMode, flexFlow, direction, flexDirection
         flexbox.style.width = '100px';
         flexbox.style.margin = "20px";
         flexbox.style.webkitFlexPack = 'center';
-        flexbox.style.webkitFlexAlign = 'center';
+        flexbox.style.webkitAlignItems = 'center';
 
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
             var child = document.createElement('div');
@@ -594,7 +594,7 @@ writingModes.forEach(function(writingMode) {
                 document.body.appendChild(flexbox);
             }
             addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection);
-            addFlexAlignCenterTests(writingMode, flexFlow, direction, flexDirection);
+            addAlignItemsCenterTests(writingMode, flexFlow, direction, flexDirection);
         })
     })
 })

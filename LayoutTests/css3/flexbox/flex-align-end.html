@@ -106,7 +106,7 @@ writingModes.forEach(function(writingMode) {
             document.body.appendChild(title);
 
             var container = document.createElement('div');
-            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-flex-align: end;">\n' +
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: end;">\n' +
                 '<div ' + positionAsString(expectations[writingMode][flexFlow][direction]) + '></div><div></div>\n' +
             '</div>';
 

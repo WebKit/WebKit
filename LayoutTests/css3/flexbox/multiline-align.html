@@ -1307,7 +1307,7 @@ function addChild(flexbox, mainAxis, crossAxis, preferredSize, crossAxisLength, 
     var child = document.createElement('div');
     child.setAttribute('style', '-webkit-flex: 1 ' + preferredSize + 'px;'
         + crossAxis + ': ' + crossAxisLength + ';'
-        + '-webkit-flex-item-align: ' + alignment);
+        + '-webkit-align-self: ' + alignment);
 
     child.setAttribute("data-expected-width", expectations[0]);
     child.setAttribute("data-expected-height", expectations[1]);

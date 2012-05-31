@@ -1,3 +1,29 @@
+2012-05-31  Tony Chang  <tony@chromium.org>
+
+        rename flexbox CSS properties from flex-align and flex-item-align to align-items and align-self
+        https://bugs.webkit.org/show_bug.cgi?id=87907
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests for new CSS property names.
+
+        * css3/flexbox/align-absolute-child.html:
+        * css3/flexbox/cross-axis-scrollbar.html:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/flexbox/flex-align-baseline.html:
+        * css3/flexbox/flex-align-column.html:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-align-stretch.html:
+        * css3/flexbox/flex-align-vertical-writing-mode.html:
+        * css3/flexbox/flex-align.html:
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/multiline-align.html:
+        * css3/flexbox/multiline-reverse-wrap-baseline.html:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/true-centering.html:
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 10 fast/text tests failing

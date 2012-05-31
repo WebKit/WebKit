@@ -1791,8 +1791,8 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
         // For multiline columns, we need to apply the flex-line-pack first, so we can't stretch now.
         if (!parent()->style()->isColumnFlexDirection() || parent()->style()->flexWrap() != FlexWrapNone)
             return true;
-        EFlexAlign itemAlign = style()->flexItemAlign();
-        if (itemAlign != AlignStretch && (itemAlign != AlignAuto || parent()->style()->flexAlign() != AlignStretch))
+        EAlignItems itemAlign = style()->alignSelf();
+        if (itemAlign != AlignStretch && (itemAlign != AlignAuto || parent()->style()->alignItems() != AlignStretch))
             return true;
     }
 

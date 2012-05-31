@@ -539,11 +539,11 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFilter:
 #endif
 #if ENABLE(CSS3_FLEXBOX)
+    case CSSPropertyWebkitAlignItems:
+    case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
-    case CSSPropertyWebkitFlexAlign:
-    case CSSPropertyWebkitFlexItemAlign:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexLinePack:

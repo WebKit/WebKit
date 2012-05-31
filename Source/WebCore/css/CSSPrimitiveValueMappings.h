@@ -1197,7 +1197,7 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
 
 #if ENABLE(CSS3_FLEXBOX)
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignItems e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
@@ -1223,7 +1223,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EFlexAlign() const
+template<> inline CSSPrimitiveValue::operator EAlignItems() const
 {
     switch (m_value.ident) {
     case CSSValueAuto:

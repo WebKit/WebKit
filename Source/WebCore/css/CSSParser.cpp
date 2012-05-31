@@ -689,17 +689,17 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlexAlign:
+    case CSSPropertyWebkitAlignItems:
         if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
+            return true;
+        break;
+    case CSSPropertyWebkitAlignSelf:
+        if (valueID == CSSValueAuto || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
     case CSSPropertyWebkitFlexDirection:
         if (valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse)
                 return true;
-        break;
-    case CSSPropertyWebkitFlexItemAlign:
-        if (valueID == CSSValueAuto || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
-            return true;
         break;
     case CSSPropertyWebkitFlexLinePack:
          if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
@@ -920,9 +920,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitColumnRuleStyle:
 #if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlexAlign:
+    case CSSPropertyWebkitAlignItems:
+    case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexItemAlign:
     case CSSPropertyWebkitFlexLinePack:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:
@@ -2554,9 +2554,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitColumnRuleStyle:
 #if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlexAlign:
+    case CSSPropertyWebkitAlignItems:
+    case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexItemAlign:
     case CSSPropertyWebkitFlexLinePack:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:
