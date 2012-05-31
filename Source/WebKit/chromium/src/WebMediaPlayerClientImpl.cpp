@@ -593,9 +593,11 @@ unsigned WebMediaPlayerClientImpl::totalBytes() const
     return 0;
 }
 
-bool WebMediaPlayerClientImpl::didLoadingProgress() const
+unsigned WebMediaPlayerClientImpl::bytesLoaded() const
 {
-    return m_webMediaPlayer && m_webMediaPlayer->didLoadingProgress();
+    if (m_webMediaPlayer)
+        return static_cast<unsigned>(m_webMediaPlayer->bytesLoaded());
+    return 0;
 }
 
 void WebMediaPlayerClientImpl::setSize(const IntSize& size)

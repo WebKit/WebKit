@@ -116,7 +116,6 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
     , m_isSeeking(false)
     , m_composited(false)
     , m_preload(MediaPlayer::Auto)
-    , m_bytesLoadedAtLastDidLoadingProgress(0)
     , m_suppressNextPlaybackChanged(false)
 {
     m_mediaPlayer->setVideoOutput(m_videoItem);
@@ -362,17 +361,13 @@ float MediaPlayerPrivateQt::maxTimeSeekable() const
     return static_cast<float>(m_mediaPlayerControl->availablePlaybackRanges().latestTime()) / 1000.0f;
 }
 
-bool MediaPlayerPrivateQt::didLoadingProgress() const
+unsigned MediaPlayerPrivateQt::bytesLoaded() const
 {
-    unsigned bytesLoaded = 0;
     QLatin1String bytesLoadedKey("bytes-loaded");
     if (m_mediaPlayer->availableExtendedMetaData().contains(bytesLoadedKey))
-        bytesLoaded = m_mediaPlayer->extendedMetaData(bytesLoadedKey).toInt();
-    else
-        bytesLoaded = m_mediaPlayer->bufferStatus();
-    bool didLoadingProgress = bytesLoaded != m_bytesLoadedAtLastDidLoadingProgress;
-    m_bytesLoadedAtLastDidLoadingProgress = bytesLoaded;
-    return didLoadingProgress;
+        return m_mediaPlayer->extendedMetaData(bytesLoadedKey).toInt();
+
+    return m_mediaPlayer->bufferStatus();
 }
 
 unsigned MediaPlayerPrivateQt::totalBytes() const

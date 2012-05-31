@@ -183,7 +183,6 @@ MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualConte
     , m_delayingLoad(false)
     , m_privateBrowsing(false)
     , m_preload(MediaPlayer::Auto)
-    , m_maxTimeLoadedAtLastDidLoadingProgress(0)
 {
 }
 
@@ -584,14 +583,15 @@ float MediaPlayerPrivateQuickTimeVisualContext::maxTimeLoaded() const
     return m_movie->maxTimeLoaded(); 
 }
 
-bool MediaPlayerPrivateQuickTimeVisualContext::didLoadingProgress() const
+unsigned MediaPlayerPrivateQuickTimeVisualContext::bytesLoaded() const
 {
-    if (!m_movie || !duration())
-        return false;
-    float currentMaxTimeLoaded = maxTimeLoaded();
-    bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
-    m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    return didLoadingProgress;
+    if (!m_movie)
+        return 0;
+    float dur = duration();
+    float maxTime = maxTimeLoaded();
+    if (!dur)
+        return 0;
+    return totalBytes() * maxTime / dur;
 }
 
 unsigned MediaPlayerPrivateQuickTimeVisualContext::totalBytes() const

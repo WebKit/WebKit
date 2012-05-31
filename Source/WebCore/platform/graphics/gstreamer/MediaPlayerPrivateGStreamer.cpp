@@ -227,7 +227,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_preload(MediaPlayer::Auto)
     , m_delayingLoad(false)
     , m_mediaDurationKnown(true)
-    , m_maxTimeLoadedAtLastDidLoadingProgress(0)
     , m_volumeTimerHandler(0)
     , m_muteTimerHandler(0)
     , m_hasVideo(false)
@@ -921,15 +920,17 @@ float MediaPlayerPrivateGStreamer::maxTimeLoaded() const
     return loaded;
 }
 
-bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
+unsigned MediaPlayerPrivateGStreamer::bytesLoaded() const
 {
-    if (!m_playBin || !m_mediaDuration || !totalBytes())
-        return false;
-    float currentMaxTimeLoaded = maxTimeLoaded();
-    bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
-    m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    LOG_VERBOSE(Media, "didLoadingProgress: %d", didLoadingProgress);
-    return didLoadingProgress;
+    if (!m_playBin)
+        return 0;
+
+    if (!m_mediaDuration)
+        return 0;
+
+    unsigned loaded = totalBytes() * maxTimeLoaded() / m_mediaDuration;
+    LOG_VERBOSE(Media, "bytesLoaded: %d", loaded);
+    return loaded;
 }
 
 unsigned MediaPlayerPrivateGStreamer::totalBytes() const

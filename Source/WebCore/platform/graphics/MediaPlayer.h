@@ -278,7 +278,7 @@ public:
     PassRefPtr<TimeRanges> seekable();
     float maxTimeSeekable();
 
-    bool didLoadingProgress();
+    unsigned bytesLoaded();
 
     float volume() const;
     void setVolume(float);

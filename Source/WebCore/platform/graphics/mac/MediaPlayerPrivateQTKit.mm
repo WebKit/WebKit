@@ -214,7 +214,6 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_videoFrameHasDrawn(false)
     , m_isAllowedToRender(false)
     , m_privateBrowsing(false)
-    , m_maxTimeLoadedAtLastDidLoadingProgress(0)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -946,14 +945,12 @@ float MediaPlayerPrivateQTKit::maxTimeLoaded() const
     return wkQTMovieMaxTimeLoaded(m_qtMovie.get()); 
 }
 
-bool MediaPlayerPrivateQTKit::didLoadingProgress() const
+unsigned MediaPlayerPrivateQTKit::bytesLoaded() const
 {
-    if (!duration() || !totalBytes())
-        return false;
-    float currentMaxTimeLoaded = maxTimeLoaded();
-    bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
-    m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    return didLoadingProgress;
+    float dur = duration();
+    if (!dur)
+        return 0;
+    return totalBytes() * maxTimeLoaded() / dur;
 }
 
 unsigned MediaPlayerPrivateQTKit::totalBytes() const

@@ -131,7 +131,7 @@ public:
     virtual PassRefPtr<TimeRanges> buffered() const { return TimeRanges::create(); }
 
     virtual unsigned totalBytes() const { return 0; }
-    virtual bool didLoadingProgress() const { return false; }
+    virtual unsigned bytesLoaded() const { return 0; }
 
     virtual void setSize(const IntSize&) { }
 
@@ -681,9 +681,9 @@ float MediaPlayer::maxTimeSeekable()
     return m_private->maxTimeSeekable();
 }
 
-bool MediaPlayer::didLoadingProgress()
+unsigned MediaPlayer::bytesLoaded()
 {
-    return m_private->didLoadingProgress();
+    return m_private->bytesLoaded();
 }
 
 void MediaPlayer::setSize(const IntSize& size)
