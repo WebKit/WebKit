@@ -1,3 +1,30 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] 10 fast/forms tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=88013
+
+        Add/update Windows-expected (failing?) results to get the bots greener.
+
+        * platform/win/fast/forms/basic-selects-expected.png: Added.
+        * platform/win/fast/forms/basic-selects-expected.txt:
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.png:
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt:
+        * platform/win/fast/forms/file: Added.
+        * platform/win/fast/forms/file/file-input-disabled-expected.png: Added.
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt: Added.
+        * platform/win/fast/forms/implicit-submission-expected.txt:
+        * platform/win/fast/forms/input-step-as-double-expected.txt: Added.
+        * platform/win/fast/forms/input-text-drag-down-expected.png:
+        * platform/win/fast/forms/input-text-drag-down-expected.txt:
+        * platform/win/fast/forms/select: Added.
+        * platform/win/fast/forms/select-overflow-scroll-expected.png: Added.
+        * platform/win/fast/forms/select-overflow-scroll-expected.txt: Added.
+        * platform/win/fast/forms/select-overflow-scroll-inherited-expected.png: Added.
+        * platform/win/fast/forms/select-overflow-scroll-inherited-expected.txt: Added.
+        * platform/win/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/win/fast/forms/select/optgroup-rendering-expected.txt: Added.
+        * platform/win/fast/forms/text-control-intrinsic-widths-expected.txt:
+
 2012-05-31  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement IDBTransaction.error and IDBRequest.error
