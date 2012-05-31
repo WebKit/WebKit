@@ -4,7 +4,6 @@ LIST(APPEND WebCore_LINK_FLAGS
 )
 
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-  "${JAVASCRIPTCORE_DIR}/wtf/gobject"
   "${WEBCORE_DIR}/accessibility/efl"
   "${WEBCORE_DIR}/page/efl"
   "${WEBCORE_DIR}/platform/efl"

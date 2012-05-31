@@ -1,3 +1,16 @@
+2012-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE][EFL] Remove unneeded include path
+        https://bugs.webkit.org/show_bug.cgi?id=87927 
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Though *wtf* directory was moved to Source/WTF, PlatformEfl.cmake is still including the previous
+        path. In addition, files on EFL port are using <wtf/gobject/XXX> directly in #include line.
+        So, EFL port doesn't need to include ${JAVASCRIPTCORE_DIR}/wtf/gobject path anymore.
+
+        * PlatformEfl.cmake: Remove '${JAVASCRIPTCORE_DIR}/wtf/gobject' path from include path list.
+
 2012-05-30  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Add an Accelerated Compositing layer for Web Inspector DOM highlight.
