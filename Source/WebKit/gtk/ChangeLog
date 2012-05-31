@@ -1,3 +1,17 @@
+2012-05-31  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leak in webkit_web_view_init
+        https://bugs.webkit.org/show_bug.cgi?id=87943
+
+        Reviewed by Martin Robinson.
+
+        Fixed a memory leak in webkit_web_view_init by making the
+        UserMediaClientGtk to be owned by the WebView.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        * webkit/webkitwebviewprivate.h:
+
 2012-05-31  commit-queue@webkit.org  <commit-queue@webkit.org@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 
         Spell checker doesn't recognize contractions (apostrophes)

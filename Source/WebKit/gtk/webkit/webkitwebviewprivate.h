@@ -34,6 +34,10 @@
 #include <webkit/webkitwebview.h>
 #include <wtf/gobject/GOwnPtr.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaClientGtk.h"
+#endif
+
 namespace WebKit {
 WebCore::Page* core(WebKitWebView*);
 WebKitWebView* kit(WebCore::Page*);
@@ -103,6 +107,10 @@ struct _WebKitWebViewPrivate {
 
 #if ENABLE(ICONDATABASE)
     gulong iconLoadedHandler;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    OwnPtr<WebKit::UserMediaClientGtk> userMediaClient;
 #endif
 };
 
