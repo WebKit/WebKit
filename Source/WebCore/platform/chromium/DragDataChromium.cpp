@@ -38,8 +38,10 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include "PlatformSupport.h"
 #include "markup.h"
+
+#include <public/Platform.h>
+#include <public/WebFileUtilities.h>
 
 namespace WebCore {
 
@@ -60,7 +62,8 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
     if (m_platformDragData->types().contains(mimeTypeTextURIList))
         m_platformDragData->urlAndTitle(url, title);
     else if (filenamePolicy == ConvertFilenames && containsFiles()) {
-        url = PlatformSupport::filePathToURL(PlatformSupport::getAbsolutePath(m_platformDragData->filenames()[0]));
+        String path = String(WebKit::Platform::current()->fileUtilities()->getAbsolutePath(m_platformDragData->filenames()[0]));
+        url = KURL(WebKit::Platform::current()->fileUtilities()->filePathToURL(path));
     }
     return url;
 }

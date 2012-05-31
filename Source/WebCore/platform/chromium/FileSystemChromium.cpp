@@ -34,27 +34,27 @@
 #include "FileMetadata.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include "PlatformSupport.h"
 
 #include <public/Platform.h>
+#include <public/WebFileInfo.h>
 #include <public/WebFileUtilities.h>
 
 namespace WebCore {
 
 bool deleteFile(const String& path)
 {
-    return PlatformSupport::deleteFile(path);
+    return WebKit::Platform::current()->fileUtilities()->deleteFile(path);
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    return PlatformSupport::deleteEmptyDirectory(path);
+    return WebKit::Platform::current()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
 bool getFileSize(const String& path, long long& result)
 {
     FileMetadata metadata;
-    if (!PlatformSupport::getFileMetadata(path, metadata))
+    if (!getFileMetadata(path, metadata))
         return false;
     result = metadata.length;
     return true;
@@ -63,7 +63,7 @@ bool getFileSize(const String& path, long long& result)
 bool getFileModificationTime(const String& path, time_t& result)
 {
     FileMetadata metadata;
-    if (!PlatformSupport::getFileMetadata(path, metadata))
+    if (!getFileMetadata(path, metadata))
         return false;
     result = metadata.modificationTime;
     return true;
@@ -71,22 +71,28 @@ bool getFileModificationTime(const String& path, time_t& result)
 
 bool getFileMetadata(const String& path, FileMetadata& metadata)
 {
-    return PlatformSupport::getFileMetadata(path, metadata);
+    WebKit::WebFileInfo webFileInfo;
+    if (!WebKit::Platform::current()->fileUtilities()->getFileInfo(path, webFileInfo))
+        return false;
+    metadata.modificationTime = webFileInfo.modificationTime;
+    metadata.length = webFileInfo.length;
+    metadata.type = static_cast<FileMetadata::Type>(webFileInfo.type);
+    return true;
 }
 
 String directoryName(const String& path)
 {
-    return PlatformSupport::directoryName(path);
+    return WebKit::Platform::current()->fileUtilities()->directoryName(path);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    return PlatformSupport::pathByAppendingComponent(path, component);
+    return WebKit::Platform::current()->fileUtilities()->pathByAppendingComponent(path, component);
 }
 
 bool makeAllDirectories(const String& path)
 {
-    return PlatformSupport::makeAllDirectories(path);
+    return WebKit::Platform::current()->fileUtilities()->makeAllDirectories(path);
 }
 
 bool fileExists(const String& path)
@@ -96,32 +102,32 @@ bool fileExists(const String& path)
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
-    return PlatformSupport::openFile(path, mode);
+    return WebKit::Platform::current()->fileUtilities()->openFile(path, mode);
 }
 
 void closeFile(PlatformFileHandle& handle)
 {
-    return PlatformSupport::closeFile(handle);
+    WebKit::Platform::current()->fileUtilities()->closeFile(handle);
 }
 
 long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return PlatformSupport::seekFile(handle, offset, origin);
+    return WebKit::Platform::current()->fileUtilities()->seekFile(handle, offset, origin);
 }
 
 bool truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return PlatformSupport::truncateFile(handle, offset);
+    return WebKit::Platform::current()->fileUtilities()->truncateFile(handle, offset);
 }
 
 int readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return PlatformSupport::readFromFile(handle, data, length);
+    return WebKit::Platform::current()->fileUtilities()->readFromFile(handle, data, length);
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return PlatformSupport::writeToFile(handle, data, length);
+    return WebKit::Platform::current()->fileUtilities()->writeToFile(handle, data, length);
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)

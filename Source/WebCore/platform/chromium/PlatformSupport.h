@@ -122,23 +122,6 @@ public:
     static void deleteCookie(const Document*, const KURL&, const String& cookieName);
     static bool cookiesEnabled(const Document*);
 
-    // File ---------------------------------------------------------------
-    static bool deleteFile(const String&);
-    static bool deleteEmptyDirectory(const String&);
-    static bool getFileMetadata(const String&, FileMetadata& result);
-    static String directoryName(const String& path);
-    static String pathByAppendingComponent(const String& path, const String& component);
-    static bool makeAllDirectories(const String& path);
-    static String getAbsolutePath(const String&);
-    static bool isDirectory(const String&);
-    static KURL filePathToURL(const String&);
-    static PlatformFileHandle openFile(const String& path, FileOpenMode);
-    static void closeFile(PlatformFileHandle&);
-    static long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
-    static bool truncateFile(PlatformFileHandle, long long offset);
-    static int readFromFile(PlatformFileHandle, char* data, int length);
-    static int writeToFile(PlatformFileHandle, const char* data, int length);
-
 #if ENABLE(FILE_SYSTEM)
     static PassOwnPtr<AsyncFileSystem> createAsyncFileSystem();
 #endif
