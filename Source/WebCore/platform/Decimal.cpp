@@ -278,7 +278,7 @@ bool Decimal::EncodedData::operator==(const EncodedData& another) const
 }
 
 Decimal::Decimal(int32_t i32)
-    : m_data(i32 < 0 ? Negative : Positive, 0, i32 < 0 ? static_cast<uint32_t>(-i32) : i32)
+    : m_data(i32 < 0 ? Negative : Positive, 0, static_cast<uint32_t>(i32 < 0 ? -i32 : i32))
 {
 }
 

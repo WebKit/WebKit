@@ -1,5 +1,12 @@
 2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Build fix for Linon/SnowLeopard after r119062
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::Decimal):
+
+2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Platform] Introduce Decimal class for Number/Range input type.
         https://bugs.webkit.org/show_bug.cgi?id=87360
 
