@@ -654,6 +654,7 @@ void RenderTableSection::layoutRows()
             LayoutRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
 
             LayoutPoint cellLocation(0, m_rowPos[rindx]);
+            // FIXME: Switch to cell's styleForCellFlow() for consistency with RenderTableCell, once it supports row group.
             if (!style()->isLeftToRightDirection())
                 cellLocation.setX(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing);
             else

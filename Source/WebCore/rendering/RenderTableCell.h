@@ -135,6 +135,16 @@ public:
         return createAnonymousWithParentRenderer(parent);
     }
 
+    // This function is used to unify which table part's style we use for computing direction and
+    // writing mode. Writing modes are not allowed on row group and row but direction is.
+    // This means we can safely use the same style in all cases to simplify our code.
+    // FIXME: Eventually this function should replaced by style() once we support direction
+    // on all table parts and writing-mode on cells.
+    const RenderStyle* styleForCellFlow() const
+    {
+        return table()->style();
+    }
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -171,10 +181,10 @@ private:
     CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    CollapsedBorderValue cachedCollapsedLeftBorder(RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedRightBorder(RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedTopBorder(RenderStyle*) const;
-    CollapsedBorderValue cachedCollapsedBottomBorder(RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedLeftBorder(const RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedRightBorder(const RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedTopBorder(const RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedBottomBorder(const RenderStyle*) const;
 
     CollapsedBorderValue computeCollapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

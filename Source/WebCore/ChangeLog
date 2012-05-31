@@ -1,3 +1,50 @@
+2012-05-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add an helper function to get the style for a cell's flow computation
+        https://bugs.webkit.org/show_bug.cgi?id=87902
+
+        Reviewed by Ojan Vafai.
+
+        No expected change in behavior.
+
+        This change introduces styleForCellFlow that unify which function we use
+        to determine a cell's direction and writing mode.
+
+        This unification will make it easier to support direction on table row
+        group (section in WebKit land).
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::styleForCellFlow):
+        Added the new function along with a comment as to its purpose.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder):
+        (WebCore::RenderTableCell::borderHalfLeft):
+        (WebCore::RenderTableCell::borderHalfRight):
+        (WebCore::RenderTableCell::borderHalfTop):
+        (WebCore::RenderTableCell::borderHalfBottom):
+        (WebCore::RenderTableCell::borderHalfStart):
+        (WebCore::RenderTableCell::borderHalfEnd):
+        (WebCore::RenderTableCell::borderHalfBefore):
+        (WebCore::RenderTableCell::borderHalfAfter):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        Mostly mechanical replacement.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::cachedCollapsedLeftBorder):
+        (WebCore::RenderTableCell::cachedCollapsedRightBorder):
+        (WebCore::RenderTableCell::cachedCollapsedTopBorder):
+        (WebCore::RenderTableCell::cachedCollapsedBottomBorder):
+        Made the argument 'const' now.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        Added a FIXME to unify with the rest.
+
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [JSC] SerializedScriptValue.create() succeeds even if MessagePort object cannot be found in transferred ports
