@@ -1,5 +1,11 @@
 2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed. Unskipping tests for GTK now passing in all the bots.
+
+        * platform/gtk/test_expectations.txt:
+
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
         fast/dom/Window/mozilla-focus-blur.html failing after r118916
         https://bugs.webkit.org/show_bug.cgi?id=87951
 

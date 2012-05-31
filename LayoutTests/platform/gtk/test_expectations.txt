@@ -580,9 +580,6 @@ BUGWK53964 : fast/forms/option-mouseevents.html = FAIL
 BUGWK53959 : fast/dom/Window/window-resize-and-move-arguments.html = FAIL
 BUGWK53959 : fast/dom/Window/window-resize.html = FAIL
 
-// The background is not clipped in this test, as observed in the pixel output.
-BUGWKGTK : fast/backgrounds/background-clip-text.html = FAIL
-
 // keygen element rendering is broken
 BUGWK54136 : http/tests/misc/submit-post-keygen.html = FAIL
 
@@ -826,12 +823,6 @@ BUGWK40601 : editing/selection/5354455-1.html = FAIL
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
 BUGWK58222 : fast/preloader = FAIL
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = FAIL
-
-// No matching language preference set
-BUGWKGTK : svg/W3C-SVG-1.1/struct-cond-02-t.svg = FAIL
-
-// The pixel output shows two broken images instead of the sunset.
-BUGWKGTK : svg/W3C-SVG-1.1/struct-image-04-t.svg = FAIL
 
 // The middle circle on both rectangles is missing in the pixel output.
 BUGWKGTK : svg/custom/circular-marker-reference-2.svg = FAIL
