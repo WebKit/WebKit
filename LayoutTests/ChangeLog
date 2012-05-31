@@ -1,3 +1,13 @@
+2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Gardening after r118920
+        https://bugs.webkit.org/show_bug.cgi?id=87934
+
+        Unreviewed, gardening of http/tests/local/fileapi/file-last-modified-after-delete.html which
+        relies on unsupported drag'n'drop feature.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-31  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Retainers are missing for all objects

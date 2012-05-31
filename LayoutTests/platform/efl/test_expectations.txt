@@ -93,6 +93,7 @@ BUGWK86623 : editing/pasteboard/drop-inputtext-acquires-style.html = TEXT
 BUGWK86623 : editing/pasteboard/drop-link.html = TEXT
 BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
+BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
 // Missing drag'n'drop, needs baselines
 BUGWK86623 : editing/pasteboard/drag-drop-dead-frame.html = MISSING
