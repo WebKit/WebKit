@@ -29,16 +29,19 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderSurfaceDrawQuad> CCRenderSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica)
+PassOwnPtr<CCRenderSurfaceDrawQuad> CCRenderSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
 {
-    return adoptPtr(new CCRenderSurfaceDrawQuad(sharedQuadState, quadRect, layer, surfaceDamageRect, isReplica));
+    return adoptPtr(new CCRenderSurfaceDrawQuad(sharedQuadState, quadRect, layer, surfaceDamageRect, isReplica, filters, backgroundFilters, maskTextureId));
 }
 
-CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica)
+CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer, const FloatRect& surfaceDamageRect, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::RenderSurface, quadRect)
     , m_layer(layer)
     , m_surfaceDamageRect(surfaceDamageRect)
     , m_isReplica(isReplica)
+    , m_filters(filters)
+    , m_backgroundFilters(backgroundFilters)
+    , m_maskTextureId(maskTextureId)
 {
     ASSERT(m_layer);
 }

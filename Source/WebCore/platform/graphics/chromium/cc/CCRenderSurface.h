@@ -31,7 +31,6 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "SkBitmap.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerQuad.h"
@@ -41,6 +40,7 @@
 namespace WebCore {
 
 class CCDamageTracker;
+class CCQuadCuller;
 class CCSharedQuadState;
 class CCLayerImpl;
 class LayerRendererChromium;
@@ -54,18 +54,13 @@ public:
 
     bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
+    bool hasValidContentsTexture() const;
 
     bool prepareBackgroundTexture(LayerRendererChromium*);
     void releaseBackgroundTexture();
+    bool hasValidBackgroundTexture() const;
 
     void setScissorRect(LayerRendererChromium*, const FloatRect& surfaceDamageRect) const;
-
-    void drawContents(LayerRendererChromium*);
-    void drawReplica(LayerRendererChromium*);
-
-    // Takes a texture with pixels in device space, and a transform from content space to the device. Copies the device-space texture back into
-    // content space for the surface, storing the result in the backgroundTexture(). The surface's backgroundTexture() must be the active drawing target.
-    void copyDeviceToBackgroundTexture(LayerRendererChromium*, int deviceBackgroundTextureId, const IntRect& deviceTextureRect, const TransformationMatrix& deviceTransform) const;
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;
@@ -74,18 +69,12 @@ public:
 
     // Returns the rect that encloses the RenderSurface including any reflection.
     FloatRect drawableContentRect() const;
-    // Returns the rect that encloses the pixels that may affect the pixel values in this surface through background filters.
-    IntRect readbackDeviceContentRect(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
-
-    // Gives the transform from the surface content space, with origin in the top left, to the current target device space, with origin in the top left.
-    TransformationMatrix computeDeviceTransform(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
 
     void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
-    SkBitmap applyFilters(LayerRendererChromium*, const WebKit::WebFilterOperations&, ManagedTexture* sourceTexture);
 
     void setBackgroundFilters(const WebKit::WebFilterOperations& filters) { m_backgroundFilters = filters; }
     const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
@@ -126,13 +115,8 @@ public:
     void setContentRect(const IntRect&);
     const IntRect& contentRect() const { return m_contentRect; }
 
-    void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
-    bool skipsDraw() const { return m_skipsDraw; }
-
     void clearLayerList() { m_layerList.clear(); }
     Vector<CCLayerImpl*>& layerList() { return m_layerList; }
-
-    void setMaskLayer(CCLayerImpl* maskLayer) { m_maskLayer = maskLayer; }
 
     ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
     ManagedTexture* backgroundTexture() const { return m_backgroundTexture.get(); }
@@ -154,21 +138,13 @@ public:
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState() const;
 
+    // FIXME: Remove the surfaceDamageRect parameter when the value is removed from CCRenderSurfaceDrawQuad.
+    void appendQuads(CCQuadCuller&, CCSharedQuadState*, bool forReplica, const FloatRect& surfaceDamageRect);
+
 private:
-    IntRect computeDeviceBoundingBox(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
-    IntRect computeReadbackDeviceBoundingBox(LayerRendererChromium*, const TransformationMatrix& drawTransform) const;
-
-    void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, int contentsTextureId);
-    template <class T>
-    void drawSurface(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad&, int contentsTextureId, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
-
-    static void copyTextureToFramebuffer(LayerRendererChromium*, int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix);
-
     CCLayerImpl* m_owningLayer;
-    CCLayerImpl* m_maskLayer;
 
     IntRect m_contentRect;
-    bool m_skipsDraw;
     bool m_surfacePropertyChanged;
 
     OwnPtr<ManagedTexture> m_contentsTexture;

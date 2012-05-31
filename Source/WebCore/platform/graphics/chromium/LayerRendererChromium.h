@@ -135,6 +135,7 @@ public:
     void drawTexturedQuad(const TransformationMatrix& layerMatrix,
                           float width, float height, float opacity, const FloatQuad&,
                           int matrixLocation, int alphaLocation, int quadLocation);
+    void copyTextureToFramebuffer(int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix);
 
 protected:
     friend class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
@@ -153,7 +154,7 @@ private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
-    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*);
+    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*, const TransformationMatrix& deviceTransform);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);

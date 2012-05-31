@@ -475,11 +475,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setUsesLayerClipping(false);
         layer->setClipRect(IntRect());
 
-        if (layer->maskLayer()) {
-            renderSurface->setMaskLayer(layer->maskLayer());
+        if (layer->maskLayer())
             layer->maskLayer()->setTargetRenderSurface(renderSurface);
-        } else
-            renderSurface->setMaskLayer(0);
 
         if (layer->replicaLayer() && layer->replicaLayer()->maskLayer())
             layer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);

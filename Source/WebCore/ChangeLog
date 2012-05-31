@@ -1,3 +1,65 @@
+2012-05-31  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move drawing code for RenderSurfaces into LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=87877
+
+        Reviewed by James Robinson.
+
+        We add data to CCRenderSurfaceDrawQuad so that the only use of
+        CCRenderSurface directly from LayerRendererChromium is to
+        reserve, release, and use the surface's textures, and to set the
+        scissor rect. Each of these changes will be done independent
+        of this change.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::applyFilters):
+        (WebCore):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderSurfaceQuad):
+        (WebCore::LayerRendererChromium::copyTextureToFramebuffer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::contentsTextureId):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        * platform/graphics/chromium/cc/CCQuadCuller.h:
+        (CCQuadCuller):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore):
+        (WebCore::CCRenderSurface::CCRenderSurface):
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::releaseContentsTexture):
+        (WebCore::CCRenderSurface::hasValidContentsTexture):
+        (WebCore::CCRenderSurface::releaseBackgroundTexture):
+        (WebCore::CCRenderSurface::hasValidBackgroundTexture):
+        (WebCore::CCRenderSurface::hasMask):
+        (WebCore::CCRenderSurface::replicaHasMask):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.cpp:
+        (WebCore::CCRenderSurfaceDrawQuad::create):
+        (WebCore::CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.h:
+        (WebKit):
+        (CCRenderSurfaceDrawQuad):
+        (WebCore::CCRenderSurfaceDrawQuad::maskTextureId):
+        (WebCore::CCRenderSurfaceDrawQuad::filters):
+        (WebCore::CCRenderSurfaceDrawQuad::backgroundFilters):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::contentsTextureId):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+
 2012-05-31  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11544454> and https://bugs.webkit.org/show_bug.cgi?id=87990

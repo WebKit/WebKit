@@ -28,24 +28,12 @@
 #include "cc/CCRenderPass.h"
 
 #include "Color.h"
-#include "cc/CCDamageTracker.h"
-#include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCQuadCuller.h"
-#include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
 #include "cc/CCSolidColorDrawQuad.h"
 
 namespace WebCore {
-
-static const int debugSurfaceBorderWidth = 2;
-static const int debugSurfaceBorderAlpha = 100;
-static const int debugSurfaceBorderColorRed = 0;
-static const int debugSurfaceBorderColorGreen = 0;
-static const int debugSurfaceBorderColorBlue = 255;
-static const int debugReplicaBorderColorRed = 160;
-static const int debugReplicaBorderColorGreen = 0;
-static const int debugReplicaBorderColorBlue = 255;
 
 PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface)
 {
@@ -75,26 +63,20 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclus
     CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, layer->hasDebugBorders());
 
     CCRenderSurface* surface = layer->renderSurface();
+
     OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
-    if (layer->hasDebugBorders()) {
-        Color color(debugSurfaceBorderColorRed, debugSurfaceBorderColorGreen, debugSurfaceBorderColorBlue, debugSurfaceBorderAlpha);
-        quadCuller.appendSurface(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
-    }
     bool isReplica = false;
-    quadCuller.appendSurface(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
+    surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, surfaceDamageRect());
     m_sharedQuadStateList.append(sharedQuadState.release());
 
+    if (!surface->hasReplica())
+        return;
+
     // Add replica after the surface so that it appears below the surface.
-    if (surface->hasReplica()) {
-        OwnPtr<CCSharedQuadState> sharedQuadState = surface->createReplicaSharedQuadState();
-        if (layer->hasDebugBorders()) {
-            Color color(debugReplicaBorderColorRed, debugReplicaBorderColorGreen, debugReplicaBorderColorBlue, debugSurfaceBorderAlpha);
-            quadCuller.appendReplica(CCDebugBorderDrawQuad::create(sharedQuadState.get(), surface->contentRect(), color, debugSurfaceBorderWidth));
-        }
-        bool isReplica = true;
-        quadCuller.appendReplica(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect(), isReplica));
-        m_sharedQuadStateList.append(sharedQuadState.release());
-    }
+    OwnPtr<CCSharedQuadState> replicaSharedQuadState = surface->createReplicaSharedQuadState();
+    isReplica = true;
+    surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica, surfaceDamageRect());
+    m_sharedQuadStateList.append(replicaSharedQuadState.release());
 }
 
 void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, const Color& screenBackgroundColor, const CCOcclusionTrackerImpl& occlusionTracker)

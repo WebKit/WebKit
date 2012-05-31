@@ -169,9 +169,10 @@ void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQu
     quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, layerRect, debugBorderColor(), debugBorderWidth()));
 }
 
-void CCLayerImpl::bindContentsTexture(LayerRendererChromium*)
+unsigned CCLayerImpl::contentsTextureId() const
 {
     ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void CCLayerImpl::scrollBy(const FloatSize& scroll)

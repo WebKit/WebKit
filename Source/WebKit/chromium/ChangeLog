@@ -1,3 +1,13 @@
+2012-05-31  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move drawing code for RenderSurfaces into LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=87877
+
+        Reviewed by James Robinson.
+
+        * tests/CCRenderSurfaceTest.cpp:
+        (WebCore::TEST):
+
 2012-05-31  Ami Fischman  <fischman@chromium.org>
 
         Replace WebMediaPlayer::bytesLoaded() with an explicit didLoadingProgress()

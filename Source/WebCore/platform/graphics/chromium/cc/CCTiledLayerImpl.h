@@ -45,7 +45,7 @@ public:
 
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
-    virtual void bindContentsTexture(LayerRendererChromium*) OVERRIDE;
+    virtual unsigned contentsTextureId() const OVERRIDE;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 

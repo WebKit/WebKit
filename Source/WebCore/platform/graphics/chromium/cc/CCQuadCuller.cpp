@@ -89,11 +89,5 @@ bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 
-bool CCQuadCuller::appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad)
-{
-    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), true, passDrawQuad->quadRect());
-    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
-}
-
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

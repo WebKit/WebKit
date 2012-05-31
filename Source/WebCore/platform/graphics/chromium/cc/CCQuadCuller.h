@@ -41,7 +41,6 @@ public:
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
     virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad);
     virtual bool appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad);
-    virtual bool appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad);
 
 private:
     CCQuadList& m_quadList;

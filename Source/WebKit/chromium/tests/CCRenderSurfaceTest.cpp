@@ -86,9 +86,7 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setDrawTransform(dummyMatrix));
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setReplicaDrawTransform(dummyMatrix));
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setOriginTransform(dummyMatrix));
-    EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setSkipsDraw(true));
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->clearLayerList());
-    EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setMaskLayer(dummyMask.get()));
 }
 
 TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)

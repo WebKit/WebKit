@@ -46,6 +46,8 @@
 #include "PlatformColor.h"
 #include "PlatformContextSkia.h"
 #include "RenderSurfaceChromium.h"
+#include "SharedGraphicsContext3D.h"
+#include "SkBitmap.h"
 #include "TextureCopier.h"
 #include "TextureManager.h"
 #include "ThrottledTextureUploader.h"
@@ -56,11 +58,13 @@
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCLayerQuad.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCProxy.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
+#include "cc/CCRenderSurfaceFilters.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
@@ -568,7 +572,21 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     GLC(context(), context()->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
 }
 
-void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad* quad)
+static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const WebKit::WebFilterOperations& filters, ManagedTexture* sourceTexture)
+{
+    if (filters.isEmpty())
+        return SkBitmap();
+
+    RefPtr<GraphicsContext3D> filterContext = CCProxy::hasImplThread() ? SharedGraphicsContext3D::getForImplThread() : SharedGraphicsContext3D::get();
+    if (!filterContext)
+        return SkBitmap();
+
+    layerRenderer->context()->flush();
+
+    return CCRenderSurfaceFilters::apply(filters, sourceTexture->textureId(), sourceTexture->size(), filterContext.get());
+}
+
+void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad* quad, const TransformationMatrix& contentsDeviceTransform)
 {
     // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
     // The algorithm works as follows:
@@ -585,7 +603,7 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad*
     // Pixel copies in this algorithm occur at steps 2, 3, 4, and 5.
 
     CCRenderSurface* drawingSurface = quad->layer()->renderSurface();
-    if (drawingSurface->backgroundFilters().isEmpty())
+    if (quad->backgroundFilters().isEmpty())
         return;
 
     // FIXME: We only allow background filters on the root render surface because other surfaces may contain
@@ -593,17 +611,21 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad*
     if (!isCurrentRenderSurface(m_defaultRenderSurface))
         return;
 
-    const TransformationMatrix& surfaceDrawTransform = quad->isReplica() ? drawingSurface->replicaDrawTransform() : drawingSurface->drawTransform();
-
     // FIXME: Do a single readback for both the surface and replica and cache the filtered results (once filter textures are not reused).
-    IntRect deviceRect = drawingSurface->readbackDeviceContentRect(this, surfaceDrawTransform);
+    IntRect deviceRect = enclosingIntRect(CCMathUtil::mapClippedRect(contentsDeviceTransform, sharedGeometryQuad().boundingBox()));
+
+    int top, right, bottom, left;
+    quad->backgroundFilters().getOutsets(top, right, bottom, left);
+    deviceRect.move(-left, -top);
+    deviceRect.expand(left + right, top + bottom);
+
     deviceRect.intersect(m_currentRenderSurface->contentRect());
 
     OwnPtr<ManagedTexture> deviceBackgroundTexture = ManagedTexture::create(m_renderSurfaceTextureManager.get());
     if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
         return;
 
-    SkBitmap filteredDeviceBackground = drawingSurface->applyFilters(this, drawingSurface->backgroundFilters(), deviceBackgroundTexture.get());
+    SkBitmap filteredDeviceBackground = applyFilters(this, quad->backgroundFilters(), deviceBackgroundTexture.get());
     if (!filteredDeviceBackground.getTexture())
         return;
 
@@ -613,29 +635,144 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad*
     if (!drawingSurface->prepareBackgroundTexture(this))
         return;
 
-    // This must be computed before switching the target render surface to the background texture.
-    TransformationMatrix contentsDeviceTransform = drawingSurface->computeDeviceTransform(this, surfaceDrawTransform);
-
     CCRenderSurface* targetRenderSurface = m_currentRenderSurface;
-    if (useManagedTexture(drawingSurface->backgroundTexture(), drawingSurface->contentRect())) {
-        drawingSurface->copyDeviceToBackgroundTexture(this, filteredDeviceBackgroundTextureId, deviceRect, contentsDeviceTransform);
+    if (useManagedTexture(drawingSurface->backgroundTexture(), quad->quadRect())) {
+        // Copy the readback pixels from device to the background texture for the surface.
+        TransformationMatrix deviceToSurfaceTransform;
+        deviceToSurfaceTransform.translate(quad->quadRect().width() / 2.0, quad->quadRect().height() / 2.0);
+        deviceToSurfaceTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
+        deviceToSurfaceTransform *= contentsDeviceTransform.inverse();
+        deviceToSurfaceTransform.translate(deviceRect.width() / 2.0, deviceRect.height() / 2.0);
+        deviceToSurfaceTransform.translate(deviceRect.x(), deviceRect.y());
+
+        copyTextureToFramebuffer(filteredDeviceBackgroundTextureId, deviceRect.size(), deviceToSurfaceTransform);
+
         useRenderSurface(targetRenderSurface);
     }
 }
 
 void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad* quad)
 {
-    CCLayerImpl* layer = quad->layer();
+    // The replica is always drawn first, so free after drawing the contents.
+    bool shouldReleaseTextures = !quad->isReplica();
 
-    drawBackgroundFilters(quad);
+    CCRenderSurface* drawingSurface = quad->layer()->renderSurface();
 
-    layer->renderSurface()->setScissorRect(this, quad->surfaceDamageRect());
-    if (quad->isReplica())
-        layer->renderSurface()->drawReplica(this);
-    else
-        layer->renderSurface()->drawContents(this);
-    layer->renderSurface()->releaseBackgroundTexture();
-    layer->renderSurface()->releaseContentsTexture();
+    TransformationMatrix renderTransform = quad->layerTransform();
+    // Apply a scaling factor to size the quad from 1x1 to its intended size.
+    renderTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
+    TransformationMatrix contentsDeviceTransform = TransformationMatrix(windowMatrix() * projectionMatrix() * renderTransform).to2dTransform();
+
+    // Can only draw surface if device matrix is invertible.
+    if (!contentsDeviceTransform.isInvertible() || !drawingSurface->hasValidContentsTexture()) {
+        if (shouldReleaseTextures) {
+            drawingSurface->releaseBackgroundTexture();
+            drawingSurface->releaseContentsTexture();
+        }
+        return;
+    }
+
+    drawBackgroundFilters(quad, contentsDeviceTransform);
+
+    // FIXME: Remove this call when the quad's scissorRect() is set correctly.
+    drawingSurface->setScissorRect(this, quad->surfaceDamageRect());
+
+    // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
+    // Apply filters to the contents texture.
+    SkBitmap filterBitmap = applyFilters(this, quad->filters(), drawingSurface->contentsTexture());
+    int contentsTextureId = drawingSurface->contentsTexture()->textureId();
+    if (filterBitmap.getTexture()) {
+        GrTexture* texture = reinterpret_cast<GrTexture*>(filterBitmap.getTexture());
+        contentsTextureId = texture->getTextureHandle();
+    }
+
+    // Draw the background texture if there is one.
+    if (drawingSurface->hasValidBackgroundTexture())
+        copyTextureToFramebuffer(drawingSurface->backgroundTexture()->textureId(), quad->quadRect().size(), quad->layerTransform());
+
+    FloatQuad deviceQuad = contentsDeviceTransform.mapQuad(sharedGeometryQuad());
+    CCLayerQuad deviceLayerBounds = CCLayerQuad(FloatQuad(deviceQuad.boundingBox()));
+    CCLayerQuad deviceLayerEdges = CCLayerQuad(deviceQuad);
+
+    // Use anti-aliasing programs only when necessary.
+    bool useAA = (!deviceQuad.isRectilinear() || !deviceQuad.boundingBox().isExpressibleAsIntRect());
+    if (useAA) {
+        deviceLayerBounds.inflateAntiAliasingDistance();
+        deviceLayerEdges.inflateAntiAliasingDistance();
+    }
+
+    bool useMask = quad->maskTextureId();
+
+    // FIXME: use the backgroundTexture and blend the background in with this draw instead of having a separate copy of the background texture.
+
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    context()->bindTexture(GraphicsContext3D::TEXTURE_2D, contentsTextureId);
+
+    int shaderQuadLocation = -1;
+    int shaderEdgeLocation = -1;
+    int shaderMaskSamplerLocation = -1;
+    int shaderMatrixLocation = -1;
+    int shaderAlphaLocation = -1;
+    if (useAA && useMask) {
+        const RenderSurfaceMaskProgramAA* program = renderSurfaceMaskProgramAA();
+        GLC(context(), context()->useProgram(program->program()));
+        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+        shaderQuadLocation = program->vertexShader().pointLocation();
+        shaderEdgeLocation = program->fragmentShader().edgeLocation();
+        shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
+        shaderMatrixLocation = program->vertexShader().matrixLocation();
+        shaderAlphaLocation = program->fragmentShader().alphaLocation();
+    } else if (!useAA && useMask) {
+        const RenderSurfaceMaskProgram* program = renderSurfaceMaskProgram();
+        GLC(context(), context()->useProgram(program->program()));
+        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+        shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
+        shaderMatrixLocation = program->vertexShader().matrixLocation();
+        shaderAlphaLocation = program->fragmentShader().alphaLocation();
+    } else if (useAA && !useMask) {
+        const RenderSurfaceProgramAA* program = renderSurfaceProgramAA();
+        GLC(context(), context()->useProgram(program->program()));
+        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+        shaderQuadLocation = program->vertexShader().pointLocation();
+        shaderEdgeLocation = program->fragmentShader().edgeLocation();
+        shaderMatrixLocation = program->vertexShader().matrixLocation();
+        shaderAlphaLocation = program->fragmentShader().alphaLocation();
+    } else {
+        const RenderSurfaceProgram* program = renderSurfaceProgram();
+        GLC(context(), context()->useProgram(program->program()));
+        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+        shaderMatrixLocation = program->vertexShader().matrixLocation();
+        shaderAlphaLocation = program->fragmentShader().alphaLocation();
+    }
+
+    if (shaderMaskSamplerLocation != -1) {
+        GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
+        GLC(context(), context()->uniform1i(shaderMaskSamplerLocation, 1));
+        context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->maskTextureId());
+        GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    }
+
+    if (shaderEdgeLocation != -1) {
+        float edge[24];
+        deviceLayerEdges.toFloatArray(edge);
+        deviceLayerBounds.toFloatArray(&edge[12]);
+        GLC(context(), context()->uniform3fv(shaderEdgeLocation, 8, edge));
+    }
+
+    // Map device space quad to surface space.
+    FloatQuad surfaceQuad = contentsDeviceTransform.inverse().mapQuad(deviceLayerEdges.floatQuad());
+
+    drawTexturedQuad(quad->layerTransform(), quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
+                     shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
+
+    if (shouldReleaseTextures) {
+        drawingSurface->releaseBackgroundTexture();
+        drawingSurface->releaseContentsTexture();
+    }
 }
 
 void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
@@ -1096,6 +1233,8 @@ void LayerRendererChromium::finishDrawingFrame()
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
+    m_renderSurfaceTextureManager->unprotectAllTextures();
+
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
     size_t reclaimLimit = TextureManager::reclaimLimitBytes(viewportSize());
     size_t preferredLimit = reclaimLimit > contentsMemoryUseBytes ? reclaimLimit - contentsMemoryUseBytes : 0;
@@ -1157,6 +1296,25 @@ void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& drawMat
         GLC(m_context, m_context->uniform1f(alphaLocation, opacity));
 
     GLC(m_context, m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
+}
+
+void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix)
+{
+    const RenderSurfaceProgram* program = renderSurfaceProgram();
+
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+
+    GLC(context(), context()->useProgram(program->program()));
+    GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    drawTexturedQuad(drawMatrix, bounds.width(), bounds.height(), 1, sharedGeometryQuad(),
+                                    program->vertexShader().matrixLocation(),
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
 }
 
 void LayerRendererChromium::finish()
