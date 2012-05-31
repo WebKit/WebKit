@@ -68,7 +68,6 @@
 		1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */; };
 		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
 		1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */; };
-		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
 		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
@@ -178,8 +177,6 @@
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
-		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
-		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
@@ -196,7 +193,6 @@
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
 		1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */; };
-		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
 		1AAF061412B01131008E49E2 /* PDFViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF061212B01131008E49E2 /* PDFViewController.h */; };
 		1AAF061512B01131008E49E2 /* PDFViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF061312B01131008E49E2 /* PDFViewController.mm */; };
 		1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */; };
@@ -452,7 +448,6 @@
 		7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
 		8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CFECE931490F140002AAA32 /* EditorState.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
-		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905620E812BC248B000799B6 /* WebMemorySampler.cpp */; };
 		909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 905620E912BC248B000799B6 /* WebMemorySampler.h */; };
 		909854EE12BC4E18000AD080 /* WebMemorySampler.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */; };
@@ -651,7 +646,6 @@
 		BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */; };
 		BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */; };
-		BC617EE8104CB34700FB3FE1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
 		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
 		BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64696E11DBE603006455B0 /* ImmutableArray.h */; };
 		BC646C1A11DD399F006455B0 /* WKBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1611DD399F006455B0 /* WKBackForwardList.cpp */; };
@@ -697,7 +691,6 @@
 		BC8699B6116AADAA002A925B /* WKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8699B3116AADAA002A925B /* WKView.mm */; };
 		BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B4116AADAA002A925B /* WKViewInternal.h */; };
 		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
-		BC87DFAA1018101400564216 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC87DFA91018101400564216 /* libicucore.dylib */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9099801256A98200083756 /* WKStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90997F1256A98200083756 /* WKStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */; };
@@ -778,7 +771,6 @@
 		BCCF6AC912C91F59008F9C35 /* WKImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCF6AC712C91F59008F9C35 /* WKImageCG.cpp */; };
 		BCCF6ACA12C91F59008F9C35 /* WKImageCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6AC812C91F59008F9C35 /* WKImageCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */; };
-		BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
 		BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD01397110FA420003B8A67 /* WKFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0139C110FA420003B8A67 /* WKFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD01398110FA420003B8A67 /* WKFrame.cpp */; };
 		BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -837,7 +829,6 @@
 		BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */; };
 		BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF505E51243047B005955AE /* PlatformCertificateInfo.h */; };
 		BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */; };
-		BCF5068512431861005955AE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
 		BCF69F861176CD6F00471A52 /* WebHistoryClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */; };
 		BCF69F871176CD6F00471A52 /* WebHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F851176CD6F00471A52 /* WebHistoryClient.h */; };
@@ -884,7 +875,6 @@
 		CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */; };
 		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
-		CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCA85D4132AC2B300E961DF /* IOKit.framework */; };
 		CDCA85EE132AD70100E961DF /* WebFullScreenManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */; };
 		CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
@@ -2029,16 +2019,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */,
-				1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */,
-				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
-				BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */,
-				CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */,
-				BC617EE8104CB34700FB3FE1 /* JavaScriptCore.framework in Frameworks */,
-				BC87DFAA1018101400564216 /* libicucore.dylib in Frameworks */,
-				1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */,
-				BCF5068512431861005955AE /* Security.framework in Frameworks */,
-				1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,19 @@
+2012-05-31  Andy Estes  <aestes@apple.com>
+
+        Move the specification of framework and library linking out of WebKit2.xcodeproj and into WebKit2.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=87932
+
+        Reviewed by Dan Bernstein.
+
+        Doing this makes it easier to vary linking based on SDK or other factors.
+
+        * Configurations/WebKit2.xcconfig: Create FRAMEWORK_AND_LIBRARY_LDFLAGS,
+        which specifies the same list of frameworks and libraries that were
+        previously in WebKit2's 'Link Binary With Libraries' build phase, and
+        append it to $(OTHER_LDFLAGS).
+        * WebKit2.xcodeproj/project.pbxproj: Remove all frameworks and
+        libraries from the 'Link Binary With Libraries' build phase.
+
 2012-05-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] [WK2] Memory leak in webkitWebViewBaseStartDrag
