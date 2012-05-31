@@ -92,7 +92,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_artificiallyInflatedBounds(false)
     , m_isMainFrameRenderViewLayer(false)
     , m_usingTiledCacheLayer(false)
-    , m_requiresOwnBackingStore(true)
 #if ENABLE(CSS_FILTERS)
     , m_canCompositeFilters(false)
 #endif
@@ -566,10 +565,6 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
-
-    // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
-    setRequiresOwnBackingStore(compositor()->requiresOwnBackingStore(m_owningLayer, compAncestor));
-
     updateDrawsContent();
     updateAfterWidgetResize();
 }
@@ -952,7 +947,7 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
 
 bool RenderLayerBacking::containsPaintedContent() const
 {
-    if (isSimpleContainerCompositingLayer() || paintsIntoWindow() || paintsIntoCompositedAncestor() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
+    if (isSimpleContainerCompositingLayer() || paintsIntoWindow() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
         return false;
 
     if (isDirectlyCompositedImage())
@@ -1110,8 +1105,6 @@ bool RenderLayerBacking::paintsIntoWindow() const
 
 void RenderLayerBacking::setContentsNeedDisplay()
 {
-    ASSERT(!paintsIntoCompositedAncestor());
-    
     if (m_graphicsLayer && m_graphicsLayer->drawsContent())
         m_graphicsLayer->setNeedsDisplay();
     
@@ -1125,8 +1118,6 @@ void RenderLayerBacking::setContentsNeedDisplay()
 // r is in the coordinate space of the layer's render object
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
-    ASSERT(!paintsIntoCompositedAncestor());
-
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         IntRect layerDirtyRect = r;
         layerDirtyRect.move(-m_graphicsLayer->offsetFromRenderer());
@@ -1151,7 +1142,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
                     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase,
                     RenderObject* paintingRoot)
 {
-    if (paintsIntoWindow() || paintsIntoCompositedAncestor()) {
+    if (paintsIntoWindow()) {
         ASSERT_NOT_REACHED();
         return;
     }

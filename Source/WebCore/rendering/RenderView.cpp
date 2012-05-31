@@ -253,7 +253,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         }
 
 #if USE(ACCELERATED_COMPOSITING)
-        if (RenderLayer* compositingLayer = layer->enclosingCompositingLayerForRepaint()) {
+        if (RenderLayer* compositingLayer = layer->enclosingCompositingLayer()) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
                 frameView()->setCannotBlitToWindow();
                 break;
