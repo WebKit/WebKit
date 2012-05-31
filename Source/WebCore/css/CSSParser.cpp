@@ -35,9 +35,6 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
-#if ENABLE(CSS_IMAGE_SET)
-#include "CSSImageSetValue.h"
-#endif
 #include "CSSImageValue.h"
 #include "CSSImportRule.h"
 #include "CSSInheritedValue.h"
@@ -78,21 +75,27 @@
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
 #include "TextEncoding.h"
-#if ENABLE(CSS_FILTERS)
-#include "WebKitCSSFilterValue.h"
-#endif
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
 #include "WebKitCSSTransformValue.h"
-#if ENABLE(CSS_SHADERS)
-#include "WebKitCSSShaderValue.h"
-#endif
 #include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(CSS_IMAGE_SET)
+#include "CSSImageSetValue.h"
+#endif
+
+#if ENABLE(CSS_FILTERS)
+#include "WebKitCSSFilterValue.h"
+#endif
+
+#if ENABLE(CSS_SHADERS)
+#include "WebKitCSSShaderValue.h"
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -415,10 +418,12 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitPaddingStart:
         acceptsNegativeNumbers = false;
         return true;
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
         acceptsNegativeNumbers = false;
         return RuntimeEnabledFeatures::cssExclusionsEnabled();
+#endif
     case CSSPropertyBottom:
     case CSSPropertyLeft:
     case CSSPropertyMarginBottom:
@@ -758,8 +763,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
 #endif
     case CSSPropertyWebkitPrintColorAdjust:
         if (valueID == CSSValueExact || valueID == CSSValueEconomy)
+#if ENABLE(CSS_REGIONS)
             return true;
         break;
+#endif
     case CSSPropertyWebkitRtlOrdering:
         if (valueID == CSSValueLogical || valueID == CSSValueVisual)
             return true;
@@ -797,6 +804,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText)
             return true;
         break;
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapFlow:
         if (!RuntimeEnabledFeatures::cssExclusionsEnabled())
             return false;
@@ -809,6 +817,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueWrap || valueID == CSSValueNone)
             return true;
         break;
+#endif
     case CSSPropertyWebkitWritingMode:
         if (valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
             return true;
@@ -916,8 +925,10 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapThrough:
+#endif
     case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
@@ -1495,21 +1506,33 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyPageBreakBefore:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
+#if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitRegionBreakAfter:
     case CSSPropertyWebkitRegionBreakBefore:
+#endif
         if (id == CSSValueAuto
             || id == CSSValueAlways
             || id == CSSValueAvoid
             || id == CSSValueLeft
             || id == CSSValueRight)
+#if ENABLE(CSS_REGIONS)
             validPrimitive = ((propId == CSSPropertyWebkitRegionBreakAfter) || (propId == CSSPropertyWebkitRegionBreakBefore)) ? cssRegionsEnabled() : true;
+#else
+            validPrimitive = true;
+#endif
         break;
 
     case CSSPropertyPageBreakInside:     // avoid | auto | inherit
     case CSSPropertyWebkitColumnBreakInside:
+#if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitRegionBreakInside:
+#endif
         if (id == CSSValueAuto || id == CSSValueAvoid)
+#if ENABLE(CSS_REGIONS)
             validPrimitive = (propId == CSSPropertyWebkitRegionBreakInside) ? cssRegionsEnabled() : true;
+#else
+            validPrimitive = true;
+#endif
         break;
 
     case CSSPropertyContent:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
@@ -2077,6 +2100,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg);
         break;
+#if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowInto:
         if (!cssRegionsEnabled())
             return false;
@@ -2089,6 +2113,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (cssRegionsEnabled() && (id == CSSValueAuto || id == CSSValueBreak))
             validPrimitive = true;
         break;
+#endif
     case CSSPropertyWebkitTransform:
         if (id == CSSValueNone)
             validPrimitive = true;
@@ -2431,7 +2456,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseFontVariantLigatures(important);
         break;
-
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
         if (!RuntimeEnabledFeatures::cssExclusionsEnabled())
@@ -2447,6 +2472,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     case CSSPropertyWebkitWrap:
         return RuntimeEnabledFeatures::cssExclusionsEnabled() && parseShorthand(propId, webkitWrapShorthand(), important);
+#endif
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:
@@ -2528,8 +2554,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
+#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitWrapThrough:
+#endif
     case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
@@ -4116,6 +4144,8 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
     return false;
 }
 
+#if ENABLE(CSS_EXCLUSIONS)
+
 PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRectangle(CSSParserValueList* args)
 {
     ASSERT(args);
@@ -4337,6 +4367,8 @@ bool CSSParser::parseExclusionShape(bool shapeInside, bool important)
 
     return false;
 }
+
+#endif
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
 bool CSSParser::parseFont(bool important)
@@ -7248,6 +7280,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 }
 #endif
 
+#if ENABLE(CSS_REGIONS)
 static bool validFlowName(const String& flowName)
 {
     return !(equalIgnoringCase(flowName, "auto")
@@ -7256,12 +7289,14 @@ static bool validFlowName(const String& flowName)
             || equalIgnoringCase(flowName, "initial")
             || equalIgnoringCase(flowName, "none"));
 }
+#endif
 
 bool CSSParser::cssRegionsEnabled() const
 {
     return m_context.isCSSRegionsEnabled;
 }
 
+#if ENABLE(CSS_REGIONS)
 bool CSSParser::parseFlowThread(const String& flowName)
 {
     RefPtr<StyleSheetInternal> dummyStyleSheet = StyleSheetInternal::create();
@@ -7337,6 +7372,7 @@ bool CSSParser::parseRegionThread(CSSPropertyID propId, bool important)
 
     return true;
 }
+#endif
 
 bool CSSParser::parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, CSSPropertyID& propId3, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
 {
@@ -8433,8 +8469,10 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
             return;
 
         case 15:
+#if ENABLE(CSS_REGIONS)
             if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-region"))
                 m_token = WEBKIT_REGION_RULE_SYM;
+#endif
             return;
 
         case 17:

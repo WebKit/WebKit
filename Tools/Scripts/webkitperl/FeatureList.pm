@@ -48,7 +48,9 @@ my (
     $batteryStatusSupport,
     $blobSupport,
     $channelMessagingSupport,
+    $cssExclusionsSupport,
     $cssFiltersSupport,
+    $cssRegionsSupport,
     $cssGridLayoutSupport,
     $cssShadersSupport,
     $dataTransferItemsSupport,
@@ -143,11 +145,17 @@ my @features = (
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
+    { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
+      define => "ENABLE_CSS_EXCLUSIONS", default => 1, value => \$cssExclusionsSupport },
+
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
 
     { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
       define => "ENABLE_CSS_GRID_LAYOUT", default => 0, value => \$cssGridLayoutSupport },
+
+    { option => "css-regions", desc => "Toggle CSS Regions support",
+      define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
 
     { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },

@@ -69,8 +69,10 @@ String CSSRule::cssText() const
         return static_cast<const WebKitCSSKeyframesRule*>(this)->cssText();
     case WEBKIT_KEYFRAME_RULE:
         return static_cast<const WebKitCSSKeyframeRule*>(this)->cssText();
+#if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         return static_cast<const WebKitCSSRegionRule*>(this)->cssText();
+#endif
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -106,9 +108,11 @@ void CSSRule::destroy()
     case WEBKIT_KEYFRAME_RULE:
         delete static_cast<WebKitCSSKeyframeRule*>(this);
         return;
+#if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         delete static_cast<WebKitCSSRegionRule*>(this);
         return;
+#endif
     }
     ASSERT_NOT_REACHED();
 }

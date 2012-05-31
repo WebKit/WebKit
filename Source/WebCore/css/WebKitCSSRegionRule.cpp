@@ -36,6 +36,8 @@
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(CSS_REGIONS)
+
 namespace WebCore {
 WebKitCSSRegionRule::WebKitCSSRegionRule(StyleRuleRegion* regionRule, CSSStyleSheet* parent)
     : CSSRule(parent, CSSRule::WEBKIT_REGION_RULE)
@@ -98,3 +100,5 @@ CSSRuleList* WebKitCSSRegionRule::cssRules() const
 
 
 } // namespace WebCore
+
+#endif

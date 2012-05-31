@@ -1099,6 +1099,22 @@ AC_ARG_WITH(font_backend,
             [],[with_font_backend="freetype"])
 
 case "$with_font_backend" in
+
+# check whether to enable CSS Exclusions support
+AC_MSG_CHECKING([whether to enable CSS Exclusions])
+AC_ARG_ENABLE(css_exclusions,
+              AC_HELP_STRING([--enable-css-exclusions],
+                             [enable support for CSS Exclusions [default=yes]]),
+              [],[enable_css_exclusions="yes"])
+AC_MSG_RESULT([$enable_css_exclusions])
+
+# check whether to enable CSS Regions support
+AC_MSG_CHECKING([whether to enable CSS Regions])
+AC_ARG_ENABLE(css_regions,
+              AC_HELP_STRING([--enable-css-regions],
+                             [enable support for CSS Regions [default=yes]]),
+              [],[enable_css_regions="yes"])
+AC_MSG_RESULT([$enable_css_regions])
      freetype|pango) ;;
      *) AC_MSG_ERROR([Invalid font backend: must be freetype or pango.]) ;;
 esac
@@ -1425,6 +1441,8 @@ WebKit was configured with the following options:
 
 Build configuration:
  Enable debugging (slow)                                  : $enable_debug
+AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
  Compile with debug symbols (slow)                        : $enable_debug_symbols
  Enable debug features (slow)                             : $enable_debug_features
  Enable GCC build optimization                            : $enable_optimizations
@@ -1438,6 +1456,8 @@ Features:
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
  Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
+ CSS Exclusions support                                   : $enable_css_exclusions
+ CSS Regions support                                      : $enable_css_regions
  DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
