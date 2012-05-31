@@ -41,6 +41,7 @@ from webkitpy.layout_tests.port.leakdetector import LeakDetector
 
 _log = logging.getLogger(__name__)
 
+
 class MacPort(ApplePort):
     port_name = "mac"
 
@@ -177,7 +178,7 @@ class MacPort(ApplePort):
     def release_http_lock(self):
         pass
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
         # Note that we do slow-spin here and wait, since it appears the time
         # ReportCrash takes to actually write and flush the file varies when there are
         # lots of simultaneous crashes going on.
@@ -192,13 +193,33 @@ class MacPort(ApplePort):
         deadline = now + 5 * int(self.get_option('child_processes', 1))
         while not crash_log and now <= deadline:
             crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
+            if not wait_for_log:
+                break
             if not crash_log or not [line for line in crash_log.splitlines() if not line.startswith('ERROR')]:
                 sleep_fn(0.1)
                 now = time_fn()
+
         if not crash_log:
-            crash_log = 'no crash log found for %s:%d' % (name, pid)
-            _log.warning(crash_log)
+            return None
         return crash_log
+
+    def look_for_new_crash_logs(self, crashed_processes, start_time):
+        """Since crash logs can take a long time to be written out if the system is
+           under stress do a second pass at the end of the test run.
+
+           crashes: test_name -> pid, process_name tuple of crashed process
+           start_time: time the tests started at.  We're looking for crash
+               logs after that time.
+        """
+        crash_logs = {}
+        for (test_name, process_name, pid) in crashed_processes:
+            # Passing None for output.  This is a second pass after the test finished so
+            # if the output had any loggine we would have already collected it.
+            crash_log = self._get_crash_log(process_name, pid, None, None, start_time, wait_for_log=False)
+            if not crash_log:
+                continue
+            crash_logs[test_name] = crash_log
+        return crash_logs
 
     def sample_process(self, name, pid):
         try:

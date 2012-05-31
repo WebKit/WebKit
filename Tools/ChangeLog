@@ -1,3 +1,25 @@
+2012-05-30  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87714
+        Mac crash logs can take a really long time to be written out.
+
+        Reviewed by Dirk Pranke.
+
+        Make a second pass looking for crash logs after the tests have completed running.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (use_trac_links_in_results_html):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.repository_paths):
+        (Port.look_for_new_crash_logs):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.look_for_new_crash_logs):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_get_crash_log):
+        (test_look_for_new_crash_logs):
+        (test_look_for_new_crash_logs.fake_time_cb):
+
 2012-05-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Fix 2.9 issues with c_str() type by using the wx fprintf wrapper.

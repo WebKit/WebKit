@@ -907,7 +907,6 @@ class Port(object):
         # where turnk isn't checked out as a whole.
         return [('webkit', self.layout_tests_dir())]
 
-
     _WDIFF_DEL = '##WDIFF_DEL##'
     _WDIFF_ADD = '##WDIFF_ADD##'
     _WDIFF_END = '##WDIFF_END##'
@@ -1084,6 +1083,9 @@ class Port(object):
         return 'crash log for %s (pid %s):\n%s\n%s\n' % (name_str, pid_str,
             '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
             '\n'.join(('STDERR: ' + l) for l in stderr_lines))
+
+    def look_for_new_crash_logs(self, crashed_processes, start_time):
+        pass
 
     def sample_process(self, name, pid):
         pass

@@ -46,6 +46,7 @@ import time
 
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import worker
+from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
@@ -105,6 +106,7 @@ def use_trac_links_in_results_html(port_obj):
     # We only use trac links on the buildbots.
     # Use existence of builder_name as a proxy for knowing we're on a bot.
     return port_obj.get_option("builder_name")
+
 
 # FIXME: This should be on the Manager class (since that's the only caller)
 # or split off from Manager onto another helper class, but should not be a free function.
@@ -909,6 +911,10 @@ class Manager(object):
 
         end_time = time.time()
 
+        # Some crash logs can take a long time to be written out so look
+        # for new logs after the test run finishes.
+        self._look_for_new_crash_logs(result_summary, start_time)
+        self._look_for_new_crash_logs(retry_summary, start_time)
         self._clean_up_run()
 
         self._print_timing_statistics(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary)
@@ -969,6 +975,29 @@ class Manager(object):
         self._port.stop_helper()
         _log.debug("cleaning up port")
         self._port.clean_up_test_run()
+
+    def _look_for_new_crash_logs(self, result_summary, start_time):
+        """Since crash logs can take a long time to be written out if the system is
+           under stress do a second pass at the end of the test run.
+
+           result_summary: the results of the test run
+           start_time: time the tests started at.  We're looking for crash
+               logs after that time.
+        """
+        crashed_processes = []
+        for test, result in result_summary.unexpected_results.iteritems():
+            if (result.type != test_expectations.CRASH):
+                continue
+            for failure in result.failures:
+                if not isinstance(failure, test_failures.FailureCrash):
+                    continue
+                crashed_processes.append([test, failure.process_name, failure.pid])
+
+        crash_logs = self._port.look_for_new_crash_logs(crashed_processes, start_time)
+        if crash_logs:
+            for test, crash_log in crash_logs.iteritems():
+                writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
+                writer.write_crash_log(crash_log)
 
     def update_summary(self, result_summary):
         """Update the summary and print results with any completed tests."""

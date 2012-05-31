@@ -573,10 +573,14 @@ class WebKitDriver(Driver):
         # FIXME: We may need to also read stderr until the process dies?
         self.error_from_test += self._server_process.pop_all_buffered_stderr()
 
-        crash_log = ''
+        crash_log = None
         if self.has_crashed():
             crash_log = self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, text, self.error_from_test,
                                                   newer_than=start_time)
+
+            # If we don't find a crash log use a placeholder error message instead.
+            if not crash_log:
+                crash_log = 'no crash log found for %s:%d.' % (self._crashed_process_name, self._crashed_pid)
 
         timeout = self._server_process.timed_out
         if timeout:

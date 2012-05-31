@@ -32,6 +32,7 @@
 
 import StringIO
 import sys
+import time
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
@@ -325,6 +326,21 @@ class ManagerTest(unittest.TestCase):
 
             manager = get_manager_with_tests(['http\\tests\\mime'])
             self.assertTrue(manager.needs_servers())
+
+    def test_look_for_new_crash_logs(self):
+        def get_manager_with_tests(test_names):
+            host = MockHost()
+            port = host.port_factory.get('test-mac-leopard')
+            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
+            manager.collect_tests(test_names)
+            return manager
+        host = MockHost()
+        port = host.port_factory.get('test-mac-leopard')
+        tests = ['failures/expected/crash.html']
+        expectations = test_expectations.TestExpectations(port, tests)
+        rs = result_summary.ResultSummary(expectations, tests)
+        manager = get_manager_with_tests(tests)
+        manager._look_for_new_crash_logs(rs, time.time())
 
 
 class NaturalCompareTest(unittest.TestCase):
