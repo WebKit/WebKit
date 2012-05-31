@@ -1,3 +1,15 @@
+2012-05-30  Zhenyao Mo  <zmo@google.com>
+
+        WebKit incorrectly clears the alpha channel on readPixels, even for Framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=87310
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::getParameter): set DEPTH_BITS/STENCIL_BITS to 0 if related channels are not requested.
+        (WebCore::WebGLRenderingContext::readPixels): don't do the alpha value fix if the current bound is not the internal drawing buffer.
+
 2012-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118986.

@@ -1,5 +1,9 @@
+
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script id="vshader" type="x-shader/x-vertex">
@@ -26,12 +30,17 @@ void main()
 </script>
 
 <script>
+var successfullyParsed = false;
 
 // These four declarations need to be global for "shouldBe" to see them
-var webGL = null;
+var gl;
 var contextAttribs = null;
 var pixel = [0, 0, 0, 1];
 var correctColor = null;
+var framebuffer;
+var fbHasColor;
+var fbHasDepth;
+var fbHasStencil;
 
 function init()
 {
@@ -52,26 +61,51 @@ function getWebGL(canvasWidth, canvasHeight, contextAttribs, clearColor, clearDe
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    var context = create3DContext(canvas, contextAttribs);
-    if (!context)
+    gl = create3DContext(canvas, contextAttribs);
+    if (!gl)
         return null;
 
-    context.program = createProgram(context, "vshader", "fshader", ["pos", "colorIn"]);
-    if (!context.program)
+    var program = createProgram(gl, "vshader", "fshader", ["pos", "colorIn"]);
+    if (!program)
         return null;
 
-    context.useProgram(context.program);
+    gl.useProgram(program);
 
-    context.enable(context.DEPTH_TEST);
-    context.enable(context.STENCIL_TEST);
-    context.disable(context.BLEND);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.STENCIL_TEST);
+    gl.disable(gl.BLEND);
 
-    context.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    context.clearDepth(clearDepth);
-    context.clearStencil(clearStencil);
-    context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    gl.clearDepth(clearDepth);
+    gl.clearStencil(clearStencil);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
-    return context;
+    framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.canvas.width, gl.canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    fbHasStencil = false;
+    fbHasDepth = false;
+    fbHasColor = gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE;
+    if (fbHasColor) {
+      var depthStencil = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, depthStencil);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, gl.canvas.width, gl.canvas.height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, depthStencil);
+      fbHasDepth = gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE;
+      if (!fbHasDepth) {
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, null);
+        shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
+      } else {
+        fbHasStencil = true;
+      }
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
+
+    return gl;
 }
 
 function drawAndReadPixel(gl, vertices, colors, x, y)
@@ -99,33 +133,63 @@ function drawAndReadPixel(gl, vertices, colors, x, y)
 function testAlpha(alpha)
 {
     debug("Testing alpha = " + alpha);
-    if (alpha)
-        shouldBeNonNull("webGL = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
-    else
-        shouldBeNonNull("webGL = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
-    shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
+    if (alpha) {
+        shouldBeNonNull("gl = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+        shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) >= 8");
+    } else {
+        shouldBeNonNull("gl = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+        shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) == 0");
+    }
+    shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.BLUE_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+    shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) == 0");
+
+    shouldBeNonNull("contextAttribs = gl.getContextAttributes()");
     shouldBeTrue("contextAttribs.alpha == " + alpha);
 
     var buf = new Uint8Array(1 * 1 * 4);
-    webGL.readPixels(0, 0, 1, 1, webGL.RGBA, webGL.UNSIGNED_BYTE, buf);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
     pixel[0] = buf[0];
     pixel[1] = buf[1];
     pixel[2] = buf[2];
     pixel[3] = buf[3];
     correctColor = (contextAttribs.alpha ? [0, 0, 0, 0] : [0, 0, 0, 255]);
     shouldBe("pixel", "correctColor");
+
+    if (fbHasColor) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      gl.clearColor(0.5, 0.5, 0.5, 0.5);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+      pixel[0] = buf[0];
+      pixel[1] = buf[1];
+      pixel[2] = buf[2];
+      pixel[3] = buf[3];
+      shouldBeTrue("Math.abs(pixel[0] - 127) <= 1 && Math.abs(pixel[1] - 127) <= 1 && Math.abs(pixel[2] - 127) <= 1 && Math.abs(pixel[3] - 127) <= 1");
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
 }
 
 function testDepth(depth)
 {
     debug("Testing depth = " + depth);
-    if (depth)
-        shouldBeNonNull("webGL = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
-    else
-        shouldBeNonNull("webGL = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
-    shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
+    if (depth) {
+        shouldBeNonNull("gl = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) >= 16");
+    } else {
+        shouldBeNonNull("gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+    }
+    shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.BLUE_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) >= 8");
 
-    webGL.depthFunc(webGL.NEVER);
+    shouldBeNonNull("contextAttribs = gl.getContextAttributes()");
+
+    gl.depthFunc(gl.NEVER);
 
     var vertices = new Float32Array([
          1.0,  1.0, 0.0,
@@ -142,32 +206,64 @@ function testDepth(depth)
         255, 0, 0, 255,
         255, 0, 0, 255]);
 
-    var buf = drawAndReadPixel(webGL, vertices, colors, 0, 0);
+    var buf = drawAndReadPixel(gl, vertices, colors, 0, 0);
     pixel[0] = buf[0];
     pixel[1] = buf[1];
     pixel[2] = buf[2];
     pixel[3] = buf[3];
     correctColor = (contextAttribs.depth ? [0, 0, 0, 255] : [255, 0, 0, 255]);
     shouldBe("pixel", "correctColor");
+
+    if (fbHasDepth) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      var buf = drawAndReadPixel(gl, vertices, colors, 0, 0);
+      pixel[0] = buf[0];
+      pixel[1] = buf[1];
+      pixel[2] = buf[2];
+      pixel[3] = buf[3];
+      shouldBe("pixel", "[0, 0, 0, 255]");
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
 }
 
 function testStencilAndDepth(stencil, depth)
 {
     debug("Testing stencil = " + stencil + ", depth = " + depth);
     var creationString =
-        "webGL = getWebGL(1, 1, { depth: " + depth + ", stencil: " + stencil + ", antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
+        "gl = getWebGL(1, 1, { depth: " + depth + ", stencil: " + stencil + ", antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
     shouldBeNonNull(creationString);
-    shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
+
+    shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.BLUE_BITS) >= 8");
+    shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) >= 8");
+    if (depth)
+        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) >= 16");
+    else
+        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+
+    if (stencil)
+        shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) >= 8");
+    else
+        shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) == 0");
+
+    shouldBeNonNull("contextAttribs = gl.getContextAttributes()");
+    if (!depth && contextAttribs.depth) {
+        testFailed("WebGL implementation provided a depth buffer when it should not have");
+    }
+    if (!contextAttribs.depth)
+        depth = false;
     if (!stencil && contextAttribs.stencil) {
         testFailed("WebGL implementation provided a stencil buffer when it should not have");
     }
     if (!contextAttribs.stencil)
         stencil = false;
 
-    webGL.depthFunc(webGL.ALWAYS);
+    gl.depthFunc(gl.ALWAYS);
 
-    webGL.stencilFunc(webGL.NEVER, 1, 1);
-    webGL.stencilOp(webGL.KEEP, webGL.KEEP, webGL.KEEP);
+    gl.stencilFunc(gl.NEVER, 1, 1);
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
     var vertices = new Float32Array([
          1.0, 1.0, 0.0,
@@ -184,23 +280,35 @@ function testStencilAndDepth(stencil, depth)
         255, 0, 0, 255,
         255, 0, 0, 255]);
 
-    var buf = drawAndReadPixel(webGL, vertices, colors, 0, 0);
+    var buf = drawAndReadPixel(gl, vertices, colors, 0, 0);
     pixel[0] = buf[0];
     pixel[1] = buf[1];
     pixel[2] = buf[2];
     pixel[3] = buf[3];
     correctColor = (stencil ? [0, 0, 0, 255] : [255, 0, 0, 255]);
     shouldBe("pixel", "correctColor");
+
+    if (fbHasStencil) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      var buf = drawAndReadPixel(gl, vertices, colors, 0, 0);
+      pixel[0] = buf[0];
+      pixel[1] = buf[1];
+      pixel[2] = buf[2];
+      pixel[3] = buf[3];
+      shouldBe("pixel", "[0, 0, 0, 255]");
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
 }
 
 function testAntialias(antialias)
 {
     debug("Testing antialias = " + antialias);
     if (antialias)
-        shouldBeNonNull("webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
     else
-        shouldBeNonNull("webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
-    shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
+        shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+    shouldBeNonNull("contextAttribs = gl.getContextAttributes()");
 
     var vertices = new Float32Array([
          1.0, 1.0, 0.0,
@@ -210,7 +318,7 @@ function testAntialias(antialias)
         255, 0, 0, 255,
         255, 0, 0, 255,
         255, 0, 0, 255]);
-    var buf = drawAndReadPixel(webGL, vertices, colors, 0, 0);
+    var buf = drawAndReadPixel(gl, vertices, colors, 0, 0);
     pixel[0] = buf[0];
     shouldBe("pixel[0] != 255 && pixel[0] != 0", "contextAttribs.antialias");
 }

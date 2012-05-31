@@ -2401,6 +2401,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     UNUSED_PARAM(ec);
     if (isContextLost())
         return WebGLGetInfo();
+    const int intZero = 0;
     WebGLStateRestorer(this, false);
     switch (pname) {
     case GraphicsContext3D::ACTIVE_TEXTURE:
@@ -2444,6 +2445,8 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::CURRENT_PROGRAM:
         return WebGLGetInfo(PassRefPtr<WebGLProgram>(m_currentProgram));
     case GraphicsContext3D::DEPTH_BITS:
+        if (!m_attributes.depth)
+            return WebGLGetInfo(intZero);
         return getIntParameter(pname);
     case GraphicsContext3D::DEPTH_CLEAR_VALUE:
         return getFloatParameter(pname);
@@ -2537,6 +2540,8 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
     case GraphicsContext3D::STENCIL_BACK_WRITEMASK:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BITS:
+        if (!m_attributes.stencil)
+            return WebGLGetInfo(intZero);
         return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_CLEAR_VALUE:
         return getIntParameter(pname);
@@ -3291,7 +3296,7 @@ void WebGLRenderingContext::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC
 #if OS(DARWIN)
     // FIXME: remove this section when GL driver bug on Mac is fixed, i.e.,
     // when alpha is off, readPixels should set alpha to 255 instead of 0.
-    if (!m_context->getContextAttributes().alpha) {
+    if (!m_framebufferBinding && !m_context->getContextAttributes().alpha) {
         unsigned char* pixels = reinterpret_cast<unsigned char*>(data);
         for (GC3Dsizei iy = 0; iy < height; ++iy) {
             for (GC3Dsizei ix = 0; ix < width; ++ix) {
