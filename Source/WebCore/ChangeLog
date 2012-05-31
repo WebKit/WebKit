@@ -1,3 +1,11 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        Fix Lion build after r119073.
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::toString):
+        Do not attempt to assign a unsigned long long to an int.
+
 2012-05-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable CSS_IMAGE_SET flag
