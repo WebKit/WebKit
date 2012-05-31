@@ -120,11 +120,13 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_composingTextEnd(0)
     , m_pendingKeyboardVisibilityChange(NoChange)
     , m_delayKeyboardVisibilityChange(false)
+    , m_selectClient(0)
 {
 }
 
 InputHandler::~InputHandler()
 {
+    delete m_selectClient;
 }
 
 static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement)
