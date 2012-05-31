@@ -1,3 +1,10 @@
+2012-05-30  Ami Fischman  <fischman@chromium.org>
+
+        Roll chromium DEPS from r139300 to r139542.  Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=87868
+
+        * DEPS:
+
 2012-05-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call fileUtilities methods directly
