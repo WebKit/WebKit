@@ -75,6 +75,7 @@ class CrashLogsTest(unittest.TestCase):
         else:
             self.assertEqual(a.splitlines(), b.splitlines())
 
+
     def test_find_log_darwin(self):
         if not SystemHost().platform.is_mac():
             return
@@ -105,8 +106,17 @@ class CrashLogsTest(unittest.TestCase):
         self.assertEqual(log, None)
 
         def bad_read(path):
-            raise IOError('No such file or directory')
+            raise IOError('IOError: No such file or directory')
+
+        def bad_mtime(path):
+            raise OSError('OSError: No such file or directory')
 
         filesystem.read_text_file = bad_read
         log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
-        self.assertTrue('No such file or directory' in log)
+        self.assertTrue('IOError: No such file or directory' in log)
+
+        filesystem = MockFileSystem(files)
+        crash_logs = CrashLogs(MockSystemHost(filesystem=filesystem))
+        filesystem.mtime = bad_mtime
+        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
+        self.assertTrue('OSError: No such file or directory' in log)

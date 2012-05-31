@@ -56,15 +56,18 @@ class CrashLogs(object):
         first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
         errors = ''
         for path in reversed(sorted(logs)):
-            if not newer_than or self._host.filesystem.mtime(path) > newer_than:
-                try:
+            try:
+                if not newer_than or self._host.filesystem.mtime(path) > newer_than:
                     f = self._host.filesystem.read_text_file(path)
                     match = first_line_regex.match(f[0:f.find('\n')])
                     if match and match.group('process_name') == process_name and (pid is None or int(match.group('pid')) == pid):
                         return errors + f
-                except IOError, e:
-                    if include_errors:
-                        errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+            except IOError, e:
+                if include_errors:
+                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+            except OSError, e:
+                if include_errors:
+                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
 
         if include_errors and errors:
             return errors
