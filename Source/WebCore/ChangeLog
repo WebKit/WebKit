@@ -1,3 +1,16 @@
+2012-05-30  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Implement HTML clipboard support.
+        https://bugs.webkit.org/show_bug.cgi?id=87883
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::writeRange):
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::documentFragment):
+
 2012-05-30  Garrett Casto  <gcasto@chromium.org>
 
         TextFieldDecorationElement should respect style attribute

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ClipboardWx.h"
 
+#include "Editor.h"
 #include "FileList.h"
+#include "Frame.h"
 #include "HashTable.h"
 #include "IntPoint.h"
 #include "NotImplemented.h"
@@ -127,9 +129,9 @@ void ClipboardWx::writeURL(const KURL& url, const String& string, Frame* frame)
     Pasteboard::generalPasteboard()->writeURL(url, string, frame);
 }
 
-void ClipboardWx::writeRange(Range*, Frame*) 
+void ClipboardWx::writeRange(Range* range, Frame* frame) 
 {
-    notImplemented();
+    Pasteboard::generalPasteboard()->writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
 }
 
 bool ClipboardWx::hasData() 

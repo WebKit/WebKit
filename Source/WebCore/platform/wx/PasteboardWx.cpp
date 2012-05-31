@@ -53,7 +53,10 @@ Pasteboard* Pasteboard::generalPasteboard()
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     if (wxTheClipboard->Open()) {
-        wxTheClipboard->SetData( new wxTextDataObject(frame->editor()->selectedText()) );
+#if wxCHECK_VERSION(2, 9, 4)
+        wxTheClipboard->SetData(new wxHTMLDataObject(createMarkup(selectedRange, 0, AnnotateForInterchange)));
+#endif
+        wxTheClipboard->SetData(new wxTextDataObject(frame->editor()->selectedText()));
         wxTheClipboard->Close();
     }
 }
@@ -91,11 +94,21 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 {
     RefPtr<DocumentFragment> fragment = 0;
     if (wxTheClipboard->Open()) {
-        if (allowPlainText && wxTheClipboard->IsSupported( wxDF_TEXT )) {
-            wxTextDataObject data;
-            wxTheClipboard->GetData( data );
-            chosePlainText = true;
-            fragment = createFragmentFromText(context.get(), data.GetText());
+#if wxCHECK_VERSION(2, 9, 4)
+        if (wxTheClipboard->IsSupported(wxDF_HTML)) {
+            wxHTMLDataObject data;
+            wxTheClipboard->GetData(data);
+            chosePlainText = false;
+            fragment = createFragmentFromMarkup(frame->document(), data.GetHTML(), "", FragmentScriptingNotAllowed);
+        } else
+#endif
+        {
+            if (allowPlainText && wxTheClipboard->IsSupported( wxDF_TEXT )) {
+                wxTextDataObject data;
+                wxTheClipboard->GetData( data );
+                chosePlainText = true;
+                fragment = createFragmentFromText(context.get(), data.GetText());
+            }
         }
         wxTheClipboard->Close();
     }
