@@ -1,3 +1,12 @@
+2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening; skip fast/canvas/canvas-imageSmoothingEnabled.
+
+        Skip the test just like GTK+, as there seems to be a problem in
+        the cairo backend that makes the test fail.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-31  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening, updating baselines after r119124.

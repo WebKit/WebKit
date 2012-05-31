@@ -703,3 +703,6 @@ BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = TEXT
 
 // Looks like some race condition during loading.
 BUGWK85977 : fast/css/font-face-download-error.html = TIMEOUT
+
+// Seems to be a bug in the cairo backend.
+BUGWK87985 : fast/canvas/canvas-imageSmoothingEnabled.html = TEXT
