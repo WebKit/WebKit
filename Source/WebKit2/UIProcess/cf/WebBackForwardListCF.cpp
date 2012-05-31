@@ -131,14 +131,14 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     }
 
     CFIndex size = CFArrayGetCount(cfEntries);
-    if (currentCFIndex != -1 && currentCFIndex >= size) {
+    if (currentCFIndex < -1 || currentCFIndex >= size ) {
         LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentCFIndex, size);
         return false;
     }
 
     // FIXME: We're relying on currentIndex == -1 to mean the exact same thing as NoCurrentItemIndex (UINT_MAX) in unsigned form.
     // That seems implicit and fragile and we should find a better way of representing the NoCurrentItemIndex case.
-    uint32_t currentIndex = currentCFIndex == -1 ? NoCurrentItemIndex : currentCFIndex;
+    uint32_t currentIndex = currentCFIndex == -1 ? NoCurrentItemIndex : static_cast<uint32_t>(currentCFIndex);
 
     if (currentIndex == NoCurrentItemIndex && size) {
         LOG(SessionState, "WebBackForwardList dictionary representation says there is no current item index, but there is a list of %ld entries - this is bogus", size);

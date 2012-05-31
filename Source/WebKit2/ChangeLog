@@ -1,5 +1,18 @@
 2012-05-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 118443
+
+    2012-05-24  Brady Eidson  <beidson@apple.com>
+
+            Fix the build after http://trac.webkit.org/changeset/118441
+            Also fix a glaring bug with the new code, will run it by original reviewer retroactively.
+
+            * UIProcess/cf/WebBackForwardListCF.cpp:
+            (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): Fix up the types of the ? operands
+              to appease super-strict compilers. Don't allow negative indexes (besides the -1 "No index" index).
+
+2012-05-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 118441
 
     2012-05-24  Brady Eidson  <beidson@apple.com>
