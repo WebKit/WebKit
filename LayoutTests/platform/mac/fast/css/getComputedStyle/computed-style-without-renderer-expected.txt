@@ -185,8 +185,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-perspective-origin: 50% 50%
     -webkit-print-color-adjust: economy
     -webkit-rtl-ordering: logical
-    -webkit-shape-inside: auto
-    -webkit-shape-outside: auto
     -webkit-text-combine: none
     -webkit-text-decorations-in-effect: none
     -webkit-text-emphasis-color: rgb(0, 0, 0)
@@ -208,16 +206,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-user-modify: read-only
     -webkit-user-select: text
     -webkit-writing-mode: horizontal-tb
-    -webkit-flow-into: none
-    -webkit-flow-from: none
-    -webkit-region-overflow: auto
-    -webkit-region-break-after: auto
-    -webkit-region-break-before: auto
-    -webkit-region-break-inside: auto
-    -webkit-wrap-flow: auto
-    -webkit-wrap-margin: 0px
-    -webkit-wrap-padding: 0px
-    -webkit-wrap-through: wrap
     clip-path: none
     clip-rule: nonzero
     mask: none
