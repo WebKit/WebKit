@@ -38,6 +38,11 @@ class WebFilterOperationsPrivate;
 class WebFilterOperations {
 public:
     WebFilterOperations() { initialize(); }
+    WebFilterOperations(const WebFilterOperations& other)
+    {
+        initialize();
+        assign(other);
+    }
     WebFilterOperations& operator=(const WebFilterOperations& other)
     {
         assign(other);
