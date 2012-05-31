@@ -172,10 +172,6 @@ fast/parser/pre-html5-parser-quirks.html
 # Fallback resource wasn't used for a redirect to a resource with another origin
 http/tests/appcache/fallback.html
 
-# EFL's LayoutTestController does not implement clearApplicationCacheForOrigin
-http/tests/appcache/origin-delete.html
-http/tests/appcache/origin-usage.html
-
 # EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
 http/tests/appcache/origin-usage.html
 

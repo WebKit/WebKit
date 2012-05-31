@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ewk_security_origin.h"
 
+#include "ApplicationCache.h"
 #include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
 #include "SecurityOrigin.h"
@@ -89,6 +90,11 @@ void ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin* 
     WebCore::cacheStorage().storeUpdatedQuotaForOrigin(origin->securityOrigin.get(), quota);
 }
 
+void ewk_security_origin_application_cache_clear(const Ewk_Security_Origin* origin)
+{
+    WebCore::ApplicationCache::deleteCacheForOrigin(origin->securityOrigin.get());
+}
+
 Eina_List* ewk_security_origin_web_database_get_all(const Ewk_Security_Origin* origin)
 {
     Eina_List* databases = 0;
@@ -115,6 +121,11 @@ void ewk_security_origin_free(Ewk_Security_Origin* origin)
     eina_stringshare_del(origin->protocol);
 
     delete origin;
+}
+
+Ewk_Security_Origin* ewk_security_origin_new_from_string(const char* url)
+{
+    return ewk_security_origin_new(WebCore::SecurityOrigin::createFromString(String::fromUTF8(url)).get());
 }
 
 /**

@@ -578,10 +578,11 @@ void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quo
     ewk_security_origin_free(origin);
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)
+void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString* url)
 {
-    // FIXME: Implement to support deleting all application caches for an origin.
-    notImplemented();
+    Ewk_Security_Origin* origin = ewk_security_origin_new_from_string(url->ustring().utf8().data());
+    ewk_security_origin_application_cache_clear(origin);
+    ewk_security_origin_free(origin);
 }
 
 long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef)
