@@ -1,3 +1,13 @@
+2012-05-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        m_totalAllocated should be intialized in RenderArena constructor
+        https://bugs.webkit.org/show_bug.cgi?id=87967
+
+        Reviewed by Ojan Vafai.
+
+        * rendering/RenderArena.cpp:
+        (WebCore::RenderArena::RenderArena): added missing initializer.
+
 2012-05-31  Julien Chaffraix  <jchaffraix@webkit.org>
 
         The difference between a column and a column group renderer is badly drawn

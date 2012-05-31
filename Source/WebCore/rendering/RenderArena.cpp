@@ -60,14 +60,14 @@ static const size_t debugHeaderSize = ARENA_ALIGN(sizeof(RenderArenaDebugHeader)
 #endif
 
 RenderArena::RenderArena(unsigned arenaSize)
+    : m_totalSize(0)
+    , m_totalAllocated(0)
 {
     // Initialize the arena pool
     INIT_ARENA_POOL(&m_pool, "RenderArena", arenaSize);
 
     // Zero out the recyclers array
     memset(m_recyclers, 0, sizeof(m_recyclers));
-
-    m_totalSize = 0;
 }
 
 RenderArena::~RenderArena()
