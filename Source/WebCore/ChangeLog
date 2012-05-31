@@ -1,3 +1,28 @@
+2012-05-30  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Fix assertion fail on redirect due to multiple jobs per handle
+        https://bugs.webkit.org/show_bug.cgi?id=87579
+
+        Reviewed by George Staikos.
+
+        RIM PR #158892:
+
+        When we start a redirect, we now call cancelJob instead of just deleting it immediately to make sure
+        that all cleanup is performed. However, we also reassign the ResourceHandle to the new job, and
+        since cancelJob is asynchronous it is now assigned to two jobs simultaneously.
+
+        Work around this by only returning handles that have not been cancelled from findJobForHandle.
+        Cancelled jobs still technically exist in the jobs list, but they're invisible to callers. This is
+        safe because there is literally nothing that can be done with a cancelled job - it is supposed to
+        merely consume any notifications that are already in progress and then kill itself off - so no
+        callers of findJobForHandle are expecting a cancelled job. (All existing callers call methods on the
+        returned job which are no-ops for cancelled jobs, so there is no behaviour change.)
+
+        No new tests because there is no behaviour change (fixes a regression).
+
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::findJobForHandle):
+
 2012-05-30  Kentaro Hara  <haraken@chromium.org>
 
         [V8][Performance] Optimize DOM attribute getters that return an empty string
