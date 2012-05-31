@@ -1,3 +1,9 @@
+2012-05-31  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Updating test expectations (svg/as-image/animated-svg-as-image.html)
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-31  Erik Arvidsson  <arv@chromium.org>
 
         Make DOM Exceptions Errors
