@@ -1,5 +1,28 @@
 2012-05-30  Stephanie Lewis  <slewis@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=87717
+        Unresponsive WebProcesses can be mistaken for WebProcess crashes.
+
+        Reviewed by Dirk Pranke.
+
+        Change the error message from #CRASHED to #UNRESPONSIVE PROCESS
+        If there isn't a crash log found for the process add a message saying
+        the process was unresponsive.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_check_for_driver_crash.assert_crash):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_check_for_driver_crash):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR):
+        (WTR::TestController::runTest):
+
+2012-05-30  Stephanie Lewis  <slewis@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=87714
         Mac crash logs can take a really long time to be written out.
 

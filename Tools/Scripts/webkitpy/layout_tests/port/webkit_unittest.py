@@ -322,10 +322,11 @@ class WebKitDriverTest(unittest.TestCase):
             def stop(self):
                 pass
 
-        def assert_crash(driver, error_line, crashed, name, pid):
+        def assert_crash(driver, error_line, crashed, name, pid, unresponsive=False):
             self.assertEquals(driver._check_for_driver_crash(error_line), crashed)
             self.assertEquals(driver._crashed_process_name, name)
             self.assertEquals(driver._crashed_pid, pid)
+            self.assertEquals(driver._subprocess_was_unresponsive, unresponsive)
             driver.stop()
 
         driver._server_process = FakeServerProcess(False)
@@ -334,21 +335,31 @@ class WebKitDriverTest(unittest.TestCase):
         driver._crashed_process_name = None
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(False)
+        driver._subprocess_was_unresponsive = False
         assert_crash(driver, '#CRASHED\n', True, 'FakeServerProcess', 1234)
 
         driver._crashed_process_name = None
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(False)
+        driver._subprocess_was_unresponsive = False
         assert_crash(driver, '#CRASHED - WebProcess\n', True, 'WebProcess', None)
 
         driver._crashed_process_name = None
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(False)
+        driver._subprocess_was_unresponsive = False
         assert_crash(driver, '#CRASHED - WebProcess (pid 8675)\n', True, 'WebProcess', 8675)
+        
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._subprocess_was_unresponsive = False
+        assert_crash(driver, '#PROCESS UNRESPONSIVE - WebProcess (pid 8675)\n', True, 'WebProcess', 8675, True)
 
         driver._crashed_process_name = None
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(True)
+        driver._subprocess_was_unresponsive = False
         assert_crash(driver, '', True, 'FakeServerProcess', 1234)
 
     def test_creating_a_port_does_not_write_to_the_filesystem(self):

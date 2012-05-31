@@ -498,9 +498,9 @@ bool TestController::runTest(const char* test)
     if (!resetStateToConsistentValues()) {
 #if PLATFORM(MAC)
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "#CRASHED - WebProcess (pid %ld)\n", static_cast<long>(pid));
+        fprintf(stderr, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
 #else
-        fputs("#CRASHED - WebProcess\n", stderr);
+        fputs("#PROCESS UNRESPONSIVE - WebProcess\n", stderr);
 #endif
         fflush(stderr);
         return false;
