@@ -1,3 +1,16 @@
+2012-05-31  Anders Carlsson  <andersca@apple.com>
+
+        Vector should have a move constructor and move assignment operator
+        https://bugs.webkit.org/show_bug.cgi?id=87997
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Compiler.h:
+        Use __has_extension so we can use move semantics and other C++11 features even when building as C++98.
+
+        * wtf/Vector.h:
+        Add a move constructor and a move assignment operator to Vector.
+
 2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)

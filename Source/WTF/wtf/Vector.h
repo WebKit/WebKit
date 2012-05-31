@@ -518,6 +518,11 @@ namespace WTF {
         template<size_t otherCapacity> 
         Vector& operator=(const Vector<T, otherCapacity>&);
 
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+        Vector(Vector&&);
+        Vector& operator=(Vector&&);
+#endif
+
         size_t size() const { return m_size; }
         size_t capacity() const { return m_buffer.capacity(); }
         bool isEmpty() const { return !size(); }
@@ -758,6 +763,24 @@ namespace WTF {
 
         return *this;
     }
+
+#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
+    template<typename T, size_t inlineCapacity>
+    Vector<T, inlineCapacity>::Vector(Vector<T, inlineCapacity>&& other)
+        : m_size(0)
+    {
+        // It's a little weird to implement a move constructor using swap but this way we
+        // don't have to add a move constructor to VectorBuffer.
+        swap(other);
+    }
+
+    template<typename T, size_t inlineCapacity>
+    Vector<T, inlineCapacity>& Vector<T, inlineCapacity>::operator=(Vector<T, inlineCapacity>&& other)
+    {
+        swap(other);
+        return *this;
+    }
+#endif
 
     template<typename T, size_t inlineCapacity>
     template<typename U>
