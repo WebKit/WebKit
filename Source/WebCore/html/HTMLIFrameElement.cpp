@@ -117,7 +117,7 @@ void HTMLIFrameElement::removedFrom(Node* insertionPoint)
 
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const
 {
-    return contentDocument() && contentDocument()->mayDisplaySeamlessWithParent() && hasAttribute(seamlessAttr);
+    return contentDocument() && contentDocument()->shouldDisplaySeamlesslyWithParent();
 }
 
 #if ENABLE(MICRODATA)
