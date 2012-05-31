@@ -1,3 +1,9 @@
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Unreviewed. Added FAIL expectation due to test consistently failing.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable CSS_IMAGE_SET flag

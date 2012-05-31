@@ -1166,6 +1166,7 @@ BUGWK77015 : fast/events/clear-edit-drag-state.html = FAIL
 BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = FAIL
 
 BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = FAIL
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = FAIL
 
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = FAIL
