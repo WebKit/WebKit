@@ -1,3 +1,11 @@
+2012-05-31  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Don't enforce the version of libpng for the config test when passing the option to the linker
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        * qmake/config.tests/libpng/libpng.pro:
+
 2012-05-30  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Automatically install 64-bit linker for Android
