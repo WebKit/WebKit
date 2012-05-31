@@ -1,3 +1,15 @@
+2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r118957
+        https://bugs.webkit.org/show_bug.cgi?id=87937
+
+        Unreviewed gardening.
+
+        compositing/layer-creation/fixed-position-and-transform.html and compositing/layer-creation/fixed-position-under-transform.html
+        added with r118957 were skipped in EFL port as EFL's LayoutTestController does not implement layerTreeAsText.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-31  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase xss test, skip failing tests.
