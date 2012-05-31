@@ -1,3 +1,25 @@
+2012-05-30  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in ContainerNode::parserAddChild.
+        https://bugs.webkit.org/show_bug.cgi?id=87903
+
+        Reviewed by Ryosuke Niwa.
+
+        Call the ChildNodeInsertionNotifier.notify call at the end since
+        it can destroy |this| and some of the local pointers like |last|.
+        This also matches the order of calls - childrenChanged precedes
+        ChildNodeInsertionNotifier.notify in updateTreeAfterInsertion and
+        ContainerNode::parserInsertBefore.
+
+        Also remove a FIXME since we use ChildNodeInsertionNotifier.notify
+        instead of ChildNodeInsertionNotifier.notifyInsertedIntoDocument
+        (as recommended in the FIXME).
+
+        Test: fast/dom/child-insertion-notify-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::parserAddChild):
+
 2012-05-30  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Implement pointer and hover CSS media features
