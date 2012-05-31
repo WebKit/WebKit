@@ -27899,6 +27899,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\Decimal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\Decimal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\DragData.cpp"
 				>
 			</File>

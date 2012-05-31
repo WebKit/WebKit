@@ -1084,6 +1084,7 @@ SOURCES += \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
     platform/DateComponents.cpp \
+    platform/Decimal.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/EventTracer.cpp \
@@ -2206,6 +2207,7 @@ HEADERS += \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
     platform/DateComponents.h \
+    platform/Decimal.h \
     platform/DragData.h \
     platform/DragImage.h \
     platform/EventTracer.h \

@@ -1,3 +1,26 @@
+2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Introduce Decimal class for Number/Range input type.
+        https://bugs.webkit.org/show_bug.cgi?id=87360
+
+        Reviewed by Kent Tamura.
+
+        This patch added unit test for Decimal class.
+
+        * WebKit.gypi:
+        * tests/DecimalTest.cpp: Added.
+        (WebCore):
+        (WebCore::operator<<): Output Decimal for unit test debugging
+        (DecimalStepRange):
+        (DecimalStepRange::DecimalStepRange):
+        (DecimalStepRange::clampValue):
+        (DecimalTest):
+        (DecimalTest::encode):
+        (DecimalTest::fromString):
+        (DecimalTest::stepDown):
+        (DecimalTest::stepUp):
+        (TEST_F):
+
 2012-05-30  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix min/max bounds error in CCMathUtil.cpp

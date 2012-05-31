@@ -1,3 +1,99 @@
+2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Introduce Decimal class for Number/Range input type.
+        https://bugs.webkit.org/show_bug.cgi?id=87360
+
+        Reviewed by Kent Tamura.
+
+        This patch added new class Decimal for decimal arithmatic in two
+        files: platform/Decimal.cpp and Decimal.h with unit test.
+
+        Test: WebKit/chromium/tests/DecimalTest.cpp
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Decimal.cpp: Added.
+        (WebCore):
+        (DecimalPrivate):
+        (SpecialValueHandler):
+        (WebCore::DecimalPrivate::SpecialValueHandler::SpecialValueHandler):
+        (WebCore::DecimalPrivate::SpecialValueHandler::handle):
+        (WebCore::DecimalPrivate::SpecialValueHandler::value):
+        (UInt128):
+        (WebCore::DecimalPrivate::UInt128::UInt128):
+        (WebCore::DecimalPrivate::UInt128::high):
+        (WebCore::DecimalPrivate::UInt128::low):
+        (WebCore::DecimalPrivate::UInt128::multiply):
+        (WebCore::DecimalPrivate::UInt128::highUInt32):
+        (WebCore::DecimalPrivate::UInt128::lowUInt32):
+        (WebCore::DecimalPrivate::UInt128::isZero):
+        (WebCore::DecimalPrivate::UInt128::makeUInt64):
+        (WebCore::DecimalPrivate::UInt128::operator/=):
+        (WebCore::DecimalPrivate::UInt128::multiplyHigh):
+        (WebCore::DecimalPrivate::countDigits):
+        (WebCore::DecimalPrivate::scaleDown):
+        (WebCore::DecimalPrivate::scaleUp):
+        (WebCore::Decimal::EncodedData::EncodedData):
+        (WebCore::Decimal::EncodedData::operator==):
+        (WebCore::Decimal::Decimal):
+        (WebCore::Decimal::operator=):
+        (WebCore::Decimal::operator+=):
+        (WebCore::Decimal::operator-=):
+        (WebCore::Decimal::operator*=):
+        (WebCore::Decimal::operator/=):
+        (WebCore::Decimal::operator-):
+        (WebCore::Decimal::operator+):
+        (WebCore::Decimal::operator*):
+        (WebCore::Decimal::operator/):
+        (WebCore::Decimal::operator==):
+        (WebCore::Decimal::operator!=):
+        (WebCore::Decimal::operator<):
+        (WebCore::Decimal::operator<=):
+        (WebCore::Decimal::operator>):
+        (WebCore::Decimal::operator>=):
+        (WebCore::Decimal::abs):
+        (WebCore::Decimal::alignOperands):
+        (WebCore::Decimal::ceiling):
+        (WebCore::Decimal::compareTo):
+        (WebCore::Decimal::floor):
+        (WebCore::Decimal::fromString):
+        (WebCore::Decimal::infinity):
+        (WebCore::Decimal::nan):
+        (WebCore::Decimal::remainder):
+        (WebCore::Decimal::round):
+        (WebCore::Decimal::toString):
+        (WebCore::Decimal::zero):
+        * platform/Decimal.h: Added.
+        (WebCore):
+        (DecimalPrivate):
+        (Decimal):
+        (EncodedData):
+        (WebCore::Decimal::EncodedData::operator!=):
+        (WebCore::Decimal::EncodedData::coefficient):
+        (WebCore::Decimal::EncodedData::exponent):
+        (WebCore::Decimal::EncodedData::isFinite):
+        (WebCore::Decimal::EncodedData::isNaN):
+        (WebCore::Decimal::EncodedData::isSpecial):
+        (WebCore::Decimal::EncodedData::isZero):
+        (WebCore::Decimal::EncodedData::sign):
+        (WebCore::Decimal::EncodedData::setSign):
+        (WebCore::Decimal::EncodedData::formatClass):
+        (WebCore::Decimal::isFinite):
+        (WebCore::Decimal::isNaN):
+        (WebCore::Decimal::isNegative):
+        (WebCore::Decimal::isPositive):
+        (WebCore::Decimal::isSpecial):
+        (WebCore::Decimal::isZero):
+        (WebCore::Decimal::value):
+        (AlignedOperands):
+        (WebCore::Decimal::invertSign):
+        (WebCore::Decimal::exponent):
+        (WebCore::Decimal::sign):
+
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r116723.
