@@ -1,5 +1,11 @@
 2012-05-31  Anders Carlsson  <andersca@apple.com>
 
+        Disable support for rvalue references until I figure out why this is breaking the Xcode 4.2 build.
+
+        * wtf/Compiler.h:
+
+2012-05-31  Anders Carlsson  <andersca@apple.com>
+
         Vector should have a move constructor and move assignment operator
         https://bugs.webkit.org/show_bug.cgi?id=87997
 
