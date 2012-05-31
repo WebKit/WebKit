@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
- * Copyright (C) 2012 Igalia, S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +31,6 @@
 #include "BytecodeGenerator.h"
 
 #include "BatchedTransitionOptimizer.h"
-#include "JSActivation.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "LowLevelInterpreter.h"
@@ -119,6 +117,8 @@ namespace JSC {
     expected by the callee.
 */
 
+static bool s_dumpsGeneratedCode = false;
+
 void Label::setLocation(unsigned location)
 {
     m_location = location;
@@ -127,41 +127,6 @@ void Label::setLocation(unsigned location)
     for (unsigned i = 0; i < size; ++i)
         m_generator->m_instructions[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
 }
-
-#ifndef NDEBUG
-void ResolveResult::checkValidity()
-{
-    switch (m_type) {
-    case Register:
-    case ReadOnlyRegister:
-        ASSERT(m_local);
-        return;
-    case Lexical:
-    case ReadOnlyLexical:
-    case DynamicLexical:
-    case DynamicReadOnlyLexical:
-        ASSERT(m_index != missingSymbolMarker());
-        return;
-    case Global:
-    case DynamicGlobal:
-        ASSERT(m_globalObject);
-        return;
-    case IndexedGlobal:
-    case ReadOnlyIndexedGlobal:
-    case DynamicIndexedGlobal:
-    case DynamicReadOnlyIndexedGlobal:
-        ASSERT(m_index != missingSymbolMarker());
-        ASSERT(m_globalObject);
-        return;
-    case Dynamic:
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-#endif
-
-static bool s_dumpsGeneratedCode = false;
 
 void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
 {
@@ -536,6 +501,42 @@ void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex
     m_codeBlock->addParameter();
 }
 
+RegisterID* BytecodeGenerator::registerFor(const Identifier& ident)
+{
+    if (ident == propertyNames().thisIdentifier)
+        return &m_thisRegister;
+        
+    if (m_codeType == GlobalCode)
+        return 0;
+
+    if (!shouldOptimizeLocals())
+        return 0;
+
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
+    if (entry.isNull())
+        return 0;
+
+    if (ident == propertyNames().arguments)
+        createArgumentsIfNecessary();
+
+    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+}
+
+RegisterID* BytecodeGenerator::constRegisterFor(const Identifier& ident)
+{
+    if (m_codeType == EvalCode)
+        return 0;
+
+    if (m_codeType == GlobalCode)
+        return 0;
+
+    SymbolTableEntry entry = symbolTable().get(ident.impl());
+    if (entry.isNull())
+        return 0;
+
+    return createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
+}
+
 bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
 {
     if (ident != propertyNames().arguments)
@@ -569,6 +570,19 @@ RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
         return reg;
     emitLazyNewFunction(reg, m_lazyFunctions.get(reg->index()));
     return reg;
+}
+
+bool BytecodeGenerator::isLocal(const Identifier& ident)
+{
+    if (ident == propertyNames().thisIdentifier)
+        return true;
+    
+    return shouldOptimizeLocals() && symbolTable().contains(ident.impl());
+}
+
+bool BytecodeGenerator::isLocalConstant(const Identifier& ident)
+{
+    return symbolTable().get(ident.impl()).isReadOnly();
 }
 
 RegisterID* BytecodeGenerator::newRegister()
@@ -1154,106 +1168,59 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v)
     return constantID;
 }
 
-ResolveResult BytecodeGenerator::resolve(const Identifier& property)
+bool BytecodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting, bool& requiresDynamicChecks, JSObject*& globalObject)
 {
-    if (property == propertyNames().thisIdentifier)
-        return ResolveResult::registerResolve(thisRegister(), ResolveResult::ReadOnlyFlag);
+    // Cases where we cannot statically optimize the lookup.
+    if (property == propertyNames().arguments || !canOptimizeNonLocals()) {
+        stackDepth = 0;
+        index = missingSymbolMarker();
 
-    // Check if the property should be allocated in a register.
-    if (m_codeType != GlobalCode && shouldOptimizeLocals()) {
-        SymbolTableEntry entry = symbolTable().get(property.impl());
-        if (!entry.isNull()) {
-            if (property == propertyNames().arguments)
-                createArgumentsIfNecessary();
-            unsigned flags = entry.isReadOnly() ? ResolveResult::ReadOnlyFlag : 0;
-            RegisterID* local = createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
-            return ResolveResult::registerResolve(local, flags);
+        if (shouldOptimizeLocals() && m_codeType == GlobalCode) {
+            ScopeChainIterator iter = m_scopeChain->begin();
+            globalObject = iter->get();
+            ASSERT((++iter) == m_scopeChain->end());
         }
+        return false;
     }
 
-    // Cases where we cannot statically optimize the lookup.
-    if (property == propertyNames().arguments || !canOptimizeNonLocals())
-        return ResolveResult::dynamicResolve(0);
-
+    size_t depth = 0;
+    requiresDynamicChecks = false;
     ScopeChainIterator iter = m_scopeChain->begin();
     ScopeChainIterator end = m_scopeChain->end();
-    size_t depth = 0;
-    unsigned flags = 0;
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = iter->get();
-        if (!currentScope->isVariableObject()) {
-            flags |= ResolveResult::DynamicFlag;
+        if (!currentScope->isVariableObject())
             break;
-        }        
         JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
 
         // Found the property
         if (!entry.isNull()) {
-            if (entry.isReadOnly())
-                flags |= ResolveResult::ReadOnlyFlag;
-            depth += m_codeBlock->needsFullScopeChain();
-            if (++iter == end) {
-                if (flags & ResolveResult::DynamicFlag)
-                    return ResolveResult::dynamicIndexedGlobalResolve(entry.getIndex(), depth, currentScope, flags);
-                return ResolveResult::indexedGlobalResolve(entry.getIndex(), currentScope, flags);
+            if (entry.isReadOnly() && forWriting) {
+                stackDepth = 0;
+                index = missingSymbolMarker();
+                if (++iter == end)
+                    globalObject = currentVariableObject;
+                return false;
             }
-#if !ASSERT_DISABLED
-            if (JSActivation* activation = jsDynamicCast<JSActivation*>(currentVariableObject))
-                ASSERT(activation->isValidScopedLookup(entry.getIndex()));
-#endif
-            return ResolveResult::lexicalResolve(entry.getIndex(), depth, flags);
+            stackDepth = depth + m_codeBlock->needsFullScopeChain();
+            index = entry.getIndex();
+            if (++iter == end)
+                globalObject = currentVariableObject;
+            return true;
         }
         bool scopeRequiresDynamicChecks = false;
         if (currentVariableObject->isDynamicScope(scopeRequiresDynamicChecks))
             break;
-        if (scopeRequiresDynamicChecks)
-            flags |= ResolveResult::DynamicFlag;
+        requiresDynamicChecks |= scopeRequiresDynamicChecks;
     }
-
     // Can't locate the property but we're able to avoid a few lookups.
+    stackDepth = depth + m_codeBlock->needsFullScopeChain();
+    index = missingSymbolMarker();
     JSObject* scope = iter->get();
-    depth += m_codeBlock->needsFullScopeChain();
-    if (++iter == end) {
-        if ((flags & ResolveResult::DynamicFlag) && depth)
-            return ResolveResult::dynamicGlobalResolve(depth, scope);
-        return ResolveResult::globalResolve(scope);
-    }
-    return ResolveResult::dynamicResolve(depth);
-}
-
-ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
-{
-    // Register-allocated const declarations.
-    if (m_codeType != EvalCode && m_codeType != GlobalCode) {
-        SymbolTableEntry entry = symbolTable().get(property.impl());
-        if (!entry.isNull()) {
-            unsigned flags = entry.isReadOnly() ? ResolveResult::ReadOnlyFlag : 0;
-            RegisterID* local = createLazyRegisterIfNecessary(&registerFor(entry.getIndex()));
-            return ResolveResult::registerResolve(local, flags);
-        }
-    }
-
-    // Const declarations in eval code or global code.
-    ScopeChainIterator iter = scopeChain()->begin();
-    ScopeChainIterator end = scopeChain()->end();
-    size_t depth = 0;
-    for (; iter != end; ++iter, ++depth) {
-        JSObject* currentScope = iter->get();
-        if (!currentScope->isVariableObject())
-            continue;
-        JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
-        SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
-        if (entry.isNull())
-            continue;
-        if (++iter == end)
-            return ResolveResult::indexedGlobalResolve(entry.getIndex(), currentVariableObject, 0);
-        return ResolveResult::lexicalResolve(entry.getIndex(), depth + scopeDepth(), 0);
-    }
-
-    // FIXME: While this code should only be hit in an eval block, it will assign
-    // to the wrong base if property exists in an intervening with scope.
-    return ResolveResult::dynamicResolve(scopeDepth());
+    if (++iter == end)
+        globalObject = scope;
+    return true;
 }
 
 void BytecodeGenerator::emitCheckHasInstance(RegisterID* base)
@@ -1279,136 +1246,217 @@ bool BytecodeGenerator::shouldAvoidResolveGlobal()
     return m_codeBlock->globalResolveInfoCount() > maxGlobalResolves && !m_labelScopes.size();
 }
 
-RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const ResolveResult& resolveResult, const Identifier& property)
+RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& property)
 {
-    if (resolveResult.isStatic())
-        return emitGetStaticVar(dst, resolveResult);
-    
-    if (resolveResult.isGlobal() && !shouldAvoidResolveGlobal()) {
-#if ENABLE(JIT)
-        m_codeBlock->addGlobalResolveInfo(instructions().size());
-#endif
-        m_codeBlock->addGlobalResolveInstruction(instructions().size());
-        bool dynamic = resolveResult.isDynamic() && resolveResult.depth();
-        ValueProfile* profile = emitProfiledOpcode(dynamic ? op_resolve_global_dynamic : op_resolve_global);
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) && !globalObject) {
+        // We can't optimise at all :-(
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
-        instructions().append(0);
-        instructions().append(0);
-        if (dynamic)
-            instructions().append(resolveResult.depth());
         instructions().append(profile);
         return dst;
+    }
+    if (shouldAvoidResolveGlobal()) {
+        globalObject = 0;
+        requiresDynamicChecks = true;
     }
         
-    if (resolveResult.type() == ResolveResult::Dynamic && resolveResult.depth()) {
-        // In this case we are at least able to drop a few scope chains from the
-        // lookup chain, although we still need to hash from then on.
-        ValueProfile* profile = emitProfiledOpcode(op_resolve_skip);
-        instructions().append(dst->index());
-        instructions().append(addConstant(property));
-        instructions().append(resolveResult.depth());
-        instructions().append(profile);
-        return dst;
-    }
-
-    ValueProfile* profile = emitProfiledOpcode(op_resolve);
-    instructions().append(dst->index());
-    instructions().append(addConstant(property));
-    instructions().append(profile);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitResolveBase(RegisterID* dst, const ResolveResult& resolveResult, const Identifier& property)
-{
-    if (resolveResult.isGlobal() && !resolveResult.isDynamic())
-        // Global object is the base
-        return emitLoad(dst, JSValue(resolveResult.globalObject()));
-
-    // We can't optimise at all :-(
-    ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
-    instructions().append(dst->index());
-    instructions().append(addConstant(property));
-    instructions().append(false);
-    instructions().append(profile);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitResolveBaseForPut(RegisterID* dst, const ResolveResult& resolveResult, const Identifier& property)
-{
-    if (!m_codeBlock->isStrictMode())
-        return emitResolveBase(dst, resolveResult, property);
-
-    if (resolveResult.isGlobal() && !resolveResult.isDynamic()) {
-        // Global object is the base
-        RefPtr<RegisterID> result = emitLoad(dst, JSValue(resolveResult.globalObject()));
-        emitOpcode(op_ensure_property_exists);
-        instructions().append(dst->index());
-        instructions().append(addConstant(property));
-        return result.get();
-    }
-
-    // We can't optimise at all :-(
-    ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
-    instructions().append(dst->index());
-    instructions().append(addConstant(property));
-    instructions().append(true);
-    instructions().append(profile);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const ResolveResult& resolveResult, const Identifier& property)
-{
-    if (resolveResult.isGlobal() && !resolveResult.isDynamic()) {
-        // Global object is the base
-        emitLoad(baseDst, JSValue(resolveResult.globalObject()));
-
-        if (resolveResult.isStatic()) {
+    if (globalObject) {
+        if (index != missingSymbolMarker() && !requiresDynamicChecks) {
             // Directly index the property lookup across multiple scopes.
-            emitGetStaticVar(propDst, resolveResult);
-            return baseDst;
-        }
-
-        if (shouldAvoidResolveGlobal()) {
-            ValueProfile* profile = emitProfiledOpcode(op_resolve);
-            instructions().append(propDst->index());
-            instructions().append(addConstant(property));
-            instructions().append(profile);
-            return baseDst;
+            return emitGetScopedVar(dst, depth, index, globalObject);
         }
 
 #if ENABLE(JIT)
         m_codeBlock->addGlobalResolveInfo(instructions().size());
 #endif
-#if ENABLE(CLASSIC_INTERPRETER)
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
-#endif
-        ValueProfile* profile = emitProfiledOpcode(op_resolve_global);
-        instructions().append(propDst->index());
+        ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+        instructions().append(dst->index());
         instructions().append(addConstant(property));
         instructions().append(0);
         instructions().append(0);
+        if (requiresDynamicChecks)
+            instructions().append(depth);
+        instructions().append(profile);
+        return dst;
+    }
+
+    if (requiresDynamicChecks) {
+        // If we get here we have eval nested inside a |with| just give up
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
+        instructions().append(dst->index());
+        instructions().append(addConstant(property));
+        instructions().append(profile);
+        return dst;
+    }
+
+    if (index != missingSymbolMarker()) {
+        // Directly index the property lookup across multiple scopes.
+        return emitGetScopedVar(dst, depth, index, globalObject);
+    }
+
+    // In this case we are at least able to drop a few scope chains from the
+    // lookup chain, although we still need to hash from then on.
+    ValueProfile* profile = emitProfiledOpcode(op_resolve_skip);
+    instructions().append(dst->index());
+    instructions().append(addConstant(property));
+    instructions().append(depth);
+    instructions().append(profile);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValue globalObject)
+{
+    if (globalObject) {
+        if (m_lastOpcodeID == op_put_global_var) {
+            int dstIndex;
+            int srcIndex;
+            retrieveLastUnaryOp(dstIndex, srcIndex);
+
+            if (dstIndex == index && srcIndex == dst->index())
+                return dst;
+        }
+
+        ValueProfile* profile = emitProfiledOpcode(op_get_global_var);
+        instructions().append(dst->index());
+        instructions().append(index);
+        instructions().append(profile);
+        return dst;
+    }
+
+    ValueProfile* profile = emitProfiledOpcode(op_get_scoped_var);
+    instructions().append(dst->index());
+    instructions().append(index);
+    instructions().append(depth);
+    instructions().append(profile);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value, JSValue globalObject)
+{
+    if (globalObject) {
+        emitOpcode(op_put_global_var);
+        instructions().append(index);
+        instructions().append(value->index());
+        return value;
+    }
+    emitOpcode(op_put_scoped_var);
+    instructions().append(index);
+    instructions().append(depth);
+    instructions().append(value->index());
+    return value;
+}
+
+RegisterID* BytecodeGenerator::emitResolveBase(RegisterID* dst, const Identifier& property)
+{
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject);
+    if (!globalObject || requiresDynamicChecks) {
+        // We can't optimise at all :-(
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
+        instructions().append(dst->index());
+        instructions().append(addConstant(property));
+        instructions().append(false);
+        instructions().append(profile);
+        return dst;
+    }
+
+    // Global object is the base
+    return emitLoad(dst, JSValue(globalObject));
+}
+
+RegisterID* BytecodeGenerator::emitResolveBaseForPut(RegisterID* dst, const Identifier& property)
+{
+    if (!m_codeBlock->isStrictMode())
+        return emitResolveBase(dst, property);
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject);
+    if (!globalObject || requiresDynamicChecks) {
+        // We can't optimise at all :-(
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
+        instructions().append(dst->index());
+        instructions().append(addConstant(property));
+        instructions().append(true);
+        instructions().append(profile);
+        return dst;
+    }
+
+    // Global object is the base
+    RefPtr<RegisterID> result = emitLoad(dst, JSValue(globalObject));
+    emitOpcode(op_ensure_property_exists);
+    instructions().append(dst->index());
+    instructions().append(addConstant(property));
+    return result.get();
+}
+
+RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
+{
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) || !globalObject || requiresDynamicChecks) {
+        // We can't optimise at all :-(
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_with_base);
+        instructions().append(baseDst->index());
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
         instructions().append(profile);
         return baseDst;
     }
 
-    ValueProfile* profile = emitProfiledOpcode(op_resolve_with_base);
-    instructions().append(baseDst->index());
+    bool forceGlobalResolve = false;
+
+    // Global object is the base
+    emitLoad(baseDst, JSValue(globalObject));
+
+    if (index != missingSymbolMarker() && !forceGlobalResolve) {
+        // Directly index the property lookup across multiple scopes.
+        emitGetScopedVar(propDst, depth, index, globalObject);
+        return baseDst;
+    }
+    if (shouldAvoidResolveGlobal()) {
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        instructions().append(profile);
+        return baseDst;
+    }
+#if ENABLE(JIT)
+    m_codeBlock->addGlobalResolveInfo(instructions().size());
+#endif
+#if ENABLE(CLASSIC_INTERPRETER)
+    m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
+    ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
     instructions().append(propDst->index());
     instructions().append(addConstant(property));
+    instructions().append(0);
+    instructions().append(0);
+    if (requiresDynamicChecks)
+        instructions().append(depth);
     instructions().append(profile);
     return baseDst;
 }
 
-RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const ResolveResult& resolveResult, const Identifier& property)
+RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
 {
-    if (resolveResult.isStatic()) {
-        emitLoad(baseDst, jsUndefined());
-        emitGetStaticVar(propDst, resolveResult);
-        return baseDst;
-    }
-
-    if (resolveResult.type() == ResolveResult::Dynamic) {
+    size_t depth = 0;
+    int index = 0;
+    JSObject* globalObject = 0;
+    bool requiresDynamicChecks = false;
+    if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) || !globalObject || requiresDynamicChecks) {
         // We can't optimise at all :-(
         ValueProfile* profile = emitProfiledOpcode(op_resolve_with_this);
         instructions().append(baseDst->index());
@@ -1418,78 +1466,38 @@ RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, Register
         return baseDst;
     }
 
+    bool forceGlobalResolve = false;
+
+    // Global object is the base
     emitLoad(baseDst, jsUndefined());
-    return emitResolve(propDst, resolveResult, property);
-}
 
-RegisterID* BytecodeGenerator::emitGetStaticVar(RegisterID* dst, const ResolveResult& resolveResult)
-{
-    ValueProfile* profile = 0;
-
-    switch (resolveResult.type()) {
-    case ResolveResult::Register:
-    case ResolveResult::ReadOnlyRegister:
-        if (dst == ignoredResult())
-            return 0;
-        return moveToDestinationIfNeeded(dst, resolveResult.local());
-
-    case ResolveResult::Lexical:
-    case ResolveResult::ReadOnlyLexical:
-        profile = emitProfiledOpcode(op_get_scoped_var);
-        instructions().append(dst->index());
-        instructions().append(resolveResult.index());
-        instructions().append(resolveResult.depth());
-        instructions().append(profile);
-        return dst;
-
-    case ResolveResult::IndexedGlobal:
-    case ResolveResult::ReadOnlyIndexedGlobal:
-        if (m_lastOpcodeID == op_put_global_var) {
-            int dstIndex;
-            int srcIndex;
-            retrieveLastUnaryOp(dstIndex, srcIndex);
-            if (dstIndex == resolveResult.index() && srcIndex == dst->index())
-                return dst;
-        }
-
-        profile = emitProfiledOpcode(op_get_global_var);
-        instructions().append(dst->index());
-        instructions().append(resolveResult.index());
-        instructions().append(profile);
-        return dst;
-
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
+    if (index != missingSymbolMarker() && !forceGlobalResolve) {
+        // Directly index the property lookup across multiple scopes.
+        emitGetScopedVar(propDst, depth, index, globalObject);
+        return baseDst;
     }
-}
-
-RegisterID* BytecodeGenerator::emitPutStaticVar(const ResolveResult& resolveResult, RegisterID* value)
-{
-    switch (resolveResult.type()) {
-    case ResolveResult::Register:
-    case ResolveResult::ReadOnlyRegister:
-        return moveToDestinationIfNeeded(resolveResult.local(), value);
-
-    case ResolveResult::Lexical:
-    case ResolveResult::ReadOnlyLexical:
-        emitOpcode(op_put_scoped_var);
-        instructions().append(resolveResult.index());
-        instructions().append(resolveResult.depth());
-        instructions().append(value->index());
-        return value;
-
-    case ResolveResult::IndexedGlobal:
-    case ResolveResult::ReadOnlyIndexedGlobal:
-        emitOpcode(op_put_global_var);
-        instructions().append(resolveResult.index());
-        instructions().append(value->index());
-        return value;
-
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
+    if (shouldAvoidResolveGlobal()) {
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        instructions().append(profile);
+        return baseDst;
     }
+#if ENABLE(JIT)
+    m_codeBlock->addGlobalResolveInfo(instructions().size());
+#endif
+#if ENABLE(CLASSIC_INTERPRETER)
+    m_codeBlock->addGlobalResolveInstruction(instructions().size());
+#endif
+    ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+    instructions().append(propDst->index());
+    instructions().append(addConstant(property));
+    instructions().append(0);
+    instructions().append(0);
+    if (requiresDynamicChecks)
+        instructions().append(depth);
+    instructions().append(profile);
+    return baseDst;
 }
 
 void BytecodeGenerator::emitMethodCheck()
@@ -2423,7 +2431,7 @@ void BytecodeGenerator::setIsNumericCompareFunction(bool isNumericCompareFunctio
 
 bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNumber)
 {
-    RegisterID* registerID = resolve(ident).local();
+    RegisterID* registerID = registerFor(ident);
     if (!registerID || registerID->index() >= 0)
          return 0;
     return registerID->index() == CallFrame::argumentOffset(argumentNumber);
