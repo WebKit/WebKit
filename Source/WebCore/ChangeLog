@@ -1,3 +1,26 @@
+2012-05-31  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11544454> and https://bugs.webkit.org/show_bug.cgi?id=87990
+        Crashes unregistering DOMWindowProperties while releasing CachedPages
+
+        Reviewed by Jessie Berlin.
+
+        This patch rewrites DOMWindowProperty to always keep direct track of the DOMWindow
+        it has registered with and to only ever unregister from that very same DOMWindow.
+
+        No new tests. (While the direct cause of the crash is understood, reproducing it is not)
+
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::DOMWindowProperty):
+        (WebCore::DOMWindowProperty::~DOMWindowProperty):
+        (WebCore::DOMWindowProperty::disconnectFrameForPageCache):
+        (WebCore::DOMWindowProperty::reconnectFrameFromPageCache):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowProperty::willDestroyGlobalObjectInFrame):
+        (WebCore::DOMWindowProperty::willDetachGlobalObjectFromFrame):
+        * page/DOMWindowProperty.h:
+        (DOMWindowProperty):
+
 2012-05-31  Tony Chang  <tony@chromium.org>
 
         rename flexbox CSS properties from flex-align and flex-item-align to align-items and align-self

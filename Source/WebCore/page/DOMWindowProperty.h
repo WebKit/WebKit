@@ -47,7 +47,7 @@ protected:
     virtual ~DOMWindowProperty();
 
     Frame* m_frame;
-    DOMWindow* m_disconnectedDOMWindow;
+    DOMWindow* m_associatedDOMWindow;
 };
 
 }
