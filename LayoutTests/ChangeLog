@@ -1,3 +1,12 @@
+2012-05-31  Hayato Ito  <hayato@chromium.org>
+
+        ComposedShadowTreeWalker should support traversing nodes in an orphaned shadow subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=87493
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+
 2012-05-31  Shane Stephens  <shanestephens@google.com>
 
         text-decoration should not be propagated through absolutely positioned elements to <a> tags

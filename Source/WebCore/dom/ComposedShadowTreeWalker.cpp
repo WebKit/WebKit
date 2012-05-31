@@ -229,8 +229,7 @@ Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(cons
         return const_cast<ShadowRoot*>(shadowRoot);
     }
     InsertionPoint* assignedInsertionPoint = shadowRoot->assignedTo();
-    ASSERT(assignedInsertionPoint);
-    return traverseParent(assignedInsertionPoint);
+    return assignedInsertionPoint ? traverseParent(assignedInsertionPoint) : 0;
 }
 
 Node* ComposedShadowTreeWalker::traverseNextSibling(const Node* node)

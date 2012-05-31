@@ -1,3 +1,29 @@
+2012-05-31  Hayato Ito  <hayato@chromium.org>
+
+        ComposedShadowTreeWalker should support traversing nodes in an orphaned shadow subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=87493
+
+        Reviewed by Dimitri Glazkov.
+
+        ComposedShadowTreeWalker assumed that a visited shadow root is
+        always assigned to a shadow insertion point since it only
+        traverses nodes which are rendered.  But there is an exceptional
+        use case such as an event dispatching. Some events, such as a
+        'click' event, may happen in an orphaned shadow subtree.  In such
+        cases, traversal might start with a node in an orphaned shadow
+        subtree.  So ComposedShadowTreeWalker can not assume that visited
+        shadow root is always assigned to a shadow insertion point.
+
+        This patch only fixes ComposedShadowTreeWalker.
+        ComposedShadowTreeParentWalker will be fixed in another patch with
+        an event dispatching test.
+
+        Test: fast/dom/shadow/composed-shadow-tree-walker.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost):
+
+
 2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add MemoryUsageSupport::processMemorySizesInBytes
