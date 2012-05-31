@@ -55,7 +55,7 @@ if (! -e ".gclient") {
     # If .gclient configuration file doesn't exist, create it.
     print "Configuring gclient...\n";
     system($gclientPath,
-           "config", 
+           "config",
            "--spec=solutions=[{'name':'./','url':None}]") == 0 or die $!;
 }
 
@@ -72,7 +72,13 @@ if (isChromiumAndroid()) {
         die "Couldn't extract the Android NDK." if $result;
     }
 
-    $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/android-ndk-r7b";
+    my $androidNdkRoot = sourceDir() . "/Source/WebKit/chromium/android-ndk-r7b";
+
+    # Attempt to replace the NDK's linker with a 64-bit version if the host
+    # OS is Linux. This will significantly speed up link times.
+    chromiumInstall64BitAndroidLinkerIfNeeded($androidNdkRoot) if isLinux();
+
+    $ENV{ANDROID_NDK_ROOT} = $androidNdkRoot;
     $ENV{WEBKIT_ANDROID_BUILD} = 1;
 }
 

@@ -1,3 +1,23 @@
+2012-05-30  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Automatically install 64-bit linker for Android
+        https://bugs.webkit.org/show_bug.cgi?id=79780
+
+        Reviewed by Adam Barth.
+
+        Change the update-webkit-chromium script to check whether the 64-bit
+        linker needs to be installed as part of the update process. The actual
+        code for doing these checks and "installing" it has been added to the
+        webkitdirs.pm script.
+
+        The linker itself is part of the third_party/aosp repository, which
+        will be pulled in through the DEPS change.
+
+        * Scripts/update-webkit-chromium:
+        * Scripts/webkitdirs.pm:
+        (chromiumInstall64BitAndroidLinkerIfNeeded):
+        (chromiumReplaceAndroidLinkerIfNeeded):
+
 2012-05-30  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87803

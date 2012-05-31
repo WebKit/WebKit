@@ -167,10 +167,12 @@ deps_os = {
       From('chromium_deps', 'src/third_party/openssl'),
   },
   'android': {
-    'third_party/freetype':
-      'https://git.chromium.org/chromium/src/third_party/freetype.git',
     'tools/android':
-      Var('chromium_svn')+'/tools/android@'+Var('chromium_rev'),
+      Var('chromium_svn') + '/tools/android@' + Var('chromium_rev'),
+    'third_party/freetype':
+      From('chromium_deps', 'src/third_party/freetype'),
+    'third_party/aosp':
+      From('chromium_deps', 'src/third_party/aosp'),
   },
 }
 
