@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include <WebCore/ErrorsGtk.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceHandleInternal.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -147,6 +148,10 @@ void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* resource
     resourceHandle->setClient(m_downloadClient.get());
     m_resourceHandle = resourceHandle;
     didStart();
+    // If the handle already got a response, make sure the download client is notified.
+    ResourceHandleInternal* handleInternal = m_resourceHandle->getInternal();
+    if (!handleInternal->m_response.isNull())
+        m_downloadClient->didReceiveResponse(m_resourceHandle.get(), handleInternal->m_response);
 }
 
 void Download::cancel()
