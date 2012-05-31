@@ -1,3 +1,17 @@
+2012-05-31  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Crash when closing web page if selection is active
+        https://bugs.webkit.org/show_bug.cgi?id=87962
+
+        Reviewed by Antonio Gomes.
+
+        The embedder may try to remove a layer from the compositor at a stage
+        where the compositor has been set to 0.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::addCompositingThreadOverlay):
+        (BlackBerry::WebKit::WebPage::removeCompositingThreadOverlay):
+
 2012-05-30  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Add an Accelerated Compositing layer for Web Inspector DOM highlight.
