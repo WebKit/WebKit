@@ -1,3 +1,26 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        10 W3C video and audio canPlayType tests are failing on Mac and Win
+        https://bugs.webkit.org/show_bug.cgi?id=75184
+
+        Add Windows-specific expected (failing?) results to get the bots greener.
+
+        * platform/win/media/W3C: Added.
+        * platform/win/media/W3C/audio: Added.
+        * platform/win/media/W3C/audio/canPlayType: Added.
+        * platform/win/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt: Added.
+        * platform/win/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Added.
+        * platform/win/media/W3C/video: Added.
+        * platform/win/media/W3C/video/canPlayType: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_codecs_order_2-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_two_implies_one_3-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_two_implies_one_4-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Added.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Added.
+
 2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] EFL's DRT navigation_policy_decision implementation
