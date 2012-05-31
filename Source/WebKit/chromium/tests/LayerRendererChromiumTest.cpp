@@ -275,3 +275,44 @@ TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 }
+
+class LoseContextOnFirstGetContext : public FakeWebGraphicsContext3D {
+public:
+    LoseContextOnFirstGetContext()
+        : m_contextLost(false)
+    {
+    }
+
+    virtual bool makeContextCurrent() OVERRIDE
+    {
+        return !m_contextLost;
+    }
+
+    virtual void getProgramiv(WebGLId program, WGC3Denum pname, WGC3Dint* value) OVERRIDE
+    {
+        m_contextLost = true;
+        *value = 0;
+    }
+
+    virtual void getShaderiv(WebGLId shader, WGC3Denum pname, WGC3Dint* value) OVERRIDE
+    {
+        m_contextLost = true;
+        *value = 0;
+    }
+
+    virtual WGC3Denum getGraphicsResetStatusARB() OVERRIDE
+    {
+        return m_contextLost ? 1 : 0;
+    }
+
+private:
+    bool m_contextLost;
+};
+
+TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAssert)
+{
+    FakeLayerRendererChromiumClient mockClient;
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new LoseContextOnFirstGetContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+
+    layerRendererChromium.initialize();
+}

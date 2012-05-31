@@ -29,6 +29,7 @@
 
 #include "ProgramBinding.h"
 
+#include "Extensions3D.h"
 #include "GeometryBinding.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
@@ -50,10 +51,16 @@ ProgramBindingBase::~ProgramBindingBase()
     ASSERT(!m_initialized);
 }
 
+static bool contextLost(GraphicsContext3D* context)
+{
+    return (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
+}
+
+
 void ProgramBindingBase::init(GraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
 {
     m_program = createShaderProgram(context, vertexShader, fragmentShader);
-    ASSERT(m_program);
+    ASSERT(m_program || contextLost(context));
 }
 
 void ProgramBindingBase::cleanup(GraphicsContext3D* context)
@@ -91,20 +98,23 @@ unsigned ProgramBindingBase::createShaderProgram(GraphicsContext3D* context, con
     TRACE_EVENT("ProgramBindingBase::createShaderProgram", this, 0);
     unsigned vertexShader = loadShader(context, GraphicsContext3D::VERTEX_SHADER, vertexShaderSource);
     if (!vertexShader) {
-        LOG_ERROR("Failed to create vertex shader");
+        if (!contextLost(context))
+            LOG_ERROR("Failed to create vertex shader");
         return 0;
     }
 
     unsigned fragmentShader = loadShader(context, GraphicsContext3D::FRAGMENT_SHADER, fragmentShaderSource);
     if (!fragmentShader) {
         GLC(context, context->deleteShader(vertexShader));
-        LOG_ERROR("Failed to create fragment shader");
+        if (!contextLost(context))
+            LOG_ERROR("Failed to create fragment shader");
         return 0;
     }
 
     unsigned programObject = context->createProgram();
     if (!programObject) {
-        LOG_ERROR("Failed to create shader program");
+        if (!contextLost(context))
+            LOG_ERROR("Failed to create shader program");
         return 0;
     }
 
@@ -120,7 +130,8 @@ unsigned ProgramBindingBase::createShaderProgram(GraphicsContext3D* context, con
     int linked = 0;
     GLC(context, context->getProgramiv(programObject, GraphicsContext3D::LINK_STATUS, &linked));
     if (!linked) {
-        LOG_ERROR("Failed to link shader program");
+        if (!contextLost(context))
+            LOG_ERROR("Failed to link shader program");
         GLC(context, context->deleteProgram(programObject));
         return 0;
     }
