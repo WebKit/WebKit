@@ -88,70 +88,58 @@ static void webkit_spell_checker_enchant_init(WebKitSpellCheckerEnchant* checker
     priv->enchantDicts = 0;
 }
 
-static size_t findByteOffsetToFirstNonGraphableCharacter(const char* utf8String)
-{
-    const char* firstNonGraphableCharacter = utf8String;
-    while (firstNonGraphableCharacter && *firstNonGraphableCharacter && g_unichar_isgraph(g_utf8_get_char(firstNonGraphableCharacter)))
-        firstNonGraphableCharacter = g_utf8_find_next_char(firstNonGraphableCharacter, 0);
-
-    if (!firstNonGraphableCharacter) // If there was an error, the offset will be zero.
-        return 0;
-
-    return firstNonGraphableCharacter - utf8String;
-}
-
-static void getExtentsOfNextWord(const char* utf8String, const char*& wordStart, size_t& length)
-{
-    wordStart = utf8String;
-    while (wordStart && *wordStart && !g_unichar_isgraph(g_utf8_get_char(wordStart)))
-        wordStart = g_utf8_find_next_char(wordStart, NULL);
-
-    if (!wordStart || !*wordStart) {
-        length = 0;
-        return;
-    }
-
-    length = findByteOffsetToFirstNonGraphableCharacter(wordStart);
-    return;
-}
-
-static bool wordIsSpelledCorrectlyInAtLeastOneDictionary(GSList* dictionaries, const char* word, size_t length, int* misspellingLocation, int* misspellingLength)
-{
-    for (; dictionaries; dictionaries = dictionaries->next) {
-        EnchantDict* dictionary = static_cast<EnchantDict*>(dictionaries->data);
-        int result = enchant_dict_check(dictionary, word, length);
-
-        if (result < 0) // Error during checking.
-            continue;
-        if (!result) // Stop checking, as this word is correct for at least one dictionary.
-            return true;
-    }
-
-    return false;
-}
-
 static void checkSpellingOfString(WebKitSpellChecker* checker, const char* string, int* misspellingLocation, int* misspellingLength)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
 
-    *misspellingLocation = -1;
-    *misspellingLength = 0;
-
-    GSList* dictionaries = priv->enchantDicts;
-    if (!dictionaries)
+    GSList* dicts = priv->enchantDicts;
+    if (!dicts)
         return;
 
-    const char* wordStart = string;
-    size_t wordLength;
-    getExtentsOfNextWord(wordStart, wordStart, wordLength);
-    while (wordLength > 0) {
-        if (!wordIsSpelledCorrectlyInAtLeastOneDictionary(dictionaries, wordStart, wordLength, misspellingLocation, misspellingLength)) {
-            *misspellingLocation = g_utf8_pointer_to_offset(string, wordStart);
-            *misspellingLength = g_utf8_pointer_to_offset(string, wordStart + wordLength) - *misspellingLocation;
-            return;
-        }
+    int length = g_utf8_strlen(string, -1);
 
-        getExtentsOfNextWord(wordStart + wordLength, wordStart, wordLength);
+    PangoLanguage* language(pango_language_get_default());
+    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, length + 1));
+
+    // pango_get_log_attrs uses an aditional position at the end of the text.
+    pango_get_log_attrs(string, -1, -1, language, attrs.get(), length + 1);
+
+    for (int i = 0; i < length + 1; i++) {
+        // We go through each character until we find an is_word_start,
+        // then we get into an inner loop to find the is_word_end corresponding
+        // to it.
+        if (attrs.get()[i].is_word_start) {
+            int start = i;
+            int end = i;
+            int wordLength;
+
+            while (attrs.get()[end].is_word_end < 1)
+                end++;
+
+            wordLength = end - start;
+            // Set the iterator to be at the current word end, so we don't
+            // check characters twice.
+            i = end;
+
+            gchar* cstart = g_utf8_offset_to_pointer(string, start);
+            gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(string, end) - cstart);
+            GOwnPtr<gchar> word(g_new0(gchar, bytes + 1));
+
+            g_utf8_strncpy(word.get(), cstart, wordLength);
+
+            for (; dicts; dicts = dicts->next) {
+                EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+                if (enchant_dict_check(dict, word.get(), wordLength)) {
+                    *misspellingLocation = start;
+                    *misspellingLength = wordLength;
+                } else {
+                    // Stop checking, this word is ok in at least one dict.
+                    *misspellingLocation = -1;
+                    *misspellingLength = 0;
+                    break;
+                }
+            }
+        }
     }
 }
 
