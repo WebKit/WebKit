@@ -1,3 +1,51 @@
+2012-05-30  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Add an Accelerated Compositing layer for Web Inspector DOM highlight.
+        https://bugs.webkit.org/show_bug.cgi?id=81001
+
+        Reviewed by Antonio Gomes.
+        
+        Implemented InspectorOverlay using WebOverlayAPI.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateDelegatedOverlays):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::setInspectorOverlayClient):
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        (WebCore::InspectorClientBlackBerry::highlight):
+        (WebCore::InspectorClientBlackBerry::hideHighlight):
+        (WebCore::InspectorClientBlackBerry::paintInspectorOverlay):
+        (WebCore):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        (InspectorClientBlackBerry):
+        * WebCoreSupport/InspectorOverlay.cpp: Added.
+        (WebCore):
+        (WebCore::InspectorOverlay::create):
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::notifySyncRequired):
+        (WebCore::InspectorOverlay::paintContents):
+        (WebCore::InspectorOverlay::showDebugBorders):
+        (WebCore::InspectorOverlay::showRepaintCounter):
+        (WebCore::InspectorOverlay::contentsVisible):
+        (WebCore::InspectorOverlay::~InspectorOverlay):
+        (WebCore::InspectorOverlay::clear):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::paintWebFrame):
+        (WebCore::InspectorOverlay::invalidateWebFrame):
+        * WebCoreSupport/InspectorOverlay.h: Added.
+        (WebKit):
+        (WebCore):
+        (InspectorOverlay):
+        (InspectorOverlayClient):
+        (WebCore::InspectorOverlay::setClient):
+        (WebCore::InspectorOverlay::notifyAnimationStarted):
+
 2012-05-30  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Browser crashed when selecting in textarea

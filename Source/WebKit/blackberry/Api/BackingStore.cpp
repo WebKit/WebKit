@@ -2443,7 +2443,8 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
         if (m_webPage->d->m_page->inspectorController()->enabled()) {
             WebCore::IntPoint scrollPosition = m_client->frame()->view()->scrollPosition();
             graphicsContext.translate(scrollPosition.x(), scrollPosition.y());
-            m_webPage->d->m_page->inspectorController()->drawHighlight(graphicsContext);
+            if (m_webPage->d->m_inspectorOverlay)
+                m_webPage->d->m_inspectorOverlay->paintWebFrame(graphicsContext);
         }
 #endif
 

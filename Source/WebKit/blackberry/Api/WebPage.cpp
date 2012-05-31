@@ -75,6 +75,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorClientBlackBerry.h"
 #include "InspectorController.h"
+#include "InspectorOverlay.h"
 #include "JavaScriptDebuggerBlackBerry.h"
 #include "LayerWebKitThread.h"
 #include "NetworkManager.h"
@@ -3217,6 +3218,8 @@ void WebPagePrivate::updateDelegatedOverlays(bool dispatched)
         // Must be called on the WebKit thread.
         if (m_selectionHandler->isSelectionActive())
             m_selectionHandler->selectionPositionChanged(true /* visualChangeOnly */);
+        if (m_inspectorOverlay)
+            m_inspectorOverlay->update();
 
     } else if (m_selectionHandler->isSelectionActive()) {
         // Don't bother dispatching to webkit thread if selection and tap highlight are not active.
@@ -5759,6 +5762,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     double scale = currentScale();
     if (m_frameLayers && m_frameLayers->hasLayer())
         m_frameLayers->commitOnWebKitThread(scale);
+
     updateDelegatedOverlays();
     if (m_overlayLayer)
         m_overlayLayer->platformLayer()->commitOnWebKitThread(scale);
@@ -6282,6 +6286,24 @@ PagePopupBlackBerry* WebPage::popup()
 void WebPagePrivate::setParentPopup(PagePopupBlackBerry* webPopup)
 {
     m_parentPopup = webPopup;
+}
+
+void WebPagePrivate::setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)
+{
+    if (inspectorOverlayClient) {
+        if (!m_inspectorOverlay)
+            m_inspectorOverlay = WebCore::InspectorOverlay::create(this, inspectorOverlayClient);
+        else
+            m_inspectorOverlay->setClient(inspectorOverlayClient);
+        m_inspectorOverlay->update();
+        scheduleRootLayerCommit();
+    } else {
+        if (m_inspectorOverlay) {
+            m_inspectorOverlay->clear();
+            m_inspectorOverlay = nullptr;
+            scheduleRootLayerCommit();
+        }
+    }
 }
 
 }

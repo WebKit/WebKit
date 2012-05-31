@@ -20,6 +20,7 @@
 #define WebPage_p_h
 
 #include "ChromeClient.h"
+#include "InspectorOverlay.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "GLES2Context.h"
 #include "LayerRenderer.h"
@@ -42,6 +43,7 @@ class DOMWrapperWorld;
 class Document;
 class Frame;
 class GeolocationControllerClientBlackBerry;
+class GraphicsLayerBlackBerry;
 class JavaScriptDebuggerBlackBerry;
 class LayerWebKitThread;
 class Node;
@@ -425,6 +427,8 @@ public:
 
     void deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*);
 
+    void setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient*);
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::Page* m_page;
@@ -548,6 +552,7 @@ public:
     RefPtr<WebCore::DOMWrapperWorld> m_isolatedWorld;
     bool m_hasInRegionScrollableAreas;
     bool m_updateDelegatedOverlaysDispatched;
+    OwnPtr<WebCore::InspectorOverlay> m_inspectorOverlay;
 
     // There is no need to initialize the following members in WebPagePrivate's constructor,
     // because they are only used by WebPageTasks and the tasks will initialize them when

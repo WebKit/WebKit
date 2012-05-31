@@ -75,6 +75,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
+    blackberry/WebCoreSupport/InspectorOverlay.cpp
     blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp

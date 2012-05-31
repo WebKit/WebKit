@@ -21,6 +21,7 @@
 #define InspectorClientBlackBerry_h
 
 #include "InspectorClient.h"
+#include "InspectorOverlay.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 
@@ -32,7 +33,7 @@ class WebPagePrivate;
 
 namespace WebCore {
 
-class InspectorClientBlackBerry : public InspectorClient {
+class InspectorClientBlackBerry : public InspectorClient, public InspectorOverlay::InspectorOverlayClient {
 public:
     InspectorClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     virtual void inspectorDestroyed();
@@ -50,6 +51,7 @@ public:
     virtual bool canClearBrowserCache() { return true; }
     virtual void clearBrowserCookies();
     virtual bool canClearBrowserCookies() { return true; }
+    virtual void paintInspectorOverlay(WebCore::GraphicsContext&);
 
     virtual void updateInspectorStateCookie(const String&);
 

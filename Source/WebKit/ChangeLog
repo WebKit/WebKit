@@ -1,3 +1,14 @@
+2012-05-30  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Add an Accelerated Compositing layer for Web Inspector DOM highlight.
+        https://bugs.webkit.org/show_bug.cgi?id=81001
+
+        Reviewed by Antonio Gomes
+        
+        Added new InspectorOverlay class
+
+        * PlatformBlackBerry.cmake:
+
 2012-05-29  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] WebKit-side implementation of SelectionOverlay
