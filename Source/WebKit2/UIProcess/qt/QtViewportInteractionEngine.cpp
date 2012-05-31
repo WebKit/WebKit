@@ -200,6 +200,7 @@ void QtViewportInteractionEngine::viewportAttributesChanged(const WebCore::Viewp
 
     // If the web app successively changes the viewport on purpose
     // it wants to be in control and we should disable animations.
+    ViewportUpdateDeferrer guard(this);
     setPageItemRectVisible(nearestValidBounds());
 }
 
@@ -221,6 +222,7 @@ void QtViewportInteractionEngine::pageContentsSizeChanged(const QSize& newSize, 
     // we didn't do scale adjustment.
     emit m_viewportItem->experimental()->test()->contentsScaleCommitted();
 
+    ViewportUpdateDeferrer guard(this);
     setPageItemRectVisible(nearestValidBounds());
 }
 
