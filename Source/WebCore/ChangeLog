@@ -1,5 +1,35 @@
 2012-05-30  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Implement V8Binding::v8BooleanWithCheck(isolate)
+        https://bugs.webkit.org/show_bug.cgi?id=87814
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate to v8::True() and v8::False().
+        Similarly to v8NullWithCheck() (bug 87713), this patch implements
+        V8Binding::v8BooleanWithCheck(isolate), which calls v8::True()/v8::False()
+        or v8::True(isolate)/v8::False(isolate) depending on whether the
+        passed isolate is null or not.
+
+        This patch also passes Isolate to v8Boolean() in CodeGeneratorV8.pm.
+
+        No tests. No behavior change.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (NativeToJSValue):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::TestEventTargetV8Internal::dispatchEventCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::createAttrGetter):
+        (WebCore::TestObjV8Internal::reflectedBooleanAttrAttrGetter):
+        (WebCore::TestObjV8Internal::reflectedCustomBooleanAttrAttrGetter):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8Boolean):
+        (WebCore):
+        (WebCore::v8BooleanWithCheck):
+
+2012-05-30  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace v8::True() and v8::False() with v8Boolean()
         https://bugs.webkit.org/show_bug.cgi?id=87812
 

@@ -96,7 +96,7 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
     bool result = imp->dispatchEvent(evt, ec);
     if (UNLIKELY(ec))
         goto fail;
-    return v8Boolean(result);
+    return v8Boolean(result, args.GetIsolate());
     }
     fail:
     return V8Proxy::setDOMException(ec, args.GetIsolate());

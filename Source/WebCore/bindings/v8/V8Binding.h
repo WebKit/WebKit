@@ -248,7 +248,7 @@ namespace WebCore {
     StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external);
 
     // Since v8::Null(isolate) crashes if we pass a null isolate,
-    // we need to instead use v8NullWithCheck(isolate).
+    // we need to use v8NullWithCheck(isolate) if an isolate can be null.
     //
     // FIXME: Remove all null isolates from V8 bindings, and remove v8NullWithCheck(isolate).
     inline v8::Handle<v8::Value> v8NullWithCheck(v8::Isolate* isolate)
@@ -406,6 +406,20 @@ namespace WebCore {
     inline v8::Handle<v8::Boolean> v8Boolean(bool value)
     {
         return value ? v8::True() : v8::False();
+    }
+
+    inline v8::Handle<v8::Boolean> v8Boolean(bool value, v8::Isolate* isolate)
+    {
+        return value ? v8::True(isolate) : v8::False(isolate);
+    }
+
+    // Since v8Boolean(value, isolate) crashes if we pass a null isolate,
+    // we need to use v8BooleanWithCheck(value, isolate) if an isolate can be null.
+    //
+    // FIXME: Remove all null isolates from V8 bindings, and remove v8BooleanWithCheck(value, isolate).
+    inline v8::Handle<v8::Boolean> v8BooleanWithCheck(bool value, v8::Isolate* isolate)
+    {
+        return isolate ? v8Boolean(value, isolate) : v8Boolean(value);
     }
 
     inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)

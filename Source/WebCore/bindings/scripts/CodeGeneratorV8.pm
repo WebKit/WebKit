@@ -3802,7 +3802,7 @@ sub NativeToJSValue
     my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
     my $type = GetTypeFromSignature($signature);
 
-    return "v8Boolean($value)" if $type eq "boolean";
+    return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
     return "v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
 
     # HTML5 says that unsigned reflected attributes should be in the range
