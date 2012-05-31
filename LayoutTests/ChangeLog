@@ -1,3 +1,14 @@
+2012-05-31  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Retainers are missing for all objects
+        https://bugs.webkit.org/show_bug.cgi?id=87655
+
+        Skip the test on wincairo platform.
+
+        Reviewed by Yury Semikhatsky.
+
+        * platform/wincairo/Skipped:
+
 2012-05-31  Hayato Ito  <hayato@chromium.org>
 
         ComposedShadowTreeWalker should support traversing nodes in an orphaned shadow subtree.
