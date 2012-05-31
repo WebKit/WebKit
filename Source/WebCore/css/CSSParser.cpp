@@ -769,10 +769,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
 #endif
     case CSSPropertyWebkitPrintColorAdjust:
         if (valueID == CSSValueExact || valueID == CSSValueEconomy)
-#if ENABLE(CSS_REGIONS)
             return true;
         break;
-#endif
     case CSSPropertyWebkitRtlOrdering:
         if (valueID == CSSValueLogical || valueID == CSSValueVisual)
             return true;

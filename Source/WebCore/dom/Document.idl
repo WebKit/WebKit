@@ -254,9 +254,7 @@ module core {
 #endif
 
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
-#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
         WebKitNamedFlow webkitGetFlowByName(in DOMString name);
-#endif
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
