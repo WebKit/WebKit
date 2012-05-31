@@ -1,3 +1,16 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] fast/events/remove-target* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=88006
+
+        Add Windows-specific expected (failing?) results to get the bots greener.
+
+        * platform/win/fast/events/remove-target-in-mouseup-deep-expected.txt: Added.
+        * platform/win/fast/events/remove-target-in-mouseup-expected.txt: Added.
+        * platform/win/fast/events/remove-target-in-mouseup-insertback-expected.txt: Added.
+        * platform/win/fast/events/remove-target-in-mouseup-twice-expected.txt: Added.
+        * platform/win/fast/events/remove-target-with-shadow-in-drag-expected.txt: Added.
+
 2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening; skip fast/canvas/canvas-imageSmoothingEnabled.
