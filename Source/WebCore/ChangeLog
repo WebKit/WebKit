@@ -1,3 +1,26 @@
+2012-05-31  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderLayerCompositor cleanup: make RenderGeometryMap part of the OverlapMap
+        https://bugs.webkit.org/show_bug.cgi?id=88021
+
+        Reviewed by James Robinson.
+        
+        We only ever use the RenderGeometryMap when we have an OverlapMap, so make
+        it a member of the OverlapMap.
+
+        No behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (RenderLayerCompositor::OverlapMap):
+        (WebCore::RenderLayerCompositor::OverlapMap::geometryMap):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore):
+        (RenderLayerCompositor):
+
 2012-05-31  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Pass Isolate to v8Boolean()
