@@ -103,18 +103,18 @@ public:
     
     void OnAlertEvent(WebViewAlertEvent& event)
     {
-        fprintf(stdout, "ALERT: %S\n", event.GetMessage().c_str());
+        wxFprintf(stdout, "ALERT: %S\n", event.GetMessage());
     }
     
     void OnConfirmEvent(WebViewConfirmEvent& event)
     {
-        fprintf(stdout, "CONFIRM: %S\n", event.GetMessage().c_str());
+        wxFprintf(stdout, "CONFIRM: %S\n", event.GetMessage());
         event.SetReturnCode(1);
     }
-    
+
     void OnPromptEvent(WebViewPromptEvent& event)
     {
-        fprintf(stdout, "PROMPT: %S, default text: %S\n", event.GetMessage().c_str(), event.GetResponse().c_str());
+        wxFprintf(stdout, "PROMPT: %S, default text: %S\n", event.GetMessage(), event.GetResponse());
         event.SetReturnCode(1);
     }
     
@@ -123,15 +123,13 @@ public:
         fprintf(stdout, "CONSOLE MESSAGE: ");
         if (event.GetLineNumber())
             fprintf(stdout, "line %d: ", event.GetLineNumber());
-        fprintf(stdout, "%S\n", event.GetMessage().c_str());
+        wxFprintf(stdout, "%S\n", event.GetMessage());
     }
     
     void OnReceivedTitleEvent(WebViewReceivedTitleEvent& event)
     {
-        if (gLayoutTestController->dumpTitleChanges() && !done) {
-            const char* title = event.GetTitle().mb_str(wxConvUTF8);
-            printf("TITLE CHANGED: %S\n", title ? title : "");
-        }
+        if (gLayoutTestController->dumpTitleChanges() && !done)
+            wxFprintf(stdout, "TITLE CHANGED: %S\n", event.GetTitle());
     }
     
     void OnWindowObjectClearedEvent(WebViewWindowObjectClearedEvent& event)

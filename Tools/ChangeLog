@@ -1,3 +1,15 @@
+2012-05-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Fix 2.9 issues with c_str() type by using the wx fprintf wrapper.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (LayoutWebViewEventHandler::OnAlertEvent):
+        (LayoutWebViewEventHandler::OnConfirmEvent):
+        (LayoutWebViewEventHandler):
+        (LayoutWebViewEventHandler::OnPromptEvent):
+        (LayoutWebViewEventHandler::OnConsoleMessageEvent):
+        (LayoutWebViewEventHandler::OnReceivedTitleEvent):
+
 2012-05-30  Ojan Vafai  <ojan@chromium.org>
 
         Only give lint errors for -expected.png png files that lack a checksum
