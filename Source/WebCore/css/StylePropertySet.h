@@ -39,8 +39,6 @@ class StyledElement;
 class StylePropertyShorthand;
 class StyleSheetContents;
 
-typedef Vector<CSSProperty, 4> StylePropertyVector;
-
 class StylePropertySet : public RefCounted<StylePropertySet> {
 public:
     ~StylePropertySet();
@@ -49,11 +47,11 @@ public:
     {
         return adoptRef(new StylePropertySet(cssParserMode));
     }
-    static PassRefPtr<StylePropertySet> create(StylePropertyVector& properties)
+    static PassRefPtr<StylePropertySet> create(const CSSProperty* properties, unsigned count)
     {
-        return adoptRef(new StylePropertySet(properties, CSSStrictMode, /* makeMutable */ true));
+        return adoptRef(new StylePropertySet(properties, count, CSSStrictMode, /* makeMutable */ true));
     }
-    static PassRefPtr<StylePropertySet> createImmutable(StylePropertyVector&, CSSParserMode);
+    static PassRefPtr<StylePropertySet> createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const;
     bool isEmpty() const;
@@ -119,7 +117,7 @@ public:
     
 private:
     StylePropertySet(CSSParserMode);
-    StylePropertySet(StylePropertyVector&, CSSParserMode, bool makeMutable);
+    StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode, bool makeMutable);
     StylePropertySet(const StylePropertySet&);
 
     void setNeedsStyleRecalc();

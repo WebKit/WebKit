@@ -1,3 +1,32 @@
+2012-05-30  Andreas Kling  <kling@webkit.org>
+
+        Have StylePropertySet constructor take array/length instead of vector.
+        <http://webkit.org/b/87876>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the StylePropertyVector typedef and have StylePropertySet constructors
+        take CSSProperty*/length since we are copying the data into a tightly packed
+        array anyway. This frees up the call sites to use whatever storage they please
+        rather than being restricted to a vector with inlineCapacity=4.
+
+        Change said call sites to use an arbitrary high inline capacity (256) for their
+        stack-allocated temporary vectors.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        * css/CSSParser.cpp:
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::createImmutable):
+        (WebCore::StylePropertySet::StylePropertySet):
+        (WebCore::StylePropertySet::removePropertiesInSet):
+        (WebCore::StylePropertySet::copyPropertiesInSet):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::create):
+        (StylePropertySet):
+
 2012-05-31  Mike West  <mkwst@chromium.org>
 
         Fixing compilation with SVG disabled.

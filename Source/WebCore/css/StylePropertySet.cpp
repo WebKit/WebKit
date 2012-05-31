@@ -50,10 +50,10 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
     return propertySetCSSOMWrapperMapInstance;
 }
 
-PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(StylePropertyVector& properties, CSSParserMode cssParserMode)
+PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
-    void* slot = WTF::fastMalloc(sizeof(StylePropertySet) - sizeof(void*) + sizeof(CSSProperty) * properties.size());
-    return adoptRef(new (slot) StylePropertySet(properties, cssParserMode, /* makeMutable */ false));
+    void* slot = WTF::fastMalloc(sizeof(StylePropertySet) - sizeof(void*) + sizeof(CSSProperty) * count);
+    return adoptRef(new (slot) StylePropertySet(properties, count, cssParserMode, /* makeMutable */ false));
 }
 
 StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
@@ -65,16 +65,18 @@ StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
 {
 }
 
-StylePropertySet::StylePropertySet(StylePropertyVector& properties, CSSParserMode cssParserMode, bool makeMutable)
+StylePropertySet::StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode, bool makeMutable)
     : m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
     , m_isMutable(makeMutable)
 {
     if (makeMutable) {
         m_mutablePropertyVector = new Vector<CSSProperty>;
-        *m_mutablePropertyVector = properties;
+        m_mutablePropertyVector->reserveInitialCapacity(count);
+        for (unsigned i = 0; i < count; ++i)
+            m_mutablePropertyVector->uncheckedAppend(properties[i]);
     } else {
-        m_arraySize = properties.size();
+        m_arraySize = count;
         for (unsigned i = 0; i < m_arraySize; ++i)
             new (&array()[i]) CSSProperty(properties[i]);
     }
@@ -933,7 +935,7 @@ bool StylePropertySet::removePropertiesInSet(const CSSPropertyID* set, unsigned 
     for (unsigned i = 0; i < length; ++i)
         toRemove.add(set[i]);
 
-    StylePropertyVector newProperties;
+    Vector<CSSProperty> newProperties;
     newProperties.reserveInitialCapacity(m_mutablePropertyVector->size());
 
     unsigned size = m_mutablePropertyVector->size();
@@ -1014,14 +1016,14 @@ PassRefPtr<StylePropertySet> StylePropertySet::copy() const
 
 PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
-    StylePropertyVector list;
+    Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return StylePropertySet::create(list);
+    return StylePropertySet::create(list.data(), list.size());
 }
 
 CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
