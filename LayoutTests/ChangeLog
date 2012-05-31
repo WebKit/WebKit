@@ -1,3 +1,9 @@
+2012-05-31  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Updating test expectations after r119124.
+
+        * platform/chromium/fast/workers/storage/test-authorizer-sync-expected.txt: Added.
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 5 fast/events/popup-* tests fail
