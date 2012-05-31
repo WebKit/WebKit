@@ -79,6 +79,9 @@ public:
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();
 
+    // Measured in seconds.
+    static double animationTimerDelay();
+
 private:
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
 

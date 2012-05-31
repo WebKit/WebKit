@@ -58,9 +58,6 @@ private:
     CCSingleThreadProxy* m_proxy;
 };
 
-// Measured in seconds.
-static const double animationTimerDelay = 1 / 60.0;
-
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCSingleThreadProxy(layerTreeHost));
@@ -165,7 +162,10 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
         if (ok) {
             m_layerRendererInitialized = true;
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
-        }
+        } else
+            // If we couldn't initialize the layer renderer, we shouldn't process any future animation events.
+            m_animationTimer->stop();
+
         return ok;
     }
 }
@@ -278,7 +278,7 @@ bool CCSingleThreadProxy::commitRequested() const
 
 void CCSingleThreadProxy::didAddAnimation()
 {
-    m_animationTimer->startOneShot(animationTimerDelay);
+    m_animationTimer->startOneShot(animationTimerDelay());
 }
 
 void CCSingleThreadProxy::stop()
@@ -324,6 +324,11 @@ void CCSingleThreadProxy::compositeImmediately()
         m_layerTreeHostImpl->swapBuffers();
         didSwapFrame();
     }
+}
+
+double CCSingleThreadProxy::animationTimerDelay()
+{
+    return 1 / 60.0;
 }
 
 void CCSingleThreadProxy::forceSerializeOnSwapBuffers()

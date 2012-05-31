@@ -1,3 +1,49 @@
+2012-05-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Single thread proxy should not tick animations unless the layer renderer has been initialized
+        https://bugs.webkit.org/show_bug.cgi?id=87873
+
+        Reviewed by James Robinson.
+
+        When the layer renderer fails to initialize, be sure to stop the animation timer.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CompositorFakeWebGraphicsContext3DWithTextureTracking):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::create):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::createTexture):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::deleteTexture):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::bindTexture):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::numTextures):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::texture):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::resetTextures):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::numUsedTextures):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::usedTexture):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::resetUsedTextures):
+        (WTF::CompositorFakeWebGraphicsContext3DWithTextureTracking::CompositorFakeWebGraphicsContext3DWithTextureTracking):
+        (WTF):
+        (WTF::TestHooks::didRecreateContext):
+        (TestHooks):
+        (WTF::TestHooks::createContext):
+        (CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::clearEndTestTask):
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (EndTestTask):
+        (WTF::CCLayerTreeHostTest::EndTestTask::EndTestTask):
+        (WTF::CCLayerTreeHostTest::EndTestTask::~EndTestTask):
+        (WTF::CCLayerTreeHostTest::EndTestTask::clearTest):
+        (WTF::CCLayerTreeHostTest::EndTestTask::run):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::endTestAfterDelay):
+        (FakeWebGraphicsContext3DMakeCurrentFails):
+        (WTF::FakeWebGraphicsContext3DMakeCurrentFails::makeContextCurrent):
+        (CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation):
+        (WTF::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation):
+        (WTF::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation::beginTest):
+        (WTF::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation::animateLayers):
+        (WTF::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation::didRecreateContext):
+        (WTF::CCLayerTreeHostTestInitializeLayerRendererFailsAfterAddAnimation::afterTest):
+        (WTF::TEST_F):
+
 2012-05-15  Brett Wilson  <brettw@chromium.org>
 
         Hook up GTK IsKeyPad flag for keyboard events, and preserve this flag
