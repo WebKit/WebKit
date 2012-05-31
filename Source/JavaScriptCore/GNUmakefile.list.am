@@ -232,6 +232,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleSet.cpp \
 	Source/JavaScriptCore/heap/HandleSet.h \
 	Source/JavaScriptCore/heap/HeapBlock.h \
+    Source/JavaScriptCore/heap/IncrementalSweeper.h \
+    Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \

@@ -2158,6 +2158,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\IncrementalSweeper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\IncrementalSweeper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\WeakBlock.cpp"
 				>
 			</File>

@@ -47,6 +47,7 @@ namespace JSC {
     class GlobalCodeBlock;
     class Heap;
     class HeapRootVisitor;
+    class IncrementalSweeper;
     class JSCell;
     class JSGlobalData;
     class JSValue;
@@ -99,6 +100,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
         JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
         JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
+
+        IncrementalSweeper* sweeper();
 
         // true if an allocation or collection is in progress
         inline bool isBusy();
@@ -217,6 +220,7 @@ namespace JSC {
         OwnPtr<HashSet<MarkedArgumentBuffer*> > m_markListSet;
 
         OwnPtr<GCActivityCallback> m_activityCallback;
+        OwnPtr<IncrementalSweeper> m_sweeper;
         
         MachineThreads m_machineThreads;
         

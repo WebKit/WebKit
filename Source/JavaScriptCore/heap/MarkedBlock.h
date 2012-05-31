@@ -157,6 +157,8 @@ namespace JSC {
         bool isLiveCell(const void*);
         void setMarked(const void*);
         
+        bool needsSweeping();
+
 #if ENABLE(GGC)
         void setDirtyObject(const void* atom)
         {
@@ -414,6 +416,11 @@ namespace JSC {
 
             functor(cell);
         }
+    }
+
+    inline bool MarkedBlock::needsSweeping()
+    {
+        return m_state == Marked;
     }
 
 #if ENABLE(GGC)

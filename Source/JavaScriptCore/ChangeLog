@@ -1,3 +1,56 @@
+2012-05-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Heap should sweep incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=85429
+
+        We shouldn't have to wait for the opportunistic GC timer to fire in order 
+        to call object destructors. Instead, we should incrementally sweep some 
+        subset of the blocks requiring sweeping periodically. We tie this sweeping 
+        to a timer rather than to collections because we want to reclaim this memory 
+        even if we stop allocating. This way, our memory usage scales smoothly with 
+        actual use, regardless of whether we've recently done an opportunistic GC or not.
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::collect): We no longer sweep during a full sweep. We only shrink now,
+        which we will switch over to being done during incremental sweeping too as soon as
+        all finalizers can be run lazily (and, by extension, incrementally). 
+        (JSC::Heap::sweeper):
+        (JSC):
+        * heap/Heap.h:
+        (JSC):
+        (Heap):
+        * heap/IncrementalSweeper.cpp: Added.
+        (JSC):
+        (JSC::IncrementalSweeper::timerDidFire): The IncrementalSweeper works very similarly to 
+        GCActivityCallback. It is tied to a run-loop based timer that fires periodically based 
+        on how long the previous sweep increment took to run. The IncrementalSweeper doesn't do 
+        anything if the platform doesn't support CoreFoundation.
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::~IncrementalSweeper):
+        (JSC::IncrementalSweeper::create):
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::cancelTimer):
+        (JSC::IncrementalSweeper::doSweep): Iterates over the snapshot of the MarkedSpace taken 
+        during the last collection, checking to see which blocks need sweeping. If it successfully 
+        gets to the end of the blocks that need sweeping then it cancels the timer.
+        (JSC::IncrementalSweeper::startSweeping): We take a snapshot of the Heap and store it in 
+        a Vector that the incremental sweep will iterate over. We also reset our index into this Vector.
+        * heap/IncrementalSweeper.h: Added.
+        (JSC):
+        (IncrementalSweeper):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::needsSweeping): If a block is in the Marked state it needs sweeping 
+        to be usable and to run any destructors that need to be run.
+
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Fix JSString after r115516.

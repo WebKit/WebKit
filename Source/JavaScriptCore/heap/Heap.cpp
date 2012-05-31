@@ -27,6 +27,7 @@
 #include "ConservativeRoots.h"
 #include "GCActivityCallback.h"
 #include "HeapRootVisitor.h"
+#include "IncrementalSweeper.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSGlobalObject.h"
@@ -245,6 +246,7 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_objectSpace(this)
     , m_storageSpace(this)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
+    , m_sweeper(IncrementalSweeper::create(this))
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
@@ -703,8 +705,10 @@ void Heap::collect(SweepToggle sweepToggle)
         GCPHASE(Sweeping);
         m_objectSpace.sweep();
         m_objectSpace.shrink();
-        m_bytesAbandoned = 0;
     }
+
+    m_sweeper->startSweeping(m_objectSpace.blocks().set());
+    m_bytesAbandoned = 0;
 
     {
         GCPHASE(ResetAllocators);
@@ -735,6 +739,11 @@ void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 GCActivityCallback* Heap::activityCallback()
 {
     return m_activityCallback.get();
+}
+
+IncrementalSweeper* Heap::sweeper()
+{
+    return m_sweeper.get();
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
