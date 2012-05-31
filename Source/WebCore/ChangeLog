@@ -1,5 +1,30 @@
 2012-05-30  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Replace v8::True() and v8::False() with v8Boolean()
+        https://bugs.webkit.org/show_bug.cgi?id=87812
+
+        Reviewed by Adam Barth.
+
+        To avoid implementing all of v8TrueWithCheck(isolate), v8FalseWithCheck(isolate)
+        and v8BooleanWithCheck(isolate), we can first replace v8::True() and v8::False()
+        with v8Boolean(). Then we can just implement v8BooleanWithCheck(isolate).
+
+        No tests. No change in behavior.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8StringOrFalse):
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertNPVariantToV8Object):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyDeleter):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::isHTMLAllCollectionCallback):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::storageDeleter):
+
+2012-05-30  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace v8::Null() with v8NullWithCheck(isolate) in custom bindings where isolate can be 0
         https://bugs.webkit.org/show_bug.cgi?id=87807
 

@@ -440,7 +440,7 @@ namespace WebCore {
 
     inline v8::Handle<v8::Value> v8StringOrFalse(const String& str, v8::Isolate* isolate = 0)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        return str.isNull() ? v8::Handle<v8::Value>(v8Boolean(false)) : v8::Handle<v8::Value>(v8String(str, isolate));
     }
 
     template <class T> v8::Handle<v8::Value> v8NumberArray(const Vector<T>& values)

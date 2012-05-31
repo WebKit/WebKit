@@ -1266,10 +1266,10 @@ public:
             *value = v8NullWithCheck(m_isolate);
             break;
         case TrueTag:
-            *value = v8::True();
+            *value = v8Boolean(true);
             break;
         case FalseTag:
-            *value = v8::False();
+            *value = v8Boolean(false);
             break;
         case TrueObjectTag:
             *value = v8::BooleanObject::New(true);

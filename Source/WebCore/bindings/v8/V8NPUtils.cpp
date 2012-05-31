@@ -37,6 +37,7 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
+#include "V8Binding.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
 
@@ -86,7 +87,7 @@ v8::Handle<v8::Value> convertNPVariantToV8Object(const NPVariant* variant, NPObj
     case NPVariantType_Double:
         return v8::Number::New(NPVARIANT_TO_DOUBLE(*variant));
     case NPVariantType_Bool:
-        return NPVARIANT_TO_BOOLEAN(*variant) ? v8::True() : v8::False();
+        return v8Boolean(NPVARIANT_TO_BOOLEAN(*variant));
     case NPVariantType_Null:
         return v8::Null();
     case NPVariantType_Void:

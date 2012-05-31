@@ -133,7 +133,7 @@ static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, cons
     
     if (storage->contains(name)) {
         storage->removeItem(name);
-        return v8::True();
+        return v8Boolean(true);
     }
 
     return v8::Handle<v8::Boolean>();
