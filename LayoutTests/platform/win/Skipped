@@ -1812,3 +1812,9 @@ plugins/npruntime/delete-plugin-within-setProperty.html
 # [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild
 # https://bugs.webkit.org/show_bug.cgi?id=87450
 media/media-volume-slider-rendered-below.html
+
+# Time out
+# https://bugs.webkit.org/show_bug.cgi?id=88005
+media/crash-closing-page-with-media-as-plugin-fallback.html
+media/media-continues-playing-after-replace-source.html
+media/video-zoom.html

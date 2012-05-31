@@ -1,5 +1,33 @@
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
+        [Win] 23 media tests fail / time out
+        https://bugs.webkit.org/show_bug.cgi?id=88005
+
+        Add/update the Windows expected (failing?) results to get the bots greener.
+
+        * platform/win/Skipped:
+        * platform/win/media/audio-controls-rendering-expected.txt:
+        * platform/win/media/audio-repaint-expected.txt:
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/controls-without-preload-expected.txt:
+        * platform/win/media/media-can-play-wav-audio-expected.txt: Added.
+        * platform/win/media/media-controls-clone-expected.txt:
+        * platform/win/media/media-controls-invalid-url-expected.txt: Added.
+        * platform/win/media/media-document-audio-repaint-expected.txt:
+        * platform/win/media/nodesFromRect-shadowContent-expected.txt: Added.
+        * platform/win/media/video-colorspace-yuv420-expected.txt: Added.
+        * platform/win/media/video-colorspace-yuv422-expected.txt: Added.
+        * platform/win/media/video-controls-rendering-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+        * platform/win/media/video-pause-immediately-expected.txt: Added.
+        * platform/win/media/video-playing-and-pause-expected.txt: Added.
+        * platform/win/media/video-size-intrinsic-scale-expected.txt: Added.
+
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
         [Win] fast/events/remove-target* tests fail
         https://bugs.webkit.org/show_bug.cgi?id=88006
 

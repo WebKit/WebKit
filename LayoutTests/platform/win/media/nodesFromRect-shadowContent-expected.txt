@@ -1,0 +1,8 @@
+FAIL Different number of nodes for rect[66,290], [10,10,20,20]: '2' vs '3'
+PASS All correct nodes found for rect
+This test only runs in DRT!
+
+EXPECTED (video.controls != 'null') OK
+EVENT(canplaythrough)
+END OF TEST
+
