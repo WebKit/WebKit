@@ -1,3 +1,19 @@
+2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] SerializedScriptValue.create() succeeds even if MessagePort object cannot be found in transferred ports
+        https://bugs.webkit.org/show_bug.cgi?id=87118
+
+        Reviewed by Adam Barth.
+
+        Make SerializedScriptValue.create() throw an exception if one of the
+        MessagePort objects cannot be found in the transferred ports. This
+        matches the behavior of the V8 implementation.
+
+        Test: webintents/web-intents-obj-constructor.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+
 2012-05-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call fileUtilities methods directly

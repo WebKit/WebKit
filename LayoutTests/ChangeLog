@@ -1,3 +1,16 @@
+2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] SerializedScriptValue.create() succeeds even if MessagePort object cannot be found in transferred ports
+        https://bugs.webkit.org/show_bug.cgi?id=87118
+
+        Reviewed by Adam Barth.
+
+        Unskip webintents/web-intents-obj-constructor.html now that 
+        SerializedScriptValue.create() throws an exception if one of the
+        MessagePort objects cannot be found in the transferred ports.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-30  Jessie Berlin  <jberlin@apple.com>
 
         [Win] Need results for ietestcenter CSS3 tests

@@ -634,7 +634,9 @@ private:
                     write(index->second);
                     return true;
                 }
-                return false;
+                // MessagePort object could not be found in transferred message ports
+                code = ValidationError;
+                return true;
             }
             if (obj->inherits(&JSArrayBuffer::s_info)) {
                 RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(obj);
