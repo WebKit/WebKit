@@ -843,7 +843,7 @@ END
 
     # Generate security checks if necessary
     if ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8::Null());\n\n");
+        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
@@ -1005,7 +1005,7 @@ END
             my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
             push(@implContentDecls, <<END);
     SerializedScriptValue* serialized = imp->${getterFunc}();
-    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null());
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
 END
@@ -1438,7 +1438,7 @@ END
 
     if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
         push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $function->signature->name . "(ec)))\n");
-        push(@implContentDecls, "        return v8::Handle<v8::Value>(v8::Null());\n");
+        push(@implContentDecls, "        return v8::Handle<v8::Value>(v8::Null(args.GetIsolate()));\n");
 END
     }
 

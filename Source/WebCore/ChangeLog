@@ -1,5 +1,35 @@
 2012-05-30  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Replace v8::Null() with v8::Null(isolate) or v8NullWithCheck(isolate) in non-custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=87810
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        For non-custom bindings, we replace v8::Null() with v8::Null(isolate)
+        where isolate cannot be 0, and replace v8::Null() with v8NullWithCheck(isolate)
+        where isolate can be 0.
+
+        This will be the final patch for passing Isolate to v8::Null().
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateFunctionCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::contentDocumentAttrGetter):
+        (WebCore::TestObjV8Internal::getSVGDocumentCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetter):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetter):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+
+2012-05-30  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace v8::Null() with v8::Null(isolate) in custom bindings where isolate shouldn't be 0
         https://bugs.webkit.org/show_bug.cgi?id=87809
 

@@ -261,7 +261,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target, v8::Isolate* isolate)
 {
     if (!target)
-        return v8::Null();
+        return v8NullWithCheck(isolate);
 
     AtomicString desiredInterface = target->interfaceName();
     DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
