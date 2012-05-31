@@ -1,3 +1,16 @@
+2012-05-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leak in webkitWebViewBaseStartDrag
+        https://bugs.webkit.org/show_bug.cgi?id=87756
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fixed memory leaks in drag and drop by using adoptRef instead
+        of just getting new references.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseStartDrag):
+
 2012-05-30  Luiz Agostini  <luiz.agostini@nokia.com>
 
         [Qt] handled touchmove events should not cancel tap gesture recognition
