@@ -83,31 +83,19 @@ PassRefPtr<DOMStringList> IDBObjectStoreBackendImpl::indexNames() const
     return indexNames.release();
 }
 
-// FIXME: This can be removed once all ports have been updated to call
-// the IDBKeyRange version. https://bugs.webkit.org/show_bug.cgi?id=84285
-void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    IDB_TRACE("IDBObjectStoreBackendImpl::get");
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
-    RefPtr<IDBKey> key = prpKey;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::getInternal, objectStore, key, callbacks)))
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
-}
-
 void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::get");
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::getByRangeInternal, objectStore, keyRange, callbacks)))
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::getInternal, objectStore, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-void IDBObjectStoreBackendImpl::getByRangeInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBObjectStoreBackendImpl::getByRangeInternal");
+    IDB_TRACE("IDBObjectStoreBackendImpl::getInternal");
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(objectStore->databaseId(), objectStore->id(), keyRange.get(), IDBCursor::NEXT);
     if (!backingStoreCursor) {
         callbacks->onSuccess(SerializedScriptValue::undefinedValue());
@@ -123,18 +111,6 @@ void IDBObjectStoreBackendImpl::getByRangeInternal(ScriptExecutionContext*, Pass
 
     callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData));
     backingStoreCursor->close();
-}
-
-void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
-{
-    IDB_TRACE("IDBObjectStoreBackendImpl::getInternal");
-    String wireData = objectStore->backingStore()->getObjectStoreRecord(objectStore->databaseId(), objectStore->id(), *key);
-    if (wireData.isNull()) {
-        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-        return;
-    }
-
-    callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData));
 }
 
 static PassRefPtr<IDBKey> fetchKeyFromKeyPath(SerializedScriptValue* value, const IDBKeyPath& keyPath)

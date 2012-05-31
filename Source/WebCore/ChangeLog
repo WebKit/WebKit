@@ -1,3 +1,26 @@
+2012-05-30  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Remove old get/getKey implementations
+        https://bugs.webkit.org/show_bug.cgi?id=87879
+
+        Reviewed by Ojan Vafai.
+
+        Removal of dead code, was scaffolding for a complicated
+        Chromium landing.
+
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::getKeyInternal):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+
 2012-05-30  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Fix assertion fail on redirect due to multiple jobs per handle
