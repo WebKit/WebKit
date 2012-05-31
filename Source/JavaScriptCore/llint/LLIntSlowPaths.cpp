@@ -53,8 +53,16 @@ namespace JSC { namespace LLInt {
     JSGlobalData& globalData = exec->globalData();      \
     NativeCallFrameTracer tracer(&globalData, exec)
 
-#define LLINT_SET_PC_FOR_STUBS() \
-    exec->setCurrentVPC(pc + 1)
+#ifndef NDEBUG
+#define LLINT_SET_PC_FOR_STUBS() do { \
+        exec->codeBlock()->bytecodeOffset(pc); \
+        exec->setCurrentVPC(pc + 1); \
+    } while (false)
+#else
+#define LLINT_SET_PC_FOR_STUBS() do { \
+        exec->setCurrentVPC(pc + 1); \
+    } while (false)
+#endif
 
 #define LLINT_BEGIN()                           \
     LLINT_BEGIN_NO_SET_PC();                    \
