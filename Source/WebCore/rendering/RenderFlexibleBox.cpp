@@ -757,7 +757,8 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
             continue;
 
         child->clearOverrideSize();
-        if (preferredLengthForChild(child).isAuto()) {
+        // Only need to layout here if we will need to get the logicalHeight of the child in computeNextFlexLine.
+        if (hasOrthogonalFlow(child) && preferredLengthForChild(child).isAuto()) {
             if (!relayoutChildren)
                 child->setChildNeedsLayout(true);
             child->layoutIfNeeded();
@@ -991,6 +992,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         }
         LayoutUnit childPreferredSize = childSizes[i] + mainAxisBorderAndPaddingExtentForChild(child);
         setLogicalOverrideSize(child, childPreferredSize);
+        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
@@ -1213,6 +1215,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
         child->setLogicalHeight(stretchedLogicalHeight);
         child->computeLogicalHeight();
 
+        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         if (child->logicalHeight() != logicalHeightBefore) {
             child->setOverrideHeight(child->logicalHeight());
             child->setLogicalHeight(0);

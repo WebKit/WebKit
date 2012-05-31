@@ -1,3 +1,20 @@
+2012-05-30  Ojan Vafai  <ojan@chromium.org>
+
+        Avoid second layout for flex-direction:row, flex-basis:auto flex items
+        https://bugs.webkit.org/show_bug.cgi?id=87901
+
+        Reviewed by Tony Chang.
+
+        No new tests. This is strictly a performance optimization and has no other
+        web visible changes.
+
+        Also, add FIXMEs for other cases where we could avoid doing layouts. 
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+
 2012-05-30  Zhenyao Mo  <zmo@google.com>
 
         WebKit incorrectly clears the alpha channel on readPixels, even for Framebuffers
