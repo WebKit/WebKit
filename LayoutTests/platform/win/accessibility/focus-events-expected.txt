@@ -1,6 +1,6 @@
-Received focus event for object 'field 1'.
-Received focus event for object 'field 2'.
-Received focus event for object 'field 3'.
+Received focus event for object ''.
+Received focus event for object ''.
+Received focus event for object ''.
 This tests that we broadcast focus events when the focused element changes.
 
 

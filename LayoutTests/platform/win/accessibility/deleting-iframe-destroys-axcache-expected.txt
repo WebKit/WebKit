@@ -1,0 +1,70 @@
+Before
+
+After
+
+End of test
+
+This tests that deleting an iframe doesn't cause the accessibility cache to be destroyed and recreated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Before:
+document 
+    client 
+        grouping 
+            editable text 
+        grouping 
+            client 
+                client 
+                    client 
+                        grouping 
+                            push button 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+            editable text 
+            editable text 
+            editable text 
+            editable text 
+        grouping 
+            editable text 
+
+After:
+document 
+    client 
+        grouping 
+            editable text 
+        grouping 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+        grouping 
+            editable text 
+            editable text 
+            editable text 
+            editable text 
+            editable text 
+        grouping 
+            editable text 
+    client 
+
+FAIL frameBodyRole == frameBody.role should be false. Was true.
+PASS frameGroupRole == frameGroup.role is false
+PASS frameButtonRole == frameButton.role is false
+PASS root.isEqual(newRoot) is true
+PASS body.isEqual(newBody) is true
+PASS before.isEqual(newBefore) is true
+FAIL after.isEqual(newAfter) should be true. Was false.
+
+TEST COMPLETE
+

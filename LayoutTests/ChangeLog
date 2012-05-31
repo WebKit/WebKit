@@ -1,3 +1,19 @@
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] 8 accessibility tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=87909
+
+        Add expected (failing?) results for Windows to get the bots greener.
+
+        * platform/win/accessibility/deleting-iframe-destroys-axcache-expected.txt: Added.
+        * platform/win/accessibility/disabled-controls-not-focusable-expected.txt: Added.
+        * platform/win/accessibility/focus-events-expected.txt:
+        * platform/win/accessibility/img-alt-tag-only-whitespace-expected.txt: Added.
+        * platform/win/accessibility/option-element-selection-and-focus-events-expected.txt:
+        * platform/win/accessibility/select-element-valuechange-event-expected.txt:
+        * platform/win/accessibility/textbox-role-reports-line-number-expected.txt: Added.
+        * platform/win/accessibility/textbox-role-reports-selection-expected.txt: Added.
+
 2012-05-30  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed test expectations updates for window and mac now that we no longer skip a couple of tests on those platforms.
