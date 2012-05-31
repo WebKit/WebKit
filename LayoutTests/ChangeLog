@@ -1,3 +1,12 @@
+2012-05-30  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] Need implementation of layoutTestController.setBackingScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=87919
+
+        Add tests that use setBackingScaleFactor to the Windows Skipped list.
+
+        * platform/win/Skipped:
+
 2012-05-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [JSC] SerializedScriptValue.create() succeeds even if MessagePort object cannot be found in transferred ports
