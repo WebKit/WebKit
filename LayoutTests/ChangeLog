@@ -1,3 +1,14 @@
+2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r118989
+        https://bugs.webkit.org/show_bug.cgi?id=87958
+
+        Unreviewed gardening.
+
+        fast/css/font-face-download-error.html is skipped as bug85977 is not fixed yet.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-31  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, update Mac Leopard baselines for fast/muticol/span/span-as-immediate-columns-child.html.
