@@ -1,3 +1,12 @@
+2012-05-31  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase xss test, skip failing tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+
 2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Gardening after r118920

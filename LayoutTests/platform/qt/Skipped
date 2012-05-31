@@ -452,6 +452,7 @@ fast/forms/file/file-input-reset.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 fast/forms/file/get-file-upload.html
 fast/forms/file/input-file-re-render.html
+fast/forms/file/input-file-write-files.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata
@@ -2483,3 +2484,10 @@ fast/profiler/dead-time.html
 # [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
 # https://bugs.webkit.org/show_bug.cgi?id=87700
 fast/dom/window-scroll-scaling.html
+
+# [Qt] window.focus() fails on some test after r118916, https://bugs.webkit.org/show_bug.cgi?id=86969
+fast/dom/Window/mozilla-focus-blur.html
+fast/notifications/notifications-click-event-focus.html
+
+# [Qt] fails after r119027, https://bugs.webkit.org/show_bug.cgi?id=87118
+fast/events/message-port-multi.html
