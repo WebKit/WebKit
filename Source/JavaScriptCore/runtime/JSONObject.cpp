@@ -471,6 +471,9 @@ inline Stringifier::Holder::Holder(JSGlobalData& globalData, JSObject* object)
     : m_object(globalData, object)
     , m_isArray(object->inherits(&JSArray::s_info))
     , m_index(0)
+#ifndef NDEBUG
+    , m_size(0)
+#endif
 {
 }
 

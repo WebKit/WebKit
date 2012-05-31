@@ -1,3 +1,13 @@
+2012-05-31  Andy Wingo  <wingo@igalia.com>
+
+        Fix reference to unset variable in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=87981
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSONObject.cpp (Stringifier::Holder::Holder):
+        Initialize m_size in debug mode, as we check it later in an assert.
+
 2012-05-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap should sweep incrementally
