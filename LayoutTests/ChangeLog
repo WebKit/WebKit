@@ -1,3 +1,16 @@
+2012-05-31  Christophe Dumez  <christophe.dumez@intel.com>
+
+        fast/events/message-port-multi.html needs new baseline after r119027
+        https://bugs.webkit.org/show_bug.cgi?id=87949
+
+        Unreviewed gardening.
+
+        Update baseline for fast/events/message-port-multi.html after r119027.
+        Now all the checks are passing and we can get rid of the FAIL lines in
+        the expected result.
+
+        * fast/events/message-port-multi-expected.txt:
+
 2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r118993

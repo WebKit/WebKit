@@ -14,11 +14,10 @@ PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
-FAIL Sending host object should throw
+PASS Sending host object has thrown TypeError: Unable to deserialize data.
 PASS send-port: transferred one port
 PASS send-port-twice: transferred one port twice
 PASS send-two-ports: transferred two ports
-FAIL Unexpected message [object Object]
 
 TEST COMPLETE
 
