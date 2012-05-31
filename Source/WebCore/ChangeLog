@@ -1,3 +1,21 @@
+2012-05-31  Shane Stephens  <shanestephens@google.com>
+
+        text-decoration should not be propagated through absolutely positioned elements to <a> tags
+        https://bugs.webkit.org/show_bug.cgi?id=86517
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/text-decoration-in-second-order-descendants.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+        Remove fix from 18611 as it doesn't work on second order descendants.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        Add floating and positioned checks when deciding whether to avoid propagating text decoration. Move all checks into new method to improve readability.
+        (WebCore::doesNotInheritTextDecoration): Added
+
 2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         Build fix for Linon/SnowLeopard after r119062
