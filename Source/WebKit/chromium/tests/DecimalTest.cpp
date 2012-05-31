@@ -451,7 +451,7 @@ TEST_F(DecimalTest, Division)
     EXPECT_EQ(encode(99, 0, Positive), Decimal(99) / Decimal(1));
     EXPECT_EQ(Decimal(1), Decimal(-50) / Decimal(-50));
     EXPECT_EQ(encode(UINT64_C(3333333333333333), -16, Positive), Decimal(1) / Decimal(3));
-    EXPECT_EQ(encode(UINT64_C(12345678901234), -1, Positive), encode(12345678901234, 0, Positive) / Decimal(10));
+    EXPECT_EQ(encode(UINT64_C(12345678901234), -1, Positive), encode(UINT64_C(12345678901234), 0, Positive) / Decimal(10));
 }
 
 TEST_F(DecimalTest, DivisionBigExponent)
