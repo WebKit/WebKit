@@ -448,10 +448,10 @@ void StringCache::remove(StringImpl* stringImpl)
     m_stringCache.remove(stringImpl);
 }
 
-v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl)
+v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, v8::Isolate* isolate)
 {
     if (!stringImpl->length())
-        return v8::String::Empty();
+        return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
 
     v8::String* cachedV8String = m_stringCache.get(stringImpl);
     if (cachedV8String) {
@@ -547,22 +547,6 @@ v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
     return toStringTemplate;
 }
     
-v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo& info,
-                                           const QualifiedName& name) 
-{
-    Element* imp = V8Element::toNative(info.Holder());
-    return v8ExternalString(imp->getAttribute(name), info.GetIsolate());
-}
-
-void setElementStringAttr(const v8::AccessorInfo& info,
-                          const QualifiedName& name,
-                          v8::Local<v8::Value> value)
-{
-    Element* imp = V8Element::toNative(info.Holder());
-    AtomicString v = toAtomicWebCoreStringWithNullCheck(value);
-    imp->setAttribute(name, v);
-}
-
 PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)
 {
     v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));

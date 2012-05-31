@@ -59,7 +59,7 @@ namespace WebCore {
     public:
         StringCache() { }
 
-        v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl) 
+        v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl, v8::Isolate* isolate)
         {
             if (m_lastStringImpl.get() == stringImpl) {
                 ASSERT(!m_lastV8String.IsNearDeath());
@@ -67,7 +67,7 @@ namespace WebCore {
                 return v8::Local<v8::String>::New(m_lastV8String);
             }
 
-            return v8ExternalStringSlow(stringImpl);
+            return v8ExternalStringSlow(stringImpl, isolate);
         }
 
         void clearOnGC() 
@@ -79,7 +79,7 @@ namespace WebCore {
         void remove(StringImpl*);
 
     private:
-        v8::Local<v8::String> v8ExternalStringSlow(StringImpl*);
+        v8::Local<v8::String> v8ExternalStringSlow(StringImpl*, v8::Isolate*);
 
         HashMap<StringImpl*, v8::String*> m_stringCache;
         v8::Persistent<v8::String> m_lastV8String;
@@ -281,10 +281,10 @@ namespace WebCore {
     {
         StringImpl* stringImpl = string.impl();
         if (!stringImpl)
-            return v8::String::Empty();
+            return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
 
         V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
-        return data->stringCache()->v8ExternalString(stringImpl);
+        return data->stringCache()->v8ExternalString(stringImpl, isolate);
     }
 
     // Convert a string to a V8 string.
@@ -489,13 +489,6 @@ namespace WebCore {
                                                size_t attributeCount,
                                                const BatchedCallback*,
                                                size_t callbackCount);
-
-    v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo&,
-                                               const QualifiedName&);
-    void setElementStringAttr(const v8::AccessorInfo&,
-                              const QualifiedName&,
-                              v8::Local<v8::Value>);
-
 
     v8::Persistent<v8::String> getToStringName();
     v8::Persistent<v8::FunctionTemplate> getToStringTemplate();

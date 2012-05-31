@@ -822,7 +822,8 @@ END
             my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
-            push(@implContentDecls, "    return getElementStringAttr(info, ${namespace}::${contentAttributeName}Attr);\n");
+            push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
+            push(@implContentDecls, "    return v8ExternalString(imp->getAttribute(${namespace}::${contentAttributeName}Attr), info.GetIsolate());\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
@@ -1092,7 +1093,9 @@ END
             my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
-            push(@implContentDecls, "    setElementStringAttr(info, ${namespace}::${contentAttributeName}Attr, value);\n");
+            push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
+            push(@implContentDecls, "    AtomicString v = toAtomicWebCoreStringWithNullCheck(value);\n");
+            push(@implContentDecls, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, v);\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;
