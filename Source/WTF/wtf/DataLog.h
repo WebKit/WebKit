@@ -33,10 +33,10 @@
 
 namespace WTF {
 
-FILE* dataFile();
+WTF_EXPORT_PRIVATE FILE* dataFile();
 
-void dataLogV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-void dataLog(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+WTF_EXPORT_PRIVATE void dataLogV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
+WTF_EXPORT_PRIVATE void dataLog(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 
 } // namespace WTF
 

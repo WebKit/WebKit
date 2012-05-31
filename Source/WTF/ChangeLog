@@ -1,3 +1,13 @@
+2012-05-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DataLog should be usable outside of JSC
+        https://bugs.webkit.org/show_bug.cgi?id=88015
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/DataLog.h:
+        (WTF):
+
 2012-05-31  Anders Carlsson  <andersca@apple.com>
 
         Disable support for rvalue references until I figure out why this is breaking the Xcode 4.2 build.
