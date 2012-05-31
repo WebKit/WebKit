@@ -109,28 +109,24 @@ keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-PASS name is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-PASS name is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-PASS name is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-PASS name is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -165,28 +161,24 @@ PASS event.target.result.primaryKey is counter
 Expecting exception from event.target.result.update({id: counter, number: counter + 200})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
-PASS name is 'NotAllowedError'
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 Expecting exception from event.target.result.update({id: counter, number: counter + 200})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
-PASS name is 'NotAllowedError'
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 Expecting exception from event.target.result.update({id: counter, number: counter + 200})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
-PASS name is 'NotAllowedError'
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 Expecting exception from event.target.result.update({id: counter, number: counter + 200})
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
-PASS name is 'NotAllowedError'
 keyCursor()
 PASS counter is 5
 transactionComplete()

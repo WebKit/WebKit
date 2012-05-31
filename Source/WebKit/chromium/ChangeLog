@@ -1,3 +1,15 @@
+2012-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118986.
+        http://trac.webkit.org/changeset/118986
+        https://bugs.webkit.org/show_bug.cgi?id=87914
+
+        Caused several IndexedDB browser_test failures on Chromium
+        canary builders (Requested by rafaelw_ on #webkit).
+
+        * src/WebIDBDatabaseError.cpp:
+        (WebKit::WebIDBDatabaseError::assign):
+
 2012-05-30  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Chromium WebAccessibilityObject should check if an AccessibilityObject is detached

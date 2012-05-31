@@ -1,3 +1,46 @@
+2012-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118986.
+        http://trac.webkit.org/changeset/118986
+        https://bugs.webkit.org/show_bug.cgi?id=87914
+
+        Caused several IndexedDB browser_test failures on Chromium
+        canary builders (Requested by rafaelw_ on #webkit).
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::advance):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        * Modules/indexeddb/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        (IDBDatabaseError):
+        (WebCore::IDBDatabaseError::createWithoutOffset):
+        (WebCore::IDBDatabaseError::code):
+        (WebCore::IDBDatabaseError::setCode):
+        (WebCore::IDBDatabaseError::setMessage):
+        (WebCore::IDBDatabaseError::IDBDatabaseError):
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (WebCore):
+        (WebCore::IDBDatabaseException::initializeDescription):
+        * Modules/indexeddb/IDBDatabaseException.h:
+        (IDBDatabaseException):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessWithContinuation):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2012-05-30  Dominic Mazzoni  <dmazzoni@chromium.org>
 
         [Chromium] AX: WebAccessibilityObject should check if an AccessibilityObject is detached

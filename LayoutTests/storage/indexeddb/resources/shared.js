@@ -49,7 +49,7 @@ function unexpectedSuccessCallback()
 
 function unexpectedErrorCallback(event)
 {
-    testFailed("Error function called unexpectedly: (" + event.target.error.name + ") " + event.target.webkitErrorMessage);
+    testFailed("Error function called unexpectedly: (" + event.target.errorCode + ") " + event.target.webkitErrorMessage);
     finishJSTest();
 }
 
@@ -71,20 +71,16 @@ function unexpectedBlockedCallback()
     finishJSTest();
 }
 
-function evalAndExpectException(cmd, exceptionCode, exceptionName)
+function evalAndExpectException(cmd, expected)
 {
     debug("Expecting exception from " + cmd);
     try {
         eval(cmd);
-        testFailed("No exception thrown! Should have been " + exceptionCode);
+        testFailed("No exception thrown! Should have been " + expected);
     } catch (e) {
         code = e.code;
         testPassed("Exception was thrown.");
-        shouldBe("code", exceptionCode);
-        if (exceptionName) {
-            name = e.name;
-            shouldBe("name", exceptionName);
-        }
+        shouldBe("code", expected);
     }
 }
 

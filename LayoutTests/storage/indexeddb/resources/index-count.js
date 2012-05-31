@@ -122,9 +122,9 @@ function verifyCountWithKey()
     store = evalAndLog("index = trans.objectStore('storeName').index('indexName')");
     shouldBeNonNull("index");
 
-    evalAndExpectException("index.count(NaN)", "IDBDatabaseException.DATA_ERR", "'DataError'");
-    evalAndExpectException("index.count({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
-    evalAndExpectException("index.count(/regex/)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.count(NaN)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("index.count({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("index.count(/regex/)", "IDBDatabaseException.DATA_ERR");
 
     var tests = [
         { key: 0, expected: 1 },

@@ -113,9 +113,9 @@ function verifyCountWithKey()
     store = evalAndLog("store = trans.objectStore('storeName')");
     shouldBeNonNull("store");
 
-    evalAndExpectException("store.count(NaN)", "IDBDatabaseException.DATA_ERR", "'DataError'");
-    evalAndExpectException("store.count({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
-    evalAndExpectException("store.count(/regex/)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.count(NaN)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.count({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.count(/regex/)", "IDBDatabaseException.DATA_ERR");
 
     var tests = [
         { key: 0, expected: 1 },

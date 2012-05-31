@@ -53,20 +53,17 @@ Note: This means that a connection can receive a blocked event after its close()
 PASS event.version is "version 3"
 
 PASS connection[0] got error event
-PASS event.target.errorCode is DOMException.ABORT_ERR
-PASS event.target.error.name is 'AbortError'
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 
 PASS connection[2] got error event
-PASS event.target.errorCode is DOMException.ABORT_ERR
-PASS event.target.error.name is 'AbortError'
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 
 PASS connection[3] got error event
-PASS event.target.errorCode is DOMException.ABORT_ERR
-PASS event.target.error.name is 'AbortError'
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 

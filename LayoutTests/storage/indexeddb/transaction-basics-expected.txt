@@ -54,47 +54,36 @@ testInactiveAbortedTransaction():
 Expecting exception from index.openCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.get(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.count()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.clear()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.get(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 
 testSetVersionAbort4():
 PASS self.db.objectStoreNames is []
@@ -111,47 +100,36 @@ testInactiveCompletedTransaction():
 Expecting exception from index.openCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.get(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from index.count()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.clear()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.get(0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
-PASS name is 'TransactionInactiveError'
 
 testSetVersionAbort5():
 PASS db.objectStoreNames is ['storeFail']
@@ -195,7 +173,6 @@ Verify that specifying an invalid mode raises an exception
 Expecting exception from db.transaction(['storeName'], 'lsakjdf')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
-PASS name is 'NotAllowedError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

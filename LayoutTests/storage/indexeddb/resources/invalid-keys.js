@@ -54,9 +54,9 @@ function testInvalidKeys()
     ];
 
     invalidKeys.forEach(function(key) {
-        evalAndExpectException("request = objectStore.put('value', " + key + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("request = objectStore.put('value', " + key + ")", "IDBDatabaseException.DATA_ERR");
     });
-
+    
     finishJSTest();
 }
 
