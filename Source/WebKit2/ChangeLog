@@ -1,5 +1,25 @@
 2012-05-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 118505
+
+    2012-05-24  Andreas Kling  <kling@webkit.org>
+
+            Mac bots crashing under PluginInfo destructor.
+            <http://webkit.org/b/87414>
+            <rdar://problem/11527172>
+
+            Reviewed by Darin Adler.
+
+            We can't safely pass WTF::String to another thread without a deref() race,
+            so pass the PluginInfo vector by pointer instead of by value.
+
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::sendDidGetPlugins):
+            (WebKit::WebContext::handleGetPlugins):
+            * UIProcess/WebContext.h:
+
+2012-05-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 118443
 
     2012-05-24  Brady Eidson  <beidson@apple.com>
