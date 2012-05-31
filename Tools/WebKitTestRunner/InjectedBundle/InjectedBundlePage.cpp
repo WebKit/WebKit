@@ -330,7 +330,7 @@ void InjectedBundlePage::stopLoading()
     WKBundlePageStopLoading(m_page);
 }
 
-void InjectedBundlePage::reset()
+void InjectedBundlePage::prepare()
 {
     WKBundlePageClearMainFrameName(m_page);
 
@@ -345,6 +345,17 @@ void InjectedBundlePage::reset()
     WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
     
     WKBundlePageSetTracksRepaints(m_page, false);
+}
+
+void InjectedBundlePage::resetAfterTest()
+{
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+#if PLATFORM(QT)
+    DumpRenderTreeSupportQt::injectInternalsObject(context);
+#else
+    WebCoreTestSupport::resetInternalsObject(context);
+#endif
 }
 
 // Loader Client Callbacks

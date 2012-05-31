@@ -42,7 +42,8 @@ public:
 
     void stopLoading();
 
-    void reset();
+    void prepare();
+    void resetAfterTest();
 
     void dumpBackForwardList();
 

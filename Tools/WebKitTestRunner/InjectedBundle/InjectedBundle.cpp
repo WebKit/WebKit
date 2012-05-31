@@ -230,7 +230,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_layoutTestController->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
 
-    page()->reset();
+    page()->prepare();
 
     WKBundleClearAllDatabases(m_bundle);
     WKBundleClearApplicationCache(m_bundle);
@@ -260,7 +260,9 @@ void InjectedBundle::done()
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 
     closeOtherPages();
-    
+
+    page()->resetAfterTest();
+
     m_state = Idle;
 }
 
