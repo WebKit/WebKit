@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x558
+  RenderBlock {HTML} at (0,0) size 800x558
+    RenderBody {BODY} at (8,16) size 784x534
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 303x18
+          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+layer at (8,50) size 500x500
+  RenderBlock (relative positioned) {DIV} at (0,34) size 500x500 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,0) size 300x200
+layer at (8,50) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100
+    RenderText {#text} at (0,0) size 72x36
+      text run at (0,0) width 53: "parent is"
+      text run at (0,18) width 72: "300x200px"
+layer at (108,50) size 100x100
+  RenderBlock (positioned) {DIV} at (100,0) size 100x100
+    RenderText {#text} at (0,0) size 95x36
+      text run at (0,0) width 79: "two children"
+      text run at (0,18) width 95: "are 100x100px"

@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x200
+  RenderBlock {HTML} at (0,0) size 800x200
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 588x18
+          text run at (0,0) width 588: "Test passes if four rows of numbers (1,2,3) are read in increasing numerical order left to right."
+      RenderBlock (floating) {DIV} at (0,34) size 153x150
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 153x24
+          RenderBlock {DIV} at (10,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "1"
+          RenderBlock {DIV} at (61,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "2"
+          RenderBlock {DIV} at (112,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "3"
+        RenderBlock (anonymous) at (0,24) size 153x18
+          RenderBR {BR} at (0,0) size 0x18
+        RenderDeprecatedFlexibleBox {DIV} at (0,42) size 153x24
+          RenderBlock {DIV} at (112,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "3"
+          RenderBlock {DIV} at (61,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "2"
+          RenderBlock {DIV} at (10,0) size 31x24 [border: (1px solid #000000)]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "1"
+        RenderBlock (anonymous) at (0,66) size 153x18
+          RenderBR {BR} at (0,0) size 0x18
+        RenderBlock {DIV} at (0,84) size 153x24
+          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 153x24
+            RenderBlock {DIV} at (10,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "1"
+            RenderBlock {DIV} at (61,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "2"
+            RenderBlock {DIV} at (112,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "3"
+        RenderBlock (anonymous) at (0,108) size 153x18
+          RenderBR {BR} at (0,0) size 0x18
+        RenderBlock {DIV} at (0,126) size 153x24
+          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 153x24
+            RenderBlock {DIV} at (112,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "3"
+            RenderBlock {DIV} at (61,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "2"
+            RenderBlock {DIV} at (10,0) size 31x24 [border: (1px solid #000000)]
+              RenderText {#text} at (11,1) size 9x22
+                text run at (11,1) width 9: "1"

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 506x18
+          text run at (0,0) width 506: "Test passes if numbers (1,2,3) are read in increasing numerical order left to right."
+layer at (-2,50) size 173x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderBlock (positioned) {DIV} at (-10,0) size 173x24
+    RenderTable {TABLE} at (0,0) size 173x24
+      RenderTableSection {TBODY} at (0,0) size 173x24
+        RenderTableRow {TR} at (0,0) size 173x24
+          RenderTableCell {TD} at (20,0) size 31x24 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "1"
+          RenderTableCell {TD} at (71,0) size 31x24 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "2"
+          RenderTableCell {TD} at (122,0) size 31x24 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderText {#text} at (11,1) size 9x22
+              text run at (11,1) width 9: "3"

@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x298
+  RenderBlock {HTML} at (0,0) size 800x298
+    RenderBody {BODY} at (8,16) size 784x274
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 303x18
+          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+layer at (8,50) size 200x240
+  RenderBlock (relative positioned) {DIV} at (0,34) size 200x240
+    RenderInline {DIV} at (0,0) size 108x243 [color=#FF0000]
+      RenderText {#text} at (0,-1) size 108x243
+        text run at (0,-1) width 108: "AAAAAAAAA"
+        text run at (0,19) width 108: "BBBBBBBBB"
+        text run at (0,39) width 108: "CCCCCCCCC"
+        text run at (0,59) width 108: "DDDDDDDDD"
+        text run at (0,79) width 108: "EEEEEEEEE"
+        text run at (0,99) width 108: "FFFFFFFFF"
+        text run at (0,119) width 108: "GGGGGGGGG"
+        text run at (0,139) width 108: "HHHHHHHHH"
+        text run at (0,159) width 108: "IIIIIIIII"
+        text run at (0,179) width 108: "JJJJJJJJJ"
+        text run at (0,199) width 108: "KKKKKKKKK"
+        text run at (0,219) width 108: "LLLLLLLLL"
+    RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,50) size 100x240
+  RenderBlock (positioned) {DIV} at (0,0) size 100x240 [color=#008000]
+    RenderText {#text} at (0,-1) size 108x243
+      text run at (0,-1) width 108: "AAAAAAAAA"
+      text run at (0,19) width 108: "BBBBBBBBB"
+      text run at (0,39) width 108: "CCCCCCCCC"
+      text run at (0,59) width 108: "DDDDDDDDD"
+      text run at (0,79) width 108: "EEEEEEEEE"
+      text run at (0,99) width 108: "FFFFFFFFF"
+      text run at (0,119) width 108: "GGGGGGGGG"
+      text run at (0,139) width 108: "HHHHHHHHH"
+      text run at (0,159) width 108: "IIIIIIIII"
+      text run at (0,179) width 108: "JJJJJJJJJ"
+      text run at (0,199) width 108: "KKKKKKKKK"
+      text run at (0,219) width 108: "LLLLLLLLL"

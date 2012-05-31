@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x258
+  RenderBlock {HTML} at (0,0) size 800x258
+    RenderBody {BODY} at (8,16) size 784x234
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 265x18
+          text run at (0,0) width 265: "This test passes if there is no red showing."
+      RenderDeprecatedFlexibleBox {DIV} at (0,34) size 300x200 [bgcolor=#008000]
+        RenderBlock {DIV} at (0,75) size 100x50
+        RenderBlock {DIV} at (100,50) size 100x100
+        RenderBlock {DIV} at (200,60) size 100x80

@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x152
+  RenderBlock {root} at (0,0) size 800x152
+    RenderBlock {p} at (0,16) size 800x18
+      RenderText {#text} at (0,0) size 419x18
+        text run at (0,0) width 419: "Test passes if the \"Filler Text\" text below has a green background."
+    RenderBlock {p} at (0,50) size 800x18
+      RenderInline {span} at (0,0) size 66x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 66x18
+          text run at (0,0) width 66: "Filler Text"
+    RenderBlock {p} at (0,84) size 800x18
+      RenderInline {span} at (0,0) size 66x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 66x18
+          text run at (0,0) width 66: "Filler Text"
+    RenderBlock {p} at (0,118) size 800x18
+      RenderInline {span} at (0,0) size 66x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 66x18
+          text run at (0,0) width 66: "Filler Text"

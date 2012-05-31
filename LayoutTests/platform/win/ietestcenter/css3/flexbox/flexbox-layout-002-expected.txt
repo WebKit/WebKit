@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 303x18
+          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+      RenderDeprecatedFlexibleBox {DIV} at (0,34) size 784x36 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (0,0) size 100x36 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 75x36
+            text run at (0,0) width 75: "100px wide"
+            text run at (0,18) width 31: "child"
+        RenderBlock {DIV} at (100,0) size 100x36 [bgcolor=#008000]
+          RenderText {#text} at (0,0) size 75x36
+            text run at (0,0) width 75: "100px wide"
+            text run at (0,18) width 31: "child"
