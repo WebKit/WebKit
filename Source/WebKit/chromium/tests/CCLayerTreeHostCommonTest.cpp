@@ -1294,7 +1294,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dPerspectiveWhenClippedByW)
     // center of the layer.
     layerToSurfaceTransform.makeIdentity();
     layerToSurfaceTransform.applyPerspective(1);
-    layerToSurfaceTransform.translate3d(-1, 0, 1);
+    layerToSurfaceTransform.translate3d(-2, 0, 1);
     layerToSurfaceTransform.rotate3d(0, 45, 0);
 
     // Sanity check that this transform does indeed cause w < 0 when applying the

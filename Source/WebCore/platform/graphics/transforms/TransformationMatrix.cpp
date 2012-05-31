@@ -727,15 +727,13 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
 
 TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle)
 {
-    // angles are in degrees. Switch to radians
+    // Angles are in degrees. Switch to radians.
     angle = deg2rad(angle);
+
+    double sinTheta = sin(angle);
+    double cosTheta = cos(angle);
     
-    angle /= 2.0f;
-    double sinA = sin(angle);
-    double cosA = cos(angle);
-    double sinA2 = sinA * sinA;
-    
-    // normalize
+    // Normalize the axis of rotation
     double length = sqrt(x * x + y * y + z * z);
     if (length == 0) {
         // bad vector, just use something reasonable
@@ -750,39 +748,39 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     
     TransformationMatrix mat;
 
-    // optimize case where axis is along major axis
+    // Optimize cases where the axis is along a major axis
     if (x == 1.0f && y == 0.0f && z == 0.0f) {
         mat.m_matrix[0][0] = 1.0f;
         mat.m_matrix[0][1] = 0.0f;
         mat.m_matrix[0][2] = 0.0f;
         mat.m_matrix[1][0] = 0.0f;
-        mat.m_matrix[1][1] = 1.0f - 2.0f * sinA2;
-        mat.m_matrix[1][2] = 2.0f * sinA * cosA;
+        mat.m_matrix[1][1] = cosTheta;
+        mat.m_matrix[1][2] = sinTheta;
         mat.m_matrix[2][0] = 0.0f;
-        mat.m_matrix[2][1] = -2.0f * sinA * cosA;
-        mat.m_matrix[2][2] = 1.0f - 2.0f * sinA2;
+        mat.m_matrix[2][1] = -sinTheta;
+        mat.m_matrix[2][2] = cosTheta;
         mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
         mat.m_matrix[3][3] = 1.0f;
     } else if (x == 0.0f && y == 1.0f && z == 0.0f) {
-        mat.m_matrix[0][0] = 1.0f - 2.0f * sinA2;
+        mat.m_matrix[0][0] = cosTheta;
         mat.m_matrix[0][1] = 0.0f;
-        mat.m_matrix[0][2] = -2.0f * sinA * cosA;
+        mat.m_matrix[0][2] = -sinTheta;
         mat.m_matrix[1][0] = 0.0f;
         mat.m_matrix[1][1] = 1.0f;
         mat.m_matrix[1][2] = 0.0f;
-        mat.m_matrix[2][0] = 2.0f * sinA * cosA;
+        mat.m_matrix[2][0] = sinTheta;
         mat.m_matrix[2][1] = 0.0f;
-        mat.m_matrix[2][2] = 1.0f - 2.0f * sinA2;
+        mat.m_matrix[2][2] = cosTheta;
         mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
         mat.m_matrix[3][3] = 1.0f;
     } else if (x == 0.0f && y == 0.0f && z == 1.0f) {
-        mat.m_matrix[0][0] = 1.0f - 2.0f * sinA2;
-        mat.m_matrix[0][1] = 2.0f * sinA * cosA;
+        mat.m_matrix[0][0] = cosTheta;
+        mat.m_matrix[0][1] = sinTheta;
         mat.m_matrix[0][2] = 0.0f;
-        mat.m_matrix[1][0] = -2.0f * sinA * cosA;
-        mat.m_matrix[1][1] = 1.0f - 2.0f * sinA2;
+        mat.m_matrix[1][0] = -sinTheta;
+        mat.m_matrix[1][1] = cosTheta;
         mat.m_matrix[1][2] = 0.0f;
         mat.m_matrix[2][0] = 0.0f;
         mat.m_matrix[2][1] = 0.0f;
@@ -791,19 +789,23 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
         mat.m_matrix[3][3] = 1.0f;
     } else {
-        double x2 = x*x;
-        double y2 = y*y;
-        double z2 = z*z;
-    
-        mat.m_matrix[0][0] = 1.0f - 2.0f * (y2 + z2) * sinA2;
-        mat.m_matrix[0][1] = 2.0f * (x * y * sinA2 + z * sinA * cosA);
-        mat.m_matrix[0][2] = 2.0f * (x * z * sinA2 - y * sinA * cosA);
-        mat.m_matrix[1][0] = 2.0f * (y * x * sinA2 - z * sinA * cosA);
-        mat.m_matrix[1][1] = 1.0f - 2.0f * (z2 + x2) * sinA2;
-        mat.m_matrix[1][2] = 2.0f * (y * z * sinA2 + x * sinA * cosA);
-        mat.m_matrix[2][0] = 2.0f * (z * x * sinA2 + y * sinA * cosA);
-        mat.m_matrix[2][1] = 2.0f * (z * y * sinA2 - x * sinA * cosA);
-        mat.m_matrix[2][2] = 1.0f - 2.0f * (x2 + y2) * sinA2;
+        // This case is the rotation about an arbitrary unit vector.
+        //
+        // Formula is adapted from Wikipedia article on Rotation matrix,
+        // http://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+        //
+        // An alternate resource with the same matrix: http://www.fastgraph.com/makegames/3drotation/
+        //
+        double oneMinusCosTheta = 1 - cosTheta;
+        mat.m_matrix[0][0] = cosTheta + x * x * oneMinusCosTheta;
+        mat.m_matrix[0][1] = y * x * oneMinusCosTheta + z * sinTheta;
+        mat.m_matrix[0][2] = z * x * oneMinusCosTheta - y * sinTheta;
+        mat.m_matrix[1][0] = x * y * oneMinusCosTheta - z * sinTheta;
+        mat.m_matrix[1][1] = cosTheta + y * y * oneMinusCosTheta;
+        mat.m_matrix[1][2] = z * y * oneMinusCosTheta + x * sinTheta;
+        mat.m_matrix[2][0] = x * z * oneMinusCosTheta + y * sinTheta;
+        mat.m_matrix[2][1] = y * z * oneMinusCosTheta - x * sinTheta;
+        mat.m_matrix[2][2] = cosTheta + z * z * oneMinusCosTheta;
         mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
         mat.m_matrix[3][3] = 1.0f;
@@ -814,23 +816,21 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
 
 TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, double rz)
 {
-    // angles are in degrees. Switch to radians
+    // Angles are in degrees. Switch to radians.
     rx = deg2rad(rx);
     ry = deg2rad(ry);
     rz = deg2rad(rz);
     
     TransformationMatrix mat;
     
-    rz /= 2.0f;
-    double sinA = sin(rz);
-    double cosA = cos(rz);
-    double sinA2 = sinA * sinA;
+    double sinTheta = sin(rz);
+    double cosTheta = cos(rz);
     
-    mat.m_matrix[0][0] = 1.0f - 2.0f * sinA2;
-    mat.m_matrix[0][1] = 2.0f * sinA * cosA;
+    mat.m_matrix[0][0] = cosTheta;
+    mat.m_matrix[0][1] = sinTheta;
     mat.m_matrix[0][2] = 0.0f;
-    mat.m_matrix[1][0] = -2.0f * sinA * cosA;
-    mat.m_matrix[1][1] = 1.0f - 2.0f * sinA2;
+    mat.m_matrix[1][0] = -sinTheta;
+    mat.m_matrix[1][1] = cosTheta;
     mat.m_matrix[1][2] = 0.0f;
     mat.m_matrix[2][0] = 0.0f;
     mat.m_matrix[2][1] = 0.0f;
@@ -841,44 +841,40 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     
     TransformationMatrix rmat(mat);
     
-    ry /= 2.0f;
-    sinA = sin(ry);
-    cosA = cos(ry);
-    sinA2 = sinA * sinA;
+    sinTheta = sin(ry);
+    cosTheta = cos(ry);
     
-    mat.m_matrix[0][0] = 1.0f - 2.0f * sinA2;
+    mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = 0.0f;
-    mat.m_matrix[0][2] = -2.0f * sinA * cosA;
+    mat.m_matrix[0][2] = -sinTheta;
     mat.m_matrix[1][0] = 0.0f;
     mat.m_matrix[1][1] = 1.0f;
     mat.m_matrix[1][2] = 0.0f;
-    mat.m_matrix[2][0] = 2.0f * sinA * cosA;
+    mat.m_matrix[2][0] = sinTheta;
     mat.m_matrix[2][1] = 0.0f;
-    mat.m_matrix[2][2] = 1.0f - 2.0f * sinA2;
+    mat.m_matrix[2][2] = cosTheta;
     mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
     mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
     mat.m_matrix[3][3] = 1.0f;
-    
+
     rmat.multiply(mat);
 
-    rx /= 2.0f;
-    sinA = sin(rx);
-    cosA = cos(rx);
-    sinA2 = sinA * sinA;
+    sinTheta = sin(rx);
+    cosTheta = cos(rx);
     
     mat.m_matrix[0][0] = 1.0f;
     mat.m_matrix[0][1] = 0.0f;
     mat.m_matrix[0][2] = 0.0f;
     mat.m_matrix[1][0] = 0.0f;
-    mat.m_matrix[1][1] = 1.0f - 2.0f * sinA2;
-    mat.m_matrix[1][2] = 2.0f * sinA * cosA;
+    mat.m_matrix[1][1] = cosTheta;
+    mat.m_matrix[1][2] = sinTheta;
     mat.m_matrix[2][0] = 0.0f;
-    mat.m_matrix[2][1] = -2.0f * sinA * cosA;
-    mat.m_matrix[2][2] = 1.0f - 2.0f * sinA2;
+    mat.m_matrix[2][1] = -sinTheta;
+    mat.m_matrix[2][2] = cosTheta;
     mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
     mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
     mat.m_matrix[3][3] = 1.0f;
-    
+
     rmat.multiply(mat);
 
     multiply(rmat);

@@ -624,6 +624,38 @@ TEST(WebTransformationMatrixTest, verifyRotateAxisAngle3d)
     EXPECT_ROW4_EQ(0, 0, 0, 1, A);
 }
 
+TEST(WebTransformationMatrixTest, verifyRotateAxisAngle3dForArbitraryAxis)
+{
+    // Check rotation about an arbitrary non-axis-aligned vector.
+    WebTransformationMatrix A;
+    A.rotate3d(1, 1, 1, 90);
+    EXPECT_ROW1_NEAR(0.3333333333333334258519187,
+                     -0.2440169358562924717404030,
+                     0.9106836025229592124219380,
+                     0, A, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(0.9106836025229592124219380,
+                     0.3333333333333334258519187,
+                     -0.2440169358562924717404030,
+                     0, A, ERROR_THRESHOLD);
+    EXPECT_ROW3_NEAR(-0.2440169358562924717404030,
+                     0.9106836025229592124219380,
+                     0.3333333333333334258519187,
+                     0, A, ERROR_THRESHOLD);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, A);
+}
+
+TEST(WebTransformationMatrixTest, verifyRotateAxisAngle3dForDegenerateAxis)
+{
+    // Check rotation about a degenerate zero vector.
+    // It is expected to default to rotation about the z-axis.
+    WebTransformationMatrix A;
+    A.rotate3d(0, 0, 0, 90);
+    EXPECT_ROW1_NEAR(0, -1, 0, 0, A, ERROR_THRESHOLD);
+    EXPECT_ROW2_NEAR(1, 0, 0, 0, A, ERROR_THRESHOLD);
+    EXPECT_ROW3_EQ(0, 0, 1, 0, A);
+    EXPECT_ROW4_EQ(0, 0, 0, 1, A);
+}
+
 TEST(WebTransformationMatrixTest, verifySkewX)
 {
     WebTransformationMatrix A;
