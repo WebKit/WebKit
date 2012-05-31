@@ -1,3 +1,18 @@
+2012-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Rename ewk_private.h to ewk_view_private.h
+        https://bugs.webkit.org/show_bug.cgi?id=87923
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EFL WK1 decided to divide up ewk_private.h into each file's XXX_private.h file in order to maintain
+        internal functions more easily. EFL WK2 needs to adjust this as well.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        * UIProcess/API/efl/ewk_view_private.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_private.h.
+        (WebCore):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+
 2012-05-31  Andy Estes  <aestes@apple.com>
 
         Move the specification of framework and library linking out of WebKit2.xcodeproj and into WebKit2.xcconfig

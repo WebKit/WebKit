@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef ewk_private_h
-#define ewk_private_h
+#ifndef ewk_view_private_h
+#define ewk_view_private_h
 
 #include <Evas.h>
 
@@ -31,4 +31,4 @@ class IntSize;
 void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
 
-#endif // ewk_private_h
+#endif // ewk_view_private_h

@@ -34,7 +34,7 @@
 #include <cairo/cairo.h>
 
 #if PLATFORM(EFL)
-#include "ewk_private.h"
+#include "ewk_view_private.h"
 #endif
 
 using namespace WebCore;

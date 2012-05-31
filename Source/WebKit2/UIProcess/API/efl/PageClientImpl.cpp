@@ -32,7 +32,7 @@
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
-#include "ewk_private.h"
+#include "ewk_view_private.h"
 
 using namespace WebCore;
 
