@@ -120,7 +120,6 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
 #endif
-    , m_imageSmoothingEnabled(true)
 {
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
@@ -181,6 +180,7 @@ CanvasRenderingContext2D::State::State()
     , m_globalComposite(CompositeSourceOver)
     , m_invertibleCTM(true)
     , m_lineDashOffset(0)
+    , m_imageSmoothingEnabled(true)
     , m_textAlign(StartTextAlign)
     , m_textBaseline(AlphabeticTextBaseline)
     , m_unparsedFont(defaultFont)
@@ -206,6 +206,7 @@ CanvasRenderingContext2D::State::State(const State& other)
     , m_transform(other.m_transform)
     , m_invertibleCTM(other.m_invertibleCTM)
     , m_lineDashOffset(other.m_lineDashOffset)
+    , m_imageSmoothingEnabled(other.m_imageSmoothingEnabled)
     , m_textAlign(other.m_textAlign)
     , m_textBaseline(other.m_textBaseline)
     , m_unparsedFont(other.m_unparsedFont)
@@ -239,6 +240,7 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     m_globalComposite = other.m_globalComposite;
     m_transform = other.m_transform;
     m_invertibleCTM = other.m_invertibleCTM;
+    m_imageSmoothingEnabled = other.m_imageSmoothingEnabled;
     m_textAlign = other.m_textAlign;
     m_textBaseline = other.m_textBaseline;
     m_unparsedFont = other.m_unparsedFont;
@@ -2268,16 +2270,17 @@ PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 
 bool CanvasRenderingContext2D::webkitImageSmoothingEnabled() const
 {
-    return m_imageSmoothingEnabled;
+    return state().m_imageSmoothingEnabled;
 }
 
 void CanvasRenderingContext2D::setWebkitImageSmoothingEnabled(bool enabled)
 {
-    if (enabled == m_imageSmoothingEnabled)
+    if (enabled == state().m_imageSmoothingEnabled)
         return;
 
+    realizeSaves();
+    modifiableState().m_imageSmoothingEnabled = enabled;
     drawingContext()->setImageInterpolationQuality(enabled ? DefaultInterpolationQuality : InterpolationNone);
-    m_imageSmoothingEnabled = enabled;
 }
 
 } // namespace WebCore

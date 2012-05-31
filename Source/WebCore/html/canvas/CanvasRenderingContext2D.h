@@ -252,6 +252,7 @@ private:
         bool m_invertibleCTM;
         DashArray m_lineDash;
         float m_lineDashOffset;
+        bool m_imageSmoothingEnabled;
 
         // Text state.
         TextAlign m_textAlign;
@@ -336,7 +337,6 @@ private:
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
 #endif
-    bool m_imageSmoothingEnabled;
 };
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2012-05-31  Keyar Hood  <keyar@chromium.org>
+
+        the imageSmoothingEnabled flag needs to be in the state object
+        https://bugs.webkit.org/show_bug.cgi?id=87853
+
+        Reviewed by Darin Adler.
+
+        Updated fast/canvas/canvas-imageSmoothingEnabled.html instead of
+        adding a new test.
+
+        The imageSmoothingEnabled flag is saved in the draw state now.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::State::operator=):
+        (WebCore::CanvasRenderingContext2D::webkitImageSmoothingEnabled):
+        (WebCore::CanvasRenderingContext2D::setWebkitImageSmoothingEnabled):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (State):
+
 2012-05-31  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix checkbox position on Settings screen.
