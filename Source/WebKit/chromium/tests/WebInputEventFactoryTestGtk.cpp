@@ -31,11 +31,16 @@
 #include "config.h"
 
 #include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <gtest/gtest.h>
 
+#include "KeyboardEvent.h"
 #include "WebInputEvent.h"
+#include "WebInputEventConversion.h"
 #include "WebInputEventFactory.h"
 
+using WebKit::WebInputEvent;
+using WebKit::WebKeyboardEvent;
 using WebKit::WebMouseEvent;
 using WebKit::WebInputEventFactory;
 
@@ -170,6 +175,29 @@ TEST(WebInputEventFactoryTest, MouseUpClickCount)
     mouseUp.time = mouseMove.time + 50;
     mouseUpEvent = WebInputEventFactory::mouseEvent(&mouseUp);
     EXPECT_EQ(0, mouseUpEvent.clickCount);
+}
+
+TEST(WebInputEventFactoryTest, NumPadConversion)
+{
+    // Construct a GDK input event for the numpad "5" key.
+    char five[] = "5";
+    GdkEventKey gdkEvent;
+    memset(&gdkEvent, 0, sizeof(GdkEventKey));
+    gdkEvent.type = GDK_KEY_PRESS;
+    gdkEvent.keyval = GDK_KP_5;
+    gdkEvent.string = five;
+
+    // Numpad flag should be set on the WebKeyboardEvent.
+    WebKeyboardEvent webEvent = WebInputEventFactory::keyboardEvent(&gdkEvent);
+    EXPECT_TRUE(webEvent.modifiers & WebInputEvent::IsKeyPad);
+
+    // Round-trip through the WebCore KeyboardEvent class.
+    WebKit::PlatformKeyboardEventBuilder platformBuilder(webEvent);
+    RefPtr<WebCore::KeyboardEvent> keypress = WebCore::KeyboardEvent::create(platformBuilder, 0);
+    EXPECT_TRUE(keypress->keyLocation() == WebCore::KeyboardEvent::DOM_KEY_LOCATION_NUMPAD);
+
+    WebKit::WebKeyboardEventBuilder builder(*keypress);
+    EXPECT_TRUE(builder.modifiers & WebInputEvent::IsKeyPad);
 }
 
 } // anonymous namespace

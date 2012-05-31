@@ -79,6 +79,12 @@ void resetClickCountState()
     gLastClickButton = WebKit::WebMouseEvent::ButtonNone;
 }
 
+bool isKeyPadKeyval(guint keyval)
+{
+    // Keypad keyvals all fall into one range.
+    return keyval >= GDK_KP_Space && keyval <= GDK_KP_9;
+}
+
 }  // namespace
 
 namespace WebKit {
@@ -365,7 +371,9 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(const GdkEventKey* event)
 
     result.setKeyIdentifierFromWindowsKeyCode();
 
-    // FIXME: Do we need to set IsAutoRepeat or IsKeyPad?
+    // FIXME: Do we need to set IsAutoRepeat?
+    if (isKeyPadKeyval(event->keyval))
+        result.modifiers |= WebInputEvent::IsKeyPad;
 
     return result;
 }

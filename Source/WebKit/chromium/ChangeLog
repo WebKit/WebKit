@@ -1,3 +1,18 @@
+2012-05-15  Brett Wilson  <brettw@chromium.org>
+
+        Hook up GTK IsKeyPad flag for keyboard events, and preserve this flag
+        on all platforms when converting back to a WebKeyboardEvent.
+
+        https://bugs.webkit.org/show_bug.cgi?id=86514
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::WebKeyboardEventBuilder::WebKeyboardEventBuilder):
+        * src/gtk/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        * tests/WebInputEventFactoryTestGtk.cpp:
+
 2012-05-31  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement IDBTransaction.error and IDBRequest.error

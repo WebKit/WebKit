@@ -441,7 +441,11 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
         type = WebInputEvent::Char;
     else
         return; // Skip all other keyboard events.
+
     modifiers = getWebInputModifiers(event);
+    if (event.keyLocation() & KeyboardEvent::DOM_KEY_LOCATION_NUMPAD)
+        modifiers |= WebInputEvent::IsKeyPad;
+
     timeStampSeconds = event.timeStamp() / millisPerSecond;
     windowsKeyCode = event.keyCode();
 
