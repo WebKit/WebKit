@@ -1678,8 +1678,9 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     if (m_doingDragAndDrop)
         return true;
 
+    // Report the event to be NOT processed by WebKit, so that the browser can handle it appropriately.
     if (m_ignoreInputEvents)
-        return true;
+        return false;
 
     m_currentInputEvent = &inputEvent;
 

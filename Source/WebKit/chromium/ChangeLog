@@ -1,3 +1,18 @@
+2012-05-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Chromium] Cannot bring Inspector to front when paused on breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=87871
+
+        Reviewed by Yury Semikhatsky.
+
+        When input events handling is suppressed (due to the JS being paused on a breakpoint), we should report
+        these events as NOT handled by the WebKit, so that the browser can handle them appropriately
+        (on MacOS, switching between the application windows is done through the default key event handler, so if you run
+        event.preventDefault() for all keydown events in a handler, the Chromium window switch will not occur on Cmd+`).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2012-05-31  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
