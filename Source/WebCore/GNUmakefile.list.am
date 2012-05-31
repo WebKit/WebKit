@@ -3117,6 +3117,8 @@ webcore_sources += \
 	Source/WebCore/platform/Cursor.h \
 	Source/WebCore/platform/DateComponents.cpp \
 	Source/WebCore/platform/DateComponents.h \
+	Source/WebCore/platform/Decimal.cpp \
+	Source/WebCore/platform/Decimal.h \
 	Source/WebCore/platform/DragData.cpp \
 	Source/WebCore/platform/DragData.h \
 	Source/WebCore/platform/DragImage.cpp \

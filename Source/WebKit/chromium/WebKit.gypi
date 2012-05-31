@@ -95,6 +95,7 @@
             'tests/ClipboardChromiumTest.cpp',
             'tests/CompositorFakeGraphicsContext3D.h',
             'tests/CompositorFakeWebGraphicsContext3D.h',
+            'tests/DecimalTest.cpp',
             'tests/DragImageTest.cpp',
             'tests/DrawingBufferChromiumTest.cpp',
             'tests/EventListenerTest.cpp',
