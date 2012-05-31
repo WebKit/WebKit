@@ -1109,7 +1109,6 @@ SET(WebCore_SOURCES
     platform/ContentType.cpp
     platform/CrossThreadCopier.cpp
     platform/DateComponents.cpp
-    platform/Decimal.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/EventTracer.cpp

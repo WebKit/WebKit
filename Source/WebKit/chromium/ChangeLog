@@ -1,3 +1,16 @@
+2012-05-31  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r119062 and r119064.
+        http://trac.webkit.org/changeset/119062
+        http://trac.webkit.org/changeset/119064
+        https://bugs.webkit.org/show_bug.cgi?id=87360
+
+        Broke build on Lion, SnowLoepard, Chromium Windows, and
+        Chromium Linux 32
+
+        * WebKit.gypi:
+        * tests/DecimalTest.cpp: Removed.
+
 2012-05-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Introduce Decimal class for Number/Range input type.

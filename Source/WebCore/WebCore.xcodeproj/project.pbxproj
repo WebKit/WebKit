@@ -1193,8 +1193,6 @@
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
-		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4614A1FD0B23A8D600446E1C /* copyCursor.png */; };
 		46700ED0127B96CB00F5D5D6 /* FileWriterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */; };
 		46700ED1127B96CB00F5D5D6 /* FileWriterSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */; };
@@ -8205,8 +8203,6 @@
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
-		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
-		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
 		46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWriterSync.cpp; path = Modules/filesystem/FileWriterSync.cpp; sourceTree = "<group>"; };
 		46700ECF127B96CB00F5D5D6 /* FileWriterSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterSync.h; path = Modules/filesystem/FileWriterSync.h; sourceTree = "<group>"; };
@@ -20347,8 +20343,6 @@
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				A5732B08136A161D005C8D7C /* DateComponents.cpp */,
 				A5732B09136A161D005C8D7C /* DateComponents.h */,
-				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
-				45FEA5CE156DDE8C00654101 /* Decimal.h */,
 				A79546420B5C4CB4007B438F /* DragData.cpp */,
 				A7B6E69D0B291A9600D0529F /* DragData.h */,
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
@@ -22108,7 +22102,6 @@
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
 				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
-				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
 				A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */,
 				CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */,
 				4162A451101145AE00DFF3ED /* DedicatedWorkerContext.h in Headers */,
@@ -25605,7 +25598,6 @@
 				F55B3DB51251F12D003EF269 /* DateInputType.cpp in Sources */,
 				F55B3DB71251F12D003EF269 /* DateTimeInputType.cpp in Sources */,
 				F55B3DB91251F12D003EF269 /* DateTimeLocalInputType.cpp in Sources */,
-				45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */,
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */,
 				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,

@@ -272,7 +272,6 @@
             'platform/CookiesStrategy.h',
             'platform/Cursor.h',
             'platform/DateComponents.h',
-            'platform/Decimal.h'
             'platform/DragData.h',
             'platform/DragImage.h',
             'platform/EventTracer.h',
@@ -3150,7 +3149,6 @@
             'platform/CrossThreadCopier.h',
             'platform/Cursor.cpp',
             'platform/DateComponents.cpp',
-            'platform/Decimal.cpp',
             'platform/DragData.cpp',
             'platform/DragImage.cpp',
             'platform/EventLoop.h',

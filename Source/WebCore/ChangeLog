@@ -1,3 +1,22 @@
+2012-05-31  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r119062 and r119064.
+        http://trac.webkit.org/changeset/119062
+        http://trac.webkit.org/changeset/119064
+        https://bugs.webkit.org/show_bug.cgi?id=87360
+
+        Broke build on Lion, SnowLoepard, Chromium Windows, and
+        Chromium Linux 32
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Decimal.cpp: Removed.
+        * platform/Decimal.h: Removed.
+
 2012-05-31  Shane Stephens  <shanestephens@google.com>
 
         text-decoration should not be propagated through absolutely positioned elements to <a> tags
