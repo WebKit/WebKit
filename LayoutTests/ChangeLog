@@ -1,5 +1,15 @@
 2012-05-31  Alexey Proskuryakov  <ap@apple.com>
 
+        Updating results after r119051.
+
+        Per discussion with Simon, it's not surprising that more layers have drawsContents now.
+
+        * compositing/layer-creation/overlap-animation-expected.txt:
+        * compositing/layer-creation/overlap-transforms-expected.txt:
+        * compositing/overflow/clip-descendents-expected.txt:
+
+2012-05-31  Alexey Proskuryakov  <ap@apple.com>
+
         Update test results for disabling CSS Exclusions.
 
         * fast/css/getComputedStyle/computed-style-expected.txt:
