@@ -450,6 +450,15 @@ bool WebViewHost::handleCurrentKeyboardEvent()
     return frame->executeCommand(WebString::fromUTF8(m_editCommandName), WebString::fromUTF8(m_editCommandValue));
 }
 
+// WebKit::WebPrerendererClient
+
+void WebViewHost::willAddPrerender(WebKit::WebPrerender*)
+{
+}
+
+
+// WebKit::WebSpellCheckClient
+
 void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& misspelledLength, WebVector<WebString>* optionalSuggestions)
 {
     // Check the spelling of the given text.
@@ -1409,6 +1418,7 @@ void WebViewHost::setWebWidget(WebKit::WebWidget* widget)
 {
     m_webWidget = widget;
     webView()->setSpellCheckClient(this);
+    webView()->setPrerendererClient(this);
     webView()->setCompositorSurfaceReady();
 }
 

@@ -38,6 +38,7 @@
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
 #include "WebIntentRequest.h"
+#include "WebPrerendererClient.h"
 #include "WebSpellCheckClient.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
@@ -74,7 +75,8 @@ class MediaStreamUtil;
 class TestMediaStreamClient;
 }
 
-class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
+class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost,
+                    public WebKit::WebPrerendererClient, public WebKit::WebSpellCheckClient {
  public:
     WebViewHost(TestShell*);
     virtual ~WebViewHost();
@@ -123,6 +125,9 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
+
+    // WebKit::WebPrerendererClient
+    virtual void willAddPrerender(WebKit::WebPrerender*) OVERRIDE;
 
     // WebKit::WebSpellCheckClient
     virtual void spellCheck(const WebKit::WebString&, int& offset, int& length, WebKit::WebVector<WebKit::WebString>* optionalSuggestions);

@@ -59,6 +59,7 @@ class WebURL;
 class DRTDevToolsAgent;
 class DRTDevToolsCallArgs;
 class DRTDevToolsClient;
+class MockWebPrerenderingSupport;
 class WebPermissions;
 
 struct TestParams {
@@ -224,6 +225,9 @@ private:
 #endif
     OwnPtr<WebViewHost> m_webViewHost;
     OwnPtr<WebKit::WebThread> m_webCompositorThread;
+#if ENABLE(LINK_PRERENDER)
+    OwnPtr<MockWebPrerenderingSupport> m_prerenderingSupport;
+#endif
 
     TestParams m_params;
     int m_timeout; // timeout value in millisecond

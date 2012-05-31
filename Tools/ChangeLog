@@ -1,3 +1,32 @@
+2012-05-30  Gavin Peters  <gavinp@chromium.org>
+
+        Add a LayoutTest for prerender remove after stop.
+        https://bugs.webkit.org/show_bug.cgi?id=87860
+
+        These very boring mocks in DumpRenderTree mean that the basic Prerendering API
+        can be tested by LayoutTests now.
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockWebPrerenderingSupport.cpp: Added.
+        (MockWebPrerenderingSupport::MockWebPrerenderingSupport):
+        (MockWebPrerenderingSupport::~MockWebPrerenderingSupport):
+        (MockWebPrerenderingSupport::add):
+        (MockWebPrerenderingSupport::cancel):
+        (MockWebPrerenderingSupport::abandon):
+        * DumpRenderTree/chromium/MockWebPrerenderingSupport.h: Added.
+        (MockWebPrerenderingSupport):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::willAddPrerender):
+        (WebViewHost::setWebWidget):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-05-30  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87717

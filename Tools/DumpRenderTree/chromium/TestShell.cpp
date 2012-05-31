@@ -34,6 +34,7 @@
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
 #include "LayoutTestController.h"
+#include "MockWebPrerenderingSupport.h"
 #include "platform/WebArrayBufferView.h"
 #include "WebCompositor.h"
 #include "WebDataSource.h"
@@ -65,6 +66,7 @@
 #include <vector>
 #include <wtf/MD5.h>
 #include <wtf/OwnArrayPtr.h>
+
 
 using namespace WebKit;
 using namespace std;
@@ -147,6 +149,7 @@ void TestShell::initialize()
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
     m_gamepadController = adoptPtr(new GamepadController(this));
+
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
     m_textInputController = adoptPtr(new TextInputController(this));
@@ -154,6 +157,9 @@ void TestShell::initialize()
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
     m_printer = m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter();
+#if ENABLE(LINK_PRERENDER)
+    m_prerenderingSupport = adoptPtr(new MockWebPrerenderingSupport());
+#endif
 
     WTF::initializeThreading();
 
