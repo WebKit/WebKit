@@ -1,3 +1,18 @@
+2012-05-31  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implementation of Decimal(int32_t) isn't portable.
+        https://bugs.webkit.org/show_bug.cgi?id=87941
+
+        Reviewed by Kent Tamura.
+
+        This patch changes negation of integer to make unsigned integer
+        in portable way.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::Decimal): Use uint64_t(-int64_t(i32)) instead of uint64_t(-i32) 
+
 2012-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE][EFL] Remove unneeded include path
