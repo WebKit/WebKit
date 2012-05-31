@@ -1,3 +1,10 @@
+2012-05-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r116723.
+
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::TextRunComponent::TextRunComponent):
+
 2012-05-30  Kentaro Hara  <haraken@chromium.org>
 
         Implement CSSParser::determineNameInNamespace() as a helper function for CSSGrammar.y

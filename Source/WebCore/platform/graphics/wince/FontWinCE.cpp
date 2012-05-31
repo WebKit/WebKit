@@ -85,13 +85,15 @@ public:
 };
 
 TextRunComponent::TextRunComponent(const UChar *start, int length, const TextRun& parentTextRun, const Font &font, int o)
-    : m_textRun(start, length, parentTextRun.allowTabs(), 0, 0
+    : m_textRun(start, length, 0, 0
         , parentTextRun.allowsTrailingExpansion() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion
         , parentTextRun.direction()
         , parentTextRun.directionalOverride())
     , m_offset(o)
     , m_spaces(0)
 {
+    m_textRun.setTabSize(parentTextRun.allowTabs(), parentTextRun.tabSize());
+
     WidthIterator it(&font, m_textRun);
     it.advance(m_textRun.length(), 0);
     m_width = it.m_runWidthSoFar;
