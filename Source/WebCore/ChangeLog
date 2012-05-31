@@ -1,3 +1,35 @@
+2012-05-30  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix min/max bounds error in CCMathUtil.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=87915
+
+        Reviewed by James Robinson.
+
+        Two unit tests added to CCMathUtilTest:
+            CCMathUtilTest.verifyEnclosingClippedRectUsesCorrectInitialBounds
+            CCMathUtilTest.verifyEnclosingRectOfVerticesUsesCorrectInitialBounds
+
+        While computing bounds, the initial values for xmax and ymax are
+        intended to be set to -float_max. It turns out that
+        std::numeric_limits<float>::min() actually returns the smallest
+        positive value close to zero, which is not what was intended. This
+        patch fixes the code to use -float_max instead, which is the
+        intended value.
+
+        * platform/graphics/chromium/cc/CCMathUtil.cpp:
+        (WebCore::CCMathUtil::mapClippedRect):
+        (WebCore::CCMathUtil::projectClippedRect):
+        (WebCore::CCMathUtil::computeEnclosingRectOfVertices):
+        (WebCore::CCMathUtil::computeEnclosingClippedRect):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCMathUtil.h:
+        (WebCore::HomogeneousCoordinate::HomogeneousCoordinate):
+        (HomogeneousCoordinate):
+        (WebCore::HomogeneousCoordinate::shouldBeClipped):
+        (WebCore::HomogeneousCoordinate::cartesianPoint2d):
+        (WebCore):
+        (CCMathUtil):
+
 2012-05-30  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r118568.

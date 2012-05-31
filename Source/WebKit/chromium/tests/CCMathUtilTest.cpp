@@ -26,6 +26,7 @@
 
 #include "cc/CCMathUtil.h"
 
+#include "CCLayerTreeTestCommon.h"
 #include "TransformationMatrix.h"
 
 #include <gmock/gmock.h>
@@ -114,6 +115,40 @@ TEST(CCMathUtilTest, verifyProjectionOfPerpendicularPlane)
     EXPECT_EQ(0, projectedRect.x());
     EXPECT_EQ(0, projectedRect.y());
     EXPECT_TRUE(projectedRect.isEmpty());
+}
+
+TEST(CCMathUtilTest, verifyEnclosingClippedRectUsesCorrectInitialBounds)
+{
+    HomogeneousCoordinate h1(-100, -100, 0, 1);
+    HomogeneousCoordinate h2(-10, -10, 0, 1);
+    HomogeneousCoordinate h3(10, 10, 0, -1);
+    HomogeneousCoordinate h4(100, 100, 0, -1);
+
+    // The bounds of the enclosing clipped rect should be -100 to -10 for both x and y.
+    // However, if there is a bug where the initial xmin/xmax/ymin/ymax are initialized to
+    // numeric_limits<float>::min() (which is zero, not -flt_max) then the enclosing
+    // clipped rect will be computed incorrectly.
+    FloatRect result = CCMathUtil::computeEnclosingClippedRect(h1, h2, h3, h4);
+
+    EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint(-100, -100), FloatSize(90, 90)), result);
+}
+
+TEST(CCMathUtilTest, verifyEnclosingRectOfVerticesUsesCorrectInitialBounds)
+{
+    FloatPoint vertices[3];
+    int numVertices = 3;
+
+    vertices[0] = FloatPoint(-10, -100);
+    vertices[1] = FloatPoint(-100, -10);
+    vertices[2] = FloatPoint(-30, -30);
+
+    // The bounds of the enclosing rect should be -100 to -10 for both x and y. However,
+    // if there is a bug where the initial xmin/xmax/ymin/ymax are initialized to
+    // numeric_limits<float>::min() (which is zero, not -flt_max) then the enclosing
+    // clipped rect will be computed incorrectly.
+    FloatRect result = CCMathUtil::computeEnclosingRectOfVertices(vertices, numVertices);
+
+    EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint(-100, -100), FloatSize(90, 90)), result);
 }
 
 } // namespace

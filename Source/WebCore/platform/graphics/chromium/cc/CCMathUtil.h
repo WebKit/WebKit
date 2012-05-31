@@ -25,6 +25,8 @@
 #ifndef CCMathUtil_h
 #define CCMathUtil_h
 
+#include "FloatPoint.h"
+
 namespace WebCore {
 
 class IntRect;
@@ -32,6 +34,37 @@ class FloatPoint;
 class FloatRect;
 class FloatQuad;
 class TransformationMatrix;
+
+struct HomogeneousCoordinate {
+    HomogeneousCoordinate(double newX, double newY, double newZ, double newW)
+        : x(newX)
+        , y(newY)
+        , z(newZ)
+        , w(newW)
+    {
+    }
+
+    bool shouldBeClipped() const
+    {
+        return w <= 0;
+    }
+
+    FloatPoint cartesianPoint2d() const
+    {
+        if (w == 1)
+            return FloatPoint(x, y);
+
+        // For now, because this code is used privately only by CCMathUtil, it should never be called when w == 0, and we do not yet need to handle that case.
+        ASSERT(w);
+        double invW = 1.0 / w;
+        return FloatPoint(x * invW, y * invW);
+    }
+
+    double x;
+    double y;
+    double z;
+    double w;
+};
 
 // This class contains math helper functionality that does not belong in WebCore.
 // It is possible that this functionality should be migrated to WebCore eventually.
@@ -55,7 +88,9 @@ public:
     // numVerticesInClippedQuad may be zero, which means the entire quad was clipped, and
     // none of the vertices in the array are valid.
     static void mapClippedQuad(const TransformationMatrix&, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad);
+
     static FloatRect computeEnclosingRectOfVertices(FloatPoint vertices[], int numVertices);
+    static FloatRect computeEnclosingClippedRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4);
 
     // NOTE: These functions do not do correct clipping against w = 0 plane, but they
     // correctly detect the clipped condition via the boolean clipped.

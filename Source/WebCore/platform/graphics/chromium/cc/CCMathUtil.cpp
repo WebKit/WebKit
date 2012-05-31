@@ -33,37 +33,6 @@
 
 namespace WebCore {
 
-struct HomogeneousCoordinate {
-    HomogeneousCoordinate(double newX, double newY, double newZ, double newW)
-        : x(newX)
-        , y(newY)
-        , z(newZ)
-        , w(newW)
-    {
-    }
-
-    bool shouldBeClipped() const
-    {
-        return w <= 0;
-    }
-
-    FloatPoint cartesianPoint2d() const
-    {
-        if (w == 1)
-            return FloatPoint(x, y);
-
-        // For now, because this code is used privately only by CCMathUtil, it should never be called when w == 0, and we do not yet need to handle that case.
-        ASSERT(w);
-        double invW = 1.0 / w;
-        return FloatPoint(x * invW, y * invW);
-    }
-
-    double x;
-    double y;
-    double z;
-    double w;
-};
-
 static HomogeneousCoordinate projectPoint(const TransformationMatrix& transform, const FloatPoint& p)
 {
     // In this case, the layer we are trying to project onto is perpendicular to ray
@@ -138,55 +107,6 @@ static inline void expandBoundsToIncludePoint(float& xmin, float& xmax, float& y
     ymax = std::max(p.y(), ymax);
 }
 
-static FloatRect computeEnclosingRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4)
-{
-    // This function performs clipping as necessary and computes the enclosing 2d
-    // FloatRect of the vertices. Doing these two steps simultaneously allows us to avoid
-    // the overhead of storing an unknown number of clipped vertices.
-
-    // If no vertices on the quad are clipped, then we can simply return the enclosing rect directly.
-    bool somethingClipped = h1.shouldBeClipped() || h2.shouldBeClipped() || h3.shouldBeClipped() || h4.shouldBeClipped();
-    if (!somethingClipped) {
-        FloatQuad mappedQuad = FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
-        return mappedQuad.boundingBox();
-    }
-
-    bool everythingClipped = h1.shouldBeClipped() && h2.shouldBeClipped() && h3.shouldBeClipped() && h4.shouldBeClipped();
-    if (everythingClipped)
-        return FloatRect();
-
-    float xmin = std::numeric_limits<float>::max();
-    float xmax = std::numeric_limits<float>::min();
-    float ymin = std::numeric_limits<float>::max();
-    float ymax = std::numeric_limits<float>::min();
-
-    if (!h1.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h1.cartesianPoint2d());
-
-    if (h1.shouldBeClipped() ^ h2.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h1, h2).cartesianPoint2d());
-
-    if (!h2.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h2.cartesianPoint2d());
-
-    if (h2.shouldBeClipped() ^ h3.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h2, h3).cartesianPoint2d());
-
-    if (!h3.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h3.cartesianPoint2d());
-
-    if (h3.shouldBeClipped() ^ h4.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h3, h4).cartesianPoint2d());
-
-    if (!h4.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h4.cartesianPoint2d());
-
-    if (h4.shouldBeClipped() ^ h1.shouldBeClipped())
-        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h4, h1).cartesianPoint2d());
-
-    return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
-}
-
 static inline void addVertexToClippedQuad(const FloatPoint& newVertex, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
 {
     clippedQuad[numVerticesInClippedQuad] = newVertex;
@@ -213,7 +133,7 @@ FloatRect CCMathUtil::mapClippedRect(const TransformationMatrix& transform, cons
     HomogeneousCoordinate h3 = mapPoint(transform, q.p3());
     HomogeneousCoordinate h4 = mapPoint(transform, q.p4());
 
-    return computeEnclosingRect(h1, h2, h3, h4);
+    return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
 
 FloatRect CCMathUtil::projectClippedRect(const TransformationMatrix& transform, const FloatRect& srcRect)
@@ -225,7 +145,7 @@ FloatRect CCMathUtil::projectClippedRect(const TransformationMatrix& transform, 
     HomogeneousCoordinate h3 = projectPoint(transform, q.p3());
     HomogeneousCoordinate h4 = projectPoint(transform, q.p4());
 
-    return computeEnclosingRect(h1, h2, h3, h4);
+    return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
 
 void CCMathUtil::mapClippedQuad(const TransformationMatrix& transform, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
@@ -272,12 +192,62 @@ FloatRect CCMathUtil::computeEnclosingRectOfVertices(FloatPoint vertices[], int 
         return FloatRect();
 
     float xmin = std::numeric_limits<float>::max();
-    float xmax = std::numeric_limits<float>::min();
+    float xmax = -std::numeric_limits<float>::max();
     float ymin = std::numeric_limits<float>::max();
-    float ymax = std::numeric_limits<float>::min();
+    float ymax = -std::numeric_limits<float>::max();
 
     for (int i = 0; i < numVertices; ++i)
         expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, vertices[i]);
+
+    return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
+}
+
+FloatRect CCMathUtil::computeEnclosingClippedRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4)
+{
+    // This function performs clipping as necessary and computes the enclosing 2d
+    // FloatRect of the vertices. Doing these two steps simultaneously allows us to avoid
+    // the overhead of storing an unknown number of clipped vertices.
+
+    // If no vertices on the quad are clipped, then we can simply return the enclosing rect directly.
+    bool somethingClipped = h1.shouldBeClipped() || h2.shouldBeClipped() || h3.shouldBeClipped() || h4.shouldBeClipped();
+    if (!somethingClipped) {
+        FloatQuad mappedQuad = FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
+        return mappedQuad.boundingBox();
+    }
+
+    bool everythingClipped = h1.shouldBeClipped() && h2.shouldBeClipped() && h3.shouldBeClipped() && h4.shouldBeClipped();
+    if (everythingClipped)
+        return FloatRect();
+
+
+    float xmin = std::numeric_limits<float>::max();
+    float xmax = -std::numeric_limits<float>::max();
+    float ymin = std::numeric_limits<float>::max();
+    float ymax = -std::numeric_limits<float>::max();
+
+    if (!h1.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h1.cartesianPoint2d());
+
+    if (h1.shouldBeClipped() ^ h2.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h1, h2).cartesianPoint2d());
+
+    if (!h2.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h2.cartesianPoint2d());
+
+    if (h2.shouldBeClipped() ^ h3.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h2, h3).cartesianPoint2d());
+
+    if (!h3.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h3.cartesianPoint2d());
+
+    if (h3.shouldBeClipped() ^ h4.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h3, h4).cartesianPoint2d());
+
+    if (!h4.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, h4.cartesianPoint2d());
+
+    if (h4.shouldBeClipped() ^ h1.shouldBeClipped())
+        expandBoundsToIncludePoint(xmin, xmax, ymin, ymax, computeClippedPointForEdge(h4, h1).cartesianPoint2d());
 
     return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
 }
