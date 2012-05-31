@@ -98,7 +98,7 @@ debug('Test for content element selector.');
 showComposedShadowTree(
     createDOM('div', {'id': 'a'},
               createShadowRoot(createDOM('div', {'id': 'b'}),
-                               createDOM('content', {'select': '.d'})),
+                               createDOM('content', {'select': '#d'})),
               createDOM('div', {'id': 'c'}),
               createDOM('div', {'id': 'd'}),
               createDOM('div', {'id': 'e'})));
@@ -107,7 +107,7 @@ debug('Light children should be selected only at once.');
 showComposedShadowTree(
     createDOM('div', {'id': 'a'},
               createShadowRoot(createDOM('div', {'id': 'b'}),
-                               createDOM('content', {'select': '.d'}),
+                               createDOM('content', {'select': '#d'}),
                                createDOM('content')),
               createDOM('div', {'id': 'c'}),
               createDOM('div', {'id': 'd'}),
@@ -117,7 +117,7 @@ debug('A content element can have fallback elements.');
 showComposedShadowTree(
     createDOM('div', {'id': 'a'},
               createShadowRoot(createDOM('div', {'id': 'b'}),
-                               createDOM('content', {'select': '.z'},
+                               createDOM('content', {'select': '#z'},
                                          createDOM('div', {'id': 'f1'}),
                                          createDOM('div', {'id': 'f2'}))),
               createDOM('div', {'id': 'c'})));
@@ -126,7 +126,7 @@ debug('Fallback elements should not be used if <content> element selects any ele
 showComposedShadowTree(
     createDOM('div', {'id': 'a'},
               createShadowRoot(createDOM('div', {'id': 'b'}),
-                               createDOM('content', {'select': '.c'},
+                               createDOM('content', {'select': '#c'},
                                          createDOM('div', {'id': 'f1'}),
                                          createDOM('div', {'id': 'f2'}))),
               createDOM('div', {'id': 'c'})));

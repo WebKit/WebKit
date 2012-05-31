@@ -37,24 +37,36 @@ Test for content element selector.
 Composed Shadow Tree:
 DIV	 id=a
 	DIV	 id=b
+	DIV	 id=d
 
 Traverse in forward.
 DIV	 id=a
+DIV	 id=b
+DIV	 id=d
 Traverse in backward.
+DIV	 id=d
+DIV	 id=b
 DIV	 id=a
 
 Light children should be selected only at once.
 Composed Shadow Tree:
 DIV	 id=a
 	DIV	 id=b
+	DIV	 id=d
+	DIV	 id=c
+	DIV	 id=e
 
 Traverse in forward.
 DIV	 id=a
 DIV	 id=b
-Traverse in backward.
-DIV	 id=e
 DIV	 id=d
 DIV	 id=c
+DIV	 id=e
+Traverse in backward.
+DIV	 id=e
+DIV	 id=c
+DIV	 id=d
+DIV	 id=b
 DIV	 id=a
 
 A content element can have fallback elements.
@@ -79,17 +91,14 @@ Fallback elements should not be used if  element selects any elements.
 Composed Shadow Tree:
 DIV	 id=a
 	DIV	 id=b
-	DIV	 id=f1
-	DIV	 id=f2
+	DIV	 id=c
 
 Traverse in forward.
 DIV	 id=a
 DIV	 id=b
-DIV	 id=f1
-DIV	 id=f2
+DIV	 id=c
 Traverse in backward.
-DIV	 id=f2
-DIV	 id=f1
+DIV	 id=c
 DIV	 id=b
 DIV	 id=a
 
