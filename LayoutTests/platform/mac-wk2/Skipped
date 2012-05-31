@@ -165,6 +165,7 @@ fast/forms/listbox-typeahead-greek.html
 fast/forms/range/slider-mouse-events.html
 fast/forms/range/slider-onchange-event.html
 fast/forms/select-type-ahead-non-latin.html
+fast/forms/file/input-file-write-files.html
 fast/history/window-open.html
 fast/lists/drag-into-marker.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
