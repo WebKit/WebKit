@@ -109,18 +109,20 @@ public:
         return *this;
     }
     
-    inline float value() const
+    int value() const
     {
-        return getFloatValue();
-    }
-
-     int intValue() const
-     {
         if (isCalculated()) {
             ASSERT_NOT_REACHED();
             return 0;
         }
         return getIntValue();
+    }
+
+    // FIXME: When we switch to sub-pixel layout, value will return float by default, and this will inherit
+    // the current implementation of value().
+    int intValue() const
+    {
+        return value();
     }
 
     float percent() const
