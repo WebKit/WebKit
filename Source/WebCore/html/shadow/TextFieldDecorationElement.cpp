@@ -40,6 +40,7 @@
 #include "NodeRenderStyle.h"
 #include "RenderImage.h"
 #include "ShadowRoot.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -143,7 +144,8 @@ void TextFieldDecorationElement::updateImage()
 
 PassRefPtr<RenderStyle> TextFieldDecorationElement::customStyleForRenderer()
 {
-    RefPtr<RenderStyle> style = RenderStyle::create();
+    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
     RenderStyle* inputStyle = hostInput()->renderStyle();
     ASSERT(inputStyle);
     style->setWidth(Length(inputStyle->fontSize(), Fixed));

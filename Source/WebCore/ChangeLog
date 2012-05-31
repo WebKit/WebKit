@@ -1,3 +1,14 @@
+2012-05-30  Garrett Casto  <gcasto@chromium.org>
+
+        TextFieldDecorationElement should respect style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=87762
+
+        Reviewed by Kent Tamura.
+
+        * html/shadow/TextFieldDecorationElement.cpp: Use style set on the
+        Element when creating rendering style.
+        (WebCore::TextFieldDecorationElement::customStyleForRenderer):
+
 2012-05-30  Ojan Vafai  <ojan@chromium.org>
 
         Avoid second layout for flex-direction:row, flex-basis:auto flex items
