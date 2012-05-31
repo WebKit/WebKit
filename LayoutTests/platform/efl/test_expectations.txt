@@ -354,6 +354,16 @@ BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = FAIL
 //__worldID is undefined in isolated world
 BUGWKEFL SKIP : http/tests/security/isolatedWorld/didClearWindowObject.html = FAIL
 
+// Needs custom policy delegate enhancement to log downloads - EFL port is missing api for getting header fields from HTTP responses. 
+BUGWK87974 : http/tests/download = FAIL
+
+// Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
+BUGWK87972 : fast/loader/stop-provisional-loads.html = FAIL
+BUGWK87972 : fast/loader/policy-delegate-action-hit-test-zoomed.html = FAIL
+BUGWK87972 : fast/encoding/mailto-always-utf-8.html = FAIL
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = FAIL
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = FAIL
+
 // EFL's LayoutTestController does not implement layerTreeAsText
 BUGWK82294 : compositing/animation/animation-compositing.html = TEXT
 BUGWK82294 : compositing/geometry/ancestor-overflow-change.html = TEXT

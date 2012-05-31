@@ -1,3 +1,26 @@
+2012-05-31  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] EFL's DRT navigation_policy_decision implementation
+        https://bugs.webkit.org/show_bug.cgi?id=85006
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added navigation_policy_decision implementation for DumpRenderTreeView.
+        Added LayoutTestController::setCustomPolicyDelegate implementation.
+        Modified LayoutTestController::waitForPolicyDelegate.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/DumpRenderTreeEfl.h:
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (navigationTypeToString): aux function
+        (onNavigationPolicyDecision): navigation_policy_decision implementation
+        (drtViewAdd):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        (LayoutTestController::waitForPolicyDelegate):
+
 2012-05-31  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][DRT] LayoutTestController does not implement clearApplicationCacheForOrigin

@@ -28,6 +28,7 @@
 
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeChrome.h"
+#include "DumpRenderTreeEfl.h"
 #include "LayoutTestController.h"
 #include <EWebKit.h>
 #include <Ecore.h>
@@ -152,6 +153,40 @@ static bool chooseAndInitializeAppropriateSmartClass(Ewk_View_Smart_Class* api)
     return shouldUseSingleBackingStore() ? ewk_view_single_smart_set(api) : ewk_view_tiled_smart_set(api);
 }
 
+// Taken from the file "WebKit/Tools/DumpRenderTree/chromium/WebViewHost.cpp".
+static inline const char* navigationTypeToString(const Ewk_Navigation_Type type)
+{
+    switch (type) {
+    case EWK_NAVIGATION_TYPE_LINK_CLICKED:
+        return "link clicked";
+    case EWK_NAVIGATION_TYPE_FORM_SUBMITTED:
+        return "form submitted";
+    case EWK_NAVIGATION_TYPE_BACK_FORWARD:
+        return "back/forward";
+    case EWK_NAVIGATION_TYPE_RELOAD:
+        return "reload";
+    case EWK_NAVIGATION_TYPE_FORM_RESUBMITTED:
+        return "form resubmitted";
+    case EWK_NAVIGATION_TYPE_OTHER:
+        return "other";
+    }
+    return "illegal value";
+}
+
+static Eina_Bool onNavigationPolicyDecision(Ewk_View_Smart_Data*, Ewk_Frame_Resource_Request* request, Ewk_Navigation_Type navigationType)
+{
+    if (!policyDelegateEnabled)
+        return true;
+
+    printf("Policy delegate: attempt to load %s with navigation type '%s'\n", urlSuitableForTestResult(request->url).utf8().data(),
+           navigationTypeToString(navigationType));
+
+    if (gLayoutTestController)
+        gLayoutTestController->notifyDone();
+
+    return policyDelegatePermissive;
+}
+
 Evas_Object* drtViewAdd(Evas* evas)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View");
@@ -170,6 +205,7 @@ Evas_Object* drtViewAdd(Evas* evas)
     api.window_close = onWindowClose;
     api.exceeded_application_cache_quota = onExceededApplicationCacheQuota;
     api.exceeded_database_quota = onExceededDatabaseQuota;
+    api.navigation_policy_decision = onNavigationPolicyDecision;
 
     return evas_object_smart_add(evas, evas_smart_class_new(&api.sc));
 }

@@ -273,6 +273,9 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
         ewk_intent_request_unref(m_currentIntentRequest);
         m_currentIntentRequest = 0;
     }
+
+    policyDelegateEnabled = false;
+    policyDelegatePermissive = false;
 }
 
 static CString pathSuitableForTestResult(const char* uriString)

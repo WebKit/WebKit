@@ -202,13 +202,15 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     ewk_cookies_policy_set(alwaysAcceptCookies ? EWK_COOKIE_JAR_ACCEPT_ALWAYS : EWK_COOKIE_JAR_ACCEPT_NEVER);
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool, bool)
+void LayoutTestController::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
-    notImplemented();
+    policyDelegateEnabled = enabled;
+    policyDelegatePermissive = permissive;
 }
 
 void LayoutTestController::waitForPolicyDelegate()
 {
+    setCustomPolicyDelegate(true, false);
     waitForPolicy = true;
     setWaitToDump(true);
 }

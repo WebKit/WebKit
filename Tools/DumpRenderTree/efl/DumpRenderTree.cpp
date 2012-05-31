@@ -54,6 +54,8 @@
 OwnPtr<DumpRenderTreeChrome> browser;
 Evas_Object* topLoadingFrame = 0;
 bool waitForPolicy = false;
+bool policyDelegateEnabled = false;
+bool policyDelegatePermissive = false;
 Ecore_Timer* waitToDumpWatchdog = 0;
 extern Ewk_History_Item* prevTestBFItem;
 

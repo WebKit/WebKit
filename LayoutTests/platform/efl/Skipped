@@ -115,13 +115,6 @@ fast/history/visited-generated-content-test.html
 fast/history/visited-link-background-color.html
 fast/history/window-open.html
 
-# EFL's LayoutTestController does not implement setCustomPolicyDelegate
-fast/loader/javascript-url-hierarchical-execution.html
-fast/loader/onload-policy-ignore-for-frame.html
-fast/loader/policy-delegate-action-hit-test-zoomed.html
-fast/loader/reload-policy-delegate.html
-http/tests/download
-
 # EFL's LayoutTestController does not implement setScrollbarPolicy
 fast/overflow/scrollbar-restored-and-then-locked.html
 
@@ -207,36 +200,8 @@ fast/html/set-text-direction.html
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
 
-# EFL's DRT (DumpRenderTreeView) needs to implement navigation_policy_decision
-fast/encoding/mailto-always-utf-8.html
-fast/forms/mailto/advanced-get.html
-fast/forms/mailto/advanced-put.html
-fast/forms/mailto/formenctype-attribute-button-html.html
-fast/forms/mailto/formenctype-attribute-input-html.html
-fast/forms/mailto/get-multiple-items-text-plain.html
-fast/forms/mailto/get-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/get-multiple-items.html
-fast/forms/mailto/get-non-ascii-always-utf-8.html
-fast/forms/mailto/get-non-ascii-text-plain-latin-1.html
-fast/forms/mailto/get-non-ascii-text-plain.html
-fast/forms/mailto/get-non-ascii.html
-fast/forms/mailto/get-overwrite-query.html
-fast/forms/mailto/post-append-query.html
-fast/forms/mailto/post-multiple-items-multipart-form-data.html
-fast/forms/mailto/post-multiple-items-text-plain.html
-fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/post-multiple-items.html
-fast/forms/mailto/post-text-plain-with-accept-charset.html
-fast/forms/mailto/post-text-plain.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
-
-# Missing delegates: tests failing because of missing policy delegate callbacks.
-fast/loader/onload-policy-ignore-for-frame.html
-fast/loader/policy-delegate-action-hit-test-zoomed.html
-fast/loader/reload-policy-delegate.html
-fast/loader/stop-provisional-loads.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
@@ -887,6 +852,8 @@ fast/forms/input-paste-undo.html
 fast/forms/input-placeholder-visibility-1.html
 fast/forms/input-step-as-double.html
 fast/forms/input-text-scroll-left-on-blur.html
+fast/forms/mailto/advanced-get.html
+fast/forms/mailto/advanced-put.html
 fast/forms/number/spin-button-events.html
 fast/forms/number/spin-in-multi-column.html
 fast/forms/placeholder-position.html

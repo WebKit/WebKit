@@ -36,6 +36,8 @@ class DumpRenderTreeChrome;
 extern OwnPtr<DumpRenderTreeChrome> browser;
 extern Evas_Object* topLoadingFrame;
 extern bool waitForPolicy;
+extern bool policyDelegateEnabled;
+extern bool policyDelegatePermissive;
 extern Ecore_Timer* waitToDumpWatchdog;
 
 #endif /* DumpRenderTreeEfl_h */
