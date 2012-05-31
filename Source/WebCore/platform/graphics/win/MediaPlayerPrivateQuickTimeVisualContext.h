@@ -99,7 +99,7 @@ private:
     
     PassRefPtr<TimeRanges> buffered() const;
     float maxTimeSeekable() const;
-    unsigned bytesLoaded() const;
+    bool didLoadingProgress() const;
     unsigned totalBytes() const;
     
     void setVisible(bool);
@@ -201,6 +201,7 @@ private:
     String m_movieURL;
     bool m_privateBrowsing;
     MediaPlayer::Preload m_preload;
+    mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
 #if DRAW_FRAME_RATE
     double m_frameCountWhilePlaying;
     double m_timeStartedPlaying;

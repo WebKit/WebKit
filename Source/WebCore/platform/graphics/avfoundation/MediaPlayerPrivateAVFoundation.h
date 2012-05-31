@@ -140,7 +140,7 @@ protected:
     virtual MediaPlayer::ReadyState readyState() const { return m_readyState; }
     virtual float maxTimeSeekable() const;
     virtual PassRefPtr<TimeRanges> buffered() const;
-    virtual unsigned bytesLoaded() const;
+    virtual bool didLoadingProgress() const;
     virtual void setSize(const IntSize&);
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
     virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
@@ -263,7 +263,7 @@ private:
     mutable float m_cachedMaxTimeSeekable;
     mutable float m_cachedDuration;
     float m_reportedDuration;
-
+    mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
     float m_seekTo;
     float m_requestedRate;
     mutable int m_delayCallbacks;

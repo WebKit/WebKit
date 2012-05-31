@@ -83,7 +83,7 @@ public:
     virtual float maxTimeSeekable() const;
     virtual PassRefPtr<TimeRanges> buffered() const;
 
-    virtual unsigned bytesLoaded() const;
+    virtual bool didLoadingProgress() const;
 
     virtual void setSize(const IntSize&);
 

@@ -1,3 +1,55 @@
+2012-05-31  Ami Fischman  <fischman@chromium.org>
+
+        Replace WebMediaPlayer::bytesLoaded() with an explicit didLoadingProgress()
+        https://bugs.webkit.org/show_bug.cgi?id=86113
+
+        Reviewed by Eric Carlson.
+
+        No new functionality, so no new tests.  Loading progress is already tested by existing layouttests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::startProgressEventTimer):
+        (WebCore::HTMLMediaElement::changeNetworkStateFromLoadingToIdle):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::startPlaybackProgressTimer):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::didLoadingProgress):
+        (WebCore::MediaPlayer::didLoadingProgress):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (MediaPlayerPrivateInterface):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (MediaPlayerPrivateAVFoundation):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::didLoadingProgress):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (MediaPlayerPrivate):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (MediaPlayerPrivateQTKit):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit):
+        (WebCore::MediaPlayerPrivateQTKit::didLoadingProgress):
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::didLoadingProgress):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (MediaPlayerPrivateQt):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::didLoadingProgress):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        (MediaPlayerPrivateQuickTimeVisualContext):
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h:
+        (MediaPlayerPrivate):
+
 2012-05-31  Erik Arvidsson  <arv@chromium.org>
 
         Make DOM Exceptions Errors

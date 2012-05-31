@@ -1,3 +1,17 @@
+2012-05-31  Ami Fischman  <fischman@chromium.org>
+
+        Replace WebMediaPlayer::bytesLoaded() with an explicit didLoadingProgress()
+        https://bugs.webkit.org/show_bug.cgi?id=86113
+
+        Reviewed by Eric Carlson.
+
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::didLoadingProgress):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-05-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] create WebTransformOperation interface for chromium platform

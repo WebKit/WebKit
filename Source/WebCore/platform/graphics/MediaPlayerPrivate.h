@@ -96,7 +96,7 @@ public:
     virtual float maxTimeSeekable() const = 0;
     virtual PassRefPtr<TimeRanges> buffered() const = 0;
 
-    virtual unsigned bytesLoaded() const = 0;
+    virtual bool didLoadingProgress() const = 0;
 
     virtual void setSize(const IntSize&) = 0;
 

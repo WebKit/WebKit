@@ -70,6 +70,7 @@ namespace WebCore {
 
         PassRefPtr<TimeRanges> buffered() const;
         float maxTimeSeekable() const;
+        // FIXME: bytesLoaded() should be replaced with didLoadingProgress() (by somebody who can find the implementation of this class).
         unsigned bytesLoaded() const;
         unsigned totalBytes() const;
 

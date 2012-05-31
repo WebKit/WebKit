@@ -144,7 +144,7 @@ public:
     virtual NetworkState networkState() const = 0;
     virtual ReadyState readyState() const = 0;
 
-    virtual unsigned long long bytesLoaded() const = 0;
+    virtual bool didLoadingProgress() const = 0;
     virtual unsigned long long totalBytes() const = 0;
 
     virtual bool hasSingleSecurityOrigin() const = 0;

@@ -122,7 +122,7 @@ public:
     virtual int dataRate() const;
     virtual bool totalBytesKnown() const;
     virtual unsigned totalBytes() const;
-    virtual unsigned bytesLoaded() const;
+    virtual bool didLoadingProgress() const;
     virtual void setSize(const WebCore::IntSize&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void paintCurrentFrameInContext(WebCore::GraphicsContext*, const WebCore::IntRect&);

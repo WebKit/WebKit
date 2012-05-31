@@ -57,6 +57,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedMaxTimeSeekable(0)
     , m_cachedDuration(invalidTime())
     , m_reportedDuration(invalidTime())
+    , m_maxTimeLoadedAtLastDidLoadingProgress(invalidTime())
     , m_seekTo(invalidTime())
     , m_requestedRate(1)
     , m_delayCallbacks(0)
@@ -366,14 +367,15 @@ float MediaPlayerPrivateAVFoundation::maxTimeLoaded() const
     return m_cachedMaxTimeLoaded;   
 }
 
-unsigned MediaPlayerPrivateAVFoundation::bytesLoaded() const
+bool MediaPlayerPrivateAVFoundation::didLoadingProgress() const
 {
-    float dur = duration();
-    if (!dur)
-        return 0;
-    unsigned loaded = totalBytes() * maxTimeLoaded() / dur;
-    LOG(Media, "MediaPlayerPrivateAVFoundation::bytesLoaded(%p) - returning %i", this, loaded);
-    return loaded;
+    if (!duration() || !totalBytes())
+        return false;
+    float currentMaxTimeLoaded = maxTimeLoaded();
+    bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
+    m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
+    LOG(Media, "MediaPlayerPrivateAVFoundation::didLoadingProgress(%p) - returning %d", this, didLoadingProgress);
+    return didLoadingProgress;
 }
 
 bool MediaPlayerPrivateAVFoundation::isReadyForVideoSetup() const
