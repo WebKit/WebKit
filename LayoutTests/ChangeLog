@@ -1,5 +1,15 @@
 2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed. Added new baselines for GTK after r117815.
+
+        * platform/gtk/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Updated.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+
+2012-05-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed. Added new baselines for GTK after r118891.
 
         * platform/gtk/fast/forms/select/optgroup-rendering-expected.png: Added.
