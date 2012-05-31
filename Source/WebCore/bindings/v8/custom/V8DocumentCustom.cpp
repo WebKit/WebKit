@@ -43,6 +43,7 @@
 #include "V8CanvasRenderingContext2D.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMImplementation.h"
+#include "V8DOMWrapper.h"
 #include "V8HTMLDocument.h"
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
@@ -142,9 +143,8 @@ v8::Handle<v8::Value> V8Document::createTouchListCallback(const v8::Arguments& a
     RefPtr<TouchList> touchList = TouchList::create();
 
     for (int i = 0; i < args.Length(); i++) {
-        if (!args[i]->IsObject())
-            return v8::Undefined();
-        touchList->append(V8Touch::toNative(args[i]->ToObject()));
+        Touch* touch = V8DOMWrapper::isWrapperOfType(args[i], &V8Touch::info) ? V8Touch::toNative(args[i]->ToObject()) : 0;
+        touchList->append(touch);
     }
 
     return toV8(touchList.release(), args.GetIsolate());

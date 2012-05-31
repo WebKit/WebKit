@@ -5869,14 +5869,8 @@ PassRefPtr<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, 
     // http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/DocumentAdditionsReference/DocumentAdditions/DocumentAdditions.html
     // when this method should throw and nor is it by inspection of iOS behavior. It would be nice to verify any cases where it throws under iOS
     // and implement them here. See https://bugs.webkit.org/show_bug.cgi?id=47819
-    // Ditto for the createTouchList method below.
     Frame* frame = window ? window->frame() : this->frame();
     return Touch::create(frame, target, identifier, screenX, screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force);
-}
-
-PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
-{
-    return TouchList::create();
 }
 #endif
 

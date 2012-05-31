@@ -1,0 +1,19 @@
+This test ensures that WebKit doesn't crash when the document.createTouchList API is called with non-Touch parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createTouchList(document).item(0) is null
+PASS document.createTouchList({"a":1}).item(0) is null
+PASS document.createTouchList(new Array(5)).item(0) is null
+PASS document.createTouchList("string").item(0) is null
+PASS document.createTouchList(null).item(0) is null
+PASS document.createTouchList(undefined).item(0) is null
+PASS tl.length is 3
+PASS tl.item(0) is non-null.
+PASS tl.item(1) is null
+PASS tl.item(2) is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

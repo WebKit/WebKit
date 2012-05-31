@@ -1123,7 +1123,6 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     PassRefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
-    PassRefPtr<TouchList> createTouchList(ExceptionCode&) const;
 #endif
 
     const DocumentTiming* timing() const { return &m_documentTiming; }

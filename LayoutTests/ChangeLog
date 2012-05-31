@@ -1,3 +1,16 @@
+2012-05-31  Ben Murdoch  <benm@google.com>
+
+        Fix crash in V8Document::createTouchListCallback.
+        https://bugs.webkit.org/show_bug.cgi?id=87085
+
+        Test for crash in document.createTouchList when it
+        is supplied with non-touch parameters.
+
+        Reviewed by Abhishek Arya.
+
+        * fast/events/touch/document-create-touch-list-crash-expected.txt: Added.
+        * fast/events/touch/document-create-touch-list-crash.html: Added.
+
 2012-05-31  Rafael Weinstein  <rafaelw@chromium.org>
 
         Updating test expectations after r119124.
