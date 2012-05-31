@@ -1,5 +1,20 @@
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
+        [Win] 4 css3 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=88024
+
+        Add Windows-specific expected (failing?) results to get the bots green.
+
+        * platform/win/css3: Added.
+        * platform/win/css3/filters: Added.
+        * platform/win/css3/filters/composited-during-animation-expected.txt: Added.
+        * platform/win/css3/filters/composited-during-animation-layertree-expected.txt: Added.
+        * platform/win/css3/filters/composited-during-transition-layertree-expected.txt: Added.
+        * platform/win/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/win/css3/unicode-bidi-isolate-basic-expected.txt: Added.
+
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
         [Win] 10 fast/forms tests failing
         https://bugs.webkit.org/show_bug.cgi?id=88013
 
