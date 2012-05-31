@@ -1,3 +1,41 @@
+2012-05-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] create WebTransformOperation interface for chromium platform
+        https://bugs.webkit.org/show_bug.cgi?id=87510
+
+        Reviewed by James Robinson.
+
+        Unit tests:
+            WebTransformOperationsTest.transformTypesAreUnique
+            WebTransformOperationsTest.matchesTypesSameLength
+            WebTransformOperationsTest.matchesTypesDifferentLength
+            WebTransformOperationsTest.applyTranslate
+            WebTransformOperationsTest.applyRotate
+            WebTransformOperationsTest.applyScale
+            WebTransformOperationsTest.applySkew
+            WebTransformOperationsTest.applyPerspective
+            WebTransformOperationsTest.applyMatrix
+            WebTransformOperationsTest.applyOrder
+            WebTransformOperationsTest.blendOrder
+            WebTransformOperationsTest.blendProgress
+            WebTransformOperationsTest.blendWhenTypesDoNotMatch
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebTransformOperations.cpp: Added.
+        (WebKit):
+        (WebTransformOperationsPrivate):
+        (WebKit::WebTransformOperations::apply):
+        (WebKit::WebTransformOperations::blend):
+        (WebKit::WebTransformOperations::matchesTypes):
+        (WebKit::WebTransformOperations::appendTranslate):
+        (WebKit::WebTransformOperations::appendRotate):
+        (WebKit::WebTransformOperations::appendScale):
+        (WebKit::WebTransformOperations::appendSkew):
+        (WebKit::WebTransformOperations::appendPerspective):
+        (WebKit::WebTransformOperations::appendMatrix):
+        (WebKit::WebTransformOperations::reset):
+        (WebKit::WebTransformOperations::initialize):
+
 2012-05-31  Yury Semikhatsky  <yurys@chromium.org>
 
         m_totalAllocated should be intialized in RenderArena constructor

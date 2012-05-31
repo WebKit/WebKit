@@ -100,6 +100,7 @@
             'chromium/public/WebThread.h',
             'chromium/public/WebThreadSafeData.h',
             'chromium/public/WebTransformationMatrix.h',
+            'chromium/public/WebTransformOperations.h',
             'chromium/public/WebPrerender.h',
             'chromium/public/WebURL.h',
             'chromium/public/WebURLError.h',

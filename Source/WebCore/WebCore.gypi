@@ -8330,6 +8330,7 @@
             'platform/chromium/support/WebPrerender.cpp',
             'platform/chromium/support/WebThreadSafeData.cpp',
             'platform/chromium/support/WebTransformationMatrix.cpp',
+            'platform/chromium/support/WebTransformOperations.cpp',
             'platform/chromium/support/WebURL.cpp',
             'platform/chromium/support/WebURLError.cpp',
             'platform/chromium/support/WebURLRequest.cpp',

@@ -153,6 +153,7 @@
             'tests/WebSocketDeflaterTest.cpp',
             'tests/WebSocketExtensionDispatcherTest.cpp',
             'tests/WebTransformationMatrixTest.cpp',
+            'tests/WebTransformOperationsTest.cpp',
             'tests/WebURLRequestTest.cpp',
             'tests/WebURLResponseTest.cpp',
             'tests/WebViewTest.cpp',

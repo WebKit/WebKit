@@ -1,3 +1,18 @@
+2012-05-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] create WebTransformOperation interface for chromium platform
+        https://bugs.webkit.org/show_bug.cgi?id=87510
+
+        Reviewed by James Robinson.
+
+        * Platform.gypi:
+        * chromium/public/WebTransformOperations.h: Added.
+        (WebKit):
+        (WebTransformOperations):
+        (WebKit::WebTransformOperations::~WebTransformOperations):
+        (WebKit::WebTransformOperations::WebTransformOperations):
+        (WebKit::WebTransformOperations::operator=):
+
 2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add MemoryUsageSupport::processMemorySizesInBytes
