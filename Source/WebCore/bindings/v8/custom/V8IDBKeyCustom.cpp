@@ -51,7 +51,7 @@ v8::Handle<v8::Value> toV8(IDBKey* key, v8::Isolate* isolate)
     case IDBKey::NumberType:
         return v8::Number::New(key->number());
     case IDBKey::StringType:
-        return v8String(key->string());
+        return v8String(key->string(), isolate);
     case IDBKey::DateType:
         return v8::Date::New(key->date());
     case IDBKey::ArrayType:

@@ -76,7 +76,7 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
     case IDBAny::SerializedScriptValueType:
         return impl->serializedScriptValue()->deserialize(0, isolate);
     case IDBAny::StringType:
-        return v8String(impl->string());
+        return v8String(impl->string(), isolate);
     }
 
     ASSERT_NOT_REACHED();

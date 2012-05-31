@@ -135,7 +135,7 @@ template<class Collection> static v8::Handle<v8::Value> collectionStringOrNullIn
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     Collection* collection = toNativeCollection<Collection>(info.Holder());
     String result = collection->item(index);
-    return v8StringOrNull(result);
+    return v8StringOrNull(result, info.GetIsolate());
 }
 
 
@@ -146,7 +146,7 @@ template<class Collection> static v8::Handle<v8::Value> collectionStringIndexedP
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     Collection* collection = toNativeCollection<Collection>(info.Holder());
     String result = collection->item(index);
-    return v8String(result);
+    return v8String(result, info.GetIsolate());
 }
 
 

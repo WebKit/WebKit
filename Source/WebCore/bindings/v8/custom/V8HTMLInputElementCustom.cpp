@@ -100,7 +100,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionDirectionAccessorGetter(v8::L
     if (!imp->canHaveSelection())
         return V8Proxy::throwTypeError("Accessing selectionDirection on an input element that cannot have a selection.", info.GetIsolate());
 
-    return v8String(imp->selectionDirection());
+    return v8String(imp->selectionDirection(), info.GetIsolate());
 }
 
 void V8HTMLInputElement::selectionDirectionAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

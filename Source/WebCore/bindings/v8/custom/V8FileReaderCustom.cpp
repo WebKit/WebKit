@@ -47,7 +47,7 @@ v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> n
     FileReader* imp = V8FileReader::toNative(holder);
     if (imp->readType() == FileReaderLoader::ReadAsArrayBuffer)
         return toV8(imp->arrayBufferResult(), info.GetIsolate());
-    return v8StringOrNull(imp->stringResult());
+    return v8StringOrNull(imp->stringResult(), info.GetIsolate());
 }
 
 } // namespace WebCore

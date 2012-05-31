@@ -57,7 +57,7 @@ static v8::Handle<v8::Value> toV8Object(CanvasStyle* style, v8::Isolate* isolate
     if (style->canvasPattern())
         return toV8(style->canvasPattern(), isolate);
 
-    return v8String(style->color());
+    return v8String(style->color(), isolate);
 }
 
 static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value)

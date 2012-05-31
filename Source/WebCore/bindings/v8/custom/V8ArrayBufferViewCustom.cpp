@@ -54,7 +54,7 @@ v8::Handle<v8::Value> installHiddenCopyMethod(v8::Handle<v8::Object> prototype) 
     return value;
 }
 
-bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset)
+bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset, v8::Isolate* isolate)
 {
     v8::Handle<v8::Value> prototype_value = destArray->GetPrototype();
     if (prototype_value.IsEmpty() || !prototype_value->IsObject())

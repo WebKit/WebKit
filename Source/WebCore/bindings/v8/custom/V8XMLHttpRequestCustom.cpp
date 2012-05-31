@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseTextAccessorGetter(v8::Local<v8:
     const String& text = xmlHttpRequest->responseText(ec);
     if (ec)
         return throwError(ec, info.GetIsolate());
-    return v8String(text);
+    return v8String(text, info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

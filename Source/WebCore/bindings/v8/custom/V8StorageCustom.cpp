@@ -47,7 +47,7 @@ v8::Handle<v8::Array> V8Storage::namedPropertyEnumerator(const v8::AccessorInfo&
         String key = storage->key(i);
         ASSERT(!key.isNull());
         String val = storage->getItem(key);
-        properties->Set(v8::Integer::New(i), v8String(key));
+        properties->Set(v8::Integer::New(i), v8String(key, info.GetIsolate()));
     }
 
     return properties;
@@ -59,7 +59,7 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
     String name = toWebCoreString(v8Name);
 
     if (name != "length" && storage->contains(name))
-        return v8String(storage->getItem(name));
+        return v8String(storage->getItem(name), info.GetIsolate());
 
     return v8::Handle<v8::Value>();
 }

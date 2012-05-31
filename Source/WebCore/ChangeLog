@@ -1,3 +1,61 @@
+2012-05-31  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Pass Isolate to v8String() in custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=87825
+
+        Reviewed by Adam Barth.
+
+        The objective is to pass Isolate around in V8 bindings.
+        This patch passes Isolate to v8String() in custom bindings.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        (WebCore::installFastSet):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyEnumerator):
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter):
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        (WebCore::toV8Object):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::typesAccessorGetter):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyGetter):
+        (WebCore::V8DOMStringMap::namedPropertyEnumerator):
+        * bindings/v8/custom/V8FileReaderCustom.cpp:
+        (WebCore::V8FileReader::resultAccessorGetter):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::toDataURLCallback):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore::toV8Object):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorGetter):
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::databaseIdCallback):
+        (WebCore::V8InjectedScriptHost::storageIdCallback):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::platformCallback):
+        * bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp:
+        (WebCore::V8JavaScriptCallFrame::typeAccessorGetter):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::toStringCallback):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::V8Storage::namedPropertyEnumerator):
+        (WebCore::storageGetter):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseTextAccessorGetter):
+        * bindings/v8/custom/V8XSLTProcessorCustom.cpp:
+        (WebCore::V8XSLTProcessor::getParameterCallback):
+
 2012-05-31  Hayato Ito  <hayato@chromium.org>
 
         ComposedShadowTreeWalker should support traversing nodes in an orphaned shadow subtree.

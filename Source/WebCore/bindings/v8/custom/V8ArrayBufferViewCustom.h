@@ -42,7 +42,7 @@ namespace WebCore {
 
 // Copy the elements from the source array to the typed destination array.
 // Returns true if it succeeded, otherwise returns false.
-bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset);
+bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset, v8::Isolate*);
 
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
@@ -165,7 +165,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
 
     if (!srcArray.IsEmpty()) {
-        bool copied = copyElements(args.Holder(), srcArray, len, 0);
+        bool copied = copyElements(args.Holder(), srcArray, len, 0, args.GetIsolate());
         if (!copied) {
             for (unsigned i = 0; i < len; i++)
                 array->set(i, srcArray->Get(i)->NumberValue());
@@ -210,7 +210,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             // Out of range offset or overflow
             return V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
         }
-        bool copied = copyElements(args.Holder(), array, length, offset);
+        bool copied = copyElements(args.Holder(), array, length, offset, args.GetIsolate());
         if (!copied) {
             for (uint32_t i = 0; i < length; i++)
                 impl->set(offset + i, array->Get(i)->NumberValue());

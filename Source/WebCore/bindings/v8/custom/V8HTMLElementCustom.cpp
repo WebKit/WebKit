@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> toV8Object(MicroDataItemValue* itemValue, v8::Isola
     if (itemValue->isNode())
         return toV8(itemValue->getNode(), isolate);
 
-    return v8String(itemValue->getString());
+    return v8String(itemValue->getString(), isolate);
 }
 
 v8::Handle<v8::Value> V8HTMLElement::itemValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

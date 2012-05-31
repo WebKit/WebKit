@@ -130,7 +130,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments&
     if (result.isNull())
         return v8::Undefined();
 
-    return v8String(result);
+    return v8String(result, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8XSLTProcessor::removeParameterCallback(const v8::Arguments& args)

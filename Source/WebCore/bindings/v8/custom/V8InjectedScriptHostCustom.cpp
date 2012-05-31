@@ -274,7 +274,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallback(const v8::Argumen
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Database* database = V8Database::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (database)
-        return v8StringOrUndefined(host->databaseIdImpl(database));
+        return v8StringOrUndefined(host->databaseIdImpl(database), args.GetIsolate());
 #endif
     return v8::Undefined();
 }
@@ -287,7 +287,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallback(const v8::Argument
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     Storage* storage = V8Storage::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (storage)
-        return v8StringOrUndefined(host->storageIdImpl(storage));
+        return v8StringOrUndefined(host->storageIdImpl(storage), args.GetIsolate());
     return v8::Undefined();
 }
 

@@ -255,7 +255,7 @@ v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return v8::Undefined();
     String result = imp->href();
-    return v8String(result);
+    return v8String(result, args.GetIsolate());
 }
 
 bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
