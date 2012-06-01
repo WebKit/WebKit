@@ -86,7 +86,7 @@ public:
 
     PassRefPtr<TimeRanges> buffered() const;
     float maxTimeSeekable() const;
-    unsigned bytesLoaded() const;
+    bool didLoadingProgress() const;
     unsigned totalBytes() const;
 
     void setVisible(bool);
@@ -156,6 +156,7 @@ private:
     bool m_isSeeking;
     bool m_composited;
     MediaPlayer::Preload m_preload;
+    mutable unsigned m_bytesLoadedAtLastDidLoadingProgress;
     bool m_delayingLoad;
     String m_mediaUrl;
     bool m_suppressNextPlaybackChanged;

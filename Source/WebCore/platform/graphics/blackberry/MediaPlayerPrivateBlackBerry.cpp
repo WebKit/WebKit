@@ -288,10 +288,10 @@ PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
     return timeRanges.release();
 }
 
-unsigned MediaPlayerPrivate::bytesLoaded() const
+bool MediaPlayerPrivate::didLoadingProgress() const
 {
     notImplemented();
-    return 0;
+    return false;
 }
 
 void MediaPlayerPrivate::setSize(const IntSize&)

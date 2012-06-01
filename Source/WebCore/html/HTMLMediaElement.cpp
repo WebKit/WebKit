@@ -210,7 +210,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_readyStateMaximum(HAVE_NOTHING)
     , m_volume(1.0f)
     , m_lastSeekTime(0)
-    , m_previousProgress(0)
     , m_previousProgressTime(numeric_limits<double>::max())
     , m_lastTimeUpdateEventWallTime(0)
     , m_lastTimeUpdateEventMovieTime(numeric_limits<float>::max())
@@ -1377,7 +1376,6 @@ void HTMLMediaElement::startProgressEventTimer()
         return;
 
     m_previousProgressTime = WTF::currentTime();
-    m_previousProgress = 0;
     // 350ms is not magic, it is in the spec!
     m_progressEventTimer.startRepeating(0.350);
 }
@@ -1584,7 +1582,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
 {
     m_progressEventTimer.stop();
-    if (hasMediaControls() && m_player->bytesLoaded() != m_previousProgress)
+    if (hasMediaControls() && m_player->didLoadingProgress())
         mediaControls()->bufferingProgressed();
 
     // Schedule one last progress event so we guarantee that at least one is fired
@@ -1837,25 +1835,21 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
     if (m_networkState != NETWORK_LOADING)
         return;
 
-    unsigned progress = m_player->bytesLoaded();
     double time = WTF::currentTime();
     double timedelta = time - m_previousProgressTime;
 
-    if (progress == m_previousProgress) {
-        if (timedelta > 3.0 && !m_sentStalledEvent) {
-            scheduleEvent(eventNames().stalledEvent);
-            m_sentStalledEvent = true;
-            setShouldDelayLoadEvent(false);
-        }
-    } else {
+    if (m_player->didLoadingProgress()) {
         scheduleEvent(eventNames().progressEvent);
-        m_previousProgress = progress;
         m_previousProgressTime = time;
         m_sentStalledEvent = false;
         if (renderer())
             renderer()->updateFromElement();
         if (hasMediaControls())
             mediaControls()->bufferingProgressed();
+    } else if (timedelta > 3.0 && !m_sentStalledEvent) {
+        scheduleEvent(eventNames().stalledEvent);
+        m_sentStalledEvent = true;
+        setShouldDelayLoadEvent(false);
     }
 }
 
@@ -2723,7 +2717,6 @@ void HTMLMediaElement::startPlaybackProgressTimer()
         return;
 
     m_previousProgressTime = WTF::currentTime();
-    m_previousProgress = 0;
     m_playbackProgressTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 
