@@ -4121,14 +4121,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
 #if ENABLE(CSS3_FLEXBOX)
+    case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
-    case CSSPropertyWebkitFlexLinePack:
-    case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:
+    case CSSPropertyWebkitJustifyContent:
 #endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:

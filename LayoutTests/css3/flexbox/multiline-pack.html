@@ -6,7 +6,7 @@
     display: -webkit-flex;
     background-color: grey;
     max-width: 100px;
-    -webkit-flex-line-pack: start;
+    -webkit-align-content: start;
 }
 .flexbox > * {
     -webkit-flex: none;
@@ -50,20 +50,20 @@
 .wrap-reverse {
     -webkit-flex-wrap: wrap-reverse;
 }
-.pack-start {
-    -webkit-flex-pack: start;
+.justify-content-start {
+    -webkit-justify-content: start;
 }
-.pack-end {
-    -webkit-flex-pack: end;
+.justify-content-end {
+    -webkit-justify-content: end;
 }
-.pack-center {
-    -webkit-flex-pack: center;
+.justify-content-center {
+    -webkit-justify-content: center;
 }
-.pack-space-between {
-    -webkit-flex-pack: space-between;
+.justify-content-space-between {
+    -webkit-justify-content: space-between;
 }
-.pack-space-around {
-    -webkit-flex-pack: space-around;
+.justify-content-space-around {
+    -webkit-justify-content: space-around;
 }
 .flexbox > :nth-child(1) {
     background-color: #0f0;
@@ -2587,14 +2587,14 @@ var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-l
 var flexDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];
-var packs = ['start', 'end', 'center', 'space-between', 'space-around'];
+var justifyContents = ['start', 'end', 'center', 'space-between', 'space-around'];
 
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {
         directions.forEach(function(direction) {
             wraps.forEach(function(wrap) {
-                packs.forEach(function(pack) {
-                    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexDirection + ' ' + wrap + ' pack-' + pack;
+                justifyContents.forEach(function(justifyContent) {
+                    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexDirection + ' ' + wrap + ' justify-content-' + justifyContent;
                     var title = document.createElement('div');
                     title.className = 'title';
                     title.innerHTML = flexboxClassName;
@@ -2608,8 +2608,8 @@ writingModes.forEach(function(writingMode) {
                     flexbox.setAttribute('style', mainAxis + ': 80px');
 
                     var baselineMargin = (flexDirection.indexOf('row') != -1) ? '-webkit-margin-before: 5px' : '-webkit-margin-start: 5px';
-                        
-                    var testExpectations = expectations[writingMode][flexDirection][direction][wrap][pack];
+
+                    var testExpectations = expectations[writingMode][flexDirection][direction][wrap][justifyContent];
                     addChild(flexbox, mainAxis, crossAxis, 40, '10', testExpectations['child1']);
                     addChild(flexbox, mainAxis, crossAxis, 20, '10', testExpectations['child2']);
                     addChild(flexbox, mainAxis, crossAxis, 40, '10', testExpectations['child3']);

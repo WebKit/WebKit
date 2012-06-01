@@ -228,14 +228,14 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitFilter,
 #endif
 #if ENABLE(CSS3_FLEXBOX)
+    CSSPropertyWebkitAlignContent,
     CSSPropertyWebkitAlignItems,
     CSSPropertyWebkitAlignSelf,
     CSSPropertyWebkitFlex,
-    CSSPropertyWebkitFlexPack,
     CSSPropertyWebkitFlexDirection,
     CSSPropertyWebkitFlexFlow,
-    CSSPropertyWebkitFlexLinePack,
     CSSPropertyWebkitFlexWrap,
+    CSSPropertyWebkitJustifyContent,
 #endif
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
@@ -1652,8 +1652,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         }
         case CSSPropertyWebkitOrder:
             return cssValuePool().createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyWebkitFlexPack:
-            return cssValuePool().createValue(style->flexPack());
+        case CSSPropertyWebkitJustifyContent:
+            return cssValuePool().createValue(style->justifyContent());
         case CSSPropertyWebkitAlignItems:
             return cssValuePool().createValue(style->alignItems());
         case CSSPropertyWebkitAlignSelf:
@@ -1667,8 +1667,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->flexDirection());
         case CSSPropertyWebkitFlexWrap:
             return cssValuePool().createValue(style->flexWrap());
-        case CSSPropertyWebkitFlexLinePack:
-            return cssValuePool().createValue(style->flexLinePack());
+        case CSSPropertyWebkitAlignContent:
+            return cssValuePool().createValue(style->alignContent());
         case CSSPropertyWebkitFlexFlow: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             list->append(cssValuePool().createValue(style->flexDirection()));

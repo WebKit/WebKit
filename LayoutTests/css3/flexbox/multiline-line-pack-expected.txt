@@ -1,4 +1,4 @@
-Test to make sure that flex-line-pack works properly.
+Test to make sure that align-content works properly.
 
 PASS
 PASS

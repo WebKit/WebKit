@@ -48,10 +48,8 @@ public:
     float m_negativeFlex;
     Length m_preferredSize;
 
-    unsigned m_flexPack : 3; // EFlexPack
     unsigned m_flexDirection : 2; // EFlexDirection
     unsigned m_flexWrap : 2; // EFlexWrap
-    unsigned m_flexLinePack : 3; // EFlexLinePack
 
 private:
     StyleFlexibleBoxData();

@@ -173,11 +173,11 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 
 // CSS3 Flexbox Properties
 
+enum EAlignContent { AlignContentStart, AlignContentEnd, AlignContentCenter, AlignContentSpaceBetween, AlignContentSpaceAround, AlignContentStretch };
 enum EAlignItems { AlignAuto, AlignStart, AlignEnd, AlignCenter, AlignStretch, AlignBaseline };
-enum EFlexPack { PackStart, PackEnd, PackCenter, PackSpaceBetween, PackSpaceAround };
 enum EFlexDirection { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
-enum EFlexLinePack { LinePackStart, LinePackEnd, LinePackCenter, LinePackSpaceBetween, LinePackSpaceAround, LinePackStretch };
 enum EFlexWrap { FlexWrapNone, FlexWrap, FlexWrapReverse };
+enum EJustifyContent { JustifyStart, JustifyEnd, JustifyCenter, JustifySpaceBetween, JustifySpaceAround };
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE

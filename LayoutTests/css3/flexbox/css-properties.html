@@ -51,32 +51,32 @@ flexitem.style.webkitOrder = '';
 shouldBeEqualToString('flexitem.style.webkitOrder', '');
 
 
-shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 // The initial value is 'start'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
 
-flexbox.style.webkitFlexPack = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
+flexbox.style.webkitJustifyContent = 'foo';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 
-flexbox.style.webkitFlexPack = 'start';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'start');
+flexbox.style.webkitJustifyContent = 'start';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
 
-flexbox.style.webkitFlexPack = 'end';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'end');
+flexbox.style.webkitJustifyContent = 'end';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'end');
 
-flexbox.style.webkitFlexPack = 'center';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'center');
+flexbox.style.webkitJustifyContent = 'center';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'center');
 
-flexbox.style.webkitFlexPack = 'space-between';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', 'space-between');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'space-between');
+flexbox.style.webkitJustifyContent = 'space-between';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'space-between');
 
-flexbox.style.webkitFlexPack = '';
-shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'start');
+flexbox.style.webkitJustifyContent = '';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
 
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
@@ -261,40 +261,40 @@ shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse wrap-reverse'
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse wrap-reverse');
 
 // The initial value is 'stretch'.
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
 
-flexbox.style.webkitFlexLinePack = 'start';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'start');
+flexbox.style.webkitAlignContent = 'start';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'start');
 
-flexbox.style.webkitFlexLinePack = 'end';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'end');
+flexbox.style.webkitAlignContent = 'end';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'end');
 
-flexbox.style.webkitFlexLinePack = 'center';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'center');
+flexbox.style.webkitAlignContent = 'center';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'center');
 
-flexbox.style.webkitFlexLinePack = 'space-between';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'space-between');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'space-between');
+flexbox.style.webkitAlignContent = 'space-between';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'space-between');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'space-between');
 
-flexbox.style.webkitFlexLinePack = 'space-around';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'space-around');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'space-around');
+flexbox.style.webkitAlignContent = 'space-around';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'space-around');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'space-around');
 
-flexbox.style.webkitFlexLinePack = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+flexbox.style.webkitAlignContent = 'stretch';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
 
-flexbox.style.webkitFlexLinePack = '';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+flexbox.style.webkitAlignContent = '';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
 
-flexbox.style.webkitFlexLinePack = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+flexbox.style.webkitAlignContent = 'foo';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>

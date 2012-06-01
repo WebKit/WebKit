@@ -493,7 +493,7 @@ function setFlexboxSize(flexbox, flexDirection)
     }
 }
 
-function addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection)
+function addJustifyContentSpaceBetweenTests(writingMode, flexFlow, direction, flexDirection)
 {
     var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
     for (var absoluteIndex = 1; absoluteIndex <= 3; ++absoluteIndex) {
@@ -506,7 +506,7 @@ function addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection
         var flexbox = document.createElement('div');
         flexbox.className = 'flexbox ' + flexboxClassName;
         setFlexboxSize(flexbox, flexDirection);
-        flexbox.style.webkitFlexPack = 'space-between';
+        flexbox.style.webkitJustifyContent = 'space-between';
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
             var child = document.createElement('div');
             child.style[flexDirection] = '40px';
@@ -540,7 +540,7 @@ function addAlignItemsCenterTests(writingMode, flexFlow, direction, flexDirectio
         flexbox.style.height = '100px';
         flexbox.style.width = '100px';
         flexbox.style.margin = "20px";
-        flexbox.style.webkitFlexPack = 'center';
+        flexbox.style.webkitJustifyContent = 'center';
         flexbox.style.webkitAlignItems = 'center';
 
         for (var childIndex = 1; childIndex <= 3; ++childIndex) {
@@ -594,7 +594,7 @@ writingModes.forEach(function(writingMode) {
 
                 document.body.appendChild(flexbox);
             }
-            addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection);
+            addJustifyContentSpaceBetweenTests(writingMode, flexFlow, direction, flexDirection);
             addAlignItemsCenterTests(writingMode, flexFlow, direction, flexDirection);
         })
     })

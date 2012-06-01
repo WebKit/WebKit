@@ -60,8 +60,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_pageSizeType(PAGE_SIZE_AUTO)
     , m_transformStyle3D(RenderStyle::initialTransformStyle3D())
     , m_backfaceVisibility(RenderStyle::initialBackfaceVisibility())
+    , m_alignContent(RenderStyle::initialAlignContent())
     , m_alignItems(RenderStyle::initialAlignItems())
     , m_alignSelf(RenderStyle::initialAlignSelf())
+    , m_justifyContent(RenderStyle::initialJustifyContent())
     , userDrag(RenderStyle::initialUserDrag())
     , textOverflow(RenderStyle::initialTextOverflow())
     , marginBeforeCollapse(MCOLLAPSE)
@@ -130,8 +132,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_pageSizeType(o.m_pageSizeType)
     , m_transformStyle3D(o.m_transformStyle3D)
     , m_backfaceVisibility(o.m_backfaceVisibility)
+    , m_alignContent(o.m_alignContent)
     , m_alignItems(o.m_alignItems)
     , m_alignSelf(o.m_alignSelf)
+    , m_justifyContent(o.m_justifyContent)
     , userDrag(o.userDrag)
     , textOverflow(o.textOverflow)
     , marginBeforeCollapse(o.marginBeforeCollapse)
@@ -206,8 +210,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_pageSizeType == o.m_pageSizeType
         && m_transformStyle3D == o.m_transformStyle3D
         && m_backfaceVisibility == o.m_backfaceVisibility
+        && m_alignContent == o.m_alignContent
         && m_alignItems == o.m_alignItems
         && m_alignSelf == o.m_alignSelf
+        && m_justifyContent == o.m_justifyContent
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
         && marginBeforeCollapse == o.marginBeforeCollapse

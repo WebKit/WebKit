@@ -1244,45 +1244,45 @@ template<> inline CSSPrimitiveValue::operator EAlignItems() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EJustifyContent e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case PackStart:
+    case JustifyStart:
         m_value.ident = CSSValueStart;
         break;
-    case PackEnd:
+    case JustifyEnd:
         m_value.ident = CSSValueEnd;
         break;
-    case PackCenter:
+    case JustifyCenter:
         m_value.ident = CSSValueCenter;
         break;
-    case PackSpaceBetween:
+    case JustifySpaceBetween:
         m_value.ident = CSSValueSpaceBetween;
         break;
-    case PackSpaceAround:
+    case JustifySpaceAround:
         m_value.ident = CSSValueSpaceAround;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EFlexPack() const
+template<> inline CSSPrimitiveValue::operator EJustifyContent() const
 {
     switch (m_value.ident) {
     case CSSValueStart:
-        return PackStart;
+        return JustifyStart;
     case CSSValueEnd:
-        return PackEnd;
+        return JustifyEnd;
     case CSSValueCenter:
-        return PackCenter;
+        return JustifyCenter;
     case CSSValueSpaceBetween:
-        return PackSpaceBetween;
+        return JustifySpaceBetween;
     case CSSValueSpaceAround:
-        return PackSpaceAround;
+        return JustifySpaceAround;
     default:
         ASSERT_NOT_REACHED();
-        return PackStart;
+        return JustifyStart;
     }
 }
 
@@ -1323,50 +1323,50 @@ template<> inline CSSPrimitiveValue::operator EFlexDirection() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexLinePack e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignContent e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case LinePackStart:
+    case AlignContentStart:
         m_value.ident = CSSValueStart;
         break;
-    case LinePackEnd:
+    case AlignContentEnd:
         m_value.ident = CSSValueEnd;
         break;
-    case LinePackCenter:
+    case AlignContentCenter:
         m_value.ident = CSSValueCenter;
         break;
-    case LinePackSpaceBetween:
+    case AlignContentSpaceBetween:
         m_value.ident = CSSValueSpaceBetween;
         break;
-    case LinePackSpaceAround:
+    case AlignContentSpaceAround:
         m_value.ident = CSSValueSpaceAround;
         break;
-    case LinePackStretch:
+    case AlignContentStretch:
         m_value.ident = CSSValueStretch;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EFlexLinePack() const
+template<> inline CSSPrimitiveValue::operator EAlignContent() const
 {
     switch (m_value.ident) {
     case CSSValueStart:
-        return LinePackStart;
+        return AlignContentStart;
     case CSSValueEnd:
-        return LinePackEnd;
+        return AlignContentEnd;
     case CSSValueCenter:
-        return LinePackCenter;
+        return AlignContentCenter;
     case CSSValueSpaceBetween:
-        return LinePackSpaceBetween;
+        return AlignContentSpaceBetween;
     case CSSValueSpaceAround:
-        return LinePackSpaceAround;
+        return AlignContentSpaceAround;
     case CSSValueStretch:
-        return LinePackStretch;
+        return AlignContentStretch;
     default:
         ASSERT_NOT_REACHED();
-        return LinePackStretch;
+        return AlignContentStretch;
     }
 }
 

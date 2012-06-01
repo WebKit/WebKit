@@ -35,23 +35,23 @@
 .wrap-reverse {
     -webkit-flex-wrap: wrap-reverse;
 }
-.line-pack-start {
-    -webkit-flex-line-pack: start;
+.align-content-start {
+    -webkit-align-content: start;
 }
-.line-pack-end {
-    -webkit-flex-line-pack: end;
+.align-content-end {
+    -webkit-align-content: end;
 }
-.line-pack-center {
-    -webkit-flex-line-pack: center;
+.align-content-center {
+    -webkit-align-content: center;
 }
-.line-pack-space-between {
-    -webkit-flex-line-pack: space-between;
+.align-content-space-between {
+    -webkit-align-content: space-between;
 }
-.line-pack-space-around {
-    -webkit-flex-line-pack: space-around;
+.align-content-space-around {
+    -webkit-align-content: space-around;
 }
-.line-pack-stretch {
-    -webkit-flex-line-pack: stretch;
+.align-content-stretch {
+    -webkit-align-content: stretch;
 }
 .flexbox > :nth-child(1) {
     background-color: blue;
@@ -237,13 +237,13 @@ function mainAxisDirection(writingMode, flexDirection)
     return 'height';
 }
 
-function addChild(flexbox, preferredSize, linePack, expected_x_offset)
+function addChild(flexbox, preferredSize, alignContent, expected_x_offset)
 {
     var child = document.createElement('div');
     child.setAttribute('style', '-webkit-flex: 1 ' + preferredSize + 'px;'
         + 'min-width: 100px');
 
-    child.setAttribute("data-expected-width", linePack == "stretch" ? "300" : "100");
+    child.setAttribute("data-expected-width", alignContent == "stretch" ? "300" : "100");
     child.setAttribute("data-expected-height", "20");
     child.setAttribute("data-offset-y", "0");
     child.setAttribute("data-offset-x", expected_x_offset);
@@ -255,14 +255,14 @@ var writingModes = ['horizontal-tb', 'horizontal-bt'];
 var flexDirections = ['column', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];
-var linePacks = ['start', 'end', 'center', 'space-between', 'space-around', 'stretch'];
+var alignContents = ['start', 'end', 'center', 'space-between', 'space-around', 'stretch'];
 
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {
         directions.forEach(function(direction) {
             wraps.forEach(function(wrap) {
-                linePacks.forEach(function(linePack) {
-                    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexDirection + ' ' + wrap + ' line-pack-' + linePack;
+                alignContents.forEach(function(alignContent) {
+                    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexDirection + ' ' + wrap + ' align-content-' + alignContent;
                     var title = document.createElement('div');
                     title.className = 'title';
                     title.innerHTML = flexboxClassName;
@@ -276,9 +276,9 @@ writingModes.forEach(function(writingMode) {
                     flexbox.setAttribute("data-expected-width", "600");
                     flexbox.setAttribute("data-expected-height", "20");
 
-                    var testExpectations = expectations[writingMode][flexDirection][direction][wrap][linePack];
-                    addChild(flexbox, 20, linePack, testExpectations[0]);
-                    addChild(flexbox, 5, linePack, testExpectations[1]);
+                    var testExpectations = expectations[writingMode][flexDirection][direction][wrap][alignContent];
+                    addChild(flexbox, 20, alignContent, testExpectations[0]);
+                    addChild(flexbox, 5, alignContent, testExpectations[1]);
 
                     document.body.appendChild(flexbox);
                 })
