@@ -29,6 +29,8 @@ SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 
 OTHER_FILES = \
     Scripts/* \
+    $$files(Scripts/webkitpy/*.py, true) \
+    $$files(Scripts/webkitperl/*.p[l|m], true) \
     qmake/README \
     qmake/configure.pro \
     qmake/sync.profile \
