@@ -56,6 +56,7 @@ public:
 protected:
     void getUniformLocation(GLint& var, const char* name);
     void initializeProgram();
+    virtual void initialize() { }
     virtual const char* vertexShaderSource() const = 0;
     virtual const char* fragmentShaderSource() const = 0;
 
@@ -103,10 +104,24 @@ public:
     static PassRefPtr<TextureMapperShaderProgramSimple> create();
     virtual void prepare(float opacity, const BitmapTexture*);
 
+protected:
+    virtual void initialize();
+
 private:
     virtual const char* vertexShaderSource() const;
     virtual const char* fragmentShaderSource() const;
-    TextureMapperShaderProgramSimple();
+    TextureMapperShaderProgramSimple() { }
+
+    friend class TextureMapperShaderProgramRectSimple;
+};
+
+class TextureMapperShaderProgramRectSimple : public TextureMapperShaderProgramSimple {
+public:
+    static PassRefPtr<TextureMapperShaderProgramRectSimple> create();
+
+private:
+    virtual const char* fragmentShaderSource() const;
+    TextureMapperShaderProgramRectSimple() { }
 };
 
 class TextureMapperShaderProgramOpacityAndMask : public TextureMapperShaderProgram {
@@ -115,12 +130,26 @@ public:
     virtual void prepare(float opacity, const BitmapTexture*);
     GLint maskTextureVariable() const { return m_maskTextureVariable; }
 
+protected:
+    virtual void initialize();
+
 private:
     static int m_classID;
     virtual const char* vertexShaderSource() const;
     virtual const char* fragmentShaderSource() const;
-    TextureMapperShaderProgramOpacityAndMask();
+    TextureMapperShaderProgramOpacityAndMask() { }
     GLint m_maskTextureVariable;
+
+    friend class TextureMapperShaderProgramRectOpacityAndMask;
+};
+
+class TextureMapperShaderProgramRectOpacityAndMask : public TextureMapperShaderProgramOpacityAndMask {
+public:
+    static PassRefPtr<TextureMapperShaderProgramRectOpacityAndMask> create();
+
+private:
+    virtual const char* fragmentShaderSource() const;
+    TextureMapperShaderProgramRectOpacityAndMask() { }
 };
 
 class TextureMapperShaderProgramSolidColor : public TextureMapperShaderProgram {
@@ -128,21 +157,25 @@ public:
     static PassRefPtr<TextureMapperShaderProgramSolidColor> create();
     GLint colorVariable() const { return m_colorVariable; }
 
+protected:
+    virtual void initialize();
+
 private:
     virtual const char* vertexShaderSource() const;
     virtual const char* fragmentShaderSource() const;
-    TextureMapperShaderProgramSolidColor();
+    TextureMapperShaderProgramSolidColor() { }
     GLint m_colorVariable;
 };
-
 
 class TextureMapperShaderManager {
 public:
     enum ShaderType {
         Invalid = 0, // HashMaps do not like 0 as a key.
         Simple,
+        RectSimple,
         OpacityAndMask,
-        SolidColor,
+        RectOpacityAndMask,
+        SolidColor
     };
 
     TextureMapperShaderManager();

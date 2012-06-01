@@ -21,10 +21,47 @@
 #include "TextureMapperBackingStore.h"
 
 #include "GraphicsLayer.h"
+#include "GraphicsSurface.h"
 #include "ImageBuffer.h"
 #include "TextureMapper.h"
+#include "TextureMapperGL.h"
 
 namespace WebCore {
+
+#if USE(GRAPHICS_SURFACE)
+void TextureMapperSurfaceBackingStore::setGraphicsSurface(uint32_t graphicsSurfaceToken, const IntSize& surfaceSize)
+{
+    if (graphicsSurfaceToken != m_backBufferGraphicsSurfaceData.m_graphicsSurfaceToken) {
+        GraphicsSurface::Flags surfaceFlags = GraphicsSurface::SupportsTextureTarget
+                                            | GraphicsSurface::SupportsSharing;
+        m_backBufferGraphicsSurfaceData.setSurface(GraphicsSurface::create(surfaceSize, surfaceFlags, graphicsSurfaceToken));
+        m_graphicsSurfaceSize = surfaceSize;
+    }
+
+    std::swap(m_backBufferGraphicsSurfaceData, m_frontBufferGraphicsSurfaceData);
+}
+
+PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
+{
+    // FIXME: Instead of just returning an empty texture, we should wrap the texture contents into a BitmapTexture.
+    RefPtr<BitmapTexture> emptyTexture;
+    return emptyTexture;
+}
+
+void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+{
+    TransformationMatrix adjustedTransform = transform;
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_graphicsSurfaceSize), targetRect));
+#if OS(DARWIN)
+    // This is specific to the Mac implementation of GraphicsSurface. IOSurface requires GL_TEXTURE_RECTANGLE_ARB to be used.
+    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_frontBufferGraphicsSurfaceData.m_textureID, 0, m_graphicsSurfaceSize, targetRect, adjustedTransform, opacity, mask);
+#else
+    UNUSED_PARAM(textureMapper);
+    UNUSED_PARAM(opacity);
+    UNUSED_PARAM(mask);
+#endif
+}
+#endif
 
 void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect)
 {

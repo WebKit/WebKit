@@ -21,6 +21,7 @@
 #include "TextureMapperGL.h"
 
 #include "GraphicsContext.h"
+#include "GraphicsSurface.h"
 #include "Image.h"
 #include "TextureMapperShaderManager.h"
 #include "Timer.h"
@@ -364,6 +365,34 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.size(), targetRect, matrix, opacity, mask);
+}
+
+void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
+{
+    RefPtr<TextureMapperShaderProgram> shaderInfo;
+    if (maskTexture)
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::RectOpacityAndMask);
+    else
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::RectSimple);
+    GL_CMD(glUseProgram(shaderInfo->id()));
+
+    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture));
+    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0));
+
+    const GLfloat m4src[] = {
+        targetRect.width(), 0, 0, 0,
+        0, (flags & ShouldFlipTexture) ? -targetRect.height() : targetRect.height(), 0, 0,
+        0, 0, 1, 0,
+        0, (flags & ShouldFlipTexture) ? 1 : 0, 0, 1};
+
+    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src));
+
+    shaderInfo->prepare(opacity, maskTexture);
+
+    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
+    drawRect(targetRect, modelViewMatrix, shaderInfo.get(), GL_TRIANGLE_FAN, needsBlending);
 }
 
 void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)

@@ -1,3 +1,66 @@
+2012-06-01  Zeno Albisser  <zeno@webkit.org>
+
+        Make TextureMapper work with GraphicsSurface.
+        https://bugs.webkit.org/show_bug.cgi?id=87738
+
+        Add TextureMapperSurfaceBackingStore, a new backing store
+        that allows to import textures from a GraphicsSurface.
+        On Mac the GraphicsSurface is backed by an IOSurface
+        which must be used with a GL_TEXTURE_RECTANGLE_ARB texture.
+        Therefore it is also necessary to add new shader programs
+        for directly painting these textures on screen.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        Add a new TextureMapperBackingStore implementation that can directly
+        reuse textures as they are being passed from the GraphicsSurface.
+        (WebCore::TextureMapperSurfaceBackingStore::setGraphicsSurface):
+        (WebCore::TextureMapperSurfaceBackingStore::texture):
+        (WebCore::TextureMapperSurfaceBackingStore::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (GraphicsSurfaceData):
+        (WebCore::GraphicsSurfaceData::setSurface):
+        (WebCore::GraphicsSurfaceData::GraphicsSurfaceData):
+        (TextureMapperSurfaceBackingStore):
+        (WebCore::TextureMapperSurfaceBackingStore::create):
+        (WebCore::TextureMapperSurfaceBackingStore::~TextureMapperSurfaceBackingStore):
+        (WebCore::TextureMapperSurfaceBackingStore::TextureMapperSurfaceBackingStore):
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        Add a drawing function for textures of type GL_TEXTURE_RECTANGLE_ARB.
+        (WebCore::TextureMapperGL::drawTextureRectangleARB):
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::TextureMapperShaderManager::getShaderProgram):
+        (WebCore::TextureMapperShaderProgramSimple::create):
+        (WebCore::TextureMapperShaderProgramSimple::initialize):
+        (WebCore::TextureMapperShaderProgramSolidColor::create):
+        (WebCore::TextureMapperShaderProgramSolidColor::initialize):
+        (WebCore::TextureMapperShaderProgramRectSimple::create):
+        (WebCore::TextureMapperShaderProgramRectSimple::fragmentShaderSource):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::create):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::initialize):
+        (WebCore::TextureMapperShaderProgramRectOpacityAndMask::create):
+        (WebCore::TextureMapperShaderProgramRectOpacityAndMask::fragmentShaderSource):
+
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        Add new shader programs that can be used with GL_TEXTURE_RECTANGLE_ARB textures.
+        This is mainly necessary, because this type of texture uses non-normalized coordinates.
+        Further move the calls to initializeProgram() from the constructor into a separate
+        initialize() function, as initializeProgram() calls vertexShaderSource() (and friends)
+        and we should not call virtual functions in the constructor.
+        (WebCore::TextureMapperShaderProgram::initialize):
+        (TextureMapperShaderProgramSimple):
+        (WebCore::TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple):
+        (TextureMapperShaderProgramRectSimple):
+        (WebCore::TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple):
+        (TextureMapperShaderProgramOpacityAndMask):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask):
+        (TextureMapperShaderProgramRectOpacityAndMask):
+        (WebCore::TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask):
+        (TextureMapperShaderProgramSolidColor):
+        (WebCore::TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor):
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL port does not enable WEB_INTENTS_TAG flag

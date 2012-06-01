@@ -55,6 +55,20 @@ static const char* fragmentShaderSourceOpacityAndMask =
         }
     );
 
+static const char* fragmentShaderSourceRectOpacityAndMask =
+    FRAGMENT_SHADER(
+        uniform sampler2DRect SourceTexture, MaskTexture;
+        uniform lowp float Opacity;
+        varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+        void main(void)
+        {
+            lowp vec4 color = texture2DRect(SourceTexture, OutTexCoordSource);
+            lowp vec4 maskColor = texture2DRect(MaskTexture, OutTexCoordMask);
+            lowp float fragmentAlpha = Opacity * maskColor.a;
+            gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
+        }
+    );
+
 static const char* vertexShaderSourceOpacityAndMask =
     VERTEX_SHADER(
         uniform mat4 InMatrix, InSourceMatrix;
@@ -76,6 +90,18 @@ static const char* fragmentShaderSourceSimple =
         void main(void)
         {
             lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
+            gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
+        }
+    );
+
+static const char* fragmentShaderSourceRectSimple =
+    FRAGMENT_SHADER(
+        uniform sampler2DRect SourceTexture;
+        uniform lowp float Opacity;
+        varying highp vec2 OutTexCoordSource;
+        void main(void)
+        {
+            lowp vec4 color = texture2DRect(SourceTexture, OutTexCoordSource);
             gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
         }
     );
@@ -131,8 +157,14 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProg
     case Simple:
         program = TextureMapperShaderProgramSimple::create();
         break;
+    case RectSimple:
+        program = TextureMapperShaderProgramRectSimple::create();
+        break;
     case OpacityAndMask:
         program = TextureMapperShaderProgramOpacityAndMask::create();
+        break;
+    case RectOpacityAndMask:
+        program = TextureMapperShaderProgramRectOpacityAndMask::create();
         break;
     case SolidColor:
         program = TextureMapperShaderProgramSolidColor::create();
@@ -186,10 +218,13 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
 
 PassRefPtr<TextureMapperShaderProgramSimple> TextureMapperShaderProgramSimple::create()
 {
-    return adoptRef(new TextureMapperShaderProgramSimple());
+    RefPtr<TextureMapperShaderProgramSimple> program = adoptRef(new TextureMapperShaderProgramSimple());
+    // Avoid calling virtual functions in constructor.
+    program->initialize();
+    return program.release();
 }
 
-TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
+void TextureMapperShaderProgramSimple::initialize()
 {
     initializeProgram();
     getUniformLocation(m_sourceMatrixVariable, "InSourceMatrix");
@@ -215,10 +250,13 @@ void TextureMapperShaderProgramSimple::prepare(float opacity, const BitmapTextur
 
 PassRefPtr<TextureMapperShaderProgramSolidColor> TextureMapperShaderProgramSolidColor::create()
 {
-    return adoptRef(new TextureMapperShaderProgramSolidColor());
+    RefPtr<TextureMapperShaderProgramSolidColor> program = adoptRef(new TextureMapperShaderProgramSolidColor());
+    // Avoid calling virtual functions in constructor.
+    program->initialize();
+    return program.release();
 }
 
-TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor()
+void TextureMapperShaderProgramSolidColor::initialize()
 {
     initializeProgram();
     getUniformLocation(m_matrixVariable, "InMatrix");
@@ -235,12 +273,28 @@ const char* TextureMapperShaderProgramSolidColor::fragmentShaderSource() const
     return fragmentShaderSourceSolidColor;
 }
 
-PassRefPtr<TextureMapperShaderProgramOpacityAndMask> TextureMapperShaderProgramOpacityAndMask::create()
+PassRefPtr<TextureMapperShaderProgramRectSimple> TextureMapperShaderProgramRectSimple::create()
 {
-    return adoptRef(new TextureMapperShaderProgramOpacityAndMask());
+    RefPtr<TextureMapperShaderProgramRectSimple> program = adoptRef(new TextureMapperShaderProgramRectSimple());
+    // Avoid calling virtual functions in constructor.
+    program->initialize();
+    return program.release();
 }
 
-TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask()
+const char* TextureMapperShaderProgramRectSimple::fragmentShaderSource() const
+{
+    return fragmentShaderSourceRectSimple;
+}
+
+PassRefPtr<TextureMapperShaderProgramOpacityAndMask> TextureMapperShaderProgramOpacityAndMask::create()
+{
+    RefPtr<TextureMapperShaderProgramOpacityAndMask> program = adoptRef(new TextureMapperShaderProgramOpacityAndMask());
+    // Avoid calling virtual functions in constructor.
+    program->initialize();
+    return program.release();
+}
+
+void TextureMapperShaderProgramOpacityAndMask::initialize()
 {
     initializeProgram();
     getUniformLocation(m_matrixVariable, "InMatrix");
@@ -271,6 +325,19 @@ void TextureMapperShaderProgramOpacityAndMask::prepare(float opacity, const Bitm
     glBindTexture(GL_TEXTURE_2D, maskTextureGL->id());
     glUniform1i(m_maskTextureVariable, 1);
     glActiveTexture(GL_TEXTURE0);
+}
+
+PassRefPtr<TextureMapperShaderProgramRectOpacityAndMask> TextureMapperShaderProgramRectOpacityAndMask::create()
+{
+    RefPtr<TextureMapperShaderProgramRectOpacityAndMask> program = adoptRef(new TextureMapperShaderProgramRectOpacityAndMask());
+    // Avoid calling virtual functions in constructor.
+    program->initialize();
+    return program.release();
+}
+
+const char* TextureMapperShaderProgramRectOpacityAndMask::fragmentShaderSource() const
+{
+    return fragmentShaderSourceRectOpacityAndMask;
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()
