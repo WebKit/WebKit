@@ -1,3 +1,15 @@
+2012-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Use -Werror only in developer builds
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        In production builds -Werror with custom toolchains and wierd system
+        headers, -Werror is of no use and just creates confusion. So use it
+        only if Qt is configured with -developer-build.
+
+        * Source/api.pri: qt_developer_build determination moved to default_pre.prf
+
 2012-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Move QObject bridge related tests from tst_qwebframe to tst_qobjectbridge

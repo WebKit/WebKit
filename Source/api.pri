@@ -42,10 +42,6 @@ haveQt(5) {
     # have to make sure the rpath/install_name of the libraries are relative
     # to the webkit build dir.
 
-    # We use private_tests to detect developer build, since the destdir will
-    # always be our webkit build dir. This might change as configure changes.
-    contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
-
     !build_pass {
         # Make a more accessible copy of the module forward file
         # in the WebKit build directory.

@@ -1,3 +1,17 @@
+2012-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Use -Werror only in developer builds
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        In production builds -Werror with custom toolchains and wierd system
+        headers, -Werror is of no use and just creates confusion. So use it
+        only if Qt is configured with -developer-build.
+
+        * qmake/mkspecs/features/default_pre.prf: Move qt_developer_build determination here...
+        * qmake/mkspecs/features/unix/default_post.prf: ... so that we can use it here to do -Werror
+        only if qt_developer_build is set.
+
 2012-06-01  Jochen Eisinger  <jochen@chromium.org>
 
         [watchlist] Add myself to loader and v8 bindings changes

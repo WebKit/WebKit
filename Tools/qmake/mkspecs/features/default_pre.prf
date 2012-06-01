@@ -109,6 +109,10 @@ haveQt(5): {
     }
 }
 
+# We use private_tests to detect developer build, since the destdir will
+# always be our webkit build dir. This might change as configure changes.
+contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
+
 haveQt(4) {
     # Qt5 will automatically load the module files for us, but for Qt4
     # we have to do it manually so that the various QT.webkit.foo names
