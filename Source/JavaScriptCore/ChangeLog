@@ -1,3 +1,14 @@
+2012-05-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSGlobalObject does not mark m_privateNameStructure
+        https://bugs.webkit.org/show_bug.cgi?id=88023
+
+        Rubber stamped by Gavin Barraclough.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren): We need to mark this so it doesn't get 
+        inadvertently garbage collected.
+
 2012-05-31  Erik Arvidsson  <arv@chromium.org>
 
         Make DOM Exceptions Errors

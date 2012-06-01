@@ -390,6 +390,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitIfNeeded(visitor, &thisObject->m_boundFunctionStructure);
     visitIfNeeded(visitor, &thisObject->m_namedFunctionStructure);
     visitIfNeeded(visitor, &thisObject->m_numberObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_privateNameStructure);
     visitIfNeeded(visitor, &thisObject->m_regExpMatchesArrayStructure);
     visitIfNeeded(visitor, &thisObject->m_regExpStructure);
     visitIfNeeded(visitor, &thisObject->m_stringObjectStructure);
