@@ -42,7 +42,7 @@ public:
 private:
     HTMLIntentElement(const QualifiedName&, Document*);
 
-    virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
 };
 
 } // namespace WebCore

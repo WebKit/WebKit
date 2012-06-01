@@ -1,3 +1,15 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL port does not enable WEB_INTENTS_TAG flag
+        https://bugs.webkit.org/show_bug.cgi?id=86866
+
+        Reviewed by Adam Barth.
+
+        Unskip webintents/intent-tag.html now that the WEB_INTENTS_TAG flag is
+        enabled by default on EFL port.
+
+        * platform/efl/test_expectations.txt:
+
 2012-06-01  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Pixel artifacts can be seen on reflections

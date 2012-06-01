@@ -1,3 +1,20 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL port does not enable WEB_INTENTS_TAG flag
+        https://bugs.webkit.org/show_bug.cgi?id=86866
+
+        Reviewed by Adam Barth.
+
+        Catch new "intent,service,register" signal on the frame and print out
+        information about the Web Intent service in EFL's DumpRenderTree.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameIntentServiceRegistration):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-06-01  Martin Robinson  <mrobinson@igalia.com>
 
         The ChangeLog parser cannot handle reviewers with initials in their name

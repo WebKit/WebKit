@@ -655,9 +655,6 @@ BUGWK84167 : editing/selection/inline-table.html = IMAGE+TEXT
 BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 
-// Incomplete Web Intents support
-BUGWK86866 SKIP : webintents/intent-tag.html = TEXT
-
 // EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
 

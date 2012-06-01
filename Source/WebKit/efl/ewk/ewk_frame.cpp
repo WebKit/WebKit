@@ -1587,6 +1587,19 @@ void ewk_frame_intent_new(Evas_Object* ewkFrame, Ewk_Intent_Request* request)
 
 /**
  * @internal
+ * Reports an intent service registration.
+ *
+ * Emits signal: "intent,service,register" with pointer to a Ewk_Intent_Service_Info.
+ */
+void ewk_frame_intent_service_register(Evas_Object* ewkFrame, Ewk_Intent_Service_Info* info)
+{
+#if ENABLE(WEB_INTENTS_TAG)
+    evas_object_smart_callback_call(ewkFrame, "intent,service,register", info);
+#endif
+}
+
+/**
+ * @internal
  *
  * Reports contents size changed.
  */

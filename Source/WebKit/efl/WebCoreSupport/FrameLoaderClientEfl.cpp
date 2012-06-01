@@ -1051,6 +1051,21 @@ void FrameLoaderClientEfl::dispatchIntent(PassRefPtr<WebCore::IntentRequest> int
 }
 #endif
 
+#if ENABLE(WEB_INTENTS_TAG)
+void FrameLoaderClientEfl::registerIntentService(const String& action, const String& type, const KURL& href, const String& title, const String& disposition)
+{
+    CString actionStr = action.utf8();
+    CString typeStr = type.utf8();
+    CString hrefStr = href.string().utf8();
+    CString titleStr = title.utf8();
+    CString dispositionStr = disposition.utf8();
+
+    Ewk_Intent_Service_Info serviceInfo = { actionStr.data(), typeStr.data(), hrefStr.data(), titleStr.data(), dispositionStr.data() };
+
+    ewk_frame_intent_service_register(m_frame, &serviceInfo);
+}
+#endif
+
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientEfl::createNetworkingContext()
 {
     return FrameNetworkingContextEfl::create(EWKPrivate::coreFrame(m_frame), m_frame);

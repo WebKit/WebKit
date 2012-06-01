@@ -41,6 +41,7 @@
  *    contents were changed
  *  - "icon,changed", void: frame favicon changed.
  *  - "intent,new", Ewk_Intent_Request*: reports new intent.
+ *  - "intent,service,register", Ewk_Intent_Service_Info*: reports new intent service registration.
  *  - "load,committed", void: reports load committed.
  *  - "load,document,finished", void: frame finished loading the document.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
@@ -181,6 +182,17 @@ typedef struct _Ewk_Frame_Xss_Notification Ewk_Frame_Xss_Notification;
 struct _Ewk_Frame_Xss_Notification {
     const char *insecure_url; /**< insecure url of the document */
     Eina_Bool is_entire_page_blocked; /** < indicates if the entire page was blocked by XSSAuditor */
+};
+
+/// Creates a type name for Ewk_Intent_Service_Info.
+typedef struct _Ewk_Intent_Service_Info Ewk_Intent_Service_Info;
+
+struct _Ewk_Intent_Service_Info {
+    const char *action; /**< an opaque string indicating the behavior class the service supports. */
+    const char *type; /**< a string specifying the type of payload data the service can accept. */
+    const char *href; /**< service URI. */
+    const char *title; /**< A human-readable title for the service. */
+    const char *disposition; /**< A hint about whether the service can be run "inline" or in a new "window". */
 };
 
 /// Enum containing hit test data types

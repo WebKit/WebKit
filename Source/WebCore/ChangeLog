@@ -1,3 +1,22 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL port does not enable WEB_INTENTS_TAG flag
+        https://bugs.webkit.org/show_bug.cgi?id=86866
+
+        Reviewed by Adam Barth.
+
+        Fix compilation error when WEB_INTENTS_TAG flag is enabled.
+        HTMLElement::insertedInto() takes a ContainerNode* in argument, not a
+        Node*.
+
+        Test: webintents/intent-tag.html
+
+        * CMakeLists.txt:
+        * html/HTMLIntentElement.cpp:
+        (WebCore::HTMLIntentElement::insertedInto):
+        * html/HTMLIntentElement.h:
+        (HTMLIntentElement):
+
 2012-06-01  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Pixel artifacts can be seen on reflections

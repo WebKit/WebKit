@@ -51,7 +51,7 @@ PassRefPtr<HTMLIntentElement> HTMLIntentElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIntentElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLIntentElement::insertedInto(Node* insertionPoint)
+Node::InsertionNotificationRequest HTMLIntentElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
 

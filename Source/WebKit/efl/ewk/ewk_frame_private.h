@@ -70,6 +70,7 @@ bool ewk_frame_uri_changed(Evas_Object* ewkFrame);
 void ewk_frame_force_layout(Evas_Object* ewkFrame);
 void ewk_frame_icon_changed(Evas_Object* ewkFrame);
 void ewk_frame_intent_new(Evas_Object* ewkFrame, Ewk_Intent_Request* request);
+void ewk_frame_intent_service_register(Evas_Object* ewkFrame, Ewk_Intent_Service_Info* info);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 

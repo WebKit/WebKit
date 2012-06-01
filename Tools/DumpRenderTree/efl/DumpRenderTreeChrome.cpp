@@ -116,6 +116,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     Evas_Object* mainFrame = ewk_view_frame_main_get(view);
     evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(mainFrame, "intent,new", onFrameIntentNew, 0);
+    evas_object_smart_callback_add(mainFrame, "intent,service,register", onFrameIntentServiceRegistration, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
@@ -536,6 +537,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
 
     evas_object_smart_callback_add(frame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(frame, "intent,new", onFrameIntentNew, 0);
+    evas_object_smart_callback_add(frame, "intent,service,register", onFrameIntentServiceRegistration, 0);
     evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(frame, "load,provisional,failed", onFrameProvisionalLoadFailed, 0);
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
@@ -731,4 +733,15 @@ void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo
         printf("Have suggestion %s\n", static_cast<char*>(data));
         free(data);
     }
+}
+
+void DumpRenderTreeChrome::onFrameIntentServiceRegistration(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Intent_Service_Info* serviceInfo = static_cast<Ewk_Intent_Service_Info*>(eventInfo);
+    printf("Registered Web Intent Service: action=%s type=%s title=%s url=%s disposition=%s\n",
+           serviceInfo->action,
+           serviceInfo->type,
+           serviceInfo->title,
+           serviceInfo->href,
+           serviceInfo->disposition);
 }
