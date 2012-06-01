@@ -82,8 +82,7 @@ public:
     void pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize);
 
 private Q_SLOTS:
-    // Respond to changes of content that are not driven by us, like the page resizing itself.
-    void pageItemSizeChanged();
+    // Respond to changes of position that are not driven by us.
     void pageItemPositionChanged();
 
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);

@@ -163,8 +163,6 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(WebKit::WebPageProxy* p
     , m_lastCommittedScale(-1)
     , m_zoomOutScale(0.0)
 {
-    connect(m_pageItem, SIGNAL(widthChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
-    connect(m_pageItem, SIGNAL(heightChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementStarted()), SLOT(flickMoveStarted()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementEnded()), SLOT(flickMoveEnded()), Qt::DirectConnection);
 
@@ -736,21 +734,6 @@ void QtViewportInteractionEngine::viewportItemSizeChanged()
     m_webPageProxy->setViewportSize(viewportSize);
 
     informVisibleContentChange(QPointF());
-}
-
-/*
- * This is called for all changes of item scale, width or height.
- * This is called when interacting, ie. during for instance pinch-zooming.
- *
- * FIXME: This is currently called twice if you concurrently change width and height.
- */
-void QtViewportInteractionEngine::pageItemSizeChanged()
-{
-    if (m_suspendCount)
-        return;
-
-    ViewportUpdateDeferrer guard(this);
-    setPageItemRectVisible(nearestValidBounds());
 }
 
 void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)
