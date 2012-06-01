@@ -131,7 +131,7 @@ void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
 
 void LayerTreeHostProxy::setContentsSize(const FloatSize& contentsSize)
 {
-    m_renderer->setContentsSize(contentsSize);
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setContentsSize, m_renderer.get(), contentsSize));
 }
 
 void LayerTreeHostProxy::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector, const WebCore::FloatPoint& accurateVisibleContentsPosition)
