@@ -782,7 +782,7 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
 #if USE(LEGACY_VIEWPORT_ADAPTION)
         ASSERT(m_viewportArguments.type == ViewportArguments::Implicit);
         if (m_docType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
-            processViewport("width=device-width, height=device-height, initial-scale=1");
+            processViewport("width=device-width, height=device-height", ViewportArguments::XHTMLMobileProfile);
 #endif
     }
     // Doctype affects the interpretation of the stylesheets.
@@ -3036,11 +3036,14 @@ void Document::processArguments(const String& features, void* data, ArgumentsCal
     }
 }
 
-void Document::processViewport(const String& features)
+void Document::processViewport(const String& features, ViewportArguments::Type origin)
 {
     ASSERT(!features.isNull());
 
-    m_viewportArguments = ViewportArguments(ViewportArguments::ViewportMeta);
+    if (origin < m_viewportArguments.type)
+        return;
+
+    m_viewportArguments = ViewportArguments(origin);
     processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
 
     updateViewportArguments();

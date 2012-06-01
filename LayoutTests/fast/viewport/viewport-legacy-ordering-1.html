@@ -1,0 +1,14 @@
+<head>
+    <title>Viewport, HandheldFriendly Meta.</title>
+    <meta name="viewport" content="width=300">
+    <meta name="HandheldFriendly" content="true">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(160, 320, 480, 320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

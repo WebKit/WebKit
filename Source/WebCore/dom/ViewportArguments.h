@@ -57,7 +57,13 @@ struct ViewportAttributes {
 struct ViewportArguments {
 
     enum Type {
+        // These are ordered in increasing importance.
         Implicit,
+#if USE(LEGACY_VIEWPORT_ADAPTION)
+        XHTMLMobileProfile,
+        HandheldFriendlyMeta,
+        MobileOptimizedMeta,
+#endif
         ViewportMeta
     } type;
 
