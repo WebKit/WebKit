@@ -1,3 +1,11 @@
+2012-06-01  Stephen Chenney  <schenney@chromium.org>
+
+        Another Chromium test expectation update per the bug 88124.
+
+        Unreviewed Chromium test expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-06-01  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed rebaseline of svg/css/getComputedStyle-basic for mac.
