@@ -187,8 +187,10 @@ Page::~Page()
     setGroupName(String());
     allPages->remove(this);
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        frame->willDetachPage();
         frame->detachFromPage();
+    }
 
     m_editorClient->pageDestroyed();
     if (m_alternativeTextClient)
