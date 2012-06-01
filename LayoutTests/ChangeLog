@@ -1,3 +1,17 @@
+2012-06-01  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Indenting a paragraph that begins with a link 3 times breaks the paragraph into two paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=87428
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding two tests for indenting nested inlines.
+
+        * editing/execCommand/indent-nested-inlines-1-expected.txt: Added.
+        * editing/execCommand/indent-nested-inlines-1.html: Added.
+        * editing/execCommand/indent-nested-inlines-2-expected.txt: Added.
+        * editing/execCommand/indent-nested-inlines-2.html: Added.
+
 2012-06-01  Ami Fischman  <fischman@chromium.org>
 
         [chromium] Unskip http/tests/media/video-buffered.html

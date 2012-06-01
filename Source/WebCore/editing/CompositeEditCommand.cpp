@@ -967,17 +967,14 @@ void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
 void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Position& end, Node* passedOuterNode, Element* blockElement)
 {
     // First we clone the outerNode
-    RefPtr<Node> topNode;
     RefPtr<Node> lastNode;
     RefPtr<Node> outerNode = passedOuterNode;
 
     if (outerNode->isRootEditableElement()) {
-        topNode = blockElement;
         lastNode = blockElement;
     } else {
-        topNode = outerNode->cloneNode(isTableElement(outerNode.get()));
-        appendNode(topNode, blockElement);
-        lastNode = topNode;
+        lastNode = outerNode->cloneNode(isTableElement(outerNode.get()));
+        appendNode(lastNode, blockElement);
     }
 
     if (start.deprecatedNode() != outerNode && lastNode->isElementNode()) {
@@ -1002,21 +999,26 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     
     if (start.deprecatedNode() != end.deprecatedNode() && !start.deprecatedNode()->isDescendantOf(end.deprecatedNode())) {
         // If end is not a descendant of outerNode we need to
-        // find the first common ancestor and adjust the insertion
-        // point accordingly.
+        // find the first common ancestor to increase the scope
+        // of our nextSibling traversal.
         while (!end.deprecatedNode()->isDescendantOf(outerNode.get())) {
             outerNode = outerNode->parentNode();
-            topNode = topNode->parentNode();
         }
 
-        for (Node* n = start.deprecatedNode()->traverseNextSibling(outerNode.get()); n; n = n->traverseNextSibling(outerNode.get())) {
-            if (n->parentNode() != start.deprecatedNode()->parentNode())
-                lastNode = topNode->lastChild();
+        Node* startNode = start.deprecatedNode();
+        for (Node* node = startNode->traverseNextSibling(outerNode.get()); node; node = node->traverseNextSibling(outerNode.get())) {
+            // Move lastNode up in the tree as much as node was moved up in the
+            // tree by traverseNextSibling, so that the relative depth between
+            // node and the original start node is maintained in the clone.
+            while (startNode->parentNode() != node->parentNode()) {
+                startNode = startNode->parentNode();
+                lastNode = lastNode->parentNode();
+            }
 
-            RefPtr<Node> clonedNode = n->cloneNode(true);
+            RefPtr<Node> clonedNode = node->cloneNode(true);
             insertNodeAfter(clonedNode, lastNode);
             lastNode = clonedNode.release();
-            if (n == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(n))
+            if (node == end.deprecatedNode() || end.deprecatedNode()->isDescendantOf(node))
                 break;
         }
     }
