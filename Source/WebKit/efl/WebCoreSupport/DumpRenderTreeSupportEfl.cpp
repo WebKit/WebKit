@@ -690,6 +690,21 @@ WebCore::MessagePortChannelArray* DumpRenderTreeSupportEfl::intentMessagePorts(c
 #endif
 }
 
+void DumpRenderTreeSupportEfl::deliverWebIntent(Evas_Object* ewkFrame, JSStringRef action, JSStringRef type, JSStringRef data)
+{
+#if ENABLE(WEB_INTENTS)
+    RefPtr<WebCore::SerializedScriptValue> serializedData = WebCore::SerializedScriptValue::create(String(data->ustring().impl()));
+    WebCore::ExceptionCode ec = 0;
+    WebCore::MessagePortArray ports;
+    RefPtr<WebCore::Intent> coreIntent = WebCore::Intent::create(String(action->ustring().impl()), String(type->ustring().impl()), serializedData.get(), ports, ec);
+    if (ec)
+        return;
+    Ewk_Intent* ewkIntent = ewk_intent_new(coreIntent.get());
+    ewk_frame_intent_deliver(ewkFrame, ewkIntent);
+    ewk_intent_free(ewkIntent);
+#endif
+}
+
 void DumpRenderTreeSupportEfl::setComposition(Evas_Object* ewkView, const char* text, int start, int length)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);

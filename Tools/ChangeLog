@@ -1,3 +1,31 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController needs to implement deliverWebIntent
+        https://bugs.webkit.org/show_bug.cgi?id=86865
+
+        Reviewed by Adam Barth.
+
+        Add deliverWebIntent method to LayoutTestController and provide
+        implementation for EFL port.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (deliverWebIntentCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::deliverWebIntent):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::deliverWebIntent):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::deliverWebIntent):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::deliverWebIntent):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::deliverWebIntent):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::deliverWebIntent):
+
 2012-06-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make Qt Creator aware of files in webkitpy/perl for easy editing

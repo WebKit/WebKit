@@ -81,6 +81,7 @@
 #ifndef ewk_frame_h
 #define ewk_frame_h
 
+#include "ewk_intent.h"
 #include "ewk_security_origin.h"
 
 #include <Evas.h>
@@ -700,6 +701,14 @@ EAPI void          ewk_frame_hit_test_free(Ewk_Hit_Test *hit_test);
  * @return a newly allocated hit test on success, @c 0 otherwise
  */
 EAPI Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object *o, int x, int y);
+
+/**
+ * Delivers an intent to a target service page in the frame.
+ *
+ * @param o frame object to deliver the intent to.
+ * @param ewkIntent intent object to deliver.
+ */
+EAPI void ewk_frame_intent_deliver(const Evas_Object *o, Ewk_Intent *ewk_intent);
 
 /**
  * Sets a relative scroll of the given frame.

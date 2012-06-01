@@ -888,3 +888,8 @@ void LayoutTestController::sendWebIntentResponse(JSStringRef response)
 
     DumpRenderTreeSupportEfl::sendWebIntentResponse(request, response);
 }
+
+void LayoutTestController::deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data)
+{
+    DumpRenderTreeSupportEfl::deliverWebIntent(browser->mainFrame(), action, type, data);
+}

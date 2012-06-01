@@ -871,3 +871,8 @@ void LayoutTestController::sendWebIntentResponse(JSStringRef)
 {
     notImplemented();
 }
+
+void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+{
+    notImplemented();
+}

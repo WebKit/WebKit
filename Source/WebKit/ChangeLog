@@ -1,3 +1,15 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController needs to implement deliverWebIntent
+        https://bugs.webkit.org/show_bug.cgi?id=86865
+
+        Reviewed by Adam Barth.
+
+        Add "${WEBCORE_DIR}/dom/default" to include directories in
+        CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Implement PlatformStrategies

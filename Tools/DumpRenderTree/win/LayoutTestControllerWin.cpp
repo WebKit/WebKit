@@ -1497,3 +1497,8 @@ void LayoutTestController::sendWebIntentResponse(JSStringRef)
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+{
+    // FIXME: Implement this.
+}
