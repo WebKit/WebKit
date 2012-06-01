@@ -591,71 +591,51 @@ void GraphicsContext::strokePath(const Path& path)
         fillPathStroke(p, pathStroker, platformPath, pen.brush());
 }
 
-static inline void drawRepeatPattern(QPainter* p, QPixmap* image, const FloatRect& rect, const bool repeatX, const bool repeatY)
+static inline void drawRepeatPattern(QPainter* p, PassRefPtr<Pattern> pattern, const FloatRect& rect)
 {
+    ASSERT(pattern);
+
+    AffineTransform affine;
+    const QBrush brush = pattern->createPlatformPattern(affine);
+    if (brush.style() != Qt::TexturePattern)
+        return;
+
+    const bool repeatX = pattern->repeatX();
+    const bool repeatY = pattern->repeatY();
     // Patterns must be painted so that the top left of the first image is anchored at
     // the origin of the coordinate space
-    if (image) {
-        int w = image->width();
-        int h = image->height();
-        int startX, startY;
-        QRect r(static_cast<int>(rect.x()), static_cast<int>(rect.y()), static_cast<int>(rect.width()), static_cast<int>(rect.height()));
 
-        // startX, startY is the coordinate of the first image we need to put on the left-top of the rect
-        if (repeatX && repeatY) {
-            // repeat
-            // startX, startY is at the left top side of the left-top of the rect
-            startX = r.x() >=0 ? r.x() - (r.x() % w) : r.x() - (w - qAbs(r.x()) % w);
-            startY = r.y() >=0 ? r.y() - (r.y() % h) : r.y() - (h - qAbs(r.y()) % h);
-        } else {
-           if (!repeatX && !repeatY) {
-               // no-repeat
-               // only draw the image once at orgin once, check if need to draw
-               QRect imageRect(0, 0, w, h);
-               if (imageRect.intersects(r)) {
-                   startX = 0;
-                   startY = 0;
-               } else
-                   return;   
-           } else if (repeatX && !repeatY) {
-               // repeat-x
-               // startY is fixed, but startX change based on the left-top of the rect
-               QRect imageRect(r.x(), 0, r.width(), h);
-               if (imageRect.intersects(r)) {
-                   startX = r.x() >=0 ? r.x() - (r.x() % w) : r.x() - (w - qAbs(r.x()) % w);
-                   startY = 0;
-               } else
-                   return;
-           } else {
-               // repeat-y
-               // startX is fixed, but startY change based on the left-top of the rect
-               QRect imageRect(0, r.y(), w, r.height());
-               if (imageRect.intersects(r)) {
-                   startX = 0;
-                   startY = r.y() >=0 ? r.y() - (r.y() % h) : r.y() - (h - qAbs(r.y()) % h);
-               } else
-                   return;
-           }
-        }
+    QRectF targetRect(rect);
+    const int w = brush.texture().width();
+    const int h = brush.texture().height();
 
-        int x = startX;
-        int y = startY; 
-        do {
-            // repeat Y
-            do {
-                // repeat X
-                QRect   imageRect(x, y, w, h);
-                QRect   intersectRect = imageRect.intersected(r);
-                QPoint  destStart(intersectRect.x(), intersectRect.y());
-                QRect   sourceRect(intersectRect.x() - imageRect.x(), intersectRect.y() - imageRect.y(), intersectRect.width(), intersectRect.height());
+    ASSERT(p);
+    QRegion oldClip;
+    if (p->hasClipping())
+        oldClip = p->clipRegion();
 
-                p->drawPixmap(destStart, *image, sourceRect);
-                x += w;
-            } while (repeatX && x < r.x() + r.width());
-            x = startX;
-            y += h;
-        } while (repeatY && y < r.y() + r.height());
+    // The only type of transforms supported for the brush are translations.
+    ASSERT(!brush.transform().isRotating());
+
+    QRectF clip = targetRect;
+    QRectF patternRect = brush.transform().mapRect(QRectF(0, 0, w, h));
+    if (!repeatX) {
+        clip.setLeft(patternRect.left());
+        clip.setWidth(patternRect.width());
     }
+    if (!repeatY) {
+        clip.setTop(patternRect.top());
+        clip.setHeight(patternRect.height());
+    }
+    if (!repeatX || !repeatY)
+        p->setClipRect(clip);
+
+    p->fillRect(targetRect, brush);
+
+    if (!oldClip.isEmpty())
+        p->setClipRegion(oldClip);
+    else if (!repeatX || !repeatY)
+        p->setClipping(false);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -668,14 +648,13 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     ShadowBlur* shadow = shadowBlur();
 
     if (m_state.fillPattern) {
-        QPixmap* image = m_state.fillPattern->tileImage()->nativeImageForCurrentFrame();
         GraphicsContext* shadowContext = hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowContext) {
             QPainter* shadowPainter = shadowContext->platformContext();
-            drawRepeatPattern(shadowPainter, image, normalizedRect, m_state.fillPattern->repeatX(), m_state.fillPattern->repeatY());
+            drawRepeatPattern(shadowPainter, m_state.fillPattern, normalizedRect);
             shadow->endShadowLayer(this);
         }
-        drawRepeatPattern(p, image, normalizedRect, m_state.fillPattern->repeatX(), m_state.fillPattern->repeatY());
+        drawRepeatPattern(p, m_state.fillPattern, normalizedRect);
     } else if (m_state.fillGradient) {
         QBrush brush(*m_state.fillGradient->platformGradient());
         brush.setTransform(m_state.fillGradient->gradientSpaceTransform());

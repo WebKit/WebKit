@@ -1,3 +1,12 @@
+2012-06-01  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Support drawing a pattern with a translation.
+        https://bugs.webkit.org/show_bug.cgi?id=87025
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: fix the expected pixel result
+
 2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening failure case on EFL build bot

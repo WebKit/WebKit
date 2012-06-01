@@ -1,3 +1,21 @@
+2012-06-01  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Support drawing a pattern with a translation.
+        https://bugs.webkit.org/show_bug.cgi?id=87025
+
+        Drawing an SVG pattern that has its x or y attribute set
+        works by setting a transform on the Pattern.
+        We would ignore this by only taking into account the texture and
+        target rect.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        test: svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawRepeatPattern): refactored to take into account the translation set on the brush.
+        (WebCore::GraphicsContext::fillRect):
+
 2012-06-01  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r109729) [Form] Rendering of select/optgroup/option combination is too slow.
