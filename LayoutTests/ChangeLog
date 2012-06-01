@@ -1,5 +1,14 @@
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaseline after r119274.
+
+        * platform/chromium-linux/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/chromium-mac/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/chromium-win/fast/reflections/reflection-with-zoom-expected.png: Added.
+
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo in the expected result for the test added in r119281.119281
 
         * fast/js/dfg-cse-cfa-discrepancy-expected.txt:
