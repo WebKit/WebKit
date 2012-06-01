@@ -1,3 +1,19 @@
+2012-06-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Bad layout of "Override device metrics" controls in the Settings dialog
+        https://bugs.webkit.org/show_bug.cgi?id=88074
+
+        Reviewed by Yury Semikhatsky.
+
+        The "Override device metrics" controls are placed in a table, which gets too narrow. Give it a
+        "white-space: nowrap" to avoid wrapping individual cells.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen.prototype._createDeviceMetricsElement):
+        * inspector/front-end/elementsPanel.css:
+        * inspector/front-end/inspector.css:
+        (.nowrap):
+
 2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Implement PlatformStrategies

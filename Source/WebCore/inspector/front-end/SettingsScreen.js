@@ -603,7 +603,7 @@ WebInspector.SettingsScreen.prototype = {
             this._applyDeviceMetricsUserInput();
         }
 
-        var tableElement = fieldsetElement.createChild("table");
+        var tableElement = fieldsetElement.createChild("table", "nowrap");
 
         var rowElement = tableElement.createChild("tr");
         var cellElement = rowElement.createChild("td");

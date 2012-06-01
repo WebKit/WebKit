@@ -27,10 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#elements-content.nowrap {
-    white-space: nowrap;
-}
-
 #elements-content {
     padding-left: 0;
 }
