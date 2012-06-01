@@ -1,3 +1,13 @@
+2012-06-01  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform][Decimal] UInt128::operator/= calls makeUInt128 with wrong argument order
+        https://bugs.webkit.org/show_bug.cgi?id=88044
+
+        Reviewed by Kent Tamura.
+
+        * tests/DecimalTest.cpp:
+        (TEST_F): Add a new test for multiplication.
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

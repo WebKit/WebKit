@@ -168,7 +168,7 @@ UInt128& UInt128::operator/=(const uint32_t divisor)
     uint32_t quotient[4];
     uint32_t remainder = 0;
     for (int i = 3; i >= 0; --i) {
-        const uint64_t work = makeUInt64(remainder, dividend[i]);
+        const uint64_t work = makeUInt64(dividend[i], remainder);
         remainder = static_cast<uint32_t>(work % divisor);
         quotient[i] = static_cast<uint32_t>(work / divisor);
     }

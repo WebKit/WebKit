@@ -1,3 +1,18 @@
+2012-06-01  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform][Decimal] UInt128::operator/= calls makeUInt128 with wrong argument order
+        https://bugs.webkit.org/show_bug.cgi?id=88044
+
+        Reviewed by Kent Tamura.
+
+        This patch fixed wrong argument of makeUInt128 in UInt128::operator/= to get right
+        result for decimal multiplication.
+
+        Test: WebKit/chromium/tests/DecimalTest.cpp: Add new a new test case.
+
+        * platform/Decimal.cpp:
+        (WebCore::DecimalPrivate::UInt128::operator/=):
+
 2012-06-01  Adam Barth  <abarth@webkit.org>
 
         sandbox directive in X-WebKit-CSP header unable to create a unique origin

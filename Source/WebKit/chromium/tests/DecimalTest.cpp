@@ -646,6 +646,7 @@ TEST_F(DecimalTest, Multiplication)
     EXPECT_EQ(encode(2, 0, Negative), Decimal(-1) * Decimal(2));
     EXPECT_EQ(encode(99, 0, Positive), Decimal(99) * Decimal(1));
     EXPECT_EQ(encode(2500, 0, Positive), Decimal(-50) * Decimal(-50));
+    EXPECT_EQ(encode(1, 21, Positive), encode(UINT64_C(10000000000), 0, Positive) * encode(UINT64_C(100000000000), 0, Positive));
 }
 
 TEST_F(DecimalTest, MultiplicationBigExponent)
