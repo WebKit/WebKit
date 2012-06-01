@@ -1107,9 +1107,6 @@ BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 // Test is intentionally SLOW as we're waiting for a connection timeout.
 BUGCR73609 SLOW : http/tests/media/video-play-stall.html = TEXT PASS
 
-// We haven't implemented detailed buffered ranged yet.
-BUGCR103513 SKIP : http/tests/media/video-buffered.html = PASS
-
 // These refer to the webkitHasClosedCaptions / webkitSupportsFullscreen
 // methods on the media elements themselves. We're not going to implement them.
 WONTFIX SKIP : media/media-captions.html = TIMEOUT

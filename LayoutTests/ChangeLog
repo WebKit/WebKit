@@ -1,3 +1,14 @@
+2012-06-01  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] Unskip http/tests/media/video-buffered.html
+        https://bugs.webkit.org/show_bug.cgi?id=87568
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/video-buffered-expected.txt:
+        * http/tests/media/video-buffered.html:
+        * platform/chromium/test_expectations.txt:
+
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Chromium test expectation update per the bug 88124.

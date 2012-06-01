@@ -8,11 +8,11 @@
 <script src=../../media-resources/video-test.js></script>
 <script src=../../media-resources/media-file.js></script>
 <script>
-    function delayedSeek() {
+    waitForEvent("ended", ended);
+    waitForEvent('playing', function() {
         testExpected("video.buffered.length", 1, "==");
         run("video.currentTime = video.duration - 0.5");
-        waitForEvent("ended", ended);
-    }
+    });
 
     function ended() {
         testExpected("video.buffered.length", 2, "==");
@@ -21,11 +21,12 @@
 
     function start () {
         video = document.getElementById('video');
-        video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?nph=1&name=resources/counting-captioned.mov&throttle=20&type=video/quicktime";
+        var mediaFile = findMediaFile("audio", "../../../media/content/test");
+        var type = mimeTypeForExtension(mediaFile.split('.').pop());
+        video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?nph=1&name=" + mediaFile + "&throttle=100&type=" + type;
 
         video.play();
-        setTimeout(delayedSeek, 1000);
-     }
+    }
 </script>
 </body>
 </html>
