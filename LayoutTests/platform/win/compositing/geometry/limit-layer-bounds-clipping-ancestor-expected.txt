@@ -1,0 +1,23 @@
+top
+
+middlebottom
+top
+
+middlebottom
+(GraphicsLayer
+  (bounds 1570.00 5236.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 3140.00 10472.00)
+      (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 1
+        (GraphicsLayer
+          (position 21.00 21.00)
+          (bounds 100.00 100.00)
+        )
+      )
+    )
+  )
+)
+

@@ -1,3 +1,61 @@
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] Windows 7 Release Testers report many compositing failures
+        https://bugs.webkit.org/show_bug.cgi?id=88040
+
+        Part 1 of adding expected (failing?) results to get the bots greener.
+
+        * platform/win/compositing/geometry/flipped-writing-mode-expected.txt: Added.
+        * platform/win/compositing/geometry/foreground-layer-expected.txt: Added.
+        * platform/win/compositing/geometry/foreground-offset-change-expected.txt: Added.
+        * platform/win/compositing/geometry/horizontal-scroll-composited-expected.txt: Added.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Added.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Added.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-expected.txt: Added.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-opacity-transition-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * platform/win/compositing/geometry/outline-change-expected.txt: Added.
+        * platform/win/compositing/geometry/partial-layout-update-expected.txt: Added.
+        * platform/win/compositing/geometry/preserve-3d-switching-expected.txt: Added.
+        * platform/win/compositing/geometry/root-layer-update-expected.txt: Added.
+        * platform/win/compositing/geometry/tall-page-composited-expected.txt: Added.
+        * platform/win/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt: Added.
+        * platform/win/compositing/geometry/vertical-scroll-composited-expected.txt: Added.
+        * platform/win/compositing/geometry/video-opacity-overlay-expected.txt: Added.
+        * platform/win/compositing/iframes/become-composited-nested-iframes-expected.txt: Added.
+        * platform/win/compositing/iframes/become-overlapped-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/composited-iframe-alignment-expected.txt: Added.
+        * platform/win/compositing/iframes/composited-iframe-scroll-expected.txt: Added.
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * platform/win/compositing/iframes/enter-compositing-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-content-flipping-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-copy-on-scroll-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-in-composited-layer-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-resize-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-size-from-zero-expected.txt: Added.
+        * platform/win/compositing/iframes/invisible-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/invisible-nested-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Added.
+        * platform/win/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/win/compositing/iframes/layout-on-compositing-change-expected.txt: Added.
+        * platform/win/compositing/iframes/nested-iframe-scrolling-expected.txt: Added.
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/overlapped-iframe-iframe-expected.txt:
+        * platform/win/compositing/iframes/page-cache-layer-tree-expected.txt: Added.
+        * platform/win/compositing/iframes/resizer-expected.txt: Added.
+        * platform/win/compositing/iframes/scrolling-iframe-expected.txt: Added.
+
 2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a TEXT expectation for http/tests/media/video-buffered.html

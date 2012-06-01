@@ -1,0 +1,2 @@
+Text  
+FAIL: did not get clicked callback from iframe. (This test must be run in DRT.)

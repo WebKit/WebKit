@@ -1,0 +1,20 @@
+Test
+Fader
+(GraphicsLayer
+  (bounds 1570.00 1170.00)
+  (children 1
+    (GraphicsLayer
+      (position -19984.00 0.00)
+      (anchor 0.86 0.00)
+      (bounds 23124.00 2340.00)
+      (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 1
+        (GraphicsLayer
+          (position 19992.00 8.00)
+          (bounds 352.00 288.00)
+        )
+      )
+    )
+  )
+)
+
