@@ -1,3 +1,23 @@
+2012-05-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add RenderArena sizes to the memory pie-chart
+        https://bugs.webkit.org/show_bug.cgi?id=87971
+
+        Reviewed by Pavel Feldman.
+
+        Added allocated and used sizes of page render arenas to the memory
+        report returned by the InspectorMemoryAgent. Total allocated size of
+        the inspected page's render arenas will be displayed on the memory
+        pie-chart.
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::renderTreeInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
 2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: change type of injected script id from long to int

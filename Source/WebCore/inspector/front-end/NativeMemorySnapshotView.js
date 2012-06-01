@@ -201,6 +201,8 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("rgba(240, 240, 250, 0.8)", "ProcessPrivateMemory", "Total");
     addBlock("rgba(250, 200, 200, 0.8)", "JSHeapAllocated", "JavaScript heap");
     addBlock("rgba(200, 250, 200, 0.8)", "JSHeapUsed", "Used JavaScript heap");
+    addBlock("rgba(250, 250, 150, 0.8)", "RenderTreeAllocated", "Render tree");
+    addBlock("rgba(200, 150, 150, 0.8)", "RenderTreeUsed", "Render tree used");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)

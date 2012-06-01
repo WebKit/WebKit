@@ -63,6 +63,8 @@ namespace MemoryBlockName {
 static const char jsHeapAllocated[] = "JSHeapAllocated";
 static const char jsHeapUsed[] = "JSHeapUsed";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
+static const char renderTreeUsed[] = "RenderTreeUsed";
+static const char renderTreeAllocated[] = "RenderTreeAllocated";
 }
 
 namespace {
@@ -334,6 +336,22 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
     return jsHeapAllocated.release();
 }
 
+static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeInfo(Page* page)
+{
+    ArenaSize arenaSize = page->renderTreeSize();
+
+    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeAllocated = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::renderTreeAllocated);
+    renderTreeAllocated->setSize(static_cast<int>(arenaSize.allocated));
+
+    RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
+    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeUsed = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::renderTreeUsed);
+    renderTreeUsed->setSize(static_cast<int>(arenaSize.treeSize));
+    children->addItem(renderTreeUsed);
+
+    renderTreeAllocated->setChildren(children);
+    return renderTreeAllocated.release();
+}
+
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock>& processMemory)
 {
     size_t privateBytes = 0;
@@ -344,6 +362,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Web
 
     RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
     children->addItem(jsHeapInfo());
+    children->addItem(renderTreeInfo(m_page)); // TODO: collect for all pages?
     processMemory->setChildren(children);
 }
 
