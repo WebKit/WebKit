@@ -1223,9 +1223,6 @@ BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
 BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
 
-// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
-BUGWK79682 WIN MAC : svg/repaint/text-mask-update.svg = MISSING IMAGE+TEXT IMAGE TEXT PASS
-
 BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
 
 BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE

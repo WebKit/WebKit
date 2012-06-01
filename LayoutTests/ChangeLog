@@ -1,3 +1,13 @@
+2012-06-01  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed. Adding Win and Mac baselines after r119241.
+
+        * platform/chromium-mac/svg/repaint/text-mask-update-expected.png: Added.
+        * platform/chromium-mac/svg/repaint/text-mask-update-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/repaint/text-mask-update-expected.txt.
+        * platform/chromium-win/svg/repaint/text-mask-update-expected.png: Added.
+        * platform/chromium-win/svg/repaint/text-mask-update-expected.txt: Renamed from LayoutTests/platform/chromium-linux/svg/repaint/text-mask-update-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2012-06-01  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 9 plugin tests fail/time out
