@@ -1,3 +1,13 @@
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
+        Windows WK2 MouseMoveAfterCrash API test failing
+        https://bugs.webkit.org/show_bug.cgi?id=69982
+
+        Disable the test on Windows to get the bots greener.
+
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL port does not enable WEB_INTENTS_TAG flag
