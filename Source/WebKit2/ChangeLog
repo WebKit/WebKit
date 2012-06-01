@@ -2,6 +2,19 @@
 
         <rdar://problem/11335622> and https://bugs.webkit.org/show_bug.cgi?id=88119
         REGRESSION (r99448) Zero-sized plug-ins no longer get an NPP_SetWindow call
+        
+        Followup to r119260
+
+        Rubber-stamped by Anders Carlsson. 
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindow): Set the m_hasCalledSetWindow here...
+        (WebKit::NetscapePlugin::geometryDidChange): ...instead of here.
+
+2012-06-01  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11335622> and https://bugs.webkit.org/show_bug.cgi?id=88119
+        REGRESSION (r99448) Zero-sized plug-ins no longer get an NPP_SetWindow call
 
         Reviewed by Oliver Hunt.
 

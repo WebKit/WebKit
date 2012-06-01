@@ -507,6 +507,7 @@ void NetscapePlugin::callSetWindow()
     m_npWindow.clipRect.bottom = m_npWindow.clipRect.top + m_clipRect.height();
 
     NPP_SetWindow(&m_npWindow);
+    m_hasCalledSetWindow = true;
 }
 
 bool NetscapePlugin::shouldLoadSrcURL()
@@ -712,7 +713,6 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
         return;
 
     callSetWindow();
-    m_hasCalledSetWindow = true;
 }
 
 void NetscapePlugin::visibilityDidChange()
