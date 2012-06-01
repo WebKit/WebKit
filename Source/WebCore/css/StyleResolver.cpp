@@ -1389,8 +1389,14 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     }
 #endif
 
-    if (element->hasTagName(optionTag))
-        return false;
+    // Check attributes for :disabled, :enabeld, :checked, :default, CSS pseudo class.
+    if (element->hasTagName(optionTag)) {
+        HTMLOptionElement* thisOptionElement = toHTMLOptionElement(element);
+        HTMLOptionElement* otherOptionElement = toHTMLOptionElement(m_element);
+        if (thisOptionElement->isEnabledFormControl() != otherOptionElement->isEnabledFormControl()
+            || thisOptionElement->selected() != otherOptionElement->selected())
+            return false;
+    }
 
     if (element->hasTagName(optgroupTag) && m_element->disabled() != element->disabled())
         return false;

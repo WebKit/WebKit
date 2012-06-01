@@ -1,3 +1,20 @@
+2012-06-01  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r109729) [Form] Rendering of select/optgroup/option combination is too slow.
+        https://bugs.webkit.org/show_bug.cgi?id=88059
+
+        Reviewed by Kent Tamura.
+
+        This patch changes to share RenderStyle object among the "option" 
+        elements to improve rendering performance and reducing memory usage
+        of RenderStyle.
+
+        No new tests. This patch doesn't change behavior but rendering performance.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement): Check attribute value
+        mismatching for "option" element.
+
 2012-06-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] Bad layout of "Override device metrics" controls in the Settings dialog
