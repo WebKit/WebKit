@@ -1,3 +1,15 @@
+2012-06-01  Adam Barth  <abarth@webkit.org>
+
+        Overflow scrolling doesn't need to create a stacking context is the overflow is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=88057
+
+        Reviewed by James Robinson.
+
+        This patch causes us to match the iOS implementation of this feature.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Unreviewed compile fix for r119283

@@ -2071,7 +2071,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 #endif
 #if ENABLE(OVERFLOW_SCROLLING)
         // Touch overflow scrolling creates a stacking context.
-        || style->useTouchOverflowScrolling()
+        || ((style->overflowX() != OHIDDEN || style->overflowY() != OHIDDEN) && style->useTouchOverflowScrolling())
 #endif
         ))
         style->setZIndex(0);
