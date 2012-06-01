@@ -1,3 +1,10 @@
+2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r119196.
+
+        * platform/gtk/fast/dom/gc-attribute-node-expected.txt: Added.
+        * platform/gtk/test_expectations.txt: Also mark fast/replaced/border-radius-clip.html as flaky.
+
 2012-05-31  Dominic Cooney  <dominicc@chromium.org>
 
         [V8] Expando properties on attribute nodes disappear
