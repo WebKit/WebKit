@@ -1,3 +1,28 @@
+2012-06-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Move suspension to QtViewportInteractionEngine
+        https://bugs.webkit.org/show_bug.cgi?id=88078
+
+        Reviewed by Simon Hausmann.
+
+        Next step is to take care of visibility changes.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::ViewportUpdateDeferrer):
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::suspendPageContent):
+        (WebKit):
+        (WebKit::QtViewportInteractionEngine::resumePageContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][W2] Qml Error in ViewportInfoItem.qml in MiniBrowser

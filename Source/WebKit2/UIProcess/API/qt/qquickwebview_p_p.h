@@ -93,9 +93,6 @@ public:
     virtual void updateViewportSize() { }
     void updateTouchViewportSize();
 
-    virtual void _q_suspend() { }
-    virtual void _q_resume() { }
-
     virtual qreal zoomFactor() const { return 1; }
     virtual void setZoomFactor(qreal) { }
 
@@ -228,15 +225,11 @@ public:
     virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
     virtual void updateViewportSize();
 
-    virtual void _q_suspend();
-    virtual void _q_resume();
-
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);
 
 private:
     QScopedPointer<WebKit::QtViewportInteractionEngine> interactionEngine;
-    bool pageIsSuspended;
 };
 
 #endif // qquickwebview_p_p_h

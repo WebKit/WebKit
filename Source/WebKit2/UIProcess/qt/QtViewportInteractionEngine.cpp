@@ -72,10 +72,8 @@ public:
 
         // There is no need to suspend content for immediate updates
         // only during animations or longer gestures.
-        if (suspendContentFlag == DeferUpdateAndSuspendContent && !engine->m_hasSuspendedContent) {
-            engine->m_hasSuspendedContent = true;
-            emit engine->contentSuspendRequested();
-        }
+        if (suspendContentFlag == DeferUpdateAndSuspendContent)
+            engine->suspendPageContent();
     }
 
     ~ViewportUpdateDeferrer()
@@ -83,10 +81,7 @@ public:
         if (--(engine->m_suspendCount))
             return;
 
-        if (engine->m_hasSuspendedContent) {
-            engine->m_hasSuspendedContent = false;
-            emit engine->contentResumeRequested();
-        }
+        engine->resumePageContent();
 
         // Make sure that tiles all around the viewport will be requested.
         engine->informVisibleContentChange(QPointF());
@@ -95,6 +90,23 @@ public:
 private:
     QtViewportInteractionEngine* const engine;
 };
+
+void QtViewportInteractionEngine::suspendPageContent()
+{
+    if (m_hasSuspendedContent)
+        return;
+
+    m_hasSuspendedContent = true;
+    m_webPageProxy->suspendActiveDOMObjectsAndAnimations();
+}
+
+void QtViewportInteractionEngine::resumePageContent()
+{
+    if (!m_hasSuspendedContent)
+        return;
+    m_hasSuspendedContent = false;
+    m_webPageProxy->resumeActiveDOMObjectsAndAnimations();
+}
 
 // A floating point compare with absolute error.
 static inline bool fuzzyCompare(qreal a, qreal b, qreal epsilon)

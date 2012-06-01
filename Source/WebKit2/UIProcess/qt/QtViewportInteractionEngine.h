@@ -92,10 +92,6 @@ private Q_SLOTS:
     void flickMoveStarted(); // Called when panning starts.
     void flickMoveEnded(); //   Called when panning (+ kinetic animation) ends.
 
-Q_SIGNALS:
-    void contentSuspendRequested();
-    void contentResumeRequested();
-
 private:
     friend class ViewportUpdateDeferrer;
     friend class ::QWebKitTest;
@@ -123,6 +119,9 @@ private:
 
     QRectF computePosRangeForPageItemAtScale(qreal itemScale) const;
     void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
+
+    void suspendPageContent();
+    void resumePageContent();
 
     WebCore::ViewportAttributes m_rawAttributes;
 

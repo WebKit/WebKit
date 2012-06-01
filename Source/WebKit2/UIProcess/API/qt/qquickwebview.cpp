@@ -809,7 +809,6 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
-    , pageIsSuspended(false)
 {
     // Disable mouse events on the flickable web view so we do not
     // select text during pan gestures on platforms which send both
@@ -838,11 +837,6 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
     interactionEngine.reset(new QtViewportInteractionEngine(webPageProxy.get(), q, pageView.data()));
     pageView->eventHandler()->setViewportInteractionEngine(interactionEngine.data());
 
-    QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
-    QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
-
-    _q_resume();
-
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
 }
@@ -858,21 +852,6 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     // FIXME: Examine why there is not an interactionEngine here in the beginning.
     if (interactionEngine)
         interactionEngine->viewportItemSizeChanged();
-}
-
-void QQuickWebViewFlickablePrivate::_q_suspend()
-{
-    pageIsSuspended = true;
-    webPageProxy->suspendActiveDOMObjectsAndAnimations();
-}
-
-void QQuickWebViewFlickablePrivate::_q_resume()
-{
-    if (!interactionEngine)
-        return;
-
-    pageIsSuspended = false;
-    webPageProxy->resumeActiveDOMObjectsAndAnimations();
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
