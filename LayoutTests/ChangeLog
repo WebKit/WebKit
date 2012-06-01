@@ -1,3 +1,16 @@
+2012-05-31  Hans Muller  <hmuller@adobe.com>
+
+        Bug: Negative SVG rect rx,ry corner radii values aren't handled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=87859
+
+        Reviewed by Dirk Schulze.
+
+        Added a reftest which verifies that negative rect corner radius values are handled per the SVG spec, 
+        http://www.w3.org/TR/SVG/shapes.html#RectElement.
+
+        * svg/custom/rect-negative-corner-radii-expected.svg: Added.
+        * svg/custom/rect-negative-corner-radii.svg: Added.
+
 2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening. Skip fast/loader/opaque-base-url.html only on debug bots.

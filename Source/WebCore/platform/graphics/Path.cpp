@@ -105,13 +105,20 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii,
     FloatSize radius(roundingRadii);
     FloatSize halfSize(rect.width() / 2, rect.height() / 2);
 
-    // If rx is greater than half of the width of the rectangle
-    // then set rx to half of the width (required in SVG spec)
+    // Apply the SVG corner radius constraints, per the rect section of the SVG shapes spec: if
+    // one of rx,ry is negative, then the other corner radius value is used. If both values are 
+    // negative then rx = ry = 0. If rx is greater than half of the width of the rectangle
+    // then set rx to half of the width; ry is handled similarly.
+
+    if (radius.width() < 0)
+        radius.setWidth((radius.height() < 0) ? 0 : radius.height());
+
+    if (radius.height() < 0)
+        radius.setHeight(radius.width());
+
     if (radius.width() > halfSize.width())
         radius.setWidth(halfSize.width());
 
-    // If ry is greater than half of the height of the rectangle
-    // then set ry to half of the height (required in SVG spec)
     if (radius.height() > halfSize.height())
         radius.setHeight(halfSize.height());
 

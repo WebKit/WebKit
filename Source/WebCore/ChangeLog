@@ -1,3 +1,24 @@
+2012-05-31  Hans Muller  <hmuller@adobe.com>
+
+        Bug: Negative SVG rect rx,ry corner radii values aren't handled correctly
+        https://bugs.webkit.org/show_bug.cgi?id=87859
+
+        Reviewed by Dirk Schulze.
+
+        Added the rect element corner radius constraints specified in steps 2-4 of 
+        http://www.w3.org/TR/SVG/shapes.html#RectElement to Path::addRoundedRect().  
+        Support for steps 6 and 7 was already included.  Steps 2-4:
+
+        2 - If neither rx nor ry are properly specified, then set both rx and ry to 0. (This will result in square corners.)
+        3 - Otherwise, if a properly specified value is provided for rx, but not for ry then set both rx and ry to the value of rx.
+        4 - Otherwise, if a properly specified value is provided for ry, but not for rx, then set both rx and ry to the value of ry.
+
+        Tests: svg/custom/rect-negative-corner-radii-expected.svg
+               svg/custom/rect-negative-corner-radii.svg
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+
 2012-05-31  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Migrate to WebTransformationMatrix
