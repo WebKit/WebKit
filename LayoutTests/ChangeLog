@@ -1,3 +1,15 @@
+2012-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update test results after r119025
+
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt: Clearly incorrect results were
+        landed for this test, not sure how that happened (I cannot find these wrong results anywhere
+        in trunk history).
+
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt: Looks like this test was not updated
+        with others. The only observable difference is a slightly smaller width of an input field,
+        which matches what one could expect from the change.
+
 2012-05-31  Alexey Proskuryakov  <ap@apple.com>
 
         More result updating for disabling CSS Exclusions.
