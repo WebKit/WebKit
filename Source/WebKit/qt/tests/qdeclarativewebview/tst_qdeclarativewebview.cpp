@@ -477,30 +477,30 @@ void tst_QDeclarativeWebView::settings()
     QVERIFY(s);
 
     QStringList settingsList;
-    settingsList << QString::fromAscii("autoLoadImages")
-                 << QString::fromAscii("developerExtrasEnabled")
-                 << QString::fromAscii("javaEnabled")
-                 << QString::fromAscii("javascriptCanAccessClipboard")
-                 << QString::fromAscii("javascriptCanOpenWindows")
-                 << QString::fromAscii("javascriptEnabled")
-                 << QString::fromAscii("linksIncludedInFocusChain")
-                 << QString::fromAscii("localContentCanAccessRemoteUrls")
-                 << QString::fromAscii("localStorageDatabaseEnabled")
-                 << QString::fromAscii("offlineStorageDatabaseEnabled")
-                 << QString::fromAscii("offlineWebApplicationCacheEnabled")
-                 << QString::fromAscii("pluginsEnabled")
-                 << QString::fromAscii("printElementBackgrounds")
-                 << QString::fromAscii("privateBrowsingEnabled")
-                 << QString::fromAscii("zoomTextOnly");
+    settingsList << QString::fromLatin1("autoLoadImages")
+                 << QString::fromLatin1("developerExtrasEnabled")
+                 << QString::fromLatin1("javaEnabled")
+                 << QString::fromLatin1("javascriptCanAccessClipboard")
+                 << QString::fromLatin1("javascriptCanOpenWindows")
+                 << QString::fromLatin1("javascriptEnabled")
+                 << QString::fromLatin1("linksIncludedInFocusChain")
+                 << QString::fromLatin1("localContentCanAccessRemoteUrls")
+                 << QString::fromLatin1("localStorageDatabaseEnabled")
+                 << QString::fromLatin1("offlineStorageDatabaseEnabled")
+                 << QString::fromLatin1("offlineWebApplicationCacheEnabled")
+                 << QString::fromLatin1("pluginsEnabled")
+                 << QString::fromLatin1("printElementBackgrounds")
+                 << QString::fromLatin1("privateBrowsingEnabled")
+                 << QString::fromLatin1("zoomTextOnly");
 
     // Merely tests that setting gets stored (in QWebSettings), behavioural tests are in WebKit.
     for (int b = 0; b <= 1; b++) {
         bool value = !!b;
         foreach (const QString& name, settingsList)
-            s->setProperty(name.toAscii().data(), value);
+            s->setProperty(name.toLatin1().data(), value);
         for (int i = 0; i < 2; i++) {
             foreach (const QString& name, settingsList)
-                QCOMPARE(s->property(name.toAscii().data()).toBool(), value);
+                QCOMPARE(s->property(name.toLatin1().data()).toBool(), value);
         }
     }
 }

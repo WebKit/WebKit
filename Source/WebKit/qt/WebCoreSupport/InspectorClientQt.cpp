@@ -120,7 +120,7 @@ public:
         QString settingKey(settingStoragePrefix + QString(name));
         QString storedValueType = qsettings.value(settingKey + settingStorageTypeSuffix).toString();
         QVariant storedValue = qsettings.value(settingKey);
-        storedValue.convert(QVariant::nameToType(storedValueType.toAscii().data()));
+        storedValue.convert(QVariant::nameToType(storedValueType.toLatin1().data()));
         return variantToSetting(storedValue);
 #endif // QT_NO_SETTINGS
     }

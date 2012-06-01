@@ -287,7 +287,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
         if (!m_contentType.isEmpty())
             responseHeader.setContentType(QString::fromLatin1(m_contentType));
 
-        QByteArray asciiHeader = responseHeader.toString().toAscii();
+        QByteArray asciiHeader = responseHeader.toString().toLatin1();
         m_tcpConnection->write(asciiHeader);
 
         m_tcpConnection->write(response);
