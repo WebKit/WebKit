@@ -1,5 +1,14 @@
 2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening. Skip fast/loader/opaque-base-url.html only on debug bots.
+
+        The test hits an assertion which obviously only crashes the debug
+        bots.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unskip fast/multicol tests.
 
         Most tests were passing and just needed new baselines. Only skip
