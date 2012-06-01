@@ -1,3 +1,22 @@
+2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] <input type="number"> is not a spinbutton
+        https://bugs.webkit.org/show_bug.cgi?id=86846
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implemented adjustInnerSpinButtonStyle and
+        paintInnerSpinButton in RenderThemeEfl.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeStateFromForm):
+        (WebCore::RenderThemeEfl::edjeGroupFromFormType):
+        (WebCore::RenderThemeEfl::adjustInnerSpinButtonStyle):
+        (WebCore):
+        (WebCore::RenderThemeEfl::paintInnerSpinButton):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

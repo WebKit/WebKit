@@ -1,3 +1,22 @@
+2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] <input type="number"> is not a spinbutton
+        https://bugs.webkit.org/show_bug.cgi?id=86846
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implemented spinner widget.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/spinner/sp_bg.png: Added.
+        * DefaultTheme/widget/spinner/sp_down_default.png: Added.
+        * DefaultTheme/widget/spinner/sp_down_hover.png: Added.
+        * DefaultTheme/widget/spinner/sp_down_pressed.png: Added.
+        * DefaultTheme/widget/spinner/sp_up_default.png: Added.
+        * DefaultTheme/widget/spinner/sp_up_hover.png: Added.
+        * DefaultTheme/widget/spinner/sp_up_pressed.png: Added.
+        * DefaultTheme/widget/spinner/spinner.edc: Added.
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

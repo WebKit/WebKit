@@ -65,6 +65,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SeekBackwardButton,
     FullScreenButton,
 #endif
+    Spinner,
     FormTypeLast
 };
 
@@ -161,6 +162,9 @@ public:
     virtual void adjustSliderThumbSize(RenderStyle*) const;
 
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+
+    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     static void setDefaultFontSize(int fontsize);
 

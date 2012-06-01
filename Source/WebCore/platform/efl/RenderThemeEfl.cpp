@@ -295,7 +295,8 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
         "read-only",
         "default",
         "window-inactive",
-        "indeterminate"
+        "indeterminate",
+        "spinup"
     };
 
     edje_object_signal_emit(object, "reset", "");
@@ -579,6 +580,7 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("mediacontrol/seekbackward_button"),
         W("mediacontrol/fullscreen_button"),
 #endif
+        W("spinner"),
 #undef W
         0
     };
@@ -981,6 +983,20 @@ void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver* styleResolver, Render
 bool RenderThemeEfl::paintSearchField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchField, info, rect);
+}
+
+void RenderThemeEfl::adjustInnerSpinButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
+{
+    if (!m_page && element && element->document()->page()) {
+        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustInnerSpinButtonStyle(styleResolver, style, element);
+        return;
+    }
+    adjustSizeConstraints(style, Spinner);
+}
+
+bool RenderThemeEfl::paintInnerSpinButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    return paintThemePart(object, Spinner, info, rect);
 }
 
 void RenderThemeEfl::setDefaultFontSize(int size)

@@ -1,3 +1,14 @@
+2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] <input type="number"> is not a spinbutton
+        https://bugs.webkit.org/show_bug.cgi?id=86846
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip spinbutton layout tests.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Chromium test expectation of media/video-poster-blocked-by-willsendrequest.html to PASS TEXT

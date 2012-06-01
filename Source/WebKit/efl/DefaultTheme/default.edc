@@ -56,6 +56,7 @@ collections {
 #include "widget/search/cancel/search_cancel.edc"
 #include "widget/search/decoration/search_decoration.edc"
 #include "widget/slider/slider.edc"
+#include "widget/spinner/spinner.edc"
 #include "widget/mediacontrol/playpausebutton/playpause_button.edc"
 #include "widget/mediacontrol/mutebutton/mute_button.edc"
 #include "widget/mediacontrol/seekforwardbutton/seekforward_button.edc"
