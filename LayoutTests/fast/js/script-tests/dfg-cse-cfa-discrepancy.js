@@ -1,5 +1,5 @@
 description(
-"Tests stability when the CFA finds a constant in block-local data flow over captured variables but the CSE doesn't because if differences in heap modeling."
+"Tests stability when the CFA finds a constant in block-local data flow over captured variables but the CSE doesn't because of differences in heap modeling."
 );
 
 function foo(a, b) {
