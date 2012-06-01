@@ -56,19 +56,6 @@ EAPI const char *ewk_intent_action_get(const Ewk_Intent *intent);
 EAPI const char *ewk_intent_type_get(const Ewk_Intent *intent);
 
 /**
- * Query data for this intent.
- *
- * @param intent intent item to query.
- *
- * @return the data pointer, that may be @c NULL. This pointer is
- *         guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
- */
-EAPI const char *ewk_intent_data_get(const Ewk_Intent *intent);
-
-/**
  * Query service for this intent.
  *
  * @param intent intent item to query.

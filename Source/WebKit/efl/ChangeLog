@@ -1,5 +1,24 @@
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] ewk_intent_data_get() is not needed and can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=88072
+
+        Reviewed by Adam Barth.
+
+        Remove ewk_intent_data_get() method from Ewk_Intent. Intent data is
+        serialized and does not need to be publicly exposed. The browser only
+        needs action and type to match with services.
+
+        * ewk/ewk_intent.cpp:
+        (_Ewk_Intent):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_free):
+        * ewk/ewk_intent.h:
+
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] EFL's LayoutTestController needs to implement deliverWebIntent
         https://bugs.webkit.org/show_bug.cgi?id=86865
 

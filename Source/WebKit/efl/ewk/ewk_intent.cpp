@@ -22,7 +22,6 @@
 
 #include "Intent.h"
 #include "NotImplemented.h"
-#include "SerializedScriptValue.h"
 #include "ewk_intent_private.h"
 #include "ewk_private.h"
 #include <KURL.h>
@@ -40,7 +39,6 @@ struct _Ewk_Intent {
 #endif
     const char* action;
     const char* type;
-    const char* data;
     const char* service;
 };
 
@@ -60,7 +58,7 @@ const char* ewk_intent_action_get(const Ewk_Intent* intent)
 #if ENABLE(WEB_INTENTS)
     EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
 
-    // hide the following optimzation from outside
+    // hide the following optimization from outside
     Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
     eina_stringshare_replace(&ewkIntent->action,
                              core->action().utf8().data());
@@ -75,21 +73,11 @@ const char* ewk_intent_type_get(const Ewk_Intent* intent)
 #if ENABLE(WEB_INTENTS)
     EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
 
-    // hide the following optimzation from outside
+    // hide the following optimization from outside
     Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
     eina_stringshare_replace(&ewkIntent->type,
                              core->type().utf8().data());
     return ewkIntent->type;
-#else
-    return 0;
-#endif
-}
-
-const char* ewk_intent_data_get(const Ewk_Intent* intent)
-{
-#if ENABLE(WEB_INTENTS)
-    notImplemented();
-    return 0;
 #else
     return 0;
 #endif
@@ -100,7 +88,7 @@ const char* ewk_intent_service_get(const Ewk_Intent* intent)
 #if ENABLE(WEB_INTENTS)
     EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
 
-    // hide the following optimzation from outside
+    // hide the following optimization from outside
     Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
     eina_stringshare_replace(&ewkIntent->service,
                              core->service().string().utf8().data());
@@ -184,7 +172,6 @@ void ewk_intent_free(Ewk_Intent* intent)
 
     eina_stringshare_del(intent->action);
     eina_stringshare_del(intent->type);
-    eina_stringshare_del(intent->data);
     eina_stringshare_del(intent->service);
     delete intent;
 }
