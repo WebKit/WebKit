@@ -3794,3 +3794,4 @@ BUGWK87886 LINUX : perf/mouse-event.html = PASS TEXT
 
 BUGWK88123 LEOPARD DEBUG : media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html = PASS TIMEOUT
 
+BUGWK88124 DEBUG : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = PASS IMAGE+TEXT

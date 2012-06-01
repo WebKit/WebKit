@@ -1,5 +1,11 @@
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another Chromium test expectation update per the bug 88124.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium test expectation update.
 
         * platform/chromium/test_expectations.txt:
