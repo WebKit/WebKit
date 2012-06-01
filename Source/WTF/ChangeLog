@@ -1,3 +1,36 @@
+2012-05-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make conversion from QString to WTF::String (and back again) ~free
+
+        https://bugs.webkit.org/show_bug.cgi?id=87847
+
+        Instead of copying the QString data when converting to a WTF::String we
+        make the WTF::String adopt the QString data by introducing a new buffer
+        ownership type, and pointing the internal WTF::StringImpl 16-bit data
+        member to the string data managed by QStringData.
+
+        We make sure to reference the QStringData when adopting, so that the
+        data will stay alive, and then dereference it when the WTF::StringImpl
+        is deleted, which will free the QStringData (either straight away, if
+        we're the only one holding a reference still, or later, when the ref
+        count goes to 0).
+
+        In the case of going back from a WTF::String to a QString we can cheat
+        a bit (avoid a copy), if we know that the WTF::String was adopted from
+        a QString, since it's then just a matter of having the QString adopt
+        the existing QStringData (just like a regular QString copy).
+
+        If the WTF::String buffer is not owned by QStringData, eg a regular
+        8-bit or 16-bit string/substring, we have to fall back to copying,
+        as before (though there are potential optimization tricks we can
+        apply here later on).
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/qt/StringQt.cpp:
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+
 2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Implement PlatformStrategies

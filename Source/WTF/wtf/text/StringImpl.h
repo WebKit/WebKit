@@ -31,6 +31,10 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
+#if PLATFORM(QT) && HAVE(QT5)
+#include <QString>
+#endif
+
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
@@ -82,6 +86,10 @@ private:
         BufferInternal,
         BufferOwned,
         BufferSubstring,
+#if PLATFORM(QT) && HAVE(QT5)
+        BufferAdoptedQString
+#endif
+        // NOTE: Adding more ownership types needs to extend m_hashAndFlags as we're at capacity
     };
 
     // Used to construct static strings, which have an special refCount that can never hit zero.
@@ -215,6 +223,29 @@ private:
         m_hashAndFlags = hash | BufferInternal;
     }
 
+#if PLATFORM(QT) && HAVE(QT5)
+    // Used to create new strings that adopt an existing QString's data
+    enum ConstructAdoptedQStringTag { ConstructAdoptedQString };
+    StringImpl(QStringData* qStringData, ConstructAdoptedQStringTag)
+        : m_refCount(s_refCountIncrement)
+        , m_length(qStringData->size)
+        , m_data16(0)
+        , m_qStringData(qStringData)
+        , m_hashAndFlags(BufferAdoptedQString)
+    {
+        ASSERT(m_length);
+
+        // We ref the string-data to ensure it will be valid for the lifetime of
+        // this string. We then deref it in the destructor, so that the string
+        // data can eventually be freed.
+        m_qStringData->ref.ref();
+
+        // Now that we have a ref we can safely reference the string data
+        m_data16 = reinterpret_cast_ptr<const UChar*>(qStringData->data());
+        ASSERT(m_data16);
+    }
+#endif
+
 public:
     WTF_EXPORT_PRIVATE ~StringImpl();
 
@@ -308,6 +339,10 @@ public:
     static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>& buffer);
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>& buffer);
 
+#if PLATFORM(QT) && HAVE(QT5)
+    static PassRefPtr<StringImpl> adopt(QStringData*);
+#endif
+
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
 
@@ -366,6 +401,10 @@ public:
         else
             m_hashAndFlags &= ~s_hashFlagIsAtomic;
     }
+
+#if PLATFORM(QT) && HAVE(QT5)
+    QStringData* qStringData() { return bufferOwnership() == BufferAdoptedQString ? m_qStringData : 0; }
+#endif
 
 private:
     // The high bits of 'hash' are always empty, but we prefer to store our flags
@@ -591,6 +630,9 @@ private:
         void* m_buffer;
         StringImpl* m_substringBuffer;
         mutable UChar* m_copyData16;
+#if PLATFORM(QT) && HAVE(QT5)
+        QStringData* m_qStringData;
+#endif
     };
     mutable unsigned m_hashAndFlags;
 };
