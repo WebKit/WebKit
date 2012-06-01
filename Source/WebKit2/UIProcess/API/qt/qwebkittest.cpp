@@ -157,7 +157,7 @@ QVariant QWebKitTest::isScalable() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return !!viewport->m_rawAttributes.userScalable;
-    return true;
+    return false;
 }
 
 QVariant QWebKitTest::layoutSize() const

@@ -1,3 +1,15 @@
+2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Set QWebKitTest::isScalable default as false
+        https://bugs.webkit.org/show_bug.cgi?id=88095
+
+        Reviewed by Tor Arne Vestbø.
+
+        Set QWebKitTest::isScalable default as false
+
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::isScalable):
+
 2012-06-01  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Remove QtViewportInteractionEngine::pageItemSizeChanged.
