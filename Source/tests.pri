@@ -12,6 +12,7 @@ load(features)
 WEBKIT_TESTS_DIR = $$PWD/WebKit/qt/tests
 
 SUBDIRS += \
+    $$WEBKIT_TESTS_DIR/qobjectbridge \
     $$WEBKIT_TESTS_DIR/qwebframe \
     $$WEBKIT_TESTS_DIR/qwebpage \
     $$WEBKIT_TESTS_DIR/qwebelement \

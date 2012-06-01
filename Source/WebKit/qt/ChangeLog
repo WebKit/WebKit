@@ -1,3 +1,29 @@
+2012-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Move QObject bridge related tests from tst_qwebframe to tst_qobjectbridge
+        https://bugs.webkit.org/show_bug.cgi?id=88117
+
+        Reviewed by Noam Rosenthal.
+
+        Five tests (classEnums, classConstructor, transferInvokable, findObject and
+        findChildren) were removed since they contained commented code since the file was
+        added back in 2008. The QObject bridge tests were probably inspired in similar
+        tests for QtScript, so many features not yet implemented were present in QtWebKit
+        tests but commented.
+
+        Other minor changes:
+        - Moved MyEnumTestQObject near the only test function that uses it.
+        - Removed unnecessary Q_INVOKABLE from setBrushProperty.
+        - Removed some bits of dead / commented code.
+
+        * tests/qobjectbridge/qobjectbridge.pro: Added.
+        * tests/qobjectbridge/tst_qobjectbridge.cpp: Copied from Source/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp.
+        Kept only the tests related to QObject bridge implementation.
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame):
+        (tst_QWebFrame::init):
+        (tst_QWebFrame::cleanup):
+
 2012-06-01  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [Qt] Remove deprecated to/fromAscii()
