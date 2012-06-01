@@ -66,6 +66,16 @@ public:
         return m_rowIndex;
     }
 
+    const BorderValue& borderAdjoiningTableStart() const
+    {
+        return style()->borderStart();
+    }
+
+    const BorderValue& borderAdjoiningTableEnd() const
+    {
+        return style()->borderEnd();
+    }
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

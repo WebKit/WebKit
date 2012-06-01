@@ -1276,6 +1276,17 @@ unsigned RenderTableSection::numColumns() const
     return result + 1;
 }
 
+const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
+{
+    return cellAt(0, 0).primaryCell();
+}
+
+const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableEnd() const
+{
+    return cellAt(0, table()->numEffCols() - 1).primaryCell();
+}
+
+
 void RenderTableSection::appendColumn(unsigned pos)
 {
     ASSERT(!m_needsCellRecalc);

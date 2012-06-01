@@ -145,6 +145,16 @@ public:
         return table()->style();
     }
 
+    const BorderValue& borderAdjoiningTableStart() const
+    {
+        return style()->borderStart();
+    }
+
+    const BorderValue& borderAdjoiningTableEnd() const
+    {
+        return style()->borderEnd();
+    }
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

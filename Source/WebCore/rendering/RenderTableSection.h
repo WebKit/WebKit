@@ -114,6 +114,19 @@ public:
         Length logicalHeight;
     };
 
+    const BorderValue& borderAdjoiningTableStart() const
+    {
+        return style()->borderStart();
+    }
+
+    const BorderValue& borderAdjoiningTableEnd() const
+    {
+        return style()->borderEnd();
+    }
+
+    const RenderTableCell* firstRowCellAdjoiningTableStart() const;
+    const RenderTableCell* firstRowCellAdjoiningTableEnd() const;
+
     CellStruct& cellAt(unsigned row,  unsigned col) { return m_grid[row].row[col]; }
     const CellStruct& cellAt(unsigned row, unsigned col) const { return m_grid[row].row[col]; }
     RenderTableCell* primaryCellAt(unsigned row, unsigned col)

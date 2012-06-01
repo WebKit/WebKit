@@ -1,3 +1,47 @@
+2012-06-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Prepare table collapsed border computation to support mixed directionality on row group
+        https://bugs.webkit.org/show_bug.cgi?id=88110
+
+        Reviewed by Ojan Vafai.
+
+        No expected change in behavior.
+
+        One big issue with supporting mixed directionality inside a table is that the start / end
+        borders don't align between table parts anymore: the start border of a ltr table will have
+        to match the end border of a rtl row group for the purpose of collapsed border computation.
+
+        This change adds the concept of adjoining borders in the table direction so that we can safely
+        hide which exact borders we pick up for the collapsed border computation.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderStart):
+        (WebCore::RenderTable::calcBorderEnd):
+        Refactored those functions to use proper naming along with the new APIs. The name 'adjoining' is
+        used extensively as we cannot make any assumptions on which borders we will get.
+
+        (WebCore::RenderTable::recalcBordersInRowDirection):
+        Added a FIXME found during testing.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::borderAdjoiningTableStart):
+        (WebCore::RenderTableCell::borderAdjoiningTableEnd):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::borderAdjoiningTableStart):
+        (WebCore::RenderTableRow::borderAdjoiningTableEnd):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::borderAdjoiningTableStart):
+        (WebCore::RenderTableSection::borderAdjoiningTableEnd):
+        Those functions are the same at the moment to match the existing code. They
+        will be changed to use the proper directionality in a follow up patch.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstRowCellAdjoiningTableStart):
+        (WebCore::RenderTableSection::firstRowCellAdjoiningTableEnd):
+        Those functions return the cells that is adjoining a table edge. Due to us flipping
+        the cells at layout to match the section's direction, those functions will need to
+        account for mixed direction in determining the right cell to consider.
+
 2012-06-01  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Indenting a paragraph that begins with a link 3 times breaks the paragraph into two paragraphs
