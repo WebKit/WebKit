@@ -1,5 +1,17 @@
 2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, add missing text and image baselines for
+        fast/images/png-suite/test.html. Add MISSING expectations for two
+        placeholder-in-text-area tests - the placeholder text does not appear
+        in text areas (known bug).
+
+        * platform/gtk/fast/images/png-suite: Added.
+        * platform/gtk/fast/images/png-suite/test-expected.png: Added.
+        * platform/gtk/fast/images/png-suite/test-expected.txt: Added.
+        * platform/gtk/test_expectations.txt:
+
+2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening after r119196.
 
         * platform/gtk/fast/dom/gc-attribute-node-expected.txt: Added.

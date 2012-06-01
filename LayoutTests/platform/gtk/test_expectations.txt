@@ -1147,6 +1147,8 @@ BUGWKGTK : svg/css/stars-with-shadow.html = FAIL
 BUGWK78673 : svg/animations/animate-text-nested-transforms.html = FAIL
 
 BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
+BUGWK73409 : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING
+BUGWK73409 : fast/forms/input-placeholder-paint-order.html = MISSING
 
 BUGWK73653 : fast/forms/number/spin-in-multi-column.html = FAIL
 BUGWK73653 : fast/forms/range/slider-in-multi-column.html = FAIL
