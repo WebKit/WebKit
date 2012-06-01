@@ -36,16 +36,21 @@
 #include "DataTransferItem.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
-#include "PlatformSupport.h"
+
+#include <public/Platform.h>
+#include <public/WebClipboard.h>
 
 namespace WebCore {
 
 PassRefPtr<ChromiumDataObject> ChromiumDataObject::createFromPasteboard()
 {
     RefPtr<ChromiumDataObject> dataObject = create();
-    uint64_t sequenceNumber = PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer());
+    uint64_t sequenceNumber = WebKit::Platform::current()->clipboard()->sequenceNumber(currentPasteboardBuffer());
     bool ignored;
-    HashSet<String> types = PlatformSupport::clipboardReadAvailableTypes(currentPasteboardBuffer(), &ignored);
+    WebKit::WebVector<WebKit::WebString> webTypes = WebKit::Platform::current()->clipboard()->readAvailableTypes(currentPasteboardBuffer(), &ignored);
+    HashSet<String> types;
+    for (size_t i = 0; i < webTypes.size(); ++i)
+        types.add(webTypes[i]);
     for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
         dataObject->m_itemList.append(ChromiumDataObjectItem::createFromPasteboard(*it, sequenceNumber));
     return dataObject.release();

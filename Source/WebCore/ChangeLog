@@ -1,3 +1,38 @@
+2012-06-01  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call clipboard methods directly
+        https://bugs.webkit.org/show_bug.cgi?id=88038
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * WebCore.gypi:
+        * platform/Pasteboard.h:
+        (Pasteboard):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::createFromPasteboard):
+        * platform/chromium/ChromiumDataObjectItem.cpp:
+        (WebCore::ChromiumDataObjectItem::getAsFile):
+        (WebCore::ChromiumDataObjectItem::internalGetAsString):
+        * platform/chromium/ClipboardUtilitiesChromium.cpp:
+        (WebCore::currentPasteboardBuffer):
+        * platform/chromium/ClipboardUtilitiesChromium.h:
+        (WebCore):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::writeClipboard):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PasteboardPrivate.h: Removed.
+        * platform/chromium/PlatformSupport.h:
+        (WebCore):
+        (PlatformSupport):
+
 2012-06-01  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Improve handling of legacy viewport meta tags

@@ -35,13 +35,15 @@
 #include "Pasteboard.h"
 #include "PlatformString.h"
 
+#include <public/WebClipboard.h>
+
 namespace WebCore {
 
-PasteboardPrivate::ClipboardBuffer currentPasteboardBuffer()
+WebKit::WebClipboard::Buffer currentPasteboardBuffer()
 {
     return Pasteboard::generalPasteboard()->isSelectionMode() ?
-        PasteboardPrivate::SelectionBuffer :
-        PasteboardPrivate::StandardBuffer;
+        WebKit::WebClipboard::BufferSelection :
+        WebKit::WebClipboard::BufferStandard;
 }
 
 #if OS(WINDOWS)

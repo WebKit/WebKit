@@ -1,3 +1,16 @@
+2012-06-01  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call clipboard methods directly
+        https://bugs.webkit.org/show_bug.cgi?id=88038
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/AssertMatchingEnums.cpp:
+        * src/PlatformSupport.cpp:
+        (WebCore::getCookieJar):
+
 2012-06-01  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

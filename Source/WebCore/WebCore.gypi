@@ -3346,7 +3346,6 @@
             'platform/chromium/MemoryUsageSupportChromium.cpp',
             'platform/chromium/MIMETypeRegistryChromium.cpp',
             'platform/chromium/PasteboardChromium.cpp',
-            'platform/chromium/PasteboardPrivate.h',
             'platform/chromium/PlatformCursor.h',
             'platform/chromium/PlatformKeyboardEventChromium.cpp',
             'platform/chromium/PlatformScreenChromium.cpp',

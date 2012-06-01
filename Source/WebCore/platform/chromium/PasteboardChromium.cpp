@@ -31,6 +31,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "ClipboardChromium.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -41,7 +42,6 @@
 #include "Image.h"
 #include "KURL.h"
 #include "NativeImageSkia.h"
-#include "PlatformSupport.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "markup.h"
@@ -50,6 +50,10 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #endif
+
+#include <public/Platform.h>
+#include <public/WebClipboard.h>
+#include <public/WebDragData.h>
 
 namespace WebCore {
 
@@ -91,7 +95,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 #endif
     replaceNBSPWithSpace(plainText);
 
-    PlatformSupport::clipboardWriteSelection(html, url, plainText, canSmartCopyOrDelete);
+    WebKit::Platform::current()->clipboard()->writeHTML(html, url, plainText, canSmartCopyOrDelete);
 }
 
 void Pasteboard::writePlainText(const String& text)
@@ -99,9 +103,9 @@ void Pasteboard::writePlainText(const String& text)
 #if OS(WINDOWS)
     String plainText(text);
     replaceNewlinesWithWindowsStyleNewlines(plainText);
-    PlatformSupport::clipboardWritePlainText(plainText);
+    WebKit::Platform::current()->clipboard()->writePlainText(plainText);
 #else
-    PlatformSupport::clipboardWritePlainText(text);
+    WebKit::Platform::current()->clipboard()->writePlainText(text);
 #endif
 }
 
@@ -116,7 +120,7 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
             title = url.host();
     }
 
-    PlatformSupport::clipboardWriteURL(url, title);
+    WebKit::Platform::current()->clipboard()->writeURL(url, title);
 }
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
@@ -151,47 +155,51 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
         urlString = element->getAttribute(element->imageSourceAttributeName());
     }
     KURL url = urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
-
-    PlatformSupport::clipboardWriteImage(bitmap, url, title);
+    WebKit::WebImage webImage = bitmap->bitmap();
+    WebKit::Platform::current()->clipboard()->writeImage(webImage, WebKit::WebURL(url), WebKit::WebString(title));
 }
 
 void Pasteboard::writeClipboard(Clipboard* clipboard)
 {
-    PlatformSupport::clipboardWriteDataObject(clipboard);
+    WebKit::WebDragData dragData = static_cast<ClipboardChromium*>(clipboard)->dataObject();
+    WebKit::Platform::current()->clipboard()->writeDataObject(dragData);
 }
 
 bool Pasteboard::canSmartReplace()
 {
-    return PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::WebSmartPasteFormat, m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
+    return WebKit::Platform::current()->clipboard()->isFormatAvailable(WebKit::WebClipboard::FormatSmartPaste, m_selectionMode ? WebKit::WebClipboard::BufferSelection : WebKit::WebClipboard::BufferStandard);
 }
 
 String Pasteboard::plainText(Frame* frame)
 {
-    return PlatformSupport::clipboardReadPlainText(m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
+    return WebKit::Platform::current()->clipboard()->readPlainText(m_selectionMode ? WebKit::WebClipboard::BufferSelection : WebKit::WebClipboard::BufferStandard);
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
-    PasteboardPrivate::ClipboardBuffer buffer = m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer;
+    WebKit::WebClipboard::Buffer buffer = m_selectionMode ? WebKit::WebClipboard::BufferSelection : WebKit::WebClipboard::BufferStandard;
 
-    if (PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::HTMLFormat, buffer)) {
-        String markup;
-        KURL srcURL;
+    if (WebKit::Platform::current()->clipboard()->isFormatAvailable(WebKit::WebClipboard::FormatHTML, buffer)) {
+        WebKit::WebString markup;
         unsigned fragmentStart = 0;
         unsigned fragmentEnd = 0;
-        PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL, &fragmentStart, &fragmentEnd);
+        WebKit::WebURL url;
+        markup = WebKit::Platform::current()->clipboard()->readHTML(buffer, &url, &fragmentStart, &fragmentEnd);
+
+        
+        //        PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL, &fragmentStart, &fragmentEnd);
 
         if (!markup.isEmpty()) {
           RefPtr<DocumentFragment> fragment =
-              createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, DisallowScriptingContent);
+              createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, KURL(url), DisallowScriptingContent);
           if (fragment)
               return fragment.release();
         }
     }
 
     if (allowPlainText) {
-        String markup = PlatformSupport::clipboardReadPlainText(buffer);
+        String markup = WebKit::Platform::current()->clipboard()->readPlainText(buffer);
         if (!markup.isEmpty()) {
             chosePlainText = true;
 

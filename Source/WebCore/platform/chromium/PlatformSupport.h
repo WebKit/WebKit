@@ -38,7 +38,6 @@
 #include "FileSystem.h"
 #include "ImageSource.h"
 #include "LinkHash.h"
-#include "PasteboardPrivate.h"
 #include "PluginData.h"
 
 #include <wtf/Forward.h>
@@ -67,7 +66,6 @@ typedef struct HFONT__* HFONT;
 namespace WebCore {
 
 class AsyncFileSystem;
-class Clipboard;
 class Color;
 class Cursor;
 class Document;
@@ -94,26 +92,6 @@ struct FontRenderStyle;
 
 class PlatformSupport {
 public:
-    // Clipboard ----------------------------------------------------------
-    static uint64_t clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer);
-
-    static bool clipboardIsFormatAvailable(PasteboardPrivate::ClipboardFormat, PasteboardPrivate::ClipboardBuffer);
-    static HashSet<String> clipboardReadAvailableTypes(PasteboardPrivate::ClipboardBuffer, bool* containsFilenames);
-
-    static String clipboardReadPlainText(PasteboardPrivate::ClipboardBuffer);
-    static void clipboardReadHTML(PasteboardPrivate::ClipboardBuffer, String*, KURL*, unsigned* fragmentStart, unsigned* fragmentEnd);
-    static PassRefPtr<SharedBuffer> clipboardReadImage(PasteboardPrivate::ClipboardBuffer);
-    static String clipboardReadCustomData(PasteboardPrivate::ClipboardBuffer, const String& type);
-
-    // Only the clipboardRead functions take a buffer argument because
-    // Chromium currently uses a different technique to write to alternate
-    // clipboard buffers.
-    static void clipboardWriteSelection(const String&, const KURL&, const String&, bool);
-    static void clipboardWritePlainText(const String&);
-    static void clipboardWriteURL(const KURL&, const String&);
-    static void clipboardWriteImage(NativeImagePtr, const KURL&, const String&);
-    static void clipboardWriteDataObject(Clipboard*);
-
     // Cookies ------------------------------------------------------------
     static void setCookies(const Document*, const KURL&, const String& value);
     static String cookies(const Document*, const KURL&);

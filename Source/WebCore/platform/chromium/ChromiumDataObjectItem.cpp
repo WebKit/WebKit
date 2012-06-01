@@ -40,9 +40,11 @@
 #include "ClipboardUtilitiesChromium.h"
 #include "DataTransferItem.h"
 #include "File.h"
-#include "PlatformSupport.h"
 #include "SharedBuffer.h"
 #include "StringCallback.h"
+
+#include <public/Platform.h>
+#include <public/WebClipboard.h>
 
 namespace WebCore {
 
@@ -141,7 +143,7 @@ PassRefPtr<Blob> ChromiumDataObjectItem::getAsFile() const
         // method to the blob registry; that way the data is only copied over
         // into the renderer when it's actually read, not when the blob is
         // initially constructed).
-        RefPtr<SharedBuffer> data = PlatformSupport::clipboardReadImage(PasteboardPrivate::StandardBuffer);
+        RefPtr<SharedBuffer> data = static_cast<PassRefPtr<SharedBuffer> >(WebKit::Platform::current()->clipboard()->readImage(WebKit::WebClipboard::BufferStandard));
         RefPtr<RawData> rawData = RawData::create();
         rawData->mutableData()->append(data->data(), data->size());
         OwnPtr<BlobData> blobData = BlobData::create();
@@ -165,15 +167,15 @@ String ChromiumDataObjectItem::internalGetAsString() const
     String data;
     // This is ugly but there's no real alternative.
     if (m_type == mimeTypeTextPlain)
-        data = PlatformSupport::clipboardReadPlainText(currentPasteboardBuffer());
+        data = WebKit::Platform::current()->clipboard()->readPlainText(currentPasteboardBuffer());
     else if (m_type == mimeTypeTextHTML) {
-        KURL ignoredSourceURL;
+        WebKit::WebURL ignoredSourceURL;
         unsigned ignored;
-        PlatformSupport::clipboardReadHTML(currentPasteboardBuffer(), &data, &ignoredSourceURL, &ignored, &ignored);
+        data = WebKit::Platform::current()->clipboard()->readHTML(currentPasteboardBuffer(), &ignoredSourceURL, &ignored, &ignored);
     } else
-        data = PlatformSupport::clipboardReadCustomData(currentPasteboardBuffer(), m_type);
+        data = WebKit::Platform::current()->clipboard()->readCustomData(currentPasteboardBuffer(), m_type);
 
-    return PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()) == m_sequenceNumber ? data : String();
+    return WebKit::Platform::current()->clipboard()->sequenceNumber(currentPasteboardBuffer()) == m_sequenceNumber ? data : String();
 }
 
 bool ChromiumDataObjectItem::isFilename() const

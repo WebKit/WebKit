@@ -33,7 +33,9 @@
 
 #include "WebCommon.h"
 #include "WebData.h"
+#include "WebImage.h"
 #include "WebString.h"
+#include "WebURL.h"
 #include "WebVector.h"
 
 namespace WebKit {
@@ -60,7 +62,7 @@ public:
 
     // Returns an identifier which can be used to determine whether the data
     // contained within the clipboard has changed.
-    virtual uint64 sequenceNumber(Buffer) { return 0; }
+    virtual uint64_t sequenceNumber(Buffer) { return 0; }
 
     virtual bool isFormatAvailable(Format, Buffer) { return false; }
 

@@ -80,7 +80,6 @@
 
 #include "AsyncFileSystemChromium.h"
 #include "BitmapImage.h"
-#include "ClipboardChromium.h"
 #include "Cookie.h"
 #include "Document.h"
 #include "FrameView.h"
@@ -94,7 +93,6 @@
 
 #include "Worker.h"
 #include "WorkerContextProxy.h"
-#include <public/WebClipboard.h>
 #include <public/WebCookie.h>
 #include <public/WebCookieJar.h>
 #include <public/WebMimeRegistry.h>
@@ -139,96 +137,6 @@ static WebCookieJar* getCookieJar(const Document* document)
     if (!cookieJar)
         cookieJar = WebKit::Platform::current()->cookieJar();
     return cookieJar;
-}
-
-// Clipboard ------------------------------------------------------------------
-
-uint64_t PlatformSupport::clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer buffer)
-{
-    return webKitPlatformSupport()->clipboard()->sequenceNumber(
-        static_cast<WebClipboard::Buffer>(buffer));
-}
-
-bool PlatformSupport::clipboardIsFormatAvailable(
-    PasteboardPrivate::ClipboardFormat format,
-    PasteboardPrivate::ClipboardBuffer buffer)
-{
-    return webKitPlatformSupport()->clipboard()->isFormatAvailable(
-        static_cast<WebClipboard::Format>(format),
-        static_cast<WebClipboard::Buffer>(buffer));
-}
-
-HashSet<String> PlatformSupport::clipboardReadAvailableTypes(
-    PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
-{
-    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readAvailableTypes(
-        static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
-    HashSet<String> types;
-    for (size_t i = 0; i < result.size(); ++i)
-        types.add(result[i]);
-    return types;
-}
-
-String PlatformSupport::clipboardReadPlainText(
-    PasteboardPrivate::ClipboardBuffer buffer)
-{
-    return webKitPlatformSupport()->clipboard()->readPlainText(
-        static_cast<WebClipboard::Buffer>(buffer));
-}
-
-void PlatformSupport::clipboardReadHTML(
-    PasteboardPrivate::ClipboardBuffer buffer,
-    String* htmlText, KURL* sourceURL, unsigned* fragmentStart, unsigned* fragmentEnd)
-{
-    WebURL url;
-    *htmlText = webKitPlatformSupport()->clipboard()->readHTML(
-        static_cast<WebClipboard::Buffer>(buffer), &url, fragmentStart, fragmentEnd);
-    *sourceURL = url;
-}
-
-PassRefPtr<SharedBuffer> PlatformSupport::clipboardReadImage(
-    PasteboardPrivate::ClipboardBuffer buffer)
-{
-    return webKitPlatformSupport()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
-}
-
-String PlatformSupport::clipboardReadCustomData(
-    PasteboardPrivate::ClipboardBuffer buffer, const String& type)
-{
-    return webKitPlatformSupport()->clipboard()->readCustomData(static_cast<WebClipboard::Buffer>(buffer), type);
-}
-
-void PlatformSupport::clipboardWriteSelection(const String& htmlText,
-                                             const KURL& sourceURL,
-                                             const String& plainText,
-                                             bool writeSmartPaste)
-{
-    webKitPlatformSupport()->clipboard()->writeHTML(
-        htmlText, sourceURL, plainText, writeSmartPaste);
-}
-
-void PlatformSupport::clipboardWritePlainText(const String& plainText)
-{
-    webKitPlatformSupport()->clipboard()->writePlainText(plainText);
-}
-
-void PlatformSupport::clipboardWriteURL(const KURL& url, const String& title)
-{
-    webKitPlatformSupport()->clipboard()->writeURL(url, title);
-}
-
-void PlatformSupport::clipboardWriteImage(NativeImagePtr image,
-                                         const KURL& sourceURL,
-                                         const String& title)
-{
-    WebImage webImage(image->bitmap());
-    webKitPlatformSupport()->clipboard()->writeImage(webImage, sourceURL, title);
-}
-
-void PlatformSupport::clipboardWriteDataObject(Clipboard* clipboard)
-{
-    WebDragData data = static_cast<ClipboardChromium*>(clipboard)->dataObject();
-    webKitPlatformSupport()->clipboard()->writeDataObject(data);
 }
 
 // Cookies --------------------------------------------------------------------
