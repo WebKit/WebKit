@@ -55,10 +55,10 @@ public:
 
     InjectedScriptHost* injectedScriptHost();
 
-    pair<long, ScriptObject> injectScript(const String& source, ScriptState*);
+    pair<int, ScriptObject> injectScript(const String& source, ScriptState*);
     InjectedScript injectedScriptFor(ScriptState*);
-    InjectedScript injectedScriptForId(long);
-    long injectedScriptIdFor(ScriptState*);
+    InjectedScript injectedScriptForId(int);
+    int injectedScriptIdFor(ScriptState*);
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
     void discardInjectedScriptsFor(DOMWindow*);
@@ -70,18 +70,18 @@ private:
     explicit InjectedScriptManager(InspectedStateAccessCheck);
 
     String injectedScriptSource();
-    ScriptObject createInjectedScript(const String& source, ScriptState*, long id);
+    ScriptObject createInjectedScript(const String& source, ScriptState*, int id);
     void discardInjectedScript(ScriptState*);
 
     static bool canAccessInspectedWindow(ScriptState*);
     static bool canAccessInspectedWorkerContext(ScriptState*);
 
-    long m_nextInjectedScriptId;
-    typedef HashMap<long, InjectedScript> IdToInjectedScriptMap;
+    int m_nextInjectedScriptId;
+    typedef HashMap<int, InjectedScript> IdToInjectedScriptMap;
     IdToInjectedScriptMap m_idToInjectedScript;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
     InspectedStateAccessCheck m_inspectedStateAccessCheck;
-    typedef HashMap<ScriptState*, long> ScriptStateToId;
+    typedef HashMap<ScriptState*, int> ScriptStateToId;
     ScriptStateToId m_scriptStateToId;
 };
 

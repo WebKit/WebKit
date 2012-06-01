@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, long id)
+ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, int id)
 {
     JSLock lock(SilenceAssertionsOnly);
 
@@ -95,7 +95,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* scriptState
     if (!m_inspectedStateAccessCheck(scriptState))
         return InjectedScript();
 
-    pair<long, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
+    pair<int, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
     globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
     InjectedScript result(injectedScriptObject.second, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(injectedScriptObject.first, result);

@@ -1,3 +1,28 @@
+2012-05-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: change type of injected script id from long to int
+        https://bugs.webkit.org/show_bug.cgi?id=87837
+
+        Reviewed by Pavel Feldman.
+
+        Changed injected script id type from long to int so that we don't
+        lose precision when sending the id over the protocol.
+
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptForId):
+        (WebCore::InjectedScriptManager::injectedScriptIdFor):
+        (WebCore::InjectedScriptManager::injectScript):
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::notifyContextCreated):
+
 2012-05-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: draw pie-chart based on memory data received from backend

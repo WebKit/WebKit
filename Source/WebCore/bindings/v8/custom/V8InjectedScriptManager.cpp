@@ -76,7 +76,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
     return instance;
 }
 
-ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSource, ScriptState* inspectedScriptState, long id)
+ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSource, ScriptState* inspectedScriptState, int id)
 {
     v8::HandleScope scope;
 
@@ -148,7 +148,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
     if (!m_inspectedStateAccessCheck(inspectedScriptState))
         return InjectedScript();
 
-    pair<long, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
+    pair<int, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
     InjectedScript result(injectedScript.second, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(injectedScript.first, result);
     global->SetHiddenValue(key, injectedScript.second.v8Object());

@@ -77,7 +77,7 @@ InjectedScriptHost* InjectedScriptManager::injectedScriptHost()
     return m_injectedScriptHost.get();
 }
 
-InjectedScript InjectedScriptManager::injectedScriptForId(long id)
+InjectedScript InjectedScriptManager::injectedScriptForId(int id)
 {
     IdToInjectedScriptMap::iterator it = m_idToInjectedScript.find(id);
     if (it != m_idToInjectedScript.end())
@@ -89,12 +89,12 @@ InjectedScript InjectedScriptManager::injectedScriptForId(long id)
     return InjectedScript();
 }
 
-long InjectedScriptManager::injectedScriptIdFor(ScriptState* scriptState)
+int InjectedScriptManager::injectedScriptIdFor(ScriptState* scriptState)
 {
     ScriptStateToId::iterator it = m_scriptStateToId.find(scriptState);
     if (it != m_scriptStateToId.end())
         return it->second;
-    long id = m_nextInjectedScriptId++;
+    int id = m_nextInjectedScriptId++;
     m_scriptStateToId.set(scriptState, id);
     return id;
 }
@@ -166,9 +166,9 @@ String InjectedScriptManager::injectedScriptSource()
     return String(reinterpret_cast<const char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
 }
 
-pair<long, ScriptObject> InjectedScriptManager::injectScript(const String& source, ScriptState* scriptState)
+pair<int, ScriptObject> InjectedScriptManager::injectScript(const String& source, ScriptState* scriptState)
 {
-    long id = injectedScriptIdFor(scriptState);
+    int id = injectedScriptIdFor(scriptState);
     return std::make_pair(id, createInjectedScript(source, scriptState, id));
 }
 
