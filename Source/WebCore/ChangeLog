@@ -1,3 +1,17 @@
+2012-06-01  Mihai Parparita  <mihaip@chromium.org>
+
+        Improve synchronous XHR disabling
+        https://bugs.webkit.org/show_bug.cgi?id=88032
+
+        Reviewed by Alexey Proskuryakov.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setSyncXHRInDocumentsEnabled): Fix a
+        copy-and-paste error
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Improves the disabled message, as
+        suggested in a comment after r118599 was put in the commit queue.
+
 2012-06-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87774

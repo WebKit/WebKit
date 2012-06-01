@@ -371,10 +371,10 @@ void InternalSettings::setFixedPositionCreatesStackingContext(bool creates, Exce
     settings()->setFixedPositionCreatesStackingContext(creates);
 }
 
-void InternalSettings::setSyncXHRInDocumentsEnabled(bool creates, ExceptionCode& ec)
+void InternalSettings::setSyncXHRInDocumentsEnabled(bool enabled, ExceptionCode& ec)
 {
-    InternalSettingsGuardForFrameView();
-    settings()->setSyncXHRInDocumentsEnabled(creates);
+    InternalSettingsGuardForSettings();
+    settings()->setSyncXHRInDocumentsEnabled(enabled);
 }
 
 void InternalSettings::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
