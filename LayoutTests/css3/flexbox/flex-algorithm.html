@@ -6,6 +6,7 @@ body {
 }
 .flexbox {
     width: 600px;
+    display: -webkit-flex;
 }
 .flexbox div {
     height: 20px;
@@ -29,136 +30,136 @@ if (window.layoutTestController)
 <script src="resources/flexbox.js"></script>
 <body onload="checkFlexBoxen()">
 
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="200" style="-webkit-flex: 1"></div>
-  <div data-expected-width="200" style="-webkit-flex: 1"></div>
-  <div data-expected-width="200" style="-webkit-flex: 1"></div>
+<div class="flexbox">
+  <div data-expected-width="200"></div>
+  <div data-expected-width="200"></div>
+  <div data-expected-width="200"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="200" style="-webkit-flex: .5"></div>
   <div data-expected-width="200" style="-webkit-flex: .5"></div>
   <div data-expected-width="200" style="-webkit-flex: .5"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="300" style="-webkit-flex: 3"></div>
   <div data-expected-width="200" style="-webkit-flex: 2"></div>
   <div data-expected-width="100" style="-webkit-flex: 1"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="250" style="-webkit-flex: 1"></div>
-  <div data-expected-width="250" style="-webkit-flex: 1"></div>
-  <div data-expected-width="100" style="width: 100px"></div>
+<div class="flexbox">
+  <div data-expected-width="250"></div>
+  <div data-expected-width="250"></div>
+  <div data-expected-width="100" style="width: 100px; -webkit-flex: none;"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="150" style="-webkit-flex: 1"></div>
-  <div data-expected-width="150" style="-webkit-flex: 1"></div>
-  <div data-expected-width="300" style="width: 50%"></div>
+<div class="flexbox">
+  <div data-expected-width="150"></div>
+  <div data-expected-width="150"></div>
+  <div data-expected-width="300" style="width: 50%; -webkit-flex: none;"></div>
 </div>
 
 <!-- The first two boxes should fill the extra 300px evenly (each gets 150px extra). -->
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="150" style="-webkit-flex: 1"></div>
+<div class="flexbox">
+  <div data-expected-width="150"></div>
   <div data-expected-width="350" style="-webkit-flex: 1 200px"></div>
-  <div data-expected-width="100" style="width: 100px"></div>
+  <div data-expected-width="100" style="width: 100px; -webkit-flex: none;"></div>
 </div>
 
 <!-- Like the last test, except the middle box gets more space than the first box. -->
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="100" style="-webkit-flex: 1"></div>
+<div class="flexbox">
+  <div data-expected-width="100"></div>
   <div data-expected-width="400" style="-webkit-flex: 2 33.333333%"></div>
-  <div data-expected-width="100" style="width: 100px"></div>
+  <div data-expected-width="100" style="width: 100px; -webkit-flex: none;"></div>
 </div>
 
 <!-- Test some negative flexing. -->
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="200" style="-webkit-flex: 1 1 300px"></div>
   <div data-expected-width="200" style="-webkit-flex: 2 1 300px"></div>
   <div data-expected-width="200" style="-webkit-flex: 3 1 300px"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="250" style="-webkit-flex: 1 1 300px"></div>
   <div data-expected-width="150" style="-webkit-flex: 2 3 300px"></div>
-  <div data-expected-width="200" style="width: 200px"></div>
+  <div data-expected-width="200" style="width: 200px; -webkit-flex: none;"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
   <div data-expected-width="250" style="-webkit-flex: 1 1 500px"></div>
-  <div data-expected-width="300" style="width: 300px"></div>
+  <div data-expected-width="300" style="width: 300px; -webkit-flex: none"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
   <div data-expected-width="250" style="-webkit-flex: 1 1 500px; margin-right: 300px;"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
   <div data-expected-width="550" style="-webkit-flex: 1 1 500px; padding-left: 300px;"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="50" style="-webkit-flex: 1 1 100px"></div>
   <div data-expected-width="550" style="-webkit-flex: 1 1 500px; border-left: 200px dashed orange; border-right: 100px dashed orange;"></div>
 </div>
 
 <!-- Test some overflow cases. -->
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
   <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="600" style="-webkit-flex: 100000000000000000000000000000000000000 0 600px"></div>
   <div data-expected-width="600" style="-webkit-flex: 0 100000000000000000000000000000000000000 600px"></div>
   <div data-expected-width="0" style="-webkit-flex: 1 1 100000000000000000000000000000000000000px"></div>
 </div>
 
 <!-- Test flexitem borders. -->
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="250" style="-webkit-flex: 1; border-left: 150px solid black"></div>
   <div data-expected-width="250" style="-webkit-flex: 1 0 0px; border-right: 150px solid orange"></div>
   <div data-expected-width="100" style="-webkit-flex: 1 0 0px"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="300" style="width: 100px; border: 100px solid black"></div>
+<div class="flexbox">
+  <div data-expected-width="300" style="width: 100px; border: 100px solid black; -webkit-flex: none;"></div>
   <div data-expected-width="200" style="-webkit-flex: 2"></div>
-  <div data-expected-width="100" style="-webkit-flex: 1"></div>
+  <div data-expected-width="100"></div>
 </div>
 
 <!-- Test flexitem padding. -->
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="250" style="-webkit-flex: 1; padding-left: 150px"></div>
   <div data-expected-width="250" style="-webkit-flex: 1 0 0px; padding-right: 150px"></div>
   <div data-expected-width="100" style="-webkit-flex: 1 0 0px"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
-  <div data-expected-width="300" style="width: 100px; padding: 100px"></div>
+<div class="flexbox">
+  <div data-expected-width="300" style="width: 100px; padding: 100px; -webkit-flex: none;"></div>
   <div data-expected-width="200" style="-webkit-flex: 2"></div>
-  <div data-expected-width="100" style="-webkit-flex: 1"></div>
+  <div data-expected-width="100"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="200" style="-webkit-flex: 1; padding-left: 25%"></div>
   <div data-expected-width="150" style="-webkit-flex: 3;"></div>
-  <div data-expected-width="250" style="width: 100px; padding-right: 25%"></div>
+  <div data-expected-width="250" style="width: 100px; padding-right: 25%; -webkit-flex: none;"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="200" style="-webkit-flex: 1; padding-left: 50px; border-right: 50px solid black"></div>
   <div data-expected-width="250" style="-webkit-flex: 2; border-right: 50px solid orange"></div>
   <div data-expected-width="150" style="-webkit-flex: 1; padding-right: 50px;"></div>
 </div>
 
 <!-- Test items with an intrinsic size. -->
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="120" style="-webkit-flex: 1">
       <div style="width: 100px; height: 100%;"></div>
   </div>
@@ -166,20 +167,20 @@ if (window.layoutTestController)
   <div data-expected-width="240" style="-webkit-flex: 2"></div>
 </div>
 
-<div style="display: -webkit-flex" class="flexbox">
+<div class="flexbox">
   <div data-expected-width="200" style="-webkit-flex: 1 0 0">
       <div style="width: 100px; height: 100%;"></div>
   </div>
-  <div data-expected-width="200" style="-webkit-flex: 1"></div>
-  <div data-expected-width="200" style="-webkit-flex: 1"></div>
+  <div data-expected-width="200"></div>
+  <div data-expected-width="200"></div>
 </div>
 
 <!-- Test border/padding/margin on the flexbox itself. -->
 <div data-expected-width="830" style="border: 10px solid; display: inline-block;">
     <div data-expected-width="700" style="display: -webkit-flex; padding-left: 10px; padding-right: 20px; border-left: 30px solid; border-right: 40px solid; margin-left: 50px; margin-right:60px;" class="flexbox ">
-      <div data-offset-x="100" data-expected-width="200" style="-webkit-flex: 1"></div>
-      <div data-offset-x="300" data-expected-width="200" style="-webkit-flex: 1"></div>
-      <div data-offset-x="500" data-expected-width="200" style="-webkit-flex: 1"></div>
+      <div data-offset-x="100" data-expected-width="200"></div>
+      <div data-offset-x="300" data-expected-width="200"></div>
+      <div data-offset-x="500" data-expected-width="200"></div>
     </div>
 </div>
 

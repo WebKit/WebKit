@@ -13,6 +13,7 @@ body {
 .flexbox div {
     height: 20px;
     border: 0;
+    -webkit-flex: none;
 }
 
 .flexbox :nth-child(1) {
@@ -112,7 +113,7 @@ if (window.layoutTestController)
 
 <!-- We overflow the flexbox (no negative flexing) and align the end. The overflow is to the left. -->
 <div class="flexbox" style="-webkit-flex-pack: end">
-  <div data-expected-width="300" data-offset-x="-100" style="-webkit-flex: 1 300px;"></div>
+  <div data-expected-width="300" data-offset-x="-100" style="-webkit-flex: 1 0 300px;"></div>
   <div data-expected-width="200" data-offset-x="200" style="width: 200px;"></div>
   <div data-expected-width="200" data-offset-x="400" style="width: 200px;"></div>
 </div>

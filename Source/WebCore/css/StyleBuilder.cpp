@@ -1723,8 +1723,11 @@ public:
     {
         if (value->isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-            if (primitiveValue->getIdent() == CSSValueNone)
-                applyInitialValue(styleResolver);
+            if (primitiveValue->getIdent() == CSSValueNone) {
+                styleResolver->style()->setPositiveFlex(0);
+                styleResolver->style()->setNegativeFlex(0);
+                styleResolver->style()->setFlexPreferredSize(Length(Auto));
+            }
             return;
         }
 

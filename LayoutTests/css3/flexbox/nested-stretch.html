@@ -50,10 +50,10 @@ height on the right.
 None of the boxes should overflow and the inner most boxes should be end aligned.
 <div class="flexbox column" style="width: 600px; height: 300px; position: relative;">
   <div data-expected-width=590 data-expected-height=250 class="column flex" style="-webkit-flex-pack: end">
-    <div data-offset-y="180" data-expected-width=570 data-expected-height=30 style="height: 20px"></div>
-    <div data-offset-y="220" data-expected-width=570 data-expected-height=30 style="height: 20px"></div>
+    <div data-offset-y="180" data-expected-width=570 data-expected-height=30 style="height: 20px; -webkit-flex: none;"></div>
+    <div data-offset-y="220" data-expected-width=570 data-expected-height=30 style="height: 20px; -webkit-flex: none;"></div>
   </div>
-  <div data-expected-width=590 data-expected-height=30 style="height: 20px"></div>
+  <div data-expected-width=590 data-expected-height=30 style="height: 20px; -webkit-flex: none;"></div>
 </div>
 
 

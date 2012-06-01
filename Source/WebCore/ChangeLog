@@ -1,3 +1,21 @@
+2012-05-31  Tony Chang  <tony@chromium.org>
+
+        initial flex value should be 1 1 auto
+        https://bugs.webkit.org/show_bug.cgi?id=86526
+
+        Reviewed by Ojan Vafai.
+
+        Also, if -webkit-flex is used to set the positive flex to 0 and
+        the negative flex is omitted, the negative flex is set to 0.
+
+        New test cases in: flex-property-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFlex):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyFlex::applyValue):
+        * rendering/style/RenderStyle.h:
+
 2012-05-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119146.

@@ -290,7 +290,7 @@ rect: style.getPropertyValue(-webkit-align-items) : stretch
 rect: style.getPropertyCSSValue(-webkit-align-items) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-align-self) : stretch
 rect: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-flex) : 0 0 auto
+rect: style.getPropertyValue(-webkit-flex) : 1 1 auto
 rect: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-flex-order) : 0
 rect: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]
@@ -822,7 +822,7 @@ g: style.getPropertyValue(-webkit-align-items) : stretch
 g: style.getPropertyCSSValue(-webkit-align-items) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-align-self) : stretch
 g: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-flex) : 0 0 auto
+g: style.getPropertyValue(-webkit-flex) : 1 1 auto
 g: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-flex-order) : 0
 g: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]

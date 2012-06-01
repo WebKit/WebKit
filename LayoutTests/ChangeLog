@@ -1,3 +1,63 @@
+2012-05-31  Tony Chang  <tony@chromium.org>
+
+        initial flex value should be 1 1 auto
+        https://bugs.webkit.org/show_bug.cgi?id=86526
+
+        In most tests, I added a CSS rule to default -webkit-flex: none.
+        In a few tests, -webkit-flex didn't include the negative flex value
+        and it was becoming 1, causing negative flexing. I fixed those by
+        explicitly stating the negative flex as 0.
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/align-absolute-child.html:
+        * css3/flexbox/auto-margins.html:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-flow-auto-margins.html:
+        * css3/flexbox/flex-flow-orientations.html:
+        * css3/flexbox/flex-flow-overflow.html:
+        * css3/flexbox/flex-pack.html:
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+        * css3/flexbox/flexbox-overflow-auto-expected.html:
+        * css3/flexbox/flexbox-overflow-auto.html:
+        * css3/flexbox/multiline-column-auto.html:
+        * css3/flexbox/multiline-pack.html:
+        * css3/flexbox/multiline-shrink-to-fit.html:
+        * css3/flexbox/multiline.html:
+        * css3/flexbox/nested-stretch.html:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/preferred-widths-orthogonal.html:
+        * css3/flexbox/true-centering.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-linux-x86/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac-leopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-snowleopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-vista/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 4 fast/frames tests failing
