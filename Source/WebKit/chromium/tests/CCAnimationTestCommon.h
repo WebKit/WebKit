@@ -54,7 +54,7 @@ public:
     virtual ~FakeTransformTransition();
 
     virtual double duration() const OVERRIDE { return m_duration; }
-    virtual WebKit::WebTransformationMatrix getValue(double time, const WebCore::IntSize&) const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix getValue(double time) const OVERRIDE;
 
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 

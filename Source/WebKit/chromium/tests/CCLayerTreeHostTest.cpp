@@ -2952,7 +2952,7 @@ public:
         // Any valid CCAnimationCurve will do here.
         OwnPtr<CCAnimationCurve> curve(CCEaseTimingFunction::create());
         OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), CCActiveAnimation::Opacity));
-        layer->layerAnimationController()->add(animation.release());
+        layer->layerAnimationController()->addAnimation(animation.release());
 
         // We add the animation *before* attaching the layer to the tree.
         m_layerTreeHost->rootLayer()->addChild(layer);

@@ -65,7 +65,7 @@ class CCTransformAnimationCurve : public CCAnimationCurve {
 public:
     virtual ~CCTransformAnimationCurve() { }
 
-    virtual WebKit::WebTransformationMatrix getValue(double t, const IntSize& layerSize) const = 0;
+    virtual WebKit::WebTransformationMatrix getValue(double t) const = 0;
 
     // Partial CCAnimation implementation.
     virtual Type type() const OVERRIDE { return Transform; }

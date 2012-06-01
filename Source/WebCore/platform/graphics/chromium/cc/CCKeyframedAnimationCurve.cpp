@@ -26,15 +26,6 @@
 
 #include "cc/CCKeyframedAnimationCurve.h"
 
-#include "IdentityTransformOperation.h"
-#include "Matrix3DTransformOperation.h"
-#include "MatrixTransformOperation.h"
-#include "PerspectiveTransformOperation.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
-#include "SkewTransformOperation.h"
-#include "TranslateTransformOperation.h"
-
 #include <wtf/OwnPtr.h>
 
 using WebKit::WebTransformationMatrix;
@@ -116,12 +107,12 @@ PassOwnPtr<CCFloatKeyframe> CCFloatKeyframe::clone() const
     return CCFloatKeyframe::create(time(), value(), timingFunction() ? cloneTimingFunction(timingFunction()) : nullptr);
 }
 
-PassOwnPtr<CCTransformKeyframe> CCTransformKeyframe::create(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction> timingFunction)
+PassOwnPtr<CCTransformKeyframe> CCTransformKeyframe::create(double time, const WebKit::WebTransformOperations& value, PassOwnPtr<CCTimingFunction> timingFunction)
 {
     return adoptPtr(new CCTransformKeyframe(time, value, timingFunction));
 }
 
-CCTransformKeyframe::CCTransformKeyframe(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction> timingFunction)
+CCTransformKeyframe::CCTransformKeyframe(double time, const WebKit::WebTransformOperations& value, PassOwnPtr<CCTimingFunction> timingFunction)
     : CCKeyframe(time, timingFunction)
     , m_value(value)
 {
@@ -131,78 +122,14 @@ CCTransformKeyframe::~CCTransformKeyframe()
 {
 }
 
-const TransformOperations& CCTransformKeyframe::value() const
+const WebKit::WebTransformOperations& CCTransformKeyframe::value() const
 {
     return m_value;
 }
 
 PassOwnPtr<CCTransformKeyframe> CCTransformKeyframe::clone() const
 {
-    // We need to do a deep copy the m_value may contain ref pointers to TransformOperation objects.
-    TransformOperations operations;
-    for (size_t j = 0; j < m_value.size(); ++j) {
-        TransformOperation::OperationType operationType = m_value.operations()[j]->getOperationType();
-        switch (operationType) {
-        case TransformOperation::SCALE_X:
-        case TransformOperation::SCALE_Y:
-        case TransformOperation::SCALE_Z:
-        case TransformOperation::SCALE_3D:
-        case TransformOperation::SCALE: {
-            ScaleTransformOperation* transform = static_cast<ScaleTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(ScaleTransformOperation::create(transform->x(), transform->y(), transform->z(), operationType));
-            break;
-        }
-        case TransformOperation::TRANSLATE_X:
-        case TransformOperation::TRANSLATE_Y:
-        case TransformOperation::TRANSLATE_Z:
-        case TransformOperation::TRANSLATE_3D:
-        case TransformOperation::TRANSLATE: {
-            TranslateTransformOperation* transform = static_cast<TranslateTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(TranslateTransformOperation::create(transform->x(), transform->y(), transform->z(), operationType));
-            break;
-        }
-        case TransformOperation::ROTATE_X:
-        case TransformOperation::ROTATE_Y:
-        case TransformOperation::ROTATE_3D:
-        case TransformOperation::ROTATE: {
-            RotateTransformOperation* transform = static_cast<RotateTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(RotateTransformOperation::create(transform->x(), transform->y(), transform->z(), transform->angle(), operationType));
-            break;
-        }
-        case TransformOperation::SKEW_X:
-        case TransformOperation::SKEW_Y:
-        case TransformOperation::SKEW: {
-            SkewTransformOperation* transform = static_cast<SkewTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(SkewTransformOperation::create(transform->angleX(), transform->angleY(), operationType));
-            break;
-        }
-        case TransformOperation::MATRIX: {
-            MatrixTransformOperation* transform = static_cast<MatrixTransformOperation*>(m_value.operations()[j].get());
-            WebTransformationMatrix m = WebTransformationMatrix(transform->matrix());
-            operations.operations().append(MatrixTransformOperation::create(m.a(), m.b(), m.c(), m.d(), m.e(), m.f()));
-            break;
-        }
-        case TransformOperation::MATRIX_3D: {
-            Matrix3DTransformOperation* transform = static_cast<Matrix3DTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(Matrix3DTransformOperation::create(transform->matrix()));
-            break;
-        }
-        case TransformOperation::PERSPECTIVE: {
-            PerspectiveTransformOperation* transform = static_cast<PerspectiveTransformOperation*>(m_value.operations()[j].get());
-            operations.operations().append(PerspectiveTransformOperation::create(transform->perspective()));
-            break;
-        }
-        case TransformOperation::IDENTITY: {
-            operations.operations().append(IdentityTransformOperation::create());
-            break;
-        }
-        case TransformOperation::NONE:
-            // Do nothing.
-            break;
-        } // switch
-    } // for each operation
-
-    return CCTransformKeyframe::create(time(), operations, timingFunction() ? cloneTimingFunction(timingFunction()) : nullptr);
+    return CCTransformKeyframe::create(time(), value(), timingFunction() ? cloneTimingFunction(timingFunction()) : nullptr);
 }
 
 PassOwnPtr<CCKeyframedFloatAnimationCurve> CCKeyframedFloatAnimationCurve::create()
@@ -289,20 +216,13 @@ PassOwnPtr<CCAnimationCurve> CCKeyframedTransformAnimationCurve::clone() const
     return toReturn.release();
 }
 
-WebTransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, const IntSize& layerSize) const
+WebTransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t) const
 {
-    // Note: WebCore data type used here, just for now.
-    TransformationMatrix transformMatrix;
+    if (t <= m_keyframes.first()->time())
+        return m_keyframes.first()->value().apply();
 
-    if (t <= m_keyframes.first()->time()) {
-        m_keyframes.first()->value().apply(layerSize, transformMatrix);
-        return WebTransformationMatrix(transformMatrix);
-    }
-
-    if (t >= m_keyframes.last()->time()) {
-        m_keyframes.last()->value().apply(layerSize, transformMatrix);
-        return WebTransformationMatrix(transformMatrix);
-    }
+    if (t >= m_keyframes.last()->time())
+        return m_keyframes.last()->value().apply();
 
     size_t i = 0;
     for (; i < m_keyframes.size() - 1; ++i) {
@@ -315,20 +235,7 @@ WebTransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, c
     if (m_keyframes[i]->timingFunction())
         progress = m_keyframes[i]->timingFunction()->getValue(progress);
 
-    if (m_keyframes[i]->value().operationsMatch(m_keyframes[i+1]->value())) {
-        for (size_t j = 0; j < m_keyframes[i+1]->value().size(); ++j)
-            m_keyframes[i+1]->value().operations()[j]->blend(m_keyframes[i]->value().at(j), progress)->apply(transformMatrix, layerSize);
-    } else {
-        // Note: WebCore data type used here, just for now.
-        TransformationMatrix source;
-
-        m_keyframes[i]->value().apply(layerSize, source);
-        m_keyframes[i+1]->value().apply(layerSize, transformMatrix);
-
-        transformMatrix.blend(source, progress);
-    }
-
-    return WebTransformationMatrix(transformMatrix);
+    return m_keyframes[i+1]->value().blend(m_keyframes[i]->value(), progress);
 }
 
 } // namespace WebCore

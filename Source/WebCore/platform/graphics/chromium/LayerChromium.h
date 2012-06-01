@@ -57,6 +57,7 @@
 
 namespace WebCore {
 
+class CCActiveAnimation;
 struct CCAnimationEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
@@ -234,7 +235,7 @@ public:
     void setAlwaysReserveTextures(bool alwaysReserveTextures) { m_alwaysReserveTextures = alwaysReserveTextures; }
     bool alwaysReserveTextures() const { return m_alwaysReserveTextures; }
 
-    bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, int animationId, int groupId, double timeOffset);
+    bool addAnimation(PassOwnPtr<CCActiveAnimation>);
     void pauseAnimation(int animationId, double timeOffset);
     void removeAnimation(int animationId);
 

@@ -1,3 +1,42 @@
+2012-06-01  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Accelerated animations should use WebTransformOperations
+        https://bugs.webkit.org/show_bug.cgi?id=87686
+
+        Reviewed by James Robinson.
+
+        CCTransformKeyframe new owns a WebTransformOperations rather than a
+        TransformOperations. LayerChromium's API has been changed so that
+        LayerChromium::addAnimation should take only a CCActiveAnimation.
+        GraphicsLayerChromium is new responsible for translating to
+        WebTransformOperations and creating CCActiveAnimations. Tests that use
+        the public API (that is, they call addAnimation with KeyframeValueList
+        and Animation arguments) have been moved to GraphicsLayerChromiumTest.
+
+        * tests/CCAnimationTestCommon.cpp:
+        (WebCore::addOpacityTransition):
+        (WebCore::addAnimatedTransform):
+        (WebKitTests::FakeTransformTransition::getValue):
+        * tests/CCAnimationTestCommon.h:
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::beginTest):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (MockLayerTreeHostClient):
+        (WebKitTests):
+        (MockLayerTreeHost):
+        (WebKitTests::MockLayerTreeHost::create):
+        (WebKitTests::MockLayerTreeHost::createLayerTreeHostImpl):
+        (WebKitTests::MockLayerTreeHost::MockLayerTreeHost):
+        (GraphicsLayerChromiumTest):
+        (WebKitTests::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        (WebKitTests::GraphicsLayerChromiumTest::~GraphicsLayerChromiumTest):
+        (WebKitTests::GraphicsLayerChromiumTest::expectTranslateX):
+        (WebKitTests::TEST_F):
+
 2012-06-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call clipboard methods directly

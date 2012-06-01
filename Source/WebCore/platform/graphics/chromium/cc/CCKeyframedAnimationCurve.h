@@ -25,12 +25,14 @@
 #ifndef CCKeyframedAnimationCurve_h
 #define CCKeyframedAnimationCurve_h
 
-#include "TransformOperations.h"
 #include "cc/CCAnimationCurve.h"
 #include "cc/CCTimingFunction.h"
 
+#include <public/WebTransformOperations.h>
+
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -65,17 +67,17 @@ private:
 
 class CCTransformKeyframe : public CCKeyframe {
 public:
-    static PassOwnPtr<CCTransformKeyframe> create(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction>);
+    static PassOwnPtr<CCTransformKeyframe> create(double time, const WebKit::WebTransformOperations& value, PassOwnPtr<CCTimingFunction>);
     virtual ~CCTransformKeyframe();
 
-    const TransformOperations& value() const;
+    const WebKit::WebTransformOperations& value() const;
 
     PassOwnPtr<CCTransformKeyframe> clone() const;
 
 private:
-    CCTransformKeyframe(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction>);
+    CCTransformKeyframe(double time, const WebKit::WebTransformOperations& value, PassOwnPtr<CCTimingFunction>);
 
-    TransformOperations m_value;
+    WebKit::WebTransformOperations m_value;
 };
 
 class CCKeyframedFloatAnimationCurve : public CCFloatAnimationCurve {
@@ -116,7 +118,7 @@ public:
     virtual PassOwnPtr<CCAnimationCurve> clone() const OVERRIDE;
 
     // CCTransformAnimationCurve implementation
-    virtual WebKit::WebTransformationMatrix getValue(double t, const IntSize&) const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix getValue(double t) const OVERRIDE;
 
 private:
     CCKeyframedTransformAnimationCurve();
