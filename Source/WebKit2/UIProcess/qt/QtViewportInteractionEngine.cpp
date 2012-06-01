@@ -703,11 +703,15 @@ void QtViewportInteractionEngine::informVisibleContentChange(const QPointF& traj
     if (!drawingArea)
         return;
 
+    if (m_lastVisibleContentsRect == visibleContentsRect())
+        return;
+
     qreal scale = m_pageItem->contentsScale();
 
     if (scale != m_lastCommittedScale)
         emit m_viewportItem->experimental()->test()->contentsScaleCommitted();
     m_lastCommittedScale = scale;
+    m_lastVisibleContentsRect = visibleContentsRect();
 
     drawingArea->setVisibleContentsRect(visibleContentsRect(), scale, trajectoryVector, m_viewportItem->contentPos());
 

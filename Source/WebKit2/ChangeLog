@@ -1,3 +1,18 @@
+2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Contents not rendered in MiniBrowser for some pages
+        https://bugs.webkit.org/show_bug.cgi?id=87922
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set drawing area visible contents rect if new visible contents rect is different from
+        the previous one.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::informVisibleContentChange):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-06-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Move suspension to QtViewportInteractionEngine

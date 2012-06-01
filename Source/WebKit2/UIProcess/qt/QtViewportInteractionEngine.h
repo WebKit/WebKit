@@ -166,6 +166,7 @@ private:
     QPointF m_lastScrollPosition;
     qreal m_pinchStartScale;
     qreal m_lastCommittedScale;
+    QRectF m_lastVisibleContentsRect;
     qreal m_zoomOutScale;
     QList<ScaleStackItem> m_scaleStack;
 };
