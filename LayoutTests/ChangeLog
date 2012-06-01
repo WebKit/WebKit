@@ -1,3 +1,18 @@
+2012-05-31  Dominic Cooney  <dominicc@chromium.org>
+
+        [V8] Expando properties on attribute nodes disappear
+        https://bugs.webkit.org/show_bug.cgi?id=87925
+
+        Checks in a failing result for JSC; see
+        <https://bugs.webkit.org/show_bug.cgi?id=88045>.
+
+        Reviewed by Adam Barth.
+
+        * fast/dom/gc-attribute-node-expected.txt: Added.
+        * fast/dom/gc-attribute-node.html: Added.
+        * platform/chromium/fast/dom/gc-attribute-node-expected.txt: Added.
+        * platform/mac/fast/dom/gc-attribute-node-expected.txt: Added.
+
 2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] <input type="number"> is not a spinbutton

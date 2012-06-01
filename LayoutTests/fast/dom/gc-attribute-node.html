@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<body>
+<script>
+description('Tests that attribute node wrappers are not prematurely garbage collected');
+
+var e = document.createElement('div');
+document.body.appendChild(e);
+e.setAttribute('id', 'd');
+e.setAttribute('foo', 'bar');
+a = e.getAttributeNode('foo');
+a.prop = 'set';
+shouldBe('a.prop', '"set"');
+
+a = null;
+e = null;
+gc();
+
+e = document.body.querySelector('div#d');
+a = e.getAttributeNode('foo');
+shouldBe('a.prop', '"set"');
+
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>

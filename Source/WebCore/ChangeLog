@@ -1,3 +1,15 @@
+2012-05-31  Dominic Cooney  <dominicc@chromium.org>
+
+        [V8] Expando properties on attribute nodes disappear
+        https://bugs.webkit.org/show_bug.cgi?id=87925
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/gc-attribute-node.html
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::calculateGroupId): Group attributes like other nodes.
+
 2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] <input type="number"> is not a spinbutton

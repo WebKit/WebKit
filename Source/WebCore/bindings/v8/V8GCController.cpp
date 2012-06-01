@@ -306,10 +306,9 @@ static GroupId calculateGroupId(Node* node)
         // because it'll always be a group of 1.
         if (!root)
             return GroupId();
-    } else {
-        while (Node* parent = root->parentOrHostNode())
-            root = parent;
     }
+    while (Node* parent = root->parentOrHostNode())
+        root = parent;
 
     return GroupId(root);
 }
