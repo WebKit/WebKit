@@ -5040,9 +5040,14 @@ void Document::initContentSecurityPolicy()
     contentSecurityPolicy()->copyStateFrom(m_frame->tree()->parent()->document()->contentSecurityPolicy());
 }
 
-void Document::setSecurityOrigin(PassRefPtr<SecurityOrigin> origin)
+void Document::didUpdateSecurityOrigin()
 {
-    SecurityContext::setSecurityOrigin(origin);
+    if (!m_frame)
+        return;
+    // FIXME: We should remove DOMWindow::m_securityOrigin so that we don't need to keep them in sync.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=75793>.
+    m_frame->domWindow()->setSecurityOrigin(securityOrigin());
+    m_frame->script()->updateSecurityOrigin();
 }
 
 bool Document::isContextThread() const

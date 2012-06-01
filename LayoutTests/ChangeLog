@@ -1,3 +1,20 @@
+2012-06-01  Adam Barth  <abarth@webkit.org>
+
+        sandbox directive in X-WebKit-CSP header unable to create a unique origin
+        https://bugs.webkit.org/show_bug.cgi?id=88014
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control.html: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header.html: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header.html: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control-expected.txt: Added.
+
 2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, add missing text and image baselines for

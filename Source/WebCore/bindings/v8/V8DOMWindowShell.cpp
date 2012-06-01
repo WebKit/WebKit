@@ -592,6 +592,8 @@ void V8DOMWindowShell::namedItemRemoved(HTMLDocument* doc, const AtomicString& n
 
 void V8DOMWindowShell::updateSecurityOrigin()
 {
+    if (m_context.IsEmpty())
+        return;
     v8::HandleScope scope;
     setSecurityToken();
 }

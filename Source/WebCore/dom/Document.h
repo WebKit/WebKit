@@ -1048,11 +1048,6 @@ public:
     void initSecurityContext();
     void initContentSecurityPolicy();
 
-    // Explicitly override the security origin for this document.
-    // Note: It is dangerous to change the security origin of a document
-    //       that already contains content.
-    void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
-
     void updateURLForPushOrReplaceState(const KURL&);
     void statePopped(PassRefPtr<SerializedScriptValue>);
 
@@ -1166,6 +1161,8 @@ public:
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
+
+    virtual void didUpdateSecurityOrigin() OVERRIDE;
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
