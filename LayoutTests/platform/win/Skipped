@@ -1825,3 +1825,11 @@ media/video-zoom.html
 # https://bugs.webkit.org/show_bug.cgi?id=84073
 plugins/npruntime/object-from-destroyed-plugin-in-subframe.html
 plugins/npruntime/object-from-destroyed-plugin.html
+
+# Time out
+# https://bugs.webkit.org/show_bug.cgi?id=88107
+platform/win/plugins/iframe-inside-overflow.html
+platform/win/plugins/window-region-is-set-to-clip-rect.html
+plugins/crash-restoring-plugin-page-from-page-cache.html
+plugins/fullscreen-plugins-dont-reload.html
+plugins/netscape-plugin-page-cache-works.html

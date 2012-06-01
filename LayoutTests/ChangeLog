@@ -1,5 +1,20 @@
 2012-06-01  Jessie Berlin  <jberlin@apple.com>
 
+        [Win] 9 plugin tests fail/time out
+        https://bugs.webkit.org/show_bug.cgi?id=88107
+
+        Skip the ones that time out and add/update platform-specific results for the the ones that
+        fail to get the bots greener.
+
+        * platform/win/Skipped:
+        * platform/win/plugins/get-value-netscape-window-expected.txt:
+        * platform/win/plugins/netscape-dom-access-and-reload-expected.txt: Added.
+        * platform/win/plugins/npn-invalidate-rect-invalidates-window-expected.txt:
+        * platform/win/plugins/window-geometry-initialized-before-set-window-expected.txt:
+        * platform/win/plugins/geturlnotify-during-document-teardown-expected.txt
+
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
         Skip some plugin tests that crash/assert on Windows.
 
         * platform/win/Skipped:
