@@ -272,6 +272,8 @@ private:
     bool m_isTransparent;
     bool m_inNPPNew;
     bool m_shouldUseManualLoader;
+    bool m_hasCalledSetWindow;
+
     RefPtr<NetscapePluginStream> m_manualStream;
     Vector<bool, 8> m_popupEnabledStates;
 

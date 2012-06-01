@@ -1,3 +1,23 @@
+2012-06-01  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11335622> and https://bugs.webkit.org/show_bug.cgi?id=88119
+        REGRESSION (r99448) Zero-sized plug-ins no longer get an NPP_SetWindow call
+
+        Reviewed by Oliver Hunt.
+
+        Add a flag to NetscapePlugin to track whether or not NPP_SetWindow has ever been called.
+        Check this flag in geometryDidChange to make sure every plug-in gets the call at least once.
+
+        "Everybody gets one.  Tell him, Peter."
+        "Apparently everybody gets one."
+        "Bingo."
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        (WebKit::NetscapePlugin::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+
 2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [WK2] WebLayerTreeRenderer::setContentsSize called synchronously
