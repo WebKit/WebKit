@@ -1,3 +1,10 @@
+2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a TEXT expectation for http/tests/media/video-buffered.html
+        after it started failing in r119268.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG constant folding should be OK with GetLocal of captured variables having a constant
