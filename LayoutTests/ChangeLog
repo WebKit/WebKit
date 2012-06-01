@@ -1,3 +1,14 @@
+2012-06-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Prepare styles-new-API.html results format for a more complex CSS model
+        https://bugs.webkit.org/show_bug.cgi?id=88090
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/styles/resources/styles-new-API.css:
+        * inspector/styles/styles-new-API-expected.txt:
+        * inspector/styles/styles-new-API.html:
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] [DRT] editing/execCommand/paste-and-match-style-event.html crashes

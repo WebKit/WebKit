@@ -38,13 +38,13 @@ function test()
             InspectorTest.addResult("=== Inherited styles for body ===");
             for (var i = 0; i < styles.inherited.length; ++i) {
                 InspectorTest.addResult("Level=" + (i + 1));
-                dumpRuleOrStyle(styles.inherited[i].inlineStyle);
+                dumpStyle(styles.inherited[i].inlineStyle);
                 dumpRulesArray(styles.inherited[i].matchedCSSRules);
             }
 
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Inline style for body ===");
-            dumpRuleOrStyle(styles.inlineStyle);
+            dumpStyle(styles.inlineStyle);
             test_tableStyles();
         }
 
@@ -104,7 +104,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Attributes style for table ===");
-            dumpRuleOrStyle(attributesStyle);
+            dumpStyle(attributesStyle);
             test_styleSheets();
         }
 
@@ -230,7 +230,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After property manipulations ===");
-            dumpRuleOrStyle(style);
+            dumpStyle(style);
             test_enableProperty(style.styleId);
         }
 
@@ -288,7 +288,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== After property enabled ===");
-            dumpRuleOrStyle(style);
+            dumpStyle(style);
             InspectorTest.completeTest();
         }
 
@@ -298,32 +298,73 @@ function test()
 
     // Data dumping
 
-    function dumpRulesArray(rules)
+    const indent = "    ";
+
+    function dumpRulesArray(rules, currentIndent)
     {
+        currentIndent = currentIndent || "";
         if (!rules)
             return;
         for (var i = 0; i < rules.length; ++i)
-            dumpRuleOrStyle(rules[i]);
+            dumpRule(rules[i], currentIndent);
     }
 
-    function dumpRuleOrStyle(ruleOrStyle)
+    function dumpRule(rule, currentIndent)
     {
-        if (!ruleOrStyle)
+        currentIndent = currentIndent || "";
+
+        if (!rule.type || rule.type === "style") {
+            InspectorTest.addResult(currentIndent + rule.selectorText + ": [" + rule.origin + "] {");
+            dumpStyle(rule.style, currentIndent + indent);
+            InspectorTest.addResult(currentIndent + "}");
             return;
-        var isRule = !!(ruleOrStyle.style);
-        var style = isRule ? ruleOrStyle.style : ruleOrStyle;
-        InspectorTest.addResult("");
-        InspectorTest.addResult(isRule ? "rule" : "style");
-        InspectorTest.addResult((isRule ? (ruleOrStyle.selectorText + ": [" + ruleOrStyle.origin + "]") : "raw style"));
+        }
+
+        if (rule.type === "media") {
+            InspectorTest.addResult(currentIndent + "@media " + rule.mediaText + " {");
+            dumpRulesArray(rule.childRules, currentIndent + indent);
+            InspectorTest.addResult(currentIndent + "}");
+            return;
+        }
+
+        if (rule.type === "import") {
+            InspectorTest.addResult(currentIndent + "@import: header=" + InspectorTest.rangeText(rule.headerRange) + ", body=" + InspectorTest.rangeText(rule.bodyRange));
+            return;
+        }
+
+        if (rule.type === "page" || rule.type === "font-face") {
+            if (rule.type === "page")
+                InspectorTest.addResult(currentIndent + rule.selectorText + " {");
+            else
+                InspectorTest.addResult(currentIndent + "@" + rule.type + " " + (rule.selectorText ? rule.selectorText + " " : "")  + "{");
+            dumpStyle(rule.style, currentIndent + indent);
+            InspectorTest.addResult(currentIndent + "}");
+            return;
+        }
+
+        if (rule.type === "charset") {
+            InspectorTest.addResult("@charset");
+            return;
+        }
+
+        InspectorTest.addResult(currentIndent + "[UNKNOWN RULE]: header=" + InspectorTest.rangeText(rule.headerRange) + ", body=" + InspectorTest.rangeText(rule.bodyRange));
+    }
+
+    function dumpStyle(style, currentIndent)
+    {
+        currentIndent = currentIndent || "";
+        if (!style) {
+            InspectorTest.addResult(currentIndent + "[NO STYLE]");
+            return;
+        }
         for (var i = 0; i < style.cssProperties.length; ++i) {
             var property = style.cssProperties[i];
             if (property.status !== "disabled")
-                InspectorTest.addResult("['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (("parsedOk" in property) ? " non-parsed" : "") +"] @" + InspectorTest.rangeText(property.range) + " " + (property.status || "style"));
+                InspectorTest.addResult(currentIndent + "['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (("parsedOk" in property) ? " non-parsed" : "") +"] @" + InspectorTest.rangeText(property.range) + " " + (property.status || "style"));
             else
-                InspectorTest.addResult("[text='" + property.text + "'] " + property.status);
+                InspectorTest.addResult(currentIndent + "[text='" + property.text + "'] " + property.status);
         }
     }
-
 
     function loadAndDumpStyleSheet(styleSheetId, continuation, error)
     {
@@ -340,8 +381,7 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("StyleSheet: '" + styleSheet.text + "'");
-            for (var i = 0; i < styleSheet.rules.length; ++i)
-                dumpRuleOrStyle(styleSheet.rules[i]);
+            dumpRulesArray(styleSheet.rules);
             if (continuation)
                 continuation(styleSheet);
         }

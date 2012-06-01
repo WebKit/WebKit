@@ -7,99 +7,85 @@ H1
 OK
 
 === Matched rules for body ===
-
-rule
-body: [user-agent]
-['display':'block'] @[undefined-undefined] style
-['margin-top':'8px'] @[undefined-undefined] style
-['margin-right':'8px'] @[undefined-undefined] style
-['margin-bottom':'8px'] @[undefined-undefined] style
-['margin-left':'8px'] @[undefined-undefined] style
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
-
-rule
-body: [regular]
-['font-size':'12px'] @[5-21] active
-['foo':'bar !
+body: [user-agent] {
+    ['display':'block'] @[undefined-undefined] style
+    ['margin-top':'8px'] @[undefined-undefined] style
+    ['margin-right':'8px'] @[undefined-undefined] style
+    ['margin-bottom':'8px'] @[undefined-undefined] style
+    ['margin-left':'8px'] @[undefined-undefined] style
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['font-size':'12px'] @[5-21] active
+    ['foo':'bar !
 
     important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
-['height':'100% !important' is-important] @[109-133] active
-['colorz':'"!important"' non-parsed] @[138-159] active
-['important':'!important' non-parsed] @[164-185] active
-['color':'yellow'] @[190-204] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
-
-rule
-body.main1: [regular]
-['color':'#F00BAA'] @[13-28] active
-['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
-
-rule
-body.main2: [regular]
-['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
-['background-image':'initial' is-important] @[undefined-undefined] style
-['background-repeat-x':'initial' is-important] @[undefined-undefined] style
-['background-repeat-y':'initial' is-important] @[undefined-undefined] style
-['background-attachment':'initial' is-important] @[undefined-undefined] style
-['background-position-x':'initial' is-important] @[undefined-undefined] style
-['background-position-y':'initial' is-important] @[undefined-undefined] style
-['background-origin':'initial' is-important] @[undefined-undefined] style
-['background-clip':'initial' is-important] @[undefined-undefined] style
-['background-color':'green' is-important] @[undefined-undefined] style
-['background-size':'initial' is-important] @[undefined-undefined] style
-
-rule
-body.mainpage: [regular]
-['text-decoration':'none'] @[5-27] active
-['badproperty':'1badvalue1' non-parsed] @[108-132] active
-
-rule
-body.mainpage: [regular]
-['prop1':'val1' non-parsed] @[5-17] active
-['prop2':'val2' non-parsed] @[22-34] active
+    ['height':'100% !important' is-important] @[109-133] active
+    ['colorz':'"!important"' non-parsed] @[138-159] active
+    ['important':'!important' non-parsed] @[164-185] active
+    ['color':'yellow'] @[190-204] active
+    ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
+}
+body.main1: [regular] {
+    ['color':'#F00BAA'] @[13-28] active
+    ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+}
+body.main2: [regular] {
+    ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+    ['background-image':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+    ['background-attachment':'initial' is-important] @[undefined-undefined] style
+    ['background-position-x':'initial' is-important] @[undefined-undefined] style
+    ['background-position-y':'initial' is-important] @[undefined-undefined] style
+    ['background-origin':'initial' is-important] @[undefined-undefined] style
+    ['background-clip':'initial' is-important] @[undefined-undefined] style
+    ['background-color':'green' is-important] @[undefined-undefined] style
+    ['background-size':'initial' is-important] @[undefined-undefined] style
+}
+body.mainpage: [regular] {
+    ['text-decoration':'none'] @[5-27] active
+    ['badproperty':'1badvalue1' non-parsed] @[108-132] active
+}
+body.mainpage: [regular] {
+    ['prop1':'val1' non-parsed] @[5-17] active
+    ['prop2':'val2' non-parsed] @[22-34] active
+}
 
 === Pseudo rules for body ===
 PseudoId=4
-
-rule
-body::after: [regular]
-['content':'"After body"'] @[5-27] active
+body::after: [regular] {
+    ['content':'"After body"'] @[5-27] active
+}
 
 === Inherited styles for body ===
 Level=1
-
-rule
-html: [user-agent]
-['display':'block'] @[undefined-undefined] style
-
-rule
-html: [regular]
-['font-weight':'400'] @[5-22] active
+[NO STYLE]
+html: [user-agent] {
+    ['display':'block'] @[undefined-undefined] style
+}
+html: [regular] {
+    ['font-weight':'400'] @[5-22] active
+}
 
 === Inline style for body ===
-
-style
-raw style
 ['font-weight':'normal'] @[0-20] active
 ['width':'85%'] @[21-32] active
 ['background-image':'url(bar.png)'] @[33-63] active
 
 === Attributes style for table ===
-
-style
-raw style
 ['width':'50%'] @[undefined-undefined] style
 
 === All stylesheets ===
 
-StyleSheet: '@import url("styles-new-API-1.css");
+StyleSheet: '@charset "UTF-8";
+
+@import url("styles-new-API-1.css");
 
 html {
     font-weight: 400;
@@ -131,69 +117,63 @@ h1 {
     height : 100% ; border: 1px solid; border-width: 2px; background-color : #33FF33; googles: abra; foo: .bar; -moz-goog: 1***; border-width: 0px;
 }
 '
-
-rule
-html: [regular]
-['font-weight':'400'] @[5-22] active
-
-rule
-body: [regular]
-['font-size':'12px'] @[5-21] active
-['foo':'bar !
+html: [regular] {
+    ['font-weight':'400'] @[5-22] active
+}
+body: [regular] {
+    ['font-size':'12px'] @[5-21] active
+    ['foo':'bar !
 
     important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
-['height':'100% !important' is-important] @[109-133] active
-['colorz':'"!important"' non-parsed] @[138-159] active
-['important':'!important' non-parsed] @[164-185] active
-['color':'yellow'] @[190-204] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
-
-rule
-body.main1: [regular]
-['color':'#F00BAA'] @[13-28] active
-['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
-
-rule
-body.main2: [regular]
-['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
-['background-image':'initial' is-important] @[undefined-undefined] style
-['background-repeat-x':'initial' is-important] @[undefined-undefined] style
-['background-repeat-y':'initial' is-important] @[undefined-undefined] style
-['background-attachment':'initial' is-important] @[undefined-undefined] style
-['background-position-x':'initial' is-important] @[undefined-undefined] style
-['background-position-y':'initial' is-important] @[undefined-undefined] style
-['background-origin':'initial' is-important] @[undefined-undefined] style
-['background-clip':'initial' is-important] @[undefined-undefined] style
-['background-color':'green' is-important] @[undefined-undefined] style
-['background-size':'initial' is-important] @[undefined-undefined] style
-
-rule
-body::after: [regular]
-['content':'"After body"'] @[5-27] active
-
-rule
-h1: [regular]
-['height':'100%'] @[5-20] active
-['border':'1px solid'] @[21-39] active
-['border-width':'2px'] @[40-58] inactive
-['background-color':'#33FF33'] @[59-86] active
-['googles':'abra' non-parsed] @[87-101] active
-['foo':'.bar' non-parsed] @[102-112] active
-['-moz-goog':'1***' non-parsed] @[113-129] active
-['border-width':'0px'] @[130-148] active
-['border-top-style':'solid'] @[undefined-undefined] style
-['border-right-style':'solid'] @[undefined-undefined] style
-['border-bottom-style':'solid'] @[undefined-undefined] style
-['border-left-style':'solid'] @[undefined-undefined] style
-['border-top-color':'initial'] @[undefined-undefined] style
-['border-right-color':'initial'] @[undefined-undefined] style
-['border-bottom-color':'initial'] @[undefined-undefined] style
-['border-left-color':'initial'] @[undefined-undefined] style
-['border-image':'initial'] @[undefined-undefined] style
-['border-top-width':'0px'] @[undefined-undefined] style
-['border-right-width':'0px'] @[undefined-undefined] style
-['border-bottom-width':'0px'] @[undefined-undefined] style
-['border-left-width':'0px'] @[undefined-undefined] style
+    ['height':'100% !important' is-important] @[109-133] active
+    ['colorz':'"!important"' non-parsed] @[138-159] active
+    ['important':'!important' non-parsed] @[164-185] active
+    ['color':'yellow'] @[190-204] active
+    ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
+}
+body.main1: [regular] {
+    ['color':'#F00BAA'] @[13-28] active
+    ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+}
+body.main2: [regular] {
+    ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+    ['background-image':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+    ['background-attachment':'initial' is-important] @[undefined-undefined] style
+    ['background-position-x':'initial' is-important] @[undefined-undefined] style
+    ['background-position-y':'initial' is-important] @[undefined-undefined] style
+    ['background-origin':'initial' is-important] @[undefined-undefined] style
+    ['background-clip':'initial' is-important] @[undefined-undefined] style
+    ['background-color':'green' is-important] @[undefined-undefined] style
+    ['background-size':'initial' is-important] @[undefined-undefined] style
+}
+body::after: [regular] {
+    ['content':'"After body"'] @[5-27] active
+}
+h1: [regular] {
+    ['height':'100%'] @[5-20] active
+    ['border':'1px solid'] @[21-39] active
+    ['border-width':'2px'] @[40-58] inactive
+    ['background-color':'#33FF33'] @[59-86] active
+    ['googles':'abra' non-parsed] @[87-101] active
+    ['foo':'.bar' non-parsed] @[102-112] active
+    ['-moz-goog':'1***' non-parsed] @[113-129] active
+    ['border-width':'0px'] @[130-148] active
+    ['border-top-style':'solid'] @[undefined-undefined] style
+    ['border-right-style':'solid'] @[undefined-undefined] style
+    ['border-bottom-style':'solid'] @[undefined-undefined] style
+    ['border-left-style':'solid'] @[undefined-undefined] style
+    ['border-top-color':'initial'] @[undefined-undefined] style
+    ['border-right-color':'initial'] @[undefined-undefined] style
+    ['border-bottom-color':'initial'] @[undefined-undefined] style
+    ['border-left-color':'initial'] @[undefined-undefined] style
+    ['border-image':'initial'] @[undefined-undefined] style
+    ['border-top-width':'0px'] @[undefined-undefined] style
+    ['border-right-width':'0px'] @[undefined-undefined] style
+    ['border-bottom-width':'0px'] @[undefined-undefined] style
+    ['border-left-width':'0px'] @[undefined-undefined] style
+}
 
 StyleSheet: '@import url(styles-new-API-2.css);
 
@@ -221,13 +201,11 @@ body {
 
 }
 '
-
-rule
-#absent-id: [regular]
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+#absent-id: [regular] {
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
 
 StyleSheet: '@import url(styles-new-API-1.css);
 
@@ -255,13 +233,11 @@ body {
 
 }
 '
-
-rule
-#absent-id: [regular]
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+#absent-id: [regular] {
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
 
 StyleSheet: '
 
@@ -277,144 +253,124 @@ body.mainpage {
 }
 
 '
-
-rule
-body.mainpage: [regular]
-['text-decoration':'none'] @[5-27] active
-['badproperty':'1badvalue1' non-parsed] @[108-132] active
-
-rule
-body.mainpage: [regular]
-['prop1':'val1' non-parsed] @[5-17] active
-['prop2':'val2' non-parsed] @[22-34] active
+body.mainpage: [regular] {
+    ['text-decoration':'none'] @[5-27] active
+    ['badproperty':'1badvalue1' non-parsed] @[108-132] active
+}
+body.mainpage: [regular] {
+    ['prop1':'val1' non-parsed] @[5-17] active
+    ['prop2':'val2' non-parsed] @[22-34] active
+}
 
 === Last stylesheet patched ===
 
 StyleSheet: 'body.mainpage {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
-
-rule
-body.mainpage: [regular]
-['text-decoration':'strikethrough' non-parsed] @[4-35] active
-['badproperty':'2badvalue2' non-parsed] @[39-63] active
-
-rule
-body: [regular]
-['text-align':'justify'] @[4-24] active
+body.mainpage: [regular] {
+    ['text-decoration':'strikethrough' non-parsed] @[4-35] active
+    ['badproperty':'2badvalue2' non-parsed] @[39-63] active
+}
+body: [regular] {
+    ['text-align':'justify'] @[4-24] active
+}
 
 === After selector set ===
 
 StyleSheet: 'html *, body[foo="bar"] {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
-
-rule
-html *, body[foo="bar"]: [regular]
-['text-decoration':'strikethrough' non-parsed] @[4-35] active
-['badproperty':'2badvalue2' non-parsed] @[39-63] active
-
-rule
-body: [regular]
-['text-align':'justify'] @[4-24] active
+html *, body[foo="bar"]: [regular] {
+    ['text-decoration':'strikethrough' non-parsed] @[4-35] active
+    ['badproperty':'2badvalue2' non-parsed] @[39-63] active
+}
+body: [regular] {
+    ['text-align':'justify'] @[4-24] active
+}
 
 === After style text set ===
 
 StyleSheet: 'html *, body[foo="bar"] {
     color: white; background: black;
 }body {    text-align: justify;}'
-
-rule
-html *, body[foo="bar"]: [regular]
-['color':'white'] @[5-18] active
-['background':'black'] @[19-37] active
-['background-image':'initial'] @[undefined-undefined] style
-['background-repeat-x':'initial'] @[undefined-undefined] style
-['background-repeat-y':'initial'] @[undefined-undefined] style
-['background-attachment':'initial'] @[undefined-undefined] style
-['background-position-x':'initial'] @[undefined-undefined] style
-['background-position-y':'initial'] @[undefined-undefined] style
-['background-origin':'initial'] @[undefined-undefined] style
-['background-clip':'initial'] @[undefined-undefined] style
-['background-color':'black'] @[undefined-undefined] style
-['background-size':'initial'] @[undefined-undefined] style
-
-rule
-body: [regular]
-['text-align':'justify'] @[4-24] active
+html *, body[foo="bar"]: [regular] {
+    ['color':'white'] @[5-18] active
+    ['background':'black'] @[19-37] active
+    ['background-image':'initial'] @[undefined-undefined] style
+    ['background-repeat-x':'initial'] @[undefined-undefined] style
+    ['background-repeat-y':'initial'] @[undefined-undefined] style
+    ['background-attachment':'initial'] @[undefined-undefined] style
+    ['background-position-x':'initial'] @[undefined-undefined] style
+    ['background-position-y':'initial'] @[undefined-undefined] style
+    ['background-origin':'initial'] @[undefined-undefined] style
+    ['background-clip':'initial'] @[undefined-undefined] style
+    ['background-color':'black'] @[undefined-undefined] style
+    ['background-size':'initial'] @[undefined-undefined] style
+}
+body: [regular] {
+    ['text-align':'justify'] @[4-24] active
+}
 
 === Matched rules after rule added ===
-
-rule
-body: [user-agent]
-['display':'block'] @[undefined-undefined] style
-['margin-top':'8px'] @[undefined-undefined] style
-['margin-right':'8px'] @[undefined-undefined] style
-['margin-bottom':'8px'] @[undefined-undefined] style
-['margin-left':'8px'] @[undefined-undefined] style
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
-
-rule
-body: [regular]
-['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
-
-rule
-body: [regular]
-['font-size':'12px'] @[5-21] active
-['foo':'bar !
+body: [user-agent] {
+    ['display':'block'] @[undefined-undefined] style
+    ['margin-top':'8px'] @[undefined-undefined] style
+    ['margin-right':'8px'] @[undefined-undefined] style
+    ['margin-bottom':'8px'] @[undefined-undefined] style
+    ['margin-left':'8px'] @[undefined-undefined] style
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['font-size':'12px'] @[5-21] active
+    ['foo':'bar !
 
     important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
-['height':'100% !important' is-important] @[109-133] active
-['colorz':'"!important"' non-parsed] @[138-159] active
-['important':'!important' non-parsed] @[164-185] active
-['color':'yellow'] @[190-204] active
-['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
-
-rule
-html *, body[foo="bar"]: [regular]
-['color':'white'] @[5-18] active
-['background':'black'] @[19-37] active
-['background-image':'initial'] @[undefined-undefined] style
-['background-repeat-x':'initial'] @[undefined-undefined] style
-['background-repeat-y':'initial'] @[undefined-undefined] style
-['background-attachment':'initial'] @[undefined-undefined] style
-['background-position-x':'initial'] @[undefined-undefined] style
-['background-position-y':'initial'] @[undefined-undefined] style
-['background-origin':'initial'] @[undefined-undefined] style
-['background-clip':'initial'] @[undefined-undefined] style
-['background-color':'black'] @[undefined-undefined] style
-['background-size':'initial'] @[undefined-undefined] style
-
-rule
-body: [regular]
-['text-align':'justify'] @[4-24] active
-
-rule
-body: [inspector]
-['font-family':'serif'] @[5-24] active
-
-rule
-body.main1: [regular]
-['color':'#F00BAA'] @[13-28] active
-['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
-
-rule
-body.main2: [regular]
-['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
-['background-image':'initial' is-important] @[undefined-undefined] style
-['background-repeat-x':'initial' is-important] @[undefined-undefined] style
-['background-repeat-y':'initial' is-important] @[undefined-undefined] style
-['background-attachment':'initial' is-important] @[undefined-undefined] style
-['background-position-x':'initial' is-important] @[undefined-undefined] style
-['background-position-y':'initial' is-important] @[undefined-undefined] style
-['background-origin':'initial' is-important] @[undefined-undefined] style
-['background-clip':'initial' is-important] @[undefined-undefined] style
-['background-color':'green' is-important] @[undefined-undefined] style
-['background-size':'initial' is-important] @[undefined-undefined] style
+    ['height':'100% !important' is-important] @[109-133] active
+    ['colorz':'"!important"' non-parsed] @[138-159] active
+    ['important':'!important' non-parsed] @[164-185] active
+    ['color':'yellow'] @[190-204] active
+    ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
+}
+html *, body[foo="bar"]: [regular] {
+    ['color':'white'] @[5-18] active
+    ['background':'black'] @[19-37] active
+    ['background-image':'initial'] @[undefined-undefined] style
+    ['background-repeat-x':'initial'] @[undefined-undefined] style
+    ['background-repeat-y':'initial'] @[undefined-undefined] style
+    ['background-attachment':'initial'] @[undefined-undefined] style
+    ['background-position-x':'initial'] @[undefined-undefined] style
+    ['background-position-y':'initial'] @[undefined-undefined] style
+    ['background-origin':'initial'] @[undefined-undefined] style
+    ['background-clip':'initial'] @[undefined-undefined] style
+    ['background-color':'black'] @[undefined-undefined] style
+    ['background-size':'initial'] @[undefined-undefined] style
+}
+body: [regular] {
+    ['text-align':'justify'] @[4-24] active
+}
+body: [inspector] {
+    ['font-family':'serif'] @[5-24] active
+}
+body.main1: [regular] {
+    ['color':'#F00BAA'] @[13-28] active
+    ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+}
+body.main2: [regular] {
+    ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+    ['background-image':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+    ['background-attachment':'initial' is-important] @[undefined-undefined] style
+    ['background-position-x':'initial' is-important] @[undefined-undefined] style
+    ['background-position-y':'initial' is-important] @[undefined-undefined] style
+    ['background-origin':'initial' is-important] @[undefined-undefined] style
+    ['background-clip':'initial' is-important] @[undefined-undefined] style
+    ['background-color':'green' is-important] @[undefined-undefined] style
+    ['background-size':'initial' is-important] @[undefined-undefined] style
+}
 
 === After property manipulations ===
-
-style
-raw style
 [text='height : 100% ;'] disabled
 ['border':'1px solid'] @[1-19] active
 ['border-width':'2px'] @[20-38] inactive
@@ -439,9 +395,6 @@ raw style
 ['border-image':'initial'] @[undefined-undefined] style
 
 === After property enabled ===
-
-style
-raw style
 [text='height : 100% ;'] disabled
 ['border':'1px solid'] @[1-19] active
 ['border-width':'2px'] @[20-38] inactive
