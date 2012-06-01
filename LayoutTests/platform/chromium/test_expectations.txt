@@ -31,8 +31,8 @@ BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
 BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 DEBUG : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : jquery/traversing.html = PASS
-BUGCR24182 SLOW LEOPARD DEBUG : jquery/traversing.html = PASS TEXT
+BUGCR24182 SLOW LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
+BUGCR24182 SLOW LEOPARD DEBUG : jquery/traversing.html = PASS TEXT TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
@@ -3791,4 +3791,6 @@ BUGWK87870 MAC DEBUG : css3/filters/custom/custom-filter-property-computed-style
 BUGWK87880 : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
 
 BUGWK87886 LINUX : perf/mouse-event.html = PASS TEXT
+
+BUGWK88123 LEOPARD DEBUG : media/W3C/audio/canPlayType/canPlayType_application_octet_stream.html = PASS TIMEOUT
 

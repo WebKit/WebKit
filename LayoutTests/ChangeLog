@@ -1,3 +1,9 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-06-01  Joe Thomas  <joethomas@motorola.com>
 
         getComputedStyle for background shorthand property does not return background-origin and background-clip.
