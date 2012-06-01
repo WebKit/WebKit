@@ -74,11 +74,9 @@ public:
                 Node phantom(Phantom, node.codeOrigin);
                 
                 if (node.op() == GetLocal) {
-                    ASSERT(m_graph[node.child1()].op() == Phi);
-                    ASSERT(!m_graph[node.child1()].hasResult());
-                    
                     NodeIndex previousLocalAccess = NoNode;
-                    if (block->variablesAtHead.operand(node.local()) == nodeIndex) {
+                    if (block->variablesAtHead.operand(node.local()) == nodeIndex
+                        && m_graph[node.child1()].op() == Phi) {
                         // We expect this to be the common case.
                         ASSERT(block->isInPhis(node.child1().index()));
                         previousLocalAccess = node.child1().index();
@@ -97,13 +95,6 @@ public:
                                 continue;
                             // The two must have been unified.
                             ASSERT(subNode.variableAccessData() == node.variableAccessData());
-                            // Currently, the previous node must be a flush.
-                            // NOTE: This assertion should be removed if we ever do
-                            // constant folding on captured variables. In particular,
-                            // this code does not require the previous node to be a flush,
-                            // but we are asserting this anyway because it is a constraint
-                            // of the IR and this is as good a place as any to assert it.
-                            ASSERT(subNode.op() == Flush);
                             previousLocalAccess = subNodeIndex;
                             break;
                         }

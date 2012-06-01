@@ -1,3 +1,17 @@
+2012-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG constant folding should be OK with GetLocal of captured variables having a constant
+        https://bugs.webkit.org/show_bug.cgi?id=88137
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-cse-cfa-discrepancy-expected.txt: Added.
+        * fast/js/dfg-cse-cfa-discrepancy.html: Added.
+        * fast/js/script-tests/dfg-cse-cfa-discrepancy.js: Added.
+        (foo.bar.baz):
+        (foo.bar):
+        (foo):
+
 2012-06-01  Jessie Berlin  <jberlin@apple.com>
 
         [Win] ASSERT(enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()))
