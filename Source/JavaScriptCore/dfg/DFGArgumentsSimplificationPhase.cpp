@@ -487,19 +487,21 @@ public:
                         node.setOp(GetMyArgumentsLength);
                         changed = true;
                     }
-                    if (!node.codeOrigin.inlineCallFrame)
+                    
+                    CodeOrigin codeOrigin = node.codeOrigin;
+                    if (!codeOrigin.inlineCallFrame)
                         break;
                     
                     // We know exactly what this will return. But only after we have checked
                     // that nobody has escaped our arguments.
-                    Node check(CheckArgumentsNotCreated, node.codeOrigin);
+                    Node check(CheckArgumentsNotCreated, codeOrigin);
                     check.ref();
                     NodeIndex checkIndex = m_graph.size();
                     m_graph.append(check);
                     insertionSet.append(indexInBlock, checkIndex);
                     
                     m_graph.convertToConstant(
-                        nodeIndex, jsNumber(node.codeOrigin.inlineCallFrame->arguments.size() - 1));
+                        nodeIndex, jsNumber(codeOrigin.inlineCallFrame->arguments.size() - 1));
                     changed = true;
                     break;
                 }
