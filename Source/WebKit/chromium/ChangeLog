@@ -1,3 +1,77 @@
+2012-05-31  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Migrate to WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=87788
+
+        Reviewed by James Robinson.
+
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setSublayerTransform):
+        (WebKit::WebLayer::setTransform):
+        * tests/CCAnimationTestCommon.cpp:
+        (WebKitTests::FakeTransformTransition::getValue):
+        * tests/CCAnimationTestCommon.h:
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::executeCalculateDrawTransformsAndVisibility):
+        (WebKitTests::TEST_F):
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        * tests/CCLayerAnimationControllerTest.cpp:
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerSorterTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::commitCompleteOnCCThread):
+        (WTF::setLayerPropertiesForTesting):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::beginTest):
+        (WTF::setTestLayerPropertiesForTesting):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/CCLayerTreeTestCommon.h:
+        (WebKitTests):
+        * tests/CCMathUtilTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::createRoot):
+        (WebKitTests::CCOcclusionTrackerTest::createLayer):
+        (WebKitTests::CCOcclusionTrackerTest::createSurface):
+        (WebKitTests::CCOcclusionTrackerTest::createDrawingLayer):
+        (WebKitTests::CCOcclusionTrackerTest::createReplicaLayer):
+        (WebKitTests::CCOcclusionTrackerTest::createDrawingSurface):
+        (CCOcclusionTrackerTest):
+        (WebKitTests::CCOcclusionTrackerTest::setBaseProperties):
+        (WebKitTests::CCOcclusionTrackerTest::setProperties):
+        (WebKitTests::CCOcclusionTrackerTestRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTranslatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestChildInRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestVisitTargetTwoTimes::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceRotatedOffAxis::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithTwoOpaqueChildren::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblings::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestFilters::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTest3dTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransformBehindCamera::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTwoBackgroundFiltersReduceOcclusionTwice::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionBelowBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionIfBackgroundFilterIsOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReduceOcclusionWhenBackgroundFilterIsPartiallyOccluded::runMyTest):
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/FloatQuadTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+        * tests/LinkHighlightTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        * tests/WebTransformationMatrixTest.cpp:
+        (WebKit::TEST):
+        (WebKit):
+
 2012-05-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Single thread proxy should not tick animations unless the layer renderer has been initialized

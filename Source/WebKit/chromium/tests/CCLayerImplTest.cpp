@@ -86,7 +86,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     IntRect arbitraryIntRect = IntRect(arbitraryIntPoint, arbitraryIntSize);
     FloatRect arbitraryFloatRect = FloatRect(arbitraryFloatPoint, FloatSize(1.234f, 5.678f));
     Color arbitraryColor = Color(10, 20, 30);
-    TransformationMatrix arbitraryTransform;
+    WebTransformationMatrix arbitraryTransform;
     arbitraryTransform.scale3d(0.1, 0.2, 0.3);
     WebFilterOperations arbitraryFilters;
     arbitraryFilters.append(WebFilterOperation::createOpacityFilter(0.5));

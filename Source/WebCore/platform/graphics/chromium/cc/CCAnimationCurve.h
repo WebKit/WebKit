@@ -25,14 +25,14 @@
 #ifndef CCAnimationCurve_h
 #define CCAnimationCurve_h
 
-#include "TransformationMatrix.h"
-
+#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class CCFloatAnimationCurve;
 class CCTransformAnimationCurve;
+class IntSize;
 class TransformOperations;
 
 // An animation curve is a function that returns a value given a time.
@@ -65,7 +65,7 @@ class CCTransformAnimationCurve : public CCAnimationCurve {
 public:
     virtual ~CCTransformAnimationCurve() { }
 
-    virtual TransformationMatrix getValue(double t, const IntSize& layerSize) const = 0;
+    virtual WebKit::WebTransformationMatrix getValue(double t, const IntSize& layerSize) const = 0;
 
     // Partial CCAnimation implementation.
     virtual Type type() const OVERRIDE { return Transform; }

@@ -44,9 +44,10 @@
 #include "cc/CCLayerTreeHost.h"
 #include "skia/ext/platform_canvas.h"
 
-namespace WebCore {
-
 using namespace std;
+using WebKit::WebTransformationMatrix;
+
+namespace WebCore {
 
 static int s_nextLayerId = 1;
 
@@ -361,7 +362,7 @@ void LayerChromium::setPosition(const FloatPoint& position)
     setNeedsCommit();
 }
 
-void LayerChromium::setSublayerTransform(const TransformationMatrix& sublayerTransform)
+void LayerChromium::setSublayerTransform(const WebTransformationMatrix& sublayerTransform)
 {
     if (m_sublayerTransform == sublayerTransform)
         return;
@@ -369,7 +370,7 @@ void LayerChromium::setSublayerTransform(const TransformationMatrix& sublayerTra
     setNeedsCommit();
 }
 
-void LayerChromium::setTransform(const TransformationMatrix& transform)
+void LayerChromium::setTransform(const WebTransformationMatrix& transform)
 {
     if (m_transform == transform)
         return;
@@ -590,7 +591,7 @@ void LayerChromium::setOpacityFromAnimation(float opacity)
     m_opacity = opacity;
 }
 
-void LayerChromium::setTransformFromAnimation(const TransformationMatrix& transform)
+void LayerChromium::setTransformFromAnimation(const WebTransformationMatrix& transform)
 {
     // This is called due to an ongoing accelerated animation. Since this animation is
     // also being run on the impl thread, there is no need to request a commit to push

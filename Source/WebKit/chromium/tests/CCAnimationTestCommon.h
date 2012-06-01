@@ -25,6 +25,7 @@
 #ifndef CCAnimationTestCommon_h
 #define CCAnimationTestCommon_h
 
+#include "IntSize.h"
 #include "cc/CCAnimationCurve.h"
 #include "cc/CCLayerAnimationController.h"
 
@@ -53,7 +54,7 @@ public:
     virtual ~FakeTransformTransition();
 
     virtual double duration() const OVERRIDE { return m_duration; }
-    virtual WebCore::TransformationMatrix getValue(double time, const WebCore::IntSize&) const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix getValue(double time, const WebCore::IntSize&) const OVERRIDE;
 
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 
@@ -86,13 +87,13 @@ public:
     virtual int id() const OVERRIDE { return 0; }
     virtual void setOpacityFromAnimation(float opacity) OVERRIDE { m_opacity = opacity; }
     virtual float opacity() const OVERRIDE { return m_opacity; }
-    virtual void setTransformFromAnimation(const WebCore::TransformationMatrix& transform) OVERRIDE { m_transform = transform; }
-    virtual const WebCore::TransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix& transform) OVERRIDE { m_transform = transform; }
+    virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
     virtual const WebCore::IntSize& bounds() const OVERRIDE { return m_bounds; }
 
 private:
     float m_opacity;
-    WebCore::TransformationMatrix m_transform;
+    WebKit::WebTransformationMatrix m_transform;
     WebCore::IntSize m_bounds;
 };
 

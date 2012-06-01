@@ -47,6 +47,8 @@
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
+using WebKit::WebTransformationMatrix;
+
 namespace {
 
 void didVisibilityChange(WebCore::CCLayerTreeHostImpl* id, bool visible)
@@ -234,7 +236,7 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
     FloatRect surfaceDamageRect;
     // For now, we conservatively use the root damage as the damage for
     // all surfaces, except perspective transforms.
-    const TransformationMatrix& screenSpaceTransform = renderSurfaceLayer->renderSurface()->screenSpaceTransform();
+    const WebTransformationMatrix& screenSpaceTransform = renderSurfaceLayer->renderSurface()->screenSpaceTransform();
     if (screenSpaceTransform.hasPerspective()) {
         // Perspective projections do not play nice with mapRect of
         // inverse transforms. In this uncommon case, its simpler to
@@ -243,7 +245,7 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         surfaceDamageRect = renderSurface->contentRect();
     } else {
-        TransformationMatrix inverseScreenSpaceTransform = screenSpaceTransform.inverse();
+        WebTransformationMatrix inverseScreenSpaceTransform = screenSpaceTransform.inverse();
         surfaceDamageRect = inverseScreenSpaceTransform.mapRect(rootDamageRect);
     }
     return surfaceDamageRect;
@@ -264,8 +266,8 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
 
     {
         TRACE_EVENT("CCLayerTreeHostImpl::calcDrawEtc", this, 0);
-        TransformationMatrix identityMatrix;
-        TransformationMatrix deviceScaleTransform;
+        WebTransformationMatrix identityMatrix;
+        WebTransformationMatrix deviceScaleTransform;
         deviceScaleTransform.scale(m_settings.deviceScaleFactor);
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
     }

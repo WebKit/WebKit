@@ -47,8 +47,8 @@ class CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCDrawQuad);
 public:
     const IntRect& quadRect() const { return m_quadRect; }
-    const TransformationMatrix& quadTransform() const { return m_sharedQuadState->quadTransform(); }
-    const TransformationMatrix& layerTransform() const { return m_sharedQuadState->layerTransform(); }
+    const WebKit::WebTransformationMatrix& quadTransform() const { return m_sharedQuadState->quadTransform(); }
+    const WebKit::WebTransformationMatrix& layerTransform() const { return m_sharedQuadState->layerTransform(); }
     const IntRect& layerRect() const { return m_sharedQuadState->layerRect(); }
     const IntRect& clipRect() const { return m_sharedQuadState->clipRect(); }
     float opacity() const { return m_sharedQuadState->opacity(); }

@@ -31,11 +31,12 @@
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
 #include "Path.h"
-#include "TransformationMatrix.h"
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
@@ -63,11 +64,10 @@ TEST(LinkHighlightTest, verifyLinkHighlightLayer)
     EXPECT_TRUE(contentLayer->transform().isIdentityOrTranslation());
     EXPECT_TRUE(contentLayer->transform().isIntegerTranslation());
 
-    TransformationMatrix::DecomposedType decomposition;
-    EXPECT_TRUE(contentLayer->transform().decompose(decomposition));
-
-    FloatPoint expectedTranslation(pathBoundingRect.x() + pathBoundingRect.width() / 2, pathBoundingRect.y() + pathBoundingRect.height() / 2);
-    EXPECT_EQ(FloatPoint(decomposition.translateX, decomposition.translateY), expectedTranslation);
+    float expectedXTranslation = pathBoundingRect.x() + pathBoundingRect.width() / 2;
+    float expectedYTranslation = pathBoundingRect.y() + pathBoundingRect.height() / 2;
+    EXPECT_FLOAT_EQ(expectedXTranslation, contentLayer->transform().m41());
+    EXPECT_FLOAT_EQ(expectedYTranslation, contentLayer->transform().m42());
 }
 
 TEST(LinkHighlightTest, verifyGraphicsLayerChromiumEmbedding)

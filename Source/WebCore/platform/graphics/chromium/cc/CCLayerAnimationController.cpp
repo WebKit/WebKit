@@ -27,11 +27,13 @@
 #include "cc/CCLayerAnimationController.h"
 
 #include "GraphicsLayer.h" // for KeyframeValueList
-#include "TransformationMatrix.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCKeyframedAnimationCurve.h"
+#include <public/WebTransformationMatrix.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
+
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -478,7 +480,7 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
 
             case CCActiveAnimation::Transform: {
                 const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->curve()->toTransformAnimationCurve();
-                const TransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
+                const WebTransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
                 if (m_activeAnimations[i]->isFinishedAt(monotonicTime))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, monotonicTime);
 

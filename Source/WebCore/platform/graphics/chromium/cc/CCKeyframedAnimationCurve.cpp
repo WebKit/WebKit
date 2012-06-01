@@ -37,6 +37,8 @@
 
 #include <wtf/OwnPtr.h>
 
+using WebKit::WebTransformationMatrix;
+
 namespace WebCore {
 
 namespace {
@@ -176,7 +178,7 @@ PassOwnPtr<CCTransformKeyframe> CCTransformKeyframe::clone() const
         }
         case TransformOperation::MATRIX: {
             MatrixTransformOperation* transform = static_cast<MatrixTransformOperation*>(m_value.operations()[j].get());
-            TransformationMatrix m = transform->matrix();
+            WebTransformationMatrix m = WebTransformationMatrix(transform->matrix());
             operations.operations().append(MatrixTransformOperation::create(m.a(), m.b(), m.c(), m.d(), m.e(), m.f()));
             break;
         }
@@ -287,18 +289,19 @@ PassOwnPtr<CCAnimationCurve> CCKeyframedTransformAnimationCurve::clone() const
     return toReturn.release();
 }
 
-TransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, const IntSize& layerSize) const
+WebTransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, const IntSize& layerSize) const
 {
+    // Note: WebCore data type used here, just for now.
     TransformationMatrix transformMatrix;
 
     if (t <= m_keyframes.first()->time()) {
         m_keyframes.first()->value().apply(layerSize, transformMatrix);
-        return transformMatrix;
+        return WebTransformationMatrix(transformMatrix);
     }
 
     if (t >= m_keyframes.last()->time()) {
         m_keyframes.last()->value().apply(layerSize, transformMatrix);
-        return transformMatrix;
+        return WebTransformationMatrix(transformMatrix);
     }
 
     size_t i = 0;
@@ -316,6 +319,7 @@ TransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, cons
         for (size_t j = 0; j < m_keyframes[i+1]->value().size(); ++j)
             m_keyframes[i+1]->value().operations()[j]->blend(m_keyframes[i]->value().at(j), progress)->apply(transformMatrix, layerSize);
     } else {
+        // Note: WebCore data type used here, just for now.
         TransformationMatrix source;
 
         m_keyframes[i]->value().apply(layerSize, source);
@@ -324,7 +328,7 @@ TransformationMatrix CCKeyframedTransformAnimationCurve::getValue(double t, cons
         transformMatrix.blend(source, progress);
     }
 
-    return transformMatrix;
+    return WebTransformationMatrix(transformMatrix);
 }
 
 } // namespace WebCore

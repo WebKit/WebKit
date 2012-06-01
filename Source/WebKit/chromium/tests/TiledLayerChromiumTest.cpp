@@ -33,10 +33,12 @@
 #include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
 using namespace WebKitTests;
 using namespace WTF;
+using WebKit::WebTransformationMatrix;
 
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x(), b.x()); \
@@ -109,7 +111,7 @@ TEST(TiledLayerChromiumTest, pushOccludedDirtyTiles)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
     layer->invalidateRect(IntRect(0, 0, 100, 200));
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), &occluded);
@@ -327,7 +329,7 @@ TEST(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     occluded.setOcclusion(IntRect(0, 0, 100, 100));
 
     layer->setBounds(IntSize(100, 100));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleLayerRect(IntRect(0, 0, 100, 100));
     layer->invalidateRect(IntRect(0, 0, 100, 100));
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), &occluded);
@@ -1018,7 +1020,7 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
     layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
@@ -1063,7 +1065,7 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     // The partially occluded tiles (by the 150 occlusion height) are visible beyond the occlusion, so not culled.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
@@ -1114,7 +1116,7 @@ TEST(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
     layer->setVisibleLayerRect(IntRect(0, 0, 600, 600));
@@ -1149,10 +1151,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     // This makes sure the painting works when the occluded region (in screen space)
     // is transformed differently than the layer.
     layer->setBounds(IntSize(600, 600));
-    TransformationMatrix screenTransform;
+    WebTransformationMatrix screenTransform;
     screenTransform.scale(0.5);
     layer->setScreenSpaceTransform(screenTransform);
-    layer->setDrawTransform(screenTransform * TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(100, 100, 150, 50));
     layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
@@ -1179,7 +1181,7 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // pixels, which means none should be occluded.
     layer->setContentsScale(0.5);
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
     layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
@@ -1212,10 +1214,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // This makes sure content scaling and transforms work together.
-    TransformationMatrix screenTransform;
+    WebTransformationMatrix screenTransform;
     screenTransform.scale(0.5);
     layer->setScreenSpaceTransform(screenTransform);
-    layer->setDrawTransform(screenTransform * TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(100, 100, 150, 100));
     layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
@@ -1244,7 +1246,7 @@ TEST(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     IntRect visibleBounds = IntRect(0, 0, 100, 150);
 
     layer->setBounds(contentBounds.size());
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleLayerRect(visibleBounds);
     layer->setDrawOpacity(1);
 
@@ -1338,7 +1340,7 @@ TEST(TiledLayerChromiumTest, pixelsPaintedMetrics)
     IntRect visibleBounds = IntRect(0, 0, 100, 300);
 
     layer->setBounds(contentBounds.size());
-    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleLayerRect(visibleBounds);
     layer->setDrawOpacity(1);
 

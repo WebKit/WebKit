@@ -38,20 +38,21 @@
 #include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
-TransformationMatrix transformationMatrixFromSkMatrix44(const SkMatrix44& matrix)
+WebTransformationMatrix transformationMatrixFromSkMatrix44(const SkMatrix44& matrix)
 {
     double data[16];
     matrix.asColMajord(data);
-    return TransformationMatrix(data[0], data[1], data[2], data[3],
-                                data[4], data[5], data[6], data[7],
-                                data[8], data[9], data[10], data[11],
-                                data[12], data[13], data[14], data[15]);
+    return WebTransformationMatrix(data[0], data[1], data[2], data[3],
+                                   data[4], data[5], data[6], data[7],
+                                   data[8], data[9], data[10], data[11],
+                                   data[12], data[13], data[14], data[15]);
 }
 
-SkMatrix44 skMatrix44FromTransformationMatrix(const TransformationMatrix& matrix)
+SkMatrix44 skMatrix44FromTransformationMatrix(const WebTransformationMatrix& matrix)
 {
     SkMatrix44 skMatrix;
     skMatrix.set(0, 0, SkDoubleToMScalar(matrix.m11()));
@@ -231,7 +232,7 @@ void WebLayer::setSublayerTransform(const SkMatrix44& matrix)
 
 void WebLayer::setSublayerTransform(const WebTransformationMatrix& matrix)
 {
-    m_private->setSublayerTransform(matrix.toWebCoreTransform());
+    m_private->setSublayerTransform(matrix);
 }
 
 SkMatrix44 WebLayer::sublayerTransform() const
@@ -246,7 +247,7 @@ void WebLayer::setTransform(const SkMatrix44& matrix)
 
 void WebLayer::setTransform(const WebTransformationMatrix& matrix)
 {
-    m_private->setTransform(matrix.toWebCoreTransform());
+    m_private->setTransform(matrix);
 }
 
 SkMatrix44 WebLayer::transform() const

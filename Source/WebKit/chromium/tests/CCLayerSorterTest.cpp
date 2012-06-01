@@ -30,8 +30,10 @@
 #include "cc/CCMathUtil.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
@@ -46,11 +48,11 @@ TEST(CCLayerSorterTest, BasicOverlap)
     float weight = 0;
 
     // Trivial test, with one layer directly obscuring the other.
-    TransformationMatrix neg4Translate;
+    WebTransformationMatrix neg4Translate;
     neg4Translate.translate3d(0, 0, -4);
     CCLayerSorter::LayerShape front(2, 2, neg4Translate);
 
-    TransformationMatrix neg5Translate;
+    WebTransformationMatrix neg5Translate;
     neg5Translate.translate3d(0, 0, -5);
     CCLayerSorter::LayerShape back(2, 2, neg5Translate);
 
@@ -63,7 +65,7 @@ TEST(CCLayerSorterTest, BasicOverlap)
     EXPECT_EQ(1, weight);
 
     // One layer translated off to the right. No overlap should be detected.
-    TransformationMatrix rightTranslate;
+    WebTransformationMatrix rightTranslate;
     rightTranslate.translate3d(10, 0, -5);
     CCLayerSorter::LayerShape backRight(2, 2, rightTranslate);
     overlapResult = CCLayerSorter::checkOverlap(&front, &backRight, zThreshold, weight);
@@ -80,14 +82,15 @@ TEST(CCLayerSorterTest, RightAngleOverlap)
     const float zThreshold = 0.1f;
     float weight = 0;
 
-    TransformationMatrix perspectiveMatrix;
+    WebTransformationMatrix perspectiveMatrix;
     perspectiveMatrix.applyPerspective(1000);
 
     // Two layers forming a right angle with a perspective viewing transform.
-    TransformationMatrix leftFaceMatrix;
-    leftFaceMatrix.rotate3d(0, 1, 0, -90).translateRight3d(-1, 0, -5);
+    WebTransformationMatrix leftFaceMatrix;
+    leftFaceMatrix.rotate3d(0, 1, 0, -90);
+    leftFaceMatrix.translateRight3d(-1, 0, -5);
     CCLayerSorter::LayerShape leftFace(2, 2, perspectiveMatrix * leftFaceMatrix);
-    TransformationMatrix frontFaceMatrix;
+    WebTransformationMatrix frontFaceMatrix;
     frontFaceMatrix.translate3d(0, 0, -4);
     CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
 
@@ -101,17 +104,18 @@ TEST(CCLayerSorterTest, IntersectingLayerOverlap)
     const float zThreshold = 0.1f;
     float weight = 0;
 
-    TransformationMatrix perspectiveMatrix;
+    WebTransformationMatrix perspectiveMatrix;
     perspectiveMatrix.applyPerspective(1000);
 
     // Intersecting layers. An explicit order will be returned based on relative z
     // values at the overlapping features but the weight returned should be zero.
-    TransformationMatrix frontFaceMatrix;
+    WebTransformationMatrix frontFaceMatrix;
     frontFaceMatrix.translate3d(0, 0, -4);
     CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
 
-    TransformationMatrix throughMatrix;
-    throughMatrix.rotate3d(0, 1, 0, 45).translateRight3d(0, 0, -4);
+    WebTransformationMatrix throughMatrix;
+    throughMatrix.rotate3d(0, 1, 0, 45);
+    throughMatrix.translateRight3d(0, 0, -4);
     CCLayerSorter::LayerShape rotatedFace(2, 2, perspectiveMatrix * throughMatrix);
     overlapResult = CCLayerSorter::checkOverlap(&frontFace, &rotatedFace, zThreshold, weight);
     EXPECT_NE(CCLayerSorter::None, overlapResult);
@@ -136,15 +140,15 @@ TEST(CCLayerSorterTest, LayersAtAngleOverlap)
     // C is in front of A and behind B (not what you'd expect by comparing centers).
     // A and B don't overlap, so they're incomparable.
 
-    TransformationMatrix transformA;
+    WebTransformationMatrix transformA;
     transformA.translate3d(-6, 0, 1);
     CCLayerSorter::LayerShape layerA(8, 20, transformA);
 
-    TransformationMatrix transformB;
+    WebTransformationMatrix transformB;
     transformB.translate3d(6, 0, -1);
     CCLayerSorter::LayerShape layerB(8, 20, transformB);
 
-    TransformationMatrix transformC;
+    WebTransformationMatrix transformC;
     transformC.rotate3d(0, 1, 0, 40);
     CCLayerSorter::LayerShape layerC(8, 20, transformC);
 
@@ -167,10 +171,10 @@ TEST(CCLayerSorterTest, LayersUnderPathologicalPerspectiveTransform)
     // where w < 0. If the code uses the invalid value, it will think that a layer has
     // different bounds than it really does, which can cause things to sort incorrectly.
 
-    TransformationMatrix perspectiveMatrix;
+    WebTransformationMatrix perspectiveMatrix;
     perspectiveMatrix.applyPerspective(1);
 
-    TransformationMatrix transformA;
+    WebTransformationMatrix transformA;
     transformA.translate3d(-15, 0, -2);
     CCLayerSorter::LayerShape layerA(10, 10, perspectiveMatrix * transformA);
 
@@ -178,7 +182,7 @@ TEST(CCLayerSorterTest, LayersUnderPathologicalPerspectiveTransform)
     // visible on the left half of the projection plane, in front of layerA. When it is
     // not clipped, its bounds will actually incorrectly appear much smaller and the
     // correct sorting dependency will not be found.
-    TransformationMatrix transformB;
+    WebTransformationMatrix transformB;
     transformB.translate3d(0, 0, 0.7);
     transformB.rotate3d(0, 45, 0);
     CCLayerSorter::LayerShape layerB(10, 10, perspectiveMatrix * transformB);
@@ -216,9 +220,9 @@ TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)
     OwnPtr<CCLayerImpl> layer4 = CCLayerImpl::create(4);
     OwnPtr<CCLayerImpl> layer5 = CCLayerImpl::create(5);
 
-    TransformationMatrix BehindMatrix;
+    WebTransformationMatrix BehindMatrix;
     BehindMatrix.translate3d(0, 0, 2);
-    TransformationMatrix FrontMatrix;
+    WebTransformationMatrix FrontMatrix;
     FrontMatrix.translate3d(0, 0, 1);
 
     layer1->setBounds(IntSize(10, 10));

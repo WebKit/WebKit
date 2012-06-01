@@ -31,18 +31,18 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
-void expectTranslateX(double translateX, const TransformationMatrix& matrix)
+void expectTranslateX(double translateX, const WebTransformationMatrix& matrix)
 {
-    TransformationMatrix::DecomposedType decomposedType;
-    matrix.decompose(decomposedType);
-    EXPECT_FLOAT_EQ(translateX, decomposedType.translateX);
+    EXPECT_FLOAT_EQ(translateX, matrix.m41());
 }
 
 // Tests that a float animation with one keyframe works as expected.
@@ -191,10 +191,8 @@ TEST(CCKeyframedAnimationCurveTest, RepeatedTransformKeyTimes)
     expectTranslateX(4, curve->getValue(0.5, layerSize));
 
     // There is a discontinuity at 1. Any value between 4 and 6 is valid.
-    TransformationMatrix value = curve->getValue(1, layerSize);
-    TransformationMatrix::DecomposedType decomposedType;
-    value.decompose(decomposedType);
-    EXPECT_TRUE(decomposedType.translateX >= 4 && decomposedType.translateX <= 6);
+    WebTransformationMatrix value = curve->getValue(1, layerSize);
+    EXPECT_TRUE(value.m41() >= 4 && value.m41() <= 6);
 
     expectTranslateX(6, curve->getValue(1.5, layerSize));
     expectTranslateX(6, curve->getValue(2, layerSize));

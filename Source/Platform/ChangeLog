@@ -1,3 +1,13 @@
+2012-05-31  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Migrate to WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=87788
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2012-05-31  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add copy constructor to WebFilterOperations

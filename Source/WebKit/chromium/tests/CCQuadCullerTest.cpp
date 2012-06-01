@@ -33,8 +33,10 @@
 #include "cc/CCTileDrawQuad.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
@@ -55,7 +57,7 @@ private:
 
 typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const TransformationMatrix& drawTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect, Vector<CCLayerImpl*>& surfaceLayerList)
+static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const WebTransformationMatrix& drawTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect, Vector<CCLayerImpl*>& surfaceLayerList)
 {
     OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(0);
     OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::NoBorderTexels);
@@ -105,7 +107,7 @@ static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >
     CCQuadList quadList;                                \
     Vector<OwnPtr<CCSharedQuadState> > sharedStateList; \
     Vector<CCLayerImpl*> renderSurfaceLayerList;        \
-    TransformationMatrix childTransform;                \
+    WebTransformationMatrix childTransform;                \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
     IntSize childSize = IntSize(200, 200);              \
@@ -115,8 +117,8 @@ TEST(CCQuadCullerTest, verifyNoCulling)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, false, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, false, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -132,8 +134,8 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -149,7 +151,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1, true, IntRect(), renderSurfaceLayerList);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 0.9f, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
@@ -166,7 +168,7 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
@@ -185,7 +187,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
 
     childTransform.translate(50, 50);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
@@ -222,7 +224,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
 
     // Make the root layer's quad have extent (99.1, 99.1) -> (200.9, 200.9) to make
     // sure it doesn't get culled due to transform rounding.
-    TransformationMatrix rootTransform;
+    WebTransformationMatrix rootTransform;
     rootTransform.translate(99.1, 99.1);
     rootTransform.scale(1.018);
 
@@ -251,7 +253,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
     childTransform.translate(100.1, 100.1);
     childTransform.scale(0.982);
 
-    TransformationMatrix rootTransform;
+    WebTransformationMatrix rootTransform;
     rootTransform.translate(100, 100);
 
     rootRect = childRect = IntRect(0, 0, 100, 100);
@@ -276,7 +278,7 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
 
     childTransform.translate(100, 100);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
@@ -295,7 +297,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
 
     childTransform.translate(50, 50);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
@@ -315,7 +317,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
 
     childTransform.translate(50, 10);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() * 3 / 4);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
@@ -335,7 +337,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
 
     childTransform.translate(50, 49);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
@@ -356,7 +358,7 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
     // Use a small rotation so as to not disturb the geometry significantly.
     childTransform.rotate(1);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
@@ -379,11 +381,11 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
     // Use a small rotation so as to not disturb the geometry significantly.
-    TransformationMatrix parentTransform;
+    WebTransformationMatrix parentTransform;
     parentTransform.rotate(1);
 
     OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, parentTransform, rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -399,8 +401,8 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(200, 100, 100, 100));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -416,8 +418,8 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(100, 100, 100, 100));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -433,8 +435,8 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -450,8 +452,8 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(500, 500, 100, 100));
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
@@ -467,8 +469,8 @@ TEST(CCQuadCullerTest, verifyWithoutMetrics)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, WebTransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), WebTransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200), false);
     CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 

@@ -34,8 +34,8 @@
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
 #include "TextureManager.h"
-#include "TransformationMatrix.h"
 #include <public/WebFilterOperations.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -65,23 +65,23 @@ public:
 
     // This goes from content space with the origin in the center of the rect being transformed to the target space with the origin in the top left of the
     // rect being transformed. Position the rect so that the origin is in the center of it before applying this transform.
-    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-    void setDrawTransform(const TransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
+    const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
+    void setDrawTransform(const WebKit::WebTransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
 
-    const TransformationMatrix& originTransform() const { return m_originTransform; }
-    void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
+    const WebKit::WebTransformationMatrix& originTransform() const { return m_originTransform; }
+    void setOriginTransform(const WebKit::WebTransformationMatrix& originTransform) { m_originTransform = originTransform; }
 
-    const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
-    void setScreenSpaceTransform(const TransformationMatrix& screenSpaceTransform) { m_screenSpaceTransform = screenSpaceTransform; }
+    const WebKit::WebTransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
+    void setScreenSpaceTransform(const WebKit::WebTransformationMatrix& screenSpaceTransform) { m_screenSpaceTransform = screenSpaceTransform; }
 
-    const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
-    void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
+    const WebKit::WebTransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
+    void setReplicaDrawTransform(const WebKit::WebTransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
 
-    const TransformationMatrix& replicaOriginTransform() const { return m_replicaOriginTransform; }
-    void setReplicaOriginTransform(const TransformationMatrix& replicaOriginTransform) { m_replicaOriginTransform = replicaOriginTransform; }
+    const WebKit::WebTransformationMatrix& replicaOriginTransform() const { return m_replicaOriginTransform; }
+    void setReplicaOriginTransform(const WebKit::WebTransformationMatrix& replicaOriginTransform) { m_replicaOriginTransform = replicaOriginTransform; }
 
-    const TransformationMatrix& replicaScreenSpaceTransform() const { return m_replicaScreenSpaceTransform; }
-    void setReplicaScreenSpaceTransform(const TransformationMatrix& replicaScreenSpaceTransform) { m_replicaScreenSpaceTransform = replicaScreenSpaceTransform; }
+    const WebKit::WebTransformationMatrix& replicaScreenSpaceTransform() const { return m_replicaScreenSpaceTransform; }
+    void setReplicaScreenSpaceTransform(const WebKit::WebTransformationMatrix& replicaScreenSpaceTransform) { m_replicaScreenSpaceTransform = replicaScreenSpaceTransform; }
 
     bool targetSurfaceTransformsAreAnimating() const { return m_targetSurfaceTransformsAreAnimating; }
     void setTargetSurfaceTransformsAreAnimating(bool animating) { m_targetSurfaceTransformsAreAnimating = animating; }
@@ -124,12 +124,12 @@ private:
 
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
-    TransformationMatrix m_drawTransform;
-    TransformationMatrix m_originTransform;
-    TransformationMatrix m_screenSpaceTransform;
-    TransformationMatrix m_replicaDrawTransform;
-    TransformationMatrix m_replicaOriginTransform;
-    TransformationMatrix m_replicaScreenSpaceTransform;
+    WebKit::WebTransformationMatrix m_drawTransform;
+    WebKit::WebTransformationMatrix m_originTransform;
+    WebKit::WebTransformationMatrix m_screenSpaceTransform;
+    WebKit::WebTransformationMatrix m_replicaDrawTransform;
+    WebKit::WebTransformationMatrix m_replicaOriginTransform;
+    WebKit::WebTransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
     WebKit::WebFilterOperations m_filters;

@@ -34,6 +34,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+using WebKit::WebTransformationMatrix;
+
 namespace WebCore {
 
 PassRefPtr<LinkHighlight> LinkHighlight::create(GraphicsLayerChromium* parent, const Path& path, int animationId, int groupId)
@@ -52,7 +54,7 @@ LinkHighlight::LinkHighlight(GraphicsLayerChromium* parent, const Path& path, in
 
     m_contentLayer->setBounds(rect.size());
 
-    TransformationMatrix transform;
+    WebTransformationMatrix transform;
     transform.translate(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
     m_contentLayer->setTransform(transform);
 

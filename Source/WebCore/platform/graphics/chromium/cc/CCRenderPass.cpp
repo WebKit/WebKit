@@ -33,6 +33,8 @@
 #include "cc/CCSharedQuadState.h"
 #include "cc/CCSolidColorDrawQuad.h"
 
+using WebKit::WebTransformationMatrix;
+
 namespace WebCore {
 
 PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface)
@@ -89,7 +91,7 @@ void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, const Color& 
         return;
 
     OwnPtr<CCSharedQuadState> sharedQuadState = rootLayer->createSharedQuadState();
-    TransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
+    WebTransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
     Vector<IntRect> fillRects = fillRegion.rects();
     for (size_t i = 0; i < fillRects.size(); ++i) {
         IntRect layerRect = transformToLayerSpace.mapRect(fillRects[i]);

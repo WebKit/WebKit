@@ -41,11 +41,11 @@
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
 #include "ShaderChromium.h"
-#include "TransformationMatrix.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
 
 #include <public/WebFilterOperations.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -77,8 +77,8 @@ public:
     virtual int id() const OVERRIDE { return m_layerId; }
     virtual void setOpacityFromAnimation(float) OVERRIDE;
     virtual float opacity() const OVERRIDE { return m_opacity; }
-    virtual void setTransformFromAnimation(const TransformationMatrix&) OVERRIDE;
-    virtual const TransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) OVERRIDE;
+    virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
     virtual const IntSize& bounds() const OVERRIDE { return m_bounds; }
 
     const LayerChromium* rootLayer() const;
@@ -130,10 +130,10 @@ public:
     void setPosition(const FloatPoint&);
     FloatPoint position() const { return m_position; }
 
-    void setSublayerTransform(const TransformationMatrix&);
-    const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
+    void setSublayerTransform(const WebKit::WebTransformationMatrix&);
+    const WebKit::WebTransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    void setTransform(const TransformationMatrix&);
+    void setTransform(const WebKit::WebTransformationMatrix&);
     bool transformIsAnimating() const;
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
@@ -213,11 +213,11 @@ public:
     void setScreenSpaceTransformIsAnimating(bool animating) { m_screenSpaceTransformIsAnimating = animating; }
 
     // This moves from layer space, with origin in the center to target space with origin in the top left
-    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-    void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
+    const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
+    void setDrawTransform(const WebKit::WebTransformationMatrix& matrix) { m_drawTransform = matrix; }
     // This moves from layer space, with origin the top left to screen space with origin in the top left
-    const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
-    void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
+    const WebKit::WebTransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
+    void setScreenSpaceTransform(const WebKit::WebTransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
     float contentsScale() const { return m_contentsScale; }
@@ -334,8 +334,8 @@ private:
     bool m_drawCheckerboardForMissingTiles;
     bool m_forceRenderSurface;
 
-    TransformationMatrix m_transform;
-    TransformationMatrix m_sublayerTransform;
+    WebKit::WebTransformationMatrix m_transform;
+    WebKit::WebTransformationMatrix m_sublayerTransform;
 
     // Replica layer used for reflections.
     RefPtr<LayerChromium> m_replicaLayer;
@@ -346,8 +346,8 @@ private:
     bool m_drawOpacityIsAnimating;
     IntRect m_clipRect;
     RenderSurfaceChromium* m_targetRenderSurface;
-    TransformationMatrix m_drawTransform;
-    TransformationMatrix m_screenSpaceTransform;
+    WebKit::WebTransformationMatrix m_drawTransform;
+    WebKit::WebTransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;
     bool m_screenSpaceTransformIsAnimating;
     IntRect m_drawableContentRect;

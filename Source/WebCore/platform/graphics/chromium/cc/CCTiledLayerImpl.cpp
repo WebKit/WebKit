@@ -38,6 +38,7 @@
 #include <wtf/text/WTFString.h>
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -121,9 +122,9 @@ DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
     return addedTile;
 }
 
-TransformationMatrix CCTiledLayerImpl::quadTransform() const
+WebTransformationMatrix CCTiledLayerImpl::quadTransform() const
 {
-    TransformationMatrix transform = drawTransform();
+    WebTransformationMatrix transform = drawTransform();
 
     if (contentBounds().isEmpty())
         return transform;

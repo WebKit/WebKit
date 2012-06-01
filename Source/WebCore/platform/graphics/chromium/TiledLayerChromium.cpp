@@ -44,6 +44,7 @@
 #include <wtf/MathExtras.h>
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -489,7 +490,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
 
             tile->texture()->prepareRect(sourceRect);
             if (occlusion)
-                occlusion->overdrawMetrics().didUpload(TransformationMatrix(), sourceRect, tile->opaqueRect());
+                occlusion->overdrawMetrics().didUpload(WebTransformationMatrix(), sourceRect, tile->opaqueRect());
 
             const IntPoint anchor = m_tiler->tileRect(tile).location();
 

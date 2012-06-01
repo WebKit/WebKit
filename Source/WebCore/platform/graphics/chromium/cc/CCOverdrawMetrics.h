@@ -27,9 +27,12 @@
 
 #include <wtf/PassOwnPtr.h>
 
+namespace WebKit {
+class WebTransformationMatrix;
+}
+
 namespace WebCore {
 class IntRect;
-class TransformationMatrix;
 class CCLayerTreeHost;
 class CCLayerTreeHostImpl;
 
@@ -45,14 +48,14 @@ public:
     // Records that an invalid tile was culled and did not need to be painted/uploaded, and did not contribute to other tiles needing to be painted.
     void didCullTileForUpload();
     // Records pixels that were uploaded to texture memory.
-    void didUpload(const TransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect);
+    void didUpload(const WebKit::WebTransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect);
 
     // These methods are used for saving metrics during draw.
 
     // Record pixels that were not drawn to screen.
-    void didCullForDrawing(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
+    void didCullForDrawing(const WebKit::WebTransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
     // Record pixels that were drawn to screen.
-    void didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
+    void didDraw(const WebKit::WebTransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
 
     void recordMetrics(const CCLayerTreeHost*) const;
     void recordMetrics(const CCLayerTreeHostImpl*) const;

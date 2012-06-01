@@ -25,20 +25,20 @@
 
 #include "config.h"
 
+#include "cc/CCMathUtil.h"
 #include "FloatQuad.h"
-
-#include "TransformationMatrix.h"
-
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
 TEST(FloatQuadTest, IsRectilinearTest)
 {
     const int numRectilinear = 8;
-    TransformationMatrix rectilinearTrans[numRectilinear];
+    WebTransformationMatrix rectilinearTrans[numRectilinear];
     rectilinearTrans[1].rotate(90);
     rectilinearTrans[2].rotate(180);
     rectilinearTrans[3].rotate(270);
@@ -50,12 +50,14 @@ TEST(FloatQuadTest, IsRectilinearTest)
     rectilinearTrans[7].rotate(180);
 
     for (int i = 0; i < numRectilinear; ++i) {
-        FloatQuad quad = rectilinearTrans[i].mapQuad(FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f));
+        bool clipped = false;
+        FloatQuad quad = CCMathUtil::mapQuad(rectilinearTrans[i], FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f), clipped);
+        ASSERT_TRUE(!clipped);
         EXPECT_TRUE(quad.isRectilinear());
     }
 
     const int numNonRectilinear = 10;
-    TransformationMatrix nonRectilinearTrans[numNonRectilinear];
+    WebTransformationMatrix nonRectilinearTrans[numNonRectilinear];
     nonRectilinearTrans[0].rotate(359.999);
     nonRectilinearTrans[1].rotate(0.0000001);
     nonRectilinearTrans[2].rotate(89.999999);
@@ -68,7 +70,9 @@ TEST(FloatQuadTest, IsRectilinearTest)
     nonRectilinearTrans[9].skewY(0.00001);
 
     for (int i = 0; i < numNonRectilinear; ++i) {
-        FloatQuad quad = nonRectilinearTrans[i].mapQuad(FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f));
+        bool clipped = false;
+        FloatQuad quad = CCMathUtil::mapQuad(nonRectilinearTrans[i], FloatRect(0.01010101f, 0.01010101f, 100.01010101f, 100.01010101f), clipped);
+        ASSERT_TRUE(!clipped);
         EXPECT_FALSE(quad.isRectilinear());
     }
 }

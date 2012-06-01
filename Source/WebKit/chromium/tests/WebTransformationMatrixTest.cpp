@@ -153,6 +153,15 @@ TEST(WebTransformationMatrixTest, verifyConstructorFor2dElements)
     EXPECT_ROW4_EQ(0, 0, 0, 1, A);
 }
 
+TEST(WebTransformationMatrixTest, verifyConstructorForAllElements)
+{
+    WebTransformationMatrix A(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+    EXPECT_ROW1_EQ(1, 5,  9, 13, A);
+    EXPECT_ROW2_EQ(2, 6, 10, 14, A);
+    EXPECT_ROW3_EQ(3, 7, 11, 15, A);
+    EXPECT_ROW4_EQ(4, 8, 12, 16, A);
+}
+
 TEST(WebTransformationMatrixTest, verifyCopyConstructor)
 {
     WebTransformationMatrix A;

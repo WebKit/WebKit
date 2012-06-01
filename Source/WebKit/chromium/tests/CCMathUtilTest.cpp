@@ -27,18 +27,19 @@
 #include "cc/CCMathUtil.h"
 
 #include "CCLayerTreeTestCommon.h"
-#include "TransformationMatrix.h"
-
+#include "FloatRect.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
 TEST(CCMathUtilTest, verifyBackfaceVisibilityBasicCases)
 {
-    TransformationMatrix transform;
+    WebTransformationMatrix transform;
 
     transform.makeIdentity();
     EXPECT_FALSE(transform.isBackFaceVisible());
@@ -59,7 +60,7 @@ TEST(CCMathUtilTest, verifyBackfaceVisibilityBasicCases)
 
 TEST(CCMathUtilTest, verifyBackfaceVisibilityForPerspective)
 {
-    TransformationMatrix layerSpaceToProjectionPlane;
+    WebTransformationMatrix layerSpaceToProjectionPlane;
 
     // This tests if isBackFaceVisible works properly under perspective transforms.
     // Specifically, layers that may have their back face visible in orthographic
@@ -105,7 +106,7 @@ TEST(CCMathUtilTest, verifyProjectionOfPerpendicularPlane)
     // In this case, the m33() element of the transform becomes zero, which could cause a
     // divide-by-zero when projecting points/quads.
 
-    TransformationMatrix transform;
+    WebTransformationMatrix transform;
     transform.makeIdentity();
     transform.setM33(0);
 

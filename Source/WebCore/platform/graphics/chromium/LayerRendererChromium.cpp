@@ -74,16 +74,17 @@
 #include <wtf/MainThread.h>
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
 namespace {
 
-static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
+static WebTransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
 {
     float deltaX = right - left;
     float deltaY = top - bottom;
-    TransformationMatrix ortho;
+    WebTransformationMatrix ortho;
     if (!deltaX || !deltaY)
         return ortho;
     ortho.setM11(2.0f / deltaX);
@@ -98,9 +99,9 @@ static TransformationMatrix orthoMatrix(float left, float right, float bottom, f
     return ortho;
 }
 
-static TransformationMatrix screenMatrix(int x, int y, int width, int height)
+static WebTransformationMatrix screenMatrix(int x, int y, int width, int height)
 {
-    TransformationMatrix screen;
+    WebTransformationMatrix screen;
 
     // Map to viewport.
     screen.translate3d(x, y, 0);
@@ -526,7 +527,7 @@ void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* q
     GLC(context(), context()->useProgram(program->program()));
 
     IntRect tileRect = quad->quadRect();
-    TransformationMatrix tileTransform = quad->quadTransform();
+    WebTransformationMatrix tileTransform = quad->quadTransform();
     tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
 
     float texOffsetX = tileRect.x();
@@ -555,7 +556,7 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     GLC(context(), context()->useProgram(program->program()));
 
     const IntRect& layerRect = quad->quadRect();
-    TransformationMatrix renderMatrix = quad->quadTransform();
+    WebTransformationMatrix renderMatrix = quad->quadTransform();
     renderMatrix.translate(0.5 * layerRect.width() + layerRect.x(), 0.5 * layerRect.height() + layerRect.y());
     renderMatrix.scaleNonUniform(layerRect.width(), layerRect.height());
     LayerRendererChromium::toGLMatrix(&glMatrix[0], projectionMatrix() * renderMatrix);
@@ -586,7 +587,7 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
     return CCRenderSurfaceFilters::apply(filters, sourceTexture->textureId(), sourceTexture->size(), filterContext.get());
 }
 
-void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad* quad, const TransformationMatrix& contentsDeviceTransform)
+void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad* quad, const WebTransformationMatrix& contentsDeviceTransform)
 {
     // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
     // The algorithm works as follows:
@@ -638,10 +639,10 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderSurfaceDrawQuad*
     CCRenderSurface* targetRenderSurface = m_currentRenderSurface;
     if (useManagedTexture(drawingSurface->backgroundTexture(), quad->quadRect())) {
         // Copy the readback pixels from device to the background texture for the surface.
-        TransformationMatrix deviceToSurfaceTransform;
+        WebTransformationMatrix deviceToSurfaceTransform;
         deviceToSurfaceTransform.translate(quad->quadRect().width() / 2.0, quad->quadRect().height() / 2.0);
         deviceToSurfaceTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
-        deviceToSurfaceTransform *= contentsDeviceTransform.inverse();
+        deviceToSurfaceTransform.multiply(contentsDeviceTransform.inverse());
         deviceToSurfaceTransform.translate(deviceRect.width() / 2.0, deviceRect.height() / 2.0);
         deviceToSurfaceTransform.translate(deviceRect.x(), deviceRect.y());
 
@@ -658,10 +659,10 @@ void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*
 
     CCRenderSurface* drawingSurface = quad->layer()->renderSurface();
 
-    TransformationMatrix renderTransform = quad->layerTransform();
+    WebTransformationMatrix renderTransform = quad->layerTransform();
     // Apply a scaling factor to size the quad from 1x1 to its intended size.
     renderTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
-    TransformationMatrix contentsDeviceTransform = TransformationMatrix(windowMatrix() * projectionMatrix() * renderTransform).to2dTransform();
+    WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * renderTransform).to2dTransform();
 
     // Can only draw surface if device matrix is invertible.
     if (!contentsDeviceTransform.isInvertible() || !drawingSurface->hasValidContentsTexture()) {
@@ -782,7 +783,7 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
 
     IntRect tileRect = quad->quadRect();
 
-    TransformationMatrix tileTransform = quad->quadTransform();
+    WebTransformationMatrix tileTransform = quad->quadTransform();
     tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
 
     const Color& color = quad->color();
@@ -858,7 +859,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
 
     FloatQuad localQuad;
-    TransformationMatrix deviceTransform = TransformationMatrix(windowMatrix() * projectionMatrix() * quad->quadTransform()).to2dTransform();
+    WebTransformationMatrix deviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * quad->quadTransform()).to2dTransform();
     if (!deviceTransform.isInvertible())
         return;
 
@@ -947,7 +948,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
         CCLayerQuad deviceQuad(leftEdge, topEdge, rightEdge, bottomEdge);
 
         // Map quad to layer space.
-        TransformationMatrix inverseDeviceTransform = deviceTransform.inverse();
+        WebTransformationMatrix inverseDeviceTransform = deviceTransform.inverse();
         localQuad = inverseDeviceTransform.mapQuad(deviceQuad.floatQuad());
     } else {
         // Move fragment shader transform to vertex shader. We can do this while
@@ -1220,7 +1221,7 @@ void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const
     GLC(m_context, m_context->useProgram(program->program()));
     GLC(m_context, m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
-    TransformationMatrix matrix;
+    WebTransformationMatrix matrix;
     matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
     drawTexturedQuad(matrix, hudSize.width(), hudSize.height(),
                      1, sharedGeometryQuad(), program->vertexShader().matrixLocation(),
@@ -1243,7 +1244,7 @@ void LayerRendererChromium::finishDrawingFrame()
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_renderSurfaceTextureAllocator.get());
 }
 
-void LayerRendererChromium::toGLMatrix(float* flattened, const TransformationMatrix& m)
+void LayerRendererChromium::toGLMatrix(float* flattened, const WebTransformationMatrix& m)
 {
     flattened[0] = m.m11();
     flattened[1] = m.m12();
@@ -1263,13 +1264,13 @@ void LayerRendererChromium::toGLMatrix(float* flattened, const TransformationMat
     flattened[15] = m.m44();
 }
 
-void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& drawMatrix,
+void LayerRendererChromium::drawTexturedQuad(const WebTransformationMatrix& drawMatrix,
                                              float width, float height, float opacity, const FloatQuad& quad,
                                              int matrixLocation, int alphaLocation, int quadLocation)
 {
     static float glMatrix[16];
 
-    TransformationMatrix renderMatrix = drawMatrix;
+    WebTransformationMatrix renderMatrix = drawMatrix;
 
     // Apply a scaling factor to size the quad from 1x1 to its intended size.
     renderMatrix.scale3d(width, height, 1);
@@ -1298,7 +1299,7 @@ void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& drawMat
     GLC(m_context, m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix)
+void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSize& bounds, const WebTransformationMatrix& drawMatrix)
 {
     const RenderSurfaceProgram* program = renderSurfaceProgram();
 

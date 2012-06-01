@@ -107,8 +107,8 @@ public:
 
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
-    const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
-    const TransformationMatrix& windowMatrix() const { return m_windowMatrix; }
+    const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
+    const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
@@ -131,11 +131,11 @@ public:
 
     GC3Denum bestTextureFormat();
 
-    static void toGLMatrix(float*, const TransformationMatrix&);
-    void drawTexturedQuad(const TransformationMatrix& layerMatrix,
+    static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
+    void drawTexturedQuad(const WebKit::WebTransformationMatrix& layerMatrix,
                           float width, float height, float opacity, const FloatQuad&,
                           int matrixLocation, int alphaLocation, int quadLocation);
-    void copyTextureToFramebuffer(int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix);
+    void copyTextureToFramebuffer(int textureId, const IntSize& bounds, const WebKit::WebTransformationMatrix& drawMatrix);
 
 protected:
     friend class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
@@ -154,7 +154,7 @@ private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
-    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*, const TransformationMatrix& deviceTransform);
+    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);
@@ -195,8 +195,8 @@ private:
 
     LayerRendererCapabilities m_capabilities;
 
-    TransformationMatrix m_projectionMatrix;
-    TransformationMatrix m_windowMatrix;
+    WebKit::WebTransformationMatrix m_projectionMatrix;
+    WebKit::WebTransformationMatrix m_windowMatrix;
 
     CCRenderSurface* m_currentRenderSurface;
     ManagedTexture* m_currentManagedTexture;

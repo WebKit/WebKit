@@ -46,7 +46,7 @@ namespace {
 void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
     CCLayerSorter layerSorter;
-    TransformationMatrix identityMatrix;
+    WebTransformationMatrix identityMatrix;
     Vector<CCLayerImpl*> dummyLayerList;
     int dummyMaxTextureSize = 512;
 
@@ -291,7 +291,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child = root->children()[0].get();
 
-    TransformationMatrix rotation;
+    WebTransformationMatrix rotation;
     rotation.rotate(45);
 
     // Note carefully, the anchor is actually part of layer->position(). By setting anchor
@@ -332,7 +332,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPerspectiveClippedLayer)
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child = root->children()[0].get();
 
-    TransformationMatrix transform;
+    WebTransformationMatrix transform;
     transform.applyPerspective(1);
     transform.translate3d(-150, -50, 0);
     transform.rotate3d(0, 45, 0);
@@ -789,7 +789,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
         OwnPtr<CCLayerImpl> grandChild1Replica = CCLayerImpl::create(7);
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint::zero());
-        TransformationMatrix reflection;
+        WebTransformationMatrix reflection;
         reflection.scale3d(-1.0, 1.0, 1.0);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());
@@ -928,7 +928,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
         OwnPtr<CCLayerImpl> grandChild1Replica = CCLayerImpl::create(6);
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint::zero());
-        TransformationMatrix reflection;
+        WebTransformationMatrix reflection;
         reflection.scale3d(-1.0, 1.0, 1.0);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());
@@ -988,7 +988,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
         OwnPtr<CCLayerImpl> grandChild1Replica = CCLayerImpl::create(6);
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint::zero()); // note, this is not the anchor being tested.
-        TransformationMatrix reflection;
+        WebTransformationMatrix reflection;
         reflection.scale3d(-1.0, 1.0, 1.0);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());

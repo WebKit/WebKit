@@ -36,6 +36,7 @@
 #include <algorithm>
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -131,7 +132,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::finishedTargetRenderS
 }
 
 template<typename RenderSurfaceType>
-static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surface, const Region& region, const TransformationMatrix& transform)
+static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surface, const Region& region, const WebTransformationMatrix& transform)
 {
     // Verify that rects within the |surface| will remain rects in its target surface after applying |transform|. If this is true, then
     // apply |transform| to each rect within |region| in order to transform the entire Region.
@@ -194,7 +195,7 @@ static inline void reduceOcclusion(const IntRect& affectedArea, const IntRect& e
 }
 
 template<typename RenderSurfaceType>
-static void reduceOcclusionBelowSurface(RenderSurfaceType* surface, const IntRect& surfaceRect, const TransformationMatrix& surfaceTransform, RenderSurfaceType* surfaceTarget, Region& occlusionInTarget, Region& occlusionInScreen)
+static void reduceOcclusionBelowSurface(RenderSurfaceType* surface, const IntRect& surfaceRect, const WebTransformationMatrix& surfaceTransform, RenderSurfaceType* surfaceTarget, Region& occlusionInTarget, Region& occlusionInScreen)
 {
     if (surfaceRect.isEmpty())
         return;
@@ -260,13 +261,13 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
 }
 
 template<typename LayerType>
-static inline TransformationMatrix contentToScreenSpaceTransform(const LayerType* layer)
+static inline WebTransformationMatrix contentToScreenSpaceTransform(const LayerType* layer)
 {
     ASSERT(layerTransformsToScreenKnown(layer));
     IntSize boundsInLayerSpace = layer->bounds();
     IntSize boundsInContentSpace = layer->contentBounds();
 
-    TransformationMatrix transform = layer->screenSpaceTransform();
+    WebTransformationMatrix transform = layer->screenSpaceTransform();
 
     if (boundsInContentSpace.isEmpty())
         return transform;
@@ -279,13 +280,13 @@ static inline TransformationMatrix contentToScreenSpaceTransform(const LayerType
 }
 
 template<typename LayerType>
-static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerType* layer)
+static inline WebTransformationMatrix contentToTargetSurfaceTransform(const LayerType* layer)
 {
     ASSERT(layerTransformsToTargetKnown(layer));
     IntSize boundsInLayerSpace = layer->bounds();
     IntSize boundsInContentSpace = layer->contentBounds();
 
-    TransformationMatrix transform = layer->drawTransform();
+    WebTransformationMatrix transform = layer->drawTransform();
 
     if (boundsInContentSpace.isEmpty())
         return transform;
@@ -302,7 +303,7 @@ static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerTy
 
 // FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
-static inline void addOcclusionBehindLayer(Region& region, const LayerType* layer, const TransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, const IntSize& minimumTrackingSize)
+static inline void addOcclusionBehindLayer(Region& region, const LayerType* layer, const WebTransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, const IntSize& minimumTrackingSize)
 {
     ASSERT(layer->visibleLayerRect().contains(opaqueContents.bounds()));
 
@@ -345,7 +346,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     // remain rectilinear, then we don't add any occlusion in screen space.
 
     if (layerTransformsToScreenKnown(layer)) {
-        TransformationMatrix targetToScreenTransform = m_stack.last().surface->screenSpaceTransform();
+        WebTransformationMatrix targetToScreenTransform = m_stack.last().surface->screenSpaceTransform();
         bool clipped;
         FloatQuad scissorInScreenQuad = CCMathUtil::mapQuad(targetToScreenTransform, FloatQuad(FloatRect(scissorInTarget)), clipped);
         // FIXME: Find a rect interior to the transformed scissor quad.
@@ -356,7 +357,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     }
 }
 
-static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
+static inline bool testContentRectOccluded(const IntRect& contentRect, const WebTransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
     FloatRect transformedRect = CCMathUtil::mapClippedRect(contentSpaceTransform, FloatRect(contentRect));
     // Take the enclosingIntRect, as we want to include partial pixels in the test.
@@ -391,7 +392,7 @@ static inline IntRect rectSubtractRegion(const IntRect& rect, const Region& regi
     return rectRegion.bounds();
 }
 
-static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
+static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, const WebTransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
     if (!contentSpaceTransform.isInvertible())
         return contentRect;
@@ -455,8 +456,8 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContribu
     // found just below the top of the stack (if it exists).
     bool hasOcclusion = m_stack.size() > 1;
 
-    const TransformationMatrix& transformToScreen = forReplica ? surface->replicaScreenSpaceTransform() : surface->screenSpaceTransform();
-    const TransformationMatrix& transformToTarget = forReplica ? surface->replicaOriginTransform() : surface->originTransform();
+    const WebTransformationMatrix& transformToScreen = forReplica ? surface->replicaScreenSpaceTransform() : surface->screenSpaceTransform();
+    const WebTransformationMatrix& transformToTarget = forReplica ? surface->replicaOriginTransform() : surface->originTransform();
 
     IntRect unoccludedInScreen = contentRect;
     if (surfaceTransformsToScreenKnown(surface)) {

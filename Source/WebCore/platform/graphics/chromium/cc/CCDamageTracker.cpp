@@ -40,6 +40,8 @@
 #include "cc/CCRenderSurface.h"
 #include <public/WebFilterOperations.h>
 
+using WebKit::WebTransformationMatrix;
+
 namespace WebCore {
 
 PassOwnPtr<CCDamageTracker> CCDamageTracker::create()
@@ -244,7 +246,7 @@ void CCDamageTracker::extendDamageForLayer(CCLayerImpl* layer, FloatRect& target
     // Property changes take priority over update rects.
 
     // Compute the layer's "originTransform" by translating the drawTransform.
-    TransformationMatrix originTransform = layer->drawTransform();
+    WebTransformationMatrix originTransform = layer->drawTransform();
     originTransform.translate(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height());
 
     bool layerIsNew = false;
@@ -304,12 +306,12 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
 
     // If there was damage, transform it to target space, and possibly contribute its reflection if needed.
     if (!damageRectInLocalSpace.isEmpty()) {
-        const TransformationMatrix& originTransform = renderSurface->originTransform();
+        const WebTransformationMatrix& originTransform = renderSurface->originTransform();
         FloatRect damageRectInTargetSpace = CCMathUtil::mapClippedRect(originTransform, damageRectInLocalSpace);
         targetDamageRect.uniteIfNonZero(damageRectInTargetSpace);
 
         if (layer->replicaLayer()) {
-            const TransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
+            const WebTransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
             targetDamageRect.uniteIfNonZero(CCMathUtil::mapClippedRect(replicaOriginTransform, damageRectInLocalSpace));
         }
     }
@@ -322,7 +324,7 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         removeRectFromCurrentFrame(replicaMaskLayer->id(), replicaIsNew);
 
         // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
-        const TransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
+        const WebTransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
         FloatRect replicaMaskLayerRect = CCMathUtil::mapClippedRect(replicaOriginTransform, FloatRect(FloatPoint::zero(), FloatSize(replicaMaskLayer->bounds().width(), replicaMaskLayer->bounds().height())));
         saveRectForNextFrame(replicaMaskLayer->id(), replicaMaskLayerRect);
 

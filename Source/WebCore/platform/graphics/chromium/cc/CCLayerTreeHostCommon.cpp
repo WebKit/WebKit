@@ -31,7 +31,6 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "RenderSurfaceChromium.h"
-#include "TransformationMatrix.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
@@ -39,10 +38,13 @@
 #include "cc/CCLayerSorter.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCRenderSurface.h"
+#include <public/WebTransformationMatrix.h>
+
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
+IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const WebTransformationMatrix& transform)
 {
     // Is this layer fully contained within the target surface?
     IntRect layerInSurfaceSpace = CCMathUtil::mapClippedRect(transform, layerBoundRect);
@@ -59,7 +61,7 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
     // This bounding rectangle may be larger than it needs to be (being
     // axis-aligned), but is a reasonable filter on the space to consider.
     // Non-invertible transforms will create an empty rect here.
-    const TransformationMatrix surfaceToLayer = transform.inverse();
+    const WebTransformationMatrix surfaceToLayer = transform.inverse();
     IntRect layerRect = enclosingIntRect(CCMathUtil::projectClippedRect(surfaceToLayer, FloatRect(minimalSurfaceRect)));
     layerRect.intersect(layerBoundRect);
     return layerRect;
@@ -102,7 +104,7 @@ static bool isLayerBackFaceVisible(LayerType* layer)
 }
 
 template<typename LayerType>
-static bool isSurfaceBackFaceVisible(LayerType* layer, const TransformationMatrix& drawTransform)
+static bool isSurfaceBackFaceVisible(LayerType* layer, const WebTransformationMatrix& drawTransform)
 {
     if (layerIsInExisting3DRenderingContext(layer))
         return drawTransform.isBackFaceVisible();
@@ -133,7 +135,7 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
     const IntSize& contentBounds = layer->contentBounds();
 
     const IntRect layerBoundRect = IntRect(IntPoint(), contentBounds);
-    TransformationMatrix transform = layer->drawTransform();
+    WebTransformationMatrix transform = layer->drawTransform();
 
     transform.scaleNonUniform(bounds.width() / static_cast<double>(contentBounds.width()),
                               bounds.height() / static_cast<double>(contentBounds.height()));
@@ -143,7 +145,7 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
     return visibleLayerRect;
 }
 
-static bool isScaleOrTranslation(const TransformationMatrix& m)
+static bool isScaleOrTranslation(const WebTransformationMatrix& m)
 {
     return !m.m12() && !m.m13() && !m.m14()
            && !m.m21() && !m.m23() && !m.m24()
@@ -282,7 +284,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename LayerList, typename RenderSurfaceType, typename LayerSorter>
-static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, RenderSurfaceType* nearestAncestorThatMovesPixels, LayerList& renderSurfaceLayerList, LayerList& layerList, LayerSorter* layerSorter, int maxTextureSize)
+static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, LayerType* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, RenderSurfaceType* nearestAncestorThatMovesPixels, LayerList& renderSurfaceLayerList, LayerList& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     // This function computes the new matrix transformations recursively for this
     // layer and all its descendants. It also computes the appropriate render surfaces.
@@ -296,7 +298,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     //    projection applied at draw time flips the Y axis appropriately.
     //
     // 2. The anchor point, when given as a FloatPoint object, is specified in "unit layer space",
-    //    where the bounds of the layer map to [0, 1]. However, as a TransformationMatrix object,
+    //    where the bounds of the layer map to [0, 1]. However, as a WebTransformationMatrix object,
     //    the transform to the anchor point is specified in "pixel layer space", where the bounds
     //    of the layer map to [bounds.width(), bounds.height()].
     //
@@ -399,7 +401,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     float centerOffsetX = (0.5 - anchorPoint.x()) * bounds.width();
     float centerOffsetY = (0.5 - anchorPoint.y()) * bounds.height();
 
-    TransformationMatrix layerLocalTransform;
+    WebTransformationMatrix layerLocalTransform;
     // LT = Tr[origin] * S[pageScaleDelta]
     layerLocalTransform.scale(layer->pageScaleDelta());
     // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor]
@@ -409,8 +411,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
-    TransformationMatrix combinedTransform = parentMatrix;
-    combinedTransform = combinedTransform.multiply(layerLocalTransform);
+    WebTransformationMatrix combinedTransform = parentMatrix;
+    combinedTransform.multiply(layerLocalTransform);
 
     bool animatingTransformToTarget = layer->transformIsAnimating();
     bool animatingTransformToScreen = animatingTransformToTarget;
@@ -424,7 +426,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
     // fullHierarchyMatrix is the matrix that transforms objects between screen space (except projection matrix) and the most recent RenderSurface's space.
     // nextHierarchyMatrix will only change if this layer uses a new RenderSurface, otherwise remains the same.
-    TransformationMatrix nextHierarchyMatrix = fullHierarchyMatrix;
+    WebTransformationMatrix nextHierarchyMatrix = fullHierarchyMatrix;
 
     // FIXME: This seems like the wrong place to set this
     layer->setUsesLayerClipping(false);
@@ -441,7 +443,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         renderSurface->clearLayerList();
 
         // The origin of the new surface is the upper left corner of the layer.
-        TransformationMatrix drawTransform;
+        WebTransformationMatrix drawTransform;
         drawTransform.translate3d(0.5 * bounds.width(), 0.5 * bounds.height(), 0);
         layer->setDrawTransform(drawTransform);
 
@@ -453,7 +455,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setDrawOpacity(1);
         layer->setDrawOpacityIsAnimating(false);
 
-        TransformationMatrix surfaceOriginTransform = combinedTransform;
+        WebTransformationMatrix surfaceOriginTransform = combinedTransform;
         surfaceOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->setOriginTransform(surfaceOriginTransform);
 
@@ -526,7 +528,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
     // Note that at this point, layer->drawTransform() is not necessarily the same as local variable drawTransform.
     // layerScreenSpaceTransform represents the transform between root layer's "screen space" and local layer space.
-    TransformationMatrix layerScreenSpaceTransform = nextHierarchyMatrix;
+    WebTransformationMatrix layerScreenSpaceTransform = nextHierarchyMatrix;
     layerScreenSpaceTransform.multiply(layer->drawTransform());
     layerScreenSpaceTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
     layer->setScreenSpaceTransform(layerScreenSpaceTransform);
@@ -541,7 +543,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     } else
         layer->setDrawableContentRect(IntRect());
 
-    TransformationMatrix sublayerMatrix = layer->drawTransform();
+    WebTransformationMatrix sublayerMatrix = layer->drawTransform();
 
     // Flatten to 2D if the layer doesn't preserve 3D.
     if (!layer->preserves3D()) {
@@ -629,7 +631,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setClipRect(layer->drawableContentRect());
 
         // Adjust the origin of the transform to be the center of the render surface.
-        TransformationMatrix drawTransform = renderSurface->originTransform();
+        WebTransformationMatrix drawTransform = renderSurface->originTransform();
         drawTransform.translate3d(surfaceCenter.x() + centerOffsetDueToClipping.width(), surfaceCenter.y() + centerOffsetDueToClipping.height(), 0);
         renderSurface->setDrawTransform(drawTransform);
 
@@ -638,23 +640,23 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         if (layer->replicaLayer()) {
             // Compute the transformation matrix used to draw the surface's replica to the target surface.
-            TransformationMatrix replicaDrawTransform = renderSurface->originTransform();
+            WebTransformationMatrix replicaDrawTransform = renderSurface->originTransform();
             replicaDrawTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
             replicaDrawTransform.multiply(layer->replicaLayer()->transform());
             replicaDrawTransform.translate(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height());
             renderSurface->setReplicaDrawTransform(replicaDrawTransform);
 
-            TransformationMatrix surfaceOriginToReplicaOriginTransform;
+            WebTransformationMatrix surfaceOriginToReplicaOriginTransform;
             surfaceOriginToReplicaOriginTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
             surfaceOriginToReplicaOriginTransform.multiply(layer->replicaLayer()->transform());
             surfaceOriginToReplicaOriginTransform.translate(-anchorPoint.x() * bounds.width(), -anchorPoint.y() * bounds.height());
 
             // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
-            TransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform() * surfaceOriginToReplicaOriginTransform;
+            WebTransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform() * surfaceOriginToReplicaOriginTransform;
             renderSurface->setReplicaOriginTransform(replicaOriginTransform);
 
             // Compute the replica's "screenSpaceTransform" that maps from the replica's origin space to the screen's origin space.
-            TransformationMatrix replicaScreenSpaceTransform = layer->renderSurface()->screenSpaceTransform() * surfaceOriginToReplicaOriginTransform;
+            WebTransformationMatrix replicaScreenSpaceTransform = layer->renderSurface()->screenSpaceTransform() * surfaceOriginToReplicaOriginTransform;
             renderSurface->setReplicaScreenSpaceTransform(replicaScreenSpaceTransform);
         }
 
@@ -707,13 +709,13 @@ static void walkLayersAndCalculateVisibleLayerRects(const LayerList& renderSurfa
     }
 }
 
-void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
+void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(LayerChromium* layer, LayerChromium* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
 {
     WebCore::calculateDrawTransformsAndVisibilityInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, 0, maxTextureSize);
     walkLayersAndCalculateVisibleLayerRects<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium>(renderSurfaceLayerList);
 }
 
-void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(CCLayerImpl* layer, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
+void CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(CCLayerImpl* layer, CCLayerImpl* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
 {
     calculateDrawTransformsAndVisibilityInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
     walkLayersAndCalculateVisibleLayerRects<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface>(renderSurfaceLayerList);

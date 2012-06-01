@@ -26,14 +26,15 @@
 
 #include "cc/CCRenderSurface.h"
 
-#include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCSharedQuadState.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
@@ -77,7 +78,7 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setContentRect(testRect));
 
     OwnPtr<CCLayerImpl> dummyMask = CCLayerImpl::create(1);
-    TransformationMatrix dummyMatrix;
+    WebTransformationMatrix dummyMatrix;
     dummyMatrix.translate(1.0, 2.0);
 
     // The rest of the surface properties are either internal and should not cause change,
@@ -101,8 +102,8 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
 
     IntRect contentRect = IntRect(IntPoint::zero(), IntSize(50, 50));
     IntRect clipRect = IntRect(IntPoint(5, 5), IntSize(40, 40));
-    TransformationMatrix draw;
-    TransformationMatrix origin;
+    WebTransformationMatrix draw;
+    WebTransformationMatrix origin;
 
     draw.translate(30, 40);
 

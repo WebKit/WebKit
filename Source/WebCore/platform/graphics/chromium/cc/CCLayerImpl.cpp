@@ -38,6 +38,8 @@
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
+using WebKit::WebTransformationMatrix;
+
 namespace WebCore {
 
 CCLayerImpl::CCLayerImpl(int id)
@@ -194,9 +196,9 @@ const IntRect CCLayerImpl::getDrawRect() const
     return mappedRect;
 }
 
-TransformationMatrix CCLayerImpl::quadTransform() const
+WebTransformationMatrix CCLayerImpl::quadTransform() const
 {
-    TransformationMatrix quadTransformation = drawTransform();
+    WebTransformationMatrix quadTransformation = drawTransform();
 
     float offsetX = -0.5 * bounds().width();
     float offsetY = -0.5 * bounds().height();
@@ -309,7 +311,7 @@ void CCLayerImpl::setOpacityFromAnimation(float opacity)
     setOpacity(opacity);
 }
 
-void CCLayerImpl::setTransformFromAnimation(const TransformationMatrix& transform)
+void CCLayerImpl::setTransformFromAnimation(const WebTransformationMatrix& transform)
 {
     setTransform(transform);
 }
@@ -455,7 +457,7 @@ void CCLayerImpl::setPreserves3D(bool preserves3D)
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTransform)
+void CCLayerImpl::setSublayerTransform(const WebTransformationMatrix& sublayerTransform)
 {
     if (m_sublayerTransform == sublayerTransform)
         return;
@@ -465,7 +467,7 @@ void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTrans
     noteLayerPropertyChangedForDescendants();
 }
 
-void CCLayerImpl::setTransform(const TransformationMatrix& transform)
+void CCLayerImpl::setTransform(const WebTransformationMatrix& transform)
 {
     if (m_transform == transform)
         return;

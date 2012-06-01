@@ -26,13 +26,14 @@
 
 #include "cc/CCLayerSorter.h"
 
-#include "TransformationMatrix.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCRenderSurface.h"
 #include <limits.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/Deque.h>
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 #define LOG_CHANNEL_PREFIX Log
 #define SHOW_DEBUG_LOG 0
@@ -151,7 +152,7 @@ CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(LayerShape* a, LayerS
     return BBeforeA;
 }
 
-CCLayerSorter::LayerShape::LayerShape(float width, float height, const TransformationMatrix& drawTransform)
+CCLayerSorter::LayerShape::LayerShape(float width, float height, const WebTransformationMatrix& drawTransform)
 {
     FloatQuad layerQuad(FloatPoint(-width * 0.5, height * 0.5),
                         FloatPoint(width * 0.5, height * 0.5),
@@ -236,7 +237,7 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
         LOG(CCLayerSorter, "Layer %d (%d x %d)\n", node.layer->id(), node.layer->bounds().width(), node.layer->bounds().height());
 #endif
 
-        TransformationMatrix drawTransform;
+        WebTransformationMatrix drawTransform;
         float layerWidth, layerHeight;
         if (renderSurface) {
             drawTransform = renderSurface->drawTransform();

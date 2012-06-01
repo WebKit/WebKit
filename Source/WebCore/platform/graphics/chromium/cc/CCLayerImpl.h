@@ -31,11 +31,11 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "TextStream.h"
-#include "TransformationMatrix.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCRenderSurface.h"
 #include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -61,8 +61,8 @@ public:
     virtual int id() const OVERRIDE { return m_layerId; }
     virtual void setOpacityFromAnimation(float) OVERRIDE;
     virtual float opacity() const OVERRIDE { return m_opacity; }
-    virtual void setTransformFromAnimation(const TransformationMatrix&) OVERRIDE;
-    virtual const TransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) OVERRIDE;
+    virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
     virtual const IntSize& bounds() const OVERRIDE { return m_bounds; }
 
     // Tree structure.
@@ -136,8 +136,8 @@ public:
     void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
-    void setSublayerTransform(const TransformationMatrix&);
-    const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
+    void setSublayerTransform(const WebKit::WebTransformationMatrix&);
+    const WebKit::WebTransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
     // Debug layer border - visual effect only, do not change geometry/clipping/etc.
     void setDebugBorderColor(Color);
@@ -212,13 +212,13 @@ public:
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
 
-    void setTransform(const TransformationMatrix&);
+    void setTransform(const WebKit::WebTransformationMatrix&);
     bool transformIsAnimating() const;
 
-    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-    void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
-    const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
-    void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
+    const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
+    void setDrawTransform(const WebKit::WebTransformationMatrix& matrix) { m_drawTransform = matrix; }
+    const WebKit::WebTransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
+    void setScreenSpaceTransform(const WebKit::WebTransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
 
     bool drawTransformIsAnimating() const { return m_drawTransformIsAnimating; }
     void setDrawTransformIsAnimating(bool animating) { m_drawTransformIsAnimating = animating; }
@@ -253,7 +253,7 @@ protected:
     static void writeIndent(TextStream&, int indent);
 
     // Transformation used to transform quads provided in appendQuads.
-    virtual TransformationMatrix quadTransform() const;
+    virtual WebKit::WebTransformationMatrix quadTransform() const;
 
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
@@ -304,8 +304,8 @@ private:
     FloatPoint m_position;
     bool m_preserves3D;
     bool m_drawCheckerboardForMissingTiles;
-    TransformationMatrix m_sublayerTransform;
-    TransformationMatrix m_transform;
+    WebKit::WebTransformationMatrix m_sublayerTransform;
+    WebKit::WebTransformationMatrix m_transform;
     bool m_usesLayerClipping;
     bool m_isNonCompositedContent;
 
@@ -339,8 +339,8 @@ private:
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;
 
-    TransformationMatrix m_drawTransform;
-    TransformationMatrix m_screenSpaceTransform;
+    WebKit::WebTransformationMatrix m_drawTransform;
+    WebKit::WebTransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;
     bool m_screenSpaceTransformIsAnimating;
 

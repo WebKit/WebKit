@@ -27,13 +27,16 @@
 
 #include "FloatPoint.h"
 
+namespace WebKit {
+class WebTransformationMatrix;
+}
+
 namespace WebCore {
 
 class IntRect;
 class FloatPoint;
 class FloatRect;
 class FloatQuad;
-class TransformationMatrix;
 
 struct HomogeneousCoordinate {
     HomogeneousCoordinate(double newX, double newY, double newZ, double newW)
@@ -71,7 +74,7 @@ struct HomogeneousCoordinate {
 class CCMathUtil {
 public:
 
-    // Background: TransformationMatrix code in WebCore does not do the right thing in
+    // Background: WebTransformationMatrix code in WebCore does not do the right thing in
     // mapRect / mapQuad / projectQuad when there is a perspective projection that causes
     // one of the transformed vertices to go to w < 0. In those cases, it is necessary to
     // perform clipping in homogeneous coordinates, after applying the transform, before
@@ -79,23 +82,23 @@ public:
     //
     // These functions return the axis-aligned rect that encloses the correctly clipped,
     // transformed polygon.
-    static IntRect mapClippedRect(const TransformationMatrix&, const IntRect&);
-    static FloatRect mapClippedRect(const TransformationMatrix&, const FloatRect&);
-    static FloatRect projectClippedRect(const TransformationMatrix&, const FloatRect&);
+    static IntRect mapClippedRect(const WebKit::WebTransformationMatrix&, const IntRect&);
+    static FloatRect mapClippedRect(const WebKit::WebTransformationMatrix&, const FloatRect&);
+    static FloatRect projectClippedRect(const WebKit::WebTransformationMatrix&, const FloatRect&);
 
     // Returns an array of vertices that represent the clipped polygon. After returning, indexes from
     // 0 to numVerticesInClippedQuad are valid in the clippedQuad array. Note that
     // numVerticesInClippedQuad may be zero, which means the entire quad was clipped, and
     // none of the vertices in the array are valid.
-    static void mapClippedQuad(const TransformationMatrix&, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad);
+    static void mapClippedQuad(const WebKit::WebTransformationMatrix&, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad);
 
     static FloatRect computeEnclosingRectOfVertices(FloatPoint vertices[], int numVertices);
     static FloatRect computeEnclosingClippedRect(const HomogeneousCoordinate& h1, const HomogeneousCoordinate& h2, const HomogeneousCoordinate& h3, const HomogeneousCoordinate& h4);
 
     // NOTE: These functions do not do correct clipping against w = 0 plane, but they
     // correctly detect the clipped condition via the boolean clipped.
-    static FloatQuad mapQuad(const TransformationMatrix&, const FloatQuad&, bool& clipped);
-    static FloatQuad projectQuad(const TransformationMatrix&, const FloatQuad&, bool& clipped);
+    static FloatQuad mapQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
+    static FloatQuad projectQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
 };
 
 } // namespace WebCore

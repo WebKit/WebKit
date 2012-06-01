@@ -50,7 +50,6 @@ class CCLayerTreeHostImplTimeSourceAdapter;
 class LayerRendererChromium;
 class TextureAllocator;
 struct LayerRendererCapabilities;
-class TransformationMatrix;
 
 // CCLayerTreeHost->CCProxy callback interface.
 class CCLayerTreeHostImplClient {

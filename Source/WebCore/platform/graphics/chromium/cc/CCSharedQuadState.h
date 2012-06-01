@@ -28,7 +28,7 @@
 
 #include "FloatQuad.h"
 #include "IntRect.h"
-#include "TransformationMatrix.h"
+#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -36,12 +36,12 @@ namespace WebCore {
 class CCSharedQuadState {
     WTF_MAKE_NONCOPYABLE(CCSharedQuadState);
 public:
-    static PassOwnPtr<CCSharedQuadState> create(const TransformationMatrix& quadTransform, const TransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
+    static PassOwnPtr<CCSharedQuadState> create(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
 
     // The transform that quads in a CCDrawQuad should be transformed with.
-    const TransformationMatrix& quadTransform() const { return m_quadTransform; }
+    const WebKit::WebTransformationMatrix& quadTransform() const { return m_quadTransform; }
     // The transform that layerRect() should be transformed with.
-    const TransformationMatrix& layerTransform() const { return m_layerTransform; }
+    const WebKit::WebTransformationMatrix& layerTransform() const { return m_layerTransform; }
     const IntRect& layerRect() const { return m_layerRect; }
     // Usage: if clipRect is empty, this clipRect should not be used.
     const IntRect& clipRect() const { return m_clipRect; }
@@ -51,10 +51,10 @@ public:
     bool isLayerAxisAlignedIntRect() const;
 
 private:
-    CCSharedQuadState(const TransformationMatrix& quadTransform, const TransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
+    CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
 
-    TransformationMatrix m_quadTransform;
-    TransformationMatrix m_layerTransform;
+    WebKit::WebTransformationMatrix m_quadTransform;
+    WebKit::WebTransformationMatrix m_layerTransform;
     IntRect m_layerRect;
     IntRect m_clipRect;
     float m_opacity;

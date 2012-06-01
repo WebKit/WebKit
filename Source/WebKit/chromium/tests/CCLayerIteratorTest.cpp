@@ -30,8 +30,10 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
+using WebKit::WebTransformationMatrix;
 using ::testing::Mock;
 using ::testing::_;
 using ::testing::AtLeast;
@@ -139,7 +141,7 @@ TEST(CCLayerIteratorTest, simpleTree)
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                TransformationMatrix(), TransformationMatrix(),
+                                                                WebTransformationMatrix(), WebTransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,
                                                                 256);
 
@@ -186,7 +188,7 @@ TEST(CCLayerIteratorTest, complexTree)
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                TransformationMatrix(), TransformationMatrix(),
+                                                                WebTransformationMatrix(), WebTransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,
                                                                 256);
 
@@ -245,7 +247,7 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                TransformationMatrix(), TransformationMatrix(),
+                                                                WebTransformationMatrix(), WebTransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,
                                                                 256);
 

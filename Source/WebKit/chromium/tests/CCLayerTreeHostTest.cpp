@@ -2092,21 +2092,21 @@ public:
         // The root render surface is the size of the viewport.
         EXPECT_EQ_RECT(IntRect(0, 0, 60, 60), root->renderSurface()->contentRect());
 
-        TransformationMatrix scaleTransform;
+        WebTransformationMatrix scaleTransform;
         scaleTransform.scale(impl->settings().deviceScaleFactor);
 
         // The root layer is scaled by 2x.
-        TransformationMatrix rootScreenSpaceTransform = scaleTransform;
-        TransformationMatrix rootDrawTransform = scaleTransform;
+        WebTransformationMatrix rootScreenSpaceTransform = scaleTransform;
+        WebTransformationMatrix rootDrawTransform = scaleTransform;
         rootDrawTransform.translate(root->bounds().width() * 0.5, root->bounds().height() * 0.5);
 
         EXPECT_EQ(rootDrawTransform, root->drawTransform());
         EXPECT_EQ(rootScreenSpaceTransform, root->screenSpaceTransform());
 
         // The child is at position 2,2, so translate by 2,2 before applying the scale by 2x.
-        TransformationMatrix childScreenSpaceTransform = scaleTransform;
+        WebTransformationMatrix childScreenSpaceTransform = scaleTransform;
         childScreenSpaceTransform.translate(2, 2);
-        TransformationMatrix childDrawTransform = scaleTransform;
+        WebTransformationMatrix childDrawTransform = scaleTransform;
         childDrawTransform.translate(2, 2);
         childDrawTransform.translate(child->bounds().width() * 0.5, child->bounds().height() * 0.5);
 
@@ -2220,7 +2220,7 @@ TEST_F(CCLayerTreeHostTestAtomicCommit, runMultiThread)
     runTest(true);
 }
 
-static void setLayerPropertiesForTesting(LayerChromium* layer, LayerChromium* parent, const TransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
+static void setLayerPropertiesForTesting(LayerChromium* layer, LayerChromium* parent, const WebTransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
 {
     layer->removeAllChildren();
     if (parent)
@@ -2248,7 +2248,7 @@ public:
         m_layerTreeHost->setRootLayer(m_parent);
         m_layerTreeHost->setViewportSize(IntSize(10, 20));
 
-        TransformationMatrix identityMatrix;
+        WebTransformationMatrix identityMatrix;
         setLayerPropertiesForTesting(m_parent.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 20), true);
         setLayerPropertiesForTesting(m_child.get(), m_parent.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(0, 10), IntSize(10, 10), false);
 
@@ -2408,7 +2408,7 @@ private:
     Region m_occludedScreenSpace;
 };
 
-static void setTestLayerPropertiesForTesting(TestLayerChromium* layer, LayerChromium* parent, const TransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
+static void setTestLayerPropertiesForTesting(TestLayerChromium* layer, LayerChromium* parent, const WebTransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
 {
     setLayerPropertiesForTesting(layer, parent, transform, anchor, position, bounds, opaque);
     layer->clearOccludedScreenSpace();
@@ -2426,8 +2426,8 @@ public:
         RefPtr<TestLayerChromium> grandChild = TestLayerChromium::create();
         RefPtr<TestLayerChromium> mask = TestLayerChromium::create();
 
-        TransformationMatrix identityMatrix;
-        TransformationMatrix childTransform;
+        WebTransformationMatrix identityMatrix;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -2628,8 +2628,8 @@ public:
         RefPtr<TestLayerChromium> grandChild = TestLayerChromium::create();
         RefPtr<TestLayerChromium> mask = TestLayerChromium::create();
 
-        TransformationMatrix identityMatrix;
-        TransformationMatrix childTransform;
+        WebTransformationMatrix identityMatrix;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -2714,7 +2714,7 @@ public:
     {
         // We create enough RenderSurfaces that it will trigger Vector reallocation while computing occlusion.
         Region occluded;
-        const TransformationMatrix identityMatrix;
+        const WebTransformationMatrix identityMatrix;
         Vector<RefPtr<TestLayerChromium> > layers;
         Vector<RefPtr<TestLayerChromium> > children;
         int numSurfaces = 20;

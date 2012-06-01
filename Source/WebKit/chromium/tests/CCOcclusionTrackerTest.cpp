@@ -31,16 +31,17 @@
 #include "CCOcclusionTrackerTestCommon.h"
 #include "LayerChromium.h"
 #include "Region.h"
-#include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -172,7 +173,7 @@ protected:
         CCLayerTreeHost::setNeedsFilterContext(false);
     }
 
-    typename Types::ContentLayerType* createRoot(const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    typename Types::ContentLayerType* createRoot(const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         typename Types::ContentLayerPtrType layer(Types::createContentLayer());
         typename Types::ContentLayerType* layerPtr = layer.get();
@@ -183,7 +184,7 @@ protected:
         return layerPtr;
     }
 
-    typename Types::LayerType* createLayer(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    typename Types::LayerType* createLayer(typename Types::LayerType* parent, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         typename Types::LayerPtrType layer(Types::createLayer());
         typename Types::LayerType* layerPtr = layer.get();
@@ -192,7 +193,7 @@ protected:
         return layerPtr;
     }
 
-    typename Types::LayerType* createSurface(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    typename Types::LayerType* createSurface(typename Types::LayerType* parent, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         typename Types::LayerType* layer = createLayer(parent, transform, position, bounds);
         WebFilterOperations filters;
@@ -201,7 +202,7 @@ protected:
         return layer;
     }
 
-    typename Types::ContentLayerType* createDrawingLayer(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
+    typename Types::ContentLayerType* createDrawingLayer(typename Types::LayerType* parent, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
     {
         typename Types::ContentLayerPtrType layer(Types::createContentLayer());
         typename Types::ContentLayerType* layerPtr = layer.get();
@@ -221,7 +222,7 @@ protected:
         return layerPtr;
     }
 
-    typename Types::LayerType* createReplicaLayer(typename Types::LayerType* owningLayer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    typename Types::LayerType* createReplicaLayer(typename Types::LayerType* owningLayer, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         typename Types::ContentLayerPtrType layer(Types::createContentLayer());
         typename Types::ContentLayerType* layerPtr = layer.get();
@@ -239,7 +240,7 @@ protected:
         return layerPtr;
     }
 
-    typename Types::ContentLayerType* createDrawingSurface(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
+    typename Types::ContentLayerType* createDrawingSurface(typename Types::LayerType* parent, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
     {
         typename Types::ContentLayerType* layer = createDrawingLayer(parent, transform, position, bounds, opaque);
         WebFilterOperations filters;
@@ -331,24 +332,24 @@ protected:
         m_layerIterator = m_layerIteratorBegin;
     }
 
-    const TransformationMatrix identityMatrix;
+    const WebTransformationMatrix identityMatrix;
 
 private:
-    void setBaseProperties(typename Types::LayerType* layer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    void setBaseProperties(typename Types::LayerType* layer, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         layer->setTransform(transform);
-        layer->setSublayerTransform(TransformationMatrix());
+        layer->setSublayerTransform(WebTransformationMatrix());
         layer->setAnchorPoint(FloatPoint(0, 0));
         layer->setPosition(position);
         layer->setBounds(bounds);
     }
 
-    void setProperties(LayerChromium* layer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    void setProperties(LayerChromium* layer, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         setBaseProperties(layer, transform, position, bounds);
     }
 
-    void setProperties(CCLayerImpl* layer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+    void setProperties(CCLayerImpl* layer, const WebTransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
         setBaseProperties(layer, transform, position, bounds);
 
@@ -482,7 +483,7 @@ class CCOcclusionTrackerTestRotatedChild : public CCOcclusionTrackerTest<Types, 
 protected:
     void runMyTest()
     {
-        TransformationMatrix layerTransform;
+        WebTransformationMatrix layerTransform;
         layerTransform.translate(250, 250);
         layerTransform.rotate(90);
         layerTransform.translate(-250, -250);
@@ -535,7 +536,7 @@ class CCOcclusionTrackerTestTranslatedChild : public CCOcclusionTrackerTest<Type
 protected:
     void runMyTest()
     {
-        TransformationMatrix layerTransform;
+        WebTransformationMatrix layerTransform;
         layerTransform.translate(20, 20);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
@@ -598,7 +599,7 @@ class CCOcclusionTrackerTestChildInRotatedChild : public CCOcclusionTrackerTest<
 protected:
     void runMyTest()
     {
-        TransformationMatrix childTransform;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -691,7 +692,7 @@ class CCOcclusionTrackerTestVisitTargetTwoTimes : public CCOcclusionTrackerTest<
 protected:
     void runMyTest()
     {
-        TransformationMatrix childTransform;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -837,12 +838,12 @@ class CCOcclusionTrackerTestSurfaceRotatedOffAxis : public CCOcclusionTrackerTes
 protected:
     void runMyTest()
     {
-        TransformationMatrix childTransform;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(95);
         childTransform.translate(-250, -250);
 
-        TransformationMatrix layerTransform;
+        WebTransformationMatrix layerTransform;
         layerTransform.translate(10, 10);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
@@ -854,7 +855,7 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        IntRect clippedLayerInChild = layerTransform.mapRect(layer->visibleLayerRect());
+        IntRect clippedLayerInChild = CCMathUtil::mapClippedRect(layerTransform, layer->visibleLayerRect());
 
         this->visitLayer(layer, occlusion);
         this->enterContributingSurface(child, occlusion);
@@ -903,7 +904,7 @@ class CCOcclusionTrackerTestSurfaceWithTwoOpaqueChildren : public CCOcclusionTra
 protected:
     void runMyTest()
     {
-        TransformationMatrix childTransform;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -991,7 +992,7 @@ class CCOcclusionTrackerTestOverlappingSurfaceSiblings : public CCOcclusionTrack
 protected:
     void runMyTest()
     {
-        TransformationMatrix childTransform;
+        WebTransformationMatrix childTransform;
         childTransform.translate(250, 250);
         childTransform.rotate(90);
         childTransform.translate(-250, -250);
@@ -1100,12 +1101,12 @@ class CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms : public
 protected:
     void runMyTest()
     {
-        TransformationMatrix child1Transform;
+        WebTransformationMatrix child1Transform;
         child1Transform.translate(250, 250);
         child1Transform.rotate(-90);
         child1Transform.translate(-250, -250);
 
-        TransformationMatrix child2Transform;
+        WebTransformationMatrix child2Transform;
         child2Transform.translate(250, 250);
         child2Transform.rotate(90);
         child2Transform.translate(-250, -250);
@@ -1207,7 +1208,7 @@ class CCOcclusionTrackerTestFilters : public CCOcclusionTrackerTest<Types, opaqu
 protected:
     void runMyTest()
     {
-        TransformationMatrix layerTransform;
+        WebTransformationMatrix layerTransform;
         layerTransform.translate(250, 250);
         layerTransform.rotate(90);
         layerTransform.translate(-250, -250);
@@ -1843,7 +1844,7 @@ class CCOcclusionTrackerTest3dTransform : public CCOcclusionTrackerTest<Types, o
 protected:
     void runMyTest()
     {
-        TransformationMatrix transform;
+        WebTransformationMatrix transform;
         transform.rotate3d(0, 30, 0);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
@@ -1866,7 +1867,7 @@ class CCOcclusionTrackerTestPerspectiveTransform : public CCOcclusionTrackerTest
 protected:
     void runMyTest()
     {
-        TransformationMatrix transform;
+        WebTransformationMatrix transform;
         transform.translate(150, 150);
         transform.applyPerspective(400);
         transform.rotate3d(1, 0, 0, -30);
@@ -1894,7 +1895,7 @@ protected:
     void runMyTest()
     {
         // This test is based on the platform/chromium/compositing/3d-corners.html layout test.
-        TransformationMatrix transform;
+        WebTransformationMatrix transform;
         transform.translate(250, 50);
         transform.applyPerspective(10);
         transform.translate(-250, -50);
@@ -1925,7 +1926,7 @@ class CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude : public CCOcclusion
 protected:
     void runMyTest()
     {
-        TransformationMatrix transform;
+        WebTransformationMatrix transform;
         transform.translate(50, 50);
         transform.applyPerspective(100);
         transform.translate3d(0, 0, 110);
@@ -1954,7 +1955,7 @@ class CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect : public CCOcclusio
 protected:
     void runMyTest()
     {
-        TransformationMatrix transform;
+        WebTransformationMatrix transform;
         transform.translate(50, 50);
         transform.applyPerspective(100);
         transform.translate3d(0, 0, 99);
@@ -2182,7 +2183,7 @@ class CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent : public CCOcclus
 protected:
     void runMyTest()
     {
-        TransformationMatrix surfaceTransform;
+        WebTransformationMatrix surfaceTransform;
         surfaceTransform.translate(300, 300);
         surfaceTransform.scale(2);
         surfaceTransform.translate(-150, -150);
@@ -2514,7 +2515,7 @@ class CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilter : public 
 protected:
     void runMyTest()
     {
-        TransformationMatrix scaleByHalf;
+        WebTransformationMatrix scaleByHalf;
         scaleByHalf.scale(0.5);
 
         // Make a surface and its replica, each 50x50, that are completely surrounded by opaque layers which are above them in the z-order.
@@ -2639,7 +2640,7 @@ class CCOcclusionTrackerTestTwoBackgroundFiltersReduceOcclusionTwice : public CC
 protected:
     void runMyTest()
     {
-        TransformationMatrix scaleByHalf;
+        WebTransformationMatrix scaleByHalf;
         scaleByHalf.scale(0.5);
 
         // Makes two surfaces that completely cover |parent|. The occlusion both above and below the filters will be reduced by each of them.
@@ -2826,7 +2827,7 @@ class CCOcclusionTrackerTestDontReduceOcclusionBelowBackgroundFilter : public CC
 protected:
     void runMyTest()
     {
-        TransformationMatrix scaleByHalf;
+        WebTransformationMatrix scaleByHalf;
         scaleByHalf.scale(0.5);
 
         // Make a surface and its replica, each 50x50, with a smaller 30x30 layer centered below each.
@@ -2875,7 +2876,7 @@ class CCOcclusionTrackerTestDontReduceOcclusionIfBackgroundFilterIsOccluded : pu
 protected:
     void runMyTest()
     {
-        TransformationMatrix scaleByHalf;
+        WebTransformationMatrix scaleByHalf;
         scaleByHalf.scale(0.5);
 
         // Make a surface and its replica, each 50x50, that are completely occluded by opaque layers which are above them in the z-order.
@@ -2923,7 +2924,7 @@ class CCOcclusionTrackerTestReduceOcclusionWhenBackgroundFilterIsPartiallyOcclud
 protected:
     void runMyTest()
     {
-        TransformationMatrix scaleByHalf;
+        WebTransformationMatrix scaleByHalf;
         scaleByHalf.scale(0.5);
 
         // Make a surface and its replica, each 50x50, that are partially occluded by opaque layers which are above them in the z-order.

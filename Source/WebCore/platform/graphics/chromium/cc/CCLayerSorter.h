@@ -33,6 +33,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
+namespace WebKit {
+class WebTransformationMatrix;
+}
+
 namespace WebCore {
 
 class CCLayerSorter {
@@ -47,7 +51,7 @@ public:
     // Holds various useful properties derived from a layer's 3D outline.
     struct LayerShape {
         LayerShape() { }
-        LayerShape(float width, float height, const TransformationMatrix& drawTransform);
+        LayerShape(float width, float height, const WebKit::WebTransformationMatrix& drawTransform);
 
         float layerZFromProjectedPoint(const FloatPoint&) const;
 

@@ -27,9 +27,9 @@
 #define CCTiledLayerImpl_h
 
 #include "LayerTextureUpdater.h"
-#include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTilingData.h"
+#include <public/WebTransformationMatrix.h>
 
 namespace WebCore {
 
@@ -65,7 +65,7 @@ protected:
     bool hasTileAt(int, int) const;
     bool hasTextureIdForTileAt(int, int) const;
 
-    virtual TransformationMatrix quadTransform() const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix quadTransform() const OVERRIDE;
 
 private:
 

@@ -34,12 +34,16 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+
+namespace WebKit {
+class WebTransformationMatrix;
+}
+
 namespace WebCore {
 
 class Animation;
 class IntSize;
 class KeyframeValueList;
-class TransformationMatrix;
 
 class CCLayerAnimationControllerClient {
 public:
@@ -48,8 +52,8 @@ public:
     virtual int id() const = 0;
     virtual void setOpacityFromAnimation(float) = 0;
     virtual float opacity() const = 0;
-    virtual void setTransformFromAnimation(const TransformationMatrix&) = 0;
-    virtual const TransformationMatrix& transform() const = 0;
+    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) = 0;
+    virtual const WebKit::WebTransformationMatrix& transform() const = 0;
     virtual const IntSize& bounds() const = 0;
 };
 

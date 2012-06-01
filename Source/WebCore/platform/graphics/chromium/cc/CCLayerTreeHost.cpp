@@ -43,6 +43,7 @@
 #include "cc/CCThreadProxy.h"
 
 using namespace std;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 static int numLayerTreeInstances;
@@ -511,8 +512,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
 
     {
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
-        TransformationMatrix identityMatrix;
-        TransformationMatrix deviceScaleTransform;
+        WebTransformationMatrix identityMatrix;
+        WebTransformationMatrix deviceScaleTransform;
         deviceScaleTransform.scale(m_settings.deviceScaleFactor);
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }

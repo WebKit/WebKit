@@ -31,10 +31,12 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "TraceEvent.h"
-#include "TransformationMatrix.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include <public/Platform.h>
+#include <public/WebTransformationMatrix.h>
+
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -78,7 +80,7 @@ void CCOverdrawMetrics::didCullTileForUpload()
         ++m_tilesCulledForUpload;
 }
 
-void CCOverdrawMetrics::didUpload(const TransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect)
+void CCOverdrawMetrics::didUpload(const WebTransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect)
 {
     if (!m_recordMetricsForFrame)
         return;
@@ -90,7 +92,7 @@ void CCOverdrawMetrics::didUpload(const TransformationMatrix& transformToTarget,
     m_pixelsUploadedTranslucent += uploadArea - uploadOpaqueArea;
 }
 
-void CCOverdrawMetrics::didCullForDrawing(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
+void CCOverdrawMetrics::didCullForDrawing(const WebTransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
 {
     if (!m_recordMetricsForFrame)
         return;
@@ -101,7 +103,7 @@ void CCOverdrawMetrics::didCullForDrawing(const TransformationMatrix& transformT
     m_pixelsCulledForDrawing += beforeCullArea - afterCullArea;
 }
 
-void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect)
+void CCOverdrawMetrics::didDraw(const WebTransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect)
 {
     if (!m_recordMetricsForFrame)
         return;

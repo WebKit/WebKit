@@ -29,11 +29,13 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
-#include "TransformationMatrix.h"
+#include <public/WebTransformationMatrix.h>
+
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-static HomogeneousCoordinate projectPoint(const TransformationMatrix& transform, const FloatPoint& p)
+static HomogeneousCoordinate projectPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
 {
     // In this case, the layer we are trying to project onto is perpendicular to ray
     // (point p and z-axis direction) that we are trying to project. This happens when the
@@ -55,7 +57,7 @@ static HomogeneousCoordinate projectPoint(const TransformationMatrix& transform,
     return HomogeneousCoordinate(outX, outY, outZ, outW);
 }
 
-static HomogeneousCoordinate mapPoint(const TransformationMatrix& transform, const FloatPoint& p)
+static HomogeneousCoordinate mapPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
 {
     double x = p.x();
     double y = p.y();
@@ -113,12 +115,12 @@ static inline void addVertexToClippedQuad(const FloatPoint& newVertex, FloatPoin
     numVerticesInClippedQuad++;
 }
 
-IntRect CCMathUtil::mapClippedRect(const TransformationMatrix& transform, const IntRect& srcRect)
+IntRect CCMathUtil::mapClippedRect(const WebTransformationMatrix& transform, const IntRect& srcRect)
 {
     return enclosingIntRect(mapClippedRect(transform, FloatRect(srcRect)));
 }
 
-FloatRect CCMathUtil::mapClippedRect(const TransformationMatrix& transform, const FloatRect& srcRect)
+FloatRect CCMathUtil::mapClippedRect(const WebTransformationMatrix& transform, const FloatRect& srcRect)
 {
     if (transform.isIdentityOrTranslation()) {
         FloatRect mappedRect(srcRect);
@@ -136,7 +138,7 @@ FloatRect CCMathUtil::mapClippedRect(const TransformationMatrix& transform, cons
     return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
 
-FloatRect CCMathUtil::projectClippedRect(const TransformationMatrix& transform, const FloatRect& srcRect)
+FloatRect CCMathUtil::projectClippedRect(const WebTransformationMatrix& transform, const FloatRect& srcRect)
 {
     // Perform the projection, but retain the result in homogeneous coordinates.
     FloatQuad q = FloatQuad(FloatRect(srcRect));
@@ -148,7 +150,7 @@ FloatRect CCMathUtil::projectClippedRect(const TransformationMatrix& transform, 
     return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
 
-void CCMathUtil::mapClippedQuad(const TransformationMatrix& transform, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
+void CCMathUtil::mapClippedQuad(const WebTransformationMatrix& transform, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
 {
     HomogeneousCoordinate h1 = mapPoint(transform, srcQuad.p1());
     HomogeneousCoordinate h2 = mapPoint(transform, srcQuad.p2());
@@ -252,7 +254,7 @@ FloatRect CCMathUtil::computeEnclosingClippedRect(const HomogeneousCoordinate& h
     return FloatRect(FloatPoint(xmin, ymin), FloatSize(xmax - xmin, ymax - ymin));
 }
 
-FloatQuad CCMathUtil::mapQuad(const TransformationMatrix& transform, const FloatQuad& q, bool& clipped)
+FloatQuad CCMathUtil::mapQuad(const WebTransformationMatrix& transform, const FloatQuad& q, bool& clipped)
 {
     if (transform.isIdentityOrTranslation()) {
         FloatQuad mappedQuad(q);
@@ -272,7 +274,7 @@ FloatQuad CCMathUtil::mapQuad(const TransformationMatrix& transform, const Float
     return FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
 }
 
-FloatQuad CCMathUtil::projectQuad(const TransformationMatrix& transform, const FloatQuad& q, bool& clipped)
+FloatQuad CCMathUtil::projectQuad(const WebTransformationMatrix& transform, const FloatQuad& q, bool& clipped)
 {
     FloatQuad projectedQuad;
     bool clippedPoint;

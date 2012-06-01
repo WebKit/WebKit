@@ -1,3 +1,180 @@
+2012-05-31  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Migrate to WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=87788
+
+        Reviewed by James Robinson.
+
+        Covered by all existing layout tests and unit tests.
+
+        This patch replaces all occurrences of WebCore::TransformationMatrix
+        with WebKit::WebTransformationMatrix in the chromium compositor code.
+
+        * platform/chromium/support/WebTransformationMatrix.cpp:
+        (WebKit::WebTransformationMatrix::WebTransformationMatrix):
+        (WebKit):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setSublayerTransform):
+        (WebCore::LayerChromium::setTransform):
+        (WebCore::LayerChromium::setTransformFromAnimation):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        (WebCore::LayerChromium::sublayerTransform):
+        (WebCore::LayerChromium::drawTransform):
+        (WebCore::LayerChromium::setDrawTransform):
+        (WebCore::LayerChromium::screenSpaceTransform):
+        (WebCore::LayerChromium::setScreenSpaceTransform):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawCheckerboardQuad):
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderSurfaceQuad):
+        (WebCore::LayerRendererChromium::drawSolidColorQuad):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::toGLMatrix):
+        (WebCore::LayerRendererChromium::drawTexturedQuad):
+        (WebCore::LayerRendererChromium::copyTextureToFramebuffer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::projectionMatrix):
+        (WebCore::LayerRendererChromium::windowMatrix):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/LinkHighlight.cpp:
+        (WebCore::LinkHighlight::LinkHighlight):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore::RenderSurfaceChromium::drawTransform):
+        (WebCore::RenderSurfaceChromium::setDrawTransform):
+        (WebCore::RenderSurfaceChromium::originTransform):
+        (WebCore::RenderSurfaceChromium::setOriginTransform):
+        (WebCore::RenderSurfaceChromium::screenSpaceTransform):
+        (WebCore::RenderSurfaceChromium::setScreenSpaceTransform):
+        (WebCore::RenderSurfaceChromium::replicaDrawTransform):
+        (WebCore::RenderSurfaceChromium::setReplicaDrawTransform):
+        (WebCore::RenderSurfaceChromium::replicaOriginTransform):
+        (WebCore::RenderSurfaceChromium::setReplicaOriginTransform):
+        (WebCore::RenderSurfaceChromium::replicaScreenSpaceTransform):
+        (WebCore::RenderSurfaceChromium::setReplicaScreenSpaceTransform):
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTiles):
+        * platform/graphics/chromium/cc/CCAnimationCurve.h:
+        (WebCore):
+        (CCTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::extendDamageForLayer):
+        (WebCore::CCDamageTracker::extendDamageForRenderSurface):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::quadTransform):
+        (WebCore::CCDrawQuad::layerTransform):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp:
+        (WebCore::CCTransformKeyframe::clone):
+        (WebCore::CCKeyframedTransformAnimationCurve::getValue):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h:
+        (CCKeyframedTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        (WebCore::CCLayerAnimationController::tickAnimations):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        (WebKit):
+        (WebCore):
+        (CCLayerAnimationControllerClient):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::quadTransform):
+        (WebCore::CCLayerImpl::setTransformFromAnimation):
+        (WebCore::CCLayerImpl::setSublayerTransform):
+        (WebCore::CCLayerImpl::setTransform):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        (WebCore::CCLayerImpl::sublayerTransform):
+        (WebCore::CCLayerImpl::drawTransform):
+        (WebCore::CCLayerImpl::setDrawTransform):
+        (WebCore::CCLayerImpl::screenSpaceTransform):
+        (WebCore::CCLayerImpl::setScreenSpaceTransform):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::LayerShape::LayerShape):
+        (WebCore::CCLayerSorter::createGraphNodes):
+        * platform/graphics/chromium/cc/CCLayerSorter.h:
+        (WebKit):
+        (LayerShape):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::CCLayerTreeHostCommon::calculateVisibleRect):
+        (WebCore::isSurfaceBackFaceVisible):
+        (WebCore::calculateVisibleLayerRect):
+        (WebCore::isScaleOrTranslation):
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (CCLayerTreeHostCommon):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::damageInSurfaceSpace):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCMathUtil.cpp:
+        (WebCore::projectPoint):
+        (WebCore::mapPoint):
+        (WebCore::CCMathUtil::mapClippedRect):
+        (WebCore::CCMathUtil::projectClippedRect):
+        (WebCore::CCMathUtil::mapClippedQuad):
+        (WebCore::CCMathUtil::mapQuad):
+        (WebCore::CCMathUtil::projectQuad):
+        * platform/graphics/chromium/cc/CCMathUtil.h:
+        (WebKit):
+        (WebCore):
+        (CCMathUtil):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::transformSurfaceOpaqueRegion):
+        (WebCore::reduceOcclusionBelowSurface):
+        (WebCore::contentToScreenSpaceTransform):
+        (WebCore::contentToTargetSurfaceTransform):
+        (WebCore::addOcclusionBehindLayer):
+        (WebCore::::markOccludedBehindLayer):
+        (WebCore::testContentRectOccluded):
+        (WebCore::computeUnoccludedContentRect):
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.h:
+        * platform/graphics/chromium/cc/CCOverdrawMetrics.cpp:
+        (WebCore::CCOverdrawMetrics::didUpload):
+        (WebCore::CCOverdrawMetrics::didCullForDrawing):
+        (WebCore::CCOverdrawMetrics::didDraw):
+        * platform/graphics/chromium/cc/CCOverdrawMetrics.h:
+        (WebKit):
+        (CCOverdrawMetrics):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::setDrawTransform):
+        (WebCore::CCRenderSurface::drawTransform):
+        (WebCore::CCRenderSurface::setOriginTransform):
+        (WebCore::CCRenderSurface::originTransform):
+        (WebCore::CCRenderSurface::setScreenSpaceTransform):
+        (WebCore::CCRenderSurface::screenSpaceTransform):
+        (WebCore::CCRenderSurface::setReplicaDrawTransform):
+        (WebCore::CCRenderSurface::replicaDrawTransform):
+        (WebCore::CCRenderSurface::setReplicaOriginTransform):
+        (WebCore::CCRenderSurface::replicaOriginTransform):
+        (WebCore::CCRenderSurface::setReplicaScreenSpaceTransform):
+        (WebCore::CCRenderSurface::replicaScreenSpaceTransform):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCSharedQuadState.cpp:
+        (WebCore::CCSharedQuadState::create):
+        (WebCore::CCSharedQuadState::CCSharedQuadState):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h:
+        (CCSharedQuadState):
+        (WebCore::CCSharedQuadState::quadTransform):
+        (WebCore::CCSharedQuadState::layerTransform):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.cpp:
+        (WebCore::CCSolidColorLayerImpl::quadTransform):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.h:
+        (CCSolidColorLayerImpl):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::quadTransform):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+
 2012-05-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Single thread proxy should not tick animations unless the layer renderer has been initialized

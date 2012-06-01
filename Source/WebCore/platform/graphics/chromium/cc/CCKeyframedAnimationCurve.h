@@ -116,7 +116,7 @@ public:
     virtual PassOwnPtr<CCAnimationCurve> clone() const OVERRIDE;
 
     // CCTransformAnimationCurve implementation
-    virtual TransformationMatrix getValue(double t, const IntSize&) const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix getValue(double t, const IntSize&) const OVERRIDE;
 
 private:
     CCKeyframedTransformAnimationCurve();

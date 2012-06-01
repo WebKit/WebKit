@@ -27,7 +27,7 @@
 
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TransformationMatrix.h"
+#include <public/WebTransformationMatrix.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -39,10 +39,10 @@ class LayerChromium;
 
 class CCLayerTreeHostCommon {
 public:
-    static IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix&);
+    static IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const WebKit::WebTransformationMatrix&);
 
-    static void calculateDrawTransformsAndVisibility(LayerChromium*, LayerChromium* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize);
-    static void calculateDrawTransformsAndVisibility(CCLayerImpl*, CCLayerImpl* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter*, int maxTextureSize);
+    static void calculateDrawTransformsAndVisibility(LayerChromium*, LayerChromium* rootLayer, const WebKit::WebTransformationMatrix& parentMatrix, const WebKit::WebTransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize);
+    static void calculateDrawTransformsAndVisibility(CCLayerImpl*, CCLayerImpl* rootLayer, const WebKit::WebTransformationMatrix& parentMatrix, const WebKit::WebTransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter*, int maxTextureSize);
 
     template<typename LayerType> static bool renderSurfaceContributesToTarget(LayerType*, int targetSurfaceLayerID);
 

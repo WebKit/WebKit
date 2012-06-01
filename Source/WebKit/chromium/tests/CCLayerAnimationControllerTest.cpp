@@ -35,18 +35,18 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
 using namespace WebKitTests;
+using WebKit::WebTransformationMatrix;
 
 namespace {
 
-void expectTranslateX(double translateX, const TransformationMatrix& matrix)
+void expectTranslateX(double translateX, const WebTransformationMatrix& matrix)
 {
-    TransformationMatrix::DecomposedType decomposedType;
-    matrix.decompose(decomposedType);
-    EXPECT_FLOAT_EQ(translateX, decomposedType.translateX);
+    EXPECT_FLOAT_EQ(translateX, matrix.m41());
 }
 
 PassOwnPtr<CCActiveAnimation> createActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int id, CCActiveAnimation::TargetProperty property)

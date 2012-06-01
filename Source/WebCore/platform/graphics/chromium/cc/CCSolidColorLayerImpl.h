@@ -26,8 +26,8 @@
 #ifndef CCSolidColorLayerImpl_h
 #define CCSolidColorLayerImpl_h
 
-#include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
+#include <public/WebTransformationMatrix.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ public:
     }
     virtual ~CCSolidColorLayerImpl();
 
-    virtual TransformationMatrix quadTransform() const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix quadTransform() const OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
 protected:

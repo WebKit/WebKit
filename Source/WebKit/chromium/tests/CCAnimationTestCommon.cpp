@@ -99,9 +99,9 @@ FakeTransformTransition::~FakeTransformTransition()
 {
 }
 
-WebCore::TransformationMatrix FakeTransformTransition::getValue(double time, const WebCore::IntSize& size) const
+WebKit::WebTransformationMatrix FakeTransformTransition::getValue(double time, const WebCore::IntSize& size) const
 {
-    return WebCore::TransformationMatrix();
+    return WebKit::WebTransformationMatrix();
 }
 
 PassOwnPtr<WebCore::CCAnimationCurve> FakeTransformTransition::clone() const

@@ -41,7 +41,7 @@ namespace WebKitTests {
     EXPECT_EQ((expected).size().height(), (actual).size().height())
 
 // This is a macro instead of a function so that we get useful line numbers where a test failed.
-// Even though TransformationMatrix values are double precision, there are many other floating-point values used that affect
+// Even though WebTransformationMatrix values are double precision, there are many other floating-point values used that affect
 // the transforms, and so we only expect them to be accurate up to floating-point precision.
 #define EXPECT_TRANSFORMATION_MATRIX_EQ(expected, actual)       \
     EXPECT_FLOAT_EQ((expected).m11(), (actual).m11());          \
