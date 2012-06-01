@@ -1,3 +1,11 @@
+2012-06-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Unreviewed compile fix for r119283
+
+        For the record, Dana Jensens <danakj@chromium.org> wrote this slightly faster than I did.
+
+        * tests/CCAnimationTestCommon.h:
+
 2012-06-01  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Accelerated animations should use WebTransformOperations

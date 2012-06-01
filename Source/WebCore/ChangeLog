@@ -1,3 +1,14 @@
+2012-06-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Unreviewed compile fix for r119283
+
+        For the record, Dana Jensens <danakj@chromium.org> wrote this slightly faster than I did.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::bounds):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::bounds):
+
 2012-06-01  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Accelerated animations should use WebTransformOperations
