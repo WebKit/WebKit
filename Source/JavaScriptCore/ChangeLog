@@ -1,5 +1,16 @@
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not emit unnecessary speculation checks when performing an int32 to double conversion on
+        a value that is proved to be a number, predicted to be an int32, but not proved to be an int32
+        https://bugs.webkit.org/show_bug.cgi?id=88146
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+
+2012-06-01  Filip Pizlo  <fpizlo@apple.com>
+
         DFG constant folding search for the last local access skips the immediately previous local access
         https://bugs.webkit.org/show_bug.cgi?id=88141
 

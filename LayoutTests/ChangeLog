@@ -1,3 +1,17 @@
+2012-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not emit unnecessary speculation checks when performing an int32 to double conversion on
+        a value that is proved to be a number, predicted to be an int32, but not proved to be an int32
+        https://bugs.webkit.org/show_bug.cgi?id=88146
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-int32-to-double-on-known-number-expected.txt: Added.
+        * fast/js/dfg-int32-to-double-on-known-number.html: Added.
+        * fast/js/script-tests/dfg-int32-to-double-on-known-number.js: Added.
+        (foo.bar):
+        (foo):
+
 2012-06-01  Tony Chang  <tony@chromium.org>
 
         rename -webkit-flex-pack and -webkit-flex-line-pack to -webkit-justify-content and -webkit-align-content

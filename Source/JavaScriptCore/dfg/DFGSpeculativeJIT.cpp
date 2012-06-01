@@ -1850,9 +1850,11 @@ void SpeculativeJIT::compileInt32ToDouble(Node& node)
     JITCompiler::Jump isInteger = m_jit.branchPtr(
         MacroAssembler::AboveOrEqual, op1GPR, GPRInfo::tagTypeNumberRegister);
     
-    speculationCheck(
-        BadType, JSValueRegs(op1GPR), node.child1(),
-        m_jit.branchTestPtr(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+    if (!isNumberPrediction(m_state.forNode(node.child1()).m_type)) {
+        speculationCheck(
+            BadType, JSValueRegs(op1GPR), node.child1(),
+            m_jit.branchTestPtr(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+    }
     
     m_jit.move(op1GPR, tempGPR);
     unboxDouble(tempGPR, resultFPR);
@@ -1872,9 +1874,11 @@ void SpeculativeJIT::compileInt32ToDouble(Node& node)
     JITCompiler::Jump isInteger = m_jit.branch32(
         MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
     
-    speculationCheck(
-        BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node.child1(),
-        m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
+    if (!isNumberPrediction(m_state.forNode(node.child1()).m_type)) {
+        speculationCheck(
+            BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node.child1(),
+            m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
+    }
     
     unboxDouble(op1TagGPR, op1PayloadGPR, resultFPR, tempFPR);
     JITCompiler::Jump done = m_jit.jump();
