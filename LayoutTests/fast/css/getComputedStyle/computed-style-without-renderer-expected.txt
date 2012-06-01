@@ -146,7 +146,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-align-items: stretch
     -webkit-align-self: stretch
     -webkit-flex: 1 1 auto
-    -webkit-flex-order: 0
     -webkit-flex-pack: start
     -webkit-flex-direction: row
     -webkit-flex-flow: row none
@@ -191,6 +190,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-mask-repeat: repeat
     -webkit-mask-size: auto
     -webkit-nbsp-mode: normal
+    -webkit-order: 0
     -webkit-perspective: none
     -webkit-perspective-origin: 50% 50%
     -webkit-print-color-adjust: economy

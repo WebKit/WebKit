@@ -264,7 +264,6 @@ z-index
 -webkit-flex-direction
 -webkit-flex-flow
 -webkit-flex-line-pack
--webkit-flex-order
 -webkit-flex-pack
 -webkit-flex-wrap
 #endif
@@ -328,6 +327,7 @@ z-index
 -webkit-min-logical-width
 -webkit-min-logical-height
 -webkit-nbsp-mode
+-webkit-order
 -webkit-padding-after
 -webkit-padding-before
 -webkit-padding-end

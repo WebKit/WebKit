@@ -292,8 +292,6 @@ rect: style.getPropertyValue(-webkit-align-self) : stretch
 rect: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex) : 1 1 auto
 rect: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-flex-order) : 0
-rect: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-pack) : start
 rect: style.getPropertyCSSValue(-webkit-flex-pack) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-direction) : row
@@ -382,6 +380,8 @@ rect: style.getPropertyValue(-webkit-mask-size) : auto
 rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-order) : 0
+rect: style.getPropertyCSSValue(-webkit-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective) : none
 rect: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
@@ -824,8 +824,6 @@ g: style.getPropertyValue(-webkit-align-self) : stretch
 g: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex) : 1 1 auto
 g: style.getPropertyCSSValue(-webkit-flex) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-flex-order) : 0
-g: style.getPropertyCSSValue(-webkit-flex-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-pack) : start
 g: style.getPropertyCSSValue(-webkit-flex-pack) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-direction) : row
@@ -914,6 +912,8 @@ g: style.getPropertyValue(-webkit-mask-size) : auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-order) : 0
+g: style.getPropertyCSSValue(-webkit-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective) : none
 g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px

@@ -42,21 +42,21 @@ namespace WebCore {
 // Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely flex-order values. Instead,
 // we make the two smallest int values invalid flex-order values (in the css parser code we clamp them to
 // int min + 2).
-struct RenderFlexibleBox::FlexOrderHashTraits : WTF::GenericHashTraits<int> {
+struct RenderFlexibleBox::OrderHashTraits : WTF::GenericHashTraits<int> {
     static const bool emptyValueIsZero = false;
     static int emptyValue() { return std::numeric_limits<int>::min(); }
     static void constructDeletedValue(int& slot) { slot = std::numeric_limits<int>::min() + 1; }
     static bool isDeletedValue(int value) { return value == std::numeric_limits<int>::min() + 1; }
 };
 
-class RenderFlexibleBox::FlexOrderIterator {
+class RenderFlexibleBox::OrderIterator {
 public:
-    FlexOrderIterator(RenderFlexibleBox* flexibleBox, const FlexOrderHashSet& flexOrderValues)
+    OrderIterator(RenderFlexibleBox* flexibleBox, const OrderHashSet& orderValues)
         : m_flexibleBox(flexibleBox)
         , m_currentChild(0)
         , m_orderValuesIterator(0)
     {
-        copyToVector(flexOrderValues, m_orderValues);
+        copyToVector(orderValues, m_orderValues);
         std::sort(m_orderValues.begin(), m_orderValues.end());
         first();
     }
@@ -85,7 +85,7 @@ public:
                 m_currentChild = m_flexibleBox->firstChildBox();
             } else
                 m_currentChild = m_currentChild->nextSiblingBox();
-        } while (!m_currentChild || m_currentChild->style()->flexOrder() != *m_orderValuesIterator);
+        } while (!m_currentChild || m_currentChild->style()->order() != *m_orderValuesIterator);
 
         return m_currentChild;
     }
@@ -264,9 +264,9 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     }
 
     WTF::Vector<LineContext> lineContexts;
-    FlexOrderHashSet flexOrderValues;
-    computeMainAxisPreferredSizes(relayoutChildren, flexOrderValues);
-    FlexOrderIterator flexIterator(this, flexOrderValues);
+    OrderHashSet orderValues;
+    computeMainAxisPreferredSizes(relayoutChildren, orderValues);
+    OrderIterator flexIterator(this, orderValues);
     layoutFlexItems(flexIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
@@ -296,7 +296,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     setNeedsLayout(false);
 }
 
-void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
+void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
 {
     LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? ZERO_LAYOUT_UNIT : lineContexts[0].crossAxisOffset;
     packFlexLines(iterator, lineContexts);
@@ -620,7 +620,7 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     return contentExtent - preferredMainAxisExtent;
 }
 
-void RenderFlexibleBox::layoutFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::layoutFlexItems(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
     OrderedFlexItemList orderedChildren;
     LayoutUnit preferredMainAxisExtent;
@@ -746,12 +746,12 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
-void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet& flexOrderValues)
+void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet& orderValues)
 {
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     RenderView* renderView = view();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        flexOrderValues.add(child->style()->flexOrder());
+        orderValues.add(child->style()->order());
 
         if (child->isPositioned())
             continue;
@@ -804,7 +804,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, Layo
     return childSize;
 }
 
-bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalWeightedNegativeFlexibility, LayoutUnit& minMaxAppliedMainAxisExtent)
+bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalWeightedNegativeFlexibility, LayoutUnit& minMaxAppliedMainAxisExtent)
 {
     orderedChildren.clear();
     preferredMainAxisExtent = 0;
@@ -1094,7 +1094,7 @@ static LayoutUnit linePackingSpaceBetweenChildren(LayoutUnit availableFreeSpace,
     return 0;
 }
 
-void RenderFlexibleBox::packFlexLines(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::packFlexLines(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
     if (!isMultiline() || style()->flexLinePack() == LinePackStart)
         return;
@@ -1139,7 +1139,7 @@ void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit del
         child->repaintDuringLayoutIfMoved(oldRect);
 }
 
-void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts)
+void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts)
 {
     // Keep track of the space between the baseline edge and the after edge of the box for each line.
     WTF::Vector<LayoutUnit> minMarginAfterBaselines;
@@ -1231,7 +1231,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     }
 }
 
-void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
+void RenderFlexibleBox::flipForRightToLeftColumn(OrderIterator& iterator)
 {
     if (style()->isLeftToRightDirection() || !isColumnFlow())
         return;
@@ -1246,7 +1246,7 @@ void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
     }
 }
 
-void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts, LayoutUnit crossAxisStartEdge)
+void RenderFlexibleBox::flipForWrapReverse(OrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts, LayoutUnit crossAxisStartEdge)
 {
     LayoutUnit contentExtent = crossAxisContentExtent();
     RenderBox* child = iterator.first();

@@ -48,8 +48,6 @@ public:
     float m_negativeFlex;
     Length m_preferredSize;
 
-    int m_flexOrder;
-
     unsigned m_flexPack : 3; // EFlexPack
     unsigned m_flexDirection : 2; // EFlexDirection
     unsigned m_flexWrap : 2; // EFlexWrap

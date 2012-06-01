@@ -804,10 +804,10 @@ public:
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->m_deprecatedFlexibleBox->orient); }
     EBoxPack boxPack() const { return static_cast<EBoxPack>(rareNonInheritedData->m_deprecatedFlexibleBox->pack); }
 
+    int order() const { return rareNonInheritedData->m_order; }
     float positiveFlex() const { return rareNonInheritedData->m_flexibleBox->m_positiveFlex; }
     float negativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_negativeFlex; }
     Length flexPreferredSize() const { return rareNonInheritedData->m_flexibleBox->m_preferredSize; }
-    int flexOrder() const { return rareNonInheritedData->m_flexibleBox->m_flexOrder; }
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
     EAlignItems alignItems() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignItems); }
     EAlignItems alignSelf() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignSelf); }
@@ -1249,7 +1249,7 @@ public:
     void setPositiveFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_positiveFlex, f); }
     void setNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_negativeFlex, f); }
     void setFlexPreferredSize(Length l) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_preferredSize, l); }
-    void setFlexOrder(int o) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexOrder, o); }
+    void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
     void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
     void setAlignSelf(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
@@ -1583,7 +1583,7 @@ public:
     static float initialPositiveFlex() { return 1; }
     static float initialNegativeFlex() { return 1; }
     static Length initialFlexPreferredSize() { return Length(Auto); }
-    static int initialFlexOrder() { return 0; }
+    static int initialOrder() { return 0; }
     static EFlexPack initialFlexPack() { return PackStart; }
     static EAlignItems initialAlignItems() { return AlignStretch; }
     static EAlignItems initialAlignSelf() { return AlignAuto; }

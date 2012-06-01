@@ -231,7 +231,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitAlignItems,
     CSSPropertyWebkitAlignSelf,
     CSSPropertyWebkitFlex,
-    CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
     CSSPropertyWebkitFlexDirection,
     CSSPropertyWebkitFlexFlow,
@@ -279,6 +278,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitMaskRepeat,
     CSSPropertyWebkitMaskSize,
     CSSPropertyWebkitNbspMode,
+    CSSPropertyWebkitOrder,
 #if ENABLE(OVERFLOW_SCROLLING)
     CSSPropertyWebkitOverflowScrolling,
 #endif
@@ -1650,8 +1650,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 
             return list.release();
         }
-        case CSSPropertyWebkitFlexOrder:
-            return cssValuePool().createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSSPropertyWebkitOrder:
+            return cssValuePool().createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitFlexPack:
             return cssValuePool().createValue(style->flexPack());
         case CSSPropertyWebkitAlignItems:

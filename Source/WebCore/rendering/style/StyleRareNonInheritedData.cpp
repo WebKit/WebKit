@@ -50,6 +50,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_wrapMargin(RenderStyle::initialWrapMargin())
     , m_wrapPadding(RenderStyle::initialWrapPadding())
     , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
+    , m_order(RenderStyle::initialOrder())
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
     , m_regionOverflow(RenderStyle::initialRegionOverflow())
@@ -119,6 +120,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_visitedLinkBorderRightColor(o.m_visitedLinkBorderRightColor)
     , m_visitedLinkBorderTopColor(o.m_visitedLinkBorderTopColor)
     , m_visitedLinkBorderBottomColor(o.m_visitedLinkBorderBottomColor)
+    , m_order(o.m_order)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
     , m_regionOverflow(o.m_regionOverflow)
@@ -194,6 +196,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_visitedLinkBorderRightColor == o.m_visitedLinkBorderRightColor
         && m_visitedLinkBorderTopColor == o.m_visitedLinkBorderTopColor
         && m_visitedLinkBorderBottomColor == o.m_visitedLinkBorderBottomColor
+        && m_order == o.m_order
         && m_flowThread == o.m_flowThread
         && m_regionThread == o.m_regionThread
         && m_regionOverflow == o.m_regionOverflow

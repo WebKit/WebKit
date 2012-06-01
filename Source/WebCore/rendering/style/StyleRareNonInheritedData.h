@@ -146,6 +146,8 @@ public:
     Color m_visitedLinkBorderTopColor;
     Color m_visitedLinkBorderBottomColor;
 
+    int m_order;
+
     AtomicString m_flowThread;
     AtomicString m_regionThread;
     unsigned m_regionOverflow : 1; // RegionOverflow
