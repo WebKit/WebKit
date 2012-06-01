@@ -239,22 +239,23 @@ bool AbstractState::execute(unsigned indexInBlock)
         VariableAccessData* variableAccessData = node.variableAccessData();
         bool canExit = false;
         canExit |= variableAccessData->prediction() == PredictNone;
-        if (variableAccessData->isCaptured())
-            forNode(nodeIndex) = m_variables.operand(variableAccessData->local());
-        else {
-            AbstractValue value = m_variables.operand(variableAccessData->local());
+        AbstractValue value = m_variables.operand(variableAccessData->local());
+        if (!variableAccessData->isCaptured()) {
             if (value.isClear())
                 canExit |= true;
-            if (value.value())
-                m_foundConstants = true;
-            forNode(nodeIndex) = value;
         }
+        if (value.value())
+            m_foundConstants = true;
+        forNode(nodeIndex) = value;
         node.setCanExit(canExit);
         break;
     }
         
     case GetLocalUnlinked: {
-        forNode(nodeIndex) = m_variables.operand(node.unlinkedLocal());
+        AbstractValue value = m_variables.operand(node.unlinkedLocal());
+        if (value.value())
+            m_foundConstants = true;
+        forNode(nodeIndex) = value;
         node.setCanExit(false);
         break;
     }
