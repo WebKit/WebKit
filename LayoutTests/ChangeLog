@@ -1,3 +1,9 @@
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
+        Skip some plugin tests that crash/assert on Windows.
+
+        * platform/win/Skipped:
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL port does not enable WEB_INTENTS_TAG flag
