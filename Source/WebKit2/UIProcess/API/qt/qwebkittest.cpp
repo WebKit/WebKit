@@ -122,47 +122,47 @@ QVariant QWebKitTest::contentsScale() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return viewport->currentCSSScale();
-    return QVariant();
+    return 1.0;
 }
 
 QVariant QWebKitTest::devicePixelRatio() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return viewport->m_devicePixelRatio;
-    return QVariant();
+    return 1.0;
 }
 
 QVariant QWebKitTest::initialScale() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return viewport->m_rawAttributes.initialScale;
-    return QVariant();
+    return 1.0;
 }
 
 QVariant QWebKitTest::minimumScale() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return viewport->m_minimumScale;
-    return QVariant();
+    return 1.0;
 }
 
 QVariant QWebKitTest::maximumScale() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return viewport->m_maximumScale;
-    return QVariant();
+    return 1.0;
 }
 
 QVariant QWebKitTest::isScalable() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return !!viewport->m_rawAttributes.userScalable;
-    return QVariant();
+    return true;
 }
 
 QVariant QWebKitTest::layoutSize() const
 {
     if (QtViewportInteractionEngine* viewport = m_webViewPrivate->viewportInteractionEngine())
         return QSizeF(viewport->m_rawAttributes.layoutSize);
-    return QVariant();
+    return QSizeF();
 }

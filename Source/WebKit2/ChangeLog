@@ -1,3 +1,21 @@
+2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][W2] Qml Error in ViewportInfoItem.qml in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=87999
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Return default viewport attributes rather than invalid QVariant.
+
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::contentsScale):
+        (QWebKitTest::devicePixelRatio):
+        (QWebKitTest::initialScale):
+        (QWebKitTest::minimumScale):
+        (QWebKitTest::maximumScale):
+        (QWebKitTest::isScalable):
+        (QWebKitTest::layoutSize):
+
 2012-05-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Clean up our viewport handling mess
