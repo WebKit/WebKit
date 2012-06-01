@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-Q_GLOBAL_STATIC_WITH_INITIALIZER(QByteArray, cachedSystemLocale, {*x = QLocale::system().name().toLatin1();})
+Q_GLOBAL_STATIC_WITH_ARGS(QByteArray, cachedSystemLocale, (QLocale::system().name().toLatin1()))
 
 const char* currentSearchLocaleID()
 {
