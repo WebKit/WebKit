@@ -4707,6 +4707,9 @@ webcoregtk_sources += \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
+	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerGWorld.cpp \
