@@ -485,6 +485,9 @@ BUGWK58845 : fast/dom/title-directionality-removeChild.html = FAIL
 
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
 
+// Expando properties on attribute nodes disappear
+BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
+
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
 // Requires WebP support.
