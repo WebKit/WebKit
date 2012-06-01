@@ -1,5 +1,19 @@
 2012-05-31  Andy Estes  <aestes@apple.com>
 
+        [WebKit2] Remove nested #if conditions from messages.in files
+        https://bugs.webkit.org/show_bug.cgi?id=88039
+
+        Reviewed by Filip Pizlo.
+
+        The code generator that processes messages.in files can't handle nested
+        #if conditions. Sadly I added said conditions in r117700 but failed to
+        verify the generated result. Un-nest the conditions I added.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2012-05-31  Andy Estes  <aestes@apple.com>
+
         Disentangle code that relies on USE(AUTOMATIC_TEXT_REPLACEMENT) from that which merely relies on PLATFORM(MAC)
         https://bugs.webkit.org/show_bug.cgi?id=87933
 

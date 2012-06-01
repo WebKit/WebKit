@@ -40,6 +40,7 @@ messages -> WebPage {
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
     TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
+#endif
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
     HighlightPotentialActivation(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
@@ -141,17 +142,17 @@ messages -> WebPage {
     HideFindUI()
     CountStringMatches(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
 
-#if ENABLE(DRAG_SUPPORT)
     # Drag and drop.
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && ENABLE(DRAG_SUPPORT)
     PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, HashMap<UINT,Vector<String>> dataMap, uint32_t flags)
 #endif
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if (PLATFORM(QT) || PLATFORM(GTK)) && ENABLE(DRAG_SUPPORT)
     PerformDragControllerAction(uint64_t action, WebCore::DragData dragData)
 #endif
-#if !PLATFORM(WIN) && !PLATFORM(QT) && !PLATFORM(GTK)
+#if !PLATFORM(WIN) && !PLATFORM(QT) && !PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::SandboxExtension::HandleArray sandboxExtensionsForUpload)
 #endif
+#if ENABLE(DRAG_SUPPORT)
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 #endif
 
