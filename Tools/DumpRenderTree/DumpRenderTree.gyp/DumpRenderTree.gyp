@@ -416,7 +416,7 @@
                     'action_name': 'generate_and_build',
                     'inputs': [
                         '<(chromium_src_dir)/testing/android/generate_native_test.py',
-                        '<(PRODUCT_DIR)/lib.target/libDumpRenderTree.so',
+                        '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)DumpRenderTree<(SHARED_LIB_SUFFIX)',
                         # FIXME: Build the jar for native tests with SDK.
                         # For now we are using Android.mk to build the apk.
                     ],
@@ -426,14 +426,14 @@
                     'action': [
                         '<(chromium_src_dir)/testing/android/generate_native_test.py',
                         '--native_library',
-                        '<(PRODUCT_DIR)/lib.target/libDumpRenderTree.so',
+                        '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)DumpRenderTree<(SHARED_LIB_SUFFIX)',
                         # FIXME: Build the jar for native tests with SDK.
                         # '--jar',
                         # 'foo/bar.jar',
                         '--output',
                         '<(PRODUCT_DIR)/DumpRenderTree_apk',
                         '--ant-args',
-                        '-DPRODUCT_DIR=<(PRODUCT_DIR)',
+                        '-DPRODUCT_DIR=<(ant_build_out)',
                         '--ant-compile'
                     ],
                 }],

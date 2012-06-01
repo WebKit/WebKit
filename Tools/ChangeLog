@@ -1,3 +1,17 @@
+2012-05-31  Yaron Friedman  <yfriedman@chromium.org>
+
+        Support building the Android port of chromium with Ninja
+        https://bugs.webkit.org/show_bug.cgi?id=87545
+
+        Reviewed by Adam Barth.
+
+        Ensures that shared libraries are looked up in a generator-agnostic
+        way and that output is placed in the correct directory.
+
+        Depends on http://codereview.chromium.org/10386188/
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Chromium] Chromium DRT should be able to load external resources
