@@ -735,16 +735,6 @@ void QQuickWebViewPrivate::setContentPos(const QPointF& pos)
     q->setContentY(pos.y());
 }
 
-QRect QQuickWebViewPrivate::visibleContentsRect() const
-{
-    Q_Q(const QQuickWebView);
-    const QRectF visibleRect(q->boundingRect().intersected(pageView->boundingRect()));
-
-    // We avoid using toAlignedRect() because it produces inconsistent width and height.
-    QRectF mappedRect(q->mapRectToWebContent(visibleRect));
-    return QRect(floor(mappedRect.x()), floor(mappedRect.y()), floor(mappedRect.width()), floor(mappedRect.height()));
-}
-
 WebCore::IntSize QQuickWebViewPrivate::viewSize() const
 {
     return WebCore::IntSize(pageView->width(), pageView->height());
@@ -820,7 +810,6 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
     , pageIsSuspended(false)
-    , lastCommittedScale(-1)
 {
     // Disable mouse events on the flickable web view so we do not
     // select text during pan gestures on platforms which send both
@@ -846,12 +835,11 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 {
     Q_Q(QQuickWebView);
 
-    interactionEngine.reset(new QtViewportInteractionEngine(q, pageView.data()));
+    interactionEngine.reset(new QtViewportInteractionEngine(webPageProxy.get(), q, pageView.data()));
     pageView->eventHandler()->setViewportInteractionEngine(interactionEngine.data());
 
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
-    QObject::connect(interactionEngine.data(), SIGNAL(informVisibleContentChange(QPointF)), q, SLOT(_q_onInformVisibleContentChange(QPointF)));
 
     _q_resume();
 
@@ -861,52 +849,15 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
 {
-    interactionEngine->viewportAttributesChanged(newAttributes);
+    if (interactionEngine)
+        interactionEngine->viewportAttributesChanged(newAttributes);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
 {
-    Q_Q(QQuickWebView);
-    QSize viewportSize = q->boundingRect().size().toSize();
-
-    if (viewportSize.isEmpty() || !interactionEngine)
-        return;
-
-    WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
-    wkPrefs->setDeviceWidth(viewportSize.width());
-    wkPrefs->setDeviceHeight(viewportSize.height());
-
-    // Let the WebProcess know about the new viewport size, so that
-    // it can resize the content accordingly.
-    webPageProxy->setViewportSize(viewportSize);
-
-    _q_onInformVisibleContentChange(QPointF());
-}
-
-void QQuickWebViewFlickablePrivate::_q_onInformVisibleContentChange(const QPointF& trajectoryVector)
-{
-    Q_Q(QQuickWebView);
-
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (!drawingArea)
-        return;
-
-    QRectF accurateVisibleRect(q->boundingRect());
-    accurateVisibleRect.translate(contentPos());
-
-    if (accurateVisibleRect == drawingArea->contentsRect())
-        return;
-
-    float scale = pageView->contentsScale();
-
-    if (scale != lastCommittedScale)
-        emit q->experimental()->test()->contentsScaleCommitted();
-    lastCommittedScale = scale;
-
-    drawingArea->setVisibleContentsRect(QRect(visibleContentsRect()), scale, trajectoryVector, FloatPoint(accurateVisibleRect.x(), accurateVisibleRect.y()));
-
-    // Ensure that updatePaintNode is always called before painting.
-    pageView->update();
+    // FIXME: Examine why there is not an interactionEngine here in the beginning.
+    if (interactionEngine)
+        interactionEngine->viewportItemSizeChanged();
 }
 
 void QQuickWebViewFlickablePrivate::_q_suspend()
@@ -922,13 +873,11 @@ void QQuickWebViewFlickablePrivate::_q_resume()
 
     pageIsSuspended = false;
     webPageProxy->resumeActiveDOMObjectsAndAnimations();
-
-    _q_onInformVisibleContentChange(QPointF());
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    interactionEngine->pageContentPositionRequest(pos);
+    interactionEngine->pageContentPositionRequested(pos);
 }
 
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)

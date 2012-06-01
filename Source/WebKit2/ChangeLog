@@ -1,3 +1,42 @@
+2012-05-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Clean up our viewport handling mess
+        https://bugs.webkit.org/show_bug.cgi?id=87977
+
+        Reviewed by Simon Hausmann.
+
+        Consolidated functionality from QQuickWebViewPrivate* into
+        ViewportInteractionEngine that belongs there, in preparation for
+        renaming ViewportInteractionEngine in the future.
+
+        Remove unneeded methods and move others to private.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::viewportAttributesChanged):
+        (WebKit::QtViewportInteractionEngine::pageContentsSizeChanged):
+        (WebKit::QtViewportInteractionEngine::pageItemPositionChanged):
+        (WebKit::QtViewportInteractionEngine::pageContentPositionRequested):
+        (WebKit::QtViewportInteractionEngine::visibleContentsRect):
+        (WebKit):
+        (WebKit::QtViewportInteractionEngine::informVisibleContentChange):
+        (WebKit::QtViewportInteractionEngine::viewportItemSizeChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit):
+        (QtViewportInteractionEngine):
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

@@ -22,6 +22,9 @@
 #include "config.h"
 #include "QtViewportInteractionEngine.h"
 
+#include "WebPageGroup.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include "qwebkittest_p.h"
@@ -86,7 +89,7 @@ public:
         }
 
         // Make sure that tiles all around the viewport will be requested.
-        emit engine->informVisibleContentChange(QPointF());
+        engine->informVisibleContentChange(QPointF());
     }
 
 private:
@@ -132,18 +135,22 @@ inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect
     return itemRect;
 }
 
-QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewportItem, QQuickWebPage* pageItem)
-    : m_viewportItem(viewportItem)
+QtViewportInteractionEngine::QtViewportInteractionEngine(WebKit::WebPageProxy* proxy, QQuickWebView* viewportItem, QQuickWebPage* pageItem)
+    : m_webPageProxy(proxy)
+    , m_viewportItem(viewportItem)
     , m_pageItem(pageItem)
+    , m_allowsUserScaling(false)
+    , m_minimumScale(1)
+    , m_maximumScale(1)
+    , m_devicePixelRatio(1)
     , m_suspendCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_scaleAnimation(new ScaleAnimation(this))
     , m_pinchStartScale(-1)
+    , m_lastCommittedScale(-1)
     , m_zoomOutScale(0.0)
 {
-    reset();
-
     connect(m_pageItem, SIGNAL(widthChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
     connect(m_pageItem, SIGNAL(heightChanged()), SLOT(pageItemSizeChanged()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementStarted()), SLOT(flickMoveStarted()), Qt::DirectConnection);
@@ -180,18 +187,36 @@ void QtViewportInteractionEngine::viewportAttributesChanged(const WebCore::Viewp
     m_rawAttributes = newAttributes;
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
-    // FIXME: Resetting here can reset more than needed. For instance it will end deferrers.
-    // This needs to be revised at some point.
-    reset();
+    {
+        // FIXME: Resetting here is wrong, it should happen only for the first
+        // viewport change for a given page and first when we paint the page for
+        // the first time.
 
+        m_hadUserInteraction = false;
 
-    // FIXME: Should get directly from the webPageProxy.
-    setDevicePixelRatio(m_rawAttributes.devicePixelRatio);
+        m_zoomOutScale = 0.0;
+        m_scaleStack.clear();
 
-    setAllowsUserScaling(!!m_rawAttributes.userScalable);
-    setCSSScaleBounds(m_rawAttributes.minimumScale, m_rawAttributes.maximumScale);
+        // This part below should go fully away when the above plan is implemented.
+
+        m_viewportItem->cancelFlick();
+        m_scaleAnimation->stop();
+
+        m_scaleUpdateDeferrer.clear();
+        m_scrollUpdateDeferrer.clear();
+        m_touchUpdateDeferrer.clear();
+        m_animationUpdateDeferrer.clear();
+        ASSERT(!m_suspendCount);
+        ASSERT(!m_hasSuspendedContent);
+    }
+
+    m_devicePixelRatio = m_rawAttributes.devicePixelRatio; // Should return value from the webPageProxy.
+    m_allowsUserScaling = !!m_rawAttributes.userScalable;
+    m_minimumScale = m_rawAttributes.minimumScale;
+    m_maximumScale = m_rawAttributes.maximumScale;
 
     if (!m_hadUserInteraction && !m_hasSuspendedContent) {
+        ASSERT(m_pinchStartScale == -1);
         // Emits contentsScaleChanged();
         setCSSScale(m_rawAttributes.initialScale);
     }
@@ -209,7 +234,7 @@ void QtViewportInteractionEngine::pageContentsSizeChanged(const QSize& newSize, 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, viewportSize, newSize);
 
     if (!qFuzzyCompare(minimumScale, m_rawAttributes.minimumScale)) {
-        setCSSScaleBounds(minimumScale, m_rawAttributes.maximumScale);
+        m_minimumScale = minimumScale;
         emit m_viewportItem->experimental()->test()->viewportChanged();
 
         if (!m_hadUserInteraction && !m_hasSuspendedContent) {
@@ -300,12 +325,12 @@ void QtViewportInteractionEngine::pageItemPositionChanged()
 {
     QPointF newPosition = m_viewportItem->contentPos();
 
-    emit informVisibleContentChange(m_lastScrollPosition - newPosition);
+    informVisibleContentChange(m_lastScrollPosition - newPosition);
 
     m_lastScrollPosition = newPosition;
 }
 
-void QtViewportInteractionEngine::pageContentPositionRequest(const QPoint& cssPosition)
+void QtViewportInteractionEngine::pageContentPositionRequested(const QPoint& cssPosition)
 {
     // Ignore the request if suspended. Can only happen due to delay in event delivery.
     if (m_suspendCount)
@@ -506,32 +531,6 @@ QRectF QtViewportInteractionEngine::nearestValidBounds() const
     return endVisibleContentRect;
 }
 
-void QtViewportInteractionEngine::reset()
-{
-    ASSERT(!m_suspendCount);
-
-    m_hadUserInteraction = false;
-
-    m_allowsUserScaling = false;
-    m_minimumScale = 1;
-    m_maximumScale = 1;
-    m_devicePixelRatio = 1;
-    m_pinchStartScale = -1;
-    m_zoomOutScale = 0.0;
-
-    m_viewportItem->cancelFlick();
-    m_scaleAnimation->stop();
-    m_scaleUpdateDeferrer.clear();
-    m_scrollUpdateDeferrer.clear();
-    m_scaleStack.clear();
-}
-
-void QtViewportInteractionEngine::setCSSScaleBounds(qreal minimum, qreal maximum)
-{
-    m_minimumScale = minimum;
-    m_maximumScale = maximum;
-}
-
 void QtViewportInteractionEngine::setCSSScale(qreal scale)
 {
     ViewportUpdateDeferrer guard(this);
@@ -675,6 +674,52 @@ void QtViewportInteractionEngine::pinchGestureCancelled()
 {
     m_pinchStartScale = -1;
     m_scaleUpdateDeferrer.clear();
+}
+
+QRect QtViewportInteractionEngine::visibleContentsRect() const
+{
+    const QRectF visibleRect(m_viewportItem->boundingRect().intersected(m_pageItem->boundingRect()));
+
+    // We avoid using toAlignedRect() because it produces inconsistent width and height.
+    QRectF mappedRect(m_viewportItem->mapRectToWebContent(visibleRect));
+    return QRect(floor(mappedRect.x()), floor(mappedRect.y()), floor(mappedRect.width()), floor(mappedRect.height()));
+}
+
+void QtViewportInteractionEngine::informVisibleContentChange(const QPointF& trajectoryVector)
+{
+    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
+    if (!drawingArea)
+        return;
+
+    qreal scale = m_pageItem->contentsScale();
+
+    if (scale != m_lastCommittedScale)
+        emit m_viewportItem->experimental()->test()->contentsScaleCommitted();
+    m_lastCommittedScale = scale;
+
+    drawingArea->setVisibleContentsRect(visibleContentsRect(), scale, trajectoryVector, m_viewportItem->contentPos());
+
+    // Ensure that updatePaintNode is always called before painting.
+    m_pageItem->update();
+}
+
+void QtViewportInteractionEngine::viewportItemSizeChanged()
+{
+    QSize viewportSize = m_viewportItem->boundingRect().size().toSize();
+
+    if (viewportSize.isEmpty())
+        return;
+
+    // FIXME: This is wrong, add QML api!
+    WebPreferences* wkPrefs = m_webPageProxy->pageGroup()->preferences();
+    wkPrefs->setDeviceWidth(viewportSize.width());
+    wkPrefs->setDeviceHeight(viewportSize.height());
+
+    // Let the WebProcess know about the new viewport size, so that
+    // it can resize the content accordingly.
+    m_webPageProxy->setViewportSize(viewportSize);
+
+    informVisibleContentChange(QPointF());
 }
 
 /*
