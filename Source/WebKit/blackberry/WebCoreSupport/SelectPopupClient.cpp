@@ -142,7 +142,7 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
     if (m_size > 0) {
         bool selecteds[m_size];
         for (unsigned i = 0; i < m_size; i++)
-            selecteds[i] = stringValue[i] - 32;
+            selecteds[i] = stringValue[i] - '0';
 
         const WTF::Vector<HTMLElement*>& items = m_element->listItems();
 

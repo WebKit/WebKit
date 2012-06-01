@@ -1,3 +1,16 @@
+2012-06-01  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Fix the return value checking in SelectPopupClient
+        https://bugs.webkit.org/show_bug.cgi?id=88130
+
+        Reviewed by Rob Buis.
+
+        In SelectPopupClient, return '1' means selected, '0' means not selected, 
+        the ASCII value of '0' is 48, not 32, use '0' to be more readable.
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::setValueAndClosePopup):
+
 2012-06-01  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Add end editing handling into AutofillManager
