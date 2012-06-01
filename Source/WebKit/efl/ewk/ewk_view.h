@@ -71,6 +71,9 @@
  *  - "menubar,visible,set", Eina_Bool: sets menubar visibility.
  *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
+ *  - "navigate,with,data", Ewk_View_Navigation_Data*: reports that view did navigation and gives the navigation details.
+ *  - "perform,client,redirect", Ewk_View_Redirection_Data*: reports that view performed a client redirect and gives the redirection details.
+ *  - "perform,server,redirect", Ewk_View_Redirection_Data*: reports that view performed a server redirect and gives the redirection details.
  *  - "protocolhandler,registration,requested", Ewk_Custom_Handler_Data: add a handler url for the given protocol.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "populate,visited,links": tells the client to fill the visited links set.
@@ -294,6 +297,36 @@ struct _Ewk_Download {
     /* to be extended */
 };
 
+/// Creates a type name for @a _Ewk_View_Navigation_Data.
+typedef struct _Ewk_View_Navigation_Data Ewk_View_Navigation_Data;
+
+/**
+ * @brief Structure containing details about a view navigation.
+ *
+ * Details of a view navigation. It is used in "navigate,with,data" signal.
+ */
+struct _Ewk_View_Navigation_Data {
+    const char *url;  /**< URL for the history. */
+    const char *title;  /**< Title of the navigated page. */
+    Ewk_Frame_Resource_Request *request;  /**< Navigation request. */
+    Ewk_Frame_Resource_Response *response;  /**< Navigation response. */
+    Eina_Bool has_substitute_data;  /**< Data substitution flag. */
+    const char *client_redirect_source;  /**< Client redirect source URL. */
+};
+
+
+/// Creates a type name for @a _Ewk_View_Redirection_Data.
+typedef struct _Ewk_View_Redirection_Data Ewk_View_Redirection_Data;
+
+/**
+ * @brief Structure containing details about a view redirection.
+ *
+ * Details of a client or server redirection. It is used in "perform,client,redirect" and "perform,server,redirect" signals.
+ */
+struct _Ewk_View_Redirection_Data {
+    const char *source_url;  /**< Redirect source URL. */
+    const char *destination_url;  /**< Redirect destination URL. */ 
+};
 /// Creates a type name for @a _Ewk_Scroll_Request.
 typedef struct _Ewk_Scroll_Request Ewk_Scroll_Request;
 /// Contains the scroll request that should be processed by subclass implementations.

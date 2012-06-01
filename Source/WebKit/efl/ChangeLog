@@ -1,3 +1,21 @@
+2012-06-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] New signals in ewk_view to enable global history delegate functionality
+        https://bugs.webkit.org/show_bug.cgi?id=86343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Global history delegate is an interface for WebKit clients to manage their own global history store.
+        The new ewk_view signals do the following:
+        1) report that a navigation happened within the view and give the navigation details.
+        2) report that view performed a client redirect and give source and destination uris.
+        3) report that view performed a server redirect and give source and destination uris.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::updateGlobalHistoryRedirectLinks): implementation added.
+        (WebCore::FrameLoaderClientEfl::updateGlobalHistory): implementation added.
+        * ewk/ewk_view.h: Added new signals and data types.
+
 2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Implement PlatformStrategies

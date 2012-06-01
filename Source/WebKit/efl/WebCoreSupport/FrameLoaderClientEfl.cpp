@@ -505,6 +505,27 @@ void FrameLoaderClientEfl::restoreViewState()
 
 void FrameLoaderClientEfl::updateGlobalHistoryRedirectLinks()
 {
+        WebCore::Frame* frame = EWKPrivate::coreFrame(m_frame);
+        if (!frame)
+            return;
+
+        WebCore::DocumentLoader* loader = frame->loader()->documentLoader();
+        if (!loader)
+            return;
+
+        if (!loader->clientRedirectSourceForHistory().isNull()) {
+            const CString& sourceURL = loader->clientRedirectSourceForHistory().utf8();
+            const CString& destinationURL = loader->clientRedirectDestinationForHistory().utf8();
+            Ewk_View_Redirection_Data data = { sourceURL.data(), destinationURL.data() };
+            evas_object_smart_callback_call(m_view, "perform,client,redirect", &data);
+        }
+
+        if (!loader->serverRedirectSourceForHistory().isNull()) {
+            const CString& sourceURL = loader->serverRedirectSourceForHistory().utf8();
+            const CString& destinationURL = loader->serverRedirectDestinationForHistory().utf8();
+            Ewk_View_Redirection_Data data = { sourceURL.data(), destinationURL.data() };
+            evas_object_smart_callback_call(m_view, "perform,server,redirect", &data);
+        }
 }
 
 bool FrameLoaderClientEfl::shouldGoToHistoryItem(HistoryItem* item) const
@@ -959,7 +980,32 @@ void FrameLoaderClientEfl::startDownload(const ResourceRequest& request, const S
 
 void FrameLoaderClientEfl::updateGlobalHistory()
 {
-    notImplemented();
+    WebCore::Frame* frame = EWKPrivate::coreFrame(m_frame);
+    if (!frame)
+        return;
+
+    WebCore::DocumentLoader* loader = frame->loader()->documentLoader();
+    if (!loader)
+        return;
+
+    const FrameLoader* frameLoader = loader->frameLoader();
+    const bool isMainFrameRequest = frameLoader && (loader == frameLoader->provisionalDocumentLoader()) && frameLoader->isLoadingMainFrame();
+    const CString& urlForHistory = loader->urlForHistory().string().utf8();
+    const CString& title = loader->title().string().utf8();
+    const CString& firstParty = loader->request().firstPartyForCookies().string().utf8();
+    const CString& clientRedirectSource = loader->clientRedirectSourceForHistory().utf8();
+    const CString& originalURL = loader->originalURL().string().utf8();
+    const CString& httpMethod = loader->request().httpMethod().utf8();
+    const CString& responseURL = loader->responseURL().string().utf8();
+    const CString& mimeType = loader->response().mimeType().utf8();
+
+    Ewk_Frame_Resource_Request request = { originalURL.data(), firstParty.data(), httpMethod.data(), 0, m_frame, isMainFrameRequest };
+    Ewk_Frame_Resource_Response response = { responseURL.data(), loader->response().httpStatusCode(), 0, mimeType.data() };
+    bool hasSubstituteData = loader->substituteData().isValid();
+
+    Ewk_View_Navigation_Data data = { urlForHistory.data(), title.data(), &request, &response, hasSubstituteData, clientRedirectSource.data() };
+
+    evas_object_smart_callback_call(m_view, "navigate,with,data", &data);
 }
 
 void FrameLoaderClientEfl::savePlatformDataToCachedFrame(CachedFrame*)
