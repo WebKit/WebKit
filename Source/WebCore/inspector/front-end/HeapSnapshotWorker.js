@@ -49,17 +49,20 @@ WebInspector.WorkerConsole = function()
 }
 
 WebInspector.WorkerConsole.prototype = {
-    log: function()
+    /** @param {...*} var_args */
+    log: function(var_args)
     {
         this._postMessage("log", Array.prototype.slice.call(arguments));
     },
 
-    error: function()
+    /** @param {...*} var_args */
+    error: function(var_args)
     {
         this._postMessage("error", Array.prototype.slice.call(arguments));
     },
 
-    info: function()
+    /** @param {...*} var_args */
+    info: function(var_args)
     {
         this._postMessage("info", Array.prototype.slice.call(arguments));
     },
@@ -69,6 +72,8 @@ WebInspector.WorkerConsole.prototype = {
         this.log(new Error().stack);
     },
 
+    /** @param {string} method */
+    /** @param {Array.<*>} args */
     _postMessage: function(method, args)
     {
         var rawMessage = {

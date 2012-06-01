@@ -1,3 +1,15 @@
+2012-06-01  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Add Closure compiler annotations to WorkerConsole
+        https://bugs.webkit.org/show_bug.cgi?id=88073
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshotWorker.js:
+        (WebInspector.WorkerConsole.prototype.log):
+        (WebInspector.WorkerConsole.prototype.error):
+        (WebInspector.WorkerConsole.prototype.info):
+
 2012-06-01  MORITA Hajime  <morrita@google.com>
 
         Frame::willDetachPage() shouldn't be called more than once.
