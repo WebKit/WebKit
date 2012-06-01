@@ -82,6 +82,8 @@ class AutoinstallImportHook(object):
             self._install_irc()
         elif '.buildbot' in fullname:
             self._install_buildbot()
+        elif '.webpagereplay' in fullname:
+            self._install_webpagereplay()
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -125,6 +127,15 @@ class AutoinstallImportHook(object):
                           url_subpath="irclib.py")
         installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
                           url_subpath="ircbot.py")
+
+    def _install_webpagereplay(self):
+        if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay")):
+            self._install("http://web-page-replay.googlecode.com/files/webpagereplay-1.1.1.tar.gz", "webpagereplay-1.1.1")
+            self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay-1.1.1"), self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay"))
+
+        init_path = self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay", "__init__.py")
+        if not self._fs.exists(init_path):
+            self._fs.write_text_file(init_path, "")
 
     def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)

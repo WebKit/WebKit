@@ -1,3 +1,108 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add public page loading performance tests using web-page-replay
+        https://bugs.webkit.org/show_bug.cgi?id=84008
+
+        Reviewed by Dirk Pranke.
+
+        Add the primitive implementation of replay performance tests. We use web-page-replay (http://code.google.com/p/web-page-replay/)
+        to cache data locally. Each replay test is represented by a text file with .replay extension containing a single URL.
+        To hash out bugs and isolate them from the rest of performance tests, replay tests are hidden behind --replay flag.
+
+        Run "run-perf-tests --replay PerformanceTests/Replay" after changing the system network preference to forward HTTP and HTTPS requests
+        to localhost:8080 and localhost:8443 respectively (i.e. configure the system as if there are HTTP proxies at ports 8080 and 8443)
+        excluding: *.webkit.org, *.googlecode.com, *.sourceforge.net, pypi.python.org, and www.adambarth.com for thirdparty Python dependencies.
+        run-perf-tests starts web-page-replay, which provides HTTP proxies at ports 8080 and 8443 to replay pages.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.is_external_http_test): Added.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._command_from_driver_input): Allow test names that starts with http:// or https://.
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.__init__): Takes port.
+        (PerfTest.prepare): Added. Overridden by ReplayPerfTest.
+        (PerfTest):
+        (PerfTest.run): Calls run_single.
+        (PerfTest.run_single): Extracted from PageLoadingPerfTest.run.
+        (ChromiumStylePerfTest.__init__):
+        (PageLoadingPerfTest.__init__):
+        (PageLoadingPerfTest.run):
+        (ReplayServer): Added. Responsible for starting and stopping replay.py in the web-page-replay.
+        (ReplayServer.__init__):
+        (ReplayServer.wait_until_ready): Wait until port 8080 is ready. I have tried looking at the piped output from web-page-replay
+        but it caused a dead lock on some web pages.
+        (ReplayServer.stop):
+        (ReplayServer.__del__):
+        (ReplayPerfTest):
+        (ReplayPerfTest.__init__):
+        (ReplayPerfTest._start_replay_server):
+        (ReplayPerfTest.prepare): Creates test.wpr and test-expected.png to cache the page when a replay test is ran for the first time.
+        The subsequent runs of the same test will just use test.wpr.
+        (ReplayPerfTest.run_single):
+        (PerfTestFactory):
+        (PerfTestFactory.create_perf_test):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_parse_output):
+        (MainTest.test_parse_output_with_failing_line):
+        (TestPageLoadingPerfTest.test_run):
+        (TestPageLoadingPerfTest.test_run_with_bad_output):
+        (TestReplayPerfTest):
+        (TestReplayPerfTest.ReplayTestPort):
+        (TestReplayPerfTest.ReplayTestPort.__init__):
+        (TestReplayPerfTest.ReplayTestPort.__init__.ReplayTestDriver):
+        (TestReplayPerfTest.ReplayTestPort.__init__.ReplayTestDriver.run_test):
+        (TestReplayPerfTest.ReplayTestPort._driver_class):
+        (TestReplayPerfTest.MockReplayServer):
+        (TestReplayPerfTest.MockReplayServer.__init__):
+        (TestReplayPerfTest.MockReplayServer.stop):
+        (TestReplayPerfTest._add_file):
+        (TestReplayPerfTest._setup_test):
+        (TestReplayPerfTest.test_run_single):
+        (TestReplayPerfTest.test_run_single.run_test):
+        (TestReplayPerfTest.test_run_single_fails_without_webpagereplay):
+        (TestReplayPerfTest.test_prepare_fails_when_wait_until_ready_fails):
+        (TestReplayPerfTest.test_run_single_fails_when_output_has_error):
+        (TestReplayPerfTest.test_run_single_fails_when_output_has_error.run_test):
+        (TestReplayPerfTest.test_prepare):
+        (TestReplayPerfTest.test_prepare.run_test):
+        (TestReplayPerfTest.test_prepare_calls_run_single):
+        (TestReplayPerfTest.test_prepare_calls_run_single.run_single):
+        (TestPerfTestFactory.test_regular_test):
+        (TestPerfTestFactory.test_inspector_test):
+        (TestPerfTestFactory.test_page_loading_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner._parse_args): Added --replay flag to enable replay tests.
+        (PerfTestsRunner._collect_tests): Collect .replay files when replay tests are enabled.
+        (PerfTestsRunner._collect_tests._is_test_file):
+        (PerfTestsRunner.run): Exit early if one of calls to prepare() fails.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner):
+        (run_test):
+        (_tests_for_runner):
+        (test_run_test_set):
+        (test_run_test_set_kills_drt_per_run):
+        (test_run_test_pause_before_testing):
+        (test_run_test_set_for_parser_tests):
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+        (test_run_test_set_with_multiple_repositories):
+        (test_run_with_upload_json):
+        (test_upload_json):
+        (test_upload_json.MockFileUploader.upload_single_text_file):
+        (_add_file):
+        (test_collect_tests):
+        (test_collect_tests_with_multile_files):
+        (test_collect_tests_with_multile_files.add_file):
+        (test_collect_tests_with_skipped_list):
+        (test_collect_tests_with_page_load_svg):
+        (test_collect_tests_should_ignore_replay_tests_by_default):
+        (test_collect_tests_with_replay_tests):
+        (test_parse_args):
+        * Scripts/webkitpy/thirdparty/__init__.py: Added the dependency for web-page-replay version 1.1.1.
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_webpagereplay):
+
 2012-05-31  Yaron Friedman  <yfriedman@chromium.org>
 
         Support building the Android port of chromium with Ninja

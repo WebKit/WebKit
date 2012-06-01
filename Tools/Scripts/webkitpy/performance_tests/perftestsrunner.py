@@ -41,6 +41,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.layout_tests.views import printing
 from webkitpy.performance_tests.perftest import PerfTestFactory
+from webkitpy.performance_tests.perftest import ReplayPerfTest
 
 
 _log = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ class PerfTestsRunner(object):
     _EXIT_CODE_BAD_BUILD = -1
     _EXIT_CODE_BAD_JSON = -2
     _EXIT_CODE_FAILED_UPLOADING = -3
+    _EXIT_CODE_BAD_PREPARATION = -4
 
     def __init__(self, args=None, port=None):
         self._options, self._args = PerfTestsRunner._parse_args(args)
@@ -90,21 +92,27 @@ class PerfTestsRunner(object):
             optparse.make_option("--pause-before-testing", dest="pause_before_testing", action="store_true", default=False,
                 help="Pause before running the tests to let user attach a performance monitor."),
             optparse.make_option("--output-json-path",
-                help="Filename of the JSON file that summaries the results"),
+                help="Filename of the JSON file that summaries the results."),
             optparse.make_option("--source-json-path",
-                help="Path to a JSON file to be merged into the JSON file when --output-json-path is present"),
+                help="Path to a JSON file to be merged into the JSON file when --output-json-path is present."),
             optparse.make_option("--test-results-server",
-                help="Upload the generated JSON file to the specified server when --output-json-path is present"),
+                help="Upload the generated JSON file to the specified server when --output-json-path is present."),
             optparse.make_option("--webkit-test-runner", "-2", action="store_true",
                 help="Use WebKitTestRunner rather than DumpRenderTree."),
+            optparse.make_option("--replay", dest="replay", action="store_true", default=False,
+                help="Run replay tests."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
     def _collect_tests(self):
         """Return the list of tests found."""
 
+        test_extensions = ['.html', '.svg']
+        if self._options.replay:
+            test_extensions.append('.replay')
+
         def _is_test_file(filesystem, dirname, filename):
-            return filesystem.splitext(filename)[1] in ['.html', '.svg']
+            return filesystem.splitext(filename)[1] in test_extensions
 
         filesystem = self._host.filesystem
 
@@ -122,7 +130,8 @@ class PerfTestsRunner(object):
             relative_path = self._port.relative_perf_test_filename(path).replace('\\', '/')
             if self._port.skips_perf_test(relative_path):
                 continue
-            tests.append(PerfTestFactory.create_perf_test(relative_path, path))
+            test = PerfTestFactory.create_perf_test(self._port, relative_path, path)
+            tests.append(test)
 
         return tests
 
@@ -131,10 +140,13 @@ class PerfTestsRunner(object):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self._EXIT_CODE_BAD_BUILD
 
-        # We wrap any parts of the run that are slow or likely to raise exceptions
-        # in a try/finally to ensure that we clean up the logging configuration.
-        unexpected = -1
         tests = self._collect_tests()
+        _log.info("Running %d tests" % len(tests))
+
+        for test in tests:
+            if not test.prepare(self._options.time_out_ms):
+                return self._EXIT_CODE_BAD_PREPARATION
+
         unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
 
         options = self._options

@@ -28,18 +28,30 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import errno
 import logging
 import math
 import re
+import os
+import signal
+import socket
+import subprocess
+import time
 
+# Import for auto-install
+import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
+
+from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.port.driver import DriverInput
+from webkitpy.layout_tests.port.driver import DriverOutput
 
 
 _log = logging.getLogger(__name__)
 
 
 class PerfTest(object):
-    def __init__(self, test_name, path_or_url):
+    def __init__(self, port, test_name, path_or_url):
+        self._port = port
         self._test_name = test_name
         self._path_or_url = path_or_url
 
@@ -49,11 +61,17 @@ class PerfTest(object):
     def path_or_url(self):
         return self._path_or_url
 
-    def run(self, driver, timeout_ms):
-        output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
+    def prepare(self, time_out_ms):
+        return True
+
+    def run(self, driver, time_out_ms):
+        output = self.run_single(driver, self.path_or_url(), time_out_ms)
         if self.run_failed(output):
             return None
         return self.parse_output(output)
+
+    def run_single(self, driver, path_or_url, time_out_ms, should_run_pixel_test=False):
+        return driver.run_test(DriverInput(path_or_url, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test))
 
     def run_failed(self, output):
         if output.text == None or output.error:
@@ -137,8 +155,8 @@ class PerfTest(object):
 class ChromiumStylePerfTest(PerfTest):
     _chromium_style_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
 
-    def __init__(self, test_name, path_or_url):
-        super(ChromiumStylePerfTest, self).__init__(test_name, path_or_url)
+    def __init__(self, port, test_name, path_or_url):
+        super(ChromiumStylePerfTest, self).__init__(port, test_name, path_or_url)
 
     def parse_output(self, output):
         test_failed = False
@@ -157,15 +175,15 @@ class ChromiumStylePerfTest(PerfTest):
 
 
 class PageLoadingPerfTest(PerfTest):
-    def __init__(self, test_name, path_or_url):
-        super(PageLoadingPerfTest, self).__init__(test_name, path_or_url)
+    def __init__(self, port, test_name, path_or_url):
+        super(PageLoadingPerfTest, self).__init__(port, test_name, path_or_url)
 
-    def run(self, driver, timeout_ms):
+    def run(self, driver, time_out_ms):
         test_times = []
 
         for i in range(0, 20):
-            output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
-            if self.run_failed(output):
+            output = self.run_single(driver, self.path_or_url(), time_out_ms)
+            if not output or self.run_failed(output):
                 return None
             if i == 0:
                 continue
@@ -194,16 +212,130 @@ class PageLoadingPerfTest(PerfTest):
         return {self.test_name(): results}
 
 
+class ReplayServer(object):
+    def __init__(self, archive, record):
+        self._process = None
+
+        # FIXME: Should error if local proxy isn't set to forward requests to localhost:8080 and localhost:8413
+
+        replay_path = webkitpy.thirdparty.autoinstalled.webpagereplay.replay.__file__
+        args = ['python', replay_path, '--no-dns_forwarding', '--port', '8080', '--ssl_port', '8413', '--use_closest_match', '--log_level', 'warning']
+        if record:
+            args.append('--record')
+        args.append(archive)
+
+        self._process = subprocess.Popen(args)
+
+    def wait_until_ready(self):
+        for i in range(0, 10):
+            try:
+                connection = socket.create_connection(('localhost', '8080'), timeout=1)
+                connection.close()
+                return True
+            except socket.error:
+                time.sleep(1)
+                continue
+        return False
+
+    def stop(self):
+        if self._process:
+            self._process.send_signal(signal.SIGINT)
+            self._process.wait()
+        self._process = None
+
+    def __del__(self):
+        self.stop()
+
+
+class ReplayPerfTest(PageLoadingPerfTest):
+    def __init__(self, port, test_name, path_or_url):
+        super(ReplayPerfTest, self).__init__(port, test_name, path_or_url)
+
+    def _start_replay_server(self, archive, record):
+        try:
+            return ReplayServer(archive, record)
+        except OSError as error:
+            if error.errno == errno.ENOENT:
+                _log.error("Replay tests require web-page-replay.")
+            else:
+                raise error
+
+    def prepare(self, time_out_ms):
+        filesystem = self._port.host.filesystem
+        path_without_ext = filesystem.splitext(self.path_or_url())[0]
+
+        self._archive_path = filesystem.join(path_without_ext + '.wpr')
+        self._expected_image_path = filesystem.join(path_without_ext + '-expected.png')
+        self._url = filesystem.read_text_file(self.path_or_url()).split('\n')[0]
+
+        if filesystem.isfile(self._archive_path) and filesystem.isfile(self._expected_image_path):
+            _log.info("Replay ready for %s" % self._archive_path)
+            return True
+
+        _log.info("Preparing replay for %s" % self.test_name())
+
+        driver = self._port.create_driver(worker_number=1, no_timeout=True)
+        try:
+            output = self.run_single(driver, self._url, time_out_ms, record=True)
+        finally:
+            driver.stop()
+
+        if not output or not filesystem.isfile(self._archive_path):
+            _log.error("Failed to prepare a replay for %s" % self.test_name())
+            return False
+
+        _log.info("Prepared replay for %s" % self.test_name())
+
+        return True
+
+    def run_single(self, driver, url, time_out_ms, record=False):
+        server = self._start_replay_server(self._archive_path, record)
+        if not server:
+            _log.error("Web page replay didn't start.")
+            return None
+
+        try:
+            if not server.wait_until_ready():
+                _log.error("Web page replay didn't start.")
+                return None
+
+            super(ReplayPerfTest, self).run_single(driver, "about:blank", time_out_ms)
+            _log.debug("Loading the page")
+
+            output = super(ReplayPerfTest, self).run_single(driver, self._url, time_out_ms, should_run_pixel_test=True)
+            if self.run_failed(output):
+                return None
+
+            if not output.image:
+                _log.error("Loading the page did not generate image results")
+                _log.error(output.text)
+                return None
+
+            filesystem = self._port.host.filesystem
+            dirname = filesystem.dirname(url)
+            filename = filesystem.split(url)[1]
+            writer = TestResultWriter(filesystem, self._port, dirname, filename)
+            if record:
+                writer.write_image_files(actual_image=None, expected_image=output.image)
+            else:
+                writer.write_image_files(actual_image=output.image, expected_image=None)
+
+            return output
+        finally:
+            server.stop()
+
+
 class PerfTestFactory(object):
 
     _pattern_map = [
-        (re.compile('^inspector/'), ChromiumStylePerfTest),
-        (re.compile('^PageLoad/'), PageLoadingPerfTest),
+        (re.compile(r'^inspector/'), ChromiumStylePerfTest),
+        (re.compile(r'^PageLoad/'), PageLoadingPerfTest),
+        (re.compile(r'(.+)\.replay$'), ReplayPerfTest),
     ]
 
     @classmethod
-    def create_perf_test(cls, test_name, path):
+    def create_perf_test(cls, port, test_name, path):
         for (pattern, test_class) in cls._pattern_map:
             if pattern.match(test_name):
-                return test_class(test_name, path)
-        return PerfTest(test_name, path)
+                return test_class(port, test_name, path)
+        return PerfTest(port, test_name, path)

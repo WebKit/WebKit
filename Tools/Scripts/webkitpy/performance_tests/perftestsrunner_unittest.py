@@ -120,12 +120,12 @@ max 1120
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Bindings')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
-        return runner
+        return runner, test_port
 
     def run_test(self, test_name):
-        runner = self.create_runner()
+        runner, port = self.create_runner()
         driver = MainTest.TestDriver()
-        return runner._run_single_test(ChromiumStylePerfTest(test_name, runner._host.filesystem.join('some-dir', test_name)), driver)
+        return runner._run_single_test(ChromiumStylePerfTest(port, test_name, runner._host.filesystem.join('some-dir', test_name)), driver)
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -152,19 +152,19 @@ max 1120
             path = filesystem.join(runner._base_path, test)
             dirname = filesystem.dirname(path)
             if test.startswith('inspector/'):
-                tests.append(ChromiumStylePerfTest(test, path))
+                tests.append(ChromiumStylePerfTest(runner._port, test, path))
             else:
-                tests.append(PerfTest(test, path))
+                tests.append(PerfTest(runner._port, test, path))
         return tests
 
     def test_run_test_set(self):
-        runner = self.create_runner()
+        runner, port = self.create_runner()
         tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
             'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
         output = OutputCapture()
         output.capture_output()
         try:
-            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+            unexpected_result_count = runner._run_tests_set(tests, port)
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, len(tests) - 1)
@@ -178,11 +178,11 @@ max 1120
             def stop(self):
                 TestDriverWithStopCount.stop_count += 1
 
-        runner = self.create_runner(driver_class=TestDriverWithStopCount)
+        runner, port = self.create_runner(driver_class=TestDriverWithStopCount)
 
         tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
             'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
-        unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        unexpected_result_count = runner._run_tests_set(tests, port)
 
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
 
@@ -193,13 +193,13 @@ max 1120
             def start(self):
                 TestDriverWithStartCount.start_count += 1
 
-        runner = self.create_runner(args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
+        runner, port = self.create_runner(args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
         tests = self._tests_for_runner(runner, ['inspector/pass.html'])
 
         output = OutputCapture()
         output.capture_output()
         try:
-            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+            unexpected_result_count = runner._run_tests_set(tests, port)
             self.assertEqual(TestDriverWithStartCount.start_count, 1)
         finally:
             stdout, stderr, log = output.restore_output()
@@ -207,12 +207,12 @@ max 1120
         self.assertEqual(log, "Running inspector/pass.html (1 of 1)\nRESULT group_name: test_name= 42 ms\n\n")
 
     def test_run_test_set_for_parser_tests(self):
-        runner = self.create_runner()
+        runner, port = self.create_runner()
         tests = self._tests_for_runner(runner, ['Bindings/event-target-wrapper.html', 'Parser/some-parser.html'])
         output = OutputCapture()
         output.capture_output()
         try:
-            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+            unexpected_result_count = runner._run_tests_set(tests, port)
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
@@ -226,9 +226,9 @@ max 1120
         '', '']))
 
     def test_run_test_set_with_json_output(self):
-        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
-        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
+        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
         output_capture = OutputCapture()
         output_capture.capture_output()
@@ -238,7 +238,8 @@ max 1120
             stdout, stderr, logs = output_capture.restore_output()
 
         self.assertEqual(logs,
-            '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+            '\n'.join(['Running 2 tests',
+                       'Running Bindings/event-target-wrapper.html (1 of 2)',
                        'RESULT Bindings: event-target-wrapper= 1489.05 ms',
                        'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
                        '',
@@ -246,17 +247,17 @@ max 1120
                        'RESULT group_name: test_name= 42 ms',
                        '', '']))
 
-        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
+        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678})
 
     def test_run_test_set_with_json_source(self):
-        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json', '--source-json-path=/mock-checkout/source.json'])
-        runner._host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
-        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json', '--source-json-path=/mock-checkout/source.json'])
+        port.host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
+        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
         output_capture = OutputCapture()
         output_capture.capture_output()
@@ -265,7 +266,8 @@ max 1120
         finally:
             stdout, stderr, logs = output_capture.restore_output()
 
-        self.assertEqual(logs, '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+        self.assertEqual(logs, '\n'.join(['Running 2 tests',
+            'Running Bindings/event-target-wrapper.html (1 of 2)',
             'RESULT Bindings: event-target-wrapper= 1489.05 ms',
             'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
             '',
@@ -273,7 +275,7 @@ max 1120
             'RESULT group_name: test_name= 42 ms',
             '', '']))
 
-        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
+        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
@@ -281,16 +283,16 @@ max 1120
             "key": "value"})
 
     def test_run_test_set_with_multiple_repositories(self):
-        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
-        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
+        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._timestamp = 123456789
-        runner._port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
+        port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self.assertEqual(runner.run(), 0)
-        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
+        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results": {"inspector/pass.html:group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
 
     def test_run_with_upload_json(self):
-        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
         upload_json_is_called = [False]
         upload_json_returns_true = True
@@ -302,26 +304,26 @@ max 1120
             return upload_json_returns_true
 
         runner._upload_json = mock_upload_json
-        runner._host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
-        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        port.host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
+        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
         self.assertEqual(runner.run(), 0)
         self.assertEqual(upload_json_is_called[0], True)
-        generated_json = json.loads(runner._host.filesystem.files['/mock-checkout/output.json'])
+        generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
         self.assertEqual(generated_json['platform'], 'platform1')
         self.assertEqual(generated_json['builder-name'], 'builder1')
         self.assertEqual(generated_json['build-number'], 123)
         upload_json_returns_true = False
 
-        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
         runner._upload_json = mock_upload_json
         self.assertEqual(runner.run(), -3)
 
     def test_upload_json(self):
-        runner = self.create_runner()
-        runner._host.filesystem.files['/mock-checkout/some.json'] = 'some content'
+        runner, port = self.create_runner()
+        port.host.filesystem.files['/mock-checkout/some.json'] = 'some content'
 
         called = []
         upload_single_text_file_throws = False
@@ -334,7 +336,7 @@ max 1120
                 called.append('FileUploader')
 
             def upload_single_text_file(mock, filesystem, content_type, filename):
-                self.assertEqual(filesystem, runner._host.filesystem)
+                self.assertEqual(filesystem, port.host.filesystem)
                 self.assertEqual(content_type, 'application/json')
                 self.assertEqual(filename, 'some.json')
                 called.append('upload_single_text_file')
@@ -358,59 +360,64 @@ max 1120
         runner._upload_json('some.host', 'some.json', MockFileUploader)
         self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
 
+    def _add_file(self, runner, dirname, filename, content=True):
+        dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
+        runner._host.filesystem.maybe_make_directory(dirname)
+        runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
+
     def test_collect_tests(self):
-        runner = self.create_runner()
-        filename = runner._host.filesystem.join(runner._base_path, 'inspector', 'a_file.html')
-        runner._host.filesystem.files[filename] = 'a content'
+        runner, port = self.create_runner()
+        self._add_file(runner, 'inspector', 'a_file.html', 'a content')
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
 
     def _collect_tests_and_sort_test_name(self, runner):
         return sorted([test.test_name() for test in runner._collect_tests()])
 
-    def test_collect_tests(self):
-        runner = self.create_runner(args=['PerformanceTests/test1.html', 'test2.html'])
+    def test_collect_tests_with_multile_files(self):
+        runner, port = self.create_runner(args=['PerformanceTests/test1.html', 'test2.html'])
 
         def add_file(filename):
-            runner._host.filesystem.files[runner._host.filesystem.join(runner._base_path, filename)] = 'some content'
+            port.host.filesystem.files[runner._host.filesystem.join(runner._base_path, filename)] = 'some content'
 
         add_file('test1.html')
         add_file('test2.html')
         add_file('test3.html')
-        runner._host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
+        port.host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
 
     def test_collect_tests_with_skipped_list(self):
-        runner = self.create_runner()
+        runner, port = self.create_runner()
 
-        def add_file(dirname, filename, content=True):
-            dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
-            runner._host.filesystem.maybe_make_directory(dirname)
-            runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
-
-        add_file('inspector', 'test1.html')
-        add_file('inspector', 'unsupported_test1.html')
-        add_file('inspector', 'test2.html')
-        add_file('inspector/resources', 'resource_file.html')
-        add_file('unsupported', 'unsupported_test2.html')
-        runner._port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
+        self._add_file(runner, 'inspector', 'test1.html')
+        self._add_file(runner, 'inspector', 'unsupported_test1.html')
+        self._add_file(runner, 'inspector', 'test2.html')
+        self._add_file(runner, 'inspector/resources', 'resource_file.html')
+        self._add_file(runner, 'unsupported', 'unsupported_test2.html')
+        port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_collect_tests_with_page_load_svg(self):
-        runner = self.create_runner()
-
-        def add_file(dirname, filename, content=True):
-            dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
-            runner._host.filesystem.maybe_make_directory(dirname)
-            runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
-
-        add_file('PageLoad', 'some-svg-test.svg')
+        runner, port = self.create_runner()
+        self._add_file(runner, 'PageLoad', 'some-svg-test.svg')
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
         self.assertEqual(tests[0].__class__.__name__, 'PageLoadingPerfTest')
 
+    def test_collect_tests_should_ignore_replay_tests_by_default(self):
+        runner, port = self.create_runner()
+        self._add_file(runner, 'Replay', 'www.webkit.org.replay')
+        self.assertEqual(runner._collect_tests(), [])
+
+    def test_collect_tests_with_replay_tests(self):
+        runner, port = self.create_runner(args=['--replay'])
+        self._add_file(runner, 'Replay', 'www.webkit.org.replay')
+        tests = runner._collect_tests()
+        self.assertEqual(len(tests), 1)
+        self.assertEqual(tests[0].__class__.__name__, 'ReplayPerfTest')
+
     def test_parse_args(self):
-        runner = self.create_runner()
+        runner, port = self.create_runner()
         options, args = PerfTestsRunner._parse_args([
                 '--build-directory=folder42',
                 '--platform=platform42',
