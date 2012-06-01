@@ -1,3 +1,14 @@
+2012-05-31  Hajime Morrita  <morrita@chromium.org>
+
+        REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86859
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestCheckingOfString):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2012-05-31  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Remove nested #if conditions from messages.in files

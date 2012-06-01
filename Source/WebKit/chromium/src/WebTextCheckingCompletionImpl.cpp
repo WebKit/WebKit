@@ -52,28 +52,14 @@ static Vector<TextCheckingResult> toCoreResults(const WebVector<WebTextCheckingR
 
 void WebTextCheckingCompletionImpl::didFinishCheckingText(const WebVector<WebTextCheckingResult>& results)
 {
-    if (m_spellChecker) {
-        m_spellChecker->didCheckSucceeded(m_identifier, toCoreResults(results));
-        m_editorClient->didCheckString(this);
-    }
-
+    m_request->didSucceed(toCoreResults(results));
     delete this;
 }
 
 void WebTextCheckingCompletionImpl::didCancelCheckingText()
 {
-    if (m_spellChecker) {
-        m_spellChecker->didCheckCanceled(m_identifier);
-        m_editorClient->didCheckString(this);
-    }
-
+    m_request->didCancel();
     delete this;
-}
-
-void WebTextCheckingCompletionImpl::invalidate()
-{
-    m_spellChecker = 0;
-    m_editorClient = 0;
 }
 
 } // namespace WebKit

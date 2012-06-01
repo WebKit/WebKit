@@ -86,7 +86,7 @@ public:
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail, 0u>&, int*, int*);
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&);
-    virtual void requestCheckingOfString(SpellChecker*, const TextCheckingRequest&);
+    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
 
     virtual TextCheckerClient* textChecker();
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&);

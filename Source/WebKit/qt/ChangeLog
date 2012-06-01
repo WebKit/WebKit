@@ -1,3 +1,13 @@
+2012-05-31  Hajime Morrita  <morrita@chromium.org>
+
+        REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86859
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/TextCheckerClientQt.h:
+        (WebCore::TextCheckerClientQt::requestCheckingOfString):
+
 2012-05-31  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Simplify QT_VERSION_CHECKS for Qt5 by introducing HAVE(QT5)

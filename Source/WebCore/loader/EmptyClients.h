@@ -428,7 +428,7 @@ public:
 #endif
 
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
-    virtual void requestCheckingOfString(SpellChecker*, const TextCheckingRequest&) { }
+    virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>) { }
 };
 
 class EmptyEditorClient : public EditorClient {

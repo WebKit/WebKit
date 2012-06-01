@@ -1,3 +1,57 @@
+2012-05-31  Hajime Morrita  <morrita@chromium.org>
+
+        REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86859
+
+        Reviewed by Ryosuke Niwa.
+
+        The test tries to reach an invalid SpellChecker object. Such an access should be guarded
+        beforehand.
+
+        Asynchronous spellchecking can return results after originated
+        frame is gone, which triggered an invalid access to the dead spellchecker
+        object. This chagne prevents it by marking request objects from
+        the spellchecker as invalid:
+
+        - Originally TextCheckerClient API was passed a SpellCheker object.
+          This change abstracted it behind TextCheckingRequest interface,
+          didSucceed() and didCancel() method specifically.
+        - TextCheckingRequest was turned from a plain old object into
+          a refcounted abstract class, which is now subclassed by SpellCheckRequest.
+        - SpellChecker now marks pending SpellCheckRequest objects as invalid
+          on its destructor.
+
+        Test: editing/spelling/spellcheck-async-remove-frame.html
+
+        * WebCore.exp.in:
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::SpellCheckRequest):
+        (WebCore::SpellCheckRequest::create):
+        (WebCore::SpellCheckRequest::didSucceed):
+        (WebCore):
+        (WebCore::SpellCheckRequest::didCancel):
+        (WebCore::SpellCheckRequest::wasRequestedBy):
+        (WebCore::SpellCheckRequest::requesterDestroyed):
+        (WebCore::SpellChecker::~SpellChecker):
+        (WebCore::SpellChecker::requestCheckingFor):
+        (WebCore::SpellChecker::invokeRequest):
+        (WebCore::SpellChecker::didCheckSucceed):
+        (WebCore::SpellChecker::didCheckCancel):
+        * editing/SpellChecker.h:
+        (WebCore):
+        (SpellCheckRequest):
+        (WebCore::SpellCheckRequest::isStarted):
+        (SpellChecker):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyTextCheckerClient::requestCheckingOfString):
+        * platform/text/TextCheckerClient.h:
+        (TextCheckerClient):
+        * platform/text/TextChecking.h:
+        (GrammarDetail):
+        (TextCheckingResult):
+        (TextCheckingRequest):
+        (WebCore::TextCheckingRequest::~TextCheckingRequest):
+
 2012-05-31  Tony Chang  <tony@chromium.org>
 
         initial flex value should be 1 1 auto
