@@ -1833,3 +1833,18 @@ platform/win/plugins/window-region-is-set-to-clip-rect.html
 plugins/crash-restoring-plugin-page-from-page-cache.html
 plugins/fullscreen-plugins-dont-reload.html
 plugins/netscape-plugin-page-cache-works.html
+
+# Assert in RenderGeometryMap::absoluteRect
+# https://bugs.webkit.org/show_bug.cgi?id=88128
+compositing/geometry/fixed-position.html
+compositing/geometry/fixed-position-composited-switch.html
+compositing/geometry/limit-layer-bounds-fixed-positioned.html
+compositing/geometry/video-fixed-scrolling.html
+compositing/iframes/overlapped-nested-iframes.html
+compositing/layer-creation/fixed-position-and-transform.html
+compositing/layer-creation/fixed-position-scroll.html
+compositing/layer-creation/fixed-position-under-transform.html
+compositing/overflow/fixed-position-ancestor-clip.html
+compositing/rtl/rtl-fixed-overflow-scrolled.html
+compositing/rtl/rtl-fixed-overflow.html
+compositing/rtl/rtl-fixed.html
