@@ -1,5 +1,11 @@
 2012-06-01  Jessie Berlin  <jberlin@apple.com>
 
+        Fix Windows build.
+
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
         Windows WK2 MouseMoveAfterCrash API test failing
         https://bugs.webkit.org/show_bug.cgi?id=69982
 

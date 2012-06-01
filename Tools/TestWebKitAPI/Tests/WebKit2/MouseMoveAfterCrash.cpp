@@ -54,13 +54,11 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
 
-TEST(WebKit2,
 #if PLATFORM(WIN)
-    DISABLED_MouseMoveAfterCrash
+TEST(WebKit2, DISABLED_MouseMoveAfterCrash)
 #else
-    MouseMoveAfterCrash
+TEST(WebKit2, MouseMoveAfterCrash)
 #endif
-    )
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("MouseMoveAfterCrashTest"));
 
