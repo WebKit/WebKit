@@ -1,3 +1,26 @@
+2012-06-01  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt seems to leak tmpdirs
+        https://bugs.webkit.org/show_bug.cgi?id=88126
+
+        Reviewed by Ojan Vafai.
+
+        Fix leak possibly introduced in r118979 - we now will
+        make sure we clean up any stale temp directories during the
+        start routine and attempt to clean up again in __del__. It
+        turns out that asserting in __del__ logs a message but is
+        caught by the runtime, so it's mostly useless.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__del__):
+        (WebKitDriver._start):
+        (WebKitDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_check_for_driver_crash):
+        (WebKitDriverTest.test_stop_cleans_up_properly):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_two_starts_cleans_up_properly):
+
 2012-06-01  Michael Saboff  <msaboff@apple.com>
 
         WebFrame::_stringByEvaluatingJavaScriptFromString methods don't handle nil string
