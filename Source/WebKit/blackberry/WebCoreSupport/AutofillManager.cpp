@@ -51,6 +51,11 @@ void AutofillManager::didChangeInTextField(HTMLInputElement* element)
     m_webPagePrivate->notifyPopupAutofillDialog(candidates, element->screenRect());
 }
 
+void AutofillManager::textFieldDidEndEditing(HTMLInputElement*)
+{
+    m_webPagePrivate->notifyDismissAutofillDialog();
+}
+
 void AutofillManager::autofillTextField(const String& value)
 {
     if (!m_element)

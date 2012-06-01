@@ -41,6 +41,7 @@ public:
     static PassRefPtr<AutofillManager> create(BlackBerry::WebKit::WebPagePrivate*);
 
     void didChangeInTextField(HTMLInputElement*);
+    void textFieldDidEndEditing(HTMLInputElement*);
     void autofillTextField(const WTF::String&);
     void saveTextFields(HTMLFormElement*);
 

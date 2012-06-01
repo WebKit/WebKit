@@ -507,9 +507,10 @@ void EditorClientBlackBerry::textFieldDidBeginEditing(Element*)
     notImplemented();
 }
 
-void EditorClientBlackBerry::textFieldDidEndEditing(Element*)
+void EditorClientBlackBerry::textFieldDidEndEditing(Element* element)
 {
-    notImplemented();
+    if (HTMLInputElement* inputElement = element->toInputElement())
+        m_webPagePrivate->m_autofillManager->textFieldDidEndEditing(inputElement);
 }
 
 void EditorClientBlackBerry::textDidChangeInTextField(Element* element)

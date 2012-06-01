@@ -202,6 +202,7 @@ public:
     void layoutFinished();
     void setNeedTouchEvents(bool);
     void notifyPopupAutofillDialog(const Vector<String>&, const WebCore::IntRect&);
+    void notifyDismissAutofillDialog();
 
     // Called according to our heuristic or from setLoadState depending on whether we have a virtual viewport.
     void zoomToInitialScaleOnLoad();

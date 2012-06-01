@@ -2181,6 +2181,11 @@ void WebPagePrivate::notifyPopupAutofillDialog(const Vector<String>& candidates,
     m_client->notifyPopupAutofillDialog(textItems, screenRect);
 }
 
+void WebPagePrivate::notifyDismissAutofillDialog()
+{
+    m_client->notifyDismissAutofillDialog();
+}
+
 bool WebPagePrivate::useFixedLayout() const
 {
     return true;

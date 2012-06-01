@@ -1,3 +1,31 @@
+2012-06-01  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Add end editing handling into AutofillManager
+        https://bugs.webkit.org/show_bug.cgi?id=88071
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 160857
+        Implemented EditorClientBlackBerry::textFieldDidEndEditing
+        to notify AutofillManager to send the dismissing autofill
+        dialog notification to webpage client.
+
+        No new tests since there is no behavior changes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyDismissAutofillDialog):
+        (WebKit):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/AutofillManager.cpp:
+        (WebCore::AutofillManager::textFieldDidEndEditing):
+        (WebCore):
+        * WebCoreSupport/AutofillManager.h:
+        (AutofillManager):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::textFieldDidEndEditing):
+
 2012-05-31  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Bridge Apps - Apps do not redraw correctly after orientation change
