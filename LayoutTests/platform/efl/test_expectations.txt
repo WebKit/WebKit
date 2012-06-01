@@ -563,6 +563,8 @@ BUGWK84835 : editing/execCommand/copy-without-selection.html = TEXT
 BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
+BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
+
 // DRT doesn't check for isPrinting().
 BUGWK87226 : printing/iframe-print.html = TEXT
 BUGWK87226 : printing/media-queries-print.html = MISSING
