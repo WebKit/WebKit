@@ -1909,6 +1909,10 @@ fast/dom/Window/mozilla-focus-blur.html
 # https://bugs.webkit.org/show_bug.cgi?id=87956
 fast/notifications/notifications-click-event-focus.html
 
+# [Qt][GTK][EFL] fast/dom/gc-attribute-node.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=88062
+fast/dom/gc-attribute-node.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
