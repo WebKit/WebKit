@@ -1,3 +1,36 @@
+2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement PlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=86946
+
+        Reviewed by Carlos Garcia Campos.                 
+
+        Enable PLATFORM_STRATEGIES for EFL platform.
+
+        * WebCoreSupport/PlatformStrategiesEfl.cpp: Added, code was moved
+        from platform/PluginDataEfl.
+        (PlatformStrategiesEfl::initialize): Initialize platform strategies.
+        (PlatformStrategiesEfl::PlatformStrategiesEfl):
+        (PlatformStrategiesEfl::createCookiesStrategy): Return this.
+        (PlatformStrategiesEfl::createPluginStrategy): Ditto.
+        (PlatformStrategiesEfl::createVisitedLinkStrategy): Ditto.
+        (PlatformStrategiesEfl::createPasteboardStrategy): Return 0, since
+        PasteboardStrategy is only used by mac code for now.
+        (PlatformStrategiesEfl::notifyCookiesChanged): 
+        (PlatformStrategiesEfl::refreshPlugins): Refresh the plugin
+        database. Code executes only when NETSCAPE_PLUGIN_API is ON.
+        (PlatformStrategiesEfl::getPluginInfo): Initialize plugins and
+        populate the given vector with plugins information. Code executes
+        only when NETSCAPE_PLUGIN_API is ON.
+        (PlatformStrategiesEfl::isLinkVisited): Return whether the given
+        hash is a visited link of the page group.
+        (PlatformStrategiesEfl::addVisitedLink): Add the given hash to the
+        page group visited links.
+        * WebCoreSupport/PlatformStrategiesEfl.h: Added.
+        (PlatformStrategiesEfl):
+        * ewk/ewk_main.cpp: Initialize PlatformStrategiesEfl.
+        (_ewk_init_body):
+
 2012-05-31  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] <input type="number"> is not a spinbutton

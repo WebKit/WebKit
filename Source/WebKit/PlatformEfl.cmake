@@ -98,6 +98,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/InspectorClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
+    efl/WebCoreSupport/PlatformStrategiesEfl.cpp 
 
     efl/ewk/ewk_auth.cpp
     efl/ewk/ewk_auth_soup.cpp

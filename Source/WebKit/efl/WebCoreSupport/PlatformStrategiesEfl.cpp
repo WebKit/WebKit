@@ -5,6 +5,7 @@
     Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2011 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,24 +24,75 @@
 */
 
 #include "config.h"
-#include "PluginData.h"
+#include "PlatformStrategiesEfl.h"
 
+#include "NotImplemented.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
-namespace WebCore {
+using namespace WebCore;
 
-void PluginData::initPlugins(const Page*)
+void PlatformStrategiesEfl::initialize()
 {
+    DEFINE_STATIC_LOCAL(PlatformStrategiesEfl, platformStrategies, ());
+    setPlatformStrategies(&platformStrategies);
+}
+
+PlatformStrategiesEfl::PlatformStrategiesEfl()
+{
+}
+
+// CookiesStrategy
+CookiesStrategy* PlatformStrategiesEfl::createCookiesStrategy()
+{
+    return this;
+}
+
+// PluginStrategy
+PluginStrategy* PlatformStrategiesEfl::createPluginStrategy()
+{
+    return this;
+}
+
+VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
+{
+    return this;
+}
+
+PasteboardStrategy* PlatformStrategiesEfl::createPasteboardStrategy()
+{
+    notImplemented();
+    return 0;
+}
+
+// CookiesStrategy
+void PlatformStrategiesEfl::notifyCookiesChanged()
+{
+}
+
+void PlatformStrategiesEfl::refreshPlugins()
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    PluginDatabase::installedPlugins()->refresh();
+#endif
+}
+
+void PlatformStrategiesEfl::getPluginInfo(const Page* page, Vector<PluginInfo>& outPlugins)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    PluginDatabase::installedPlugins()->refresh();
     const Vector<PluginPackage*>& plugins = PluginDatabase::installedPlugins()->plugins();
+    outPlugins.resize(plugins.size());
 
     for (size_t i = 0; i < plugins.size(); ++i) {
         PluginPackage* package = plugins[i];
-        PluginInfo info;
 
-        info.name = package->name();
-        info.file = package->fileName();
-        info.desc = package->description();
+        PluginInfo pluginInfo;
+        pluginInfo.name = package->name();
+        pluginInfo.file = package->fileName();
+        pluginInfo.desc = package->description();
 
         const MIMEToDescriptionsMap& mimeToDescriptions = package->mimeToDescriptions();
         MIMEToDescriptionsMap::const_iterator end = mimeToDescriptions.end();
@@ -50,17 +102,21 @@ void PluginData::initPlugins(const Page*)
             mime.type = it->first;
             mime.desc = it->second;
             mime.extensions = package->mimeToExtensions().get(mime.type);
-
-            info.mimes.append(mime);
+            pluginInfo.mimes.append(mime);
         }
 
-        m_plugins.append(info);
+        outPlugins.append(pluginInfo);
     }
+#endif
 }
 
-void PluginData::refresh()
+// VisitedLinkStrategy
+bool PlatformStrategiesEfl::isLinkVisited(Page* page, LinkHash hash, const KURL&, const AtomicString&)
 {
-    PluginDatabase::installedPlugins()->refresh();
+    return page->group().isLinkVisited(hash);
 }
 
-};
+void PlatformStrategiesEfl::addVisitedLink(Page* page, LinkHash hash)
+{
+    page->group().addVisitedLinkHash(hash);
+}

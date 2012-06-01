@@ -1,3 +1,14 @@
+2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement PlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=86946
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformEfl.cmake: Add PlatformStrategies.cpp file to the build system.
+        Also, remove PluginDataEfl.cpp because the same functionality is now
+        implemented in PlatformStrategiesEfl.cpp.
+
 2012-06-01  Adam Barth  <abarth@webkit.org>
 
         ASSERT(m_fontSelector->document()) is bogus and should be removed

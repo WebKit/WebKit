@@ -83,6 +83,7 @@ LIST(APPEND WebCore_SOURCES
   platform/network/soup/ResourceResponseSoup.cpp
   platform/network/soup/SocketStreamHandleSoup.cpp
   platform/network/soup/SoupURIUtils.cpp
+  platform/PlatformStrategies.cpp
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
 )
@@ -95,13 +96,11 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
     plugins/PluginStream.cpp
     plugins/PluginView.cpp
 
-    plugins/efl/PluginDataEfl.cpp
     plugins/efl/PluginPackageEfl.cpp
     plugins/efl/PluginViewEfl.cpp
   )
 ELSE ()
   LIST(APPEND WebCore_SOURCES
-    plugins/PluginDataNone.cpp
     plugins/PluginPackageNone.cpp
     plugins/PluginViewNone.cpp
   )

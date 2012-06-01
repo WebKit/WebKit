@@ -1,3 +1,12 @@
+2012-06-01  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement PlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=86946
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h: Enable PLATFORM_STRATEGIES for EFL platform.
+
 2012-05-31  Anders Carlsson  <andersca@apple.com>
 
         Enable support for rvalue references when building with a version of clang that supports them
