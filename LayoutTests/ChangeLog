@@ -1,3 +1,9 @@
+2012-06-01  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed rebaseline of svg/css/getComputedStyle-basic for mac.
+
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+
 2012-06-01  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Indenting a paragraph that begins with a link 3 times breaks the paragraph into two paragraphs
