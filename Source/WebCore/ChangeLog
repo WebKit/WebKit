@@ -1,3 +1,19 @@
+2012-06-01  Adam Barth  <abarth@webkit.org>
+
+        ASSERT(m_fontSelector->document()) is bogus and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=88053
+
+        Reviewed by Abhishek Arya.
+
+        This ASSERT was introduced in http://trac.webkit.org/changeset/97402
+        together with a branch that handled the case of the ASSERT firing.
+        This ASSERT fires when running tests on Android (which runs with
+        ASSERTs enabled). The ASSERT appears to be bogus, so this patch removes
+        it.
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::getFontData):
+
 2012-06-01  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform][Decimal] UInt128::operator/= calls makeUInt128 with wrong argument order

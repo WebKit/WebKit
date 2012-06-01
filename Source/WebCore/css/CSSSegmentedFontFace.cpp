@@ -125,7 +125,6 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
         }
     }
     if (newFontData->numRanges()) {
-        ASSERT(m_fontSelector->document());
         if (Document* document = m_fontSelector->document()) {
             fontData = newFontData.get();
             document->registerCustomFont(newFontData.release());
