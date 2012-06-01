@@ -184,56 +184,56 @@ layer at (0,0) size 784x800
         RenderText {#text} at (0,0) size 222x32
           text run at (0,0) width 222: "Pop-up Menu Sizes"
       RenderBlock {DIV} at (0,694) size 768x40
-        RenderInline {FONT} at (0,0) size 224x30
+        RenderInline {FONT} at (0,0) size 222x30
           RenderText {#text} at (0,0) size 0x0
-          RenderMenuList {SELECT} at (2,2) size 37x36 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,3) size 9x30
+          RenderMenuList {SELECT} at (2,2) size 36x36 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,3) size 8x30
               RenderBR at (0,0) size 0x30 [bgcolor=#FFFFFF]
-          RenderText {#text} at (41,5) size 7x30
-            text run at (41,5) width 7: " "
-          RenderMenuList {SELECT} at (50,2) size 37x36 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,3) size 9x30
+          RenderText {#text} at (40,5) size 7x30
+            text run at (40,5) width 7: " "
+          RenderMenuList {SELECT} at (49,2) size 36x36 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,3) size 8x30
               RenderText at (0,0) size 6x30
                 text run at (0,0) width 6: "|"
-          RenderText {#text} at (89,5) size 7x30
-            text run at (89,5) width 7: " "
-          RenderMenuList {SELECT} at (98,2) size 124x36 [bgcolor=#FFFFFF]
+          RenderText {#text} at (87,5) size 7x30
+            text run at (87,5) width 7: " "
+          RenderMenuList {SELECT} at (96,2) size 124x36 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (4,3) size 96x30
               RenderText at (0,0) size 96x30
                 text run at (0,0) width 96: "xxxxxxxx"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,734) size 768x30
-        RenderMenuList {SELECT} at (2,2) size 37x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 9x21
+        RenderMenuList {SELECT} at (2,2) size 36x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 8x21
             RenderBR at (0,0) size 0x21 [bgcolor=#FFFFFF]
-        RenderText {#text} at (41,4) size 4x21
-          text run at (41,4) width 4: " "
-        RenderMenuList {SELECT} at (47,2) size 37x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 9x21
+        RenderText {#text} at (40,4) size 4x21
+          text run at (40,4) width 4: " "
+        RenderMenuList {SELECT} at (46,2) size 36x26 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 8x21
             RenderText at (0,0) size 4x21
               text run at (0,0) width 4: "|"
-        RenderText {#text} at (86,4) size 4x21
-          text run at (86,4) width 4: " "
-        RenderMenuList {SELECT} at (92,2) size 92x26 [bgcolor=#FFFFFF]
+        RenderText {#text} at (84,4) size 4x21
+          text run at (84,4) width 4: " "
+        RenderMenuList {SELECT} at (90,2) size 92x26 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (4,2) size 64x21
             RenderText at (0,0) size 64x21
               text run at (0,0) width 64: "xxxxxxxx"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,764) size 768x20
-        RenderInline {FONT} at (0,0) size 148x13
+        RenderInline {FONT} at (0,0) size 146x13
           RenderText {#text} at (0,0) size 0x0
-          RenderMenuList {SELECT} at (0,0) size 37x20 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,3) size 9x13
+          RenderMenuList {SELECT} at (0,0) size 36x20 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,3) size 8x13
               RenderBR at (0,0) size 0x13 [bgcolor=#FFFFFF]
-          RenderText {#text} at (37,3) size 3x13
-            text run at (37,3) width 3: " "
-          RenderMenuList {SELECT} at (40,0) size 37x20 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,3) size 9x13
+          RenderText {#text} at (36,3) size 3x13
+            text run at (36,3) width 3: " "
+          RenderMenuList {SELECT} at (39,0) size 36x20 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,3) size 8x13
               RenderText at (0,0) size 3x13
                 text run at (0,0) width 3: "|"
-          RenderText {#text} at (77,3) size 3x13
-            text run at (77,3) width 3: " "
-          RenderMenuList {SELECT} at (80,0) size 68x20 [bgcolor=#FFFFFF]
+          RenderText {#text} at (75,3) size 3x13
+            text run at (75,3) width 3: " "
+          RenderMenuList {SELECT} at (78,0) size 68x20 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (4,3) size 40x13
               RenderText at (0,0) size 40x13
                 text run at (0,0) width 40: "xxxxxxxx"

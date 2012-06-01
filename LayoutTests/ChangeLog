@@ -1,3 +1,22 @@
+2012-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update expected files.
+
+        * platform/qt-5.0/fast/forms/HTMLOptionElement_label06-expected.png:
+        * platform/qt-5.0/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/qt-5.0/fast/forms/HTMLOptionElement_label07-expected.png:
+        * platform/qt-5.0/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/qt-5.0/fast/forms/form-element-geometry-expected.png:
+        * platform/qt-5.0/fast/forms/form-element-geometry-expected.txt:
+        * platform/qt-5.0/fast/forms/menulist-separator-painting-expected.png:
+        * platform/qt-5.0/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/qt-5.0/fast/forms/select-baseline-expected.png:
+        * platform/qt-5.0/fast/forms/select-baseline-expected.txt:
+        * platform/qt-5.0/fast/forms/selectlist-minsize-expected.png:
+        * platform/qt-5.0/fast/forms/selectlist-minsize-expected.txt:
+        * platform/qt-5.0/fast/replaced/three-selects-break-expected.png:
+        * platform/qt-5.0/fast/replaced/three-selects-break-expected.txt:
+
 2012-06-01  Adam Barth  <abarth@webkit.org>
 
         sandbox directive in X-WebKit-CSP header unable to create a unique origin
