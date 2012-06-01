@@ -1,3 +1,17 @@
+2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] [DRT] editing/execCommand/paste-and-match-style-event.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=86961
+
+        Reviewed by Csaba Osztrogonác.
+
+        Call ecore_x_init() in ewk_init() to initialize the ecore_x library.
+        This avoids crashing upong calling WebCore::systemBeep() which uses
+        ecore_x_bell() internally.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
 2012-06-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] New signals in ewk_view to enable global history delegate functionality
