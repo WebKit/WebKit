@@ -1,0 +1,28 @@
+From https://bugs.webkit.org/show_bug.cgi?id=44629. The parent is a tiled layer. When the child is a non-tiled layer and it is switched to a tiled layer, a crash occurs. This test should not crash.
+
+(GraphicsLayer
+  (bounds 392.00 2555.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 393.00 2556.00)
+      (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 1
+        (GraphicsLayer
+          (position 8.00 68.00)
+          (bounds 502.00 5002.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 4800.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

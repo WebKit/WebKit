@@ -1,3 +1,59 @@
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] Windows 7 Release Testers report many compositing failures
+        https://bugs.webkit.org/show_bug.cgi?id=88040
+
+        Part 2 of adding expected (failing?) results to get the bots greener.
+
+        * platform/win/compositing/images: Added.
+        * platform/win/compositing/images/clip-on-directly-composited-image-expected.txt: Added.
+        * platform/win/compositing/images/direct-image-background-color-expected.txt: Added.
+        * platform/win/compositing/images/direct-pdf-image-expected.txt: Added.
+        * platform/win/compositing/images/direct-svg-image-expected.txt: Added.
+        * platform/win/compositing/layer-creation/fixed-position-out-of-view-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-animation-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-child-layer-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-clipping-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-transformed-layer-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overlap-transforms-expected.txt: Added.
+        * platform/win/compositing/layer-creation/rotate3d-overlap-expected.txt: Added.
+        * platform/win/compositing/layer-creation/scroll-partial-update-expected.txt: Added.
+        * platform/win/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+        * platform/win/compositing/layer-creation/stacking-context-overlap-expected.txt: Added.
+        * platform/win/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Added.
+        * platform/win/compositing/layer-creation/translatez-overlap-expected.txt: Added.
+        * platform/win/compositing/masks: Added.
+        * platform/win/compositing/masks/direct-image-mask-expected.txt: Added.
+        * platform/win/compositing/masks/masked-ancestor-expected.txt: Added.
+        * platform/win/compositing/masks/multiple-masks-expected.txt: Added.
+        * platform/win/compositing/masks/simple-composited-mask-expected.txt: Added.
+        * platform/win/compositing/overflow/ancestor-overflow-expected.txt
+        * platform/win/compositing/overflow/clip-descendents-expected.txt: Added.
+        * platform/win/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/win/compositing/overflow/content-loses-scrollbars-expected.txt: Added.
+        * platform/win/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
+        * platform/win/compositing/overflow/overflow-positioning-expected.txt: Added.
+        * platform/win/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/win/compositing/overflow/resize-painting-expected.txt: Added.
+        * platform/win/compositing/rtl: Added.
+        * platform/win/compositing/rtl/rtl-absolute-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-absolute-overflow-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/win/compositing/rtl/rtl-relative-expected.txt: Added.
+        * platform/win/compositing/tiling/crash-reparent-tiled-layer-expected.txt: Added.
+        * platform/win/compositing/visibility: Added.
+        * platform/win/compositing/visibility/layer-visible-content-expected.txt: Added.
+        * platform/win/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
+
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG constant folding search for the last local access skips the immediately previous local access

@@ -1,0 +1,32 @@
+(GraphicsLayer
+  (bounds 1570.00 1170.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 3140.00 2340.00)
+      (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (children 1
+        (GraphicsLayer
+          (bounds 100.00 100.00)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [110.00 0.00 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (bounds 100.00 100.00)
+              (children 2
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
