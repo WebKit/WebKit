@@ -203,6 +203,9 @@ BUGWK85404 : fast/loader/javascript-url-in-embed.html = TEXT PASS
 
 BUGWK85408 : svg/batik/text/longTextOnPath.svg = TEXT PASS
 
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
+BUGWK79682 : svg/repaint/text-mask-update.svg = MISSING IMAGE+TEXT IMAGE TEXT PASS
+
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE

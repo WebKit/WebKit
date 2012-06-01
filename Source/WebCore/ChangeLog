@@ -1,3 +1,20 @@
+2012-06-01  Florin Malita  <fmalita@chromium.org>
+
+        http://shinydemos.com/clock/ doesn't seem to work
+        https://bugs.webkit.org/show_bug.cgi?id=79682
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: svg/repaint/text-mask-update.svg
+
+        Currently, parent resources are not invalidated when SVGInlineText nodes
+        are added or removed. Adjusting SVGResourcesCache::clientWasAddedToTree()
+        and SVGResourcesCache::clientWillBeRemovedFromTree() to cover this case.
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientWasAddedToTree):
+        (WebCore::SVGResourcesCache::clientWillBeRemovedFromTree):
+
 2012-06-01  John Mellor  <johnme@chromium.org>
 
         Don't set scroll position twice in HistoryController::restoreScrollPositionAndViewState

@@ -154,6 +154,10 @@ static inline bool rendererCanHaveResources(RenderObject* renderer)
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject* renderer, const RenderStyle* newStyle)
 {
+    if (!renderer->node())
+        return;
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+
     if (!rendererCanHaveResources(renderer))
         return;
     SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
@@ -162,12 +166,14 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject* renderer, const Rende
 
 void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject* renderer)
 {
+    if (!renderer->node())
+        return;
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+
     if (!rendererCanHaveResources(renderer))
         return;
     SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
     cache->removeResourcesFromRenderObject(renderer);
-
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 }
 
 void SVGResourcesCache::clientDestroyed(RenderObject* renderer)
