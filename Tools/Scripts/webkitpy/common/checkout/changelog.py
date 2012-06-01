@@ -72,7 +72,6 @@ class ChangeLogEntry(object):
     reviewer_name_noise_regexp = re.compile(r"""
     (\s+((tweaked\s+)?and\s+)?(landed|committed|okayed)\s+by.+) # "landed by", "commented by", etc...
     |(^(Reviewed\s+)?by\s+) # extra "Reviewed by" or "by"
-    |\.(?:(\s.+|$)) # text after the first period followed by a space
     |([(<]\s*[\w_\-\.]+@[\w_\-\.]+[>)]) # email addresses
     |([(<](https?://?bugs.)webkit.org[^>)]+[>)]) # bug url
     |("[^"]+") # wresler names like 'Sean/Shawn/Shaun' in 'Geoffrey "Sean/Shawn/Shaun" Garen'
@@ -85,6 +84,10 @@ class ChangeLogEntry(object):
     |(\(\s*(?!(and|[A-Z])).+\)) # any parenthesis that doesn't start with "and" or a capital letter
     |(with(\s+[a-z-]+)+) # phrases with "with no hesitation" in "Sam Weinig with no hesitation"
     """, re.VERBOSE)
+
+    reviewer_name_noise_needing_a_backreference_regexp = re.compile(r"""
+    (\S\S)\.(?:(\s.+|$)) # Text after the two word characters (don't match initials) and a period followed by a space.
+    """, re.IGNORECASE | re.VERBOSE)
 
     nobody_regexp = re.compile(r"""(\s+|^)nobody(
     ((,|\s+-)?\s+(\w+\s+)+fix.*) # e.g. nobody, build fix...
@@ -118,6 +121,7 @@ class ChangeLogEntry(object):
         reviewer_text = ChangeLogEntry.nobody_regexp.sub('', reviewer_text)
         reviewer_text = ChangeLogEntry.reviewer_name_noise_regexp.sub('', reviewer_text)
         reviewer_text = ChangeLogEntry.reviewer_name_casesensitive_noise_regexp.sub('', reviewer_text)
+        reviewer_text = ChangeLogEntry.reviewer_name_noise_needing_a_backreference_regexp.sub(r'\1', reviewer_text)
         reviewer_text = reviewer_text.replace('(', '').replace(')', '')
         reviewer_text = re.sub(r'\s\s+|[,.]\s*$', ' ', reviewer_text).strip()
         if not len(reviewer_text):

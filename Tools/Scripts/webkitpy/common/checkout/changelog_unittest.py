@@ -413,6 +413,18 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_fuzzy_reviewer_match('Reviewed by Mark Rowe, but Dan Bernstein also reviewed and asked thoughtful questions.',
             ['Mark Rowe', 'but Dan Bernstein also reviewed', 'asked thoughtful questions'], ['Mark Rowe'])
 
+    def test_fuzzy_reviewer_match_initial(self):
+        self._assert_fuzzy_reviewer_match('Reviewed by Alejandro G. Castro.',
+            ['Alejandro G. Castro'], ['Alejandro G. Castro'])
+        self._assert_fuzzy_reviewer_match('Reviewed by G. Alejandro G. Castro and others.',
+            ['G. Alejandro G. Castro', 'others'], ['Alejandro G. Castro'])
+
+        # If a reviewer has a name that ended with an initial, the regular expression
+        # will incorrectly trim the last period, but it will still match fuzzily to
+        # the full reviewer name.
+        self._assert_fuzzy_reviewer_match('Reviewed by G. Alejandro G. G. Castro G.',
+            ['G. Alejandro G. G. Castro G'], ['Alejandro G. Castro'])
+
     def _assert_parse_authors(self, author_text, expected_contributors):
         parsed_authors = [(author['name'], author['email']) for author in self._entry_with_author(author_text).authors()]
         self.assertEquals(parsed_authors, expected_contributors)

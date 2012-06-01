@@ -1,3 +1,21 @@
+2012-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        The ChangeLog parser cannot handle reviewers with initials in their name
+        https://bugs.webkit.org/show_bug.cgi?id=87864
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support in the ChangeLog parser for reviewer names that have
+        initials in them.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry): Add a new group of regular expressions that need a backreference
+        in the replacement string. This allows for matching the word characters before a
+        period, without totally throwing them away.
+        (ChangeLogEntry._parse_reviewer_text): Use the new regular expression.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_fuzzy_reviewer_match_initial): Add a test for a reviewer name that has an initial.
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController needs to implement deliverWebIntent
