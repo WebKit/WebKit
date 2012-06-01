@@ -1,3 +1,12 @@
+2012-06-01  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Move input element's spinner style tests to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=88054
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update expected files.

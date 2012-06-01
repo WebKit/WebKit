@@ -155,6 +155,9 @@ BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
 // Needs inner spin button to respect -webkit-inner-spin-button style
+BUGWK87619 : fast/forms/number/input-appearance-number-rtl.html = TEXT
+BUGWK87619 : fast/forms/number/input-appearance-spinbutton-disabled-readonly.html = TEXT
+BUGWK87619 : fast/forms/number/input-appearance-spinbutton-layer.html = TEXT
 BUGWK87619 : fast/forms/number/input-number-size.html = TEXT
 
 BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
