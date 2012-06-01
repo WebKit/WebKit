@@ -74698,6 +74698,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\nativeMemoryProfiler.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\navigatorView.css"
 					>
 				</File>

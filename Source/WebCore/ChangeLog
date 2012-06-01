@@ -1,3 +1,38 @@
+2012-05-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: draw pie-chart based on memory data received from backend
+        https://bugs.webkit.org/show_bug.cgi?id=87737
+
+        Reviewed by Pavel Feldman.
+
+        Added pie chart for memory data received from inspector memory agent.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemorySnapshotView):
+        (WebInspector.NativeMemoryProfileType):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked.didReceiveMemorySnapshot):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+        (WebInspector.NativeMemoryProfileHeader):
+        (WebInspector.MemoryBlockViewProperties):
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        (WebInspector.MemoryBlockViewProperties._forMemoryBlock):
+        (WebInspector.NativeMemoryPieChart):
+        (WebInspector.NativeMemoryPieChart.prototype.onResize):
+        (WebInspector.NativeMemoryPieChart.prototype._updateSize):
+        (WebInspector.NativeMemoryPieChart.prototype._addBlockLabels):
+        (WebInspector.NativeMemoryPieChart.prototype._paint.paintPercentAndLabel):
+        (WebInspector.NativeMemoryPieChart.prototype._paint):
+        (WebInspector.NativeMemoryPieChart.prototype._clear):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/nativeMemoryProfiler.css: Added.
+        (.memory-pie-chart-container):
+        (.memory-pie-chart):
+        (.memory-blocks-list .swatch):
+        (.memory-blocks-list):
+        (.memory-blocks-list .item):
+
 2012-05-31  Dominic Cooney  <dominicc@chromium.org>
 
         [V8] Expando properties on attribute nodes disappear

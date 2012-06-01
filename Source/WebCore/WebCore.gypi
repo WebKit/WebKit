@@ -6549,6 +6549,7 @@
             'inspector/front-end/helpScreen.css',
             'inspector/front-end/indexedDBViews.css',
             'inspector/front-end/inspectorCommon.css',
+            'inspector/front-end/nativeMemoryProfiler.css',
             'inspector/front-end/navigatorView.css',
             'inspector/front-end/networkLogView.css',
             'inspector/front-end/networkPanel.css',

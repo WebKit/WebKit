@@ -60,9 +60,9 @@ using WebCore::TypeBuilder::Memory::StringStatistics;
 namespace WebCore {
 
 namespace MemoryBlockName {
-static const char totalJsHeap[] = "TotalJSHeap";
+static const char jsHeapAllocated[] = "JSHeapAllocated";
+static const char jsHeapUsed[] = "JSHeapUsed";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
-static const char usedJsHeap[] = "UsedJSHeap";
 }
 
 namespace {
@@ -322,16 +322,16 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
     size_t jsHeapSizeLimit;
     ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
 
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> totalJsHeap = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::totalJsHeap);
-    totalJsHeap->setSize(static_cast<int>(totalJSHeapSize));
+    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapAllocated = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
+    jsHeapAllocated->setSize(static_cast<int>(totalJSHeapSize));
 
     RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> usedJsHeap = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::usedJsHeap);
-    usedJsHeap->setSize(static_cast<int>(usedJSHeapSize));
-    children->addItem(usedJsHeap);
+    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapUsed = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
+    jsHeapUsed->setSize(static_cast<int>(usedJSHeapSize));
+    children->addItem(jsHeapUsed);
 
-    totalJsHeap->setChildren(children);
-    return totalJsHeap.release();
+    jsHeapAllocated->setChildren(children);
+    return jsHeapAllocated.release();
 }
 
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock>& processMemory)

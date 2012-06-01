@@ -197,6 +197,7 @@
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>nativeMemoryProfiler.css</file>
     <file>navigatorView.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
