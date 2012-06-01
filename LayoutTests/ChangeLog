@@ -1,3 +1,15 @@
+2012-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] 4 fast/frames tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=88034
+
+        Add Windows-specific expected (failing?) results to get the bots green.
+
+        * platform/win/fast/frames/frame-set-scaling-hit-expected.txt: Added.
+        * platform/win/fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize-expected.txt: Added.
+        * platform/win/fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false-expected.txt: Added.
+        * platform/win/fast/frames/frames-with-frameborder-zero-can-be-resized-expected.txt: Added.
+
 2012-05-31  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor bypass with leading /*///*/ comment
