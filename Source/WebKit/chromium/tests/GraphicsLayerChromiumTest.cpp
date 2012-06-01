@@ -34,6 +34,7 @@
 #include "LayerChromium.h"
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
+#include "Length.h"
 #include "TranslateTransformOperation.h"
 #include "WebCompositor.h"
 
@@ -209,11 +210,11 @@ TEST_F(GraphicsLayerChromiumTest, createTransformAnimation)
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
 
     TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(0, &operations1));
 
     TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(duration, &operations2));
 
     RefPtr<Animation> animation = Animation::create();
@@ -292,11 +293,11 @@ TEST_F(GraphicsLayerChromiumTest, createReversedAnimation)
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
 
     TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(0, &operations1));
 
     TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(duration, &operations2));
 
     RefPtr<Animation> animation = Animation::create();
@@ -329,11 +330,11 @@ TEST_F(GraphicsLayerChromiumTest, createAlternatingAnimation)
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
 
     TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(0, &operations1));
 
     TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(duration, &operations2));
 
     RefPtr<Animation> animation = Animation::create();
@@ -368,11 +369,11 @@ TEST_F(GraphicsLayerChromiumTest, createReversedAlternatingAnimation)
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
 
     TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(0, &operations1));
 
     TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(duration, &operations2));
 
     RefPtr<Animation> animation = Animation::create();

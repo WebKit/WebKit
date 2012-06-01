@@ -1,3 +1,10 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use fully qualified name for Fixed to avoid the collision with "typedef SInt32 Fixed" in MacTypes.h
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-06-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Unreviewed compile fix for r119283
