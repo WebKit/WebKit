@@ -24,7 +24,10 @@
 #include "GraphicsSurface.h"
 #include "ImageBuffer.h"
 #include "TextureMapper.h"
+
+#if USE(GRAPHICS_SURFACE)
 #include "TextureMapperGL.h"
+#endif
 
 namespace WebCore {
 

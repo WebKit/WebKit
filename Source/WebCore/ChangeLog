@@ -1,3 +1,12 @@
+2012-06-01  Zeno Albisser  <zeno@webkit.org>
+
+        Unreviewed build fix after r119247.
+
+        Do not include TextureMapperGL.h when not building
+        with GRAPHICS_SURFACE.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+
 2012-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add a new and reusable Geoclue-based geolocation provider in WebCore
