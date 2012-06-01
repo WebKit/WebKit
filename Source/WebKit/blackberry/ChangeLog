@@ -1,3 +1,27 @@
+2012-05-31  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebGL and 2D canvas output not available to WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=88012
+
+        Reviewed by George Staikos.
+
+        Properly set up resource sharing between WebKit thread EGL contexts and
+        the compositing thread EGL context, so the texture ID produced by WebGL
+        and 2D canvas makes sense to the compositing context.
+
+        There's no public API to supply an EGLContext yet, so we're lucky that
+        the embedder never makes its context un-current. Just grab the current
+        context on the compositing thread and use that as the compositing
+        context.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::~WebPageCompositor):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-05-31  George Staikos  <staikos@webkit.org>
 
         [Blackberry] Initialize the select client and delete the pointer

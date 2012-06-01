@@ -24,6 +24,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GLES2Context.h"
 #include "LayerRenderer.h"
+#include <EGL/egl.h>
 #endif
 #include "KURL.h"
 #include "PageClientBlackBerry.h"
@@ -393,7 +394,7 @@ public:
     void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&, bool);
     bool isAcceleratedCompositingActive() const { return m_compositor; }
     WebPageCompositorPrivate* compositor() const { return m_compositor.get(); }
-    void setCompositor(PassRefPtr<WebPageCompositorPrivate>);
+    void setCompositor(PassRefPtr<WebPageCompositorPrivate>, EGLContext compositingContext);
     bool createCompositor();
     void destroyCompositor();
     void syncDestroyCompositorOnCompositingThread();
