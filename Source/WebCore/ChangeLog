@@ -1,3 +1,28 @@
+2012-06-01  MORITA Hajime  <morrita@google.com>
+
+        Frame::willDetachPage() shouldn't be called more than once.
+        https://bugs.webkit.org/show_bug.cgi?id=88056
+
+        Reviewed by Ryosuke Niwa.
+
+        This change moved willDetachPage() to private and calls it from
+        detachFromParent().  Also, it checks m_page and call
+        willDetachPage() only once, if m_page is available.
+
+        No new tests. Covered by existing suites.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeAndRemoveChild):
+        (WebCore::FrameLoader::detachFromParent):
+        * page/Frame.cpp:
+        (WebCore::Frame::detachFromPage):
+        (WebCore):
+        (WebCore::Frame::willDetachPage):
+        * page/Frame.h:
+        (Frame):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2012-06-01  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Support drawing a pattern with a translation.

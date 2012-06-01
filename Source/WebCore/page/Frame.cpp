@@ -689,18 +689,23 @@ DOMWindow* Frame::domWindow() const
     return m_domWindow.get();
 }
 
-void Frame::willDetachPage()
+void Frame::detachFromPage()
 {
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
+    if (m_page)
+        willDetachPage();
+    m_page = 0;
+}
 
+
+void Frame::willDetachPage()
+{
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->willDetachPage();
 
-    // FIXME: It's unclear as to why this is called more than once, but it is,
-    // so page() could be NULL.
-    if (page() && page()->focusController()->focusedFrame() == this)
+    if (page()->focusController()->focusedFrame() == this)
         page()->focusController()->setFocusedFrame(0);
 
     script()->clearScriptObjects();

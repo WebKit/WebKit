@@ -91,7 +91,6 @@ namespace WebCore {
         void addDestructionObserver(FrameDestructionObserver*);
         void removeDestructionObserver(FrameDestructionObserver*);
 
-        void willDetachPage();
         void detachFromPage();
         void disconnectOwnerElement();
 
@@ -207,6 +206,7 @@ namespace WebCore {
         Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
+        void willDetachPage();
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
@@ -349,11 +349,6 @@ namespace WebCore {
     inline Page* Frame::page() const
     {
         return m_page;
-    }
-
-    inline void Frame::detachFromPage()
-    {
-        m_page = 0;
     }
 
     inline EventHandler* Frame::eventHandler() const
