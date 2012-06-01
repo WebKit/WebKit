@@ -1,3 +1,110 @@
+2012-05-31  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unskip fast/multicol tests.
+
+        Most tests were passing and just needed new baselines. Only skip
+        the few failing ones.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/multicol/block-axis-horizontal-bt-expected.png: Added.
+        * platform/efl/fast/multicol/block-axis-horizontal-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/efl/fast/multicol/block-axis-horizontal-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/block-axis-vertical-lr-expected.png: Added.
+        * platform/efl/fast/multicol/block-axis-vertical-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/block-axis-vertical-rl-expected.png: Added.
+        * platform/efl/fast/multicol/block-axis-vertical-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/client-rects-expected.png: Added.
+        * platform/efl/fast/multicol/client-rects-expected.txt: Added.
+        * platform/efl/fast/multicol/column-count-with-rules-expected.png:
+        * platform/efl/fast/multicol/column-rules-expected.png:
+        * platform/efl/fast/multicol/column-rules-stacking-expected.png:
+        * platform/efl/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/efl/fast/multicol/float-avoidance-expected.png:
+        * platform/efl/fast/multicol/float-multicol-expected.png:
+        * platform/efl/fast/multicol/float-paginate-complex-expected.png:
+        * platform/efl/fast/multicol/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/float-paginate-empty-lines-expected.png:
+        * platform/efl/fast/multicol/float-paginate-expected.png:
+        * platform/efl/fast/multicol/layers-in-multicol-expected.png:
+        * platform/efl/fast/multicol/layers-split-across-columns-expected.png:
+        * platform/efl/fast/multicol/margin-collapse-expected.png:
+        * platform/efl/fast/multicol/max-height-columns-block-expected.png:
+        * platform/efl/fast/multicol/nested-columns-expected.png:
+        * platform/efl/fast/multicol/nested-columns-expected.txt:
+        * platform/efl/fast/multicol/overflow-across-columns-expected.png:
+        * platform/efl/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/efl/fast/multicol/overflow-unsplittable-expected.png:
+        * platform/efl/fast/multicol/paginate-block-replaced-expected.png:
+        * platform/efl/fast/multicol/pagination-h-horizontal-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-h-horizontal-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-h-horizontal-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-h-horizontal-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-h-vertical-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-h-vertical-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-h-vertical-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-h-vertical-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-v-horizontal-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-v-horizontal-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-v-horizontal-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-v-horizontal-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-v-vertical-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-v-vertical-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination-v-vertical-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination-v-vertical-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/positioned-split-expected.png:
+        * platform/efl/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/efl/fast/multicol/positive-leading-expected.png:
+        * platform/efl/fast/multicol/scrolling-overflow-expected.png:
+        * platform/efl/fast/multicol/single-line-expected.png: Added.
+        * platform/efl/fast/multicol/single-line-expected.txt: Added.
+        * platform/efl/fast/multicol/span/anonymous-before-child-parent-crash-expected.png: Added.
+        * platform/efl/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/efl/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/efl/fast/multicol/span/clone-flexbox-expected.txt: Added.
+        * platform/efl/fast/multicol/span/clone-summary-expected.txt: Added.
+        * platform/efl/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/efl/fast/multicol/span/span-as-nested-inline-block-child-expected.png:
+        * platform/efl/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/efl/fast/multicol/table-margin-collapse-expected.png:
+        * platform/efl/fast/multicol/table-vertical-align-expected.png:
+        * platform/efl/fast/multicol/table-vertical-align-expected.txt:
+        * platform/efl/fast/multicol/unsplittable-inline-block-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/column-break-with-balancing-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/column-count-with-rules-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/column-rules-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/float-paginate-complex-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/float-paginate-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/efl/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/efl/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/column-break-with-balancing-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/column-count-with-rules-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/column-rules-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/float-paginate-complex-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/float-paginate-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/efl/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/efl/fast/multicol/vertical-rl/rule-style-expected.txt: Added.
+        * platform/efl/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png:
+        * platform/efl/test_expectations:
+
 2012-05-31  Jessie Berlin  <jberlin@apple.com>
 
         [Win] 4 css3 tests fail

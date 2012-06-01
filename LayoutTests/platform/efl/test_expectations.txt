@@ -706,3 +706,10 @@ BUGWK85977 : fast/css/font-face-download-error.html = TIMEOUT
 
 // Seems to be a bug in the cairo backend.
 BUGWK87985 : fast/canvas/canvas-imageSmoothingEnabled.html = TEXT
+
+// Fails on GTK+ and Qt as well.
+BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE
+
+// These tests do not seem to fail anywhere else.
+BUGWK88030 : fast/multicol/column-break-with-balancing.html = IMAGE
+BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = IMAGE+TEXT

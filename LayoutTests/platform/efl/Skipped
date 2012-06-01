@@ -560,8 +560,6 @@ fast/forms/search-zoomed.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/harness/results.html
 fast/html/tab-order.html
-fast/multicol/client-rects.html
-fast/multicol/single-line.html
 fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
@@ -880,7 +878,6 @@ fast/js/constructor-length.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-image-from-local.html
-fast/multicol
 fast/overflow/overflow-float-stacking.html
 fast/overflow/overflow-stacking.html
 fast/preloader/first-base-tag-scanned-wins.html
@@ -1150,18 +1147,6 @@ editing/spelling/inline_spelling_markers.html
 editing/spelling/spelling.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/js/global-constructors.html
-fast/multicol/block-axis-horizontal-bt.html
-fast/multicol/block-axis-horizontal-tb.html
-fast/multicol/block-axis-vertical-lr.html
-fast/multicol/block-axis-vertical-rl.html
-fast/multicol/pagination-h-horizontal-bt.html
-fast/multicol/pagination-h-horizontal-tb.html
-fast/multicol/pagination-h-vertical-lr.html
-fast/multicol/pagination-h-vertical-rl.html
-fast/multicol/pagination-v-horizontal-bt.html
-fast/multicol/pagination-v-horizontal-tb.html
-fast/multicol/pagination-v-vertical-lr.html
-fast/multicol/pagination-v-vertical-rl.html
 fast/text/unicode-variation-selector.html
 fast/viewport/viewport-126.html
 fast/viewport/viewport-127.html
