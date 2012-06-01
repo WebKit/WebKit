@@ -1,3 +1,17 @@
+2012-06-01  Joe Thomas  <joethomas@motorola.com>
+
+        getComputedStyle for background shorthand property does not return background-origin and background-clip.
+        https://bugs.webkit.org/show_bug.cgi?id=86155
+
+        Reviewed by Tony Chang.
+
+        Added background-origin and background-clip CSS Property values to the background shorthand CSSValueList.
+
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+
 2012-06-01  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Improve handling of legacy viewport meta tags

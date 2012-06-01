@@ -1,3 +1,15 @@
+2012-06-01  Joe Thomas  <joethomas@motorola.com>
+
+        getComputedStyle for background shorthand property does not return background-origin and background-clip.
+        https://bugs.webkit.org/show_bug.cgi?id=86155
+
+        Reviewed by Tony Chang.
+
+        Added background-origin and background-clip CSS Property values to the background shorthand CSSValueList.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getBackgroundShorthandValue):
+
 2012-06-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call clipboard methods directly
