@@ -55,6 +55,10 @@ TEST(WebKit1, StringByEvaluatingJavaScriptFromString)
 
     RetainPtr<WebView> webView (AdoptNS, [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""]);
 
+    // Test a nil string
+    NSString *result = [webView.get() stringByEvaluatingJavaScriptFromString:nil];
+    EXPECT_WK_STREQ(@"", result);
+
     for (id expression in expressions.get()) {
         NSString *expectedResult = [expressions.get() objectForKey:expression];
         NSString *result = [webView.get() stringByEvaluatingJavaScriptFromString:expression];
