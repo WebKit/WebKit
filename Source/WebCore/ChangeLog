@@ -1,5 +1,24 @@
 2012-05-31  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: expose MemoryCache statistics in the inspector protocol
+        https://bugs.webkit.org/show_bug.cgi?id=87984
+
+        Reviewed by Pavel Feldman.
+
+        Added MemoryCache statistics to Memory.getProcessMemoryDistribution command
+        result. Corresponding sector is added to the memory pie-chart.
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::addMemoryBlockFor):
+        (WebCore::memoryCacheInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
+2012-05-31  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: add RenderArena sizes to the memory pie-chart
         https://bugs.webkit.org/show_bug.cgi?id=87971
 

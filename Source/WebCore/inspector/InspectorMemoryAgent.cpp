@@ -43,6 +43,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "MemoryCache.h"
 #include "MemoryUsageSupport.h"
 #include "Node.h"
 #include "Page.h"
@@ -57,12 +58,22 @@ using WebCore::TypeBuilder::Memory::ListenerCount;
 using WebCore::TypeBuilder::Memory::NodeCount;
 using WebCore::TypeBuilder::Memory::StringStatistics;
 
+// Use a type alias instead of 'using' here which would cause a conflict on Mac.
+typedef WebCore::TypeBuilder::Memory::MemoryBlock InspectorMemoryBlock;
+
 namespace WebCore {
 
 namespace MemoryBlockName {
 static const char jsHeapAllocated[] = "JSHeapAllocated";
 static const char jsHeapUsed[] = "JSHeapUsed";
+static const char memoryCache[] = "MemoryCache";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
+
+static const char cachedImages[] = "CachedImages";
+static const char cachedCssStyleSheets[] = "CachedCssStyleSheets";
+static const char cachedScripts[] = "CachedScripts";
+static const char cachedXslStyleSheets[] = "CachedXslStyleSheets";
+static const char cachedFonts[] = "CachedFonts";
 static const char renderTreeUsed[] = "RenderTreeUsed";
 static const char renderTreeAllocated[] = "RenderTreeAllocated";
 }
@@ -317,18 +328,18 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Arr
     strings = counterVisitor.strings();
 }
 
-static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
+static PassRefPtr<InspectorMemoryBlock> jsHeapInfo()
 {
     size_t usedJSHeapSize;
     size_t totalJSHeapSize;
     size_t jsHeapSizeLimit;
     ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
 
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapAllocated = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
+    RefPtr<InspectorMemoryBlock> jsHeapAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
     jsHeapAllocated->setSize(static_cast<int>(totalJSHeapSize));
 
-    RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapUsed = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    RefPtr<InspectorMemoryBlock> jsHeapUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
     jsHeapUsed->setSize(static_cast<int>(usedJSHeapSize));
     children->addItem(jsHeapUsed);
 
@@ -336,15 +347,15 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> jsHeapInfo()
     return jsHeapAllocated.release();
 }
 
-static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeInfo(Page* page)
+static PassRefPtr<InspectorMemoryBlock> renderTreeInfo(Page* page)
 {
     ArenaSize arenaSize = page->renderTreeSize();
 
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeAllocated = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::renderTreeAllocated);
+    RefPtr<InspectorMemoryBlock> renderTreeAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeAllocated);
     renderTreeAllocated->setSize(static_cast<int>(arenaSize.allocated));
 
-    RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
-    RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeUsed = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::renderTreeUsed);
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    RefPtr<InspectorMemoryBlock> renderTreeUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeUsed);
     renderTreeUsed->setSize(static_cast<int>(arenaSize.treeSize));
     children->addItem(renderTreeUsed);
 
@@ -352,16 +363,45 @@ static PassRefPtr<WebCore::TypeBuilder::Memory::MemoryBlock> renderTreeInfo(Page
     return renderTreeAllocated.release();
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<WebCore::TypeBuilder::Memory::MemoryBlock>& processMemory)
+static void addMemoryBlockFor(TypeBuilder::Array<InspectorMemoryBlock>* array, const MemoryCache::TypeStatistic& statistic, const char* name)
+{
+    RefPtr<InspectorMemoryBlock> result = InspectorMemoryBlock::create().setName(name);
+    result->setSize(statistic.size);
+    array->addItem(result);
+}
+
+static PassRefPtr<InspectorMemoryBlock> memoryCacheInfo()
+{
+    MemoryCache::Statistics stats = memoryCache()->getStatistics();
+    int totalSize = stats.images.size +
+                    stats.cssStyleSheets.size +
+                    stats.scripts.size +
+                    stats.xslStyleSheets.size +
+                    stats.fonts.size;
+    RefPtr<InspectorMemoryBlock> memoryCacheStats = InspectorMemoryBlock::create().setName(MemoryBlockName::memoryCache);
+    memoryCacheStats->setSize(totalSize);
+
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    addMemoryBlockFor(children.get(), stats.images, MemoryBlockName::cachedImages);
+    addMemoryBlockFor(children.get(), stats.cssStyleSheets, MemoryBlockName::cachedCssStyleSheets);
+    addMemoryBlockFor(children.get(), stats.scripts, MemoryBlockName::cachedScripts);
+    addMemoryBlockFor(children.get(), stats.xslStyleSheets, MemoryBlockName::cachedXslStyleSheets);
+    addMemoryBlockFor(children.get(), stats.fonts, MemoryBlockName::cachedFonts);
+    memoryCacheStats->setChildren(children);
+    return memoryCacheStats.release();
+}
+
+void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<InspectorMemoryBlock>& processMemory)
 {
     size_t privateBytes = 0;
     size_t sharedBytes = 0;
     MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
-    processMemory = WebCore::TypeBuilder::Memory::MemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
+    processMemory = InspectorMemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
     processMemory->setSize(static_cast<int>(privateBytes));
 
-    RefPtr<TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock> > children = TypeBuilder::Array<WebCore::TypeBuilder::Memory::MemoryBlock>::create();
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     children->addItem(jsHeapInfo());
+    children->addItem(memoryCacheInfo());
     children->addItem(renderTreeInfo(m_page)); // TODO: collect for all pages?
     processMemory->setChildren(children);
 }
