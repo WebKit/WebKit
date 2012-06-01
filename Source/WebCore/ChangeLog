@@ -1,3 +1,27 @@
+2012-06-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87774
+        REGRESSION (r105515): reflection masks are truncated at zoom levels < 1
+        -and corresponding-
+        <rdar://problem/11387506>
+
+        Reviewed by Simon Fraser.
+
+        paintNinePieceImage() expects un-zoomed results from 
+        calculateImageIntrinsicDimensions(). This was previously addressed by having 
+        paintNinePieceImage() divide the effective zoom out of the result from 
+        calculateImageIntrinsicDimensions(). However, that results in buggy behavior for 
+        generated images and images with percentage sizes. In the end it seems best to 
+        just send a parameter to calculateImageIntrinsicDimensions() indicating whether 
+        the caller wants the result to be scaled by the effective zoom when appropriate.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+
 2012-06-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Prepare table collapsed border computation to support mixed directionality on row group

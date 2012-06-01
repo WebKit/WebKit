@@ -1,3 +1,16 @@
+2012-06-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87774
+        REGRESSION (r105515): reflection masks are truncated at zoom levels < 1
+        -and corresponding-
+        <rdar://problem/11387506>
+
+        Reviewed by Simon Fraser.
+
+        * fast/reflections/reflection-with-zoom.html: Added.
+        * platform/mac/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/mac/fast/reflections/reflection-with-zoom-expected.txt: Added.
+
 2012-06-01  Stephen Chenney  <schenney@chromium.org>
 
         Another Chromium test expectation update per the bug 88124.

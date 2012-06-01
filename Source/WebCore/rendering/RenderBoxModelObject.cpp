@@ -977,7 +977,7 @@ static inline IntSize resolveAgainstIntrinsicRatio(const IntSize& size, const Fl
     return IntSize(size.width(), solutionHeight);
 }
 
-IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const IntSize& positioningAreaSize) const
+IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const IntSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot) const
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
     if (image->isGeneratedImage() && image->usesImageContainerSize())
@@ -1001,7 +1001,8 @@ IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* imag
 
     IntSize resolvedSize(intrinsicWidth.isFixed() ? intrinsicWidth.value() : 0, intrinsicHeight.isFixed() ? intrinsicHeight.value() : 0);
     IntSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
-    resolvedSize.scale(style()->effectiveZoom());
+    if (shouldScaleOrNot == ScaleByEffectiveZoom)
+        resolvedSize.scale(style()->effectiveZoom());
     resolvedSize.clampToMinimumSize(minimumSize);
 
     if (!resolvedSize.isEmpty())
@@ -1030,7 +1031,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
     StyleImage* image = fillLayer->image();
     EFillSizeType type = fillLayer->size().type;
 
-    IntSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize);
+    IntSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
     imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
     RenderView* renderView = view();
     switch (type) {
@@ -1241,13 +1242,13 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     LayoutUnit rightWithOutset = rect.maxX() + rightOutset;
     IntRect borderImageRect = pixelSnappedIntRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
 
-    IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size());
+    IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size(), DoNotScaleByEffectiveZoom);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
     styleImage->setContainerSizeForRenderer(this, imageSize, style->effectiveZoom());
 
-    int imageWidth = imageSize.width() / style->effectiveZoom();
-    int imageHeight = imageSize.height() / style->effectiveZoom();
+    int imageWidth = imageSize.width();
+    int imageHeight = imageSize.height();
     RenderView* renderView = view();
 
     float imageScaleFactor = styleImage->imageScaleFactor();
