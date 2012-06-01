@@ -1,3 +1,12 @@
+2012-06-01  Jochen Eisinger  <jochen@chromium.org>
+
+        [watchlist] Add myself to loader and v8 bindings changes
+        https://bugs.webkit.org/show_bug.cgi?id=88112
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-06-01  Jacky Jiang  <zhajiang@rim.com>
 
         Adding Jacky Jiang to committers.py
