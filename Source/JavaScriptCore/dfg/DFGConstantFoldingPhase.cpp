@@ -84,7 +84,7 @@ public:
                     } else {
                         ASSERT(indexInBlock > 0);
                         // Must search for the previous access to this local.
-                        for (BlockIndex subIndexInBlock = indexInBlock - 1; subIndexInBlock--;) {
+                        for (BlockIndex subIndexInBlock = indexInBlock; subIndexInBlock--;) {
                             NodeIndex subNodeIndex = block->at(subIndexInBlock);
                             Node& subNode = m_graph[subNodeIndex];
                             if (!subNode.shouldGenerate())

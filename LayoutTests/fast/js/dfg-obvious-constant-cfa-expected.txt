@@ -1,0 +1,10 @@
+This tests that if the CFA performs constant folding on an obvious set and then get of a captured local, then we don't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is 228300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

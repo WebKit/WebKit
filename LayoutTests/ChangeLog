@@ -1,3 +1,16 @@
+2012-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG constant folding search for the last local access skips the immediately previous local access
+        https://bugs.webkit.org/show_bug.cgi?id=88141
+
+        Reviewed by Michael Saboff.
+
+        * fast/js/dfg-obvious-constant-cfa-expected.txt: Added.
+        * fast/js/dfg-obvious-constant-cfa.html: Added.
+        * fast/js/script-tests/dfg-obvious-constant-cfa.js: Added.
+        (bar.baz):
+        (bar):
+
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r119274.
