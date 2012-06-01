@@ -65,6 +65,12 @@ String::operator QString() const
         return QString(qStringDataPointer);
     }
 #endif
+    if (is8Bit() && !m_impl->has16BitShadow()) {
+        // Asking for characters() of an 8-bit string will make a 16-bit copy internally
+        // in WTF::String. Since we're going to copy the data to QStringData anyways, we
+        // can do the conversion ourselves and save one copy.
+        return QString::fromLatin1(reinterpret_cast<const char*>(characters8()), length());
+    }
 
     return QString(reinterpret_cast<const QChar*>(characters()), length());
 }

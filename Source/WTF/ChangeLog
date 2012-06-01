@@ -1,3 +1,16 @@
+2012-06-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Save one copy when going from 8-bit WTF::String to QString
+
+        Asking for characters() of an 8-bit string will make a 16-bit copy internally
+        in WTF::String. Since we're going to copy the data to QStringData anyways, which
+        is 16-bit, we can do the conversion ourselves and save one copy.
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/qt/StringQt.cpp:
+        (WTF::String::operator QString):
+
 2012-05-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make conversion from QString to WTF::String (and back again) ~free
