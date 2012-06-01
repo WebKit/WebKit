@@ -1,3 +1,9 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo in the expected result for the test added in r119281.119281
+
+        * fast/js/dfg-cse-cfa-discrepancy-expected.txt:
+
 2012-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/cookies/simple-cookies-expired.html and simple-cookies-max-age.html are failing
