@@ -656,9 +656,8 @@ private slots:
 private:
     QString evalJS(const QString& s)
     {
-        // Convert an undefined return variant to the string "undefined"
         QVariant ret = evalJSV(s);
-        if (ret.userType() == QMetaType::Void)
+        if (!ret.isValid())
             return "undefined";
         return ret.toString();
     }
@@ -678,7 +677,6 @@ private:
         // As a special measure, if we get an exception we set the type to 'error'
         // (in ecma, an Error object has typeof object, but qtscript has a convenience function)
         // Similarly, an array is an object, but we'd prefer to have a type of 'array'
-        // Also, consider a QMetaType::Void QVariant to be undefined
         QString escaped = s;
         escaped.replace('\'', "\\'"); // Don't preescape your single quotes!
         QString code("var retvalue; "
@@ -695,7 +693,7 @@ private:
         evalJS(code.arg(escaped));
 
         QVariant ret = evalJSV("retvalue");
-        if (ret.userType() != QMetaType::Void)
+        if (ret.isValid())
             type = evalJS("typevalue");
         else {
             ret = QString("undefined");

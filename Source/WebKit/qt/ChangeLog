@@ -1,5 +1,20 @@
 2012-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] Fix QObject bridge tests in Qt5 after (not so) recent QVariant changes
+        https://bugs.webkit.org/show_bug.cgi?id=88127
+
+        Reviewed by Noam Rosenthal.
+
+        We were checking for invalid QVariants in a very odd way. Since in Qt5 the
+        userType of invalid changed to not be Void, this broke the tests for QtWebKit
+        with Qt5. Replace those checks with QVariant::isValid() calls.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::evalJS):
+        (tst_QObjectBridge::evalJSV):
+
+2012-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] Move QObject bridge related tests from tst_qwebframe to tst_qobjectbridge
         https://bugs.webkit.org/show_bug.cgi?id=88117
 
