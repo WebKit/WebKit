@@ -1,3 +1,22 @@
+2012-06-01  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [cairo] Pixel artifacts can be seen on reflections
+        https://bugs.webkit.org/show_bug.cgi?id=85483
+
+        Antialiased clipping in the simple rectangular clip method
+        leads to edge artifacts when transformations are applied to the layer.
+        Explicitly disabling antialiased clipping for this function solves this issue.
+        Comparing Cairo GraphicsContext to Qt and Skia GC, it seems that these
+        backends do not expect the platform context to clip antialiased in this
+        case either.
+
+        Reviewed by Martin Robinson.
+
+        No new tests, covered by fast/css/transformed-mask.html.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clip):
+
 2012-06-01  Florin Malita  <fmalita@chromium.org>
 
         http://shinydemos.com/clock/ doesn't seem to work

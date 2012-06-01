@@ -6,6 +6,7 @@
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  * Copyright (C) 2010, 2011 Igalia S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2012, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -526,8 +527,16 @@ void GraphicsContext::clip(const FloatRect& rect)
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
+    // The rectangular clip function is traditionally not expected to
+    // antialias. If we don't force antialiased clipping here,
+    // edge fringe artifacts may occur at the layer edges
+    // when a transformation is applied to the GraphicsContext
+    // while drawing the transformed layer.
+    cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
+    cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
+    cairo_set_antialias(cr, savedAntialiasRule);
     m_data->clip(rect);
 }
 
