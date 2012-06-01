@@ -1,3 +1,13 @@
+2012-06-01  Dan Bernstein  <mitz@apple.com>
+
+        Layout not updated after setting -webkit-line-clamp to none
+        https://bugs.webkit.org/show_bug.cgi?id=88049
+
+        Reviewed by Abhishek Arya.
+
+        * fast/flexbox/line-clamp-removed-dynamically-expected.html: Added.
+        * fast/flexbox/line-clamp-removed-dynamically.html: Added.
+
 2012-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing and crashing tests.
