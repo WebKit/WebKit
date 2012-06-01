@@ -1,3 +1,29 @@
+2012-05-31  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Bridge Apps - Apps do not redraw correctly after orientation change
+        https://bugs.webkit.org/show_bug.cgi?id=88033
+
+        Reviewed by Rob Buis.
+        Patch by Jacky Jiang <zhajiang@rim.com>
+
+        PR: 142961
+        When bridge apps were in carousel mode, the backing store was inactive
+        as its memory had been released. When we rotated the device, we would
+        call WebPagPrivate:setViewportSize and resume screen and backing store
+        to render and blit visible contents. As backing store was inactive and
+        the window usage was GLES2Usage, we were neither doing backing store
+        rendering nor direct rendering. Therefore, we drew layers directly
+        based on the invalid texture contents when blitting contents if
+        accelerated compositing was enabled.
+        This patch forces compositing mode to let the accelerated compositing
+        layer take care of the rendering which can update texture contents
+        before drawing when backing store is inactive and is openGL compositing.
+
+        Reviewed internally by George Staikos and Arvid Nilsson.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

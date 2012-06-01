@@ -300,8 +300,17 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
     m_suspendBackingStoreUpdates = false;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (op != BackingStore::None)
+    if (op != BackingStore::None) {
+        if (isOpenGLCompositing() && !isActive()) {
+            m_webPage->d->setCompositorDrawsRootLayer(true);
+            m_webPage->d->setNeedsOneShotDrawingSynchronization();
+            m_suspendScreenUpdates = false;
+            BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+            return;
+        }
+
         m_webPage->d->setNeedsOneShotDrawingSynchronization();
+    }
 #endif
 
     // For the direct rendering case, there is no such operation as blit,
