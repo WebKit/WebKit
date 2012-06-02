@@ -1,5 +1,25 @@
 2012-06-02  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] browser video player fullscreen mode (portrait) - out of screen/focus - cannot navigate or use the buttons on the screen (PART III)
+        https://bugs.webkit.org/show_bug.cgi?id=88019
+
+        Reviewed by George Staikos.
+
+        Enter 'pure-with-mouse-conversion' mode when going fullscreen, so
+        that it prevents user from scrolling the WebPage, pinch zooming,
+        touch-and-hold, enter selection mode, etc ...
+
+        Internally reviewed by Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2012-06-02  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] browser video player fullscreen mode (portrait) - out of screen/focus - cannot navigate or use the buttons on the screen (PART II)
         https://bugs.webkit.org/show_bug.cgi?id=88019
 

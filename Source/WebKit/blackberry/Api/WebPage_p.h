@@ -491,6 +491,9 @@ public:
 #endif
 
 #if ENABLE(FULLSCREEN_API)
+#if ENABLE(EVENT_MODE_METATAGS)
+    WebCore::TouchEventMode m_touchEventModePriorGoingFullScreen;
+#endif
     int m_xScrollOffsetPriorGoingFullScreen;
 #endif
 

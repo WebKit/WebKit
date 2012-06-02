@@ -357,6 +357,9 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #if ENABLE(EVENT_MODE_METATAGS)
     , m_cursorEventMode(ProcessedCursorEvents)
     , m_touchEventMode(ProcessedTouchEvents)
+#if ENABLE(FULLSCREEN_API)
+    , m_touchEventModePriorGoingFullScreen(ProcessedTouchEvents)
+#endif
 #endif
 #if ENABLE(FULLSCREEN_API)
     , m_xScrollOffsetPriorGoingFullScreen(-1)
@@ -6095,6 +6098,10 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         m_xScrollOffsetPriorGoingFullScreen = scrollPosition.x();
         m_mainFrame->view()->setScrollPosition(WebCore::IntPoint(0, scrollPosition.y()));
 
+#if ENABLE(EVENT_MODE_METATAGS)
+        m_touchEventModePriorGoingFullScreen = m_touchEventMode;
+        didReceiveTouchEventMode(PureTouchEventsWithMouseConversion);
+#endif
         // No fullscreen video widget has been made available by the Browser
         // chrome, or this is not a video element. The webkitRequestFullScreen
         // Javascript call is often made on a div element.
@@ -6122,6 +6129,10 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
             WebCore::IntPoint(m_xScrollOffsetPriorGoingFullScreen, scrollPosition.y()));
         m_xScrollOffsetPriorGoingFullScreen = -1;
 
+#if ENABLE(EVENT_MODE_METATAGS)
+        didReceiveTouchEventMode(m_touchEventModePriorGoingFullScreen);
+        m_touchEventModePriorGoingFullScreen = ProcessedTouchEvents;
+#endif
         // This is where we would restore the browser's chrome
         // if hidden above.
         client()->fullscreenStop();
