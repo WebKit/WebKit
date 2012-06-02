@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,9 @@ void Phase::beginPhase()
     dataLog("Graph before %s:\n", m_name);
     m_graph.dump();
 }
+#endif
 
+#if DFG_ENABLE(PER_PHASE_VALIDATION)
 void Phase::endPhase()
 {
     validate(m_graph, DumpGraph);

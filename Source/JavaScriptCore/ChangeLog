@@ -1,3 +1,134 @@
+2012-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE should be able to eliminate unnecessary flushes of arguments and captured variables
+        https://bugs.webkit.org/show_bug.cgi?id=87929
+
+        Reviewed by Geoffrey Garen.
+        
+        Slight speed-up on V8. Big win (up to 50%) on programs that inline very small functions.
+        
+        This required a bunch of changes:
+        
+        - The obvious change is making CSE essentially ignore whether or not the set of
+          operations between the Flush and the SetLocal can exit, and instead focus on whether or
+          not that set of operations can clobber the world or access local variables. This code
+          is now refactored to return a set of flags indicating any of these events, and the CSE
+          decides what to do based on those flags. If the set of operations is non-clobbering
+          and non-accessing, then the Flush is turned into a Phantom on the child of the
+          SetLocal. This expands the liveness of the relevant variable but virtually guarantees
+          that it will be register allocated and not flushed to the stack. So, yeah, this patch
+          is a lot of work to save a few stores to the stack.
+        
+        - Previously, CheckArgumentsNotCreated was optimized "lazily" in that you only knew if
+          it was a no-op if you were holding onto a CFA abstract state. But this would make the
+          CSE act pessimistically, since it doesn't use the CFA. Hence, this patch changes the
+          constant folding phase into something more broad; it now fixes up
+          CheckArgumentsNotCreated nodes by turning them into phantoms if it knows that they are
+          no-ops.
+        
+        - Arguments simplification was previously relying on this very strange PhantomArguments
+          node, which had two different meanings: for normal execution it meant the empty value
+          but for OSR exit it meant that the arguments should be reified. This produces problems
+          when set SetLocals to the captured arguments registers are CSE'd away, since we'd be
+          triggering reification of arguments without having initialized the arguments registers
+          to empty. The cleanest solution was to fix PhantomArguments to have one meaning:
+          namely, arguments reification on OSR exit. Hence, this patch changes arguments
+          simplification to change SetLocal of CreateArguments on the arguments registers to be
+          a SetLocal of Empty.
+        
+        - Argument value recoveries were previously derived from the value source of the
+          arguments at the InlineStart. But that relies on all SetLocals to arguments having
+          been flushed. It's possible that we could have elided the SetLocal to the arguments
+          at the callsite because there were subsequent SetLocals to the arguments inside of the
+          callee, in which case the InlineStart would get the wrong information. Hence, this
+          patch changes argument value recovery computation to operate over the ArgumentPositions
+          directly.
+        
+        - But that doesn't actually work, because previously, there was no way to link an
+          InlineStart back to the corresponding ArgumentPositions, at least not without some
+          ugliness. So this patch instates the rule that the m_argumentPositions vector consists
+          of disjoint subsequences such that each subsequence corresponds to an inline callsite
+          and can be identified by its first index, and within each subsequence are the
+          ArgumentPositions of all of the arguments ordered by argument index. This required
+          flipping the order in which ArgumentPositions are added to the vector, and giving
+          InlineStart an operand that indicates the start of that inline callsite's
+          ArgumentPosition subsequence.
+        
+        - This patch also revealed a nasty bug in the reification of arguments in inline call
+          frames on OSR exit. Since the reification was happening after the values of virtual
+          registers were recovered, the value recoveries of the inline arguments were wrong.
+          Hence using operationCreateInlinedArguments is wrong. For example a value recovery
+          might say that you have to box a double, but if we had already boxed it then boxing
+          it a second time will result in garbage. The specific case of this bug was this patch
+          uncovered was that now it is possible for an inline call frame to not have any valid
+          value recoveries for any inline arguments, if the optimization elides all argument
+          flushes, while at the same time optimizing away arguments creation. Then OSR exit
+          would try to recover the arguments using the inline call frame, which had bogus
+          information, and humorous crashes would ensue. This patch fixes this issue by moving
+          arguments reification to after call frame reification, so that arguments reification
+          can always use operationCreateArguments instead of operationCreateInlinedArguments.
+        
+        - This patch may turn a Flush into a Phantom. That's kind of the whole point. But that
+          broke forward speculation checks, which knew to look for a Flush prior to a SetLocal
+          but didn't know that there could alternatively be a Phantom in place of the Flush.
+          This patch fixes that by augmenting the forward speculation check logic.
+        
+        - Finally, in the process of having fun with all of the above, I realized that my DFG
+          validation was not actually running on every phase like I had originally designed it
+          to. In fact it was only running just after bytecode parsing. I initially tried to
+          make it run in every phase but found that this causes some tests to timeout
+          (specifically the evil fuzzing ones), so I decided on a compromise where: (i) in
+          release mode validation never runs, (ii) in debug mode validation will run just
+          after parsing and just before the backend, and (iii) it's possible with a simple
+          switch to enable validation to run on every phase.
+        
+        Luckily all of the above issues were already covered by the 77 or so DFG-specific
+        layout tests. Hence, this patch does not introduce any new tests despite being so
+        meaty.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::prediction):
+        (JSC::DFG::ArgumentPosition::doubleFormatState):
+        (JSC::DFG::ArgumentPosition::shouldUseDoubleFormat):
+        (ArgumentPosition):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::SetLocalStoreEliminationResult::SetLocalStoreEliminationResult):
+        (SetLocalStoreEliminationResult):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::hasArgumentPositionStart):
+        (JSC::DFG::Node::argumentPositionStart):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPhase.cpp:
+        (DFG):
+        * dfg/DFGPhase.h:
+        (Phase):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         DOM string cache should hash pointers, not characters

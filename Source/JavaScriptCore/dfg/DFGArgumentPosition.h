@@ -62,6 +62,13 @@ public:
         return changed;
     }
     
+    PredictedType prediction() const { return m_prediction; }
+    DoubleFormatState doubleFormatState() const { return m_doubleFormatState; }
+    bool shouldUseDoubleFormat() const
+    {
+        return doubleFormatState() == UsingDoubleFormat;
+    }
+    
 private:
     PredictedType m_prediction;
     DoubleFormatState m_doubleFormatState;

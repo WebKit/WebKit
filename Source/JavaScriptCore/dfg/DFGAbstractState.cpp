@@ -1213,10 +1213,13 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
 
     case CheckArgumentsNotCreated:
-        node.setCanExit(
-            !isEmptyPrediction(
+        if (isEmptyPrediction(
                 m_variables.operand(
-                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type));
+                    m_graph.argumentsRegisterFor(node.codeOrigin)).m_type)) {
+            node.setCanExit(false);
+            m_foundConstants = true;
+        } else
+            node.setCanExit(true);
         break;
         
     case GetMyArgumentsLength:

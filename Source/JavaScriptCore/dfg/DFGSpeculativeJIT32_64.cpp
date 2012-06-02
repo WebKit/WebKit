@@ -1848,7 +1848,13 @@ void SpeculativeJIT::compile(Node& node)
 
     switch (op) {
     case JSConstant:
+        initConstantInfo(m_compileIndex);
+        break;
+
     case PhantomArguments:
+        // This should never be must-generate.
+        ASSERT_NOT_REACHED();
+        // But as a release-mode fall-back make it the empty value.
         initConstantInfo(m_compileIndex);
         break;
 
@@ -3858,16 +3864,15 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckArgumentsNotCreated: {
-        if (!isEmptyPrediction(
-                m_state.variables().operand(
-                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
-            speculationCheck(
-                Uncountable, JSValueRegs(), NoNode,
-                m_jit.branch32(
-                    JITCompiler::NotEqual,
-                    JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
-                    TrustedImm32(JSValue::EmptyValueTag)));
-        }
+        ASSERT(!isEmptyPrediction(
+            m_state.variables().operand(
+                m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type));
+        speculationCheck(
+            Uncountable, JSValueRegs(), NoNode,
+            m_jit.branch32(
+                JITCompiler::NotEqual,
+                JITCompiler::tagFor(m_jit.argumentsRegisterFor(node.codeOrigin)),
+                TrustedImm32(JSValue::EmptyValueTag)));
         noResult(m_compileIndex);
         break;
     }

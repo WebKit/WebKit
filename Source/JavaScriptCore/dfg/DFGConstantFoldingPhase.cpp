@@ -60,9 +60,35 @@ public:
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 if (!state.isValid())
                     break;
-                state.execute(indexInBlock);
                 NodeIndex nodeIndex = block->at(indexInBlock);
                 Node& node = m_graph[nodeIndex];
+                
+                bool eliminated = false;
+                    
+                switch (node.op()) {
+                case CheckArgumentsNotCreated: {
+                    if (!isEmptyPrediction(
+                            state.variables().operand(
+                                m_graph.argumentsRegisterFor(node.codeOrigin)).m_type))
+                        break;
+                    ASSERT(node.refCount() == 1);
+                    node.setOpAndDefaultFlags(Phantom);
+                    eliminated = true;
+                    break;
+                }
+                    
+                // FIXME: This would be a great place to remove CheckStructure's.
+                    
+                default:
+                    break;
+                }
+                
+                if (eliminated) {
+                    changed = true;
+                    continue;
+                }
+                
+                state.execute(indexInBlock);
                 if (!node.shouldGenerate()
                     || m_graph.clobbersWorld(node)
                     || node.hasConstant())

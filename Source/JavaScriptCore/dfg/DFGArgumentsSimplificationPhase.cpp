@@ -398,10 +398,25 @@ public:
                     if (source.op() != CreateArguments)
                         break;
                     
+                    if (m_createsArguments.contains(source.codeOrigin.inlineCallFrame))
+                        break;
+                    
                     VariableAccessData* variableAccessData = node.variableAccessData();
                     
-                    if (variableAccessData->isCaptured())
+                    if (variableAccessData->isCaptured()) {
+                        ASSERT(m_graph.argumentsRegisterFor(node.codeOrigin) == variableAccessData->local()
+                               || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node.codeOrigin)) == variableAccessData->local());
+                        // The child of this store should really be the empty value.
+                        Node emptyJSValue(JSConstant, node.codeOrigin, OpInfo(codeBlock()->addOrFindConstant(JSValue())));
+                        emptyJSValue.ref();
+                        NodeIndex emptyJSValueIndex = m_graph.size();
+                        m_graph.deref(node.child1());
+                        node.children.child1() = Edge(emptyJSValueIndex);
+                        m_graph.append(emptyJSValue);
+                        insertionSet.append(indexInBlock, emptyJSValueIndex);
+                        changed = true;
                         break;
+                    }
                     
                     // If this is a store into a VariableAccessData* that is marked as
                     // arguments aliasing for an InlineCallFrame* that does not create
@@ -410,11 +425,8 @@ public:
                     // things. Note also that the SetLocal should become dead as soon as
                     // we replace all uses of this variable with GetMyArgumentsLength and
                     // GetMyArgumentByVal.
-                    if (m_argumentsAliasing.find(variableAccessData)->second.isValid()
-                        && !m_createsArguments.contains(source.codeOrigin.inlineCallFrame)) {
-                        changed |= variableAccessData->mergeIsArgumentsAlias(true);
-                        break;
-                    }
+                    ASSERT(m_argumentsAliasing.find(variableAccessData)->second.isValid());
+                    changed |= variableAccessData->mergeIsArgumentsAlias(true);
                     break;
                 }
                     

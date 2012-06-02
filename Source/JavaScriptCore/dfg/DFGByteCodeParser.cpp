@@ -1270,6 +1270,8 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         for (size_t i = 0; i < m_graph.m_blocks.size(); ++i)
             m_graph.m_blocks[i]->ensureLocals(newNumLocals);
     }
+    
+    size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
     InlineStackEntry inlineStackEntry(
         this, codeBlock, profiledBlock, m_graph.m_blocks.size() - 1,
@@ -1284,7 +1286,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     m_currentIndex = 0;
     m_currentProfilingIndex = 0;
 
-    addToGraph(InlineStart);
+    addToGraph(InlineStart, OpInfo(argumentPositionStart));
     
     parseCodeBlock();
     
@@ -2843,7 +2845,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     , m_caller(byteCodeParser->m_inlineStackTop)
 {
     m_argumentPositions.resize(argumentCountIncludingThis);
-    for (unsigned i = argumentCountIncludingThis; i--;) {
+    for (int i = 0; i < argumentCountIncludingThis; ++i) {
         byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
         ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
         m_argumentPositions[i] = argumentPosition;

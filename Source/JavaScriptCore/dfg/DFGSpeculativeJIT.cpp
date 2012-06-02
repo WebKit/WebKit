@@ -1040,8 +1040,29 @@ void SpeculativeJIT::compile(BasicBlock& block)
             case InlineStart: {
                 InlineCallFrame* inlineCallFrame = node.codeOrigin.inlineCallFrame;
                 int argumentCountIncludingThis = inlineCallFrame->arguments.size();
+                unsigned argumentPositionStart = node.argumentPositionStart();
+                bool argumentsAreCaptured =
+                    baselineCodeBlockForInlineCallFrame(inlineCallFrame)->argumentsAreCaptured();
                 for (int i = 0; i < argumentCountIncludingThis; ++i) {
-                    ValueRecovery recovery = computeValueRecoveryFor(m_variables[inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(i)]);
+                    ValueRecovery recovery;
+                    if (argumentsAreCaptured)
+                        recovery = ValueRecovery::alreadyInRegisterFile();
+                    else {
+                        ArgumentPosition& argumentPosition =
+                            m_jit.graph().m_argumentPositions[argumentPositionStart + i];
+                        ValueSource valueSource;
+                        if (argumentPosition.shouldUseDoubleFormat())
+                            valueSource = ValueSource(DoubleInRegisterFile);
+                        else if (isInt32Prediction(argumentPosition.prediction()))
+                            valueSource = ValueSource(Int32InRegisterFile);
+                        else if (isArrayPrediction(argumentPosition.prediction()))
+                            valueSource = ValueSource(CellInRegisterFile);
+                        else if (isBooleanPrediction(argumentPosition.prediction()))
+                            valueSource = ValueSource(BooleanInRegisterFile);
+                        else
+                            valueSource = ValueSource(ValueInRegisterFile);
+                        recovery = computeValueRecoveryFor(valueSource);
+                    }
                     // The recovery should refer either to something that has already been
                     // stored into the register file at the right place, or to a constant,
                     // since the Arguments code isn't smart enough to handle anything else.
@@ -1051,7 +1072,6 @@ void SpeculativeJIT::compile(BasicBlock& block)
                     dataLog("\nRecovery for argument %d: ", i);
                     recovery.dump(WTF::dataFile());
 #endif
-                    ASSERT(!i || (recovery.isAlreadyInRegisterFile() || recovery.isConstant()));
                     inlineCallFrame->arguments[i] = recovery;
                 }
                 break;

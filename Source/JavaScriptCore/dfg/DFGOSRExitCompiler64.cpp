@@ -511,58 +511,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    // 13) Create arguments if necessary and place them into the appropriate aliased
-    //     registers.
-    
-    if (haveArguments) {
-        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
-            const ValueRecovery& recovery = exit.valueRecovery(index);
-            if (recovery.technique() != ArgumentsThatWereNotCreated)
-                continue;
-            int operand = exit.operandForIndex(index);
-            // Find the right inline call frame.
-            InlineCallFrame* inlineCallFrame = 0;
-            for (InlineCallFrame* current = exit.m_codeOrigin.inlineCallFrame;
-                 current;
-                 current = current->caller.inlineCallFrame) {
-                if (current->stackOffset <= operand) {
-                    inlineCallFrame = current;
-                    break;
-                }
-            }
-            int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
-            
-            m_jit.loadPtr(AssemblyHelpers::addressFor(argumentsRegister), GPRInfo::regT0);
-            AssemblyHelpers::Jump haveArguments = m_jit.branchTestPtr(
-                AssemblyHelpers::NonZero, GPRInfo::regT0);
-            
-            if (inlineCallFrame) {
-                m_jit.setupArgumentsWithExecState(
-                    AssemblyHelpers::TrustedImmPtr(inlineCallFrame));
-                m_jit.move(
-                    AssemblyHelpers::TrustedImmPtr(
-                        bitwise_cast<void*>(operationCreateInlinedArguments)),
-                    GPRInfo::nonArgGPR0);
-            } else {
-                m_jit.setupArgumentsExecState();
-                m_jit.move(
-                    AssemblyHelpers::TrustedImmPtr(
-                        bitwise_cast<void*>(operationCreateArguments)),
-                    GPRInfo::nonArgGPR0);
-            }
-            m_jit.call(GPRInfo::nonArgGPR0);
-            m_jit.storePtr(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
-            m_jit.storePtr(
-                GPRInfo::returnValueGPR,
-                AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
-            m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
-            
-            haveArguments.link(&m_jit);
-            m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-        }
-    }
-    
-    // 14) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    // 13) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
     //     that all new calls into this code will go to the new JIT, so the execute
     //     counter only affects call frames that performed OSR exit and call frames
     //     that were still executing the old JIT at the time of another call frame's
@@ -600,12 +549,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     
     handleExitCounts(exit);
     
-    // 15) Load the result of the last bytecode operation into regT0.
-    
-    if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
-        m_jit.loadPtr(AssemblyHelpers::addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
-    
-    // 16) Fix call frame(s).
+    // 14) Reify inlined call frames.
     
     ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
     m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
@@ -638,10 +582,63 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
     }
     
+    // 15) Create arguments if necessary and place them into the appropriate aliased
+    //     registers.
+    
+    if (haveArguments) {
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() != ArgumentsThatWereNotCreated)
+                continue;
+            int operand = exit.operandForIndex(index);
+            // Find the right inline call frame.
+            InlineCallFrame* inlineCallFrame = 0;
+            for (InlineCallFrame* current = exit.m_codeOrigin.inlineCallFrame;
+                 current;
+                 current = current->caller.inlineCallFrame) {
+                if (current->stackOffset <= operand) {
+                    inlineCallFrame = current;
+                    break;
+                }
+            }
+            int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
+            
+            m_jit.loadPtr(AssemblyHelpers::addressFor(argumentsRegister), GPRInfo::regT0);
+            AssemblyHelpers::Jump haveArguments = m_jit.branchTestPtr(
+                AssemblyHelpers::NonZero, GPRInfo::regT0);
+            
+            if (inlineCallFrame) {
+                m_jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT0);
+                m_jit.setupArguments(GPRInfo::regT0);
+            } else
+                m_jit.setupArgumentsExecState();
+            m_jit.move(
+                AssemblyHelpers::TrustedImmPtr(
+                    bitwise_cast<void*>(operationCreateArguments)),
+                GPRInfo::nonArgGPR0);
+            m_jit.call(GPRInfo::nonArgGPR0);
+            m_jit.storePtr(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
+            m_jit.storePtr(
+                GPRInfo::returnValueGPR,
+                AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
+            m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
+            
+            haveArguments.link(&m_jit);
+            m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+        }
+    }
+    
+    // 16) Load the result of the last bytecode operation into regT0.
+    
+    if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
+        m_jit.loadPtr(AssemblyHelpers::addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
+    
+    // 17) Adjust the call frame pointer.
+    
     if (exit.m_codeOrigin.inlineCallFrame)
         m_jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
     
-    // 17) Jump into the corresponding baseline JIT code.
+    // 18) Jump into the corresponding baseline JIT code.
     
     CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlock);

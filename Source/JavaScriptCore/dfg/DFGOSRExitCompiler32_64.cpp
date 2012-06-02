@@ -533,7 +533,81 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    // 11) Create arguments if necessary and place them into the appropriate aliased
+    // 12) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    //     that all new calls into this code will go to the new JIT, so the execute
+    //     counter only affects call frames that performed OSR exit and call frames
+    //     that were still executing the old JIT at the time of another call frame's
+    //     OSR exit. We want to ensure that the following is true:
+    //
+    //     (a) Code the performs an OSR exit gets a chance to reenter optimized
+    //         code eventually, since optimized code is faster. But we don't
+    //         want to do such reentery too aggressively (see (c) below).
+    //
+    //     (b) If there is code on the call stack that is still running the old
+    //         JIT's code and has never OSR'd, then it should get a chance to
+    //         perform OSR entry despite the fact that we've exited.
+    //
+    //     (c) Code the performs an OSR exit should not immediately retry OSR
+    //         entry, since both forms of OSR are expensive. OSR entry is
+    //         particularly expensive.
+    //
+    //     (d) Frequent OSR failures, even those that do not result in the code
+    //         running in a hot loop, result in recompilation getting triggered.
+    //
+    //     To ensure (c), we'd like to set the execute counter to
+    //     counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
+    //     (a) and (b), since then every OSR exit would delay the opportunity for
+    //     every call frame to perform OSR entry. Essentially, if OSR exit happens
+    //     frequently and the function has few loops, then the counter will never
+    //     become non-negative and OSR entry will never be triggered. OSR entry
+    //     will only happen if a loop gets hot in the old JIT, which does a pretty
+    //     good job of ensuring (a) and (b). But that doesn't take care of (d),
+    //     since each speculation failure would reset the execute counter.
+    //     So we check here if the number of speculation failures is significantly
+    //     larger than the number of successes (we want 90% success rate), and if
+    //     there have been a large enough number of failures. If so, we set the
+    //     counter to 0; otherwise we set the counter to
+    //     counterValueForOptimizeAfterWarmUp().
+    
+    handleExitCounts(exit);
+    
+    // 13) Reify inlined call frames.
+    
+    ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
+    m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
+    
+    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(codeOrigin);
+        CodeBlock* baselineCodeBlockForCaller = m_jit.baselineCodeBlockFor(inlineCallFrame->caller);
+        Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlockForCaller);
+        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
+        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), returnBytecodeIndex);
+        
+        ASSERT(mapping);
+        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
+        
+        void* jumpTarget = baselineCodeBlockForCaller->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
+
+        GPRReg callerFrameGPR;
+        if (inlineCallFrame->caller.inlineCallFrame) {
+            m_jit.add32(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
+            callerFrameGPR = GPRInfo::regT3;
+        } else
+            callerFrameGPR = GPRInfo::callFrameRegister;
+        
+        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CodeBlock)));
+        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
+        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee->scope()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
+        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
+        m_jit.storePtr(callerFrameGPR, AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
+        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
+        m_jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
+        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
+        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
+    }
+    
+    // 14) Create arguments if necessary and place them into the appropriate aliased
     //     registers.
     
     if (haveArguments) {
@@ -597,91 +671,19 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    // 12) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
-    //     that all new calls into this code will go to the new JIT, so the execute
-    //     counter only affects call frames that performed OSR exit and call frames
-    //     that were still executing the old JIT at the time of another call frame's
-    //     OSR exit. We want to ensure that the following is true:
-    //
-    //     (a) Code the performs an OSR exit gets a chance to reenter optimized
-    //         code eventually, since optimized code is faster. But we don't
-    //         want to do such reentery too aggressively (see (c) below).
-    //
-    //     (b) If there is code on the call stack that is still running the old
-    //         JIT's code and has never OSR'd, then it should get a chance to
-    //         perform OSR entry despite the fact that we've exited.
-    //
-    //     (c) Code the performs an OSR exit should not immediately retry OSR
-    //         entry, since both forms of OSR are expensive. OSR entry is
-    //         particularly expensive.
-    //
-    //     (d) Frequent OSR failures, even those that do not result in the code
-    //         running in a hot loop, result in recompilation getting triggered.
-    //
-    //     To ensure (c), we'd like to set the execute counter to
-    //     counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
-    //     (a) and (b), since then every OSR exit would delay the opportunity for
-    //     every call frame to perform OSR entry. Essentially, if OSR exit happens
-    //     frequently and the function has few loops, then the counter will never
-    //     become non-negative and OSR entry will never be triggered. OSR entry
-    //     will only happen if a loop gets hot in the old JIT, which does a pretty
-    //     good job of ensuring (a) and (b). But that doesn't take care of (d),
-    //     since each speculation failure would reset the execute counter.
-    //     So we check here if the number of speculation failures is significantly
-    //     larger than the number of successes (we want 90% success rate), and if
-    //     there have been a large enough number of failures. If so, we set the
-    //     counter to 0; otherwise we set the counter to
-    //     counterValueForOptimizeAfterWarmUp().
-    
-    handleExitCounts(exit);
-    
-    // 13) Load the result of the last bytecode operation into regT0.
+    // 15) Load the result of the last bytecode operation into regT0.
     
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max()) {
         m_jit.load32(AssemblyHelpers::payloadFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
         m_jit.load32(AssemblyHelpers::tagFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister2);
     }
     
-    // 14) Fix call frame (s).
-    
-    ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
-    m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
-    
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
-        CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(codeOrigin);
-        CodeBlock* baselineCodeBlockForCaller = m_jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlockForCaller);
-        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
-        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), returnBytecodeIndex);
-        
-        ASSERT(mapping);
-        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
-        
-        void* jumpTarget = baselineCodeBlockForCaller->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
-
-        GPRReg callerFrameGPR;
-        if (inlineCallFrame->caller.inlineCallFrame) {
-            m_jit.add32(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
-            callerFrameGPR = GPRInfo::regT3;
-        } else
-            callerFrameGPR = GPRInfo::callFrameRegister;
-        
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CodeBlock)));
-        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee->scope()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ScopeChain)));
-        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
-        m_jit.storePtr(callerFrameGPR, AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::CallerFrame)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ReturnPC)));
-        m_jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::ArgumentCount)));
-        m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + RegisterFile::Callee)));
-    }
+    // 16) Adjust the call frame pointer.
     
     if (exit.m_codeOrigin.inlineCallFrame)
         m_jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
-    // 15) Jump into the corresponding baseline JIT code.
+    // 17) Jump into the corresponding baseline JIT code.
     
     CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlock);

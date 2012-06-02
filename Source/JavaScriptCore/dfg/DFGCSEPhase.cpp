@@ -619,9 +619,22 @@ private:
         return NoNode;
     }
     
-    // This returns the Flush node that is keeping a SetLocal alive.
-    NodeIndex setLocalStoreElimination(VirtualRegister local, NodeIndex expectedNodeIndex)
+    struct SetLocalStoreEliminationResult {
+        SetLocalStoreEliminationResult()
+            : mayBeAccessed(false)
+            , mayExit(false)
+            , mayClobberWorld(false)
+        {
+        }
+        
+        bool mayBeAccessed;
+        bool mayExit;
+        bool mayClobberWorld;
+    };
+    SetLocalStoreEliminationResult setLocalStoreElimination(
+        VirtualRegister local, NodeIndex expectedNodeIndex)
     {
+        SetLocalStoreEliminationResult result;
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
@@ -631,46 +644,58 @@ private:
             case GetLocal:
             case Flush:
                 if (node.local() == local)
-                    return NoNode;
+                    result.mayBeAccessed = true;
                 break;
                 
             case GetLocalUnlinked:
                 if (node.unlinkedLocal() == local)
-                    return NoNode;
+                    result.mayBeAccessed = true;
                 break;
                 
             case SetLocal: {
                 if (node.local() != local)
                     break;
                 if (index != expectedNodeIndex)
-                    return NoNode;
+                    result.mayBeAccessed = true;
                 if (m_graph[index].refCount() > 1)
-                    return NoNode;
-                return index;
+                    result.mayBeAccessed = true;
+                return result;
             }
                 
             case GetScopeChain:
                 if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
-                    return NoNode;
+                    result.mayBeAccessed = true;
                 break;
                 
+            case CheckArgumentsNotCreated:
+            case GetMyArgumentsLength:
+            case GetMyArgumentsLengthSafe:
+            case GetMyArgumentByVal:
+            case GetMyArgumentByValSafe:
+                if (m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin) == local)
+                    result.mayBeAccessed = true;
+                break;
+                
+            case CreateArguments:
             case TearOffActivation:
             case TearOffArguments:
                 // If an activation is being torn off then it means that captured variables
                 // are live. We could be clever here and check if the local qualifies as an
                 // argument register. But that seems like it would buy us very little since
                 // any kind of tear offs are rare to begin with.
-                return NoNode;
+                result.mayBeAccessed = true;
+                break;
                 
             default:
-                if (m_graph.clobbersWorld(index))
-                    return NoNode;
                 break;
             }
-            if (node.canExit())
-                return NoNode;
+            result.mayExit |= node.canExit();
+            result.mayClobberWorld |= m_graph.clobbersWorld(index);
         }
-        return NoNode;
+        ASSERT_NOT_REACHED();
+        // Be safe in release mode.
+        result.mayBeAccessed = true;
+        return result;
     }
     
     void performSubstitution(Edge& child, bool addRef = true)
@@ -861,16 +886,22 @@ private:
             if (m_fixpointState == FixpointNotConverged)
                 break;
             VariableAccessData* variableAccessData = node.variableAccessData();
-            if (!variableAccessData->isCaptured())
-                break;
             VirtualRegister local = variableAccessData->local();
-            NodeIndex replacementIndex = setLocalStoreElimination(local, node.child1().index());
-            if (replacementIndex == NoNode)
+            Node& replacement = m_graph[node.child1()];
+            if (replacement.op() != SetLocal)
                 break;
-            Node& replacement = m_graph[replacementIndex];
+            // FIXME: We should be able to remove SetLocals that can exit; we just need
+            // to replace them with appropriate type checks.
+            if (replacement.canExit())
+                break;
+            SetLocalStoreEliminationResult result =
+                setLocalStoreElimination(local, node.child1().index());
+            if (result.mayBeAccessed || result.mayClobberWorld)
+                break;
             ASSERT(replacement.op() == SetLocal);
             ASSERT(replacement.refCount() == 1);
             ASSERT(replacement.shouldGenerate());
+            // FIXME: Investigate using mayExit as a further optimization.
             node.setOpAndDefaultFlags(Phantom);
             NodeIndex dataNodeIndex = replacement.child1().index();
             ASSERT(m_graph[dataNodeIndex].hasResult());

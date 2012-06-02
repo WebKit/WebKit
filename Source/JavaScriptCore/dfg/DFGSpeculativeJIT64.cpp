@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1924,7 +1924,13 @@ void SpeculativeJIT::compile(Node& node)
 
     switch (op) {
     case JSConstant:
+        initConstantInfo(m_compileIndex);
+        break;
+
     case PhantomArguments:
+        // This should never be must-generate.
+        ASSERT_NOT_REACHED();
+        // But as a release-mode fall-back make it the empty value.
         initConstantInfo(m_compileIndex);
         break;
 
@@ -4032,16 +4038,15 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckArgumentsNotCreated: {
-        if (!isEmptyPrediction(
-                m_state.variables().operand(
-                    m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type)) {
-            speculationCheck(
-                ArgumentsEscaped, JSValueRegs(), NoNode,
-                m_jit.branchTestPtr(
-                    JITCompiler::NonZero,
-                    JITCompiler::addressFor(
-                        m_jit.argumentsRegisterFor(node.codeOrigin))));
-        }
+        ASSERT(!isEmptyPrediction(
+            m_state.variables().operand(
+                m_jit.graph().argumentsRegisterFor(node.codeOrigin)).m_type));
+        speculationCheck(
+            ArgumentsEscaped, JSValueRegs(), NoNode,
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::addressFor(
+                    m_jit.argumentsRegisterFor(node.codeOrigin))));
         noResult(m_compileIndex);
         break;
     }

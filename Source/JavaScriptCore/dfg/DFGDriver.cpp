@@ -94,10 +94,13 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     dfg.m_dominators.compute(dfg);
     performVirtualRegisterAllocation(dfg);
 
+    GraphDumpMode modeForFinalValidate = DumpGraph;
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("Graph after optimization:\n");
     dfg.dump();
+    modeForFinalValidate = DontDumpGraph;
 #endif
+    validate(dfg, modeForFinalValidate);
     
     JITCompiler dataFlowJIT(dfg);
     bool result;

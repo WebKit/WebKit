@@ -682,6 +682,17 @@ struct Node {
         ASSERT(m_virtualRegister == InvalidVirtualRegister);
         m_virtualRegister = virtualRegister;
     }
+    
+    bool hasArgumentPositionStart()
+    {
+        return op() == InlineStart;
+    }
+    
+    unsigned argumentPositionStart()
+    {
+        ASSERT(hasArgumentPositionStart());
+        return m_opInfo;
+    }
 
     bool shouldGenerate()
     {
