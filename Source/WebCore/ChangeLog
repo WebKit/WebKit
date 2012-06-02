@@ -1,5 +1,11 @@
 2012-06-02  Dan Bernstein  <mitz@apple.com>
 
+        Reverted the last change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-06-02  Dan Bernstein  <mitz@apple.com>
+
         Stop treating Perl code as private headers.
 
         * WebCore.xcodeproj/project.pbxproj: Removed CodeGenerator.pm, generate-bindings.pl,
