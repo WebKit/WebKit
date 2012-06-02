@@ -366,17 +366,21 @@ void CachedResource::stopLoading()
 
 void CachedResource::addClient(CachedResourceClient* client)
 {
-    addClientToSet(client);
-    didAddClient(client);
+    if (addClientToSet(client))
+        didAddClient(client);
 }
 
 void CachedResource::didAddClient(CachedResourceClient* c)
 {
+    if (m_clientsAwaitingCallback.contains(c)) {
+        m_clients.add(c);
+        m_clientsAwaitingCallback.remove(c);
+    }
     if (!isLoading())
         c->notifyFinished(this);
 }
 
-void CachedResource::addClientToSet(CachedResourceClient* client)
+bool CachedResource::addClientToSet(CachedResourceClient* client)
 {
     ASSERT(!isPurgeable());
 
@@ -390,13 +394,32 @@ void CachedResource::addClientToSet(CachedResourceClient* client)
     }
     if (!hasClients() && inCache())
         memoryCache()->addToLiveResourcesSize(this);
+
+    if (m_type == RawResource && !m_response.isNull() && !m_proxyResource) {
+        // Certain resources (especially XHRs) do crazy things if an asynchronous load returns
+        // synchronously (e.g., scripts may not have set all the state they need to handle the load).
+        // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,
+        // we schedule the callbacks and ensure we never finish synchronously.
+        ASSERT(!m_clientsAwaitingCallback.contains(client));
+        m_clientsAwaitingCallback.add(client, CachedResourceCallback::schedule(this, client));
+        return false;
+    }
+
     m_clients.add(client);
+    return true;
 }
 
 void CachedResource::removeClient(CachedResourceClient* client)
 {
-    ASSERT(m_clients.contains(client));
-    m_clients.remove(client);
+    OwnPtr<CachedResourceCallback> callback = m_clientsAwaitingCallback.take(client);
+    if (callback) {
+        ASSERT(!m_clients.contains(client));
+        callback->cancel();
+        callback.clear();
+    } else {
+        ASSERT(m_clients.contains(client));
+        m_clients.remove(client);
+    }
 
     if (canDelete() && !inCache())
         delete this;
@@ -723,6 +746,26 @@ void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
     if (loadPriority == ResourceLoadPriorityUnresolved)
         return;
     m_loadPriority = loadPriority;
+}
+
+
+CachedResource::CachedResourceCallback::CachedResourceCallback(CachedResource* resource, CachedResourceClient* client)
+    : m_resource(resource)
+    , m_client(client)
+    , m_callbackTimer(this, &CachedResourceCallback::timerFired)
+{
+    m_callbackTimer.startOneShot(0);
+}
+
+void CachedResource::CachedResourceCallback::cancel()
+{
+    if (m_callbackTimer.isActive())
+        m_callbackTimer.stop();
+}
+
+void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>*)
+{
+    m_resource->didAddClient(m_client);
 }
 
 }

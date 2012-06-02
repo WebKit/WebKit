@@ -43,9 +43,6 @@ public:
     unsigned long identifier() const { return m_identifier; }
 
     bool canReuse() const;
-    void sendCallbacks(CachedRawResourceClient*);
-
-    virtual void removeClient(CachedResourceClient*);
 
 private:
     virtual void didAddClient(CachedResourceClient*);
@@ -62,7 +59,6 @@ private:
 #endif
 
     unsigned long m_identifier;
-    HashMap<CachedRawResourceClient*, OwnPtr<CachedRawResourceCallback> > m_clientsAwaitingCallback;
 };
 
 
