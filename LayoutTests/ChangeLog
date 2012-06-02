@@ -1,3 +1,9 @@
+2012-06-01  Jessie Berlin  <jberlin@apple.com>
+
+        Skip more asserting tests on Windows.
+
+        * platform/win/Skipped:
+
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should know that PutByVal can clobber the world
