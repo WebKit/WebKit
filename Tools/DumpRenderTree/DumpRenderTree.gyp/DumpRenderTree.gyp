@@ -56,20 +56,22 @@
             'type': 'executable',
             'dependencies': [
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
-                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
             ],
             'include_dirs': [
-                '<(source_dir)/JavaScriptCore',
+                '<(source_dir)/WTF',
                 '<(DEPTH)',
             ],
             'sources': [
                 '<(tools_dir)/DumpRenderTree/chromium/ImageDiff.cpp',
             ],
             'conditions': [
-                ['OS=="android"', {
+                ['OS=="android" and android_build_type==0', {
                     # The Chromium Android port will compare images on host rather
                     # than target (a device or emulator) for performance reasons.
                     'toolsets': ['host'],
+                }],
+                ['OS=="android" and android_build_type!=0', {
+                    'type': 'none',
                 }],
             ],
         },
@@ -243,7 +245,6 @@
                 ['OS=="android"', {
                     'type': 'shared_library',
                     'dependencies': [
-                        'ImageDiff#host',
                         '<(chromium_src_dir)/base/base.gyp:test_support_base',
                         '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
@@ -263,6 +264,11 @@
                 }, { # OS!="android"
                     'sources/': [
                         ['exclude', 'Android\\.cpp$'],
+                    ],
+                }],
+                ['OS=="android" and android_build_type==0', {
+                    'dependencies': [
+                        'ImageDiff#host',
                     ],
                 }],
                 ['inside_chromium_build==1 and component=="shared_library"', {
