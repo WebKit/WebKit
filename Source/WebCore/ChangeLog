@@ -1,3 +1,29 @@
+2012-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        DOM string cache should hash pointers, not characters
+        https://bugs.webkit.org/show_bug.cgi?id=88175
+
+        Reviewed by Phil Pizlo and Sam Weinig.
+
+        Dromaeo DOM Core reports no change.
+
+        http://trac.webkit.org/changeset/84934 accidentally changed from hashing
+        pointers to hashing characters, due to template defaults. Let's change back.
+
+        Hashing characters is not so good because:
+
+        (1) It's not memory-safe with HashMap::set(). HashMap::set() replaces
+        the value but not the key. Since our values own our keys, we need to
+        ensure object identity between key and value, or the key can be freed
+        prematurely. (This is impossible to demonstrate with our current
+        eager sweep behavior, but it shows up as crashes in layout tests if you
+        change to lazy sweep.)
+
+        (2) It's slower.
+
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore): Override the default hash, which hashes based on characters.
+
 2012-06-02  Eli Fidler  <efidler@rim.com>
 
         Don't crash if we ask for fonts that don't exist.

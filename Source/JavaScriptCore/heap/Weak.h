@@ -153,15 +153,15 @@ template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()
 
 // This function helps avoid modifying a weak table while holding an iterator into it. (Object allocation
 // can run a finalizer that modifies the table. We avoid that by requiring a pre-constructed object as our value.)
-template<typename T, typename U> inline void weakAdd(HashMap<T, Weak<U> >& map, const T& key, PassWeak<U> value)
+template<typename Map, typename Key, typename Value> inline void weakAdd(Map& map, const Key& key, Value value)
 {
     ASSERT(!map.get(key));
     map.set(key, value); // The table may still have a zombie for value.
 }
 
-template<typename T, typename U> inline void weakRemove(HashMap<T, Weak<U> >& map, const T& key, typename Weak<U>::GetType value)
+template<typename Map, typename Key, typename Value> inline void weakRemove(Map& map, const Key& key, Value value)
 {
-    typename HashMap<T, Weak<U> >::iterator it = map.find(key);
+    typename Map::iterator it = map.find(key);
     ASSERT_UNUSED(value, value);
     ASSERT(it != map.end());
     ASSERT(it->second.was(value));

@@ -1,3 +1,15 @@
+2012-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        DOM string cache should hash pointers, not characters
+        https://bugs.webkit.org/show_bug.cgi?id=88175
+
+        Reviewed by Phil Pizlo and Sam Weinig.
+
+        * heap/Weak.h:
+        (JSC::weakAdd):
+        (JSC::weakRemove): Made these function templates slightly more generic
+        to accommodate new client types.
+
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should know that PutByVal can clobber the world

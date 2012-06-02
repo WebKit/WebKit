@@ -34,7 +34,7 @@ class JSDOMWrapper;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSDOMWrapper> > DOMObjectWrapperMap;
-typedef HashMap<StringImpl*, JSC::Weak<JSC::JSString> > JSStringCache;
+typedef HashMap<StringImpl*, JSC::Weak<JSC::JSString>, PtrHash<StringImpl*> > JSStringCache;
 
 class JSStringOwner : public JSC::WeakHandleOwner {
 public:
