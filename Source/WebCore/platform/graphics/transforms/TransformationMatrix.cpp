@@ -576,9 +576,9 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
         // Using int max causes overflow when other code uses the projected point. To
         // represent infinity yet reduce the risk of overflow, we use a large but
         // not-too-large number here when clamping.
-        const int kLargeNumber = 100000000;
-        outX = copysign(kLargeNumber, outX);
-        outY = copysign(kLargeNumber, outY);
+        const int largeNumber = 100000000 / kFixedPointDenominator;
+        outX = copysign(largeNumber, outX);
+        outY = copysign(largeNumber, outY);
         if (clamped)
             *clamped = true;
     } else if (w != 1) {
