@@ -33,6 +33,8 @@
 #include <wtf/StringHasher.h>
 #include <wtf/UnusedParam.h>
 
+using WTF::intHash;
+
 namespace WebCore {
 
 Gradient::Gradient(const FloatPoint& p0, const FloatPoint& p1)
@@ -45,7 +47,7 @@ Gradient::Gradient(const FloatPoint& p0, const FloatPoint& p1)
     , m_stopsSorted(false)
     , m_lastStop(0)
     , m_spreadMethod(SpreadMethodPad)
-    , m_hashCache(0)
+    , m_cachedHash(0)
 {
     platformInit();
 }
@@ -60,7 +62,7 @@ Gradient::Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r
     , m_stopsSorted(false)
     , m_lastStop(0)
     , m_spreadMethod(SpreadMethodPad)
-    , m_hashCache(0)
+    , m_cachedHash(0)
 {
     platformInit();
 }
@@ -104,7 +106,7 @@ void Gradient::addColorStop(float value, const Color& color)
     m_stopsSorted = false;
     platformDestroy();
 
-    clearHashCache();
+    invalidateHash();
 }
 
 void Gradient::addColorStop(const Gradient::ColorStop& stop)
@@ -114,7 +116,7 @@ void Gradient::addColorStop(const Gradient::ColorStop& stop)
     m_stopsSorted = false;
     platformDestroy();
 
-    clearHashCache();
+    invalidateHash();
 }
 
 static inline bool compareStops(const Gradient::ColorStop& a, const Gradient::ColorStop& b)
@@ -134,7 +136,7 @@ void Gradient::sortStopsIfNecessary()
 
     std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
 
-    clearHashCache();
+    invalidateHash();
 }
 
 void Gradient::getColor(float value, float* r, float* g, float* b, float* a) const
@@ -224,7 +226,7 @@ void Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
 
     m_spreadMethod = spreadMethod;
 
-    clearHashCache();
+    invalidateHash();
 }
 
 void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation)
@@ -235,7 +237,7 @@ void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTra
     m_gradientSpaceTransformation = gradientSpaceTransformation;
     setPlatformGradientSpaceTransform(gradientSpaceTransformation);
 
-    clearHashCache();
+    invalidateHash();
 }
 
 #if !USE(SKIA) && !USE(CAIRO)
@@ -244,10 +246,10 @@ void Gradient::setPlatformGradientSpaceTransform(const AffineTransform&)
 }
 #endif
 
-unsigned Gradient::hash()
+unsigned Gradient::hash() const
 {
-    if (m_hashCache)
-        return m_hashCache;
+    if (m_cachedHash)
+        return m_cachedHash;
 
     struct {
         AffineTransform gradientSpaceTransformation;
@@ -260,7 +262,12 @@ unsigned Gradient::hash()
         GradientSpreadMethod spreadMethod;
         bool radial;
     } parameters;
+
+    // StringHasher requires that the memory it hashes be a multiple of two in size.
+    COMPILE_ASSERT(!(sizeof(parameters) % 2), Gradient_parameters_size_should_be_multiple_of_two);
+    COMPILE_ASSERT(!(sizeof(ColorStop) % 2), Color_stop_size_should_be_multiple_of_two);
     
+    // Ensure that any padding in the struct is zero-filled, so it will not affect the hash value.
     memset(&parameters, 0, sizeof(parameters));
     
     parameters.gradientSpaceTransformation = m_gradientSpaceTransformation;
@@ -274,15 +281,11 @@ unsigned Gradient::hash()
     parameters.radial = m_radial;
 
     unsigned parametersHash = StringHasher::hashMemory(&parameters, sizeof(parameters));
-    
-    ColorStop * stopData = m_stops.data();
-    unsigned stopHash = StringHasher::hashMemory(stopData, m_stops.size() * sizeof(ColorStop));
-    
-    std::pair<unsigned, unsigned> hashes(parametersHash, stopHash);
-    
-    m_hashCache = DefaultHash<std::pair<unsigned, unsigned> >::Hash::hash(hashes);
+    unsigned stopHash = StringHasher::hashMemory(m_stops.data(), m_stops.size() * sizeof(ColorStop));
 
-    return m_hashCache;
+    m_cachedHash = intHash((static_cast<uint64_t>(parametersHash) << 32) | stopHash);
+
+    return m_cachedHash;
 }
 
 } //namespace

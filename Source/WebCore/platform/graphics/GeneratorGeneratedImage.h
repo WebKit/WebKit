@@ -38,10 +38,7 @@ namespace WebCore {
 
 static const int generatedImageCacheClearDelay = 1;
 
-class GeneratedImageCacheTimer;
-
 class GeneratorGeneratedImage : public GeneratedImage {
-    friend class GeneratedImageCacheTimer;
 public:
     static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Generator> generator, const IntSize& size)
     {

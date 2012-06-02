@@ -39,7 +39,7 @@ public:
     
     virtual void fill(GraphicsContext*, const FloatRect&) = 0;
     virtual void adjustParametersForTiledDrawing(IntSize& /* size */, FloatRect& /* srcRect */) { }
-    virtual unsigned hash() = 0;
+    virtual unsigned hash() const = 0;
 };
 
 } //namespace

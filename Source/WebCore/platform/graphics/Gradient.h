@@ -104,7 +104,7 @@ namespace WebCore {
             
             m_p0 = p;
             
-            clearHashCache();
+            invalidateHash();
         }
         
         void setP1(const FloatPoint& p)
@@ -114,7 +114,7 @@ namespace WebCore {
             
             m_p1 = p;
             
-            clearHashCache();
+            invalidateHash();
         }
 
         float startRadius() const { return m_r0; }
@@ -127,7 +127,7 @@ namespace WebCore {
 
             m_r0 = r;
 
-            clearHashCache();
+            invalidateHash();
         }
 
         void setEndRadius(float r)
@@ -137,7 +137,7 @@ namespace WebCore {
 
             m_r1 = r;
 
-            clearHashCache();
+            invalidateHash();
         }
 
         float aspectRatio() const { return m_aspectRatio; }
@@ -172,8 +172,8 @@ namespace WebCore {
 
         void setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
 
-        virtual unsigned hash() OVERRIDE;
-        void clearHashCache() { m_hashCache = 0; }
+        virtual unsigned hash() const OVERRIDE;
+        void invalidateHash() { m_cachedHash = 0; }
 
 #if USE(CG)
         void paint(CGContextRef);
@@ -205,7 +205,7 @@ namespace WebCore {
         GradientSpreadMethod m_spreadMethod;
         AffineTransform m_gradientSpaceTransformation;
 
-        unsigned m_hashCache;
+        mutable unsigned m_cachedHash;
 
         PlatformGradient m_gradient;
 

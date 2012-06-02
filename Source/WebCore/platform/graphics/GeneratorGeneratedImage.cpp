@@ -62,18 +62,13 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
 
     unsigned generatorHash = m_generator->hash();
 
-    if (!m_cachedImageBuffer
-        || m_cachedGeneratorHash != generatorHash
-        || m_cachedAdjustedSize != adjustedSize
-        || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
-        // Create a BitmapImage and call drawPattern on it.
+    if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
         m_cachedImageBuffer = destContext->createCompatibleBuffer(adjustedSize);
         if (!m_cachedImageBuffer)
             return;
 
         // Fill with the generated image.
-        GraphicsContext* graphicsContext = m_cachedImageBuffer->context();
-        graphicsContext->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator.get());
+        m_cachedImageBuffer->context()->fillRect(FloatRect(FloatPoint(), adjustedSize), *m_generator);
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;

@@ -1,3 +1,34 @@
+2012-06-01  Tim Horton  <timothy_horton@apple.com>
+
+        Cleanup GeneratorGeneratedImage/Gradient changes from r117858
+        https://bugs.webkit.org/show_bug.cgi?id=88063
+
+        Reviewed by Simon Fraser.
+
+        No new tests, code cleanup.
+
+        * platform/graphics/Generator.h:
+        (WebCore::Generator::hash): hash() should be const.
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern): Minor cleanup.
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::Gradient): Rename m_hashCache to m_cachedHash.
+        (WebCore::Gradient::addColorStop): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::sortStopsIfNecessary): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::setSpreadMethod): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::setGradientSpaceTransform): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::hash): Use intHash instead of the pair hasher. Add compile time size checks
+        for structures being passed to StringHasher.
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::setP0): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::setP1): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::setStartRadius): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::setEndRadius): Rename clearHashCache to invalidateHash.
+        (WebCore::Gradient::invalidateHash):  Rename clearHashCache to invalidateHash.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::scalesMatch): Added. Determine if the scale of two AffineTransforms match.
+        (WebCore::GraphicsContext::isCompatibleWithBuffer): Make use of scalesMatch to simplify the logic.
+
 2012-06-01  Raymond Toy  <rtoy@google.com>
 
         Remove RefInfo class

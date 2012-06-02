@@ -761,6 +761,11 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     }
 }
 
+static bool scalesMatch(AffineTransform a, AffineTransform b)
+{
+    return a.xScale() == b.xScale() && a.yScale() == b.yScale();
+}
+
 PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& size) const
 {
     // Make the buffer larger if the context's transform is scaling it so we need a higher
@@ -782,16 +787,9 @@ PassOwnPtr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const IntSize& s
 
 bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer* buffer) const
 {
-    AffineTransform localTransform = getCTM();
-    AffineTransform bufferTransform = buffer->context()->getCTM();
+    GraphicsContext* bufferContext = buffer->context();
 
-    if (localTransform.xScale() != bufferTransform.xScale() || localTransform.yScale() != bufferTransform.yScale())
-        return false;
-
-    if (isAcceleratedContext() != buffer->context()->isAcceleratedContext())
-        return false;
-
-    return true;
+    return scalesMatch(getCTM(), bufferContext->getCTM()) && isAcceleratedContext() == bufferContext->isAcceleratedContext();
 }
 
 #if !USE(CG)
