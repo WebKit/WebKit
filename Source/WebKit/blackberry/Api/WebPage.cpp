@@ -358,6 +358,9 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_cursorEventMode(ProcessedCursorEvents)
     , m_touchEventMode(ProcessedTouchEvents)
 #endif
+#if ENABLE(FULLSCREEN_API)
+    , m_xScrollOffsetPriorGoingFullScreen(-1)
+#endif
     , m_currentCursor(Platform::CursorNone)
     , m_dumpRenderTree(0) // Lazy initialization.
     , m_initialScale(-1.0)
@@ -6083,6 +6086,15 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         // is so that exitFullScreenForElement() gets called later.
         enterFullscreenForNode(element);
     } else {
+        // When an element goes fullscreen, it gets cloned and added to a higher index
+        // wrapper/container node, created out of the DOM tree. This wrapper is fixed
+        // position, but since our fixed position logic respects only the 'y' coordinate,
+        // we temporarily scroll the WebPage to x:0 so that the wrapper gets properly
+        // positioned. The original scroll position is restored once element leaves fullscreen.
+        WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
+        m_xScrollOffsetPriorGoingFullScreen = scrollPosition.x();
+        m_mainFrame->view()->setScrollPosition(WebCore::IntPoint(0, scrollPosition.y()));
+
         // No fullscreen video widget has been made available by the Browser
         // chrome, or this is not a video element. The webkitRequestFullScreen
         // Javascript call is often made on a div element.
@@ -6103,6 +6115,13 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
         // The Browser chrome has its own fullscreen video widget.
         exitFullscreenForNode(element);
     } else {
+        // When leaving fullscreen mode, we need to restore the 'x' scroll position
+        // prior going full screen.
+        WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
+        m_mainFrame->view()->setScrollPosition(
+            WebCore::IntPoint(m_xScrollOffsetPriorGoingFullScreen, scrollPosition.y()));
+        m_xScrollOffsetPriorGoingFullScreen = -1;
+
         // This is where we would restore the browser's chrome
         // if hidden above.
         client()->fullscreenStop();

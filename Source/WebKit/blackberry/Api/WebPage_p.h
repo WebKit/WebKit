@@ -490,6 +490,10 @@ public:
     WebCore::TouchEventMode m_touchEventMode;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    int m_xScrollOffsetPriorGoingFullScreen;
+#endif
+
     Platform::BlackBerryCursor m_currentCursor;
 
     DumpRenderTreeClient* m_dumpRenderTree;

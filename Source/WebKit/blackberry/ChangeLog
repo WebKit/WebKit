@@ -1,5 +1,28 @@
 2012-06-02  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] browser video player fullscreen mode (portrait) - out of screen/focus - cannot navigate or use the buttons on the screen (PART II)
+        https://bugs.webkit.org/show_bug.cgi?id=88019
+
+        Reviewed by George Staikos.
+
+        When an element goes fullscreen, its wrapper/container obeys all
+        BlackBerry specific fixed position customizations: we fixed
+        against Y, but not X. Then, in order to have the wrapper element
+        properly positioned when entering fullscreen mode, we
+        temporarily scroll x to 0.
+
+        The original x scroll position is restored when we leave
+        fullscreen.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2012-06-02  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] browser video player fullscreen mode (portrait) - out of screen/focus - cannot navigate or use the buttons on the screen (PART I)
         https://bugs.webkit.org/show_bug.cgi?id=88019
         PR #158266
