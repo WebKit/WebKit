@@ -1,3 +1,17 @@
+2012-04-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        Invalid cast in WebCore::HTMLCollection::isAcceptableElement
+        https://bugs.webkit.org/show_bug.cgi?id=84626
+
+        Reviewed by Darin Adler.
+
+        Check if the object is an HTMLElement before casting.
+
+        Test: fast/dom/htmlcollection-non-html.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::isAcceptableElement):
+
 2012-04-25  Nate Chapin  <japhet@chromium.org>
 
         Crash in CachedRawResource::didAddClient() due to missing protector.
