@@ -1,3 +1,17 @@
+2012-06-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        loadRequest should check for empty URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=88154
+
+        In [WebFrame loadRequest], if the url is invalid and not nil, we transform it to file: url.
+        However, WebKit client could send down an empty URL that makes us transform it to file: url
+        as well.  We should skip that as we did for nil URLs.
+
+        Reviewed by Brady Eidson.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadRequest:]):
+
 2012-06-01  Michael Saboff  <msaboff@apple.com>
 
         WebFrame::_stringByEvaluatingJavaScriptFromString methods don't handle nil string
