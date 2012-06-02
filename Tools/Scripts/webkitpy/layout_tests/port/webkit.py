@@ -77,10 +77,6 @@ class WebKitPort(Port):
             search_paths.append(self.port_name)
         return map(self._webkit_baseline_path, search_paths)
 
-    def path_to_test_expectations_file(self):
-        # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
-        return self._filesystem.join(self._webkit_baseline_path(self.port_name), 'test_expectations.txt')
-
     def _port_flag_for_scripts(self):
         # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.
         # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
@@ -361,11 +357,11 @@ class WebKitPort(Port):
         return search_paths
 
     def test_expectations(self):
-        # This allows ports to use a combination of test_expectations.txt files and Skipped lists.
+        # This allows ports to use a combination of TestExpectations files and Skipped lists.
         expectations = ''
         expectations_path = self.path_to_test_expectations_file()
         if self._filesystem.exists(expectations_path):
-            _log.debug("Using test_expectations.txt: %s" % expectations_path)
+            _log.debug("Using test expectations: %s" % expectations_path)
             expectations = self._filesystem.read_text_file(expectations_path)
         return expectations
 

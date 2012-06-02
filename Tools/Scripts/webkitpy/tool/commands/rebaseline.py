@@ -239,7 +239,7 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
 
 class RebaselineExpectations(AbstractDeclarativeCommand):
     name = "rebaseline-expectations"
-    help_text = "Rebaselines the tests indicated in test_expectations.txt."
+    help_text = "Rebaselines the tests indicated in TestExpectations."
 
     def __init__(self):
         options = [

@@ -39,7 +39,7 @@ var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_r
 var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
-// instead of matching the values we use in the test_expectations.txt file.
+// instead of matching the values we use in the TestExpectations file.
 var PLATFORMS = ['LION', 'SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_LEOPARD', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
 var PLATFORM_UNIONS = {
     'MAC': ['LEOPARD', 'SNOWLEOPARD', 'LION'],
@@ -211,7 +211,7 @@ var g_perBuilderFailures = {};
 // but have for that builder.
 var g_perBuilderWithExpectationsButNoFailures = {};
 // Map of builder to arrays of paths that are skipped. This shows the raw
-// path used in test_expectations.txt rather than the test path since we
+// path used in TestExpectations rather than the test path since we
 // don't actually have any data here for skipped tests.
 var g_perBuilderSkippedPaths = {};
 // Maps test path to an array of {builder, testResults} objects.
@@ -820,7 +820,7 @@ function processMissingAndExtraExpectations(resultsForTest)
         extraExpectations = expectationsArray.filter(
             function(element) {
                 // FIXME: Once all the FAIL lines are removed from
-                // test_expectations.txt, delete all the legacyExpectationsSemantics
+                // TestExpectations, delete all the legacyExpectationsSemantics
                 // code.
                 if (g_currentState.legacyExpectationsSemantics) {
                     if (element == 'FAIL') {
@@ -841,7 +841,7 @@ function processMissingAndExtraExpectations(resultsForTest)
             for (var i = 0; i < expectationsArray.length; i++) {
                 var expectation = expectationsArray[i];
                 // FIXME: Once all the FAIL lines are removed from
-                // test_expectations.txt, delete all the legacyExpectationsSemantics
+                // TestExpectations, delete all the legacyExpectationsSemantics
                 // code.
                 if (g_currentState.legacyExpectationsSemantics) {
                     if (expectation == 'FAIL') {
@@ -1076,7 +1076,7 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     var tests = g_perBuilderWithExpectationsButNoFailures[builder];
     var skippedPaths = g_perBuilderSkippedPaths[builder];
     var showUnexpectedPassesLink =  linkHTMLToToggleState('showUnexpectedPasses', 'tests that have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs');
-    var showSkippedLink = linkHTMLToToggleState('showSkipped', 'skipped tests in test_expectations.txt');
+    var showSkippedLink = linkHTMLToToggleState('showSkipped', 'skipped tests in TestExpectations');
     
 
     var html = '';

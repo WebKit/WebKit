@@ -36,7 +36,7 @@ from webkitpy.tool.steps.commit import Commit
 
 
 class CommitTest(unittest.TestCase):
-    def test_check_test_expectations(self):
+    def _test_check_test_expectations(self, filename):
         capture = OutputCapture()
         options = MockOptions()
         options.git_commit = ""
@@ -46,16 +46,23 @@ class CommitTest(unittest.TestCase):
         tool.user = None  # Will cause any access of tool.user to raise an exception.
         step = Commit(tool, options)
         state = {
-            "changed_files": ["test_expectations.txtXXX"],
+            "changed_files": [filename + "XXX"],
         }
 
         tool.executive = MockExecutive(should_log=True, should_throw_when_run=False)
         capture.assert_outputs(self, step.run, [state], expected_stderr="Committed r49824: <http://trac.webkit.org/changeset/49824>\n")
 
         state = {
-            "changed_files": ["platform/chromium/test_expectations.txt"],
+            "changed_files": ["platform/chromium/" + filename],
         }
-        capture.assert_outputs(self, step.run, [state], expected_stderr="MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/test_expectations.txt'], cwd=/mock-checkout\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\n")
+        capture.assert_outputs(self, step.run, [state], expected_stderr="MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/"
+            + filename + "'], cwd=/mock-checkout\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\n")
 
-        tool.executive = MockExecutive(should_log=True, should_throw_when_run=set(["platform/chromium/test_expectations.txt"]))
+        tool.executive = MockExecutive(should_log=True, should_throw_when_run=set(["platform/chromium/" + filename]))
         self.assertRaises(ScriptError, capture.assert_outputs, self, step.run, [state])
+
+    def test_check_test_expectations(self):
+        self._test_check_test_expectations('TestExpectations')
+
+    def test_check_legacy_test_expectations(self):
+        self._test_check_test_expectations('test_expectations.txt')

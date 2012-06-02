@@ -542,7 +542,8 @@ function pathToBuilderResultsFile(builderName)
 }
 
 // FIXME: Make the dashboard understand different ports' expectations files.
-var CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/LayoutTests/platform/chromium/test_expectations.txt';
+var CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/LayoutTests/platform/chromium/TestExpectations';
+var LEGACY_CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/LayoutTests/platform/chromium/test_expectations.txt';
 
 function requestExpectationsFile()
 {
@@ -552,7 +553,13 @@ function requestExpectationsFile()
         handleResourceLoad();
     },
     function() {
-        console.error('Could not load expectations file from ' + CHROMIUM_EXPECTATIONS_URL);
+        request(LEGACY_CHROMIUM_EXPECTATIONS_URL, function(xhr) {
+            g_waitingOnExpectations = false;
+            g_expectations = xhr.responseText;
+            handleResourceLoad();
+        }, function() {
+            console.error('Could not load expectations file from ' + CHROMIUM_EXPECTATIONS_URL + ' or ' + LEGACY_CHROMIUM_EXPECTATIONS_URL);
+        });
     });
 }
 

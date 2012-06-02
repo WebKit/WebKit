@@ -73,18 +73,33 @@ class TestExpectationsTestCase(unittest.TestCase):
         else:
             self.assertEquals(None, expected_port_implementation)
 
+        host = MockHost()
+        expectations_path = expectations_path.replace('TestExpectations', 'test_expectations.txt')
+        if not expectations_path.startswith('/mock-checkout'):
+            expectations_full_path = '/mock-checkout/' + expectations_path
+        else:
+            expectations_full_path = expectations_path
+        host.filesystem.files[expectations_full_path] = 'some content'
+
+        checker = TestExpectationsChecker(expectations_path, ErrorCollector(), host=host)
+        port = checker._determine_port_from_expectations_path(host, expectations_path)
+        if port:
+            self.assertTrue(port.name().startswith(expected_port_implementation))
+        else:
+            self.assertEquals(None, expected_port_implementation)
+
     def test_determine_port_from_expectations_path(self):
         self._expect_port_for_expectations_path(None, '/')
-        self._expect_port_for_expectations_path(None, 'LayoutTests/chromium-mac/test_expectations.txt')
-        self._expect_port_for_expectations_path('chromium', 'LayoutTests/platform/chromium/test_expectations.txt')
-        self._expect_port_for_expectations_path(None, '/mock-checkout/LayoutTests/platform/win/test_expectations.txt')
-        self._expect_port_for_expectations_path('win', 'LayoutTests/platform/win/test_expectations.txt')
+        self._expect_port_for_expectations_path(None, 'LayoutTests/chromium-mac/TestExpectations')
+        self._expect_port_for_expectations_path('chromium', 'LayoutTests/platform/chromium/TestExpectations')
+        self._expect_port_for_expectations_path(None, '/mock-checkout/LayoutTests/platform/win/TestExpectations')
+        self._expect_port_for_expectations_path('win', 'LayoutTests/platform/win/TestExpectations')
 
     def assert_lines_lint(self, lines, should_pass, expected_output=None):
         self._error_collector.reset_errors()
 
         host = MockHost()
-        checker = TestExpectationsChecker('test/test_expectations.txt',
+        checker = TestExpectationsChecker('test/TestExpectations',
                                           self._error_collector, host=host)
 
         # We should have failed to find a valid port object for that path.

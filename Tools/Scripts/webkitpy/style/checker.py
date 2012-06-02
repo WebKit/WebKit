@@ -517,15 +517,14 @@ class CheckerDispatcher(object):
         # Since "LayoutTests" is in _SKIPPED_FILES_WITHOUT_WARNING, make
         # an exception to prevent files like "LayoutTests/ChangeLog" and
         # "LayoutTests/ChangeLog-2009-06-16" from being skipped.
-        # Files like 'test_expectations.txt' and 'drt_expectations.txt'
-        # are also should not be skipped.
+        # Files like 'TestExpectations' are also should not be skipped.
         #
         # FIXME: Figure out a good way to avoid having to add special logic
         #        for this special case.
         basename = os.path.basename(file_path)
         if basename.startswith('ChangeLog'):
             return False
-        elif basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
+        elif basename == 'test_expectations.txt' or basename == 'TestExpectations':
             return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):

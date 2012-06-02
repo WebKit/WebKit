@@ -232,9 +232,6 @@ class ChromiumPort(Port):
             self._chromium_base_dir_path = self._chromium_base_dir(self._filesystem)
         return self._filesystem.join(self._chromium_base_dir_path, *comps)
 
-    def path_to_test_expectations_file(self):
-        return self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations.txt')
-
     def setup_environ_for_server(self, server_name=None):
         clean_env = super(ChromiumPort, self).setup_environ_for_server(server_name)
         # Webkit Linux (valgrind layout) bot needs these envvars.

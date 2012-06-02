@@ -675,12 +675,23 @@ class Port(object):
         WebKit source tree and the list of path components in |*comps|."""
         return self._config.path_from_webkit_base(*comps)
 
+    @memoized
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
 
         This is used by the rebaselining tool. Raises NotImplementedError
         if the port does not use expectations files."""
-        raise NotImplementedError('Port.path_to_test_expectations_file')
+
+        # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
+        port_name = self.port_name
+        if port_name.startswith('chromium'):
+            port_name = 'chromium'
+
+        baseline_path = self._webkit_baseline_path(port_name)
+        old_expectations_file = self._filesystem.join(baseline_path, 'test_expectations.txt')
+        if self._filesystem.exists(old_expectations_file):
+            return old_expectations_file
+        return self._filesystem.join(baseline_path, 'TestExpectations')
 
     def relative_test_filename(self, filename):
         """Returns a test_name a realtive unix-style path for a filename under the LayoutTests

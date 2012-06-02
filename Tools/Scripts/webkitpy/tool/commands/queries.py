@@ -395,7 +395,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
             make_option('--csv', action='store_true', default=False,
                         help='Print a CSV-style report that includes the port name, modifiers, tests, and expectations'),
             make_option('-f', '--full', action='store_true', default=False,
-                        help='Print a full test_expectations.txt-style line for every match'),
+                        help='Print a full TestExpectations-style line for every match'),
         ] + port_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)')
 
         AbstractDeclarativeCommand.__init__(self, options=options)

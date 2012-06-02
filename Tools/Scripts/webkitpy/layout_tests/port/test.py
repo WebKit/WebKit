@@ -247,8 +247,8 @@ else:
 def add_unit_tests_to_mock_filesystem(filesystem):
     # Add the test_expectations file.
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/platform/test')
-    if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'):
-        filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt', """
+    if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/TestExpectations'):
+        filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/TestExpectations', """
 WONTFIX : failures/expected/crash.html = CRASH
 WONTFIX : failures/expected/image.html = IMAGE
 WONTFIX : failures/expected/audio.html = AUDIO
@@ -340,7 +340,7 @@ class TestPort(Port):
         Port.__init__(self, host, port_name, **kwargs)
         self._tests = unit_test_list()
         self._flakes = set()
-        self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
+        self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/TestExpectations'
         self._results_directory = None
 
         self._operating_system = 'mac'

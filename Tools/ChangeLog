@@ -1,3 +1,66 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename test_expectations.txt to TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=86690
+
+        Reviewed by Dirk Pranke.
+
+        Make webkitpy aware of both test_expectations.txt and TestExpectations while we rename files.
+        We can the code to read test_expectations.txt once we've successfully transitioned.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._check_path_does_not_exist):
+        (TestExpectationParser._tokenize):
+        (TestExpectations): Removed TEST_LIST, which is not used anywhere.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.path_to_test_expectations_file): Moved from WebKitPort and ChromiumPort. Returns the path to
+        test_expectations.txt if one exists and the path to TestExpectations otherwise.
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_virtual_methods): path_to_test_expectations_file and test_expectations are no longer
+        virtual.
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.path_from_chromium_base):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.test_expectations):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (add_unit_tests_to_mock_filesystem): Use TestExpectations instead of test_expectations.txt.
+        (TestPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.baseline_search_path):
+        (WebKitPort.test_expectations):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Added some test cases. We should move these
+        tests to base as a follow up.
+        (WebKitPortTest.test_path_to_test_expectations_file):
+        (test_test_expectations):
+        (test_legacy_test_expectations):
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher.should_skip_without_warning): Replace the check for legacy drt_expectations.txt
+        with one for TestExpectations.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker): Accept both test_expectations.txt and TestExpectations in warning outputs.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase._expect_port_for_expectations_path): Test both TestExpectations and
+        test_expectations.txt.
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+        (TestExpectationsTestCase.assert_lines_lint):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest._test_check_test_expectations): Extracted from test_check_test_expectations.
+        (CommitTest.test_check_test_expectations): For TestExpectations.
+        (CommitTest.test_check_legacy_test_expectations): For test_expectations.txt
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (requestExpectationsFile): Look for TestExpectations first, and fallback to test_expectations.txt.
+        Error only when neither exists.
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (processMissingAndExtraExpectations):
+        (htmlForTestsWithExpectationsButNoFailures):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2012-06-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Remove dependency from ImageDiff to WTF

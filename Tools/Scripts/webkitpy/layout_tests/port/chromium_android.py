@@ -209,7 +209,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # chromium-android.
         # FIXME: This is a temporary measure to reduce the manual work when
         # updating WebKit. This method should be removed when we merge
-        # test_expectations_android.txt into test_expectations.txt.
+        # test_expectations_android.txt into TestExpectations.
         expectations = chromium.ChromiumPort.test_expectations(self)
         return expectations.replace('LINUX ', 'LINUX ANDROID ')
 

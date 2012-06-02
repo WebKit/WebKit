@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 
 
 class TestExpectationsChecker(object):
-    """Processes test_expectations.txt lines for validating the syntax."""
+    """Processes TestExpectations lines for validating the syntax."""
 
     categories = set(['test/expectations'])
 
@@ -61,7 +61,7 @@ class TestExpectationsChecker(object):
         self._handle_style_error = handle_style_error
         self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
-        self._output_regex = re.compile('.*test_expectations.txt:(?P<line>\d+)\s*(?P<message>.+)')
+        self._output_regex = re.compile('.*(TestExpectations|test_expectations.txt):(?P<line>\d+)\s*(?P<message>.+)')
 
         # FIXME: host should be a required parameter, not an optional one.
         host = host or Host()

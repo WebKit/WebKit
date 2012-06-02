@@ -169,7 +169,7 @@ test('platformAndBuildType', 88, function() {
     runPlatformAndBuildTypeTest('Chromium Linux Release (Tests)', 'LUCID', 'RELEASE');
     runPlatformAndBuildTypeTest('Chromium Mac Release (Tests)', 'SNOWLEOPARD', 'RELEASE');
     
-    // FIXME: These platforms should match whatever we use in the test_expectations.txt format.
+    // FIXME: These platforms should match whatever we use in the TestExpectations format.
     runPlatformAndBuildTypeTest('Lion Release (Tests)', 'APPLE_LION', 'RELEASE');
     runPlatformAndBuildTypeTest('Lion Debug (Tests)', 'APPLE_LION', 'DEBUG');
     runPlatformAndBuildTypeTest('Leopard Intel Release (Tests)', 'APPLE_LEOPARD', 'RELEASE');

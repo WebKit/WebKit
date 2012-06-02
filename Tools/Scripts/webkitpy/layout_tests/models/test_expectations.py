@@ -292,7 +292,7 @@ class TestExpectationParser(object):
         if (not self._port.test_exists(expectation_line.name)
             and not self._port.test_exists(expectation_line.name + '-disabled')):
             # Log a warning here since you hit this case any
-            # time you update test_expectations.txt without syncing
+            # time you update TestExpectations without syncing
             # the LayoutTests directory
             expectation_line.warnings.append('Path does not exist.')
             return True
@@ -323,7 +323,7 @@ class TestExpectationParser(object):
 
     @classmethod
     def _tokenize(cls, expectation_string, line_number=None):
-        """Tokenizes a line from test_expectations.txt and returns an unparsed TestExpectationLine instance.
+        """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance.
 
         The format of a test expectation line is:
 
@@ -672,8 +672,6 @@ class TestExpectations(object):
       -If a test is included twice, then the more precise path wins.
       -CRASH tests cannot be WONTFIX
     """
-
-    TEST_LIST = "test_expectations.txt"
 
     EXPECTATIONS = {'pass': PASS,
                     'fail': FAIL,

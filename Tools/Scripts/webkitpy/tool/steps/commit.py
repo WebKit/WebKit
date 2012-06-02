@@ -56,7 +56,7 @@ class Commit(AbstractStep):
     def _check_test_expectations(self, changed_files):
         test_expectations_files = []
         for filename in changed_files:
-            if filename.endswith('test_expectations.txt'):
+            if filename.endswith('test_expectations.txt') or filename.endswith('TestExpectations'):
                 test_expectations_files.append(filename)
 
         if not test_expectations_files:
