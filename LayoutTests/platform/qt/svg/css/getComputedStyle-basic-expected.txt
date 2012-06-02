@@ -916,6 +916,8 @@ g: style.getPropertyValue(-webkit-mask-size) : auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-order) : 0
+g: style.getPropertyCSSValue(-webkit-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective) : none
 g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
