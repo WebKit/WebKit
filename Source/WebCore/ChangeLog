@@ -1,3 +1,19 @@
+2012-06-02  Eli Fidler  <efidler@rim.com>
+
+        Don't crash if we ask for fonts that don't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=88106
+
+        Reviewed by Dan Bernstein.
+
+        RIM PR 161219
+
+        If the site doesn't ask for a reasonable font and the system doesn't
+        provide a good fallback, FontFallBackList::primaryFontData can be 0,
+        which can cause a crash.
+
+        * platform/graphics/skia/FontCacheSkia.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2012-06-02  Kentaro Hara  <haraken@chromium.org>
 
         [Performance] Optimize querySelector() by caching SelectorQuery objects

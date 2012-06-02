@@ -115,6 +115,12 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
         break;
     }
 
+    if (!fontPlatformData) {
+        // we should at least have Arial; this is the SkFontHost_fontconfig last resort fallback
+        DEFINE_STATIC_LOCAL(const AtomicString, arialStr, ("Arial"));
+        fontPlatformData = getCachedFontPlatformData(description, arialStr);
+    }
+
     ASSERT(fontPlatformData);
     return getCachedFontData(fontPlatformData, shouldRetain);
 }
