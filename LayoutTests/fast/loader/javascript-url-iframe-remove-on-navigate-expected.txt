@@ -1,0 +1,2 @@
+Blocked access to external URL http://does.not.exist/
+PASS - Javascript URL blocked without crashing.
