@@ -1,3 +1,104 @@
+2012-06-02  Kentaro Hara  <haraken@chromium.org>
+
+        [Performance] Optimize querySelector() by caching SelectorQuery objects
+        https://bugs.webkit.org/show_bug.cgi?id=87942
+
+        Reviewed by Antti Koivisto.
+
+        This patch improves performance of Node::querySelector() by 7.1x in Safari/Mac
+        and by 8.5x in Chromium/Linux.
+
+        Performance test: Parser/query-selector-first.html, Parser/query-selector-last.html
+
+        [query-selector-first.html]
+        Safari/Mac      264.97 runs/s  =>  1872.78 runs/s  (7.06x speed-up)
+        Chromium/Linux  244.84 runs/s  =>  2071.60 runs/s  (8.46x speed-up)
+
+        [query-selector-last.html]
+        Safari/Mac      393.73 runs/s  =>  466.05 runs/s   (1.18x speed-up)
+        Chromium/Linux  401.15 runs/s  =>  484.45 runs/s   (1.20x speed-up)
+
+        Previously Node::querySelector() and Node::querySelectorAll() had been
+        parsing CSS queries every time. This patch optimizes the performance by caching
+        parsed results onto a Document.
+
+        The cache is invalidated when any of CSS related variables is updated.
+        As per the current implementation of CSSParserContext::operator==(), the CSS related
+        variables are as follows:
+
+        - baseURI
+        - charset
+        - mode
+        - isHTMLDocument
+        - isCSSCustomFilterEnabled
+        - isCSSRegionsEnabled
+        - needsSiteSpecificQuirks
+        - enforcesCSSMIMETypeInNoQuirksMode
+
+        Actually, we do not need to watch all of these variables:
+
+        - The current implementation does not watch the change of charset.
+        charset is always set to a null String by CSSParserContext::CSSParserContext().
+
+        - isHTMLDocument never changes.
+
+        - isCSSCustomFilterEnabled, isCSSRegionsEnabled, needsSiteSpecificQuirks and
+        enforcesCSSMIMETypeInNoQuirksMode are not flipped in a user scenario.
+        If someone changes them, it would be reasonable to expect them
+        to take the effect only on subsequent document loads.
+        Thus we do not need to invalidate the cache when these variables are updated.
+
+        Consequently, the condition under which we have to invalidate the cache is
+        that any of the following variables is updated:
+
+        - baseURI
+        - mode
+
+        Tests: fast/dom/SelectorAPI/*. No change in test results.
+
+        * dom/SelectorQuery.h: SelectorQueryCache is a cache from CSS selectors to parsed results.
+        SelectorQueryCache::Entry is an entry of the cache.
+        SelectorQueryCache::Entry holds a SelectorQuery object and a CSSSelectorList object.
+        The reason why SelectorQueryCache::Entry needs to hold the CSSSelectorList object
+        is that the CSSSelectorList object keeps the lifetime of CSSSelector objects
+        in the SelectorQuery object. Since the SelectorQuery object just holds pointers
+        to CSSSelector objects, the CSSSelectorList object must not be destructed
+        before the SelectorQuery object is destructed.
+        (WebCore):
+        (SelectorDataList):
+        (WebCore::SelectorQuery::SelectorQuery):
+        (SelectorQuery):
+        (SelectorQueryCache):
+        (WebCore::SelectorQueryCache::SelectorQueryCache):
+        (Entry):
+        (WebCore::SelectorQueryCache::Entry::selectorQuery):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::initialize):
+        (WebCore::SelectorQueryCache::Entry::Entry):
+        (WebCore::SelectorQueryCache::add): Returns a cached SelectorQuery object if any.
+        Otherwise, parses a given CSS selector, creates a SelectorQuery object,
+        adds the SelectorQuery object to a new entry in the cache, returns the SelectorQuery
+        object.
+        (WebCore::SelectorQueryCache::invalidate): Clears the cache.
+
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Document.cpp:
+        (WebCore::Document::selectorQueryCache):
+        (WebCore):
+        (WebCore::Document::setCompatibilityMode): Invalidates the cache
+        when m_compatibilityMode is updated.
+        (WebCore::Document::updateBaseURL): Invalidates the cache
+        when m_baseURL is updated.
+
+        * dom/Node.h: Changed String to AtomicString, since the key of the cache
+        should be AtomicString.
+        (Node):
+        * dom/Node.cpp: Optimized the code by using the cache.
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+
 2012-06-02  Dan Bernstein  <mitz@apple.com>
 
         Reverted the last change.

@@ -140,6 +140,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "SegmentedString.h"
+#include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StaticHashSetNodeList.h"
@@ -731,6 +732,13 @@ void Document::invalidateAccessKeyMap()
     m_elementsByAccessKey.clear();
 }
 
+SelectorQueryCache* Document::selectorQueryCache()
+{
+    if (!m_selectorQueryCache)
+        m_selectorQueryCache = adoptPtr(new SelectorQueryCache());
+    return m_selectorQueryCache.get();
+}
+
 MediaQueryMatcher* Document::mediaQueryMatcher()
 {
     if (!m_mediaQueryMatcher)
@@ -745,6 +753,7 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
     ASSERT(!m_styleSheets->length());
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
+    selectorQueryCache()->invalidate();
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
         clearPageUserSheet();
@@ -2653,6 +2662,7 @@ void Document::updateBaseURL()
         // so we use a null base URL.
         m_baseURL = KURL(KURL(), documentURI());
     }
+    selectorQueryCache()->invalidate();
 
     if (!m_baseURL.isValid())
         m_baseURL = KURL();

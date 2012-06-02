@@ -123,6 +123,7 @@ class ScriptableDocumentParser;
 class ScriptElementData;
 class ScriptRunner;
 class SecurityOrigin;
+class SelectorQueryCache;
 class SerializedScriptValue;
 class SegmentedString;
 class Settings;
@@ -268,6 +269,8 @@ public:
 
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
+
+    SelectorQueryCache* selectorQueryCache();
 
     // DOM methods & attributes for Document
 
@@ -1450,6 +1453,8 @@ private:
 
     HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;    
     bool m_accessKeyMapValid;
+
+    OwnPtr<SelectorQueryCache> m_selectorQueryCache;
 
     bool m_useSecureKeyboardEntryWhenActive;
 

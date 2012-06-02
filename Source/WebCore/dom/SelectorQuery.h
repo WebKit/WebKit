@@ -26,21 +26,22 @@
 #ifndef SelectorQuery_h
 #define SelectorQuery_h
 
+#include "CSSSelectorList.h"
 #include "SelectorChecker.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef int ExceptionCode;
     
+class CSSSelector;
+class Element;
 class Node;
 class NodeList;
-class Element;
-class CSSSelector;
-class CSSSelectorList;
 
 class SelectorDataList {
 public:
     SelectorDataList();
-    explicit SelectorDataList(const CSSSelectorList&);
 
     void initialize(const CSSSelectorList&);
 
@@ -67,12 +68,41 @@ private:
 class SelectorQuery {
     WTF_MAKE_NONCOPYABLE(SelectorQuery);
 public:
-    SelectorQuery(const CSSSelectorList&);
-
+    SelectorQuery() { };
+    void initialize(const CSSSelectorList&);
     PassRefPtr<NodeList> queryAll(Node* rootNode) const;
     PassRefPtr<Element> queryFirst(Node* rootNode) const;
 private:
     SelectorDataList m_selectors;
+};
+
+class SelectorQueryCache {
+    WTF_MAKE_NONCOPYABLE(SelectorQueryCache);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    SelectorQueryCache() { };
+
+    SelectorQuery* add(const AtomicString&, Document*, ExceptionCode&);
+    void invalidate();
+
+private:
+
+    class Entry {
+        WTF_MAKE_NONCOPYABLE(Entry);
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        explicit Entry(CSSSelectorList&);
+        SelectorQuery* selectorQuery() { return &m_selectorQuery; };
+
+    private:
+        // m_querySelectorList keeps the lifetime of CSSSelectors in m_selectorQuery.
+        // Since m_selectorQuery just holds pointers to CSSSelector objects,
+        // m_querySelectorList must not be destructed before m_selectorQuery is destructed.
+        CSSSelectorList m_querySelectorList;
+        SelectorQuery m_selectorQuery;
+    };
+
+    HashMap<AtomicString, OwnPtr<SelectorQueryCache::Entry> > m_entries;
 };
 
 }

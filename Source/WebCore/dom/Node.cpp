@@ -1672,54 +1672,30 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     return list.release();
 }
 
-PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
+PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, ExceptionCode& ec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSParser parser(document());
-    CSSSelectorList querySelectorList;
-    parser.parseSelector(selectors, querySelectorList);
 
-    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
-        ec = SYNTAX_ERR;
+    SelectorQuery* selectorQuery = document()->selectorQueryCache()->add(selectors, document(), ec);
+    if (!selectorQuery)
         return 0;
-    }
-
-    // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (querySelectorList.selectorsNeedNamespaceResolution()) {
-        ec = NAMESPACE_ERR;
-        return 0;
-    }
-    
-    SelectorQuery selectorQuery(querySelectorList);
-    return selectorQuery.queryFirst(this);
+    return selectorQuery->queryFirst(this);
 }
 
-PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
+PassRefPtr<NodeList> Node::querySelectorAll(const AtomicString& selectors, ExceptionCode& ec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSParser p(document());
-    CSSSelectorList querySelectorList;
-    p.parseSelector(selectors, querySelectorList);
 
-    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
-        ec = SYNTAX_ERR;
+    SelectorQuery* selectorQuery = document()->selectorQueryCache()->add(selectors, document(), ec);
+    if (!selectorQuery)
         return 0;
-    }
-
-    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (querySelectorList.selectorsNeedNamespaceResolution()) {
-        ec = NAMESPACE_ERR;
-        return 0;
-    }
-
-    SelectorQuery selectorQuery(querySelectorList);
-    return selectorQuery.queryAll(this);
+    return selectorQuery->queryAll(this);
 }
 
 Document *Node::ownerDocument() const

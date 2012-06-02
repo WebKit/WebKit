@@ -577,8 +577,8 @@ public:
     PassRefPtr<NodeList> getElementsByName(const String& elementName);
     PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
 
-    PassRefPtr<Element> querySelector(const String& selectors, ExceptionCode&);
-    PassRefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
+    PassRefPtr<Element> querySelector(const AtomicString& selectors, ExceptionCode&);
+    PassRefPtr<NodeList> querySelectorAll(const AtomicString& selectors, ExceptionCode&);
 
     unsigned short compareDocumentPosition(Node*);
 

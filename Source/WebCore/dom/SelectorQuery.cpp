@@ -26,20 +26,17 @@
 #include "config.h"
 #include "SelectorQuery.h"
 
+#include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 SelectorDataList::SelectorDataList()
 {
-}
-
-SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
-{
-    initialize(selectorList);
 }
 
 void SelectorDataList::initialize(const CSSSelectorList& selectorList)
@@ -146,11 +143,10 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
     }
 }
 
-SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
-    : m_selectors(selectorList)
+void SelectorQuery::initialize(const CSSSelectorList& selectorList)
 {
+    m_selectors.initialize(selectorList);
 }
-
 
 PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
@@ -164,6 +160,43 @@ PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
     SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());
     selectorChecker.setMode(SelectorChecker::QueryingRules);
     return m_selectors.queryFirst(selectorChecker, rootNode);
+}
+
+SelectorQueryCache::Entry::Entry(CSSSelectorList& querySelectorList) : m_querySelectorList(querySelectorList)
+{
+    m_selectorQuery.initialize(m_querySelectorList);
+}
+
+SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)
+{
+    HashMap<AtomicString, OwnPtr<SelectorQueryCache::Entry> >::iterator it = m_entries.find(selectors);
+    if (it != m_entries.end())
+        return it->second->selectorQuery();
+
+    CSSParser parser(document);
+    CSSSelectorList querySelectorList;
+    parser.parseSelector(selectors, querySelectorList);
+
+    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
+    if (querySelectorList.selectorsNeedNamespaceResolution()) {
+        ec = NAMESPACE_ERR;
+        return 0;
+    }
+    
+    OwnPtr<SelectorQueryCache::Entry> entry = adoptPtr(new SelectorQueryCache::Entry(querySelectorList));
+    SelectorQuery* selectorQuery = entry->selectorQuery();
+    m_entries.add(selectors, entry.release());
+    return selectorQuery;
+}
+
+void SelectorQueryCache::invalidate()
+{
+    m_entries.clear();
 }
 
 }
