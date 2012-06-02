@@ -1,3 +1,17 @@
+2012-05-01  James Simonsen  <simonjam@chromium.org>
+
+        Ensure HTMLElementStack fails gracefully if it has a non-Element.
+        https://bugs.webkit.org/show_bug.cgi?id=85167
+
+        Reviewed by Adam Barth.
+
+        Test: Added to html5lib/resources/webkit02.dat
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::oneBelowTop):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2012-02-20  Adam Barth  <abarth@webkit.org>
 
         Invalid cast in WebCore::toElement / WebCore::HTMLElementStack::ElementRecord::element
