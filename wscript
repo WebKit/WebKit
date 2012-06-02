@@ -39,6 +39,11 @@ from TaskGen import taskgen, feature, after
 import Task, ccroot
 
 def clean_derived_sources(ds_cmd):
+    # the below command does not produce the desired output under Cygwin, so for now,
+    # disable this under Windows.
+    if building_on_win32:
+        return
+        
     cmd = ds_cmd + " -qp | grep -v '^# ' | grep -v '^[[:space:]]' | grep --only-matching '^.*:'"
     output = subprocess.check_output(cmd, shell=True)
     

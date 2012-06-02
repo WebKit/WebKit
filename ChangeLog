@@ -1,3 +1,9 @@
+2012-06-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Temporarily disable DerivedSources cleanup on Windows.
+
+        * wscript:
+
 2012-06-01  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Use -Werror only in developer builds
