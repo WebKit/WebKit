@@ -72,12 +72,6 @@ compositing
 # https://bugs.webkit.org/show_bug.cgi?id=76932
 fast/text/soft-hyphen-5.html
 
-# This platform does not support the Page Visibility API.
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
-
 # Fullscreen API is not supported with WK1 therefore not supported with Qt 4.8
 fullscreen
 plugins/fullscreen-plugins-dont-reload.html

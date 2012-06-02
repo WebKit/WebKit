@@ -1,5 +1,62 @@
 2012-06-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Replace QtXmlPatterns usage with libxslt dependency
+        https://bugs.webkit.org/show_bug.cgi?id=76820
+
+        Unreviewed gardening.
+
+        * fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Renamed from LayoutTests/platform/efl/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt.
+        * platform/efl/fast/xsl/xslt-mismatched-tags-in-xslt-expected.png: Removed.
+        * platform/gtk/fast/xsl/xslt-mismatched-tags-in-xslt-expected.png: Removed.
+        * platform/gtk/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Removed.
+        * platform/mac/fast/xsl/xslt-mismatched-tags-in-xslt-expected.png: Removed.
+        * platform/mac/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Removed.
+        * platform/qt-4.8/Skipped:
+        * platform/qt-4.8/fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog-expected.txt: Renamed from LayoutTests/platform/qt/fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog-expected.txt.
+        * platform/qt-4.8/fast/dom/Range/surround-contents-font-face-crash-expected.txt: Renamed from LayoutTests/platform/qt/fast/dom/Range/surround-contents-font-face-crash-expected.txt.
+        * platform/qt-4.8/fast/dom/xml-parser-error-message-crash-expected.txt: Renamed from LayoutTests/platform/qt/fast/dom/xml-parser-error-message-crash-expected.txt.
+        * platform/qt-4.8/fast/encoding/dumpAsText/utf-16-no-bom-expected.txt: Renamed from LayoutTests/platform/qt/fast/encoding/dumpAsText/utf-16-no-bom-expected.txt.
+        * platform/qt-4.8/fast/events/xsl-onload-expected.txt: Renamed from LayoutTests/platform/qt/fast/events/xsl-onload-expected.txt.
+        * platform/qt-4.8/fast/parser/xml-colon-entity-expected.txt: Renamed from LayoutTests/platform/qt/fast/parser/xml-colon-entity-expected.txt.
+        * platform/qt-4.8/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Renamed from LayoutTests/platform/qt/fast/parser/xml-declaration-missing-ending-mark-expected.txt.
+        * platform/qt-4.8/fast/parser/xslt-with-html-expected.txt: Renamed from LayoutTests/platform/qt/fast/parser/xslt-with-html-expected.txt.
+        * platform/qt-4.8/fast/xsl/subframe-location-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/subframe-location-expected.txt.
+        * platform/qt-4.8/fast/xsl/transform-to-html-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/transform-to-html-expected.txt.
+        * platform/qt-4.8/fast/xsl/utf8-chunks-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/utf8-chunks-expected.txt.
+        * platform/qt-4.8/fast/xsl/xslt-bad-import-uri-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-bad-import-uri-expected.txt.
+        * platform/qt-4.8/fast/xsl/xslt-doc-noenc-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-doc-noenc-expected.txt.
+        * platform/qt-4.8/fast/xsl/xslt-entity-enc-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-entity-enc-expected.txt.
+        * platform/qt-4.8/fast/xsl/xslt-entity-expected.png: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-entity-expected.png.
+        * platform/qt-4.8/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt.
+        * platform/qt-4.8/fast/xsl/xslt-recursion-expected.txt: Renamed from LayoutTests/platform/qt/fast/xsl/xslt-recursion-expected.txt.
+        * platform/qt-4.8/http/tests/misc/location-test-xsl-style-sheet-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/misc/location-test-xsl-style-sheet-expected.txt.
+        * platform/qt-4.8/http/tests/security/contentSecurityPolicy/xsl-allowed-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/contentSecurityPolicy/xsl-allowed-expected.txt.
+        * platform/qt-4.8/http/tests/security/contentSecurityPolicy/xsl-img-blocked-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/contentSecurityPolicy/xsl-img-blocked-expected.txt.
+        * platform/qt-4.8/http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2-expected.txt.
+        * platform/qt-4.8/http/tests/security/cookies/first-party-cookie-allow-xslt-expected.png: Renamed from LayoutTests/platform/qt/http/tests/security/cookies/first-party-cookie-allow-xslt-expected.png.
+        * platform/qt-4.8/http/tests/security/cookies/first-party-cookie-allow-xslt-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/cookies/first-party-cookie-allow-xslt-expected.txt.
+        * platform/qt-4.8/http/tests/security/cookies/third-party-cookie-blocking-xslt-expected.png: Renamed from LayoutTests/platform/qt/http/tests/security/cookies/third-party-cookie-blocking-xslt-expected.png.
+        * platform/qt-4.8/http/tests/security/cookies/third-party-cookie-blocking-xslt-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/cookies/third-party-cookie-blocking-xslt-expected.txt.
+        * platform/qt-4.8/http/tests/security/xss-DENIED-xml-external-entity-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/xss-DENIED-xml-external-entity-expected.txt.
+        * platform/qt-4.8/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt.
+        * platform/qt-4.8/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt.
+        * platform/qt-4.8/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt.
+        * platform/qt-4.8/svg/custom/bug45331-expected.png: Renamed from LayoutTests/platform/qt/svg/custom/bug45331-expected.png.
+        * platform/qt-4.8/svg/custom/bug45331-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/bug45331-expected.txt.
+        * platform/qt-4.8/svg/custom/bug78807-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/bug78807-expected.txt.
+        * platform/qt-4.8/svg/custom/use-invalid-html-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/use-invalid-html-expected.txt.
+        * platform/qt-4.8/svg/custom/use-invalid-style-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/use-invalid-style-expected.txt.
+        * platform/qt-4.8/svg/hixie/error/dumpAsText/004-expected.txt: Renamed from LayoutTests/platform/qt/svg/hixie/error/dumpAsText/004-expected.txt.
+        * platform/qt-4.8/svg/hixie/error/dumpAsText/005-expected.txt: Renamed from LayoutTests/platform/qt/svg/hixie/error/dumpAsText/005-expected.txt.
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt: Added.
+        * platform/qt-5.0/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt: Added.
+        * platform/qt-arm/Skipped:
+        * platform/qt/Skipped:
+
+2012-06-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed fix after r119255.
 
         * platform/qt/svg/css/getComputedStyle-basic-expected.txt:
