@@ -1,3 +1,16 @@
+2012-06-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Use 'Ok' and 'Cancel' buttons in JavaScript confirm box.
+        https://bugs.webkit.org/show_bug.cgi?id=76190
+        Based on Johannes Obermayrs (johannesobermayr@gmx.de) patch.
+        See: http://www.javascripter.net/faq/confirm.htm
+        Fixes: https://bugs.kde.org/show_bug.cgi?id=287629
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptConfirm):
+
 2012-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix QObject bridge tests in Qt5 after (not so) recent QVariant changes

@@ -2096,7 +2096,7 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
     This function is called whenever a JavaScript program running inside \a frame calls the confirm() function
     with the message, \a msg. Returns true if the user confirms the message; otherwise returns false.
 
-    The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
+    The default implementation executes the query using QMessageBox::information with QMessageBox::Ok and QMessageBox::Cancel buttons.
 */
 bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
@@ -2109,8 +2109,8 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
     box.setWindowTitle(tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()));
     box.setTextFormat(Qt::PlainText);
     box.setText(msg);
-    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    return QMessageBox::Yes == box.exec();
+    box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    return QMessageBox::Ok == box.exec();
 #endif
 }
 
