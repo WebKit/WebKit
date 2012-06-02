@@ -1,5 +1,11 @@
 2012-06-02  Dan Bernstein  <mitz@apple.com>
 
+        Reverted the last change.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2012-06-02  Dan Bernstein  <mitz@apple.com>
+
         Stop treating two Python scripts as private headers.
 
         * WebKit2.xcodeproj/project.pbxproj: Removed model.py and parser.py from the Copy Headers
