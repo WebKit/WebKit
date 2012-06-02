@@ -35,11 +35,11 @@
 .wrap-reverse {
     -webkit-flex-wrap: wrap-reverse;
 }
-.align-content-start {
-    -webkit-align-content: start;
+.align-content-flex-start {
+    -webkit-align-content: flex-start;
 }
-.align-content-end {
-    -webkit-align-content: end;
+.align-content-flex-end {
+    -webkit-align-content: flex-end;
 }
 .align-content-center {
     -webkit-align-content: center;
@@ -73,16 +73,16 @@ var expectations = {
         'column': {
             'ltr': {
                 'wrap': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
@@ -91,16 +91,16 @@ var expectations = {
             },
             'rtl': {
                 'wrap': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
@@ -112,16 +112,16 @@ var expectations = {
         'column-reverse': {
             'ltr': {
                 'wrap': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
@@ -130,16 +130,16 @@ var expectations = {
             },
             'rtl': {
                 'wrap': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
@@ -153,16 +153,16 @@ var expectations = {
         'column': {
             'ltr': {
                 'wrap': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
@@ -171,16 +171,16 @@ var expectations = {
             },
             'rtl': {
                 'wrap': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
@@ -191,16 +191,16 @@ var expectations = {
         'column-reverse': {
             'ltr': {
                 'wrap': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
                     'stretch': [0, 300],
                 },
                 'wrap-reverse': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
@@ -209,16 +209,16 @@ var expectations = {
             },
             'rtl': {
                 'wrap': {
-                    'start': [500, 400],
-                    'end': [100, 0],
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
                     'center': [300, 200],
                     'space-between': [500, 0],
                     'space-around': [400, 100],
                     'stretch': [300, 0],
                 },
                 'wrap-reverse': {
-                    'start': [0, 100],
-                    'end': [400, 500],
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
                     'center': [200, 300],
                     'space-between': [0, 500],
                     'space-around': [100, 400],
@@ -255,7 +255,7 @@ var writingModes = ['horizontal-tb', 'horizontal-bt'];
 var flexDirections = ['column', 'column-reverse'];
 var directions = ['ltr', 'rtl'];
 var wraps = ['wrap', 'wrap-reverse'];
-var alignContents = ['start', 'end', 'center', 'space-between', 'space-around', 'stretch'];
+var alignContents = ['flex-start', 'flex-end', 'center', 'space-between', 'space-around', 'stretch'];
 
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {

@@ -902,7 +902,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
 
 static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, EJustifyContent justifyContent, unsigned numberOfChildren)
 {
-    if (justifyContent == JustifyEnd)
+    if (justifyContent == JustifyFlexEnd)
         return availableFreeSpace;
     if (justifyContent == JustifyCenter)
         return availableFreeSpace / 2;
@@ -960,10 +960,10 @@ static EAlignItems alignmentForChild(RenderBox* child)
         align = child->parent()->style()->alignItems();
 
     if (child->parent()->style()->flexWrap() == FlexWrapReverse) {
-        if (align == AlignStart)
-            align = AlignEnd;
-        else if (align == AlignEnd)
-            align = AlignStart;
+        if (align == AlignFlexStart)
+            align = AlignFlexEnd;
+        else if (align == AlignFlexEnd)
+            align = AlignFlexStart;
     }
 
     return align;
@@ -1070,7 +1070,7 @@ void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children,
 
 static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, EAlignContent alignContent, unsigned numberOfLines)
 {
-    if (alignContent == AlignContentEnd)
+    if (alignContent == AlignContentFlexEnd)
         return availableFreeSpace;
     if (alignContent == AlignContentCenter)
         return availableFreeSpace / 2;
@@ -1096,7 +1096,7 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
 
 void RenderFlexibleBox::alignFlexLines(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
 {
-    if (!isMultiline() || style()->alignContent() == AlignContentStart)
+    if (!isMultiline() || style()->alignContent() == AlignContentFlexStart)
         return;
 
     LayoutUnit availableCrossAxisSpace = crossAxisContentExtent();
@@ -1166,9 +1166,9 @@ void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector
                     adjustAlignmentForChild(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child));
                 break;
             }
-            case AlignStart:
+            case AlignFlexStart:
                 break;
-            case AlignEnd:
+            case AlignFlexEnd:
                 adjustAlignmentForChild(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child));
                 break;
             case AlignCenter:

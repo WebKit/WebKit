@@ -1,6 +1,6 @@
-horizontal-tb ltr column wrap align-content-start
+horizontal-tb ltr column wrap align-content-flex-start
 PASS
-horizontal-tb ltr column wrap align-content-end
+horizontal-tb ltr column wrap align-content-flex-end
 PASS
 horizontal-tb ltr column wrap align-content-center
 PASS
@@ -10,9 +10,9 @@ horizontal-tb ltr column wrap align-content-space-around
 PASS
 horizontal-tb ltr column wrap align-content-stretch
 PASS
-horizontal-tb ltr column wrap-reverse align-content-start
+horizontal-tb ltr column wrap-reverse align-content-flex-start
 PASS
-horizontal-tb ltr column wrap-reverse align-content-end
+horizontal-tb ltr column wrap-reverse align-content-flex-end
 PASS
 horizontal-tb ltr column wrap-reverse align-content-center
 PASS
@@ -22,9 +22,9 @@ horizontal-tb ltr column wrap-reverse align-content-space-around
 PASS
 horizontal-tb ltr column wrap-reverse align-content-stretch
 PASS
-horizontal-tb rtl column wrap align-content-start
+horizontal-tb rtl column wrap align-content-flex-start
 PASS
-horizontal-tb rtl column wrap align-content-end
+horizontal-tb rtl column wrap align-content-flex-end
 PASS
 horizontal-tb rtl column wrap align-content-center
 PASS
@@ -34,9 +34,9 @@ horizontal-tb rtl column wrap align-content-space-around
 PASS
 horizontal-tb rtl column wrap align-content-stretch
 PASS
-horizontal-tb rtl column wrap-reverse align-content-start
+horizontal-tb rtl column wrap-reverse align-content-flex-start
 PASS
-horizontal-tb rtl column wrap-reverse align-content-end
+horizontal-tb rtl column wrap-reverse align-content-flex-end
 PASS
 horizontal-tb rtl column wrap-reverse align-content-center
 PASS
@@ -46,9 +46,9 @@ horizontal-tb rtl column wrap-reverse align-content-space-around
 PASS
 horizontal-tb rtl column wrap-reverse align-content-stretch
 PASS
-horizontal-tb ltr column-reverse wrap align-content-start
+horizontal-tb ltr column-reverse wrap align-content-flex-start
 PASS
-horizontal-tb ltr column-reverse wrap align-content-end
+horizontal-tb ltr column-reverse wrap align-content-flex-end
 PASS
 horizontal-tb ltr column-reverse wrap align-content-center
 PASS
@@ -58,9 +58,9 @@ horizontal-tb ltr column-reverse wrap align-content-space-around
 PASS
 horizontal-tb ltr column-reverse wrap align-content-stretch
 PASS
-horizontal-tb ltr column-reverse wrap-reverse align-content-start
+horizontal-tb ltr column-reverse wrap-reverse align-content-flex-start
 PASS
-horizontal-tb ltr column-reverse wrap-reverse align-content-end
+horizontal-tb ltr column-reverse wrap-reverse align-content-flex-end
 PASS
 horizontal-tb ltr column-reverse wrap-reverse align-content-center
 PASS
@@ -70,9 +70,9 @@ horizontal-tb ltr column-reverse wrap-reverse align-content-space-around
 PASS
 horizontal-tb ltr column-reverse wrap-reverse align-content-stretch
 PASS
-horizontal-tb rtl column-reverse wrap align-content-start
+horizontal-tb rtl column-reverse wrap align-content-flex-start
 PASS
-horizontal-tb rtl column-reverse wrap align-content-end
+horizontal-tb rtl column-reverse wrap align-content-flex-end
 PASS
 horizontal-tb rtl column-reverse wrap align-content-center
 PASS
@@ -82,9 +82,9 @@ horizontal-tb rtl column-reverse wrap align-content-space-around
 PASS
 horizontal-tb rtl column-reverse wrap align-content-stretch
 PASS
-horizontal-tb rtl column-reverse wrap-reverse align-content-start
+horizontal-tb rtl column-reverse wrap-reverse align-content-flex-start
 PASS
-horizontal-tb rtl column-reverse wrap-reverse align-content-end
+horizontal-tb rtl column-reverse wrap-reverse align-content-flex-end
 PASS
 horizontal-tb rtl column-reverse wrap-reverse align-content-center
 PASS
@@ -94,9 +94,9 @@ horizontal-tb rtl column-reverse wrap-reverse align-content-space-around
 PASS
 horizontal-tb rtl column-reverse wrap-reverse align-content-stretch
 PASS
-horizontal-bt ltr column wrap align-content-start
+horizontal-bt ltr column wrap align-content-flex-start
 PASS
-horizontal-bt ltr column wrap align-content-end
+horizontal-bt ltr column wrap align-content-flex-end
 PASS
 horizontal-bt ltr column wrap align-content-center
 PASS
@@ -106,9 +106,9 @@ horizontal-bt ltr column wrap align-content-space-around
 PASS
 horizontal-bt ltr column wrap align-content-stretch
 PASS
-horizontal-bt ltr column wrap-reverse align-content-start
+horizontal-bt ltr column wrap-reverse align-content-flex-start
 PASS
-horizontal-bt ltr column wrap-reverse align-content-end
+horizontal-bt ltr column wrap-reverse align-content-flex-end
 PASS
 horizontal-bt ltr column wrap-reverse align-content-center
 PASS
@@ -118,9 +118,9 @@ horizontal-bt ltr column wrap-reverse align-content-space-around
 PASS
 horizontal-bt ltr column wrap-reverse align-content-stretch
 PASS
-horizontal-bt rtl column wrap align-content-start
+horizontal-bt rtl column wrap align-content-flex-start
 PASS
-horizontal-bt rtl column wrap align-content-end
+horizontal-bt rtl column wrap align-content-flex-end
 PASS
 horizontal-bt rtl column wrap align-content-center
 PASS
@@ -130,9 +130,9 @@ horizontal-bt rtl column wrap align-content-space-around
 PASS
 horizontal-bt rtl column wrap align-content-stretch
 PASS
-horizontal-bt rtl column wrap-reverse align-content-start
+horizontal-bt rtl column wrap-reverse align-content-flex-start
 PASS
-horizontal-bt rtl column wrap-reverse align-content-end
+horizontal-bt rtl column wrap-reverse align-content-flex-end
 PASS
 horizontal-bt rtl column wrap-reverse align-content-center
 PASS
@@ -142,9 +142,9 @@ horizontal-bt rtl column wrap-reverse align-content-space-around
 PASS
 horizontal-bt rtl column wrap-reverse align-content-stretch
 PASS
-horizontal-bt ltr column-reverse wrap align-content-start
+horizontal-bt ltr column-reverse wrap align-content-flex-start
 PASS
-horizontal-bt ltr column-reverse wrap align-content-end
+horizontal-bt ltr column-reverse wrap align-content-flex-end
 PASS
 horizontal-bt ltr column-reverse wrap align-content-center
 PASS
@@ -154,9 +154,9 @@ horizontal-bt ltr column-reverse wrap align-content-space-around
 PASS
 horizontal-bt ltr column-reverse wrap align-content-stretch
 PASS
-horizontal-bt ltr column-reverse wrap-reverse align-content-start
+horizontal-bt ltr column-reverse wrap-reverse align-content-flex-start
 PASS
-horizontal-bt ltr column-reverse wrap-reverse align-content-end
+horizontal-bt ltr column-reverse wrap-reverse align-content-flex-end
 PASS
 horizontal-bt ltr column-reverse wrap-reverse align-content-center
 PASS
@@ -166,9 +166,9 @@ horizontal-bt ltr column-reverse wrap-reverse align-content-space-around
 PASS
 horizontal-bt ltr column-reverse wrap-reverse align-content-stretch
 PASS
-horizontal-bt rtl column-reverse wrap align-content-start
+horizontal-bt rtl column-reverse wrap align-content-flex-start
 PASS
-horizontal-bt rtl column-reverse wrap align-content-end
+horizontal-bt rtl column-reverse wrap align-content-flex-end
 PASS
 horizontal-bt rtl column-reverse wrap align-content-center
 PASS
@@ -178,9 +178,9 @@ horizontal-bt rtl column-reverse wrap align-content-space-around
 PASS
 horizontal-bt rtl column-reverse wrap align-content-stretch
 PASS
-horizontal-bt rtl column-reverse wrap-reverse align-content-start
+horizontal-bt rtl column-reverse wrap-reverse align-content-flex-start
 PASS
-horizontal-bt rtl column-reverse wrap-reverse align-content-end
+horizontal-bt rtl column-reverse wrap-reverse align-content-flex-end
 PASS
 horizontal-bt rtl column-reverse wrap-reverse align-content-center
 PASS

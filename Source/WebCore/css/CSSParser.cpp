@@ -690,15 +690,15 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 #if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
-         if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
+         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
              return true;
          break;
     case CSSPropertyWebkitAlignItems:
-        if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
+        if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
     case CSSPropertyWebkitAlignSelf:
-        if (valueID == CSSValueAuto || valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
+        if (valueID == CSSValueAuto || valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueBaseline || valueID == CSSValueStretch)
             return true;
         break;
     case CSSPropertyWebkitFlexDirection:
@@ -710,7 +710,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
              return true;
         break;
     case CSSPropertyWebkitJustifyContent:
-        if (valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround)
+        if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround)
             return true;
         break;
 #endif

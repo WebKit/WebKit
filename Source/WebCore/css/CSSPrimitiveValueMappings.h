@@ -1205,11 +1205,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignItems e)
     case AlignAuto:
         m_value.ident = CSSValueAuto;
         break;
-    case AlignStart:
-        m_value.ident = CSSValueStart;
+    case AlignFlexStart:
+        m_value.ident = CSSValueFlexStart;
         break;
-    case AlignEnd:
-        m_value.ident = CSSValueEnd;
+    case AlignFlexEnd:
+        m_value.ident = CSSValueFlexEnd;
         break;
     case AlignCenter:
         m_value.ident = CSSValueCenter;
@@ -1228,10 +1228,10 @@ template<> inline CSSPrimitiveValue::operator EAlignItems() const
     switch (m_value.ident) {
     case CSSValueAuto:
         return AlignAuto;
-    case CSSValueStart:
-        return AlignStart;
-    case CSSValueEnd:
-        return AlignEnd;
+    case CSSValueFlexStart:
+        return AlignFlexStart;
+    case CSSValueFlexEnd:
+        return AlignFlexEnd;
     case CSSValueCenter:
         return AlignCenter;
     case CSSValueStretch:
@@ -1240,7 +1240,7 @@ template<> inline CSSPrimitiveValue::operator EAlignItems() const
         return AlignBaseline;
     default:
         ASSERT_NOT_REACHED();
-        return AlignStart;
+        return AlignFlexStart;
     }
 }
 
@@ -1249,11 +1249,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EJustifyContent e)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case JustifyStart:
-        m_value.ident = CSSValueStart;
+    case JustifyFlexStart:
+        m_value.ident = CSSValueFlexStart;
         break;
-    case JustifyEnd:
-        m_value.ident = CSSValueEnd;
+    case JustifyFlexEnd:
+        m_value.ident = CSSValueFlexEnd;
         break;
     case JustifyCenter:
         m_value.ident = CSSValueCenter;
@@ -1270,10 +1270,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EJustifyContent e)
 template<> inline CSSPrimitiveValue::operator EJustifyContent() const
 {
     switch (m_value.ident) {
-    case CSSValueStart:
-        return JustifyStart;
-    case CSSValueEnd:
-        return JustifyEnd;
+    case CSSValueFlexStart:
+        return JustifyFlexStart;
+    case CSSValueFlexEnd:
+        return JustifyFlexEnd;
     case CSSValueCenter:
         return JustifyCenter;
     case CSSValueSpaceBetween:
@@ -1282,7 +1282,7 @@ template<> inline CSSPrimitiveValue::operator EJustifyContent() const
         return JustifySpaceAround;
     default:
         ASSERT_NOT_REACHED();
-        return JustifyStart;
+        return JustifyFlexStart;
     }
 }
 
@@ -1328,11 +1328,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignContent e)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case AlignContentStart:
-        m_value.ident = CSSValueStart;
+    case AlignContentFlexStart:
+        m_value.ident = CSSValueFlexStart;
         break;
-    case AlignContentEnd:
-        m_value.ident = CSSValueEnd;
+    case AlignContentFlexEnd:
+        m_value.ident = CSSValueFlexEnd;
         break;
     case AlignContentCenter:
         m_value.ident = CSSValueCenter;
@@ -1352,10 +1352,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignContent e)
 template<> inline CSSPrimitiveValue::operator EAlignContent() const
 {
     switch (m_value.ident) {
-    case CSSValueStart:
-        return AlignContentStart;
-    case CSSValueEnd:
-        return AlignContentEnd;
+    case CSSValueFlexStart:
+        return AlignContentFlexStart;
+    case CSSValueFlexEnd:
+        return AlignContentFlexEnd;
     case CSSValueCenter:
         return AlignContentCenter;
     case CSSValueSpaceBetween:

@@ -52,19 +52,19 @@ shouldBeEqualToString('flexitem.style.webkitOrder', '');
 
 
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-// The initial value is 'start'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
+// The initial value is 'flex-start'.
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
 
 flexbox.style.webkitJustifyContent = 'foo';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 
-flexbox.style.webkitJustifyContent = 'start';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
+flexbox.style.webkitJustifyContent = 'flex-start';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
 
-flexbox.style.webkitJustifyContent = 'end';
-shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'end');
+flexbox.style.webkitJustifyContent = 'flex-end';
+shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-end');
 
 flexbox.style.webkitJustifyContent = 'center';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', 'center');
@@ -76,7 +76,7 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyConte
 
 flexbox.style.webkitJustifyContent = '';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
 
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
@@ -91,13 +91,13 @@ flexbox.style.webkitAlignSelf = 'auto';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'auto');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'stretch');
 
-flexbox.style.webkitAlignSelf = 'start';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'start');
+flexbox.style.webkitAlignSelf = 'flex-start';
+shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'flex-start');
 
-flexbox.style.webkitAlignSelf = 'end';
-shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'end');
+flexbox.style.webkitAlignSelf = 'flex-end';
+shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignSelf', 'flex-end');
 
 flexbox.style.webkitAlignSelf = 'center';
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', 'center');
@@ -128,15 +128,15 @@ shouldBeEqualToString('flexbox.style.webkitAlignItems', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'stretch');
 shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'stretch');
 
-flexbox.style.webkitAlignItems = 'start';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'start');
+flexbox.style.webkitAlignItems = 'flex-start';
+shouldBeEqualToString('flexbox.style.webkitAlignItems', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'flex-start');
 
-flexbox.style.webkitAlignItems = 'end';
-shouldBeEqualToString('flexbox.style.webkitAlignItems', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'end');
+flexbox.style.webkitAlignItems = 'flex-end';
+shouldBeEqualToString('flexbox.style.webkitAlignItems', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignItems', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitAlignSelf', 'flex-end');
 
 flexbox.style.webkitAlignItems = 'center';
 shouldBeEqualToString('flexbox.style.webkitAlignItems', 'center');
@@ -264,13 +264,13 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', '
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');
 
-flexbox.style.webkitAlignContent = 'start';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'start');
+flexbox.style.webkitAlignContent = 'flex-start';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'flex-start');
 
-flexbox.style.webkitAlignContent = 'end';
-shouldBeEqualToString('flexbox.style.webkitAlignContent', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'end');
+flexbox.style.webkitAlignContent = 'flex-end';
+shouldBeEqualToString('flexbox.style.webkitAlignContent', 'flex-end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'flex-end');
 
 flexbox.style.webkitAlignContent = 'center';
 shouldBeEqualToString('flexbox.style.webkitAlignContent', 'center');

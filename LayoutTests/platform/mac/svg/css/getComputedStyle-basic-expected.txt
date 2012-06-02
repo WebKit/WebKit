@@ -302,7 +302,7 @@ rect: style.getPropertyValue(-webkit-flex-flow) : row none
 rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-flex-wrap) : none
 rect: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-justify-content) : start
+rect: style.getPropertyValue(-webkit-justify-content) : flex-start
 rect: style.getPropertyCSSValue(-webkit-justify-content) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-kerning) : auto
 rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
@@ -836,7 +836,7 @@ g: style.getPropertyValue(-webkit-flex-flow) : row none
 g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-flex-wrap) : none
 g: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-justify-content) : start
+g: style.getPropertyValue(-webkit-justify-content) : flex-start
 g: style.getPropertyCSSValue(-webkit-justify-content) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-kerning) : auto
 g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]

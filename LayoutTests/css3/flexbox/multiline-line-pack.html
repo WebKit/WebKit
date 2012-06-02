@@ -79,14 +79,14 @@ if (window.layoutTestController)
   <div data-offset-x="0" data-offset-y="80" data-expected-height="40"></div>
 </div>
 
-<div data-expected-height="120" class="flexbox horizontal" style="-webkit-align-content: start">
+<div data-expected-height="120" class="flexbox horizontal" style="-webkit-align-content: flex-start">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="20" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="40" data-expected-height="20"></div>
 </div>
 
-<div data-expected-height="120" class="flexbox horizontal" style="-webkit-align-content: end">
+<div data-expected-height="120" class="flexbox horizontal" style="-webkit-align-content: flex-end">
   <div data-offset-x="0" data-offset-y="60" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="60" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="80" data-expected-height="20"></div>
@@ -122,7 +122,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- Negative overflow goes out the top. -->
-<div data-expected-height="30" class="flexbox horizontal" style="-webkit-align-content: end; height: 30px">
+<div data-expected-height="30" class="flexbox horizontal" style="-webkit-align-content: flex-end; height: 30px">
   <div data-offset-x="0" data-offset-y="-30" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="-30" data-expected-height="20"></div>
   <div data-offset-x="0" data-offset-y="-10" data-expected-height="20"></div>
@@ -137,7 +137,7 @@ if (window.layoutTestController)
   <div data-offset-x="0" data-offset-y="25" data-expected-height="20"></div>
 </div>
 
-<!-- If we overflow, we should be the same as start. -->
+<!-- If we overflow, we should be the same as flex-start. -->
 <div data-expected-height="30" class="flexbox horizontal" style="-webkit-align-content: space-between; height: 30px">
   <div data-offset-x="0" data-offset-y="0" data-expected-height="20"></div>
   <div data-offset-x="100" data-offset-y="0" data-expected-height="20"></div>
@@ -188,14 +188,14 @@ if (window.layoutTestController)
   <div data-offset-x="0" data-offset-y="0" data-expected-width="40"></div>
 </div>
 
-<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-align-content: start">
+<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-align-content: flex-start">
   <div data-offset-x="100" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="100" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="80" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="60" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
-<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-align-content: end">
+<div data-expected-width="120" class="flexbox vertical-rl" style="-webkit-align-content: flex-end">
   <div data-offset-x="40" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="40" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="20" data-offset-y="0" data-expected-width="20"></div>
@@ -231,7 +231,7 @@ if (window.layoutTestController)
 </div>
 
 <!-- Negative overflow goes out the right. -->
-<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-align-content: end; width: 30px;">
+<div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-align-content: flex-end; width: 30px;">
   <div data-offset-x="40" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="40" data-offset-y="10" data-expected-width="20"></div>
   <div data-offset-x="20" data-offset-y="0" data-expected-width="20"></div>
@@ -246,7 +246,7 @@ if (window.layoutTestController)
   <div data-offset-x="-15" data-offset-y="0" data-expected-width="20"></div>
 </div>
 
-<!-- If we overflow, we should be the same as start. -->
+<!-- If we overflow, we should be the same as flex-start. -->
 <div data-expected-width="30" class="flexbox vertical-rl" style="-webkit-align-content: space-between; width: 30px;">
   <div data-offset-x="10" data-offset-y="0" data-expected-width="20"></div>
   <div data-offset-x="10" data-offset-y="10" data-expected-width="20"></div>

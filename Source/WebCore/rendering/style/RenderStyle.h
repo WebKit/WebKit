@@ -1589,7 +1589,7 @@ public:
     static EAlignItems initialAlignSelf() { return AlignAuto; }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexWrapNone; }
-    static EJustifyContent initialJustifyContent() { return JustifyStart; }
+    static EJustifyContent initialJustifyContent() { return JustifyFlexStart; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }

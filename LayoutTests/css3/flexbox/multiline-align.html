@@ -6,7 +6,7 @@
     display: -webkit-flex;
     background-color: grey;
     max-width: 600px;
-    -webkit-align-content: start;
+    -webkit-align-content: flex-start;
 }
 .title {
     margin-top: 1em;
@@ -1342,21 +1342,21 @@ writingModes.forEach(function(writingMode) {
                 var baselineMargin = (flexDirection.indexOf('row') != -1) ? '-webkit-margin-before: 5px;' : '-webkit-margin-start: 5px;';
 
                 var testExpectations = expectations[writingMode][flexDirection][direction][wrap];
-                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'start', testExpectations['child1']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'flex-start', testExpectations['child1']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'center', testExpectations['child2']);
-                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'end', testExpectations['child3']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'flex-end', testExpectations['child3']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'baseline', testExpectations['child4']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'baseline; ' + baselineMargin, testExpectations['child5']);
                 addChild(flexbox, mainAxis, crossAxis, 10, 'auto', 'stretch', testExpectations['child6']);
-                addChild(flexbox, mainAxis, crossAxis, 10, '30px', 'start', testExpectations['child7']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '30px', 'flex-start', testExpectations['child7']);
 
-                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'start', testExpectations['child8']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'flex-start', testExpectations['child8']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'center', testExpectations['child9']);
-                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'end', testExpectations['child10']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'flex-end', testExpectations['child10']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'baseline', testExpectations['child11']);
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'baseline; ' + baselineMargin, testExpectations['child12']);
                 addChild(flexbox, mainAxis, crossAxis, 10, 'auto', 'stretch', testExpectations['child13']);
-                addChild(flexbox, mainAxis, crossAxis, 10, '30px', 'start', testExpectations['child14']);
+                addChild(flexbox, mainAxis, crossAxis, 10, '30px', 'flex-start', testExpectations['child14']);
 
                 flexbox.setAttribute("data-expected-width", testExpectations.flexbox[0]);
                 flexbox.setAttribute("data-expected-height", testExpectations.flexbox[1]);

@@ -151,7 +151,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-flex-direction: row
     -webkit-flex-flow: row none
     -webkit-flex-wrap: none
-    -webkit-justify-content: start
+    -webkit-justify-content: flex-start
     -webkit-font-kerning: auto
     -webkit-font-smoothing: auto
     -webkit-font-variant-ligatures: normal
