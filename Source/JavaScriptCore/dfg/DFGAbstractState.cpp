@@ -1016,6 +1016,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         ASSERT(m_graph[node.child1()].shouldSpeculateArray());
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
+        if (node.op() == PutByVal)
+            clobberWorld(node.codeOrigin, indexInBlock);
         break;
     }
             
