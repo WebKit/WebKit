@@ -350,7 +350,8 @@ void AudioNode::deref(RefType refType)
     } else {
         // We were unable to get the lock, so put this in a list to finish up later.
         ASSERT(context()->isAudioThread());
-        context()->addDeferredFinishDeref(this, refType);
+        ASSERT(refType == RefTypeConnection);
+        context()->addDeferredFinishDeref(this);
     }
 
     // Once AudioContext::uninitialize() is called there's no more chances for deleteMarkedNodes() to get called, so we call here.

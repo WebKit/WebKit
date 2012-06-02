@@ -79,10 +79,14 @@ public:
     AudioParam* playbackRate() { return m_playbackRate.get(); }
 
     // If a panner node is set, then we can incorporate doppler shift into the playback pitch rate.
-    void setPannerNode(PassRefPtr<AudioPannerNode> pannerNode) { m_pannerNode = pannerNode; }
+    void setPannerNode(AudioPannerNode*);
+    void clearPannerNode();
 
     // If we are no longer playing, propogate silence ahead to downstream nodes.
     virtual bool propagatesSilence() const;
+
+    // AudioScheduledSourceNode
+    virtual void finish() OVERRIDE;
 
 private:
     AudioBufferSourceNode(AudioContext*, float sampleRate);
@@ -123,8 +127,9 @@ private:
     // m_lastGain provides continuity when we dynamically adjust the gain.
     float m_lastGain;
     
-    // We optionally keep track of a panner node which has a doppler shift that is incorporated into the pitch rate.
-    RefPtr<AudioPannerNode> m_pannerNode;
+    // We optionally keep track of a panner node which has a doppler shift that is incorporated into
+    // the pitch rate. We manually manage ref-counting because we want to use RefTypeConnection.
+    AudioPannerNode* m_pannerNode;
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Mutex m_processLock;

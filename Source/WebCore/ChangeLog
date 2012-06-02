@@ -1,3 +1,36 @@
+2012-06-01  Raymond Toy  <rtoy@google.com>
+
+        Remove RefInfo class
+        https://bugs.webkit.org/show_bug.cgi?id=87904
+
+        Reviewed by Chris Rogers.
+
+        No new tests; covered by existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::~AudioBufferSourceNode): Clear
+        panner node.
+        (WebCore::AudioBufferSourceNode::totalPitchRate):
+        (WebCore::AudioBufferSourceNode::setPannerNode): Use
+        RefTypeConnection counting for panner node.
+        (WebCore):
+        (WebCore::AudioBufferSourceNode::clearPannerNode): New function to
+         clear panner node in AudioBufferSourceNode.
+        (WebCore::AudioBufferSourceNode::finish): Clear panner node when done.
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        (AudioBufferSourceNode): Add virtual finish(), m_pannerNode is not
+        a RefPtr anymore.
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::addDeferredFinishDeref): Remove unneeded RefTyp.
+        (WebCore::AudioContext::handleDeferredFinishDerefs): Remove
+        unneeded RefType.
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext): Update addDeferredFinishDeref signature.
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::deref): Update call to addDeferredFinishDeref. 
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        (AudioScheduledSourceNode): Make finish() virtual.
+
 2012-06-01  Tony Chang  <tony@chromium.org>
 
         rename -webkit-flex-pack and -webkit-flex-line-pack to -webkit-justify-content and -webkit-align-content

@@ -213,7 +213,7 @@ public:
     };
     
     // In AudioNode::deref() a tryLock() is used for calling finishDeref(), but if it fails keep track here.
-    void addDeferredFinishDeref(AudioNode*, AudioNode::RefType);
+    void addDeferredFinishDeref(AudioNode*);
 
     // In the audio thread at the start of each render cycle, we'll call handleDeferredFinishDerefs().
     void handleDeferredFinishDerefs();
@@ -308,19 +308,8 @@ private:
     volatile ThreadIdentifier m_audioThread;
     volatile ThreadIdentifier m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == UndefinedThreadIdentifier
     
-    // Deferred de-referencing.
-    struct RefInfo {
-        RefInfo(AudioNode* node, AudioNode::RefType refType)
-            : m_node(node)
-            , m_refType(refType)
-        {
-        }
-        AudioNode* m_node;
-        AudioNode::RefType m_refType;
-    };    
-
     // Only accessed in the audio thread.
-    Vector<RefInfo> m_deferredFinishDerefList;
+    Vector<AudioNode*> m_deferredFinishDerefList;
     
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;

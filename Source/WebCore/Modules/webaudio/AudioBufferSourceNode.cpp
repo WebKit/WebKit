@@ -78,6 +78,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sample
 
 AudioBufferSourceNode::~AudioBufferSourceNode()
 {
+    clearPannerNode();
     uninitialize();
 }
 
@@ -385,7 +386,7 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
 double AudioBufferSourceNode::totalPitchRate()
 {
     double dopplerRate = 1.0;
-    if (m_pannerNode.get())
+    if (m_pannerNode)
         dopplerRate = m_pannerNode->dopplerRate();
     
     // Incorporate buffer's sample-rate versus AudioContext's sample-rate.
@@ -437,6 +438,33 @@ void AudioBufferSourceNode::setLooping(bool looping)
 bool AudioBufferSourceNode::propagatesSilence() const
 {
     return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
+}
+
+void AudioBufferSourceNode::setPannerNode(AudioPannerNode* pannerNode)
+{
+    if (m_pannerNode != pannerNode && !hasFinished()) {
+        if (pannerNode)
+            pannerNode->ref(AudioNode::RefTypeConnection);
+        if (m_pannerNode)
+            m_pannerNode->deref(AudioNode::RefTypeConnection);
+
+        m_pannerNode = pannerNode;
+    }
+}
+
+void AudioBufferSourceNode::clearPannerNode()
+{
+    if (m_pannerNode) {
+        m_pannerNode->deref(AudioNode::RefTypeConnection);
+        m_pannerNode = 0;
+    }
+}
+
+void AudioBufferSourceNode::finish()
+{
+    clearPannerNode();
+    ASSERT(!m_pannerNode);
+    AudioScheduledSourceNode::finish();
 }
 
 } // namespace WebCore

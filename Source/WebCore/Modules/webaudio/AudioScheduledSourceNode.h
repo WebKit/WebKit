@@ -78,7 +78,7 @@ protected:
                               size_t& nonSilentFramesToProcess);
 
     // Called when we have no more sound to play or the noteOff() time has been reached.
-    void finish();
+    virtual void finish();
 
     PlaybackState m_playbackState;
 
