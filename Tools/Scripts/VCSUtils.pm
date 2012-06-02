@@ -444,6 +444,7 @@ sub adjustPathForRecentRenamings($)
  
     $fullPath =~ s|WebCore/webaudio|WebCore/Modules/webaudio|g;
     $fullPath =~ s|JavaScriptCore/wtf|WTF/wtf|g;
+    $fullPath =~ s|test_expectations.txt|TestExpectations|g;
 
     return $fullPath; 
 } 
@@ -1460,6 +1461,8 @@ sub setChangeLogDateAndReviewer($$$)
 sub fixChangeLogPatch($)
 {
     my $patch = shift; # $patch will only contain patch fragments for ChangeLog.
+
+    $patch =~ s|test_expectations.txt:|TestExpectations:|g;
 
     $patch =~ /(\r?\n)/;
     my $lineEnding = $1;

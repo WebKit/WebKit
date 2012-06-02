@@ -1,3 +1,17 @@
+2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Teach svn-apply how to apply changes in test_expectations.txt to TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=88164
+
+        Reviewed by Kentaro Hara.
+
+        Just like r74856, adjust git/svn headers from test_expectations.txt to TestExpectations.
+        Also replace all occurrences of /test_expectations.txt: by /TestExpectations: in change log entries.
+
+        * Scripts/VCSUtils.pm:
+        (adjustPathForRecentRenamings):
+        (fixChangeLogPatch):
+
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename test_expectations.txt to TestExpectations

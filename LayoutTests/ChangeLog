@@ -1,3 +1,20 @@
+2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename test_expectations.txt to TestExpectations.
+
+        * platform/chromium/TestExpectations: Copied from LayoutTests/platform/chromium/test_expectations.txt.
+        * platform/chromium/test_expectations.txt: Removed.
+        * platform/efl/TestExpectations: Copied from LayoutTests/platform/efl/test_expectations.txt.
+        * platform/efl/test_expectations.txt: Removed.
+        * platform/gtk/TestExpectations: Copied from LayoutTests/platform/gtk/test_expectations.txt.
+        * platform/gtk/test_expectations.txt: Removed.
+        * platform/mac/TestExpectations: Copied from LayoutTests/platform/mac/test_expectations.txt.
+        * platform/mac/test_expectations.txt: Removed.
+        * platform/qt/TestExpectations: Copied from LayoutTests/platform/qt/test_expectations.txt.
+        * platform/qt/test_expectations.txt: Removed.
+        * platform/win/TestExpectations: Copied from LayoutTests/platform/win/test_expectations.txt.
+        * platform/win/test_expectations.txt: Removed.
+
 2012-06-02  Tony Chang  <tony@chromium.org>
 
         Rename the flexbox CSS propery values from start to flex-start and end to flex-end
