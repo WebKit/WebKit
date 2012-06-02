@@ -1,3 +1,15 @@
+2012-04-25  Nate Chapin  <japhet@chromium.org>
+
+        Crash in CachedRawResource::didAddClient() due to missing protector.
+        https://bugs.webkit.org/show_bug.cgi?id=83632
+
+        Reviewed by Eric Seidel.
+
+        Test: http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+
 2012-03-09  Nate Chapin  <japhet@chromium.org>
 
         CachedRawResource breaks when trying to load
