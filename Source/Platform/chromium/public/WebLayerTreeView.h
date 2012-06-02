@@ -50,6 +50,7 @@ public:
     struct Settings {
         Settings()
             : acceleratePainting(false)
+            , forceSoftwareCompositing(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
@@ -64,6 +65,7 @@ public:
         }
 
         bool acceleratePainting;
+        bool forceSoftwareCompositing;
         bool showFPSCounter;
         bool showPlatformLayerTree;
         bool showPaintRects;

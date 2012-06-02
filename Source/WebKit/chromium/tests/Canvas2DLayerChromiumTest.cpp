@@ -85,7 +85,7 @@ public:
 
 class MockTextureCopier : public TextureCopier {
 public:
-    MOCK_METHOD4(copyTexture, void(GraphicsContext3D*, unsigned, unsigned, const IntSize&));
+    MOCK_METHOD4(copyTexture, void(CCGraphicsContext*, unsigned, unsigned, const IntSize&));
 };
 
 class MockTextureUploader : public TextureUploader {
@@ -93,7 +93,7 @@ public:
     MOCK_METHOD0(isBusy, bool());
     MOCK_METHOD0(beginUploads, void());
     MOCK_METHOD0(endUploads, void());
-    MOCK_METHOD5(uploadTexture, void(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect, const IntRect));
+    MOCK_METHOD5(uploadTexture, void(CCGraphicsContext*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect, const IntRect));
 };
 
 } // namespace
@@ -105,7 +105,9 @@ protected:
         GraphicsContext3D::Attributes attrs;
 
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
+        RefPtr<CCGraphicsContext> ccMainContext = CCGraphicsContext::create3D(mainContext);
         RefPtr<GraphicsContext3D> implContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
+        RefPtr<CCGraphicsContext> ccImplContext = CCGraphicsContext::create3D(implContext);
 
         MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
         MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(implContext.get()));
@@ -140,7 +142,7 @@ protected:
                 // Create texture and do the copy (on the impl thread).
                 EXPECT_CALL(allocatorMock, createTexture(size, GraphicsContext3D::RGBA))
                     .WillOnce(Return(frontTextureId));
-                EXPECT_CALL(copierMock, copyTexture(implContext.get(), backTextureId, frontTextureId, size));
+                EXPECT_CALL(copierMock, copyTexture(ccImplContext.get(), backTextureId, frontTextureId, size));
                 EXPECT_CALL(implMock, flush());
 
                 // Teardown TextureManager.
@@ -164,7 +166,7 @@ protected:
             OwnPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
             EXPECT_EQ(0u, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
 
-            updater.update(implContext.get(), &allocatorMock, &copierMock, &uploaderMock, 1);
+            updater.update(ccImplContext.get(), &allocatorMock, &copierMock, &uploaderMock, 1);
             canvas->pushPropertiesTo(layerImpl.get());
 
             if (threaded && !deferred)

@@ -1,3 +1,17 @@
+2012-06-01  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Software compositor initialization and base classes
+        https://bugs.webkit.org/show_bug.cgi?id=87920
+
+        Reviewed by James Robinson.
+
+        Add a new setting to force software compositing.  In this mode,
+        no GraphicsContext3D should ever be created.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+
 2012-06-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call clipboard methods directly

@@ -23,42 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCIOSurfaceLayerImpl_h
-#define CCIOSurfaceLayerImpl_h
+#ifndef CCGraphicsContext_h
+#define CCGraphicsContext_h
 
-#include "IntSize.h"
-#include "cc/CCLayerImpl.h"
+#include "GraphicsContext3D.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class CCIOSurfaceLayerImpl : public CCLayerImpl {
+class GraphicsContext3D;
+
+class CCGraphicsContext : public RefCounted<CCGraphicsContext> {
 public:
-    static PassOwnPtr<CCIOSurfaceLayerImpl> create(int id)
+    static PassRefPtr<CCGraphicsContext> create2D()
     {
-        return adoptPtr(new CCIOSurfaceLayerImpl(id));
+        return adoptRef(new CCGraphicsContext());
     }
-    virtual ~CCIOSurfaceLayerImpl();
+    static PassRefPtr<CCGraphicsContext> create3D(PassRefPtr<GraphicsContext3D> context3D)
+    {
+        return adoptRef(new CCGraphicsContext(context3D));
+    }
 
-    void setIOSurfaceProperties(unsigned ioSurfaceId, const IntSize&);
-
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
-
-    virtual void willDraw(CCRenderer*, CCGraphicsContext*) OVERRIDE;
-    virtual void didLoseContext() OVERRIDE;
-
-    virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
+    GraphicsContext3D* context3D() { return m_context3D.get(); }
 
 private:
-    explicit CCIOSurfaceLayerImpl(int);
+    CCGraphicsContext() { }
+    explicit CCGraphicsContext(PassRefPtr<GraphicsContext3D> context3D)
+        : m_context3D(context3D) { }
 
-    virtual const char* layerTypeAsString() const OVERRIDE { return "IOSurfaceLayer"; }
-
-    unsigned m_ioSurfaceId;
-    IntSize m_ioSurfaceSize;
-    bool m_ioSurfaceChanged;
-    unsigned m_ioSurfaceTextureId;
+    RefPtr<GraphicsContext3D> m_context3D;
 };
 
 }
 
-#endif // CCIOSurfaceLayerImpl_h
+#endif // CCGraphicsContext_h

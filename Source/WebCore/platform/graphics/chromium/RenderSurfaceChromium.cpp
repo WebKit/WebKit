@@ -30,7 +30,6 @@
 #include "RenderSurfaceChromium.h"
 
 #include "FilterOperations.h"
-#include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include <wtf/text/CString.h>

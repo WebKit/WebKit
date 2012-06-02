@@ -152,7 +152,7 @@ void CCThreadProxy::requestStartPageScaleAnimationOnImplThread(IntSize targetPos
         m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
-GraphicsContext3D* CCThreadProxy::context()
+CCGraphicsContext* CCThreadProxy::context()
 {
     return 0;
 }
@@ -176,13 +176,13 @@ bool CCThreadProxy::isStarted() const
 bool CCThreadProxy::initializeContext()
 {
     TRACE_EVENT("CCThreadProxy::initializeContext", this, 0);
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
+    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
     ASSERT(context->hasOneRef());
 
     // Leak the context pointer so we can transfer ownership of it to the other side...
-    GraphicsContext3D* contextPtr = context.release().leakRef();
+    CCGraphicsContext* contextPtr = context.release().leakRef();
     ASSERT(contextPtr->hasOneRef());
 
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeContextOnImplThread,
@@ -229,17 +229,17 @@ bool CCThreadProxy::recreateContext()
     ASSERT(isMainThread());
 
     // Try to create the context.
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
+    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
-    if (CCLayerTreeHost::needsFilterContext())
+    if (CCLayerTreeHost::needsFilterContext() && !m_layerTreeHost->settings().forceSoftwareCompositing)
         if (!SharedGraphicsContext3D::createForImplThread())
             return false;
 
     ASSERT(context->hasOneRef());
 
     // Leak the context pointer so we can transfer ownership of it to the other side...
-    GraphicsContext3D* contextPtr = context.release().leakRef();
+    CCGraphicsContext* contextPtr = context.release().leakRef();
     ASSERT(contextPtr->hasOneRef());
 
     // Make a blocking call to recreateContextOnImplThread. The results of that
@@ -476,7 +476,7 @@ void CCThreadProxy::beginFrame()
         return;
     }
 
-    if (CCLayerTreeHost::needsFilterContext() && !SharedGraphicsContext3D::haveForImplThread())
+    if (CCLayerTreeHost::needsFilterContext() && !m_layerTreeHost->settings().forceSoftwareCompositing && !SharedGraphicsContext3D::haveForImplThread())
         SharedGraphicsContext3D::createForImplThread();
 
     OwnPtr<BeginFrameAndCommitState> request(m_pendingBeginFrameRequest.release());
@@ -807,7 +807,7 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     completion->signal();
 }
 
-void CCThreadProxy::initializeContextOnImplThread(GraphicsContext3D* context)
+void CCThreadProxy::initializeContextOnImplThread(CCGraphicsContext* context)
 {
     TRACE_EVENT("CCThreadProxy::initializeContextOnImplThread", this, 0);
     ASSERT(isImplThread());
@@ -864,7 +864,7 @@ void CCThreadProxy::setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas> fontAtlas)
     m_layerTreeHostImpl->setFontAtlas(fontAtlas);
 }
 
-void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, GraphicsContext3D* contextPtr, bool* recreateSucceeded, LayerRendererCapabilities* capabilities)
+void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, CCGraphicsContext* contextPtr, bool* recreateSucceeded, LayerRendererCapabilities* capabilities)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::recreateContextOnImplThread");
     ASSERT(isImplThread());

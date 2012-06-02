@@ -53,7 +53,7 @@ public:
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&) OVERRIDE;
     virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration) OVERRIDE;
-    virtual GraphicsContext3D* context() OVERRIDE;
+    virtual CCGraphicsContext* context() OVERRIDE;
     virtual void finishAllRendering() OVERRIDE;
     virtual bool isStarted() const OVERRIDE;
     virtual bool initializeContext() OVERRIDE;
@@ -136,12 +136,12 @@ private:
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
     void setSurfaceReadyOnImplThread();
-    void initializeContextOnImplThread(GraphicsContext3D*);
+    void initializeContextOnImplThread(CCGraphicsContext*);
     void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
     void setFullRootLayerDamageOnImplThread();
     void acquireLayerTexturesForMainThreadOnImplThread(CCCompletionEvent*);
-    void recreateContextOnImplThread(CCCompletionEvent*, GraphicsContext3D*, bool* recreateSucceeded, LayerRendererCapabilities*);
+    void recreateContextOnImplThread(CCCompletionEvent*, CCGraphicsContext*, bool* recreateSucceeded, LayerRendererCapabilities*);
     CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapInternal(bool forcedDraw);
     void setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas>);
     void forceSerializeOnSwapBuffersOnImplThread(CCCompletionEvent*);
@@ -168,9 +168,9 @@ private:
 
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
 
-    // Holds on to the GraphicsContext3D we might use for compositing in between initializeContext()
+    // Holds on to the context we might use for compositing in between initializeContext()
     // and initializeLayerRenderer() calls.
-    RefPtr<GraphicsContext3D> m_contextBeforeInitializationOnImplThread;
+    RefPtr<CCGraphicsContext> m_contextBeforeInitializationOnImplThread;
 
     // Set when the main thread is waiting on a scheduledActionBeginFrame to be issued.
     CCCompletionEvent* m_beginFrameCompletionEventOnImplThread;

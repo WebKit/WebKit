@@ -26,7 +26,6 @@
 
 #include "cc/CCSingleThreadProxy.h"
 
-#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCFontAtlas.h"
@@ -112,7 +111,7 @@ void CCSingleThreadProxy::startPageScaleAnimation(const IntSize& targetPosition,
     m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
-GraphicsContext3D* CCSingleThreadProxy::context()
+CCGraphicsContext* CCSingleThreadProxy::context()
 {
     ASSERT(CCProxy::isMainThread());
     if (m_contextBeforeInitialization)
@@ -139,7 +138,7 @@ bool CCSingleThreadProxy::isStarted() const
 bool CCSingleThreadProxy::initializeContext()
 {
     ASSERT(CCProxy::isMainThread());
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
+    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
     ASSERT(context->hasOneRef());
@@ -176,7 +175,7 @@ bool CCSingleThreadProxy::recreateContext()
     ASSERT(CCProxy::isMainThread());
     ASSERT(m_contextLost);
 
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
+    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
 

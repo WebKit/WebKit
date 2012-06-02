@@ -31,11 +31,12 @@
 
 #include "ManagedTexture.h"
 #include "GraphicsTypes3D.h"
+#include "cc/CCGraphicsContext.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class GraphicsContext3D;
+class CCGraphicsContext;
 class IntRect;
 class IntSize;
 class TextureAllocator;
@@ -50,7 +51,7 @@ public:
 
         ManagedTexture* texture() { return m_texture.get(); }
         virtual void prepareRect(const IntRect& /* sourceRect */) { }
-        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) = 0;
+        virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) = 0;
     protected:
         explicit Texture(PassOwnPtr<ManagedTexture> texture) : m_texture(texture) { }
 

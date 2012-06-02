@@ -61,16 +61,16 @@ private:
     WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* m_memoryAllocationChangedCallback;
 };
 
-class FakeLayerRendererChromiumClient : public LayerRendererChromiumClient {
+class FakeCCRendererClient : public CCRendererClient {
 public:
-    FakeLayerRendererChromiumClient()
+    FakeCCRendererClient()
         : m_setFullRootLayerDamageCount(0)
         , m_rootLayer(CCLayerImpl::create(1))
     {
         m_rootLayer->createRenderSurface();
     }
 
-    // LayerRendererChromiumClient methods.
+    // CCRendererClient methods.
     virtual const IntSize& deviceViewportSize() const OVERRIDE { static IntSize fakeSize; return fakeSize; }
     virtual const CCSettings& settings() const OVERRIDE { static CCSettings fakeSettings; return fakeSettings; }
     virtual void didLoseContext() OVERRIDE { }
@@ -91,7 +91,7 @@ private:
 
 class FakeLayerRendererChromium : public LayerRendererChromium {
 public:
-    FakeLayerRendererChromium(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context) : LayerRendererChromium(client, context, UnthrottledUploader) { }
+    FakeLayerRendererChromium(CCRendererClient* client, PassRefPtr<GraphicsContext3D> context) : LayerRendererChromium(client, context, UnthrottledUploader) { }
 
     // LayerRendererChromium methods.
 
@@ -126,7 +126,7 @@ protected:
 
     RefPtr<GraphicsContext3D> m_context;
     FrameCountingMemoryAllocationSettingContext& m_mockContext;
-    FakeLayerRendererChromiumClient m_mockClient;
+    FakeCCRendererClient m_mockClient;
     FakeLayerRendererChromium m_layerRendererChromium;
 };
 
@@ -270,7 +270,7 @@ public:
 // This test isn't using the same fixture as LayerRendererChromiumTest, and you can't mix TEST() and TEST_F() with the same name, hence LRC2.
 TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
 {
-    FakeLayerRendererChromiumClient mockClient;
+    FakeCCRendererClient mockClient;
     FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ForbidSynchronousCallContext), GraphicsContext3D::RenderDirectlyToHostWindow));
 
     EXPECT_TRUE(layerRendererChromium.initialize());
@@ -311,7 +311,7 @@ private:
 
 TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAssert)
 {
-    FakeLayerRendererChromiumClient mockClient;
+    FakeCCRendererClient mockClient;
     FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new LoseContextOnFirstGetContext), GraphicsContext3D::RenderDirectlyToHostWindow));
 
     layerRendererChromium.initialize();

@@ -54,7 +54,7 @@ public:
         {
         }
 
-        virtual void updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+        virtual void updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
         {
             textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
         }
@@ -88,7 +88,7 @@ public:
         m_texSubImage.setSubImageSize(tileSize);
     }
 
-    virtual void updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    virtual void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
         texture->bindTexture(context, allocator);
 

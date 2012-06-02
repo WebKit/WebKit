@@ -66,7 +66,7 @@ FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
 {
     textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
 }
@@ -96,15 +96,21 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
+    GraphicsContext3D* context3d = context->context3D();
+    if (!context3d) {
+        // FIXME: Implement this path for software compositing.
+        return;
+    }
+
     // Make sure ganesh uses the correct GL context.
-    context->makeContextCurrent();
+    context3d->makeContextCurrent();
     // Notify ganesh to sync its internal GL state.
-    context->grContext()->resetContext();
+    context3d->grContext()->resetContext();
 
     // Create an accelerated canvas to draw on.
-    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context, allocator, texture);
+    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context3d, allocator, texture);
 
     // The compositor expects the textures to be upside-down so it can flip
     // the final composited image. Ganesh renders the image upright so we
@@ -120,7 +126,7 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
     drawPicture(canvas.get());
 
     // Flush ganesh context so that all the rendered stuff appears on the texture.
-    context->grContext()->flush();
+    context3d->grContext()->flush();
 }
 
 } // namespace WebCore

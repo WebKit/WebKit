@@ -25,7 +25,6 @@
 #ifndef CCTiledLayerTestCommon_h
 #define CCTiledLayerTestCommon_h
 
-#include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "LayerTextureUpdater.h"
@@ -34,6 +33,7 @@
 #include "TextureManager.h"
 #include "TextureUploader.h"
 #include "TiledLayerChromium.h"
+#include "cc/CCGraphicsContext.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
 
@@ -48,7 +48,7 @@ public:
         Texture(FakeLayerTextureUpdater*, PassOwnPtr<WebCore::ManagedTexture>);
         virtual ~Texture();
 
-        virtual void updateRect(WebCore::GraphicsContext3D*, WebCore::TextureAllocator* , const WebCore::IntRect&, const WebCore::IntRect&);
+        virtual void updateRect(WebCore::CCGraphicsContext*, WebCore::TextureAllocator* , const WebCore::IntRect&, const WebCore::IntRect&);
         virtual void prepareRect(const WebCore::IntRect&);
 
     private:
@@ -156,7 +156,7 @@ public:
 
 class FakeTextureCopier : public WebCore::TextureCopier {
 public:
-    virtual void copyTexture(WebCore::GraphicsContext3D*, unsigned, unsigned, const WebCore::IntSize&) { }
+    virtual void copyTexture(WebCore::CCGraphicsContext*, unsigned, unsigned, const WebCore::IntSize&) { }
 };
 
 class FakeTextureUploader : public WebCore::TextureUploader {
@@ -164,7 +164,7 @@ public:
     virtual bool isBusy() { return false; }
     virtual void beginUploads() { }
     virtual void endUploads() { }
-    virtual void uploadTexture(WebCore::GraphicsContext3D* context, WebCore::LayerTextureUpdater::Texture* texture, WebCore::TextureAllocator* allocator, const WebCore::IntRect sourceRect, const WebCore::IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+    virtual void uploadTexture(WebCore::CCGraphicsContext* context, WebCore::LayerTextureUpdater::Texture* texture, WebCore::TextureAllocator* allocator, const WebCore::IntRect sourceRect, const WebCore::IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
 };
 
 }

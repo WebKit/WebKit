@@ -54,7 +54,7 @@ public:
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { m_client->updateAnimations(monotonicFrameBeginTime); }
     virtual void layout() OVERRIDE { m_client->layout(); }
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE { m_client->applyScrollAndScale(scrollDelta, pageScale); }
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext() OVERRIDE
+    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext3D() OVERRIDE
     {
         OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(m_client->createContext3D());
         if (!webContext)

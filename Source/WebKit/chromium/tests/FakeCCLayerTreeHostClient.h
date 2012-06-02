@@ -39,7 +39,7 @@ public:
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { }
     virtual void layout() OVERRIDE { }
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
-    virtual PassRefPtr<GraphicsContext3D> createContext() OVERRIDE
+    virtual PassRefPtr<GraphicsContext3D> createContext3D() OVERRIDE
     {
         GraphicsContext3D::Attributes attrs;
         return createCompositorMockGraphicsContext3D(attrs);

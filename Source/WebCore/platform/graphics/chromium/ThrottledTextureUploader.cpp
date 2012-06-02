@@ -124,7 +124,7 @@ void ThrottledTextureUploader::endUploads()
     m_pendingQueries.append(m_availableQueries.takeFirst());
 }
 
-void ThrottledTextureUploader::uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect)
+void ThrottledTextureUploader::uploadTexture(CCGraphicsContext* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect)
 {
     texture->updateRect(context, allocator, sourceRect, destRect);
 }

@@ -30,8 +30,8 @@
 #include "LayerTextureSubImage.h"
 
 #include "Extensions3DChromium.h"
-#include "GraphicsContext3D.h"
 #include "TraceEvent.h"
+#include "cc/CCGraphicsContext.h"
 
 namespace WebCore {
 
@@ -55,7 +55,7 @@ void LayerTextureSubImage::setSubImageSize(const IntSize& subImageSize)
 
 void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GC3Denum format, GraphicsContext3D* context)
+                                  GC3Denum format, CCGraphicsContext* context)
 {
     if (m_useMapTexSubImage)
         uploadWithMapTexSubImage(image, imageRect, sourceRect, destRect, format, context);
@@ -65,7 +65,7 @@ void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect
 
 void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                  const IntRect& sourceRect, const IntRect& destRect,
-                                                 GC3Denum format, GraphicsContext3D* context)
+                                                 GC3Denum format, CCGraphicsContext* context)
 {
     TRACE_EVENT("LayerTextureSubImage::uploadWithTexSubImage", this, 0);
     if (!m_subImage)
@@ -87,19 +87,31 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
 
         pixelSource = &m_subImage[0];
     }
-    context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource);
+
+    GraphicsContext3D* context3d = context->context3D();
+    if (!context3d) {
+        // FIXME: Implement this path for software compositing.
+        return;
+    }
+    context3d->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource);
 }
 
 void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                     const IntRect& sourceRect, const IntRect& destRect,
-                                                    GC3Denum format, GraphicsContext3D* context)
+                                                    GC3Denum format, CCGraphicsContext* context)
 {
     TRACE_EVENT("LayerTextureSubImage::uploadWithMapTexSubImage", this, 0);
+    GraphicsContext3D* context3d = context->context3D();
+    if (!context3d) {
+        // FIXME: Implement this path for software compositing.
+        return;
+    }
+
     // Offset from image-rect to source-rect.
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 
     // Upload tile data via a mapped transfer buffer
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
+    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context3d->getExtensions());
     uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
     if (!pixelDest) {

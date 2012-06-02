@@ -673,12 +673,13 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     FakeTextureCopier fakeCopier;
     FakeTextureUploader fakeUploader;
     RefPtr<GraphicsContext3D> context = createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(context);
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
     layer->invalidateRect(IntRect(0, 0, 100, 200));
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
+    updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     layer->pushPropertiesTo(layerImpl.get());
 
     // We should have both tiles on the impl side.
@@ -691,7 +692,7 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     // Invoke updateLayerRect again. As the layer is valid updateLayerRect shouldn't be invoked on
     // the LayerTextureUpdater.
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
+    updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareCount());
 
     layer->invalidateRect(IntRect(0, 0, 50, 50));
@@ -699,12 +700,12 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(25, 25, 50, 50), layer.get());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
+    updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
     // The layer should still be invalid as updateLayerRect invoked invalidate.
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    updater.update(context.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
+    updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
 }
 

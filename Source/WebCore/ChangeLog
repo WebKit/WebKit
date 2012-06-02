@@ -1,3 +1,153 @@
+2012-06-01  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Software compositor initialization and base classes
+        https://bugs.webkit.org/show_bug.cgi?id=87920
+
+        Reviewed by James Robinson.
+
+        This introduces new wrapper class CCGraphicsContext and base class
+        CCRenderer which will be used for software compositing support.
+        If no GraphicsContext3D is available, early return for now.
+
+        No new tests. (No-op change in 3d mode.)
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (Texture):
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (FrameBufferSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::Texture::updateRect):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::CCRenderer::toGLMatrix):
+        (WebCore):
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::CCRenderer::CCRenderer):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::copyPlaneToTexture):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::getFramebufferTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (CCRenderer):
+        (WebCore::CCRenderer::~CCRenderer):
+        (WebCore::CCRenderer::ccContext):
+        (WebCore::CCRenderer::settings):
+        (WebCore::CCRenderer::viewportSize):
+        (WebCore::CCRenderer::viewportWidth):
+        (WebCore::CCRenderer::viewportHeight):
+        (WebCore::CCRenderer::projectionMatrix):
+        (WebCore::CCRenderer::windowMatrix):
+        (WebCore::CCRenderer::sharedGeometryQuad):
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::upload):
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/LayerTextureSubImage.h:
+        (WebCore):
+        (LayerTextureSubImage):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore):
+        (Texture):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/ManagedTexture.h:
+        (WebCore):
+        (ManagedTexture):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        * platform/graphics/chromium/TextureCopier.cpp:
+        (WebCore::AcceleratedTextureCopier::copyTexture):
+        * platform/graphics/chromium/TextureCopier.h:
+        (TextureCopier):
+        (AcceleratedTextureCopier):
+        * platform/graphics/chromium/TextureUploader.h:
+        (TextureUploader):
+        * platform/graphics/chromium/ThrottledTextureUploader.cpp:
+        (WebCore::ThrottledTextureUploader::uploadTexture):
+        * platform/graphics/chromium/ThrottledTextureUploader.h:
+        (ThrottledTextureUploader):
+        * platform/graphics/chromium/cc/CCGraphicsContext.h: Copied from Source/WebCore/platform/graphics/chromium/CanvasLayerTextureUpdater.h.
+        (WebCore):
+        (CCGraphicsContext):
+        (WebCore::CCGraphicsContext::create2D):
+        (WebCore::CCGraphicsContext::create3D):
+        (WebCore::CCGraphicsContext::context3D):
+        (WebCore::CCGraphicsContext::CCGraphicsContext):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::willDraw):
+        (WebCore::CCLayerImpl::bindContentsTexture):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::createContext):
+        (WebCore::CCLayerTreeHost::context):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHostClient):
+        (WebCore::CCSettings::CCSettings):
+        (CCSettings):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::context):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::layerRenderer):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (WebCore):
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (CCScrollbarLayerImpl):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::context):
+        (WebCore::CCSingleThreadProxy::initializeContext):
+        (WebCore::CCSingleThreadProxy::recreateContext):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::update):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        (CCTextureUpdater):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::context):
+        (WebCore::CCThreadProxy::initializeContext):
+        (WebCore::CCThreadProxy::recreateContext):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::initializeContextOnImplThread):
+        (WebCore::CCThreadProxy::recreateContextOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::willDrawInternal):
+        (WebCore::CCVideoLayerImpl::reserveTextures):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (CCVideoLayerImpl):
+
 2012-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119283, r119287, and r119291.

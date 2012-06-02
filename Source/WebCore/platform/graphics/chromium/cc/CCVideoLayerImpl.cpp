@@ -128,10 +128,10 @@ static GC3Denum convertVFCFormatToGC3DFormat(const WebKit::WebVideoFrame& frame)
     return GraphicsContext3D::INVALID_VALUE;
 }
 
-void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
+void CCVideoLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext* context)
 {
     ASSERT(CCProxy::isImplThread());
-    CCLayerImpl::willDraw(layerRenderer);
+    CCLayerImpl::willDraw(layerRenderer, context);
 
     // Explicitly lock and unlock the provider mutex so it can be held from
     // willDraw to didDraw. Since the compositor thread is in the middle of
@@ -148,7 +148,7 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
         m_providerMutex.unlock();
 }
 
-void CCVideoLayerImpl::willDrawInternal(LayerRendererChromium* layerRenderer)
+void CCVideoLayerImpl::willDrawInternal(CCRenderer* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -244,7 +244,7 @@ IntSize CCVideoLayerImpl::computeVisibleSize(const WebKit::WebVideoFrame& frame,
     return IntSize(visibleWidth, visibleHeight);
 }
 
-bool CCVideoLayerImpl::reserveTextures(const WebKit::WebVideoFrame& frame, GC3Denum format, LayerRendererChromium* layerRenderer)
+bool CCVideoLayerImpl::reserveTextures(const WebKit::WebVideoFrame& frame, GC3Denum format, CCRenderer* layerRenderer)
 {
     if (frame.planes() > MaxPlanes)
         return false;

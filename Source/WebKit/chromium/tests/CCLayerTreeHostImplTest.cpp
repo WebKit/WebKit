@@ -107,9 +107,9 @@ public:
     }
 
 protected:
-    PassRefPtr<GraphicsContext3D> createContext()
+    PassRefPtr<CCGraphicsContext> createContext()
     {
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), GraphicsContext3D::RenderDirectlyToHostWindow);
+        return CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), GraphicsContext3D::RenderDirectlyToHostWindow));
     }
 
     DebugScopedSetImplThread m_alwaysImplThread;
@@ -416,7 +416,7 @@ public:
         m_didDrawCalled = true;
     }
 
-    virtual void willDraw(LayerRendererChromium*)
+    virtual void willDraw(CCRenderer*, CCGraphicsContext*)
     {
         m_willDrawCalled = true;
     }
@@ -988,7 +988,8 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
 {
     ReshapeTrackerContext* reshapeTracker = new ReshapeTrackerContext();
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(reshapeTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
-    m_hostImpl->initializeLayerRenderer(context, UnthrottledUploader);
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(context);
+    m_hostImpl->initializeLayerRenderer(ccContext, UnthrottledUploader);
 
     CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
     root->setAnchorPoint(FloatPoint(0, 0));
@@ -1031,13 +1032,14 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
 {
     PartialSwapTrackerContext* partialSwapTracker = new PartialSwapTrackerContext();
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(context);
 
     // This test creates its own CCLayerTreeHostImpl, so
     // that we can force partial swap enabled.
     CCSettings settings;
     settings.partialSwapEnabled = true;
     OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
-    layerTreeHostImpl->initializeLayerRenderer(context, UnthrottledUploader);
+    layerTreeHostImpl->initializeLayerRenderer(ccContext, UnthrottledUploader);
     layerTreeHostImpl->setViewportSize(IntSize(500, 500));
 
     CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
@@ -1151,7 +1153,7 @@ public:
 TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
 {
     // The context initialization will fail, but we should still be able to call finishAllRendering() without any ill effects.
-    m_hostImpl->initializeLayerRenderer(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow), UnthrottledUploader);
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow)), UnthrottledUploader);
     m_hostImpl->finishAllRendering();
 }
 
@@ -1356,7 +1358,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 
     // Lose the context, replacing it with a StrictWebGraphicsContext3D, that
     // will warn if any resource from the previous context gets used.
-    m_hostImpl->initializeLayerRenderer(StrictWebGraphicsContext3D::createGraphicsContext(), UnthrottledUploader);
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(StrictWebGraphicsContext3D::createGraphicsContext()), UnthrottledUploader);
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);

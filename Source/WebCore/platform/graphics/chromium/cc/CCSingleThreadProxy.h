@@ -45,7 +45,7 @@ public:
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&) OVERRIDE;
     virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration) OVERRIDE;
-    virtual GraphicsContext3D* context() OVERRIDE;
+    virtual CCGraphicsContext* context() OVERRIDE;
     virtual void finishAllRendering() OVERRIDE;
     virtual bool isStarted() const OVERRIDE;
     virtual bool initializeContext() OVERRIDE;
@@ -97,7 +97,7 @@ private:
 
     // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
     // be used for anything else.
-    RefPtr<GraphicsContext3D> m_contextBeforeInitialization;
+    RefPtr<CCGraphicsContext> m_contextBeforeInitialization;
 
     OwnPtr<CCSingleThreadProxyAnimationTimer> m_animationTimer;
 

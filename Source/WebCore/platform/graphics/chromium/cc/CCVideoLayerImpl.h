@@ -48,7 +48,7 @@ public:
     }
     virtual ~CCVideoLayerImpl();
 
-    virtual void willDraw(LayerRendererChromium*) OVERRIDE;
+    virtual void willDraw(CCRenderer*, CCGraphicsContext*) OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
     virtual void didDraw() OVERRIDE;
 
@@ -81,8 +81,8 @@ private:
     static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
-    void willDrawInternal(LayerRendererChromium*);
-    bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, LayerRendererChromium*);
+    void willDrawInternal(CCRenderer*);
+    bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, CCRenderer*);
 
     // Guards the destruction of m_provider and the frame that it provides
     Mutex m_providerMutex;

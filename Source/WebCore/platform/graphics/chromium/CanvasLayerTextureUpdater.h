@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class GraphicsContext3D;
 class LayerPainterChromium;
 class PlatformContextSkia;
 

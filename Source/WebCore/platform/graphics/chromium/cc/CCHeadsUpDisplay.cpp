@@ -69,8 +69,12 @@ bool CCHeadsUpDisplay::showDebugRects(const CCSettings& settings) const
 
 void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
 {
-    LayerRendererChromium* layerRenderer = layerTreeHostImpl->layerRenderer();
-    GraphicsContext3D* context = layerRenderer->context();
+    CCRenderer* layerRenderer = layerTreeHostImpl->layerRenderer();
+    GraphicsContext3D* context = layerTreeHostImpl->context()->context3D();
+    if (!context) {
+        // FIXME: Implement this path for software compositing.
+        return;
+    }
     if (!m_hudTexture)
         m_hudTexture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
 
@@ -101,9 +105,9 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     {
         PlatformCanvas::AutoLocker locker(&canvas);
 
-        m_hudTexture->bindTexture(context, layerRenderer->renderSurfaceTextureAllocator());
+        m_hudTexture->bindTexture(layerTreeHostImpl->context(), layerRenderer->renderSurfaceTextureAllocator());
         bool uploadedViaMap = false;
-        if (layerRenderer->contextSupportsMapSub()) {
+        if (layerRenderer->capabilities().usingMapSub) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
             uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 

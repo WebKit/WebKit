@@ -44,7 +44,7 @@ public:
         Texture(BitmapSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<ManagedTexture>);
 
         virtual void prepareRect(const IntRect& sourceRect);
-        virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect);
+        virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect);
 
     private:
         BitmapSkPictureCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
@@ -60,7 +60,7 @@ public:
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect& resultingOpaqueRect);
     void paintContentsRect(SkCanvas*, const IntRect& sourceRect);
-    void updateTextureRect(GraphicsContext3D*, GC3Denum format, const IntRect& destRect, const uint8_t* pixels);
+    void updateTextureRect(CCGraphicsContext*, GC3Denum format, const IntRect& destRect, const uint8_t* pixels);
 
 private:
     BitmapSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);

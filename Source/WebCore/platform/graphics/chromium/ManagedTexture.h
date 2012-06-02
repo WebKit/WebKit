@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class GraphicsContext3D;
+class CCGraphicsContext;
 
 class ManagedTexture {
     WTF_MAKE_NONCOPYABLE(ManagedTexture);
@@ -58,8 +58,8 @@ public:
     }
 
     void allocate(TextureAllocator*);
-    void bindTexture(GraphicsContext3D*, TextureAllocator*);
-    void framebufferTexture2D(GraphicsContext3D*, TextureAllocator*);
+    void bindTexture(CCGraphicsContext*, TextureAllocator*);
+    void framebufferTexture2D(CCGraphicsContext*, TextureAllocator*);
 
     IntSize size() const { return m_size; }
     unsigned format() const { return m_format; }

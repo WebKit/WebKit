@@ -265,9 +265,12 @@ void CCLayerTreeHost::commitComplete()
     m_client->didCommit();
 }
 
-PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createContext()
+PassRefPtr<CCGraphicsContext> CCLayerTreeHost::createContext()
 {
-    return m_client->createContext();
+    RefPtr<CCGraphicsContext> context;
+    if (settings().forceSoftwareCompositing)
+        return CCGraphicsContext::create2D();
+    return CCGraphicsContext::create3D(m_client->createContext3D());
 }
 
 PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
@@ -285,7 +288,7 @@ void CCLayerTreeHost::didLoseContext()
 }
 
 // Temporary hack until WebViewImpl context creation gets simplified
-GraphicsContext3D* CCLayerTreeHost::context()
+CCGraphicsContext* CCLayerTreeHost::context()
 {
     return m_proxy->context();
 }

@@ -109,6 +109,7 @@ public:
     virtual void setEditingBehavior(EditingBehavior);
     virtual void setAcceleratedCompositingEnabled(bool);
     virtual void setForceCompositingMode(bool);
+    virtual void setForceSoftwareCompositing(bool);
     virtual void setMockScrollbarsEnabled(bool);
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool);
     virtual void setAcceleratedCompositingForVideoEnabled(bool);
@@ -158,9 +159,11 @@ public:
     bool applyDefaultDeviceScaleFactorInCompositor() const { return m_applyDefaultDeviceScaleFactorInCompositor; }
     WebSize defaultTileSize() const { return m_defaultTileSize; }
     WebSize maxUntiledLayerSize() const { return m_maxUntiledLayerSize; }
+    virtual bool forceSoftwareCompositing() const { return m_forceSoftwareCompositing; }
 
 private:
     WebCore::Settings* m_settings;
+    bool m_forceSoftwareCompositing;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
     bool m_showPaintRects;

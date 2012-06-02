@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class GraphicsContext3D;
+class CCGraphicsContext;
 
 class LayerTextureSubImage {
 public:
@@ -46,15 +46,15 @@ public:
     void setSubImageSize(const IntSize&);
     void upload(const uint8_t* image, const IntRect& imageRect,
                 const IntRect& sourceRect, const IntRect& destRect,
-                GC3Denum format, GraphicsContext3D*);
+                GC3Denum format, CCGraphicsContext*);
 
 private:
     void uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                const IntRect& sourceRect, const IntRect& destRect,
-                               GC3Denum format, GraphicsContext3D*);
+                               GC3Denum format, CCGraphicsContext*);
     void uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GC3Denum format, GraphicsContext3D*);
+                                  GC3Denum format, CCGraphicsContext*);
 
     bool m_useMapTexSubImage;
     IntSize m_subImageSize;
@@ -64,4 +64,3 @@ private:
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif // LayerTextureSubImage_h
-

@@ -34,17 +34,11 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "FloatQuad.h"
-#include "IntRect.h"
 #include "TextureCopier.h"
 #include "ThrottledTextureUploader.h"
 #include "TrackingTextureAllocator.h"
-#include "cc/CCLayerTreeHost.h"
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
+#include "cc/CCRenderer.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -52,7 +46,6 @@ class CCCheckerboardDrawQuad;
 class CCDebugBorderDrawQuad;
 class CCDrawQuad;
 class CCIOSurfaceDrawQuad;
-class CCRenderPass;
 class CCRenderSurfaceDrawQuad;
 class CCSolidColorDrawQuad;
 class CCTextureDrawQuad;
@@ -64,74 +57,57 @@ class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
 class ScopedEnsureFramebufferAllocation;
 
-class LayerRendererChromiumClient {
-public:
-    virtual const IntSize& deviceViewportSize() const = 0;
-    virtual const CCSettings& settings() const = 0;
-    virtual void didLoseContext() = 0;
-    virtual void onSwapBuffersComplete() = 0;
-    virtual void setFullRootLayerDamage() = 0;
-    virtual void setContentsMemoryAllocationLimitBytes(size_t) = 0;
-};
-
 enum TextureUploaderOption { ThrottledUploader, UnthrottledUploader };
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium {
+class LayerRendererChromium : public CCRenderer {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
+    static PassOwnPtr<LayerRendererChromium> create(CCRendererClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
 
-    ~LayerRendererChromium();
+    virtual ~LayerRendererChromium();
 
-    const CCSettings& settings() const { return m_client->settings(); }
-    const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
+    virtual const LayerRendererCapabilities& capabilities() const OVERRIDE { return m_capabilities; }
 
     GraphicsContext3D* context();
-    bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
 
-    void viewportChanged();
+    virtual void viewportChanged() OVERRIDE;
 
-    void beginDrawingFrame(CCRenderSurface* defaultRenderSurface);
-    void drawRenderPass(const CCRenderPass*);
-    void finishDrawingFrame();
+    const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
-    void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize);
+    virtual void beginDrawingFrame(CCRenderSurface* defaultRenderSurface) OVERRIDE;
+    virtual void drawRenderPass(const CCRenderPass*) OVERRIDE;
+    virtual void finishDrawingFrame() OVERRIDE;
+
+    virtual void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize) OVERRIDE;
 
     // waits for rendering to finish
-    void finish();
+    virtual void finish() OVERRIDE;
 
-    void doNoOp();
+    virtual void doNoOp() OVERRIDE;
     // puts backbuffer onscreen
-    bool swapBuffers(const IntRect& subBuffer);
+    virtual bool swapBuffers(const IntRect& subBuffer) OVERRIDE;
 
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
-    const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
-    const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
-
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
-    const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
 
-    void getFramebufferPixels(void *pixels, const IntRect&);
+    virtual void getFramebufferPixels(void *pixels, const IntRect&) OVERRIDE;
     bool getFramebufferTexture(ManagedTexture*, const IntRect& deviceRect);
 
-    TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
-    TextureCopier* textureCopier() const { return m_textureCopier.get(); }
-    TextureUploader* textureUploader() const { return m_textureUploader.get(); }
-    TextureAllocator* renderSurfaceTextureAllocator() const { return m_renderSurfaceTextureAllocator.get(); }
-    TextureAllocator* contentsTextureAllocator() const { return m_contentsTextureAllocator.get(); }
+    virtual TextureManager* renderSurfaceTextureManager() const OVERRIDE { return m_renderSurfaceTextureManager.get(); }
+    virtual TextureCopier* textureCopier() const OVERRIDE { return m_textureCopier.get(); }
+    virtual TextureUploader* textureUploader() const OVERRIDE { return m_textureUploader.get(); }
+    virtual TextureAllocator* renderSurfaceTextureAllocator() const OVERRIDE { return m_renderSurfaceTextureAllocator.get(); }
+    virtual TextureAllocator* contentsTextureAllocator() const OVERRIDE { return m_contentsTextureAllocator.get(); }
 
-    void setScissorToRect(const IntRect&);
+    virtual void setScissorToRect(const IntRect&) OVERRIDE;
 
-    bool isContextLost();
+    virtual bool isContextLost() OVERRIDE;
 
-    void setVisible(bool);
+    virtual void setVisible(bool) OVERRIDE;
 
-    GC3Denum bestTextureFormat();
-
-    static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
     void drawTexturedQuad(const WebKit::WebTransformationMatrix& layerMatrix,
                           float width, float height, float opacity, const FloatQuad&,
                           int matrixLocation, int alphaLocation, int quadLocation);
@@ -143,13 +119,11 @@ protected:
     void ensureFramebuffer();
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
-    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
+    LayerRendererChromium(CCRendererClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
     bool initialize();
 
 private:
-    const IntSize& viewportSize() { return m_client->deviceViewportSize(); }
-    int viewportWidth() { return viewportSize().width(); }
-    int viewportHeight() { return viewportSize().height(); }
+    static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
 
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
@@ -191,18 +165,14 @@ private:
     friend class LayerRendererSwapBuffersCompleteCallbackAdapter;
     void onSwapBuffersComplete();
 
-    LayerRendererChromiumClient* m_client;
-
     LayerRendererCapabilities m_capabilities;
-
-    WebKit::WebTransformationMatrix m_projectionMatrix;
-    WebKit::WebTransformationMatrix m_windowMatrix;
 
     CCRenderSurface* m_currentRenderSurface;
     ManagedTexture* m_currentManagedTexture;
     unsigned m_offscreenFramebufferId;
 
     OwnPtr<GeometryBinding> m_sharedGeometry;
+    FloatQuad m_sharedGeometryQuad;
 
     // This block of bindings defines all of the programs used by the compositor itself.
 
@@ -296,8 +266,6 @@ private:
     RefPtr<GraphicsContext3D> m_context;
 
     CCRenderSurface* m_defaultRenderSurface;
-
-    FloatQuad m_sharedGeometryQuad;
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;

@@ -28,6 +28,7 @@
 #include "GraphicsContext3D.h"
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
+#include "cc/CCGraphicsContext.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ public:
     // Copy the base level contents of |sourceTextureId| to |destTextureId|. Both texture objects
     // must be complete and have a base level of |size| dimensions. The color formats do not need
     // to match, but |destTextureId| must have a renderable format.
-    virtual void copyTexture(GraphicsContext3D*, unsigned sourceTextureId, unsigned destTextureId, const IntSize&) = 0;
+    virtual void copyTexture(CCGraphicsContext*, unsigned sourceTextureId, unsigned destTextureId, const IntSize&) = 0;
 
 protected:
     virtual ~TextureCopier() { }
@@ -54,7 +55,7 @@ public:
     }
     virtual ~AcceleratedTextureCopier();
 
-    virtual void copyTexture(GraphicsContext3D*, unsigned sourceTextureId, unsigned destTextureId, const IntSize&);
+    virtual void copyTexture(CCGraphicsContext*, unsigned sourceTextureId, unsigned destTextureId, const IntSize&);
 
 protected:
     explicit AcceleratedTextureCopier(PassRefPtr<GraphicsContext3D>);

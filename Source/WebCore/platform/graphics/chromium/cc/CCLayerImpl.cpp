@@ -29,7 +29,6 @@
 
 #include "cc/CCLayerImpl.h"
 
-#include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCDebugBorderDrawQuad.h"
@@ -145,7 +144,7 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
     return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
 }
 
-void CCLayerImpl::willDraw(LayerRendererChromium*)
+void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)
 {
 #ifndef NDEBUG
     // willDraw/didDraw must be matched.

@@ -61,9 +61,15 @@ AcceleratedTextureCopier::~AcceleratedTextureCopier()
         GLC(m_context, m_context->deleteFramebuffer(m_fbo));
 }
 
-void AcceleratedTextureCopier::copyTexture(GraphicsContext3D* context, unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
+void AcceleratedTextureCopier::copyTexture(CCGraphicsContext* ccContext, unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
 {
     TRACE_EVENT("TextureCopier::copyTexture", this, 0);
+
+    GraphicsContext3D* context = ccContext->context3D();
+    if (!context) {
+        // FIXME: Implement this path for software compositing.
+        return;
+    }
 
     // Note: this code does not restore the viewport, bound program, 2D texture, framebuffer, buffer or blend enable.
     GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo));

@@ -43,10 +43,11 @@
 
 namespace WebCore {
 
+class CCGraphicsContext;
 class CCLayerSorter;
 class CCQuadCuller;
+class CCRenderer;
 class LayerChromium;
-class LayerRendererChromium;
 
 class CCLayerImpl : public CCLayerAnimationControllerClient {
 public:
@@ -83,7 +84,7 @@ public:
     // didDraw is guaranteed to be called before another willDraw or before
     // the layer is destroyed. To enforce this, any class that overrides
     // willDraw/didDraw must call the base class version.
-    virtual void willDraw(LayerRendererChromium*);
+    virtual void willDraw(CCRenderer*, CCGraphicsContext*);
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) { }
     virtual void didDraw();
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;

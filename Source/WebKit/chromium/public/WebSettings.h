@@ -114,6 +114,7 @@ public:
     virtual void setEditingBehavior(EditingBehavior) = 0;
     virtual void setAcceleratedCompositingEnabled(bool) = 0;
     virtual void setForceCompositingMode(bool) = 0;
+    virtual void setForceSoftwareCompositing(bool) = 0;
     virtual void setMockScrollbarsEnabled(bool) = 0;
     virtual void setAcceleratedCompositingFor3DTransformsEnabled(bool) = 0;
     virtual void setAcceleratedCompositingForVideoEnabled(bool) = 0;
@@ -155,6 +156,8 @@ public:
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
     virtual void setFixedPositionCreatesStackingContext(bool) = 0;
     virtual void setSyncXHRInDocumentsEnabled(bool) = 0;
+
+    virtual bool forceSoftwareCompositing() const = 0;
 
 protected:
     ~WebSettings() { }

@@ -31,6 +31,7 @@
 #include "LayerChromium.h"
 #include "RateLimiter.h"
 #include "cc/CCAnimationEvents.h"
+#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
@@ -59,7 +60,7 @@ public:
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
-    virtual PassRefPtr<GraphicsContext3D> createContext() = 0;
+    virtual PassRefPtr<GraphicsContext3D> createContext3D() = 0;
     virtual void didRecreateContext(bool success) = 0;
     virtual void willCommit() = 0;
     virtual void didCommit() = 0;
@@ -76,6 +77,7 @@ protected:
 struct CCSettings {
     CCSettings()
             : acceleratePainting(false)
+            , forceSoftwareCompositing(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
@@ -92,6 +94,7 @@ struct CCSettings {
     { }
 
     bool acceleratePainting;
+    bool forceSoftwareCompositing;
     bool showFPSCounter;
     bool showPlatformLayerTree;
     bool showPaintRects;
@@ -159,7 +162,7 @@ public:
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);
     void commitComplete();
-    PassRefPtr<GraphicsContext3D> createContext();
+    PassRefPtr<CCGraphicsContext> createContext();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didLoseContext();
     enum RecreateResult {
@@ -186,7 +189,7 @@ public:
 
     // NOTE: The returned value can only be used to make GL calls or make the
     // context current on the thread the compositor is running on!
-    GraphicsContext3D* context();
+    CCGraphicsContext* context();
 
     // Composites and attempts to read back the result into the provided
     // buffer. If it wasn't possible, e.g. due to context lost, will return

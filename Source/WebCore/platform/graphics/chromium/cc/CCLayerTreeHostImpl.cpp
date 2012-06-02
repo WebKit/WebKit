@@ -27,7 +27,6 @@
 #include "cc/CCLayerTreeHostImpl.h"
 
 #include "Extensions3D.h"
-#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCActiveGestureAnimation.h"
@@ -167,9 +166,9 @@ bool CCLayerTreeHostImpl::canDraw()
     return true;
 }
 
-GraphicsContext3D* CCLayerTreeHostImpl::context()
+CCGraphicsContext* CCLayerTreeHostImpl::context()
 {
-    return m_layerRenderer ? m_layerRenderer->context() : 0;
+    return m_context.get();
 }
 
 void CCLayerTreeHostImpl::animate(double monotonicTime, double wallClockTime)
@@ -331,7 +330,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         if (it.representsContributingRenderSurface())
             pass->appendQuadsForRenderSurfaceLayer(*it, &occlusionTracker);
         else if (it.representsItself() && !it->visibleLayerRect().isEmpty()) {
-            it->willDraw(m_layerRenderer.get());
+            it->willDraw(m_layerRenderer.get(), context());
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
 
@@ -547,10 +546,16 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     setBackgroundTickingEnabled(!m_visible && m_needsAnimateLayers);
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploader)
+bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
 {
+    GraphicsContext3D* context3d = context->context3D();
+    if (!context3d) {
+        // FIXME: Implement this path for software compositing.
+        return false;
+    }
+
     OwnPtr<LayerRendererChromium> layerRenderer;
-    layerRenderer = LayerRendererChromium::create(this, context, textureUploader);
+    layerRenderer = LayerRendererChromium::create(this, context3d, textureUploader);
 
     // Since we now have a new context/layerRenderer, we cannot continue to use the old
     // resources (i.e. renderSurfaces and texture IDs).
@@ -560,6 +565,8 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     }
 
     m_layerRenderer = layerRenderer.release();
+    if (m_layerRenderer)
+        m_context = context;
 
     if (!m_visible && m_layerRenderer)
          m_layerRenderer->setVisible(m_visible);

@@ -46,7 +46,7 @@ BitmapCanvasLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void BitmapCanvasLayerTextureUpdater::Texture::updateRect(GraphicsContext3D* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+void BitmapCanvasLayerTextureUpdater::Texture::updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
 {
     textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
 }
@@ -95,7 +95,7 @@ void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect
     paintContents(*canvasPainter.context(), *canvasPainter.skiaContext(), contentRect, contentsScale, resultingOpaqueRect);
 }
 
-void BitmapCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void BitmapCanvasLayerTextureUpdater::updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     PlatformCanvas::AutoLocker locker(&m_canvas);
 

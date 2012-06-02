@@ -63,7 +63,7 @@ public:
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
-class CCLayerTreeHostImpl : public CCInputHandlerClient, LayerRendererChromiumClient {
+class CCLayerTreeHostImpl : public CCInputHandlerClient, CCRendererClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
     typedef Vector<CCLayerImpl*> CCLayerList;
 
@@ -103,7 +103,7 @@ public:
     // Must be called if and only if prepareToDraw was called.
     void didDrawAllLayers(const FrameData&);
 
-    // LayerRendererChromiumClient implementation
+    // CCRendererClient implementation
     virtual const IntSize& deviceViewportSize() const OVERRIDE { return m_deviceViewportSize; }
     virtual const CCSettings& settings() const OVERRIDE { return m_settings; }
     virtual void didLoseContext() OVERRIDE;
@@ -113,7 +113,7 @@ public:
 
     // Implementation
     bool canDraw();
-    GraphicsContext3D* context();
+    CCGraphicsContext* context();
 
     String layerTreeAsText() const;
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
@@ -121,9 +121,9 @@ public:
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
+    bool initializeLayerRenderer(PassRefPtr<CCGraphicsContext>, TextureUploaderOption);
     bool isContextLost();
-    LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
+    CCRenderer* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
     TextureAllocator* contentsTextureAllocator() const;
 
@@ -209,7 +209,8 @@ private:
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
-    OwnPtr<LayerRendererChromium> m_layerRenderer;
+    RefPtr<CCGraphicsContext> m_context;
+    OwnPtr<CCRenderer> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_scrollLayerImpl;
     CCSettings m_settings;

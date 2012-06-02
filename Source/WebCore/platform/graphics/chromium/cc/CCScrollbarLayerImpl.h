@@ -59,7 +59,7 @@ public:
     CCLayerImpl* scrollLayer() const { return m_scrollLayer; }
     void setScrollLayer(CCLayerImpl* scrollLayer) { m_scrollLayer = scrollLayer; }
 
-    virtual void willDraw(LayerRendererChromium*) OVERRIDE;
+    virtual void willDraw(CCRenderer*, CCGraphicsContext*) OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
     virtual void didDraw() OVERRIDE;
 

@@ -41,6 +41,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
 {
     CCSettings settings;
     settings.acceleratePainting = acceleratePainting;
+    settings.forceSoftwareCompositing = forceSoftwareCompositing;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
     settings.showPaintRects = showPaintRects;
@@ -161,7 +162,7 @@ void WebLayerTreeView::finishAllRendering()
 
 WebGraphicsContext3D* WebLayerTreeView::context()
 {
-    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->layerTreeHost()->context());
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->layerTreeHost()->context()->context3D());
 }
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)

@@ -3447,6 +3447,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.showFPSCounter = settingsImpl()->showFPSCounter();
         layerTreeViewSettings.showPlatformLayerTree = settingsImpl()->showPlatformLayerTree();
         layerTreeViewSettings.showPaintRects = settingsImpl()->showPaintRects();
+        layerTreeViewSettings.forceSoftwareCompositing = settings()->forceSoftwareCompositing();
 
         layerTreeViewSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
         layerTreeViewSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
@@ -3495,6 +3496,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsContext3D()
 {
+    if (settings()->forceSoftwareCompositing())
+        CRASH();
+
     // Explicitly disable antialiasing for the compositor. As of the time of
     // this writing, the only platform that supported antialiasing for the
     // compositor was Mac OS X, because the on-screen OpenGL context creation
@@ -3518,6 +3522,9 @@ PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsCo
 
 WebKit::WebGraphicsContext3D* WebViewImpl::createContext3D()
 {
+    if (settings()->forceSoftwareCompositing())
+        CRASH();
+
     OwnPtr<WebKit::WebGraphicsContext3D> webContext;
 
     // If we've already created an onscreen context for this view, return that.

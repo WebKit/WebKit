@@ -62,7 +62,6 @@ class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
 class CCTextureUpdater;
-class GraphicsContext3D;
 class ScrollbarLayerChromium;
 
 // Base class for composited layers. Special layer types are derived from

@@ -160,7 +160,7 @@ public:
     virtual bool isBusy() { return false; }
     virtual void beginUploads() { }
     virtual void endUploads() { }
-    virtual void uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+    virtual void uploadTexture(CCGraphicsContext* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
 
 protected:
     UnthrottledTextureUploader() { }
@@ -217,7 +217,7 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploaderSetting)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploaderSetting)
 {
     OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context, textureUploaderSetting)));
     if (!layerRenderer->initialize())
@@ -226,25 +226,26 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChr
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client,
+LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
                                              PassRefPtr<GraphicsContext3D> context,
                                              TextureUploaderOption textureUploaderSetting)
-    : m_client(client)
+    : CCRenderer(client)
     , m_currentRenderSurface(0)
     , m_currentManagedTexture(0)
     , m_offscreenFramebufferId(0)
+    , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
     , m_context(context)
     , m_defaultRenderSurface(0)
-    , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
     , m_textureUploaderSetting(textureUploaderSetting)
 {
+    ASSERT(m_context.get());
 }
 
 class ContextLostCallbackAdapter : public GraphicsContext3D::ContextLostCallback {
 public:
-    static PassOwnPtr<ContextLostCallbackAdapter> create(LayerRendererChromiumClient* client)
+    static PassOwnPtr<ContextLostCallbackAdapter> create(CCRendererClient* client)
     {
         return adoptPtr(new ContextLostCallbackAdapter(client));
     }
@@ -255,10 +256,10 @@ public:
     }
 
 private:
-    explicit ContextLostCallbackAdapter(LayerRendererChromiumClient* client)
+    explicit ContextLostCallbackAdapter(CCRendererClient* client)
         : m_client(client) { }
 
-    LayerRendererChromiumClient* m_client;
+    CCRendererClient* m_client;
 };
 
 bool LayerRendererChromium::initialize()
@@ -1077,7 +1078,8 @@ void LayerRendererChromium::copyPlaneToTexture(const CCVideoDrawQuad* quad, cons
 {
     CCVideoLayerImpl::Texture& texture = quad->textures()[index];
     TextureAllocator* allocator = renderSurfaceTextureAllocator();
-    texture.m_texture->bindTexture(context(), allocator);
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(m_context);
+    texture.m_texture->bindTexture(ccContext.get(), allocator);
     GC3Denum format = texture.m_texture->format();
     IntSize dimensions = texture.m_texture->size();
 
@@ -1217,7 +1219,8 @@ void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const
     const HeadsUpDisplayProgram* program = headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(m_context, m_context->activeTexture(GraphicsContext3D::TEXTURE0));
-    hudTexture->bindTexture(m_context.get(), renderSurfaceTextureAllocator());
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(m_context);
+    hudTexture->bindTexture(ccContext.get(), renderSurfaceTextureAllocator());
     GLC(m_context, m_context->useProgram(program->program()));
     GLC(m_context, m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
@@ -1442,7 +1445,8 @@ bool LayerRendererChromium::getFramebufferTexture(ManagedTexture* texture, const
     if (!texture->reserve(deviceRect.size(), GraphicsContext3D::RGB))
         return false;
 
-    texture->bindTexture(m_context.get(), m_renderSurfaceTextureAllocator.get());
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(m_context);
+    texture->bindTexture(ccContext.get(), m_renderSurfaceTextureAllocator.get());
     GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, texture->format(),
                                              deviceRect.x(), deviceRect.y(), deviceRect.width(), deviceRect.height(), 0));
     return true;
@@ -1484,7 +1488,8 @@ bool LayerRendererChromium::bindFramebufferToTexture(ManagedTexture* texture, co
 {
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
 
-    texture->framebufferTexture2D(m_context.get(), m_renderSurfaceTextureAllocator.get());
+    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(m_context);
+    texture->framebufferTexture2D(ccContext.get(), m_renderSurfaceTextureAllocator.get());
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
