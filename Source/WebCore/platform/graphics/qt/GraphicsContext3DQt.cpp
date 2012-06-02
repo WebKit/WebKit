@@ -28,6 +28,7 @@
 #include "Extensions3DOpenGL.h"
 #endif
 #include "GraphicsContext.h"
+#include "GraphicsSurface.h"
 #include "HTMLCanvasElement.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
@@ -36,6 +37,9 @@
 #include "OpenGLShims.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
+#if HAVE(QT5)
+#include <QWindow>
+#endif
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -67,16 +71,25 @@ public:
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
+#if USE(GRAPHICS_SURFACE)
+    virtual uint32_t copyToGraphicsSurface();
+#endif
 
     QRectF boundingRect() const;
     void blitMultisampleFramebuffer() const;
     void blitMultisampleFramebufferAndRestoreContext() const;
     bool makeCurrentIfNeeded() const;
+    void createGraphicsSurfaces(const IntSize&);
 
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
     PlatformGraphicsSurface3D m_surface;
     PlatformGraphicsContext3D m_platformContext;
+#if USE(GRAPHICS_SURFACE)
+    GraphicsSurface::Flags m_surfaceFlags;
+    RefPtr<GraphicsSurface> m_frontBufferGraphicsSurface;
+    RefPtr<GraphicsSurface> m_backBufferGraphicsSurface;
+#endif
 };
 
 bool GraphicsContext3D::isGLES2Compliant() const
@@ -94,13 +107,40 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     , m_surface(0)
     , m_platformContext(0)
 {
-    QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
-    if (!webPageClient)
+    if (m_hostWindow && m_hostWindow->platformPageClient()) {
+        // This is the WebKit1 code path.
+        QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
+        webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface);
+        if (!m_surface)
+            return;
+
+        makeCurrentIfNeeded();
         return;
-    webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface);
-    if (!m_surface)
+    }
+
+#if USE(GRAPHICS_SURFACE)
+    // FIXME: Find a way to create a QOpenGLContext without creating a QWindow at all.
+    // We need to create a surface in order to create a QOpenGLContext and make it current.
+    QWindow* window = new QWindow;
+    window->setSurfaceType(QSurface::OpenGLSurface);
+    window->setGeometry(-10, -10, 1, 1);
+    window->create();
+    m_surface = window;
+
+    m_platformContext = new QOpenGLContext(window);
+    if (!m_platformContext->create())
         return;
+
     makeCurrentIfNeeded();
+    IntSize surfaceSize(m_context->m_currentWidth, m_context->m_currentHeight);
+    m_surfaceFlags = GraphicsSurface::SupportsTextureTarget
+                    | GraphicsSurface::SupportsSharing;
+
+    if (!surfaceSize.isEmpty()) {
+        m_frontBufferGraphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
+        m_backBufferGraphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
+    }
+#endif
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
@@ -174,6 +214,20 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+#if USE(GRAPHICS_SURFACE)
+uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
+{
+    if (!m_frontBufferGraphicsSurface || !m_backBufferGraphicsSurface)
+        return 0;
+
+    blitMultisampleFramebufferAndRestoreContext();
+    makeCurrentIfNeeded();
+    m_backBufferGraphicsSurface->copyFromFramebuffer(m_context->m_fbo, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
+    std::swap(m_frontBufferGraphicsSurface, m_backBufferGraphicsSurface);
+    return m_frontBufferGraphicsSurface->exportToken();
+}
+#endif
+
 QRectF GraphicsContext3DPrivate::boundingRect() const
 {
     return QRectF(QPointF(0, 0), QSizeF(m_context->m_currentWidth, m_context->m_currentHeight));
@@ -232,6 +286,19 @@ bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
         m_surface->makeCurrent();
 
     return QGLContext::currentContext() == widgetContext;
+#endif
+}
+
+void GraphicsContext3DPrivate::createGraphicsSurfaces(const IntSize& size)
+{
+#if USE(GRAPHICS_SURFACE)
+    if (size.isEmpty()) {
+        m_frontBufferGraphicsSurface.clear();
+        m_backBufferGraphicsSurface.clear();
+    } else {
+        m_frontBufferGraphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
+        m_backBufferGraphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
+    }
 #endif
 }
 
@@ -406,6 +473,13 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     context->drawImage(QRect(0, 0, canvasWidth, -canvasHeight), image);
     context->restore();
 }
+
+#if USE(GRAPHICS_SURFACE)
+void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
+{
+    m_private->createGraphicsSurfaces(size);
+}
+#endif
 
 #if defined(QT_OPENGL_ES_2)
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer*)

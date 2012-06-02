@@ -30,6 +30,7 @@
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
+#include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
 #include "UpdateInfo.h"
 #include <OpenGLShims.h>
@@ -194,6 +195,28 @@ void WebLayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
     m_pendingRenderedContentsScrollPosition = boundedScrollPosition(position, m_visibleContentsRect, m_contentsSize);
 }
 
+void WebLayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken)
+{
+    if (canvasSize.isEmpty() || !m_textureMapper)
+        return;
+
+#if USE(GRAPHICS_SURFACE)
+    ensureLayer(id);
+    GraphicsLayer* layer = layerByID(id);
+
+    RefPtr<TextureMapperSurfaceBackingStore> canvasBackingStore;
+    SurfaceBackingStoreMap::iterator it = m_surfaceBackingStores.find(id);
+    if (it == m_surfaceBackingStores.end()) {
+        canvasBackingStore = TextureMapperSurfaceBackingStore::create();
+        m_surfaceBackingStores.set(id, canvasBackingStore);
+    } else
+        canvasBackingStore = it->second;
+
+    canvasBackingStore->setGraphicsSurface(graphicsSurfaceToken, canvasSize);
+    layer->setContentsToMedia(canvasBackingStore.get());
+#endif
+}
+
 void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
 {
     ensureLayer(id);
@@ -271,6 +294,9 @@ void WebLayerTreeRenderer::deleteLayer(WebLayerID layerID)
     layer->removeFromParent();
     m_layers.remove(layerID);
     m_fixedLayers.remove(layerID);
+#if USE(GRAPHICS_SURFACE)
+    m_surfaceBackingStores.remove(layerID);
+#endif
     delete layer;
 }
 
@@ -419,6 +445,9 @@ void WebLayerTreeRenderer::purgeGLResources()
         layer->clearBackingStoresRecursive();
 
     m_directlyCompositedImages.clear();
+#if USE(GRAPHICS_SURFACE)
+    m_surfaceBackingStores.clear();
+#endif
 
     m_rootLayer->removeAllChildren();
     m_rootLayer.clear();

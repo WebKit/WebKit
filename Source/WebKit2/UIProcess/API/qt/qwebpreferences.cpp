@@ -63,6 +63,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetFrameFlatteningEnabled(preferencesRef());
     case DeveloperExtrasEnabled:
         return WKPreferencesGetDeveloperExtrasEnabled(preferencesRef());
+#if ENABLE(WEBGL)
+    case WebGLEnabled:
+        return WKPreferencesGetWebGLEnabled(preferencesRef());
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -106,6 +110,11 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
     case DeveloperExtrasEnabled:
         WKPreferencesSetDeveloperExtrasEnabled(preferencesRef(), enable);
         break;
+#if ENABLE(WEBGL)
+    case WebGLEnabled:
+        WKPreferencesSetWebGLEnabled(preferencesRef(), enable);
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -474,6 +483,25 @@ void QWebPreferences::setDefaultFixedFontSize(unsigned size)
 {
     d->setFontSize(QWebPreferencesPrivate::DefaultFixedFontSize, size);
     emit defaultFixedFontSizeChanged();
+}
+
+bool QWebPreferences::webGLEnabled() const
+{
+#if ENABLE(WEBGL)
+    return d->testAttribute(QWebPreferencesPrivate::WebGLEnabled);
+#else
+    return false;
+#endif
+}
+
+void QWebPreferences::setWebGLEnabled(bool enable)
+{
+#if ENABLE(WEBGL)
+    d->setAttribute(QWebPreferencesPrivate::WebGLEnabled, enable);
+    emit webGLEnabledChanged();
+#else
+    UNUSED_PARAM(enable);
+#endif
 }
 
 WKPreferencesRef QWebPreferencesPrivate::preferencesRef() const

@@ -1,3 +1,64 @@
+2012-06-02  Zeno Albisser  <zeno@webkit.org>
+
+        Fix and enable WebGL for WebKit2 on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=86214
+
+        Added glue code to make use of GraphicsSurface
+        as a backend for the webgl-canvas in case of WK2.
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::webGLEnabled):
+        (QWebPreferences::setWebGLEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+        Added WebGLEnabled enum to allow enabling/disabling of
+        WebGL using QWebPreferences.
+
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::syncCanvas):
+        Dispatch syncCanvas calls to the apropriate
+        WebLayerTreeRenderer.
+
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.messages.in:
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::syncCanvas):
+        (WebKit::WebLayerTreeRenderer::deleteLayer):
+        (WebKit::WebLayerTreeRenderer::purgeGLResources):
+        Create a TextureMapperSurfaceBackingStore for the canvas
+        if necessary and pass or update the graphicsSurfaceToken
+        for to be used with the backing store.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::setContentsToCanvas):
+        (WebCore::WebGraphicsLayer::syncCanvas):
+        Copy the multisample framebuffer contents onto the GraphicsSurface.
+        Notify the UIProcess of the availability of a new texture.
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        Sync the canvas as well.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        Added a pure virtual function syncCanvas.
+        This is guarded by PLATFORM(QT).
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::syncLayerChildren):
+        (WebKit):
+        (WebKit::LayerTreeHostQt::syncCanvas):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-06-01  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11335622> and https://bugs.webkit.org/show_bug.cgi?id=88119

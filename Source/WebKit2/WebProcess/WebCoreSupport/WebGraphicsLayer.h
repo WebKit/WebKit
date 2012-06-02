@@ -60,6 +60,9 @@ public:
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
 #endif
+#if PLATFORM(QT)
+    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) = 0;
+#endif
     virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
@@ -98,6 +101,7 @@ public:
     void setOpacity(float);
     void setContentsRect(const IntRect&);
     void setContentsToImage(Image*);
+    void setContentsToCanvas(PlatformLayer*);
     void setMaskLayer(GraphicsLayer*);
     void setReplicatedByLayer(GraphicsLayer*);
     void setNeedsDisplay();
@@ -147,6 +151,7 @@ public:
 #if ENABLE(CSS_FILTERS)
     void syncFilters();
 #endif
+    void syncCanvas();
     void ensureImageBackingStore();
 
     void adjustVisibleRect();
@@ -168,6 +173,7 @@ private:
     bool m_shouldSyncChildren: 1;
     bool m_shouldSyncFilters: 1;
     bool m_fixedToViewport : 1;
+    bool m_canvasNeedsDisplay : 1;
 
     void notifyChange();
     void didChangeGeometry();
@@ -191,6 +197,7 @@ private:
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
+    PlatformLayer* m_canvasPlatformLayer;
 };
 
 WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer*);

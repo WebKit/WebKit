@@ -69,6 +69,7 @@ public:
     void updateViewport();
     void renderNextFrame();
     void didChangeScrollPosition(const WebCore::IntPoint& position);
+    void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken);
     void purgeBackingStores();
     WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
 

@@ -911,6 +911,9 @@ public:
 
     bool reshapeFBOs(const IntSize&);
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
+#if PLATFORM(QT) && USE(GRAPHICS_SURFACE)
+    void createGraphicsSurfaces(const IntSize&);
+#endif
 
     int m_currentWidth, m_currentHeight;
     bool isResourceSafe();

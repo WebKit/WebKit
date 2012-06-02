@@ -256,6 +256,12 @@ void LayerTreeHostQt::syncLayerChildren(WebLayerID id, const Vector<WebLayerID>&
     m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerChildren(id, children));
 }
 
+void LayerTreeHostQt::syncCanvas(WebLayerID id, const IntSize& canvasSize, uint32_t graphicsSurfaceToken)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeHostProxy::SyncCanvas(id, canvasSize, graphicsSurfaceToken));
+}
+
 #if ENABLE(CSS_FILTERS)
 void LayerTreeHostQt::syncLayerFilters(WebLayerID id, const FilterOperations& filters)
 {

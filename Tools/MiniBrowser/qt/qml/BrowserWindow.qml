@@ -335,6 +335,7 @@ Rectangle {
 
         experimental.devicePixelRatio: 1.5
         experimental.preferences.fullScreenEnabled: true
+        experimental.preferences.webGLEnabled: true
         experimental.preferredMinimumContentsWidth: 980
         experimental.itemSelector: ItemSelector { }
         experimental.alertDialog: AlertDialog { }

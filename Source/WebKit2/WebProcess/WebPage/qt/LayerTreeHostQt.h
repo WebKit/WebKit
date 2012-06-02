@@ -79,6 +79,7 @@ public:
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
+    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) OVERRIDE;
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
     virtual void syncFixedLayers();

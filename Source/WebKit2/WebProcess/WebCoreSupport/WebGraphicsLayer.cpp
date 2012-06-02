@@ -30,6 +30,7 @@
 #include "GraphicsLayer.h"
 #include "LayerTreeHostProxyMessages.h"
 #include "Page.h"
+#include "TextureMapperPlatformLayer.h"
 #include "TiledBackingStoreRemoteTile.h"
 #include "WebPage.h"
 #include <wtf/CurrentTime.h>
@@ -109,8 +110,10 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     , m_shouldSyncLayerState(true)
     , m_shouldSyncChildren(true)
     , m_fixedToViewport(false)
+    , m_canvasNeedsDisplay(false)
     , m_webGraphicsLayerClient(0)
     , m_contentsScale(1)
+    , m_canvasPlatformLayer(0)
 {
     static WebLayerID nextLayerID = 1;
     m_id = nextLayerID++;
@@ -316,6 +319,15 @@ void WebGraphicsLayer::setContentsNeedsDisplay()
     RefPtr<Image> image = m_image;
     setContentsToImage(0);
     setContentsToImage(image.get());
+    m_canvasNeedsDisplay = true;
+}
+
+void WebGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
+{
+    m_canvasPlatformLayer = platformLayer;
+    m_canvasNeedsDisplay = true;
+    if (client())
+        client()->notifySyncRequired(this);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -468,6 +480,21 @@ void WebGraphicsLayer::syncLayerState()
     m_webGraphicsLayerClient->syncLayerState(m_id, m_layerInfo);
 }
 
+void WebGraphicsLayer::syncCanvas()
+{
+    if (!m_canvasNeedsDisplay)
+        return;
+
+    if (!m_canvasPlatformLayer)
+        return;
+
+#if USE(GRAPHICS_SURFACE)
+    uint32_t graphicsSurfaceToken = m_canvasPlatformLayer->copyToGraphicsSurface();
+    m_webGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), graphicsSurfaceToken);
+#endif
+    m_canvasNeedsDisplay = false;
+}
+
 void WebGraphicsLayer::ensureImageBackingStore()
 {
     if (!m_image)
@@ -475,6 +502,7 @@ void WebGraphicsLayer::ensureImageBackingStore()
     if (!m_layerInfo.imageBackingStoreID)
         m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 }
+
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
@@ -486,6 +514,7 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     syncFilters();
 #endif
     updateContentBuffers();
+    syncCanvas();
 }
 
 void WebGraphicsLayer::tiledBackingStorePaintBegin()

@@ -22,6 +22,7 @@
 
 #if USE(UI_SIDE_COMPOSITING)
 #include "BackingStore.h"
+#include "GraphicsSurface.h"
 #include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
@@ -67,6 +68,7 @@ public:
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& accurateVisibleContentsPosition);
     void didChangeScrollPosition(const WebCore::IntPoint& position);
+    void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken);
 
     void detach();
     void appendUpdate(const Function<void()>&);
@@ -117,6 +119,10 @@ private:
     PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
     HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
     HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
+#endif
+#if USE(GRAPHICS_SURFACE)
+    typedef HashMap<WebLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
+    SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
 
     void scheduleWebViewUpdate();

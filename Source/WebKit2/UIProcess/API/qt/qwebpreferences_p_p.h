@@ -38,7 +38,8 @@ public:
         FrameFlatteningEnabled,
         PrivateBrowsingEnabled,
         DnsPrefetchEnabled,
-        DeveloperExtrasEnabled
+        DeveloperExtrasEnabled,
+        WebGLEnabled
     };
 
     enum FontFamily {

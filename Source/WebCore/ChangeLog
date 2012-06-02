@@ -1,3 +1,58 @@
+2012-06-02  Zeno Albisser  <zeno@webkit.org>
+
+        Fix and enable WebGL for WebKit2 on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=86214
+
+        Make GraphicsContext3DPrivate use GraphicsSurfaces
+        for WK2. The GraphicsContext3D then uses the existing
+        RenderBuffer for multisample rendering.
+        When WebGraphicsLayer::syncCompositingState is being
+        executed, the canvas is being synced as well. This means
+        that the RenderBuffer contents are being blit onto
+        a GraphicsSurface, and the GraphicsSurface token is
+        being sent to the UIProcess.
+        The WebLayerTreeRenderer then creates a
+        TextureMapperSurfaceBackingStore for the canvas and
+        passes the GraphicsSurface token as an argument.
+        The token can then be used to identify the GraphicsSurface
+        from the UIProcess side.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/GraphicsContext3D.h:
+        Added createGraphicsSurfaces function. This is currently only
+        being used by the Qt port.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+        Calling the createGraphicsSurfaces function when the GraphicsContext3D
+        is reshaped. This is currently only relevant for the Qt port.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        Added m_frontBufferGraphicsSurface, m_backBufferGraphicsSurface
+        and m_surfaceFlags members.
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        In case of WK2, create a QOpenGLContext and two GraphicsSurface
+        for sharing the WebGL content with the UIProcess. One GraphicsSurface
+        is being used as the front, the other one as the backbuffer.
+        Creating a QOpenGLContext currently requires showing a QWindow.
+        For the moment we therefore create a minimal QWindow and place
+        it offscreen.
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+        This new function is called from the WebGraphicsLayer,
+        to blit the multisample framebuffer and copy its contents
+        onto the GraphicsSurface.
+        (WebCore::GraphicsContext3DPrivate::createGraphicsSurfaces):
+        Whenever the GraphicsContext3D is being reshaped,
+        new GraphicsSurfaces must be created with the updated dimensions.
+        (WebCore::GraphicsContext3D::createGraphicsSurfaces):
+
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        Added a new virtual function copyToGraphicsSurface.
+        (TextureMapperPlatformLayer):
+        (WebCore::TextureMapperPlatformLayer::copyToGraphicsSurface):
+
 2012-06-02  Tony Chang  <tony@chromium.org>
 
         Rename the flexbox CSS propery values from start to flex-start and end to flex-end

@@ -33,5 +33,6 @@ messages -> LayerTreeHostProxy {
     DestroyDirectlyCompositedImage(int64_t key)
     DidRenderFrame()
     DidChangeScrollPosition(WebCore::IntPoint position)
+    SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, uint32_t graphicsSurfaceToken)
 }
 #endif
