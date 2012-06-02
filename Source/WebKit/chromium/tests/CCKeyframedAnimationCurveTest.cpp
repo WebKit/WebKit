@@ -31,7 +31,6 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <public/WebTransformOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
@@ -114,55 +113,57 @@ TEST(CCKeyframedAnimationCurveTest, RepeatedFloatKeyTimes)
 TEST(CCKeyframedAnimationCurveTest, OneTransformKeyframe)
 {
     OwnPtr<CCKeyframedTransformAnimationCurve> curve(CCKeyframedTransformAnimationCurve::create());
-    WebKit::WebTransformOperations operations;
-    operations.appendTranslate(2, 0, 0);
+    TransformOperations operations;
+    operations.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
     curve->addKeyframe(CCTransformKeyframe::create(0, operations, nullptr));
 
-    expectTranslateX(2, curve->getValue(-1));
-    expectTranslateX(2, curve->getValue(0));
-    expectTranslateX(2, curve->getValue(0.5));
-    expectTranslateX(2, curve->getValue(1));
-    expectTranslateX(2, curve->getValue(2));
+    IntSize layerSize; // ignored
+    expectTranslateX(2, curve->getValue(-1, layerSize));
+    expectTranslateX(2, curve->getValue(0, layerSize));
+    expectTranslateX(2, curve->getValue(0.5, layerSize));
+    expectTranslateX(2, curve->getValue(1, layerSize));
+    expectTranslateX(2, curve->getValue(2, layerSize));
 }
 
 // Tests that a transform animation with two keyframes works as expected.
 TEST(CCKeyframedAnimationCurveTest, TwoTransformKeyframe)
 {
     OwnPtr<CCKeyframedTransformAnimationCurve> curve(CCKeyframedTransformAnimationCurve::create());
-    WebKit::WebTransformOperations operations1;
-    operations1.appendTranslate(2, 0, 0);
-    WebKit::WebTransformOperations operations2;
-    operations2.appendTranslate(4, 0, 0);
-
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
     curve->addKeyframe(CCTransformKeyframe::create(0, operations1, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(1, operations2, nullptr));
-    expectTranslateX(2, curve->getValue(-1));
-    expectTranslateX(2, curve->getValue(0));
-    expectTranslateX(3, curve->getValue(0.5));
-    expectTranslateX(4, curve->getValue(1));
-    expectTranslateX(4, curve->getValue(2));
+    IntSize layerSize; // ignored
+    expectTranslateX(2, curve->getValue(-1, layerSize));
+    expectTranslateX(2, curve->getValue(0, layerSize));
+    expectTranslateX(3, curve->getValue(0.5, layerSize));
+    expectTranslateX(4, curve->getValue(1, layerSize));
+    expectTranslateX(4, curve->getValue(2, layerSize));
 }
 
 // Tests that a transform animation with three keyframes works as expected.
 TEST(CCKeyframedAnimationCurveTest, ThreeTransformKeyframe)
 {
     OwnPtr<CCKeyframedTransformAnimationCurve> curve(CCKeyframedTransformAnimationCurve::create());
-    WebKit::WebTransformOperations operations1;
-    operations1.appendTranslate(2, 0, 0);
-    WebKit::WebTransformOperations operations2;
-    operations2.appendTranslate(4, 0, 0);
-    WebKit::WebTransformOperations operations3;
-    operations3.appendTranslate(8, 0, 0);
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations3;
+    operations3.operations().append(TranslateTransformOperation::create(Length(8, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
     curve->addKeyframe(CCTransformKeyframe::create(0, operations1, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(1, operations2, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(2, operations3, nullptr));
-    expectTranslateX(2, curve->getValue(-1));
-    expectTranslateX(2, curve->getValue(0));
-    expectTranslateX(3, curve->getValue(0.5));
-    expectTranslateX(4, curve->getValue(1));
-    expectTranslateX(6, curve->getValue(1.5));
-    expectTranslateX(8, curve->getValue(2));
-    expectTranslateX(8, curve->getValue(3));
+    IntSize layerSize; // ignored
+    expectTranslateX(2, curve->getValue(-1, layerSize));
+    expectTranslateX(2, curve->getValue(0, layerSize));
+    expectTranslateX(3, curve->getValue(0.5, layerSize));
+    expectTranslateX(4, curve->getValue(1, layerSize));
+    expectTranslateX(6, curve->getValue(1.5, layerSize));
+    expectTranslateX(8, curve->getValue(2, layerSize));
+    expectTranslateX(8, curve->getValue(3, layerSize));
 }
 
 // Tests that a transform animation with multiple keys at a given time works sanely.
@@ -170,30 +171,32 @@ TEST(CCKeyframedAnimationCurveTest, RepeatedTransformKeyTimes)
 {
     OwnPtr<CCKeyframedTransformAnimationCurve> curve(CCKeyframedTransformAnimationCurve::create());
     // A step function.
-    WebKit::WebTransformOperations operations1;
-    operations1.appendTranslate(4, 0, 0);
-    WebKit::WebTransformOperations operations2;
-    operations2.appendTranslate(4, 0, 0);
-    WebKit::WebTransformOperations operations3;
-    operations3.appendTranslate(6, 0, 0);
-    WebKit::WebTransformOperations operations4;
-    operations4.appendTranslate(6, 0, 0);
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations3;
+    operations3.operations().append(TranslateTransformOperation::create(Length(6, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    TransformOperations operations4;
+    operations4.operations().append(TranslateTransformOperation::create(Length(6, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
     curve->addKeyframe(CCTransformKeyframe::create(0, operations1, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(1, operations2, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(1, operations3, nullptr));
     curve->addKeyframe(CCTransformKeyframe::create(2, operations4, nullptr));
 
-    expectTranslateX(4, curve->getValue(-1));
-    expectTranslateX(4, curve->getValue(0));
-    expectTranslateX(4, curve->getValue(0.5));
+    IntSize layerSize; // ignored
+
+    expectTranslateX(4, curve->getValue(-1, layerSize));
+    expectTranslateX(4, curve->getValue(0, layerSize));
+    expectTranslateX(4, curve->getValue(0.5, layerSize));
 
     // There is a discontinuity at 1. Any value between 4 and 6 is valid.
-    WebTransformationMatrix value = curve->getValue(1);
+    WebTransformationMatrix value = curve->getValue(1, layerSize);
     EXPECT_TRUE(value.m41() >= 4 && value.m41() <= 6);
 
-    expectTranslateX(6, curve->getValue(1.5));
-    expectTranslateX(6, curve->getValue(2));
-    expectTranslateX(6, curve->getValue(3));
+    expectTranslateX(6, curve->getValue(1.5, layerSize));
+    expectTranslateX(6, curve->getValue(2, layerSize));
+    expectTranslateX(6, curve->getValue(3, layerSize));
 }
 
 // Tests that the keyframes may be added out of order.

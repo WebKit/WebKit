@@ -54,6 +54,7 @@ public:
     virtual float opacity() const = 0;
     virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) = 0;
     virtual const WebKit::WebTransformationMatrix& transform() const = 0;
+    virtual const IntSize& bounds() const = 0;
 };
 
 class CCLayerAnimationController {
@@ -64,10 +65,9 @@ public:
     virtual ~CCLayerAnimationController();
 
     // These methods are virtual for testing.
-    virtual void addAnimation(PassOwnPtr<CCActiveAnimation>);
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, int animationId, int groupId, double timeOffset);
     virtual void pauseAnimation(int animationId, double timeOffset);
     virtual void removeAnimation(int animationId);
-    virtual void removeAnimation(int animationId, CCActiveAnimation::TargetProperty);
     virtual void suspendAnimations(double monotonicTime);
     virtual void resumeAnimations(double monotonicTime);
 
@@ -77,13 +77,11 @@ public:
 
     void animate(double monotonicTime, CCAnimationEventsVector*);
 
-    // Returns the active animation in the given group, animating the given property, if such an
+    void add(PassOwnPtr<CCActiveAnimation>);
+
+    // Returns the active animation in the given group, animating the given property if such an
     // animation exists.
     CCActiveAnimation* getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty) const;
-
-    // Returns the active animation animating the given property that is either running, or is
-    // next to run, if such an animation exists.
-    CCActiveAnimation* getActiveAnimation(CCActiveAnimation::TargetProperty) const;
 
     // Returns true if there are any animations that have neither finished nor aborted.
     bool hasActiveAnimation() const;

@@ -37,7 +37,6 @@
 #include "PlatformContextSkia.h"
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
-#include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerAnimationDelegate.h"
@@ -600,15 +599,17 @@ void LayerChromium::setTransformFromAnimation(const WebTransformationMatrix& tra
     m_transform = transform;
 }
 
-bool LayerChromium::addAnimation(PassOwnPtr<CCActiveAnimation> animation)
+bool LayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, int animationId, int groupId, double timeOffset)
 {
     if (!m_layerTreeHost || !m_layerTreeHost->settings().threadedAnimationEnabled)
         return false;
 
-    m_layerAnimationController->addAnimation(animation);
-    m_layerTreeHost->didAddAnimation();
-    setNeedsCommit();
-    return true;
+    bool addedAnimation = m_layerAnimationController->addAnimation(values, boxSize, animation, animationId, groupId, timeOffset);
+    if (addedAnimation) {
+        m_layerTreeHost->didAddAnimation();
+        setNeedsCommit();
+    }
+    return addedAnimation;
 }
 
 void LayerChromium::pauseAnimation(int animationId, double timeOffset)

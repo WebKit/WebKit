@@ -46,7 +46,6 @@
 #include "GraphicsLayerChromium.h"
 
 #include "AnimationIdVendor.h"
-#include "AnimationTranslationUtil.h"
 #include "Canvas2DLayerChromium.h"
 #include "ContentLayerChromium.h"
 #include "FloatConversion.h"
@@ -58,8 +57,6 @@
 #include "PlatformString.h"
 #include "SkMatrix44.h"
 #include "SystemTime.h"
-
-#include "cc/CCActiveAnimation.h"
 
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
@@ -503,28 +500,8 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 
 bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
 {
-    // Bail early if we have a large rotation.
-    if (values.property() == AnimatedPropertyWebkitTransform) {
-        bool hasRotationOfMoreThan180Degrees = false;
-        validateTransformOperations(values, hasRotationOfMoreThan180Degrees);
-        if (hasRotationOfMoreThan180Degrees)
-            return false;
-    }
-
     primaryLayer().unwrap<LayerChromium>()->setLayerAnimationDelegate(this);
-
-    int animationId = mapAnimationNameToId(animationName);
-    int groupId = AnimationIdVendor::getNextGroupId();
-
-    OwnPtr<CCActiveAnimation> toAdd(createActiveAnimation(values, animation, animationId, groupId, timeOffset, boxSize));
-
-    if (toAdd.get()) {
-        // Remove any existing animations with the same animation id and target property.
-        primaryLayer().unwrap<LayerChromium>()->layerAnimationController()->removeAnimation(toAdd->id(), toAdd->targetProperty());
-        return primaryLayer().unwrap<LayerChromium>()->addAnimation(toAdd.release());
-    }
-
-    return false;
+    return primaryLayer().unwrap<LayerChromium>()->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), AnimationIdVendor::getNextGroupId(), timeOffset);
 }
 
 void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)

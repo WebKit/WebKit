@@ -76,7 +76,7 @@ LinkHighlight::LinkHighlight(GraphicsLayerChromium* parent, const Path& path, in
     // animationId = 1 is reserved for us.
     OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), animationId, groupId, CCActiveAnimation::Opacity));
     animation->setNeedsSynchronizedStartTime(true);
-    m_contentLayer->layerAnimationController()->addAnimation(animation.release());
+    m_contentLayer->layerAnimationController()->add(animation.release());
 }
 
 LinkHighlight::~LinkHighlight()

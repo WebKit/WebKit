@@ -1,3 +1,49 @@
+2012-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119283, r119287, and r119291.
+        http://trac.webkit.org/changeset/119283
+        http://trac.webkit.org/changeset/119287
+        http://trac.webkit.org/changeset/119291
+        https://bugs.webkit.org/show_bug.cgi?id=88159
+
+        Not only broke compilation in the initial commit but also
+        broke LayerChromiumTest.basicCreateAndDestroy (Requested by
+        rniwa on #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/AnimationTranslationUtil.cpp: Removed.
+        * platform/graphics/chromium/AnimationTranslationUtil.h: Removed.
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::addAnimation):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::addAnimation):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/LinkHighlight.cpp:
+        (WebCore::LinkHighlight::LinkHighlight):
+        * platform/graphics/chromium/cc/CCAnimationCurve.h:
+        (CCTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp:
+        (WebCore::CCTransformKeyframe::create):
+        (WebCore::CCTransformKeyframe::CCTransformKeyframe):
+        (WebCore::CCTransformKeyframe::value):
+        (WebCore::CCTransformKeyframe::clone):
+        (WebCore::CCKeyframedTransformAnimationCurve::getValue):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h:
+        (CCTransformKeyframe):
+        (CCKeyframedTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        (WebCore::CCLayerAnimationController::addAnimation):
+        (WebCore):
+        (WebCore::CCLayerAnimationController::add):
+        (WebCore::CCLayerAnimationController::pushNewAnimationsToImplThread):
+        (WebCore::CCLayerAnimationController::replaceImplThreadAnimations):
+        (WebCore::CCLayerAnimationController::tickAnimations):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        (CCLayerAnimationControllerClient):
+        (CCLayerAnimationController):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+
 2012-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Large number constant in TransformationMatrix::projectPoint overflows FractionalLayoutUnits with sub-pixel layout enabled

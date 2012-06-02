@@ -1,3 +1,32 @@
+2012-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119283, r119287, and r119291.
+        http://trac.webkit.org/changeset/119283
+        http://trac.webkit.org/changeset/119287
+        http://trac.webkit.org/changeset/119291
+        https://bugs.webkit.org/show_bug.cgi?id=88159
+
+        Not only broke compilation in the initial commit but also
+        broke LayerChromiumTest.basicCreateAndDestroy (Requested by
+        rniwa on #webkit).
+
+        * tests/CCAnimationTestCommon.cpp:
+        (WebCore::addOpacityTransition):
+        (WebCore::addAnimatedTransform):
+        (WebKitTests::FakeTransformTransition::getValue):
+        * tests/CCAnimationTestCommon.h:
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        * tests/CCLayerAnimationControllerTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::beginTest):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKitTests::MockGraphicsLayerClient::notifyAnimationStarted):
+        (WebKitTests::MockGraphicsLayerClient::notifySyncRequired):
+        (WebKitTests::MockGraphicsLayerClient::paintContents):
+        (WebKitTests::MockGraphicsLayerClient::showDebugBorders):
+        (WebKitTests::MockGraphicsLayerClient::showRepaintCounter):
+        (WebKitTests::TEST):
+
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use fully qualified name for Fixed to avoid the collision with "typedef SInt32 Fixed" in MacTypes.h

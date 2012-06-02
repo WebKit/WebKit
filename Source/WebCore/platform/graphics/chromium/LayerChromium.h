@@ -57,7 +57,6 @@
 
 namespace WebCore {
 
-class CCActiveAnimation;
 struct CCAnimationEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
@@ -80,6 +79,7 @@ public:
     virtual float opacity() const OVERRIDE { return m_opacity; }
     virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) OVERRIDE;
     virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual const IntSize& bounds() const OVERRIDE { return m_bounds; }
 
     const LayerChromium* rootLayer() const;
     LayerChromium* parent() const;
@@ -101,7 +101,6 @@ public:
     Color backgroundColor() const { return m_backgroundColor; }
 
     void setBounds(const IntSize&);
-    const IntSize& bounds() const { return m_bounds; }
     virtual IntSize contentBounds() const { return bounds(); }
 
     void setMasksToBounds(bool);
@@ -235,7 +234,7 @@ public:
     void setAlwaysReserveTextures(bool alwaysReserveTextures) { m_alwaysReserveTextures = alwaysReserveTextures; }
     bool alwaysReserveTextures() const { return m_alwaysReserveTextures; }
 
-    bool addAnimation(PassOwnPtr<CCActiveAnimation>);
+    bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, int animationId, int groupId, double timeOffset);
     void pauseAnimation(int animationId, double timeOffset);
     void removeAnimation(int animationId);
 
