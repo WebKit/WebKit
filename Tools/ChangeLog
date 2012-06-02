@@ -1,3 +1,18 @@
+2012-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119297.
+        http://trac.webkit.org/changeset/119297
+        https://bugs.webkit.org/show_bug.cgi?id=88156
+
+        May have broken Chromium bots (Requested by rniwa on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__del__):
+        (WebKitDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_check_for_driver_crash):
+        (WebKitDriverTest.test_stop_cleans_up_properly):
+
 2012-06-01  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt seems to leak tmpdirs

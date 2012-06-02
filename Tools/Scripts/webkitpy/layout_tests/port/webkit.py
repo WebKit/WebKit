@@ -462,7 +462,8 @@ class WebKitDriver(Driver):
         self._server_process = None
 
     def __del__(self):
-        self.stop()
+        assert(self._server_process is None)
+        assert(self._driver_tempdir is None)
 
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
@@ -487,7 +488,6 @@ class WebKitDriver(Driver):
         return cmd
 
     def _start(self, pixel_tests, per_test_args):
-        self.stop()
         self._driver_tempdir = self._port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
@@ -565,7 +565,8 @@ class WebKitDriver(Driver):
 
     def run_test(self, driver_input):
         start_time = time.time()
-        self.start(driver_input.should_run_pixel_test, driver_input.args)
+        if not self._server_process:
+            self._start(driver_input.should_run_pixel_test, driver_input.args)
         self.error_from_test = str()
         self.err_seen_eof = False
 
