@@ -74,9 +74,10 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
         return;
     CachedRawResourceClient* client = static_cast<CachedRawResourceClient*>(c);
     client->responseReceived(this, m_response);
-    if (!hasClient(c) || !m_data)
+    if (!hasClient(c))
         return;
-    client->dataReceived(this, m_data->data(), m_data->size());
+    if (m_data)
+        client->dataReceived(this, m_data->data(), m_data->size());
     if (!hasClient(c))
        return;
     CachedResource::didAddClient(client);

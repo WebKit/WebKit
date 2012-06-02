@@ -1,3 +1,16 @@
+2012-03-09  Nate Chapin  <japhet@chromium.org>
+
+        CachedRawResource breaks when trying to load
+        a resource with an empty response body from cache.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/cache/zero-length-xhr.html
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient): Don't exit early
+            if m_data is empty, we may still need to notifyFinished().
+
 2012-02-22  Nate Chapin  <japhet@chromium.org>
 
         Prevent CachedRawResource from sending the same data
