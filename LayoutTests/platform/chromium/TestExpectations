@@ -153,6 +153,9 @@ BUGGBILLOCK SKIP : webintents/intent-tag.html = FAIL
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 
+// Chromium needs larger media files to test buffering this way.
+BUGWK88172 SKIP : http/tests/media/video-buffered.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
@@ -3794,5 +3797,3 @@ BUGWK88123 LEOPARD DEBUG : media/W3C/audio/canPlayType/canPlayType_application_o
 BUGWK88124 DEBUG : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = PASS IMAGE+TEXT
 
 BUGWK88131 DEBUG : fast/dom/HTMLMeterElement/meter-element-crash.html = PASS TEXT
-
-BUGWK88160 LEOPARD : http/tests/media/video-buffered.html = TEXT
