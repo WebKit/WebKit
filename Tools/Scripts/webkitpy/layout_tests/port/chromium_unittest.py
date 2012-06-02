@@ -160,6 +160,21 @@ class ChromiumDriverTest(unittest.TestCase):
         driver2.stop()
         self.assertTrue(time.time() - start_time < 20)
 
+    def test_stop_cleans_up_properly(self):
+        self.driver._test_shell = False
+        self.driver.start(True, [])
+        last_tmpdir = self.port._filesystem.last_tmpdir
+        self.assertNotEquals(last_tmpdir, None)
+        self.driver.stop()
+        self.assertFalse(self.port._filesystem.isdir(last_tmpdir))
+
+    def test_two_starts_cleans_up_properly(self):
+        # clone the WebKitDriverTest tests here since we override start() and stop()
+        self.driver._test_shell = False
+        self.driver.start(True, [])
+        last_tmpdir = self.port._filesystem.last_tmpdir
+        self.driver._start(True, [])
+        self.assertFalse(self.port._filesystem.isdir(last_tmpdir))
 
 class ChromiumPortTest(port_testcase.PortTestCase):
     port_name = 'chromium-mac'

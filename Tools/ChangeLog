@@ -1,3 +1,27 @@
+2012-06-01  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT seems to leak (more?) temp dirs
+        https://bugs.webkit.org/show_bug.cgi?id=88126
+
+        Re-land r119297 with chromium fix (weren't calling the
+        super() method if not in --test-shell mode in start().
+        Add unit tests to chromium_unittest as well to check.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.start):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__del__):
+        (WebKitDriver._start):
+        (WebKitDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_check_for_driver_crash):
+        (WebKitDriverTest.test_stop_cleans_up_properly):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_two_starts_cleans_up_properly):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_stop_cleans_up_properly):
+        (ChromiumDriverTest.test_two_starts_cleans_up_properly):
+
 2012-06-01  Tim Horton  <timothy_horton@apple.com>
 
         Lots of "failed download-built-product" on Apple bots

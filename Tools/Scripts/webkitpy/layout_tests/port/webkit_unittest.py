@@ -349,7 +349,7 @@ class WebKitDriverTest(unittest.TestCase):
         driver._server_process = FakeServerProcess(False)
         driver._subprocess_was_unresponsive = False
         assert_crash(driver, '#CRASHED - WebProcess (pid 8675)\n', True, 'WebProcess', 8675)
-        
+
         driver._crashed_process_name = None
         driver._crashed_pid = None
         driver._server_process = FakeServerProcess(False)
@@ -375,4 +375,12 @@ class WebKitDriverTest(unittest.TestCase):
         last_tmpdir = port._filesystem.last_tmpdir
         self.assertNotEquals(last_tmpdir, None)
         driver.stop()
+        self.assertFalse(port._filesystem.isdir(last_tmpdir))
+
+    def test_two_starts_cleans_up_properly(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0, pixel_tests=True)
+        driver.start(True, [])
+        last_tmpdir = port._filesystem.last_tmpdir
+        driver._start(True, [])
         self.assertFalse(port._filesystem.isdir(last_tmpdir))

@@ -667,6 +667,9 @@ class ChromiumDriver(WebKitDriver):
             test_time=run_time, timeout=timeout, error=error)
 
     def start(self, pixel_tests, per_test_args):
+        if not self._test_shell:
+            return super(ChromiumDriver, self).start(pixel_tests, per_test_args)
+
         if not self._proc:
             self._start(pixel_tests, per_test_args)
 
