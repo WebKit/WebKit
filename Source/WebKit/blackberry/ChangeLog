@@ -1,3 +1,27 @@
+2012-06-02  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] browser video player fullscreen mode (portrait) - out of screen/focus - cannot navigate or use the buttons on the screen (PART I)
+        https://bugs.webkit.org/show_bug.cgi?id=88019
+        PR #158266
+
+        Reviewed by George Staikos.
+
+        The way elements go fullscreen with the new FULLSCREEN_API
+        is that they get cloned and added to an out-of-DOM wrapper
+        element. The wrapper is a normal fixed position element and
+        then zoom in/out accordingly to how other layers do: following
+        WebPage's scale.
+
+        When going fullscreen, we have to take the current WebPage scale
+        into account in order to properly fit the element to the screen,
+        regardless the web page scale.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::fullScreenRendererChanged):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
 2012-06-01  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Fix the return value checking in SelectPopupClient

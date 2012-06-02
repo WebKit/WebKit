@@ -130,6 +130,7 @@ public:
     virtual bool supportsFullScreenForElement(const Element*, bool withKeyboard);
     virtual void enterFullScreenForElement(Element*);
     virtual void exitFullScreenForElement(Element*);
+    virtual void fullScreenRendererChanged(RenderBox*);
 #endif
 #if ENABLE(WEBGL)
     virtual void requestWebGLPermission(Frame*);
