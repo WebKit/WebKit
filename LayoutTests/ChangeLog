@@ -1,3 +1,11 @@
+2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Suppress text diff on http/tests/media/video-buffered.html on Chromium Leopard as
+        it has been failing on Leopard since it was re-enabled in http://trac.webkit.org/changeset/119268.
+        The failure is tracked by the bug 88160.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-06-01  Jessie Berlin  <jberlin@apple.com>
 
         Skip more asserting tests on Windows.
