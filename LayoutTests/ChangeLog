@@ -1,3 +1,15 @@
+2012-06-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] New tests need a baseline
+        https://bugs.webkit.org/show_bug.cgi?id=88190
+
+        Unreviewed EFL gardening. Add EFL baseline for new test cases.
+
+        * platform/efl/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/efl/fast/reflections/reflection-with-zoom-expected.txt: Added.
+        * platform/efl/svg/repaint/text-mask-update-expected.png: Added.
+        * platform/efl/svg/repaint/text-mask-update-expected.txt: Added.
+
 2012-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119359.
