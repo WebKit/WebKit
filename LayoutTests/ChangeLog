@@ -1,3 +1,7 @@
+2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add back files inadvertently removed in r119323.
+
 2012-06-02  Ami Fischman  <fischman@chromium.org>
 
         [chromium] SKIP http/tests/media/video-buffered.html because it requires overly large data
