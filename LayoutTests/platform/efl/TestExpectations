@@ -605,6 +605,15 @@ BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 // New test introduced in r116694 fails
 BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
 
+// LEGACY_VIEWPORT_ADAPTION flag is not enabled on EFL port
+BUGWK88191 : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-mobileoptimized-3.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-ordering-5.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-ordering-6.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
+
 // EFL's EventSender does not implement contextClick yet
 BUGWK86091 : editing/pasteboard/copy-standalone-image-crash.html = TEXT
 BUGWK86091 : editing/selection/5354455-1.html = TEXT

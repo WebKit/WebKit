@@ -186,10 +186,6 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 # viewport meta tag tests that fail on the bot for yet unknown reasons
 fast/viewport/viewport-125.html
 
-# Feature disabled on EFL build
-# See https://bugs.webkit.org/show_bug.cgi?id=85425
-fast/viewport/viewport-legacy-xhtmlmp.html
-
 # viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 fast/viewport/viewport-133.html
 

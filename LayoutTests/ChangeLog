@@ -1,5 +1,16 @@
 2012-06-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] legacy-viewport tests added in r119256 need to be skipped
+        https://bugs.webkit.org/show_bug.cgi?id=88192
+
+        Unreviewed EFL gardening. Skip new tests added in r119256 since the
+        LEGACY_VIEWPORT_ADAPTION flag is disabled on EFL port.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
+2012-06-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] New tests need a baseline
         https://bugs.webkit.org/show_bug.cgi?id=88190
 
