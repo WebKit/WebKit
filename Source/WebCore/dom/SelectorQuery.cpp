@@ -162,14 +162,15 @@ PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
     return m_selectors.queryFirst(selectorChecker, rootNode);
 }
 
-SelectorQueryCache::Entry::Entry(CSSSelectorList& querySelectorList) : m_querySelectorList(querySelectorList)
+SelectorQueryCacheEntry::SelectorQueryCacheEntry(CSSSelectorList& querySelectorList)
+    : m_querySelectorList(querySelectorList)
 {
     m_selectorQuery.initialize(m_querySelectorList);
 }
 
 SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)
 {
-    HashMap<AtomicString, OwnPtr<SelectorQueryCache::Entry> >::iterator it = m_entries.find(selectors);
+    HashMap<AtomicString, OwnPtr<SelectorQueryCacheEntry> >::iterator it = m_entries.find(selectors);
     if (it != m_entries.end())
         return it->second->selectorQuery();
 
@@ -188,7 +189,7 @@ SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* 
         return 0;
     }
     
-    OwnPtr<SelectorQueryCache::Entry> entry = adoptPtr(new SelectorQueryCache::Entry(querySelectorList));
+    OwnPtr<SelectorQueryCacheEntry> entry = adoptPtr(new SelectorQueryCacheEntry(querySelectorList));
     SelectorQuery* selectorQuery = entry->selectorQuery();
     m_entries.add(selectors, entry.release());
     return selectorQuery;

@@ -76,6 +76,21 @@ private:
     SelectorDataList m_selectors;
 };
 
+class SelectorQueryCacheEntry {
+    WTF_MAKE_NONCOPYABLE(SelectorQueryCacheEntry);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit SelectorQueryCacheEntry(CSSSelectorList&);
+    SelectorQuery* selectorQuery() { return &m_selectorQuery; };
+
+private:
+    // m_querySelectorList keeps the lifetime of CSSSelectors in m_selectorQuery.
+    // Since m_selectorQuery just holds pointers to CSSSelector objects,
+    // m_querySelectorList must not be destructed before m_selectorQuery is destructed.
+    CSSSelectorList m_querySelectorList;
+    SelectorQuery m_selectorQuery;
+};
+
 class SelectorQueryCache {
     WTF_MAKE_NONCOPYABLE(SelectorQueryCache);
     WTF_MAKE_FAST_ALLOCATED;
@@ -86,23 +101,7 @@ public:
     void invalidate();
 
 private:
-
-    class Entry {
-        WTF_MAKE_NONCOPYABLE(Entry);
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        explicit Entry(CSSSelectorList&);
-        SelectorQuery* selectorQuery() { return &m_selectorQuery; };
-
-    private:
-        // m_querySelectorList keeps the lifetime of CSSSelectors in m_selectorQuery.
-        // Since m_selectorQuery just holds pointers to CSSSelector objects,
-        // m_querySelectorList must not be destructed before m_selectorQuery is destructed.
-        CSSSelectorList m_querySelectorList;
-        SelectorQuery m_selectorQuery;
-    };
-
-    HashMap<AtomicString, OwnPtr<SelectorQueryCache::Entry> > m_entries;
+    HashMap<AtomicString, OwnPtr<SelectorQueryCacheEntry> > m_entries;
 };
 
 }
