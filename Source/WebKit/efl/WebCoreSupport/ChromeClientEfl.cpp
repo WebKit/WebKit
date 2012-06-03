@@ -52,6 +52,7 @@
 #include "SecurityOrigin.h"
 #include "ViewportArguments.h"
 #include "WindowFeatures.h"
+#include "ewk_custom_handler_private.h"
 #include "ewk_frame_private.h"
 #include "ewk_private.h"
 #include "ewk_security_origin_private.h"

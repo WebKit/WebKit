@@ -4,7 +4,7 @@
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+    version 2 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,17 +17,13 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
+#ifndef ewk_custom_handler_private_h
+#define ewk_custom_handler_private_h
+
+#include "ewk_view.h"
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
-
-#include "ewk_custom_handler_private.h"
-
-bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data->ewkView, false);
-    evas_object_smart_callback_call(data->ewkView, "protocolhandler,registration,requested", data);
-    return true;
-}
-
+bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data);
 #endif
+
+#endif // ewk_custom_handler_private_h

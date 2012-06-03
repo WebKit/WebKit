@@ -1,3 +1,20 @@
+2012-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add ewk_custom_handler_private.h for ewk_custom_handler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88163
+
+        Reviewed by Ryosuke Niwa.
+
+        EFL WK1 decided to divide up ewk_private.h into each file's XXX_private.h file
+        in order to maintain internal functions more easily. Bug 73176 is adding new
+        internal functions to ewk_custom_hanlder.cpp. So, ewk_custom_handler.cpp needs
+        to have _private.h file as well.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * ewk/ewk_custom_handler.cpp:
+        * ewk/ewk_custom_handler_private.h: Added.
+        * ewk/ewk_view_private.h:
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL port does not enable WEB_INTENTS_TAG flag
