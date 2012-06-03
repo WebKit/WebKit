@@ -1,3 +1,51 @@
+2012-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Weak pointer finalization should be lazy
+        https://bugs.webkit.org/show_bug.cgi?id=87599
+
+        Reviewed by Sam Weinig.
+
+        This time for sure!
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect): Don't sweep eagerly -- we'll sweep lazily instead.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep): Sweep our weak set before we sweep our other
+        destructors -- this is our last chance to run weak set finalizers before
+        we recycle our memory.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::resetAllocator):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::resetAllocators):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::resetAllocators): Don't force allocator reset anymore.
+        It will happen automatically when a weak set is swept. It's simpler to
+        have only one canonical way for this to happen, and it wasn't buying
+        us anything to do it eagerly.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::sweep): Don't short-circuit a sweep unless we know
+        the sweep would be a no-op. If even one finalizer is pending, we need to
+        run it, since we won't get another chance.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep): This loop can be simpler now that
+        WeakBlock::sweep() does what we mean.
+
+        Reset our allocator after a sweep because this is the optimal time to
+        start trying to recycle old weak pointers.
+
+        (JSC::WeakSet::tryFindAllocator): Don't sweep when searching for an
+        allocator because we've swept already, and forcing a new sweep would be
+        wasteful.
+
+        * heap/WeakSet.h:
+        (JSC::WeakSet::shrink): Be sure to reset our allocator after a shrink
+        because the shrink may have removed the block the allocator was going to
+        allocate out of.
+
 2012-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         If the DFG bytecode parser detects that op_method_check has gone polymorphic, it
