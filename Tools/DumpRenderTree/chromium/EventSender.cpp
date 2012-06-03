@@ -287,6 +287,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("gestureScrollUpdate", &EventSender::gestureScrollUpdate);
     bindMethod("gestureTap", &EventSender::gestureTap);
     bindMethod("gestureLongPress", &EventSender::gestureLongPress);
+    bindMethod("gestureTwoFingerTap", &EventSender::gestureTwoFingerTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
     bindMethod("scalePageBy", &EventSender::scalePageBy);
@@ -1117,6 +1118,12 @@ void EventSender::gestureLongPress(const CppArgumentList& arguments, CppVariant*
     gestureEvent(WebInputEvent::GestureLongPress, arguments);
 }
 
+void EventSender::gestureTwoFingerTap(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureTwoFingerTap, arguments);
+}
+
 void EventSender::gestureScrollFirstPoint(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1167,6 +1174,10 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
         event.y = point.y;
         break;
     case WebInputEvent::GestureLongPress:
+        event.x = point.x;
+        event.y = point.y;
+        break;
+    case WebInputEvent::GestureTwoFingerTap:
         event.x = point.x;
         event.y = point.y;
         break;

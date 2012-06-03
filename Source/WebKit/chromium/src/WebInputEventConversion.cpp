@@ -159,6 +159,9 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     case WebInputEvent::GestureDoubleTap:
         m_type = PlatformEvent::GestureDoubleTap;
         break;
+    case WebInputEvent::GestureTwoFingerTap:
+        m_type = PlatformEvent::GestureTwoFingerTap;
+        break;
     case WebInputEvent::GestureLongPress:
         m_type = PlatformEvent::GestureLongPress;
         break;

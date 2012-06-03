@@ -274,6 +274,7 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::GestureTap:
     case WebInputEvent::GestureTapDown:
     case WebInputEvent::GestureDoubleTap:
+    case WebInputEvent::GestureTwoFingerTap:
     case WebInputEvent::GestureLongPress:
     case WebInputEvent::GesturePinchBegin:
     case WebInputEvent::GesturePinchEnd:

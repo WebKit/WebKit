@@ -55,6 +55,7 @@ public:
         GestureTap,
         GestureTapDown,
         GestureDoubleTap,
+        GestureTwoFingerTap,
         GestureLongPress,
         GesturePinchBegin,
         GesturePinchEnd,

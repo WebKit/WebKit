@@ -1,3 +1,20 @@
+2012-06-03  Varun Jain  <varunjain@google.com>
+
+        [chromium] Add new gesture type (two finger tap) that triggers context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=88173
+
+        Reviewed by Adam Barth.
+
+        * public/WebInputEvent.h:
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::handleInputEvent):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2012-06-03  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] replace isScrollGestureEventType with isGestureEventType

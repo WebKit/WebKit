@@ -105,6 +105,7 @@ public:
     void gestureScrollUpdate(const CppArgumentList&, CppVariant*);
     void gestureTap(const CppArgumentList&, CppVariant*);
     void gestureLongPress(const CppArgumentList&, CppVariant*);
+    void gestureTwoFingerTap(const CppArgumentList&, CppVariant*);
     void gestureEvent(WebKit::WebInputEvent::Type, const CppArgumentList&);
 
     // Unimplemented stubs
