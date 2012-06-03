@@ -26,12 +26,12 @@
 
 #include "EventDispatchMediator.h"
 #include "FloatPoint.h"
-#include "MouseEvent.h"
+#include "MouseRelatedEvent.h"
 
 namespace WebCore {
 
     // extension: mouse wheel event
-    class WheelEvent : public MouseEvent {
+    class WheelEvent : public MouseRelatedEvent {
     public:
         enum { tickMultiplier = 120 };
 
@@ -74,7 +74,7 @@ namespace WebCore {
     private:
         WheelEvent();
         WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
-                   Granularity, PassRefPtr<AbstractView>,
+                   Granularity granularity, PassRefPtr<AbstractView>,
                    const IntPoint& screenLocation, const IntPoint& pageLocation,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool directionInvertedFromDevice);
 

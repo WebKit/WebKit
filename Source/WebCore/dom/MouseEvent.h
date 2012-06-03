@@ -92,10 +92,9 @@ class PlatformMouseEvent;
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
                    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated);
 
-    protected:
+    private:
         MouseEvent();
 
-    private:
         unsigned short m_button;
         bool m_buttonDown;
         RefPtr<EventTarget> m_relatedTarget;

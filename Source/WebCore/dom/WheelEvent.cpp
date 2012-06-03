@@ -42,13 +42,12 @@ WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                        const IntPoint& screenLocation, const IntPoint& pageLocation,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                        bool directionInvertedFromDevice)
-    : MouseEvent(eventNames().mousewheelEvent,
-                 true, true, view, 0, screenLocation.x(), screenLocation.y(),
-                 pageLocation.x(), pageLocation.y(),
+    : MouseRelatedEvent(eventNames().mousewheelEvent,
+                        true, true, view, 0, screenLocation, pageLocation,
 #if ENABLE(POINTER_LOCK)
-                 0, 0,
+                        IntPoint(0, 0),
 #endif
-                 ctrlKey, altKey, shiftKey, metaKey, 0, 0, 0, false)
+                        ctrlKey, altKey, shiftKey, metaKey)
     , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * tickMultiplier), static_cast<int>(wheelTicks.y() * tickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
