@@ -26,7 +26,8 @@
 #import "config.h"
 #import "CorrectionPanel.h"
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(AUTOCORRECTION_PANEL)
+
 #import "WebPageProxy.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
@@ -145,5 +146,4 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
 
 } // namespace WebKit
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
-
+#endif // USE(AUTOCORRECTION_PANEL)

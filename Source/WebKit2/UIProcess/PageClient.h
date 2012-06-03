@@ -36,7 +36,9 @@
 #if PLATFORM(MAC)
 #include "PluginComplexTextInputState.h"
 
+#if USE(APPKIT)
 OBJC_CLASS WKView;
+#endif
 #endif
 
 namespace WebCore {
@@ -191,7 +193,9 @@ public:
     virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     
+#if USE(APPKIT)
     virtual WKView* wkView() const = 0;
+#endif
 #endif
 
     virtual void didChangeScrollbarsForMainFrame() const = 0;

@@ -1,5 +1,56 @@
 2012-06-02  Andy Estes  <aestes@apple.com>
 
+        [WebKit2] Use USE(), ENABLE(), and HAVE() macros in more places
+        https://bugs.webkit.org/show_bug.cgi?id=88182
+
+        Reviewed by Sam Weinig.
+
+        Use USE(APPKIT):
+        * Shared/mac/NativeWebKeyboardEventMac.mm:
+        * Shared/mac/NativeWebMouseEventMac.mm:
+        * Shared/mac/NativeWebWheelEventMac.mm:
+        * Shared/mac/WebEventFactory.h:
+        * UIProcess/API/mac/WKTextInputWindowController.h:
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+
+        Use ENABLE(NETSCAPE_PLUGIN_API):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+
+        Use USE(AUTOCORRECTION_PANEL):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::showCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanelSoon):
+        * UIProcess/mac/CorrectionPanel.mm:
+
+        Use HAVE(HOSTED_CORE_ANIMATION):
+        * UIProcess/mac/WebContextMac.mm:
+
+        Put ENABLE(FULLSCREEN_API) in the right place:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+
+        Remove unnecessary use of USE(APPKIT):
+        * UIProcess/mac/WebPageProxyMac.mm:
+
+        Use USE(SECURITY_FRAMEWORK):
+        * WebProcess/Authentication/mac/AuthenticationManager.mac.mm:
+
+        Use ENABLE(CONTEXT_MENUS):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+
+        Use USE(SECURITY_FRAMEWORK):
+        * WebProcess/WebProcess.h:
+
+        Remove unnecessary use of USE(SECURITY_FRAMEWORK):
+        * WebProcess/mac/WebProcessMac.mm:
+
+2012-06-02  Andy Estes  <aestes@apple.com>
+
         Remove a duplicate INIT() from WebSystemInterface.mm
         https://bugs.webkit.org/show_bug.cgi?id=88181
 

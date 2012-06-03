@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKTextInputWindowController.h"
 
+#if USE(APPKIT)
+
 #import <WebKitSystemInterface.h>
 
 @interface WKTextInputView : NSTextView {
@@ -199,3 +201,5 @@
 }
 
 @end
+
+#endif // USE(APPKIT)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include "PlatformCertificateInfo.h"
 #include <Security/SecIdentity.h>
 #include <WebCore/AuthenticationChallenge.h>
@@ -63,3 +65,5 @@ bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const Auth
 }
 
 } // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)

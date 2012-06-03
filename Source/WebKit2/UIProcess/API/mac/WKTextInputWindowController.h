@@ -26,6 +26,8 @@
 #ifndef WKTextInputWindowController_h
 #define WKTextInputWindowController_h
 
+#if USE(APPKIT)
+
 @class WKTextInputPanel;
 
 @interface WKTextInputWindowController : NSObject {
@@ -41,5 +43,7 @@
 - (void)unmarkText;
 
 @end
+
+#endif // USE(APPKIT)
 
 #endif // WKTextInputWindowController_h

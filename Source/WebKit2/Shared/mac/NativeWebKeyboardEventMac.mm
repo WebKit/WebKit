@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NativeWebKeyboardEvent.h"
 
+#if USE(APPKIT)
+
 #import "WebEventFactory.h"
 
 namespace WebKit {
@@ -37,3 +39,5 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, NSView *view)
 }
 
 } // namespace WebKit
+
+#endif // USE(APPKIT)

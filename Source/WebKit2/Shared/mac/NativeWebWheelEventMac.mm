@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NativeWebWheelEvent.h"
 
+#if USE(APPKIT)
+
 #import "WebEventFactory.h"
 
 namespace WebKit {
@@ -37,3 +39,5 @@ NativeWebWheelEvent::NativeWebWheelEvent(NSEvent* event, NSView* view)
 }
 
 } // namespace WebKit
+
+#endif // USE(APPKIT)

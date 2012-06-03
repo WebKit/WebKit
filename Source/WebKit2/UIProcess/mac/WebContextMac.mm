@@ -33,7 +33,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if HAVE(HOSTED_CORE_ANIMATION) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 

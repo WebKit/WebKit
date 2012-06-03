@@ -26,12 +26,12 @@
 #import "config.h"
 #import "WebFullScreenManagerProxy.h"
 
+#if ENABLE(FULLSCREEN_API)
+
 #import "LayerTreeContext.h"
 #import "WKFullScreenWindowController.h"
 #import "WKViewInternal.h"
 #import <WebCore/IntRect.h>
-
-#if ENABLE(FULLSCREEN_API)
 
 using namespace WebCore;
 

@@ -104,7 +104,7 @@ namespace WebCore {
 class QQuickNetworkReply;
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 #ifdef __OBJC__
 @class WKView;
 #else
@@ -364,7 +364,9 @@ public:
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
     
+#if USE(APPKIT)
     WKView* wkView() const;
+#endif
 #endif
 #if PLATFORM(WIN)
     void didChangeCompositionSelection(bool);

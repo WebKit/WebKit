@@ -43,6 +43,7 @@ void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef managerR
     toImpl(managerRef)->getSitesWithData(ArrayCallback::create(context, callback));
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 static uint64_t toNPClearSiteDataFlags(WKClearSiteDataFlags flags)
 {
     if (flags == kWKClearSiteDataFlagsClearAll)
@@ -53,13 +54,18 @@ static uint64_t toNPClearSiteDataFlags(WKClearSiteDataFlags flags)
         result |= NP_CLEAR_CACHE;
     return result;
 }
+#endif
 
 void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef, WKArrayRef sitesRef, WKClearSiteDataFlags flags, uint64_t maxAgeInSeconds, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, VoidCallback::create(context, function));
+#endif
 }
 
 void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef managerRef, void* context, WKPluginSiteDataManagerClearSiteDataFunction function)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, numeric_limits<uint64_t>::max(), VoidCallback::create(context, function));
+#endif
 }

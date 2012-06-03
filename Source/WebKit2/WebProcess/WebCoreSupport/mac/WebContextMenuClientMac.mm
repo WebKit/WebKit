@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebContextMenuClient.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #import "DictionaryPopupInfo.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
@@ -84,3 +86,5 @@ void WebContextMenuClient::searchWithSpotlight()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

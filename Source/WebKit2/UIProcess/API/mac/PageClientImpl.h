@@ -131,7 +131,7 @@ private:
 
     WKView* m_wkView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;
 #endif
 };
