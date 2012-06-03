@@ -1,5 +1,15 @@
 2012-06-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] http/tests/media/video-buffered.html is failing after r119268 and need to be skipped
+        https://bugs.webkit.org/show_bug.cgi?id=88194
+
+        Unreviewed EFL gardening. Skipping http/tests/media/video-buffered.html
+        which is failing after r119268.
+
+        * platform/efl/TestExpectations:
+
+2012-06-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] legacy-viewport tests added in r119256 need to be skipped
         https://bugs.webkit.org/show_bug.cgi?id=88192
 
