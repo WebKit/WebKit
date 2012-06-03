@@ -1,3 +1,9 @@
+2012-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from r140000 to r140222.
+
+        * DEPS:
+
 2012-06-03  Varun Jain  <varunjain@google.com>
 
         [chromium] Add new gesture type (two finger tap) that triggers context menu.
