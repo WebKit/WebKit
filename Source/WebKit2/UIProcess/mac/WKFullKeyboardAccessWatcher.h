@@ -26,8 +26,6 @@
 #ifndef WKFullKeyboardAccessWatcher_h
 #define WKFullKeyboardAccessWatcher_h
 
-#import <Cocoa/Cocoa.h>
-
 @interface WKFullKeyboardAccessWatcher : NSObject {
 @private
     BOOL fullKeyboardAccessEnabled;
