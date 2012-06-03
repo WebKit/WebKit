@@ -108,7 +108,7 @@ void StyleCachedImageSet::addClient(RenderObject* renderer)
 
 void StyleCachedImageSet::removeClient(RenderObject* renderer)
 {
-    m_bestFitImage->removeClientForRenderer(renderer);
+    m_bestFitImage->removeClient(renderer);
 }
 
 PassRefPtr<Image> StyleCachedImageSet::image(RenderObject* renderer, const IntSize&) const

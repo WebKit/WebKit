@@ -31,8 +31,8 @@
 namespace WebCore {
 
 class CachedImage;
+class CachedImageClient;
 class ImageBuffer;
-class RenderObject;
 class SVGImage;
 
 class SVGImageCache {
@@ -63,12 +63,12 @@ public:
         float scale;
     };
 
-    void removeRendererFromCache(const RenderObject*);
+    void removeClientFromCache(const CachedImageClient*);
 
-    void setRequestedSizeAndScales(const RenderObject*, const SizeAndScales&);
-    SizeAndScales requestedSizeAndScales(const RenderObject*) const;
+    void setRequestedSizeAndScales(const CachedImageClient*, const SizeAndScales&);
+    SizeAndScales requestedSizeAndScales(const CachedImageClient*) const;
 
-    Image* lookupOrCreateBitmapImageForRenderer(const RenderObject*);
+    Image* lookupOrCreateBitmapImageForClient(const CachedImageClient*);
     void imageContentChanged();
 
 private:
@@ -98,8 +98,8 @@ private:
         RefPtr<Image> image;
     };
 
-    typedef HashMap<const RenderObject*, SizeAndScales> SizeAndScalesMap;
-    typedef HashMap<const RenderObject*, ImageData> ImageDataMap;
+    typedef HashMap<const CachedImageClient*, SizeAndScales> SizeAndScalesMap;
+    typedef HashMap<const CachedImageClient*, ImageData> ImageDataMap;
 
     SVGImage* m_svgImage;
     SizeAndScalesMap m_sizeAndScalesMap;

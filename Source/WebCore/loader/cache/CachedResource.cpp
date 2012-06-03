@@ -432,6 +432,7 @@ void CachedResource::removeClient(CachedResourceClient* client)
     } else {
         ASSERT(m_clients.contains(client));
         m_clients.remove(client);
+        didRemoveClient(client);
     }
 
     if (canDelete() && !inCache())

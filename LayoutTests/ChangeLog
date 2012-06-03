@@ -1,3 +1,15 @@
+2012-06-02  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        SVGImageCache leaks image data
+        https://bugs.webkit.org/show_bug.cgi?id=87792
+
+        Reviewed by Nikolas Zimmermann.
+
+        New test case.
+
+        * svg/as-image/svg-image-leak-cached-data-expected.txt: Added.
+        * svg/as-image/svg-image-leak-cached-data.html: Added.
+
 2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the failing expectation on fast/forms/textarea-scrollbar-height.html since it has been passing.

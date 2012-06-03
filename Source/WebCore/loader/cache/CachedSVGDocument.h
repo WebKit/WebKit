@@ -52,7 +52,7 @@ class CachedSVGDocumentClient : public CachedResourceClient {
 public:
     virtual ~CachedSVGDocumentClient() { }
     static CachedResourceClientType expectedType() { return SVGDocumentType; }
-    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
 };
 
 }

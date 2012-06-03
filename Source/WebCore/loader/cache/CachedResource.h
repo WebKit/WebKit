@@ -126,6 +126,7 @@ public:
     PreloadResult preloadResult() const { return static_cast<PreloadResult>(m_preloadResult); }
 
     virtual void didAddClient(CachedResourceClient*);
+    virtual void didRemoveClient(CachedResourceClient*) { }
     virtual void allClientsRemoved();
 
     unsigned count() const { return m_clients.size(); }

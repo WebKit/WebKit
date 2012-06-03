@@ -36,7 +36,7 @@ class CachedStyleSheetClient : public CachedResourceClient {
 public:
     virtual ~CachedStyleSheetClient() { }
     static CachedResourceClientType expectedType() { return StyleSheetType; }
-    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
     virtual void setCSSStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* charset */, const CachedCSSStyleSheet*) { }
     virtual void setXSLStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* sheet */) { }
 };
