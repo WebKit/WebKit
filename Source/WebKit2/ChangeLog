@@ -1,3 +1,12 @@
+2012-06-02  Andy Estes  <aestes@apple.com>
+
+        Ensure cpu_type_t is defined by including <mach/machine.h>
+        https://bugs.webkit.org/show_bug.cgi?id=88178
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+
 2012-06-02  Sam Weinig  <sam@webkit.org>
 
         InjectedBundles' sandbox extensions don't do what we think they do

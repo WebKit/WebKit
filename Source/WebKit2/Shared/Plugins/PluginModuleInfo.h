@@ -28,6 +28,10 @@
 
 #include <WebCore/PluginData.h>
 
+#if PLATFORM(MAC)
+#include <mach/machine.h>
+#endif
+
 namespace WebKit {
 
 struct PluginModuleInfo {
