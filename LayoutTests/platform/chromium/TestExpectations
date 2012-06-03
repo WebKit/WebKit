@@ -1823,9 +1823,6 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 BUGCR32308 WIN RELEASE SLOW : fast/frames/cached-frame-counter.html = PASS
 
-// WebKit roll 53341:53451
-BUGCR32673 LINUX WIN : fast/forms/textarea-scrollbar-height.html = TEXT
-
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
 // WebKit roll 53655 -> 53704

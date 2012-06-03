@@ -1,5 +1,11 @@
 2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the failing expectation on fast/forms/textarea-scrollbar-height.html since it has been passing.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add back files inadvertently removed in r119323.
 
 2012-06-02  Ami Fischman  <fischman@chromium.org>
