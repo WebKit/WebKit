@@ -1,3 +1,17 @@
+2012-06-03  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] replace isScrollGestureEventType with isGestureEventType
+        https://bugs.webkit.org/show_bug.cgi?id=88097
+
+        This change replaces the unused and incorrect isScrollGestureEventType
+        method with a correct and useful isGestureEventType method.
+
+        Reviewed by Adam Barth.
+
+        * public/WebInputEvent.h:
+        (WebInputEvent):
+        (WebKit::WebInputEvent::isGestureEventType):
+
 2012-06-01  Alexandre Elias  <aelias@google.com>
 
         [chromium] Software compositor initialization and base classes

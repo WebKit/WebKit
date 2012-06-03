@@ -197,16 +197,21 @@ public:
             || type == TouchEnd;
     }
 
-    // Returns true if the WebInputEvent |type| should be handled as scroll gesture.
-    static bool isScrollGestureEventType(int type)
+    // Returns true if the WebInputEvent is a gesture event.
+    static bool isGestureEventType(int type)
     {
         return type == GestureScrollBegin
             || type == GestureScrollEnd
             || type == GestureScrollUpdate
             || type == GestureFlingStart
             || type == GestureFlingCancel
+            || type == GestureTap
             || type == GestureTapDown
-            || type == GestureTap; // FIXME: Why is GestureTap on this list?
+            || type == GestureDoubleTap
+            || type == GestureLongPress
+            || type == GesturePinchBegin
+            || type == GesturePinchEnd
+            || type == GesturePinchUpdate;
     }
 };
 
