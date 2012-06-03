@@ -1,3 +1,24 @@
+2012-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        WheelEvent should inherit from MouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=76104
+
+        Reviewed by Kentaro Hara.
+
+        The spec for WheelEvent is
+        <http://www.w3.org/TR/DOM-Level-3-Events/#webidl-events-WheelEvent>
+
+        Tests: fast/events/event-creation.html
+               http://samples.msdn.microsoft.com/ietestcenter/dominheritance/showdominheritancetest.htm?Prototype_WheelEvent
+
+        * bindings/objc/PublicDOMInterfaces.h: Remove redundant MouseEvent API from WheelEvent
+        * bindings/scripts/CodeGeneratorObjC.pm: MouseEvents are Events
+        * dom/MouseEvent.h: Expose no-arg constructor to WheelEvent
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent): Call MouseEvent superconstructor
+        * dom/WheelEvent.h: Extend MouseEvent
+        * dom/WheelEvent.idl: "
+
 2012-06-03  Varun Jain  <varunjain@google.com>
 
         [chromium] Add new gesture type (two finger tap) that triggers context menu.

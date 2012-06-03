@@ -1,3 +1,13 @@
+2012-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        WheelEvent should inherit from MouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=76104
+
+        Reviewed by Kentaro Hara.
+
+        * fast/events/event-creation-expected.txt:
+        * fast/events/event-creation.html: Also check WheelEvent instanceof MouseEvent as well as UIEvent, Event
+
 2012-06-03  Varun Jain  <varunjain@google.com>
 
         [chromium] Add new gesture type (two finger tap) that triggers context menu.

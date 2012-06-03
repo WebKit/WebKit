@@ -1082,23 +1082,11 @@
 - (void)initOverflowEvent:(unsigned short)orient horizontalOverflow:(BOOL)horizontalOverflow verticalOverflow:(BOOL)verticalOverflow;
 @end
 
-@interface DOMWheelEvent : DOMUIEvent WEBKIT_VERSION_3_0
-@property(readonly) int screenX;
-@property(readonly) int screenY;
-@property(readonly) int clientX;
-@property(readonly) int clientY;
-@property(readonly) BOOL ctrlKey;
-@property(readonly) BOOL shiftKey;
-@property(readonly) BOOL altKey;
-@property(readonly) BOOL metaKey;
+@interface DOMWheelEvent : DOMMouseEvent WEBKIT_VERSION_3_0
 @property(readonly) BOOL isHorizontal;
 @property(readonly) int wheelDelta;
 @property(readonly) int wheelDeltaX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @property(readonly) int wheelDeltaY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int offsetX AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int offsetY AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int x AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-@property(readonly) int y AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (void)initWheelEvent:(int)wheelDeltaX wheelDeltaY:(int)wheelDeltaY view:(DOMAbstractView *)view screenX:(int)screenX screenY:(int)screenY clientX:(int)clientX clientY:(int)clientY ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
