@@ -88,6 +88,7 @@ function addEventListeners(nodes)
         var node = getNodeInShadowTreeStack(nodes[i]);
         node.addEventListener('mouseover', recordEvent, false);
         node.addEventListener('mouseout', recordEvent, false);
+        node.addEventListener('click', recordEvent, false);
         // <content> might be an inactive insertion point, so style it also.
         if (node.tagName == 'DIV' || node.tagName == 'DETAILS' || node.tagName == 'SUMMARY' || node.tagName == 'CONTENT')
             node.setAttribute('style', 'padding-top: ' + defaultPaddingSize + 'px;');
@@ -321,6 +322,36 @@ function testEventsOnMultipleShadowRoots()
     moveMouse('B', 'A//F');
 }
 
+function testEventsOnNonDistributedNodes()
+{
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'A'},
+                            createShadowRoot(
+                                createDOM('div', {'id': 'B'},
+                                          createDOM('div', {'id': 'C'}))),
+                            createShadowRoot(
+                                createDOM('div', {'id': 'D'})),
+                            createDOM('div', {'id': 'non-distributed-node'}))));
+
+    addEventListeners(['top', 'A', 'A/', 'A/B', 'A/C', 'A//', 'A//D', 'non-distributed-node']);
+    getNodeInShadowTreeStack('A/').id = 'orphaned-shadow-root';
+    getNodeInShadowTreeStack('A//').id = 'youngest-shadow-root';
+    parent.offsetLeft;
+    showSandboxTree();
+
+    clearEventRecords();
+    debug('\nClick C');
+    getNodeInShadowTreeStack('A/C').click();
+    debugDispatchedEvent('click');
+
+    clearEventRecords();
+    debug('\nClick non-distributed-node');
+    document.getElementById('non-distributed-node').click();
+    debugDispatchedEvent('click');
+}
+
 function test()
 {
     if (window.layoutTestController)
@@ -334,6 +365,7 @@ function test()
     testEventsOnDistributedTextNode();
     testEventsOnChildOfInactiveContent();
     testEventsOnMultipleShadowRoots();
+    testEventsOnNonDistributedNodes();
 }
 
 test();

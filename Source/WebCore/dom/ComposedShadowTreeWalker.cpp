@@ -292,11 +292,9 @@ Node* ComposedShadowTreeParentWalker::traverseParentIncludingInsertionPointAndSh
     if (!node->isShadowRoot())
         return node->parentNode();
     const ShadowRoot* shadowRoot = toShadowRoot(node);
-    if (shadowRoot->isYoungest())
-        return shadowRoot->host();
-    InsertionPoint* assignedInsertionPoint = shadowRoot->assignedTo();
-    ASSERT(assignedInsertionPoint);
-    return assignedInsertionPoint;
+    if (InsertionPoint* insertionPoint = shadowRoot->assignedTo())
+        return insertionPoint;
+    return shadowRoot->host();
 }
 
 } // namespace

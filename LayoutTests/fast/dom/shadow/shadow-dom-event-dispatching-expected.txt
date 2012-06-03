@@ -375,6 +375,30 @@ Moving mouse from B to A//F
      @younger-shadow-root (target: F) (related: E)
      @A (target: A) (related: B)
      @top (target: A) (related: B)
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=D
+
+
+Click C
+
+  click
+     @C (target: C)
+     @B (target: C)
+     @orphaned-shadow-root (target: C)
+     @A (target: A)
+     @top (target: A)
+
+Click non-distributed-node
+
+  click
+     @non-distributed-node (target: non-distributed-node)
+     @A (target: non-distributed-node)
+     @top (target: non-distributed-node)
 PASS successfullyParsed is true
 
 TEST COMPLETE

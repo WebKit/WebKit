@@ -1,3 +1,22 @@
+2012-06-03  Hayato Ito  <hayato@chromium.org>
+
+        Supports traversing nodes in an orphaned shadow subtree in ComposedShadowTreeParentWalker.
+        https://bugs.webkit.org/show_bug.cgi?id=87924
+
+        Reviewed by Dimitri Glazkov.
+
+        Some events, such as a 'click' event, can be dispatched on nodes in an orphaned shadow subtree.
+        When resolving a parent node of a shadow root which is not assigned to any shadow insertion point,
+        we have to return its shadow host as a parent node.
+
+        The related shadow DOM spec section is:
+        https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#events
+
+        Test: fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeParentWalker::traverseParentIncludingInsertionPointAndShadowRoot):
+
 2012-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119359.
