@@ -243,3 +243,4 @@ EXPORTS
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
+        ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z

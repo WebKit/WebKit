@@ -1,3 +1,10 @@
+2012-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Windows build.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-06-02  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Use USE(), ENABLE(), and HAVE() macros in more places

@@ -257,3 +257,4 @@ EXPORTS
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
         ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
         ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
+        ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z        
