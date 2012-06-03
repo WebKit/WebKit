@@ -1,3 +1,16 @@
+2012-06-02  Andy Estes  <aestes@apple.com>
+
+        __ZNK7WebCore4Node27traverseNextAncestorSiblingEv should be exported even if ENABLE(FULLSCREEN_API) is false
+        https://bugs.webkit.org/show_bug.cgi?id=88184
+
+        Reviewed by Dan Bernstein.
+
+        Node::traverseNextAncestorSibling() is called in several inline
+        functions defined in ContainerNode.h (a private header), so its symbol
+        needs to be exported regardless of whether full-screen API is enabled.
+
+        * WebCore.exp.in:
+
 2012-06-02  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         SVGImageCache leaks image data
