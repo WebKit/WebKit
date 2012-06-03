@@ -1,3 +1,20 @@
+2012-06-02  Sam Weinig  <sam@webkit.org>
+
+        InjectedBundles' sandbox extensions don't do what we think they do
+        https://bugs.webkit.org/show_bug.cgi?id=88177
+
+        Reviewed by Anders Carlsson.
+
+        This cannot be tested with our current infrastructure (or any modifications of the
+        infrastructure I can think of) since it relies on the bundle being put outside
+        the build directory where WebKit is put.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::load):
+        Use SandboxExtension::consumePermanently() rather than consume(), otherwise,
+        nulling out the SandboxExtension a few lines later invalidates the extension
+        we just consumed.
+
 2012-06-02  Dan Bernstein  <mitz@apple.com>
 
         Reverted the last change.

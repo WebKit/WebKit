@@ -40,7 +40,7 @@ namespace WebKit {
 bool InjectedBundle::load(APIObject* initializationUserData)
 {
     if (m_sandboxExtension) {
-        if (!m_sandboxExtension->consume()) {
+        if (!m_sandboxExtension->consumePermanently()) {
             WTFLogAlways("InjectedBundle::load failed - Could not consume bundle sandbox extension for [%s].\n", m_path.utf8().data());
             return false;
         }
