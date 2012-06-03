@@ -94,6 +94,9 @@ private:
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction);
+    void handleGetById(
+        int destinationOperand, PredictedType, NodeIndex base, unsigned identifierNumber,
+        const GetByIdStatus&);
     // Prepare to parse a block.
     void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
@@ -1540,6 +1543,47 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
 }
 
+void ByteCodeParser::handleGetById(
+    int destinationOperand, PredictedType prediction, NodeIndex base, unsigned identifierNumber,
+    const GetByIdStatus& getByIdStatus)
+{
+    if (getByIdStatus.isSimpleDirect()
+        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
+        ASSERT(getByIdStatus.structureSet().size());
+                
+        // The implementation of GetByOffset does not know to terminate speculative
+        // execution if it doesn't have a prediction, so we do it manually.
+        if (prediction == PredictNone)
+            addToGraph(ForceOSRExit);
+                
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
+        NodeIndex propertyStorage;
+        size_t offsetOffset;
+        if (getByIdStatus.structureSet().allAreUsingInlinePropertyStorage()) {
+            propertyStorage = base;
+            ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+            offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+        } else {
+            propertyStorage = addToGraph(GetPropertyStorage, base);
+            offsetOffset = 0;
+        }
+        set(destinationOperand,
+            addToGraph(
+                GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
+                propertyStorage));
+        
+        StorageAccessData storageAccessData;
+        storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
+        storageAccessData.identifierNumber = identifierNumber;
+        m_graph.m_storageAccessData.append(storageAccessData);
+    } else {
+        set(destinationOperand,
+            addToGraph(
+                getByIdStatus.makesCalls() ? GetByIdFlush : GetById,
+                OpInfo(identifierNumber), OpInfo(prediction), base));
+    }
+}
+
 void ByteCodeParser::prepareToParseBlock()
 {
     for (unsigned i = 0; i < m_constants.size(); ++i)
@@ -2026,8 +2070,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCallStatus.prototypeStructure())), cellConstant(methodCallStatus.prototype()));
                 
                 set(getInstruction[1].u.operand, cellConstant(methodCallStatus.function()));
-            } else
-                set(getInstruction[1].u.operand, addToGraph(getByIdStatus.makesCalls() ? GetByIdFlush : GetById, OpInfo(identifier), OpInfo(prediction), base));
+            } else {
+                handleGetById(
+                    getInstruction[1].u.operand, prediction, base, identifier, getByIdStatus);
+            }
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
@@ -2060,34 +2106,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock, m_currentIndex, identifier);
             
-            if (getByIdStatus.isSimpleDirect()
-                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
-                ASSERT(getByIdStatus.structureSet().size());
-                
-                // The implementation of GetByOffset does not know to terminate speculative
-                // execution if it doesn't have a prediction, so we do it manually.
-                if (prediction == PredictNone)
-                    addToGraph(ForceOSRExit);
-                
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
-                NodeIndex propertyStorage;
-                size_t offsetOffset;
-                if (getByIdStatus.structureSet().allAreUsingInlinePropertyStorage()) {
-                    propertyStorage = base;
-                    ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
-                    offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
-                } else {
-                    propertyStorage = addToGraph(GetPropertyStorage, base);
-                    offsetOffset = 0;
-                }
-                set(currentInstruction[1].u.operand, addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage));
-                
-                StorageAccessData storageAccessData;
-                storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
-                storageAccessData.identifierNumber = identifierNumber;
-                m_graph.m_storageAccessData.append(storageAccessData);
-            } else
-                set(currentInstruction[1].u.operand, addToGraph(getByIdStatus.makesCalls() ? GetByIdFlush : GetById, OpInfo(identifierNumber), OpInfo(prediction), base));
+            handleGetById(
+                currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus);
 
             NEXT_OPCODE(op_get_by_id);
         }

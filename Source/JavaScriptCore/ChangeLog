@@ -1,5 +1,22 @@
 2012-06-02  Filip Pizlo  <fpizlo@apple.com>
 
+        If the DFG bytecode parser detects that op_method_check has gone polymorphic, it
+        shouldn't revert all the way to GetById/GetByIdFlush
+        https://bugs.webkit.org/show_bug.cgi?id=88176
+
+        Reviewed by Geoffrey Garen.
+        
+        Refactored the code so that the op_method_check case of the parser gracefully falls
+        through to all of the goodness of the normal op_get_by_id case.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2012-06-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE should be able to eliminate unnecessary flushes of arguments and captured variables
         https://bugs.webkit.org/show_bug.cgi?id=87929
 
