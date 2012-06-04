@@ -81,20 +81,20 @@ function handleDrop(e)
         files.push(file);
 
         test('file', items[i].kind);
-        with ({last: i + 1 == items.length, expected: expected}) {
-            items[i].webkitGetAsEntry(function(entry) {
-                log('entry: ' + entry.fullPath + (entry.isDirectory ? ' [dir]' : ' [file]'));
-                var components = expected.path.split('/');
-                var name = components[components.length - 1];
-                test('/' + name, entry.fullPath);
-                test(expected.directory, entry.isDirectory);
+        var entry = items[i].webkitGetAsEntry();
+        log('entry: ' + entry.fullPath + (entry.isDirectory ? ' [dir]' : ' [file]'));
 
-                entry.getMetadata(function(metadata) {
-                    if (!expected.directory)
-                        test(expected.size, metadata.size);
-                    if (last && window.layoutTestController)
-                        layoutTestController.notifyDone();
-                });
+        var components = expected.path.split('/');
+        var name = components[components.length - 1];
+        test('/' + name, entry.fullPath);
+        test(expected.directory, entry.isDirectory);
+
+        with ({last: i + 1 == items.length, expected: expected}) {
+            entry.getMetadata(function(metadata) {
+                if (!expected.directory)
+                    test(expected.size, metadata.size);
+                if (last && window.layoutTestController)
+                    layoutTestController.notifyDone();
             });
         }
     }

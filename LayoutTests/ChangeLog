@@ -1,3 +1,15 @@
+2012-05-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] DataTransferItem.webkitGetAsEntry() should synchronously return entry
+        https://bugs.webkit.org/show_bug.cgi?id=87969
+
+        Reviewed by Tony Chang.
+
+        * editing/pasteboard/data-transfer-items-drag-drop-entry-expected.txt:
+        * editing/pasteboard/data-transfer-items-drag-drop-entry.html:
+        * fast/filesystem/cross-filesystem-op.html:
+        * platform/chromium/test_expectations.txt:
+
 2012-06-03  Shawn Singh  <shawnsingh@chromium.org>
 
         Unreviewed fix of chromium TestExpectations

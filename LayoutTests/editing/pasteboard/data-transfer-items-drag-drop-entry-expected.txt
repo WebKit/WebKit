@@ -7,18 +7,18 @@ Dragging file: resources/test_directory
 Verifying contents of DataTransferItems...
 PASS: "4" == "4"
 PASS: "file" == "file"
-PASS: "file" == "file"
-PASS: "file" == "file"
-PASS: "file" == "file"
 entry: /mozilla.gif [file]
 PASS: "/mozilla.gif" == "/mozilla.gif"
 PASS: "false" == "false"
+PASS: "file" == "file"
 entry: /drop-file-svg.svg [file]
 PASS: "/drop-file-svg.svg" == "/drop-file-svg.svg"
 PASS: "false" == "false"
+PASS: "file" == "file"
 entry: /copy-backslash-euc.html [file]
 PASS: "/copy-backslash-euc.html" == "/copy-backslash-euc.html"
 PASS: "false" == "false"
+PASS: "file" == "file"
 entry: /test_directory [dir]
 PASS: "/test_directory" == "/test_directory"
 PASS: "true" == "true"

@@ -42,85 +42,49 @@
 #include "DirectoryEntry.h"
 #include "DraggedIsolatedFileSystem.h"
 #include "Entry.h"
-#include "EntryCallback.h"
 #include "File.h"
 #include "FileEntry.h"
 #include "FileMetadata.h"
+#include "FileSystem.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-namespace {
-
-class GetAsEntryCallbacks : public AsyncFileSystemCallbacks {
-    WTF_MAKE_NONCOPYABLE(GetAsEntryCallbacks);
-public:
-    static PassOwnPtr<GetAsEntryCallbacks> create(PassRefPtr<DOMFileSystem> filesystem, const String& virtualPath, PassRefPtr<EntryCallback> callback)
-    {
-        return adoptPtr(new GetAsEntryCallbacks(filesystem, virtualPath, callback));
-    }
-
-    virtual ~GetAsEntryCallbacks()
-    {
-    }
-
-    virtual void didReadMetadata(const FileMetadata& metadata)
-    {
-        if (metadata.type == FileMetadata::TypeDirectory)
-            m_callback->handleEvent(DirectoryEntry::create(m_filesystem, m_virtualPath).get());
-        else
-            m_callback->handleEvent(FileEntry::create(m_filesystem, m_virtualPath).get());
-    }
-
-    virtual void didFail(int error)
-    {
-        // FIXME: Return a special FileEntry which will let any succeeding operations fail with the error code.
-        m_callback->handleEvent(0);
-    }
-
-private:
-    GetAsEntryCallbacks(PassRefPtr<DOMFileSystem> filesystem, const String& virtualPath, PassRefPtr<EntryCallback> callback)
-        : m_filesystem(filesystem)
-        , m_virtualPath(virtualPath)
-        , m_callback(callback)
-    {
-    }
-
-    RefPtr<DOMFileSystem> m_filesystem;
-    String m_virtualPath;
-    RefPtr<EntryCallback> m_callback;
-};
-
-} // namespace
-
 // static
-void DataTransferItemFileSystem::webkitGetAsEntry(DataTransferItem* item, ScriptExecutionContext* scriptExecutionContext, PassRefPtr<EntryCallback> callback)
+PassRefPtr<Entry> DataTransferItemFileSystem::webkitGetAsEntry(DataTransferItem* item, ScriptExecutionContext* scriptExecutionContext)
 {
     DataTransferItemPolicyWrapper* itemPolicyWrapper = static_cast<DataTransferItemPolicyWrapper*>(item);
 
-    if (!callback || !itemPolicyWrapper->dataObjectItem()->isFilename())
-        return;
+    if (!itemPolicyWrapper->dataObjectItem()->isFilename())
+        return adoptRef(static_cast<Entry*>(0));
 
     // For dragged files getAsFile must be pretty lightweight.
     Blob* file = itemPolicyWrapper->getAsFile().get();
     // The clipboard may not be in a readable state.
     if (!file)
-        return;
+        return adoptRef(static_cast<Entry*>(0));
     ASSERT(file->isFile());
 
     DraggedIsolatedFileSystem* filesystem = DraggedIsolatedFileSystem::from(itemPolicyWrapper->clipboard()->dataObject().get());
     DOMFileSystem* domFileSystem = filesystem ? filesystem->getDOMFileSystem(scriptExecutionContext) : 0;
     if (!filesystem) {
         // IsolatedFileSystem may not be enabled.
-        DOMFileSystem::scheduleCallback(scriptExecutionContext, callback, adoptRef(static_cast<Entry*>(0)));
-        return;
+        return adoptRef(static_cast<Entry*>(0));
     }
 
     ASSERT(domFileSystem);
 
     // The dropped entries are mapped as top-level entries in the isolated filesystem.
-    String virtualPath = DOMFilePath::append("/", static_cast<File*>(file)->name());
-    domFileSystem->asyncFileSystem()->readMetadata(domFileSystem->createFileSystemURL(virtualPath), GetAsEntryCallbacks::create(domFileSystem, virtualPath, callback));
+    String virtualPath = DOMFilePath::append("/", toFile(file)->name());
+
+    // FIXME: This involves synchronous file operation. Consider passing file type data when we dispatch drag event.
+    FileMetadata metadata;
+    if (!getFileMetadata(toFile(file)->path(), metadata))
+        return adoptRef(static_cast<Entry*>(0));
+
+    if (metadata.type == FileMetadata::TypeDirectory)
+        return static_cast<Entry*>(DirectoryEntry::create(domFileSystem, virtualPath).get());
+    return static_cast<Entry*>(FileEntry::create(domFileSystem, virtualPath).get());
 }
 
 } // namespace WebCore

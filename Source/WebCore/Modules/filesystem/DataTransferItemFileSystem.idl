@@ -34,7 +34,7 @@ module core {
         Conditional=DATA_TRANSFER_ITEMS&FILE_SYSTEM,
         Supplemental=DataTransferItem
     ] DataTransferItemFileSystem {
-        // FIXME: add webkitGetAsEntry()
+        [CallWith=ScriptExecutionContext] Entry webkitGetAsEntry();
     };
 
 }

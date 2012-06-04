@@ -225,18 +225,18 @@ function startTest(e) {
     var items = e.dataTransfer.items;
     test(1, items.length);
     test('file', items[0].kind);
-    items[0].webkitGetAsEntry(function(entry) {
-        test(true, entry.isDirectory);
-        sourceTestDirectory = entry;
-        setupDestFileSystem(function() {
-            log('Successfully setup test environment.');
-            runTests(0, function() {
-                log('Successfully ran ' + tests.length + ' tests.');
-                cleanupDirectory(destTestDirectory, function() {
-                    log('Cleanup done.');
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
-                });
+
+    var entry = items[0].webkitGetAsEntry();
+    test(true, entry.isDirectory);
+    sourceTestDirectory = entry;
+    setupDestFileSystem(function() {
+        log('Successfully setup test environment.');
+        runTests(0, function() {
+            log('Successfully ran ' + tests.length + ' tests.');
+            cleanupDirectory(destTestDirectory, function() {
+                log('Cleanup done.');
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
             });
         });
     });

@@ -1,3 +1,22 @@
+2012-05-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] DataTransferItem.webkitGetAsEntry() should synchronously return entry
+        https://bugs.webkit.org/show_bug.cgi?id=87969
+
+        Reviewed by Tony Chang.
+
+        Per discussion on whatwg we should make webkitGetAsEntry synchronous.
+        http://lists.w3.org/Archives/Public/public-whatwg-archive/2012Apr/0079.html
+
+        Tests: editing/pasteboard/data-transfer-items-drag-drop-entry.html
+               fast/filesystem/cross-filesystem-op.html
+
+        * Modules/filesystem/DataTransferItemFileSystem.h:
+        (DataTransferItemFileSystem):
+        * Modules/filesystem/DataTransferItemFileSystem.idl:
+        * Modules/filesystem/chromium/DataTransferItemFileSystemChromium.cpp:
+        (WebCore::DataTransferItemFileSystem::webkitGetAsEntry): Changed it to synchronously return entry.
+
 2012-06-03  Dominic Cooney  <dominicc@chromium.org>
 
         EventTarget.idl should generate JS bindings
