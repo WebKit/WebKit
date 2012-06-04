@@ -45,6 +45,7 @@ namespace WebCore {
 
 class CCGraphicsContext;
 class CCLayerSorter;
+class CCLayerTreeHostImpl;
 class CCQuadCuller;
 class CCRenderer;
 class LayerChromium;
@@ -78,6 +79,9 @@ public:
 
     void setReplicaLayer(PassOwnPtr<CCLayerImpl>);
     CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
+
+    CCLayerTreeHostImpl* layerTreeHostImpl() const { return m_layerTreeHostImpl; }
+    void setLayerTreeHostImpl(CCLayerTreeHostImpl* hostImpl) { m_layerTreeHostImpl = hostImpl; }
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     // willDraw must be called before appendQuads. If willDraw is called,
@@ -283,6 +287,7 @@ private:
     int m_replicaLayerId; // ditto
     OwnPtr<CCLayerImpl> m_replicaLayer;
     int m_layerId;
+    CCLayerTreeHostImpl* m_layerTreeHostImpl;
 
     // Properties synchronized from the associated LayerChromium.
     FloatPoint m_anchorPoint;

@@ -100,7 +100,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 
-        OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr);
+        OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr, 0);
 
         CCLayerImpl* ccChild1 = ccLayerTreeRoot->children()[0].get();
         CCScrollbarLayerImpl* ccChild2 = static_cast<CCScrollbarLayerImpl*>(ccLayerTreeRoot->children()[1].get());
@@ -116,7 +116,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 
-        OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr);
+        OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr, 0);
 
         CCScrollbarLayerImpl* ccChild1 = static_cast<CCScrollbarLayerImpl*>(ccLayerTreeRoot->children()[0].get());
         CCLayerImpl* ccChild2 = ccLayerTreeRoot->children()[1].get();

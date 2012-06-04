@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CCLayerImpl;
+class CCLayerTreeHostImpl;
 class LayerChromium;
 
 class TreeSynchronizer {
@@ -41,7 +42,7 @@ WTF_MAKE_NONCOPYABLE(TreeSynchronizer);
 public:
     // Accepts a LayerChromium tree and returns a reference to a CCLayerImpl tree that duplicates the structure
     // of the LayerChromium tree, reusing the CCLayerImpls in the tree provided by oldCCLayerImplRoot if possible.
-    static PassOwnPtr<CCLayerImpl> synchronizeTrees(LayerChromium* layerRoot, PassOwnPtr<CCLayerImpl> oldCCLayerImplRoot);
+    static PassOwnPtr<CCLayerImpl> synchronizeTrees(LayerChromium* layerRoot, PassOwnPtr<CCLayerImpl> oldCCLayerImplRoot, CCLayerTreeHostImpl*);
 
 private:
     TreeSynchronizer(); // Not instantiable.
@@ -52,7 +53,7 @@ private:
     // Declared as static member functions so they can access functions on LayerChromium as a friend class.
     static PassOwnPtr<CCLayerImpl> reuseOrCreateCCLayerImpl(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium*);
     static void collectExistingCCLayerImplRecursive(OwnPtrCCLayerImplMap& oldLayers, PassOwnPtr<CCLayerImpl>);
-    static PassOwnPtr<CCLayerImpl> synchronizeTreeRecursive(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium*);
+    static PassOwnPtr<CCLayerImpl> synchronizeTreeRecursive(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium*, CCLayerTreeHostImpl*);
     static void updateScrollbarLayerPointersRecursive(const RawPtrCCLayerImplMap& newLayers, LayerChromium*);
 };
 

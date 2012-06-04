@@ -241,7 +241,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
 
-    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
+    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer(), hostImpl));
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
     // to visit their controllers.

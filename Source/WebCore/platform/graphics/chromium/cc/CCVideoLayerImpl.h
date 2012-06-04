@@ -91,7 +91,6 @@ private:
     Texture m_textures[MaxPlanes];
 
     float m_streamTextureMatrix[16];
-    CCLayerTreeHostImpl* m_layerTreeHostImpl;
 
     WebKit::WebVideoFrame* m_frame;
     GC3Denum m_format;

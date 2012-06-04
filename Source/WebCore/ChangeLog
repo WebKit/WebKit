@@ -1,3 +1,38 @@
+2012-06-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Allow CCLayerImpl to find its layer tree host, and use this for CCVideoLayerImpl instead of always-null pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=88252
+
+        Reviewed by James Robinson.
+
+        CCVideoLayerImpl has a pointer to its CCLayerTreeHostImpl which is never
+        set to be non-null currently. Instead of making this a special case, we
+        move the CCLayerTreeHostImpl* up to the CCLayerImpl base class, and set
+        the pointer on every layer during commit via the TreeSynchronizer's walk
+        through the layer tree.
+
+        Unit tests: Tested by TreeSynchronizer tests.
+
+        * platform/graphics/chromium/TreeSynchronizer.cpp:
+        (WebCore::TreeSynchronizer::synchronizeTrees):
+        (WebCore::TreeSynchronizer::synchronizeTreeRecursive):
+        * platform/graphics/chromium/TreeSynchronizer.h:
+        (WebCore):
+        (TreeSynchronizer):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        (WebCore::CCLayerImpl::layerTreeHostImpl):
+        (WebCore::CCLayerImpl::setLayerTreeHostImpl):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2012-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Mock scrollbars differ by 1px in DRT vs. WKTR

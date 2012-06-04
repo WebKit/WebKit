@@ -76,7 +76,6 @@ const float CCVideoLayerImpl::flipTransform[16] = {
 CCVideoLayerImpl::CCVideoLayerImpl(int id, WebKit::WebVideoFrameProvider* provider)
     : CCLayerImpl(id)
     , m_provider(provider)
-    , m_layerTreeHostImpl(0)
     , m_frame(0)
 {
     memcpy(m_streamTextureMatrix, flipTransform, sizeof(m_streamTextureMatrix));
@@ -292,8 +291,7 @@ void CCVideoLayerImpl::didLoseContext()
 
 void CCVideoLayerImpl::setNeedsRedraw()
 {
-    if (m_layerTreeHostImpl)
-        m_layerTreeHostImpl->setNeedsRedraw();
+    layerTreeHostImpl()->setNeedsRedraw();
 }
 
 void CCVideoLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
