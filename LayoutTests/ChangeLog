@@ -1,3 +1,13 @@
+2012-06-04  Mike West  <mkwst@chromium.org>
+
+        Adding explicit console error for duplicated CSP directives.
+        https://bugs.webkit.org/show_bug.cgi?id=88193
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/duplicate-directive-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/duplicate-directive.html: Added.
+
 2012-06-04  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r117929) [Forms] input type=number thinks 0 is not a number

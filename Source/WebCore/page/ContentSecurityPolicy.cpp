@@ -513,15 +513,16 @@ private:
     void parse(const String&);
 
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
-    void parseReportURI(const String&);
+    void parseReportURI(const String& name, const String& value);
     void addDirective(const String& name, const String& value);
-    void applySandboxPolicy(const String& sandboxPolicy);
+    void applySandboxPolicy(const String& name, const String& sandboxPolicy);
 
-    PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
+    void setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirective>&);
 
     CSPDirective* operativeDirective(CSPDirective*) const;
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
     void logUnrecognizedDirective(const String& name) const;
+    void logDuplicateDirective(const String& name) const;
     bool checkEval(CSPDirective*) const;
 
     bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
@@ -627,6 +628,12 @@ void CSPDirectiveList::reportViolation(const String& directiveText, const String
 void CSPDirectiveList::logUnrecognizedDirective(const String& name) const
 {
     String message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+}
+
+void CSPDirectiveList::logDuplicateDirective(const String& name) const
+{
+    String message = makeString("Ignoring duplicate Content-Security-Policy directive '", name, "'.\n");
     m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 
@@ -816,8 +823,12 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
     return true;
 }
 
-void CSPDirectiveList::parseReportURI(const String& value)
+void CSPDirectiveList::parseReportURI(const String& name, const String& value)
 {
+    if (!m_reportURIs.isEmpty()) {
+        logDuplicateDirective(name);
+        return;
+    }
     const UChar* position = value.characters();
     const UChar* end = position + value.length();
 
@@ -834,14 +845,21 @@ void CSPDirectiveList::parseReportURI(const String& value)
     }
 }
 
-PassOwnPtr<CSPDirective> CSPDirectiveList::createCSPDirective(const String& name, const String& value)
+void CSPDirectiveList::setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirective>& directive)
 {
-    return adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext));
+    if (directive) {
+        logDuplicateDirective(name);
+        return;
+    }
+    directive = adoptPtr(new CSPDirective(name, value, m_scriptExecutionContext));
 }
 
-void CSPDirectiveList::applySandboxPolicy(const String& sandboxPolicy)
+void CSPDirectiveList::applySandboxPolicy(const String& name, const String& sandboxPolicy)
 {
-    ASSERT(!m_haveSandboxPolicy);
+    if (m_haveSandboxPolicy) {
+        logDuplicateDirective(name);
+        return;
+    }
     m_haveSandboxPolicy = true;
     m_scriptExecutionContext->enforceSandboxFlags(SecurityContext::parseSandboxPolicy(sandboxPolicy));
 }
@@ -862,28 +880,28 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
 
     ASSERT(!name.isEmpty());
 
-    if (!m_defaultSrc && equalIgnoringCase(name, defaultSrc))
-        m_defaultSrc = createCSPDirective(name, value);
-    else if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
-        m_scriptSrc = createCSPDirective(name, value);
-    else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
-        m_objectSrc = createCSPDirective(name, value);
-    else if (!m_frameSrc && equalIgnoringCase(name, frameSrc))
-        m_frameSrc = createCSPDirective(name, value);
-    else if (!m_imgSrc && equalIgnoringCase(name, imgSrc))
-        m_imgSrc = createCSPDirective(name, value);
-    else if (!m_styleSrc && equalIgnoringCase(name, styleSrc))
-        m_styleSrc = createCSPDirective(name, value);
-    else if (!m_fontSrc && equalIgnoringCase(name, fontSrc))
-        m_fontSrc = createCSPDirective(name, value);
-    else if (!m_mediaSrc && equalIgnoringCase(name, mediaSrc))
-        m_mediaSrc = createCSPDirective(name, value);
-    else if (!m_connectSrc && equalIgnoringCase(name, connectSrc))
-        m_connectSrc = createCSPDirective(name, value);
-    else if (!m_haveSandboxPolicy && equalIgnoringCase(name, sandbox))
-        applySandboxPolicy(value);
-    else if (m_reportURIs.isEmpty() && equalIgnoringCase(name, reportURI))
-        parseReportURI(value);
+    if (equalIgnoringCase(name, defaultSrc))
+        setCSPDirective(name, value, m_defaultSrc);
+    else if (equalIgnoringCase(name, scriptSrc))
+        setCSPDirective(name, value, m_scriptSrc);
+    else if (equalIgnoringCase(name, objectSrc))
+        setCSPDirective(name, value, m_objectSrc);
+    else if (equalIgnoringCase(name, frameSrc))
+        setCSPDirective(name, value, m_frameSrc);
+    else if (equalIgnoringCase(name, imgSrc))
+        setCSPDirective(name, value, m_imgSrc);
+    else if (equalIgnoringCase(name, styleSrc))
+        setCSPDirective(name, value, m_styleSrc);
+    else if (equalIgnoringCase(name, fontSrc))
+        setCSPDirective(name, value, m_fontSrc);
+    else if (equalIgnoringCase(name, mediaSrc))
+        setCSPDirective(name, value, m_mediaSrc);
+    else if (equalIgnoringCase(name, connectSrc))
+        setCSPDirective(name, value, m_connectSrc);
+    else if (equalIgnoringCase(name, sandbox))
+        applySandboxPolicy(name, value);
+    else if (equalIgnoringCase(name, reportURI))
+        parseReportURI(name, value);
     else
         logUnrecognizedDirective(name);
 }

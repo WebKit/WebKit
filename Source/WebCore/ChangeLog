@@ -1,3 +1,24 @@
+2012-06-04  Mike West  <mkwst@chromium.org>
+
+        Adding explicit console error for duplicated CSP directives.
+        https://bugs.webkit.org/show_bug.cgi?id=88193
+
+        This patch adds an explicit error message for duplicated CSP
+        directives instead of reusing the "unrecognized directive" error.
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/contentSecurityPolicy/duplicate-directive.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::logDuplicateDirective):
+        (WebCore):
+        (WebCore::CSPDirectiveList::parseReportURI):
+        (WebCore::CSPDirectiveList::setCSPDirective):
+        (WebCore::CSPDirectiveList::applySandboxPolicy):
+        (WebCore::CSPDirectiveList::addDirective):
+
 2012-06-04  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r117929) [Forms] input type=number thinks 0 is not a number
