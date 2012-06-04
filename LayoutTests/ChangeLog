@@ -1,3 +1,13 @@
+2012-06-04  Ami Fischman  <fischman@chromium.org>
+
+        Don't crash when re-parenting a removed HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=88058
+
+        Reviewed by Eric Carlson.
+
+        * media/media-reparent-expected.txt: Added.
+        * media/media-reparent.html: Added.
+
 2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Fix software rendering for device-scale-factor > 1
