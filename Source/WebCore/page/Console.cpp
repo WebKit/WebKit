@@ -310,14 +310,14 @@ void Console::time(const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(page(), title);
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_BEGIN0("webkit", title.utf8().data());
+    TRACE_EVENT_COPY_ASYNC_BEGIN0("webkit", title.utf8().data(), this);
 #endif
 }
 
 void Console::timeEnd(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack, const String& title)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_END0("webkit", title.utf8().data());
+    TRACE_EVENT_COPY_ASYNC_END0("webkit", title.utf8().data(), this);
 #endif
     InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
 }
