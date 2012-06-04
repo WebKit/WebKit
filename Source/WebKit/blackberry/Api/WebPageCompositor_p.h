@@ -24,7 +24,7 @@
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
 
-#include <BlackBerryPlatformAnimation.h>
+#include <BlackBerryPlatformAnimationFrameRateController.h>
 #include <BlackBerryPlatformGLES2Context.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>

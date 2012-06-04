@@ -35,7 +35,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 #if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformAnimation.h>
+#include <BlackBerryPlatformAnimationFrameRateController.h>
 #endif
 
 #if PLATFORM(MAC)

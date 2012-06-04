@@ -1,3 +1,15 @@
+2012-06-04  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Split AnimationFrameRateController into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=88242
+
+        Reviewed by Antonio Gomes.
+
+        Include new header file to reflect re-organization of platform animation
+        header files.
+
+        * platform/graphics/DisplayRefreshMonitor.h:
+
 2012-06-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Allow CCLayerImpl to find its layer tree host, and use this for CCVideoLayerImpl instead of always-null pointer.
