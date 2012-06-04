@@ -1,5 +1,11 @@
 2012-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Roll Chromium DEPS from r140222 to r140260.
+
+        * DEPS:
+
+2012-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Roll Chromium DEPS from r140000 to r140222.
 
         * DEPS:
