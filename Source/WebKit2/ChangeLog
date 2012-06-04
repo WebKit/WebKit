@@ -1,3 +1,16 @@
+2012-06-04  Andy Estes  <aestes@apple.com>
+
+        Add stub WebKit2 implementations of PLUGIN_PROXY_FOR_VIDEO methods declared in FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=88244
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createMediaPlayerProxyPlugin): Add a stub implementation.
+        (WebKit::WebFrameLoaderClient::hideMediaPlayerProxyPlugin): Ditto.
+        (WebKit::WebFrameLoaderClient::showMediaPlayerProxyPlugin): Ditto.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2012-06-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK][WK2] Implement geolocation provider for the GTK port

@@ -1355,6 +1355,24 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
     return plugin.release();
 }
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+PassRefPtr<Widget> WebFrameLoaderClient::createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&)
+{
+    notImplemented();
+    return 0;
+}
+
+void WebFrameLoaderClient::hideMediaPlayerProxyPlugin(Widget*)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::showMediaPlayerProxyPlugin(Widget*)
+{
+    notImplemented();
+}
+#endif
+
 static bool pluginSupportsExtension(PluginData* pluginData, const String& extension)
 {
     ASSERT(extension.lower() == extension);
