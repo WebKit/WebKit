@@ -26,11 +26,13 @@
 #ifndef CorrectionPanel_h
 #define CorrectionPanel_h
 
+#import <WebCore/TextChecking.h>
+
+#if USE(AUTOCORRECTION_PANEL)
+
 #import <AppKit/NSSpellChecker.h>
 #import <WebCore/AlternativeTextClient.h>
 #import <wtf/RetainPtr.h>
-
-#if USE(AUTOCORRECTION_PANEL)
 
 @class WKView;
 

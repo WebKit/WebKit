@@ -79,7 +79,7 @@ messages -> WebProcess {
     GarbageCollectJavaScriptObjects()
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
     SecItemResponse(uint64_t requestID, WebKit::SecItemResponseData response) DispatchOnConnectionQueue
     SecKeychainItemResponse(uint64_t requestID, WebKit::SecKeychainItemResponseData response) DispatchOnConnectionQueue
 #endif

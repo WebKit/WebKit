@@ -28,7 +28,10 @@
 
 #include "WKAPICast.h"
 #include "WebPluginSiteDataManager.h"
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #include <WebCore/npapi.h>
+#endif
 
 using namespace WebKit;
 using namespace std;

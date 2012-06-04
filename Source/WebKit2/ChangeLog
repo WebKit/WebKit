@@ -1,5 +1,23 @@
 2012-06-04  Andy Estes  <aestes@apple.com>
 
+        Use ENABLE() and USE() macros in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=88245
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp: Only include npapi.h if
+        Netscape plug-in API is enabled.
+        * UIProcess/mac/CorrectionPanel.h: Wrap with USE(AUTOCORRECTION_PANEL)
+        * WebProcess/Authentication/AuthenticationManager.cpp: Use the stub
+        version of tryUsePlatformCertificateInfoForChallenge if
+        Security.framework isn't available.
+        * WebProcess/WebProcess.messages.in: Only generate two messages if
+        Security.framework is available.
+        * WebProcess/mac/KeychainItemShimMethods.mm: Wrap with
+        USE(SECURITY_FRAMEWORK).
+
+2012-06-04  Andy Estes  <aestes@apple.com>
+
         Add stub WebKit2 implementations of PLUGIN_PROXY_FOR_VIDEO methods declared in FrameLoaderClient
         https://bugs.webkit.org/show_bug.cgi?id=88244
 
