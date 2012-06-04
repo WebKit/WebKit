@@ -327,15 +327,17 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPerspectiveClippedLayer)
     // tracked properly.
     //
     // The transform is constructed so that if w < 0 clipping is not performed, the
-    // incorrect rect will be very small, specifically: position (-3.153448, -2.750628) and size 8.548689 x 5.661383.
-    // Instead, the correctly transformed rect should actually be very huge (i.e. in theory, infinite)
+    // incorrect rect will be very small, specifically: position (500.972504, 498.544617) and size 0.056610 x 2.910767.
+    // Instead, the correctly transformed rect should actually be very huge (i.e. in theory, -infinity on the left),
+    // and positioned so that the right-most bound rect will be approximately 501 units in root surface space.
+    //
 
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child = root->children()[0].get();
 
     WebTransformationMatrix transform;
+    transform.translate3d(500, 500, 0);
     transform.applyPerspective(1);
-    transform.translate3d(-150, -50, 0);
     transform.rotate3d(0, 45, 0);
     transform.translate3d(-50, -50, 0);
 
@@ -359,8 +361,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPerspectiveClippedLayer)
     // The expected damage should cover the entire root surface (500x500), but we don't
     // care whether the damage rect was clamped or is larger than the surface for this test.
     FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
-    EXPECT_GE(rootDamageRect.width(), 500);
-    EXPECT_GE(rootDamageRect.height(), 500);
+    FloatRect damageWeCareAbout = FloatRect(FloatPoint::zero(), FloatSize(500, 500));
+    EXPECT_TRUE(rootDamageRect.contains(damageWeCareAbout));
 }
 
 TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)

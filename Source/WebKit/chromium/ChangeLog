@@ -1,3 +1,19 @@
+2012-06-04  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] CCDamageTrackerTest.verifyDamageForPerspectiveClippedLayer needs to be cleaner
+        https://bugs.webkit.org/show_bug.cgi?id=85245
+
+        Reviewed by James Robinson.
+
+        Updated CCDamageTrackerTest.verifyDamageForPerspectiveClippedLayer
+        so that the test is clearer and cleaner. The original test was
+        covering what it needed, but in a confusing and not-so-practical
+        way. This patch adds comments and performs a tighter test so that
+        the intent is a bit more clear.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-06-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix attempt after r119411.
