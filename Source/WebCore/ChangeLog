@@ -1,3 +1,13 @@
+2012-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Unused variable with ENABLE(CONTEXT_MENUS) off
+
+        This broke in r118374.
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu): Add
+        UNUSED_PARAM(exec) when ENABLE(CONTEXT_MENUS) is off.
+
 2012-06-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119393.

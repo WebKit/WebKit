@@ -144,6 +144,8 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
     Vector<ContextMenuItem> items = menu.items();
 #endif
     impl()->showContextMenu(event, items);
+#else
+    UNUSED_PARAM(exec);
 #endif
     return jsUndefined();
 }
