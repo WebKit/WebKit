@@ -93,6 +93,22 @@ WebInspector.NativeMemoryProfileType.prototype = {
         profilesPanel.addProfileHeader(profileHeader);
         function didReceiveMemorySnapshot(error, memoryBlock)
         {
+            if (memoryBlock.size && memoryBlock.children) {
+                var knownSize = 0;
+                for (var i = 0; i < memoryBlock.children.length; i++) {
+                    var size = memoryBlock.children[i].size;
+                    if (size)
+                        knownSize += size;
+                }
+                var unknownSize = memoryBlock.size - knownSize;
+
+                if (unknownSize) {
+                    memoryBlock.children.push({
+                        name: "Unknown",
+                        size: unknownSize
+                    });
+                }
+            }
             profileHeader._memoryBlock = memoryBlock;
             profileHeader.isTemporary = false;
         }
@@ -198,7 +214,8 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     {
         WebInspector.MemoryBlockViewProperties._standardBlocks[name] = new WebInspector.MemoryBlockViewProperties(fillStyle, name, WebInspector.UIString(description));
     }
-    addBlock("rgba(240, 240, 250, 0.8)", "ProcessPrivateMemory", "Total");
+    addBlock("rgba(255, 255, 255, 0.8)", "ProcessPrivateMemory", "Total");
+    addBlock("rgba(240, 240, 250, 0.8)", "Unknown", "Unknown");
     addBlock("rgba(250, 200, 200, 0.8)", "JSHeapAllocated", "JavaScript heap");
     addBlock("rgba(200, 250, 200, 0.8)", "JSHeapUsed", "Used JavaScript heap");
     addBlock("rgba(200, 170, 200, 0.8)", "MemoryCache", "Memory cache resources");
@@ -281,9 +298,7 @@ WebInspector.NativeMemoryPieChart.prototype = {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI*2, false);
         ctx.lineWidth = 1;
-        ctx.fillStyle = WebInspector.MemoryBlockViewProperties._forMemoryBlock(this._memorySnapshot)._fillStyle;
         ctx.strokeStyle = "rgba(130, 130, 130, 0.8)";
-        ctx.fill();
         ctx.stroke();
         ctx.closePath();
 
@@ -314,35 +329,31 @@ WebInspector.NativeMemoryPieChart.prototype = {
             ctx.closePath();
         }
 
-        if (memoryBlock.children) {
-            var total = memoryBlock.size;
-            for (var i = 0; i < memoryBlock.children.length; i++) {
-                var child = memoryBlock.children[i];
-                if (!child.size)
-                    continue;
-                var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
-                var angleSpan = Math.PI * 2 * (child.size / total);
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + radius * Math.cos(currentAngle), y + radius * Math.sin(currentAngle));
-                ctx.arc(x, y, radius, currentAngle, currentAngle + angleSpan, false);
-                ctx.lineWidth = 0.5;
-                ctx.lineTo(x, y);
-                ctx.fillStyle = viewProperties._fillStyle;
-                ctx.strokeStyle = "rgba(100, 100, 100, 0.8)";
-                ctx.fill();
-                ctx.stroke();
-                ctx.closePath();
+        if (!memoryBlock.children)
+            return;
+        var total = memoryBlock.size;
+        for (var i = 0; i < memoryBlock.children.length; i++) {
+            var child = memoryBlock.children[i];
+            if (!child.size)
+                continue;
+            var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
+            var angleSpan = Math.PI * 2 * (child.size / total);
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + radius * Math.cos(currentAngle), y + radius * Math.sin(currentAngle));
+            ctx.arc(x, y, radius, currentAngle, currentAngle + angleSpan, false);
+            ctx.lineWidth = 0.5;
+            ctx.lineTo(x, y);
+            ctx.fillStyle = viewProperties._fillStyle;
+            ctx.strokeStyle = "rgba(100, 100, 100, 0.8)";
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
 
-                paintPercentAndLabel(child.size / total, viewProperties._description, currentAngle + angleSpan / 2);
+            paintPercentAndLabel(child.size / total, viewProperties._description, currentAngle + angleSpan / 2);
 
-                currentAngle += angleSpan;
-            }
+            currentAngle += angleSpan;
         }
-
-        var fraction = 1 - (currentAngle - startAngle) / (2 * Math.PI);
-        var midAngle = (currentAngle + startAngle + 2 * Math.PI) / 2;
-        paintPercentAndLabel(fraction, WebInspector.UIString("Unknown"), midAngle);
     },
 
     _clear: function() {

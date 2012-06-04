@@ -1,3 +1,18 @@
+2012-06-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add unknown size to the memory pie-chart legend
+        https://bugs.webkit.org/show_bug.cgi?id=88081
+
+        Reviewed by Pavel Feldman.
+
+        Added "Unknown" part size to the memory pie-chart legend.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked.didReceiveMemorySnapshot):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        (WebInspector.NativeMemoryPieChart.prototype._paint):
+
 2012-06-04  Mike West  <mkwst@chromium.org>
 
         Adding explicit console error for duplicated CSP directives.
