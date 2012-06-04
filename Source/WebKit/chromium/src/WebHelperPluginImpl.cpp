@@ -33,6 +33,7 @@
 
 #include "EmptyClients.h"
 #include "FocusController.h"
+#include "FileChooser.h"
 #include "FrameView.h"
 #include "Page.h"
 #include "PageWidgetDelegate.h"
