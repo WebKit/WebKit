@@ -18,6 +18,7 @@ SOURCES += \
 
 HEADERS += \
     $$PWD/qt/Api/qwebframe.h \
+    $$PWD/qt/Api/qwebframe_p.h \
     $$PWD/qt/Api/qgraphicswebview.h \
     $$PWD/qt/Api/qwebkitglobal.h \
     $$PWD/qt/Api/qwebkitplatformplugin.h \

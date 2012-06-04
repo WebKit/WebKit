@@ -26,7 +26,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
-#if defined(HAVE_QT5) && HAVE_QT5
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtWidgets/qwidget.h>
 #else
 #include <QtGui/qwidget.h>

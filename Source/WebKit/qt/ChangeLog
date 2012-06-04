@@ -1,3 +1,14 @@
+2012-06-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't use WebKit HAVE() macro in public Qt headers
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qgraphicswebview.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.h:
+        * Api/qwebview.h:
+
 2012-06-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Use 'Ok' and 'Cancel' buttons in JavaScript confirm box.
