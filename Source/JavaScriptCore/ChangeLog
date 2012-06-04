@@ -1,3 +1,10 @@
+2012-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: FeatureDefines.xcconfig should match across projects
+
+        * Configurations/FeatureDefines.xcconfig:
+        - Add missing ENABLE_LEGACY_CSS_VENDOR_PREFIXES.
+
 2012-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         Weak pointer finalization should be lazy

@@ -1,3 +1,10 @@
+2012-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: FeatureDefines.xcconfig should match across projects
+
+        * Configurations/FeatureDefines.xcconfig:
+        - Add missing ENABLE_CSS_IMAGE_RESOLUTION.
+
 2012-06-04  Justin Novosad  <junov@chromium.org>
 
         Canvas 2D - Source rectangles that overlap the source image boundary, not supported by drawImage

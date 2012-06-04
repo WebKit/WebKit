@@ -1,3 +1,12 @@
+2012-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: FeatureDefines.xcconfig should match across projects
+
+        * Configurations/FeatureDefines.xcconfig:
+        - Fix sort order of ENABLE_CSS3_FLEXBOX.
+        - Fix typo in ENABLE_FONT_BOOSTING.
+        - Add missing ENABLE_LEGACY_CSS_VENDOR_PREFIXES.
+
 2012-06-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         loadRequest should check for empty URLs.
