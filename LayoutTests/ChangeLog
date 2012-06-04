@@ -1,5 +1,14 @@
 2012-06-03  Shawn Singh  <shawnsingh@chromium.org>
 
+        Unreviewed fix of chromium TestExpectations
+
+        Some extra junk got added by accident when I tried to change
+        TestExpectations. This patch removes it.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-03  Shawn Singh  <shawnsingh@chromium.org>
+
         Unreviewed rebasline for transforms/3d test cases.
 
         9 tests re-baselined.
