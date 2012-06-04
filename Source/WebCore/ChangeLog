@@ -1,3 +1,20 @@
+2012-06-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r117929) [Forms] input type=number thinks 0 is not a number
+        https://bugs.webkit.org/show_bug.cgi?id=88208
+
+        Reviewed by Kent Tamura.
+
+        This patch fixes invalid handling of return value of parseToDoubleForNumberType
+        in NumberInputType::isAcceptableValue to use isfinite() function for checking
+        whether specified string is valid number or not. Before r117929, return value
+        of parseToDoubleForNumberType was bool, but after r117929, it is double.
+
+        Test: fast/forms/number/input-number-from-renderer.html
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::isAcceptableValue): Use isfinite()
+
 2012-06-04  Antti Koivisto  <antti@apple.com>
 
         Crash in WebCore::RenderView::getRetainedWidgets

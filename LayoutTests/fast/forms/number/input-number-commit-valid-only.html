@@ -12,21 +12,36 @@ document.body.appendChild(parent);
 parent.innerHTML = '<input type=number id=number value=256>';
 
 var input = document.getElementById('number');
-input.focus();
-document.execCommand('SelectAll', false, null);
-document.execCommand('InsertText', false, '512');
-shouldBe('input.value', '"512"');
 
-document.execCommand('SelectAll', false, null);
-document.execCommand('InsertText', false, '+++');
-input.blur();
-shouldBe('input.value', '"512"');
+function checkIt(what, sample, expected)
+{
+    input.focus();
+    document.execCommand("SelectAll");
+    document.execCommand("InsertText", false, sample);
+    input.blur();
+    debug('enter "' + sample + '" for ' + what);
+    shouldBeEqualToString('input.value', expected);
+}
 
-input.focus();
-document.execCommand('SelectAll', false, null);
-document.execCommand('InsertText', false, '');
-input.blur();
-shouldBe('input.value', '""');
+debug("\nNo restriction");
+checkIt('noRange', "512", "512");
+checkIt('typeMismatch', "+++", "512");
+checkIt('empty', "", "");
+
+debug("\nmin/max/step");
+input.setAttribute("min", "0");
+input.setAttribute("max", "100");
+input.setAttribute("step", "1");
+checkIt("randerUnderflow", "-1", "-1");
+checkIt("minimum", "0", "0");
+checkIt("inRange", "25", "25");
+checkIt("inRange", "50", "50");
+checkIt("stepMismatch", "10.5", "10.5");
+checkIt("maximum", "100", "100");
+checkIt("rangeOverflow", "200", "200");
+checkIt("typeMismatch", "abc", "200");
+checkIt("empty", "", ""); // empty
+
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>

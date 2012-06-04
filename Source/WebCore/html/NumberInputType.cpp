@@ -252,7 +252,7 @@ String NumberInputType::convertFromVisibleValue(const String& visibleValue) cons
 bool NumberInputType::isAcceptableValue(const String& proposedValue)
 {
     String standardValue = convertFromVisibleValue(proposedValue);
-    return standardValue.isEmpty() || parseToDoubleForNumberType(standardValue, 0);
+    return standardValue.isEmpty() || isfinite(parseToDoubleForNumberType(standardValue));
 }
 
 String NumberInputType::sanitizeValue(const String& proposedValue) const

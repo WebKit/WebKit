@@ -1,3 +1,16 @@
+2012-06-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r117929) [Forms] input type=number thinks 0 is not a number
+        https://bugs.webkit.org/show_bug.cgi?id=88208
+
+        Reviewed by Kent Tamura.
+
+        This patch introduced function checkIt() for code sharing and added
+        more test cases to input-number-commit-valid-only.htm
+
+        * fast/forms/number/input-number-commit-valid-only-expected.txt: Changed for additional tests.
+        * fast/forms/number/input-number-commit-valid-only.html: Changed.
+
 2012-06-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Reset "WebKitTabToLinksPreferenceKey" in DumpRenderTreeChrome::resetDefaultsToConsistentValues
