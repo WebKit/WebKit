@@ -114,7 +114,7 @@ private:
 
 template <typename T> class Handle : public HandleBase, public HandleConverter<Handle<T>, T> {
 public:
-    template <typename A, typename B> friend class HandleConverter;
+    template <typename A, typename B> friend struct HandleConverter;
     typedef typename HandleTypes<T>::ExternalType ExternalType;
     template <typename U> Handle(Handle<U> o)
     {
