@@ -2374,7 +2374,8 @@ void FrameView::performPostLayoutTasks()
     m_frame->loader()->client()->dispatchDidLayout();
 
     RenderView* root = rootRenderer(this);
-    root->updateWidgetPositions();
+    if (root)
+        root->updateWidgetPositions();
     
     for (unsigned i = 0; i < maxUpdateWidgetsIterations; i++) {
         if (updateWidgets())
@@ -2395,7 +2396,7 @@ void FrameView::performPostLayoutTasks()
 
     m_actionScheduler->resume();
 
-    if (!root->printing()) {
+    if (root && !root->printing()) {
         IntSize currentSize;
         if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
             currentSize = fixedLayoutSize();

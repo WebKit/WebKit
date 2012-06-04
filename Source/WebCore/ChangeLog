@@ -1,3 +1,19 @@
+2012-06-04  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebCore::RenderView::getRetainedWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=88217
+
+        Reviewed by Kenneth Rohde Christiansen.
+        
+        There is no known repro, the crash has been seen on the field. It is likely that it happens with frame
+        flattening enabled only.
+
+        Null check root renderer in performPostLayoutTasks. The root can legitimely be null for several reasons and
+        is mostly null checked everywhere else.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2012-06-04  Kentaro Hara  <haraken@chromium.org>
 
         Use SelectorQuery in Element::webkitMatchesSelector()
