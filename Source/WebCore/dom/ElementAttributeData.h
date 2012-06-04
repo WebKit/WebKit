@@ -58,7 +58,7 @@ public:
     ~ElementAttributeData();
 
     void clearClass() { m_classNames.clear(); }
-    void setClass(const String& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
+    void setClass(const AtomicString& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
     const SpaceSplitString& classNames() const { return m_classNames; }
 
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }

@@ -140,7 +140,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (const ElementAttributeData* attrs = element->updatedAttributeData()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
-                Attribute* attr = attrs->attributeItem(i);
+                const Attribute* attr = attrs->attributeItem(i);
                 if (attr->localName() == "xmlns")
                     m_defaultNamespaceURI = attr->value();
                 else if (attr->prefix() == "xmlns")

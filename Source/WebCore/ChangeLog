@@ -1,3 +1,14 @@
+2012-06-04  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed build fixes for cr-android and Qt.
+
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::setClass):
+        Change ElementAttributeData::setClass() to take an AtomicString instead of a String.
+        The only call site has an AtomicString anyway.
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Add missing const.
+
 2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Fix software rendering for device-scale-factor > 1
