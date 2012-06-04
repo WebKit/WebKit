@@ -1,3 +1,26 @@
+2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Combobox options and autofill options should not be scaled for device-scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=87921
+
+        Reviewed by Darin Fisher.
+
+        Chrome takes care of scaling the combobox/autofill lists in the browser side. So it is not
+        necessary to scale here. This change reverts parts of changes in r111539.
+
+        Manually tested with different scale factors.
+
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::paint):
+        (WebCore::PopupListBox::paintRow):
+        (WebCore::PopupListBox::getRowHeight):
+        * platform/chromium/PopupListBox.h:
+        (PopupContainerSettings):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupMenuChromium::show):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+
 2012-06-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make LayerRendererChromium use RenderPasses instead of RenderSurfaces

@@ -71,9 +71,6 @@ void PopupMenuChromium::show(const IntRect& rect, FrameView* frameView, int inde
     if (!p.popup) {
         Settings* settings = frameView->frame()->page()->settings();
         PopupContainerSettings popupSettings = dropDownSettings;
-        popupSettings.defaultDeviceScaleFactor = settings->defaultDeviceScaleFactor();
-        if (!popupSettings.defaultDeviceScaleFactor)
-            popupSettings.defaultDeviceScaleFactor = 1;
         popupSettings.deviceSupportsTouch = settings->deviceSupportsTouch();
         p.popup = PopupContainer::create(client(), PopupContainer::Select, popupSettings);
     }

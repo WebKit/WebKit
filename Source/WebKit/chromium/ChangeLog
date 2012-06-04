@@ -1,3 +1,13 @@
+2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Combobox options and autofill options should not be scaled for device-scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=87921
+
+        Reviewed by Darin Fisher.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+
 2012-06-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make LayerRendererChromium use RenderPasses instead of RenderSurfaces
