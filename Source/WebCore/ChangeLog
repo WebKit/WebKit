@@ -1,3 +1,22 @@
+2012-06-04  Kentaro Hara  <haraken@chromium.org>
+
+        Remove SelectorQueryCacheEntry from SelectorQuery.h
+        https://bugs.webkit.org/show_bug.cgi?id=88204
+
+        Reviewed by Hajime Morita.
+
+        As anttik@ pointed out in https://bugs.webkit.org/show_bug.cgi?id=87942#c15,
+        we can remove SelectorQueryCacheEntry by having SelectorQuery hold CSSSelectorList.
+
+        Tests: fast/dom/SelectorAPI/* No change in test results.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore::SelectorQueryCache::add):
+        * dom/SelectorQuery.h:
+        (SelectorQuery):
+        (SelectorQueryCache):
+
 2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Memory leak in PasteboardHelper

@@ -143,9 +143,10 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
     }
 }
 
-void SelectorQuery::initialize(const CSSSelectorList& selectorList)
+SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
+    : m_selectorList(selectorList)
 {
-    m_selectors.initialize(selectorList);
+    m_selectors.initialize(m_selectorList);
 }
 
 bool SelectorQuery::matches(Element* element) const
@@ -168,37 +169,31 @@ PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
     return m_selectors.queryFirst(selectorChecker, rootNode);
 }
 
-SelectorQueryCacheEntry::SelectorQueryCacheEntry(CSSSelectorList& querySelectorList)
-    : m_querySelectorList(querySelectorList)
-{
-    m_selectorQuery.initialize(m_querySelectorList);
-}
-
 SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)
 {
-    HashMap<AtomicString, OwnPtr<SelectorQueryCacheEntry> >::iterator it = m_entries.find(selectors);
+    HashMap<AtomicString, OwnPtr<SelectorQuery> >::iterator it = m_entries.find(selectors);
     if (it != m_entries.end())
-        return it->second->selectorQuery();
+        return it->second.get();
 
     CSSParser parser(document);
-    CSSSelectorList querySelectorList;
-    parser.parseSelector(selectors, querySelectorList);
+    CSSSelectorList selectorList;
+    parser.parseSelector(selectors, selectorList);
 
-    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
+    if (!selectorList.first() || selectorList.hasUnknownPseudoElements()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
     // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (querySelectorList.selectorsNeedNamespaceResolution()) {
+    if (selectorList.selectorsNeedNamespaceResolution()) {
         ec = NAMESPACE_ERR;
         return 0;
     }
     
-    OwnPtr<SelectorQueryCacheEntry> entry = adoptPtr(new SelectorQueryCacheEntry(querySelectorList));
-    SelectorQuery* selectorQuery = entry->selectorQuery();
-    m_entries.add(selectors, entry.release());
-    return selectorQuery;
+    OwnPtr<SelectorQuery> selectorQuery = adoptPtr(new SelectorQuery(selectorList));
+    SelectorQuery* rawSelectorQuery = selectorQuery.get();
+    m_entries.add(selectors, selectorQuery.release());
+    return rawSelectorQuery;
 }
 
 void SelectorQueryCache::invalidate()

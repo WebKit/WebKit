@@ -67,29 +67,15 @@ private:
 
 class SelectorQuery {
     WTF_MAKE_NONCOPYABLE(SelectorQuery);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    SelectorQuery() { };
-    void initialize(const CSSSelectorList&);
+    SelectorQuery(const CSSSelectorList&);
     bool matches(Element*) const;
     PassRefPtr<NodeList> queryAll(Node* rootNode) const;
     PassRefPtr<Element> queryFirst(Node* rootNode) const;
 private:
     SelectorDataList m_selectors;
-};
-
-class SelectorQueryCacheEntry {
-    WTF_MAKE_NONCOPYABLE(SelectorQueryCacheEntry);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit SelectorQueryCacheEntry(CSSSelectorList&);
-    SelectorQuery* selectorQuery() { return &m_selectorQuery; };
-
-private:
-    // m_querySelectorList keeps the lifetime of CSSSelectors in m_selectorQuery.
-    // Since m_selectorQuery just holds pointers to CSSSelector objects,
-    // m_querySelectorList must not be destructed before m_selectorQuery is destructed.
-    CSSSelectorList m_querySelectorList;
-    SelectorQuery m_selectorQuery;
+    CSSSelectorList m_selectorList;
 };
 
 class SelectorQueryCache {
@@ -102,7 +88,7 @@ public:
     void invalidate();
 
 private:
-    HashMap<AtomicString, OwnPtr<SelectorQueryCacheEntry> > m_entries;
+    HashMap<AtomicString, OwnPtr<SelectorQuery> > m_entries;
 };
 
 }
