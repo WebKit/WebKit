@@ -1,3 +1,94 @@
+2012-06-04  Andreas Kling  <kling@webkit.org>
+
+        Make ElementAttributeData a variable-sized object to reduce memory use.
+        <http://webkit.org/b/88240>
+
+        Reviewed by Antti Koivisto.
+
+        Take advantage of the fact that we know at ElementAttributeData construction time how many attributes
+        it needs to accomodate and allocate exactly as much space as needed instead of using a Vector.
+        For elements that never have their attribute list mutated (the vast majority), this saves a lot of
+        memory and removes the indirection to Vector<Attribute>'s heap-allocated storage.
+
+        Introduced a mutability flag to ElementAttributeData and sprinkled assertions all over to make sure
+        that nothing tries to mutate an element with a raw attribute array.
+
+        When an Element's attribute(s) are mutated, we reconstruct the ElementAttributeData, this time using
+        a Vector as backing instead. This is triggered when calling Element::mutableAttributeData().
+
+        This reduces memory consumption by 3.2MB when viewing the full HTML5 spec at <http://whatwg.org/c/>.
+        This is a 35% reduction in DOM attribute memory use.
+
+        Furthermore, that page ends up promoting 27% of the elements to mutable attribute storage due to dynamic
+        adding of "class" attributes. For more static pages, savings are even greater.
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::attributes):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::hasEquivalentAttributes):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::cloneAttributesFromElement):
+        (WebCore::Element::createMutableAttributeData):
+        * dom/Element.h:
+        (WebCore::Element::attributeData):
+        (Element):
+        (WebCore::Element::updatedAttributeData):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore::Element::ensureUpdatedAttributeData):
+        (WebCore::Element::mutableAttributeData):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::createImmutable):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (WebCore::ElementAttributeData::~ElementAttributeData):
+        (WebCore::ElementAttributeData::attrIfExists):
+        (WebCore::ElementAttributeData::ensureAttr):
+        (WebCore::ElementAttributeData::setAttr):
+        (WebCore::ElementAttributeData::removeAttr):
+        (WebCore::ElementAttributeData::ensureInlineStyle):
+        (WebCore::ElementAttributeData::ensureMutableInlineStyle):
+        (WebCore::ElementAttributeData::destroyInlineStyle):
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::isEquivalent):
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        (WebCore::ElementAttributeData::cloneDataFrom):
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::replaceAttribute):
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::setClass):
+        (WebCore::ElementAttributeData::setIdForStyleResolution):
+        (WebCore::ElementAttributeData::inlineStyle):
+        (WebCore::ElementAttributeData::setAttributeStyle):
+        (WebCore::ElementAttributeData::isMutable):
+        (WebCore::ElementAttributeData::makeMutable):
+        (WebCore::ElementAttributeData::length):
+        (WebCore::ElementAttributeData::isEmpty):
+        (WebCore::ElementAttributeData::array):
+        (WebCore::ElementAttributeData::attributeItem):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::classAttributeChanged):
+        (WebCore::StyledElement::removeInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Combobox options and autofill options should not be scaled for device-scale factor
