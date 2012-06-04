@@ -148,6 +148,12 @@ void SelectorQuery::initialize(const CSSSelectorList& selectorList)
     m_selectors.initialize(selectorList);
 }
 
+bool SelectorQuery::matches(Element* element) const
+{
+    SelectorChecker selectorChecker(element->document(), !element->document()->inQuirksMode());
+    return m_selectors.matches(selectorChecker, element);
+}
+
 PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
     SelectorChecker selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode());

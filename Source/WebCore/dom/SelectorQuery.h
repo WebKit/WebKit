@@ -70,6 +70,7 @@ class SelectorQuery {
 public:
     SelectorQuery() { };
     void initialize(const CSSSelectorList&);
+    bool matches(Element*) const;
     PassRefPtr<NodeList> queryAll(Node* rootNode) const;
     PassRefPtr<Element> queryFirst(Node* rootNode) const;
 private:

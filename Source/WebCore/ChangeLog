@@ -1,3 +1,25 @@
+2012-06-04  Kentaro Hara  <haraken@chromium.org>
+
+        Use SelectorQuery in Element::webkitMatchesSelector()
+        https://bugs.webkit.org/show_bug.cgi?id=88209
+
+        Reviewed by Antti Koivisto.
+
+        By using SelectorQuery in Element::webkitMatchesSelector(),
+        we can not only simplify the code but also improve the performance
+        thanks to the cache mechanism of SelectorQuery which was implemented
+        in bug 87942.
+
+        Tests: fast/dom/SelectorAPI/*. No change in test results.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitMatchesSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::matches):
+        (WebCore):
+        * dom/SelectorQuery.h:
+        (SelectorQuery):
+
 2012-05-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] DataTransferItem.webkitGetAsEntry() should synchronously return entry

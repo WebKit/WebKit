@@ -60,6 +60,7 @@
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
@@ -1764,29 +1765,11 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         ec = SYNTAX_ERR;
         return false;
     }
-    CSSParserContext parserContext(document());
-    CSSParser parser(parserContext);
-    CSSSelectorList selectorList;
-    parser.parseSelector(selector, selectorList);
 
-    if (!selectorList.first()) {
-        ec = SYNTAX_ERR;
+    SelectorQuery* selectorQuery = document()->selectorQueryCache()->add(selector, document(), ec);
+    if (!selectorQuery)
         return false;
-    }
-
-    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
-    if (selectorList.selectorsNeedNamespaceResolution()) {
-        ec = NAMESPACE_ERR;
-        return false;
-    }
-
-    SelectorChecker selectorChecker(document(), parserContext.mode == CSSStrictMode);
-    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-        if (selectorChecker.checkSelector(selector, this))
-            return true;
-    }
-
-    return false;
+    return selectorQuery->matches(this);
 }
 
 DOMTokenList* Element::classList()
