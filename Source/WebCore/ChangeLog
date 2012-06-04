@@ -1,3 +1,34 @@
+2012-06-04  Philip Rogers  <pdr@google.com>
+
+        Fix assert in non-scaling strokes in patterns
+        https://bugs.webkit.org/show_bug.cgi?id=88198
+
+        When calculating the CTM for a rect or path in a pattern we need to use
+        an SVGPatternElement's local transform. Pattern did not expose the transform
+        because it does not extend from from SVGStyledLocatable or SVGStyledTransformable.
+        This patch exposes the pattern's transform in localCoordinateSpaceTransform.
+
+        SVGGradientElement does not need this special handling because the children
+        of a gradient element are restricted to not include shape and structural elements
+        that would need to calculate a CTM.
+
+        Before this patch the added test would assert.
+        This patch is a prerequisite to a major refactoring of RenderSVGShape &
+        friends, and the test will be unskipped in a followup patch.
+
+        Reviewed by Dirk Schulze.
+
+        Tests: svg/stroke/non-scaling-stroke-pattern-expected.svg
+               svg/stroke/non-scaling-stroke-pattern.svg
+
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::localCoordinateSpaceTransform):
+        (WebCore):
+        * svg/SVGPatternElement.h:
+        (SVGPatternElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::localCoordinateSpaceTransform):
+
 2012-06-04  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: speed up _calculateRetainedSizes function

@@ -1227,6 +1227,8 @@ BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
 
 BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
 
+BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
+
 BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 
 // Flaky on Linux after http://trac.webkit.org/changeset/112022

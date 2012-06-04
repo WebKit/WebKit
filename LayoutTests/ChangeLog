@@ -1,3 +1,15 @@
+2012-06-04  Philip Rogers  <pdr@google.com>
+
+        Fix assert in non-scaling strokes in patterns
+        https://bugs.webkit.org/show_bug.cgi?id=88198
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+        * svg/stroke/non-scaling-stroke-pattern-expected.svg: Added.
+        * svg/stroke/non-scaling-stroke-pattern.svg: Added.
+
 2012-06-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Disable heap profiler test on mac platform.

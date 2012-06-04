@@ -242,6 +242,13 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
     }
 }
 
+AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
+{
+    AffineTransform matrix;
+    patternTransform().concatenate(matrix);
+    return matrix;
+}
+
 bool SVGPatternElement::selfHasRelativeLengths() const
 {
     return x().isRelative()
