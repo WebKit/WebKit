@@ -825,7 +825,7 @@ void BinaryPropertyListSerializer::addAggregateObjectReference(ObjectReference r
 
 void BinaryPropertyListWriter::writePropertyList()
 {
-    BinaryPropertyListSerializer(*this);
+    BinaryPropertyListSerializer serializer(*this);
 }
 
 }
