@@ -48,9 +48,10 @@ public:
     
     bool run()
     {
+        m_changed = false;
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
             performBlockCSE(m_graph.m_blocks[block].get());
-        return true; // Maybe we'll need to make this reason about whether it changed the graph in an actionable way?
+        return m_changed;
     }
     
 private:
@@ -670,9 +671,18 @@ private:
             case CheckArgumentsNotCreated:
             case GetMyArgumentsLength:
             case GetMyArgumentsLengthSafe:
+                if (m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin) == local)
+                    result.mayBeAccessed = true;
+                break;
+                
             case GetMyArgumentByVal:
             case GetMyArgumentByValSafe:
-                if (m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin) == local)
+                result.mayBeAccessed = true;
+                break;
+                
+            case GetByVal:
+                // If this is accessing arguments then it's potentially accessing locals.
+                if (m_graph[node.child1()].shouldSpeculateArguments())
                     result.mayBeAccessed = true;
                 break;
                 
@@ -873,29 +883,48 @@ private:
                     m_graph.ref(phiIndex);
                 }
             }
+            m_changed = true;
             break;
         }
             
         case GetLocalUnlinked: {
             NodeIndex relevantLocalOpIgnored;
-            setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored));
+            m_changed |= setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored));
             break;
         }
             
         case Flush: {
-            if (m_fixpointState == FixpointNotConverged)
-                break;
             VariableAccessData* variableAccessData = node.variableAccessData();
             VirtualRegister local = variableAccessData->local();
-            Node& replacement = m_graph[node.child1()];
+            NodeIndex replacementIndex = node.child1().index();
+            Node& replacement = m_graph[replacementIndex];
             if (replacement.op() != SetLocal)
                 break;
+            ASSERT(replacement.variableAccessData() == variableAccessData);
             // FIXME: We should be able to remove SetLocals that can exit; we just need
             // to replace them with appropriate type checks.
-            if (replacement.canExit())
-                break;
+            if (m_fixpointState == FixpointNotConverged) {
+                // Need to be conservative at this time; if the SetLocal has any chance of performing
+                // any speculations then we cannot do anything.
+                if (variableAccessData->isCaptured()) {
+                    // Captured SetLocals never speculate and hence never exit.
+                } else {
+                    if (variableAccessData->shouldUseDoubleFormat())
+                        break;
+                    PredictedType prediction = variableAccessData->argumentAwarePrediction();
+                    if (isInt32Prediction(prediction))
+                        break;
+                    if (isArrayPrediction(prediction))
+                        break;
+                    if (isBooleanPrediction(prediction))
+                        break;
+                }
+            } else {
+                if (replacement.canExit())
+                    break;
+            }
             SetLocalStoreEliminationResult result =
-                setLocalStoreElimination(local, node.child1().index());
+                setLocalStoreElimination(local, replacementIndex);
             if (result.mayBeAccessed || result.mayClobberWorld)
                 break;
             ASSERT(replacement.op() == SetLocal);
@@ -908,6 +937,10 @@ private:
             m_graph.clearAndDerefChild1(node);
             node.children.child1() = Edge(dataNodeIndex);
             m_graph.ref(dataNodeIndex);
+            NodeIndex oldTailIndex = m_currentBlock->variablesAtTail.operand(local);
+            if (oldTailIndex == m_compileIndex)
+                m_currentBlock->variablesAtTail.operand(local) = replacementIndex;
+            m_changed = true;
             break;
         }
             
@@ -1041,6 +1074,7 @@ private:
     Vector<NodeIndex, 16> m_replacements;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
     OptimizationFixpointState m_fixpointState;
+    bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.
 };
 
 bool performCSE(Graph& graph, OptimizationFixpointState fixpointState)

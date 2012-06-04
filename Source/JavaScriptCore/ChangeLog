@@ -1,3 +1,32 @@
+2012-06-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG arguments simplification takes unkindly to direct accesses to the arguments register
+        https://bugs.webkit.org/show_bug.cgi?id=88261
+
+        Reviewed by Geoffrey Garen.
+        
+        Fixed arguments simplification for direct accesses to the arguments register, which may
+        arise if CSE had not run. Fixed CSE so that it does run prior to arguments simplification,
+        by making it a full-fledged member of the fixpoint. Fixed other issues in arguments
+        simplification, like realizing that it needs to bail if there is a direct assignment to
+        the arguments register, and failing to turn CreateArguments into PhantomArguments. Also
+        fixed CSE's handling of store elimination of captured locals in the presence of a
+        GetMyArgumentByVal (or one of its friends), and fixed CSE to correctly fixup variables at
+        tail if the Flush it removes is the last operation on a local in a basic block.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::isOKToOptimize):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::run):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (CSEPhase):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+
 2012-06-04  Anders Carlsson  <andersca@apple.com>
 
         Fix a struct/class mismatch.

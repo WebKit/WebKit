@@ -173,6 +173,8 @@ public:
                 case SetLocal: {
                     Node& source = m_graph[node.child1()];
                     VariableAccessData* variableAccessData = node.variableAccessData();
+                    int argumentsRegister =
+                        m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin);
                     if (source.op() != CreateArguments) {
                         // Make sure that the source of the SetLocal knows that if it's
                         // a variable that we think is aliased to the arguments, then it
@@ -180,8 +182,28 @@ public:
                         // aliasing. But not yet.
                         observeBadArgumentsUse(node.child1());
                         
-                        if (variableAccessData->isCaptured())
+                        if (variableAccessData->isCaptured()) {
+                            // If this is an assignment to the arguments register, then
+                            // pretend as if the arguments were created. We don't want to
+                            // optimize code that explicitly assigns to the arguments,
+                            // because that seems too ugly.
+                            
+                            // But, before getting rid of CreateArguments, we will have
+                            // an assignment to the arguments registers with JSValue().
+                            // That's because CSE will refuse to get rid of the
+                            // init_lazy_reg since it treats CreateArguments as reading
+                            // local variables. That could be fixed, but it's easier to
+                            // work around this here.
+                            if (source.op() == JSConstant
+                                && !source.valueOfJSConstant(codeBlock()))
+                                break;
+                            
+                            if (argumentsRegister != InvalidVirtualRegister
+                                && (variableAccessData->local() == argumentsRegister
+                                    || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister)))
+                                m_createsArguments.add(node.codeOrigin.inlineCallFrame);
                             break;
+                        }
                         
                         // Make sure that if it's a variable that we think is aliased to
                         // the arguments, that we know that it might actually not be.
@@ -191,8 +213,6 @@ public:
                         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                         break;
                     }
-                    int argumentsRegister =
-                        m_graph.uncheckedArgumentsRegisterFor(node.codeOrigin);
                     if (variableAccessData->local() == argumentsRegister
                         || variableAccessData->local() ==
                             unmodifiedArgumentsRegister(argumentsRegister)) {
@@ -587,8 +607,6 @@ public:
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 NodeIndex nodeIndex = block->at(indexInBlock);
                 Node& node = m_graph[nodeIndex];
-                if (!node.shouldGenerate())
-                    continue;
                 if (node.op() != CreateArguments)
                     continue;
                 // If this is a CreateArguments for an InlineCallFrame* that does
@@ -597,14 +615,16 @@ public:
                 // empty value) in DFG and arguments creation for OSR exit.
                 if (m_createsArguments.contains(node.codeOrigin.inlineCallFrame))
                     continue;
-                Node phantom(Phantom, node.codeOrigin);
-                phantom.children = node.children;
-                phantom.ref();
+                if (node.shouldGenerate()) {
+                    Node phantom(Phantom, node.codeOrigin);
+                    phantom.children = node.children;
+                    phantom.ref();
+                    NodeIndex phantomNodeIndex = m_graph.size();
+                    m_graph.append(phantom);
+                    insertionSet.append(indexInBlock, phantomNodeIndex);
+                }
                 node.setOpAndDefaultFlags(PhantomArguments);
                 node.children.reset();
-                NodeIndex phantomNodeIndex = m_graph.size();
-                m_graph.append(phantom);
-                insertionSet.append(indexInBlock, phantomNodeIndex);
             }
             insertionSet.execute(*block);
         }
@@ -698,25 +718,31 @@ private:
     
     bool isOKToOptimize(Node& source)
     {
+        if (m_createsArguments.contains(source.codeOrigin.inlineCallFrame))
+            return false;
+        
         switch (source.op()) {
         case GetLocal: {
             VariableAccessData* variableAccessData = source.variableAccessData();
-            if (variableAccessData->isCaptured())
+            if (variableAccessData->isCaptured()) {
+                int argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(source.codeOrigin);
+                if (argumentsRegister == InvalidVirtualRegister)
+                    break;
+                if (argumentsRegister == variableAccessData->local())
+                    return true;
+                if (unmodifiedArgumentsRegister(argumentsRegister) == variableAccessData->local())
+                    return true;
                 break;
+            }
             ArgumentsAliasingData& data =
                 m_argumentsAliasing.find(variableAccessData)->second;
             if (!data.isValid())
-                break;
-            if (m_createsArguments.contains(source.codeOrigin.inlineCallFrame))
                 break;
                             
             return true;
         }
                             
         case CreateArguments: {
-            if (m_createsArguments.contains(source.codeOrigin.inlineCallFrame))
-                break;
-                            
             return true;
         }
                             

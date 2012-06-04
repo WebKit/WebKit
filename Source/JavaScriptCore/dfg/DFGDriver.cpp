@@ -82,9 +82,9 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         changed |= performConstantFolding(dfg);
         changed |= performArgumentsSimplification(dfg);
         changed |= performCFGSimplification(dfg);
+        changed |= performCSE(dfg, FixpointNotConverged);
         if (!changed)
             break;
-        performCSE(dfg, FixpointNotConverged);
         dfg.resetExitStates();
     }
     performCSE(dfg, FixpointConverged);

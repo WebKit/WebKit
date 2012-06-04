@@ -1,3 +1,27 @@
+2012-06-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG arguments simplification takes unkindly to direct accesses to the arguments register
+        https://bugs.webkit.org/show_bug.cgi?id=88261
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-arguments-alias-one-block-expected.txt: Added.
+        * fast/js/dfg-arguments-alias-one-block-osr-exit-expected.txt: Added.
+        * fast/js/dfg-arguments-alias-one-block-osr-exit.html: Added.
+        * fast/js/dfg-arguments-alias-one-block-overwrite-arguments-expected.txt: Added.
+        * fast/js/dfg-arguments-alias-one-block-overwrite-arguments.html: Added.
+        * fast/js/dfg-arguments-alias-one-block-overwrite-expected.txt: Added.
+        * fast/js/dfg-arguments-alias-one-block-overwrite.html: Added.
+        * fast/js/dfg-arguments-alias-one-block.html: Added.
+        * fast/js/script-tests/dfg-arguments-alias-one-block-osr-exit.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-arguments-alias-one-block-overwrite-arguments.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-arguments-alias-one-block-overwrite.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-arguments-alias-one-block.js: Added.
+        (foo):
+
 2012-06-04  Ami Fischman  <fischman@chromium.org>
 
         Don't crash when re-parenting a removed HTMLMediaElement

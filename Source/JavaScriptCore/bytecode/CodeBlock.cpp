@@ -1145,9 +1145,9 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_jneq_ptr: {
             int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
+            void* pointer = (++it)->u.pointer;
             int offset = (++it)->u.operand;
-            dataLog("[%4d] jneq_ptr\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            dataLog("[%4d] jneq_ptr\t\t %s, %p, %d(->%d)\n", location, registerName(exec, r0).data(), pointer, offset, location + offset);
             break;
         }
         case op_jless: {
