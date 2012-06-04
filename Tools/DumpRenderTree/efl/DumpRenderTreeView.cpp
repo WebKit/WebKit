@@ -23,6 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "DumpRenderTreeView.h"
 
@@ -36,6 +37,7 @@
 #include <Evas.h>
 #include <cstdio>
 #include <cstdlib>
+#include <inttypes.h>
 #include <wtf/NotFound.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -129,7 +131,7 @@ static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Securit
         // sufficient to just get a range of 10000 to determine if we were
         // above or below a threshold.
         int64_t truncatedSpaceNeeded = (totalSpaceNeeded / 10000) * 10000;
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%lld\n",
+        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%" PRId64 "\n",
                ewk_security_origin_protocol_get(origin),
                ewk_security_origin_host_get(origin),
                ewk_security_origin_port_get(origin),

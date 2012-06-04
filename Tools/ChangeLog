@@ -1,3 +1,16 @@
+2012-06-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Compilation warning in DumpRenderTreeView.cpp on 64-Bit
+        https://bugs.webkit.org/show_bug.cgi?id=87869
+
+        Reviewed by Andreas Kling.
+
+        Replace %lld by PRId64 macro to print an int64_t value and silent a
+        compilation warning on 64-Bit.
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededApplicationCacheQuota):
+
 2012-06-03  Varun Jain  <varunjain@google.com>
 
         [chromium] Add new gesture type (two finger tap) that triggers context menu.
