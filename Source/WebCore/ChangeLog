@@ -1,3 +1,15 @@
+2012-06-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119393.
+        http://trac.webkit.org/changeset/119393
+        https://bugs.webkit.org/show_bug.cgi?id=88236
+
+        Test is incorrect (duplicate content) and is causing Chromium
+        failures (Requested by schenney on #webkit).
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2012-06-04  Zeev Lieber  <zlieber@chromium.org>
 
         [chromium] Cleanup scissor rect computation/use with damage

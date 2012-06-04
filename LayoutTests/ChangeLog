@@ -1,3 +1,16 @@
+2012-06-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119393.
+        http://trac.webkit.org/changeset/119393
+        https://bugs.webkit.org/show_bug.cgi?id=88236
+
+        Test is incorrect (duplicate content) and is causing Chromium
+        failures (Requested by schenney on #webkit).
+
+        * fast/canvas/drawImage-clipped-source-expected.txt: Removed.
+        * fast/canvas/drawImage-clipped-source.html: Removed.
+        * fast/canvas/drawImage-clipped-source.js: Removed.
+
 2012-06-04  Philip Rogers  <pdr@google.com>
 
         Update test expectations after 119392

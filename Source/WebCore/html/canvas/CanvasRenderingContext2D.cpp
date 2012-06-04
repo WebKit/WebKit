@@ -1259,40 +1259,6 @@ static inline FloatRect normalizeRect(const FloatRect& rect)
         max(rect.height(), -rect.height()));
 }
 
-static inline bool isFiniteRect(const FloatRect& rect)
-{
-    return isfinite(rect.x()) && isfinite(rect.y()) && isfinite(rect.width()) && isfinite(rect.height());
-}
-
-static inline bool normalizeAndClipRects(const FloatRect& imageRect, FloatRect& srcRect, FloatRect& dstRect, ExceptionCode& ec)
-{
-    if (!isFiniteRect(dstRect) || !isFiniteRect(srcRect))
-        return false;
-
-    srcRect = normalizeRect(srcRect);
-    FloatRect originalSrcRect = srcRect;
-    srcRect.intersect(imageRect);
-    if (srcRect.isZero()) {
-        ec = INDEX_SIZE_ERR;
-        return false;    
-    }
-
-    if (dstRect.isZero())
-        return false;
-
-    dstRect = normalizeRect(dstRect);
-
-    if (srcRect == originalSrcRect)
-        return true; // No clipping, early exit
-
-    float xScale = dstRect.width() / originalSrcRect.width();
-    float yScale = dstRect.height() / originalSrcRect.height();
-    dstRect.move((srcRect.x() - originalSrcRect.x()) * xScale, (srcRect.y() - originalSrcRect.y()) * yScale);
-    dstRect.contract((originalSrcRect.width() - srcRect.width()) * xScale, (originalSrcRect.height() - srcRect.height()) * yScale);
-
-    return true;
-}
-
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y, ExceptionCode& ec)
 {
     if (!image) {
@@ -1345,12 +1311,16 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     if (!image->complete())
         return;
 
+    FloatRect normalizedSrcRect = normalizeRect(srcRect);
+    FloatRect normalizedDstRect = normalizeRect(dstRect);
+
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    FloatRect normalizedSrcRect = srcRect;
-    FloatRect normalizedDstRect = dstRect;
-    if (!normalizeAndClipRects(imageRect, normalizedSrcRect, normalizedDstRect, ec))
+    if (!srcRect.width() || !srcRect.height()) {
+        ec = INDEX_SIZE_ERR;
         return;
-    
+    }
+    if (!imageRect.contains(normalizedSrcRect))
+        return;
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1413,11 +1383,14 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
         return;
     }
 
+    if (!srcRect.width() || !srcRect.height()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     ec = 0;
 
-    FloatRect normalizedSrcRect = srcRect;
-    FloatRect normalizedDstRect = dstRect;
-    if (!normalizeAndClipRects(srcCanvasRect, normalizedSrcRect, normalizedDstRect, ec))
+    if (!srcCanvasRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
@@ -1443,19 +1416,20 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
 #else
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
-    if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, state().m_globalComposite);
+
+    if (rectContainsCanvas(dstRect)) {
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, state().m_globalComposite);
+        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, state().m_globalComposite);
-        didDraw(normalizedDstRect);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        didDraw(dstRect);
     }
 }
 
@@ -1502,11 +1476,13 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
         return;
 
     FloatRect videoRect = FloatRect(FloatPoint(), size(video));
-    FloatRect normalizedSrcRect = srcRect;
-    FloatRect normalizedDstRect = dstRect;
-    if (!normalizeAndClipRects(videoRect, normalizedSrcRect, normalizedDstRect, ec)) {
+    if (!srcRect.width() || !srcRect.height()) {
+        ec = INDEX_SIZE_ERR;
         return;
     }
+
+    if (!videoRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
+        return;
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1517,13 +1493,13 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     checkOrigin(video);
 
     GraphicsContextStateSaver stateSaver(*c);
-    c->clip(normalizedDstRect);
-    c->translate(normalizedDstRect.x(), normalizedDstRect.y());
-    c->scale(FloatSize(normalizedDstRect.width() / normalizedSrcRect.width(), normalizedDstRect.height() / normalizedSrcRect.height()));
-    c->translate(-normalizedSrcRect.x(), -normalizedSrcRect.y());
+    c->clip(dstRect);
+    c->translate(dstRect.x(), dstRect.y());
+    c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+    c->translate(-srcRect.x(), -srcRect.y());
     video->paintCurrentFrameInContext(c, IntRect(IntPoint(), size(video)));
     stateSaver.restore();
-    didDraw(normalizedDstRect);
+    didDraw(dstRect);
 }
 #endif
 
