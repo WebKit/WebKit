@@ -31,13 +31,6 @@
 #include <QtCore/QBasicTimer>
 #include <QtCore/QObject>
 
-// FIXME: These constants should possibly depend on DPI.
-const int maxPanDistance = 10;
-const int maxDoubleTapDistance = 120;
-const int tapAndHoldTime = 800;
-const int maxDoubleTapInterval = 400;
-const int highlightDelay = 80;
-
 namespace WebKit {
 
 class QtWebPageEventHandler;
@@ -45,7 +38,8 @@ class QtWebPageEventHandler;
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:
     QtTapGestureRecognizer(QtWebPageEventHandler*);
-    bool update(QEvent::Type eventType, const QTouchEvent::TouchPoint&);
+    void update(const QTouchEvent::TouchPoint&);
+    void finish(const QTouchEvent::TouchPoint&);
     void cancel();
 
 protected:
@@ -64,9 +58,8 @@ private:
     QTouchEvent::TouchPoint m_lastTouchPoint;
 
     enum {
-        Invalid,
         SingleTapCandidate,
-        DoubleTapCandidate,
+        DoubleTapCandidate
     } m_candidate;
 };
 

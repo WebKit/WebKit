@@ -77,7 +77,8 @@ public:
 
     void setViewportInteractionEngine(QtViewportInteractionEngine*);
 
-    void handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint&);
+    void activateTapHighlight(const QTouchEvent::TouchPoint&);
+    void deactivateTapHighlight();
     void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 
@@ -113,6 +114,7 @@ private:
     Qt::MouseButton m_previousClickButton;
     int m_clickCount;
     bool m_postponeTextInputStateChanged;
+    bool m_isTapHighlightActive;
 };
 
 } // namespace WebKit

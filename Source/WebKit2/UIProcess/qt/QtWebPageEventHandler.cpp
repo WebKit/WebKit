@@ -98,6 +98,7 @@ QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* q
     , m_previousClickButton(Qt::NoButton)
     , m_clickCount(0)
     , m_postponeTextInputStateChanged(false)
+    , m_isTapHighlightActive(false)
 {
     connect(qApp->inputPanel(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
 }
@@ -227,23 +228,32 @@ void QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
     ev->setAccepted(accepted);
 }
 
-void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint& point)
+void QtWebPageEventHandler::activateTapHighlight(const QTouchEvent::TouchPoint& point)
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (point.pos() == QPointF()) {
-        // An empty point deactivates the highlighting.
-        m_webPageProxy->handlePotentialActivation(IntPoint(), IntSize());
-    } else {
-        QTransform fromItemTransform = m_webPage->transformFromItem();
-        m_webPageProxy->handlePotentialActivation(IntPoint(fromItemTransform.map(point.pos()).toPoint()), IntSize(point.rect().size().toSize()));
-    }
+    ASSERT(!point.pos().toPoint().isNull());
+    ASSERT(!m_isTapHighlightActive);
+    m_isTapHighlightActive = true;
+    QTransform fromItemTransform = m_webPage->transformFromItem();
+    m_webPageProxy->handlePotentialActivation(IntPoint(fromItemTransform.map(point.pos()).toPoint()), IntSize(point.rect().size().toSize()));
 #else
     Q_UNUSED(point);
 #endif
 }
 
+void QtWebPageEventHandler::deactivateTapHighlight()
+{
+    if (!m_isTapHighlightActive)
+        return;
+
+    // An empty point deactivates the highlighting.
+    m_webPageProxy->handlePotentialActivation(IntPoint(), IntSize());
+    m_isTapHighlightActive = false;
+}
+
 void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)
 {
+    deactivateTapHighlight();
     m_postponeTextInputStateChanged = true;
 
     QTransform fromItemTransform = m_webPage->transformFromItem();
@@ -253,6 +263,7 @@ void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& 
 
 void QtWebPageEventHandler::handleDoubleTapEvent(const QTouchEvent::TouchPoint& point)
 {
+    deactivateTapHighlight();
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->findZoomableAreaForPoint(fromItemTransform.map(point.pos()).toPoint(), IntSize(point.rect().size().toSize()));
 }
@@ -489,9 +500,14 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     if (!activeTouchPointCount) {
         if (touchPointCount == 1) {
             // No active touch points, one finger released.
-            if (!m_panGestureRecognizer.isRecognized())
-                m_tapGestureRecognizer.update(ev->type(), touchPoints.first());
-            m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
+            if (m_panGestureRecognizer.isRecognized())
+                m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
+            else {
+                // The events did not result in a pan gesture.
+                m_panGestureRecognizer.cancel();
+                m_tapGestureRecognizer.finish(touchPoints.first());
+            }
+
         } else
             m_pinchGestureRecognizer.finish();
 
@@ -511,7 +527,7 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized() || m_webView->isMoving())
         m_tapGestureRecognizer.cancel();
     else if (touchPointCount == 1)
-        m_tapGestureRecognizer.update(ev->type(), touchPoints.first());
+        m_tapGestureRecognizer.update(touchPoints.first());
 }
 #endif
 

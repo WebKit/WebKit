@@ -1,3 +1,42 @@
+2012-06-04  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Refactor the tap gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=88096
+
+        Reviewed by Simon Hausmann.
+
+        Refactor the tap gesture recognizer so that its internal state machine is
+        self contained and independent of input event types.
+        Also change the internal API for tap highlighting to make the code easier
+        to understand on the caller side.
+
+        This patch makes the tap gesture recognizer more robust, consistent with
+        other gesture recognizers and fixes some issues related to highlighting
+        and link activation with respect to native touch events.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::withinDistance):
+        (WebKit::QtTapGestureRecognizer::update):
+        (WebKit::QtTapGestureRecognizer::finish):
+        (WebKit::QtTapGestureRecognizer::cancel):
+        (WebKit::QtTapGestureRecognizer::highlightTimeout):
+        (WebKit::QtTapGestureRecognizer::singleTapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+        (WebKit::QtTapGestureRecognizer::reset):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        (QtTapGestureRecognizer):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::activateTapHighlight):
+        (WebKit::QtWebPageEventHandler::deactivateTapHighlight):
+        (WebKit):
+        (WebKit::QtWebPageEventHandler::handleSingleTapEvent):
+        (WebKit::QtWebPageEventHandler::handleDoubleTapEvent):
+        (WebKit::QtWebPageEventHandler::doneWithTouchEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+
 2012-06-02  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.

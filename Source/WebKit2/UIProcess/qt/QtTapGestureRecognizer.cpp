@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011, 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,73 +27,92 @@
 
 #include "QtWebPageEventHandler.h"
 #include <QLineF>
-#include <QTouchEvent>
 
 namespace WebKit {
 
+// FIXME: These constants should possibly depend on DPI.
+static const int panDistanceThreshold = 10;
+static const int maxDoubleTapDistance = 120;
+
+// FIXME: These constants should possibly be consistent across the platform.
+static const int tapAndHoldTime = 1000;
+static const int maxDoubleTapInterval = 500;
+static const int highlightDelay = 100;
+
+
 QtTapGestureRecognizer::QtTapGestureRecognizer(QtWebPageEventHandler* eventHandler)
     : QtGestureRecognizer(eventHandler)
-    , m_candidate(Invalid)
+    , m_candidate(SingleTapCandidate)
 {
 }
 
 bool QtTapGestureRecognizer::withinDistance(const QTouchEvent::TouchPoint& touchPoint, int distance)
 {
+    ASSERT(m_lastTouchPoint.id() != -1);
     return QLineF(touchPoint.screenPos(), m_lastTouchPoint.screenPos()).length() < distance;
 }
 
-bool QtTapGestureRecognizer::update(QEvent::Type eventType, const QTouchEvent::TouchPoint& touchPoint)
+void QtTapGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint)
 {
-    ASSERT(m_eventHandler);
-
-    switch (eventType) {
-    case QEvent::TouchBegin:
+    switch (m_state) {
+    case NoGesture:
         m_doubleTapTimer.stop(); // Cancel other pending single tap event.
+        m_state = GestureRecognitionStarted;
 
         ASSERT(!m_tapAndHoldTimer.isActive());
         m_tapAndHoldTimer.start(tapAndHoldTime, this);
 
-        if (m_lastTouchPoint.id() != -1 && withinDistance(touchPoint, maxDoubleTapDistance))
-            m_candidate = DoubleTapCandidate;
-        else {
-            m_candidate = SingleTapCandidate;
-            // The below in facts resets any previous single tap event.
-            m_highlightTimer.start(highlightDelay, this);
-            m_lastTouchPoint = touchPoint;
-            m_doubleTapTimer.start(maxDoubleTapInterval, this);
-        }
-        break;
+        // Early return if this is the second touch point of a potential double tap gesture.
+        if (m_candidate == DoubleTapCandidate && withinDistance(touchPoint, maxDoubleTapDistance))
+            return;
 
-    case QEvent::TouchUpdate:
+        // The below in fact resets any previous single tap event.
+        m_candidate = SingleTapCandidate;
+        m_lastTouchPoint = touchPoint;
+        m_highlightTimer.start(highlightDelay, this);
+        m_doubleTapTimer.start(maxDoubleTapInterval, this);
+        break;
+    case GestureRecognitionStarted:
         // If the touch point moves further than the threshold, we cancel the tap gesture.
-        if (m_candidate != Invalid && !withinDistance(touchPoint, maxPanDistance))
+        if (!withinDistance(touchPoint, panDistanceThreshold))
             reset();
         break;
-
-    case QEvent::TouchEnd:
-        m_tapAndHoldTimer.stop();
-
-        if (m_candidate == Invalid)
-            break;
-
-        if (m_candidate == DoubleTapCandidate) {
-            m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
-            m_eventHandler->handleDoubleTapEvent(touchPoint);
-            reset();
-        }
-
-        break;
-
     default:
+        ASSERT_NOT_REACHED();
         break;
     }
+}
 
-    return false;
+void QtTapGestureRecognizer::finish(const QTouchEvent::TouchPoint& touchPoint)
+{
+    ASSERT(m_eventHandler);
+    m_tapAndHoldTimer.stop();
+
+    // Gesture has been cancelled, ignore.
+    if (m_state == NoGesture)
+        return;
+
+    m_state = NoGesture;
+
+    if (m_candidate == SingleTapCandidate) {
+        if (m_doubleTapTimer.isActive()) {
+            m_candidate = DoubleTapCandidate;
+            m_lastTouchPoint = touchPoint;
+            // Early return since this is a potential double tap gesture.
+            return;
+        }
+        // This happens when the finger is released (gesture finished) after the single
+        // tap timeout elapsed (500ms) but before the tap-and-hold timeout (1000ms) fired.
+        m_eventHandler->handleSingleTapEvent(touchPoint);
+    } else // DoubleTapCandidate
+        m_eventHandler->handleDoubleTapEvent(touchPoint);
+
+    reset();
 }
 
 void QtTapGestureRecognizer::cancel()
 {
-    if (m_candidate == Invalid)
+    if (m_lastTouchPoint.id() == -1)
         return;
 
     reset();
@@ -103,27 +122,22 @@ void QtTapGestureRecognizer::highlightTimeout()
 {
     m_highlightTimer.stop();
 
-    if (m_candidate != SingleTapCandidate)
+    // Gesture has been cancelled, ignore.
+    if (m_lastTouchPoint.id() == -1)
         return;
 
-    ASSERT(m_lastTouchPoint.id() != -1);
-    m_eventHandler->handlePotentialSingleTapEvent(m_lastTouchPoint);
+    m_eventHandler->activateTapHighlight(m_lastTouchPoint);
 }
 
 void QtTapGestureRecognizer::singleTapTimeout()
 {
     m_doubleTapTimer.stop();
 
-    // Finger is still pressed, ignore.
-    if (m_tapAndHoldTimer.isActive())
+    // Finger is still pressed or gesture has been cancelled, ignore.
+    if (m_tapAndHoldTimer.isActive() || m_lastTouchPoint.id() == -1)
         return;
 
-    ASSERT(m_lastTouchPoint.id() != -1);
-
-    if (m_candidate == SingleTapCandidate) {
-        m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
-        m_eventHandler->handleSingleTapEvent(m_lastTouchPoint);
-    }
+    m_eventHandler->handleSingleTapEvent(m_lastTouchPoint);
     reset();
 }
 
@@ -131,9 +145,11 @@ void QtTapGestureRecognizer::tapAndHoldTimeout()
 {
     m_tapAndHoldTimer.stop();
 
-    ASSERT(m_lastTouchPoint.id() != -1);
+    // Gesture has been cancelled, ignore.
+    if (m_lastTouchPoint.id() == -1)
+        return;
+
 #if 0 // No support for synthetic context menus in WK2 yet.
-    m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
     m_eventHandler->handleTapAndHoldEvent(m_lastTouchPoint);
 #endif
     reset();
@@ -141,10 +157,9 @@ void QtTapGestureRecognizer::tapAndHoldTimeout()
 
 void QtTapGestureRecognizer::reset()
 {
-    if (m_candidate != Invalid)
-        m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+    m_eventHandler->deactivateTapHighlight();
 
-    m_candidate = Invalid;
+    m_candidate = SingleTapCandidate;
     m_lastTouchPoint.setId(-1);
     m_highlightTimer.stop();
     m_doubleTapTimer.stop();
