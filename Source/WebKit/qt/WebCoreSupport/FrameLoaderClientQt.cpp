@@ -1023,6 +1023,21 @@ void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identif
         dumpAssignedUrls[identifier] = drtDescriptionSuitableForTestResult(request.url());
 }
 
+static void blockRequest(WebCore::ResourceRequest& request)
+{
+    request.setURL(QUrl());
+}
+
+static bool isLocalhost(const QString& host)
+{
+    return host == QLatin1String("127.0.0.1") || host == QLatin1String("localhost");
+}
+
+static bool hostIsUsedBySomeTestsToGenerateError(const QString& host)
+{
+    return host == QLatin1String("255.255.255.255");
+}
+
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse)
 {
     QUrl url = newRequest.url();
@@ -1034,26 +1049,32 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
                (redirectResponse.isNull()) ? "(null)" : qPrintable(drtDescriptionSuitableForTestResult(redirectResponse)));
 
     if (sendRequestReturnsNull) {
-        newRequest.setURL(QUrl());
+        blockRequest(newRequest);
         return;
     }
 
     if (sendRequestReturnsNullOnRedirect && !redirectResponse.isNull()) {
         printf("Returning null for this redirect\n");
-        newRequest.setURL(QUrl());
+        blockRequest(newRequest);
         return;
     }
 
+    QString host = url.host();
+    QString urlLowerScheme = url.scheme().toLower();
     if (QWebPagePrivate::drtRun
-        && url.isValid()
-        && (url.scheme().toLower() == QLatin1String("http") || url.scheme().toLower() == QLatin1String("https"))
-        && url.host() != QLatin1String("127.0.0.1")
-        && url.host() != QLatin1String("255.255.255.255")
-        && url.host().toLower() != QLatin1String("localhost")) {
+        && !host.isEmpty()
+        && (urlLowerScheme == QLatin1String("http") || urlLowerScheme == QLatin1String("https"))) {
 
-        printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(newRequest.url())));
-        newRequest.setURL(QUrl());
-        return;
+        QUrl testURL = m_frame->page()->mainFrame()->document()->url();
+        QString testHost = testURL.host();
+
+        if (!isLocalhost(host)
+            && !hostIsUsedBySomeTestsToGenerateError(host)
+            && ((urlLowerScheme != QLatin1String("http") && urlLowerScheme != QLatin1String("https")) || isLocalhost(testHost))) {
+            printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(newRequest.url())));
+            blockRequest(newRequest);
+            return;
+        }
     }
 
     for (int i = 0; i < sendRequestClearHeaders.size(); ++i)
