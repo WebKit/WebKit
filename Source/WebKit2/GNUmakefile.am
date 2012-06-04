@@ -97,6 +97,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(COVERAGE_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GTK_UNIX_PRINTING_CFLAGS) \

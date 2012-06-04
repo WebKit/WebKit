@@ -1,3 +1,13 @@
+2012-06-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK][WK2] Implement geolocation provider for the GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=83877
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Ignore WebKitGeolocationProvider files.
+
 2012-06-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Reset "WebKitTabToLinksPreferenceKey" in DumpRenderTreeChrome::resetDefaultsToConsistentValues

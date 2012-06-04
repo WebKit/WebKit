@@ -511,8 +511,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKFrame.h \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.h \
+	Source/WebKit2/UIProcess/API/C/WKGeolocationManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKGeolocationManager.h \
 	Source/WebKit2/UIProcess/API/C/WKGeolocationPermissionRequest.h \
+	Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.cpp \
 	Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.h \
 	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.cpp \
 	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.h \
@@ -582,6 +584,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationProvider.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationProvider.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResultPrivate.h \

@@ -24,6 +24,7 @@
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
+#include "WebKitGeolocationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -44,6 +45,9 @@ struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
 
     GRefPtr<WebKitCookieManager> cookieManager;
+#if ENABLE(GEOLOCATION)
+    RefPtr<WebKitGeolocationProvider> geolocationProvider;
+#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -93,6 +97,10 @@ static gpointer createDefaultWebContext(gpointer)
     webContext->priv->context = WKContextGetSharedProcessContext();
     WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
     attachDownloadClientToContext(webContext.get());
+#if ENABLE(GEOLOCATION)
+    WKGeolocationManagerRef wkGeolocationManager = WKContextGetGeolocationManager(webContext->priv->context.get());
+    webContext->priv->geolocationProvider = WebKitGeolocationProvider::create(wkGeolocationManager);
+#endif
     return webContext.get();
 }
 
