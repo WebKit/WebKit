@@ -23,39 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCRenderSurfaceDrawQuad_h
-#define CCRenderSurfaceDrawQuad_h
+#include "config.h"
 
-#include "cc/CCDrawQuad.h"
-#include <public/WebFilterOperations.h>
-#include <wtf/PassOwnPtr.h>
+#include "cc/CCRenderPassDrawQuad.h"
 
 namespace WebCore {
 
-class CCLayerImpl;
-
-class CCRenderSurfaceDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCRenderSurfaceDrawQuad);
-public:
-    static PassOwnPtr<CCRenderSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
-
-    CCLayerImpl* layer() const { return m_layer; }
-    bool isReplica() const { return m_isReplica; }
-    unsigned maskTextureId() const { return m_maskTextureId; }
-
-    const WebKit::WebFilterOperations& filters() const { return m_filters; }
-    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
-
-private:
-    CCRenderSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
-
-    CCLayerImpl* m_layer;
-    bool m_isReplica;
-    WebKit::WebFilterOperations m_filters;
-    WebKit::WebFilterOperations m_backgroundFilters;
-    unsigned m_maskTextureId;
-};
-
+PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
+{
+    return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPass, isReplica, filters, backgroundFilters, maskTextureId));
 }
 
-#endif
+CCRenderPassDrawQuad::CCRenderPassDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::RenderPass, quadRect)
+    , m_renderPass(renderPass)
+    , m_isReplica(isReplica)
+    , m_filters(filters)
+    , m_backgroundFilters(backgroundFilters)
+    , m_maskTextureId(maskTextureId)
+{
+    ASSERT(m_renderPass);
+}
+
+}

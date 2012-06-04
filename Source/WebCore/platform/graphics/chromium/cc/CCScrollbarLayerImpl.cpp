@@ -58,11 +58,11 @@ void CCScrollbarLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
         return;
 
     if (!m_texture)
-        m_texture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
+        m_texture = ManagedTexture::create(layerRenderer->implTextureManager());
 
     // The context could have been lost since the last frame and the old texture
     // manager may no longer be valid.
-    m_texture->setTextureManager(layerRenderer->renderSurfaceTextureManager());
+    m_texture->setTextureManager(layerRenderer->implTextureManager());
 
     IntSize textureSize = contentBounds();
     if (!m_texture->reserve(textureSize, GraphicsContext3D::RGBA))
@@ -77,7 +77,7 @@ void CCScrollbarLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
 
     {
         PlatformCanvas::AutoLocker locker(&canvas);
-        m_texture->bindTexture(context, layerRenderer->renderSurfaceTextureAllocator());
+        m_texture->bindTexture(context, layerRenderer->implTextureAllocator());
 
         // FIXME: Skia uses BGRA actually, we correct that with the swizzle pixel shader.
         GraphicsContext3D* context3d = context->context3D();

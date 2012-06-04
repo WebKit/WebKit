@@ -42,7 +42,6 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCPageScaleAnimation.h"
-#include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
@@ -303,9 +302,10 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
         occlusionTracker.enterLayer(it);
 
-        if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty())
-            pass->appendQuadsForRenderSurfaceLayer(*it, &occlusionTracker);
-        else if (it.representsItself() && !it->visibleLayerRect().isEmpty() &&  !it->scissorRect().isEmpty()) {
+        if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty()) {
+            CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
+            pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
+        } else if (it.representsItself() && !it->visibleLayerRect().isEmpty() && !it->scissorRect().isEmpty()) {
             it->willDraw(m_layerRenderer.get(), context());
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
@@ -399,13 +399,17 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(canDraw());
+    ASSERT(!frame.renderPasses.isEmpty());
 
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's
     // RenderWidget.
 
+    // The root RenderPass is the last one to be drawn.
+    CCRenderPass* rootRenderPass = frame.renderPasses.last().get();
+
     m_fpsCounter->markBeginningOfFrame(currentTime());
-    m_layerRenderer->beginDrawingFrame(m_rootLayerImpl->renderSurface());
+    m_layerRenderer->beginDrawingFrame(rootRenderPass);
 
     for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
         CCRenderPass* renderPass = frame.renderPasses[i].get();

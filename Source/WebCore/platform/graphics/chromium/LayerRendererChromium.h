@@ -46,7 +46,7 @@ class CCCheckerboardDrawQuad;
 class CCDebugBorderDrawQuad;
 class CCDrawQuad;
 class CCIOSurfaceDrawQuad;
-class CCRenderSurfaceDrawQuad;
+class CCRenderPassDrawQuad;
 class CCSolidColorDrawQuad;
 class CCTextureDrawQuad;
 class CCTileDrawQuad;
@@ -75,8 +75,8 @@ public:
 
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
-    virtual void beginDrawingFrame(CCRenderSurface* defaultRenderSurface) OVERRIDE;
-    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentSurface) OVERRIDE;
+    virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) OVERRIDE;
+    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect) OVERRIDE;
     virtual void finishDrawingFrame() OVERRIDE;
 
     virtual void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize) OVERRIDE;
@@ -92,14 +92,13 @@ public:
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
 
-
     virtual void getFramebufferPixels(void *pixels, const IntRect&) OVERRIDE;
     bool getFramebufferTexture(ManagedTexture*, const IntRect& deviceRect);
 
-    virtual TextureManager* renderSurfaceTextureManager() const OVERRIDE { return m_renderSurfaceTextureManager.get(); }
+    virtual TextureManager* implTextureManager() const OVERRIDE { return m_implTextureManager.get(); }
     virtual TextureCopier* textureCopier() const OVERRIDE { return m_textureCopier.get(); }
     virtual TextureUploader* textureUploader() const OVERRIDE { return m_textureUploader.get(); }
-    virtual TextureAllocator* renderSurfaceTextureAllocator() const OVERRIDE { return m_renderSurfaceTextureAllocator.get(); }
+    virtual TextureAllocator* implTextureAllocator() const OVERRIDE { return m_implTextureAllocator.get(); }
     virtual TextureAllocator* contentsTextureAllocator() const OVERRIDE { return m_contentsTextureAllocator.get(); }
 
     virtual void setScissorToRect(const IntRect&) OVERRIDE;
@@ -128,8 +127,8 @@ private:
     void drawQuad(const CCDrawQuad*);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
-    void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
-    void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
+    void drawBackgroundFilters(const CCRenderPassDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
+    void drawRenderPassQuad(const CCRenderPassDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);
     void drawIOSurfaceQuad(const CCIOSurfaceDrawQuad*);
@@ -144,18 +143,18 @@ private:
     void drawRGBA(const CCVideoDrawQuad*);
     void drawYUV(const CCVideoDrawQuad*);
 
-    void setDrawViewportRect(const IntRect&, bool flipY);
+    void setDrawFramebufferRect(const IntRect&, bool flipY);
 
-    // The current drawing target is either a RenderSurface or ManagedTexture. Use these functions to switch to a new drawing target.
-    bool useRenderSurface(CCRenderSurface*);
+    // The current drawing target is either a RenderPass or ManagedTexture. Use these functions to switch to a new drawing target.
+    bool useRenderPass(const CCRenderPass*);
     bool useManagedTexture(ManagedTexture*, const IntRect& viewportRect);
-    bool isCurrentRenderSurface(CCRenderSurface*);
+    bool isCurrentRenderPass(const CCRenderPass*);
 
     bool bindFramebufferToTexture(ManagedTexture*, const IntRect& viewportRect);
 
-    void clearRenderSurface(CCRenderSurface*, CCRenderSurface* rootRenderSurface, const FloatRect& rootScissorRectInCurrentSurface);
+    void clearRenderPass(const CCRenderPass*, const CCRenderPass* rootRenderPass, const FloatRect& framebufferDamageRect);
 
-    void releaseRenderSurfaceTextures();
+    void releaseRenderPassTextures();
 
     bool makeContextCurrent();
 
@@ -167,7 +166,7 @@ private:
 
     LayerRendererCapabilities m_capabilities;
 
-    CCRenderSurface* m_currentRenderSurface;
+    const CCRenderPass* m_currentRenderPass;
     ManagedTexture* m_currentManagedTexture;
     unsigned m_offscreenFramebufferId;
 
@@ -186,13 +185,10 @@ private:
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderCheckerboard> TileCheckerboardProgram;
 
     // Render surface shaders.
-    // CCRenderSurface::drawLayers() needs to see these programs currently.
-    // FIXME: Draw with a quad type for render surfaces and get rid of this friendlyness.
-    friend class CCRenderSurface;
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> RenderSurfaceProgram;
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> RenderSurfaceMaskProgram;
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaAA> RenderSurfaceProgramAA;
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> RenderSurfaceMaskProgramAA;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> RenderPassProgram;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> RenderPassMaskProgram;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaAA> RenderPassProgramAA;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> RenderPassMaskProgramAA;
 
     // Texture shaders.
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> TextureProgram;
@@ -218,10 +214,10 @@ private:
     const TileProgramSwizzleAA* tileProgramSwizzleAA();
     const TileCheckerboardProgram* tileCheckerboardProgram();
 
-    const RenderSurfaceProgram* renderSurfaceProgram();
-    const RenderSurfaceProgramAA* renderSurfaceProgramAA();
-    const RenderSurfaceMaskProgram* renderSurfaceMaskProgram();
-    const RenderSurfaceMaskProgramAA* renderSurfaceMaskProgramAA();
+    const RenderPassProgram* renderPassProgram();
+    const RenderPassProgramAA* renderPassProgramAA();
+    const RenderPassMaskProgram* renderPassMaskProgram();
+    const RenderPassMaskProgramAA* renderPassMaskProgramAA();
 
     const TextureProgram* textureProgram();
     const TextureProgramFlip* textureProgramFlip();
@@ -242,10 +238,10 @@ private:
     OwnPtr<TileProgramSwizzleAA> m_tileProgramSwizzleAA;
     OwnPtr<TileCheckerboardProgram> m_tileCheckerboardProgram;
 
-    OwnPtr<RenderSurfaceProgram> m_renderSurfaceProgram;
-    OwnPtr<RenderSurfaceProgramAA> m_renderSurfaceProgramAA;
-    OwnPtr<RenderSurfaceMaskProgram> m_renderSurfaceMaskProgram;
-    OwnPtr<RenderSurfaceMaskProgramAA> m_renderSurfaceMaskProgramAA;
+    OwnPtr<RenderPassProgram> m_renderPassProgram;
+    OwnPtr<RenderPassProgramAA> m_renderPassProgramAA;
+    OwnPtr<RenderPassMaskProgram> m_renderPassMaskProgram;
+    OwnPtr<RenderPassMaskProgramAA> m_renderPassMaskProgramAA;
 
     OwnPtr<TextureProgram> m_textureProgram;
     OwnPtr<TextureProgramFlip> m_textureProgramFlip;
@@ -257,15 +253,15 @@ private:
     OwnPtr<SolidColorProgram> m_solidColorProgram;
     OwnPtr<HeadsUpDisplayProgram> m_headsUpDisplayProgram;
 
-    OwnPtr<TextureManager> m_renderSurfaceTextureManager;
+    OwnPtr<TextureManager> m_implTextureManager;
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;
     OwnPtr<TextureUploader> m_textureUploader;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;
-    OwnPtr<TrackingTextureAllocator> m_renderSurfaceTextureAllocator;
+    OwnPtr<TrackingTextureAllocator> m_implTextureAllocator;
 
     RefPtr<GraphicsContext3D> m_context;
 
-    CCRenderSurface* m_defaultRenderSurface;
+    const CCRenderPass* m_defaultRenderPass;
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;

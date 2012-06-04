@@ -44,6 +44,7 @@ PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface)
 
 CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
     : m_targetSurface(targetSurface)
+    , m_framebufferOutputRect(targetSurface->contentRect())
 {
     ASSERT(m_targetSurface);
 }
@@ -58,7 +59,7 @@ void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImp
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
-void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker)
+void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl* occlusionTracker)
 {
     // FIXME: render surface layers should be a CCLayerImpl-derived class and
     // not be handled specially here.
@@ -68,7 +69,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclus
 
     OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
     bool isReplica = false;
-    surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica);
+    surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, contributingRenderPass);
     m_sharedQuadStateList.append(sharedQuadState.release());
 
     if (!surface->hasReplica())
@@ -77,7 +78,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclus
     // Add replica after the surface so that it appears below the surface.
     OwnPtr<CCSharedQuadState> replicaSharedQuadState = surface->createReplicaSharedQuadState();
     isReplica = true;
-    surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica);
+    surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica, contributingRenderPass);
     m_sharedQuadStateList.append(replicaSharedQuadState.release());
 }
 

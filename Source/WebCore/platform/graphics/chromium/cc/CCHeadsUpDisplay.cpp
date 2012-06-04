@@ -76,7 +76,7 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
         return;
     }
     if (!m_hudTexture)
-        m_hudTexture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
+        m_hudTexture = ManagedTexture::create(layerRenderer->implTextureManager());
 
     const CCSettings& settings = layerTreeHostImpl->settings();
     // Use a fullscreen texture only if we need to...
@@ -105,7 +105,7 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     {
         PlatformCanvas::AutoLocker locker(&canvas);
 
-        m_hudTexture->bindTexture(layerTreeHostImpl->context(), layerRenderer->renderSurfaceTextureAllocator());
+        m_hudTexture->bindTexture(layerTreeHostImpl->context(), layerRenderer->implTextureAllocator());
         bool uploadedViaMap = false;
         if (layerRenderer->capabilities().usingMapSub) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());

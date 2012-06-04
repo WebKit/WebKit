@@ -1,3 +1,104 @@
+2012-06-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make LayerRendererChromium use RenderPasses instead of RenderSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=88132
+
+        Reviewed by Adrienne Walker.
+
+        This patch is partly renaming, partly moving data into CCRenderPass
+        and CCRenderPassDrawQuad. LayerRendererChromium should accept as input
+        a set of RenderPasses and this should be sufficient for drawing. It
+        should have no notion of RenderSurfaces at all.
+
+        First, what isn't done: RenderSurfaces still hold the textures
+        where RenderPasses are drawn to/from, so that these textures can
+        persist across frames. This will be addressed separately.
+
+        Otherwise, this completely removes the concept of RenderSurface from
+        LayerRenderChromium and the CCDrawQuad, replacing it with RenderPass.
+        The "renderSurfaceTextureManager" is renamed to the "implTextureManager"
+        and like-wise for the TextureAllocator, as these are not used
+        exclusively for render surfaces (passes), and a texture manager for
+        render passes that does not require a RenderSurface* will be the focus
+        of future changes.
+
+        Covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::setVisible):
+        (WebCore::LayerRendererChromium::releaseRenderPassTextures):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::clearRenderPass):
+        (WebCore::LayerRendererChromium::beginDrawingFrame):
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::copyPlaneToTexture):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+        (WebCore::LayerRendererChromium::copyTextureToFramebuffer):
+        (WebCore::LayerRendererChromium::getFramebufferTexture):
+        (WebCore::LayerRendererChromium::isCurrentRenderPass):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::useManagedTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        (WebCore::LayerRendererChromium::setDrawFramebufferRect):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::renderPassProgram):
+        (WebCore::LayerRendererChromium::renderPassProgramAA):
+        (WebCore::LayerRendererChromium::renderPassMaskProgram):
+        (WebCore::LayerRendererChromium::renderPassMaskProgramAA):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::toRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore):
+        (CCDrawQuad):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::CCRenderPass):
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+        (WebCore::CCRenderPass::framebufferOutputRect):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.cpp.
+        (WebCore):
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.h.
+        (WebCore):
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::renderPass):
+        (WebCore::CCRenderPassDrawQuad::isReplica):
+        (WebCore::CCRenderPassDrawQuad::maskTextureId):
+        (WebCore::CCRenderPassDrawQuad::filters):
+        (WebCore::CCRenderPassDrawQuad::backgroundFilters):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::prepareBackgroundTexture):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::reserveTextures):
+
 2012-06-04  Abhishek Arya  <inferno@chromium.org>
 
         Crash in multi-column layout.

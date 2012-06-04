@@ -68,8 +68,8 @@ public:
     const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
     const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
-    virtual void beginDrawingFrame(CCRenderSurface* defaultRenderSurface) = 0;
-    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentSurface) = 0;
+    virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) = 0;
+    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentPass) = 0;
     virtual void finishDrawingFrame() = 0;
 
     virtual void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize) = 0;
@@ -83,10 +83,10 @@ public:
 
     virtual void getFramebufferPixels(void *pixels, const IntRect&) = 0;
 
-    virtual TextureManager* renderSurfaceTextureManager() const = 0;
+    virtual TextureManager* implTextureManager() const = 0;
     virtual TextureCopier* textureCopier() const = 0;
     virtual TextureUploader* textureUploader() const = 0;
-    virtual TextureAllocator* renderSurfaceTextureAllocator() const = 0;
+    virtual TextureAllocator* implTextureAllocator() const = 0;
     virtual TextureAllocator* contentsTextureAllocator() const = 0;
 
     virtual void setScissorToRect(const IntRect&) = 0;

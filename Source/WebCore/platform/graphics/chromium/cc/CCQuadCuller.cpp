@@ -34,7 +34,6 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCRenderPass.h"
-#include "cc/CCRenderSurfaceDrawQuad.h"
 #include <public/WebTransformationMatrix.h>
 
 using namespace std;

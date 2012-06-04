@@ -1,3 +1,17 @@
+2012-06-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make LayerRendererChromium use RenderPasses instead of RenderSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=88132
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+        (FakeCCRendererClient::rootRenderPass):
+        (FakeCCRendererClient):
+        (TEST_F):
+
 2012-06-04  David Dorwin  <ddorwin@chromium.org>
 
         Enable Chromium media player to instantiate a plugin

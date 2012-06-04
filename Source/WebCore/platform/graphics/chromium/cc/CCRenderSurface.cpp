@@ -39,7 +39,7 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCQuadCuller.h"
-#include "cc/CCRenderSurfaceDrawQuad.h"
+#include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/text/CString.h>
@@ -88,7 +88,7 @@ FloatRect CCRenderSurface::drawableContentRect() const
 
 bool CCRenderSurface::prepareContentsTexture(LayerRendererChromium* layerRenderer)
 {
-    TextureManager* textureManager = layerRenderer->renderSurfaceTextureManager();
+    TextureManager* textureManager = layerRenderer->implTextureManager();
 
     if (!m_contentsTexture)
         m_contentsTexture = ManagedTexture::create(textureManager);
@@ -116,7 +116,7 @@ bool CCRenderSurface::hasValidContentsTexture() const
 
 bool CCRenderSurface::prepareBackgroundTexture(LayerRendererChromium* layerRenderer)
 {
-    TextureManager* textureManager = layerRenderer->renderSurfaceTextureManager();
+    TextureManager* textureManager = layerRenderer->implTextureManager();
 
     if (!m_backgroundTexture)
         m_backgroundTexture = ManagedTexture::create(textureManager);
@@ -256,7 +256,7 @@ FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRec
     return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
 }
 
-void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica)
+void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, const CCRenderPass* renderPass)
 {
     ASSERT(!forReplica || hasReplica());
 
@@ -286,7 +286,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
 
     int maskTextureId = maskLayer ? maskLayer->contentsTextureId() : 0;
 
-    quadList.appendSurface(CCRenderSurfaceDrawQuad::create(sharedQuadState, contentRect(), m_owningLayer, forReplica, filters(), backgroundFilters(), maskTextureId));
+    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPass, forReplica, filters(), backgroundFilters(), maskTextureId));
 }
 
 }

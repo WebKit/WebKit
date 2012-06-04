@@ -256,14 +256,14 @@ bool CCVideoLayerImpl::reserveTextures(const WebKit::WebVideoFrame& frame, GC3De
         if (requiredTextureSize.isZero() || requiredTextureSize.width() > maxTextureSize || requiredTextureSize.height() > maxTextureSize)
             return false;
         if (!m_textures[plane].m_texture) {
-            m_textures[plane].m_texture = ManagedTexture::create(layerRenderer->renderSurfaceTextureManager());
+            m_textures[plane].m_texture = ManagedTexture::create(layerRenderer->implTextureManager());
             if (!m_textures[plane].m_texture)
                 return false;
             m_textures[plane].m_visibleSize = IntSize();
         } else {
-            // The renderSurfaceTextureManager may have been destroyed and recreated since the last frame, so pass the new one.
+            // The implTextureManager may have been destroyed and recreated since the last frame, so pass the new one.
             // This is a no-op if the TextureManager is still around.
-            m_textures[plane].m_texture->setTextureManager(layerRenderer->renderSurfaceTextureManager());
+            m_textures[plane].m_texture->setTextureManager(layerRenderer->implTextureManager());
         }
         if (m_textures[plane].m_texture->size() != requiredTextureSize)
             m_textures[plane].m_visibleSize = computeVisibleSize(frame, plane);

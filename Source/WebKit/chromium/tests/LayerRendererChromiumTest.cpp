@@ -68,6 +68,7 @@ public:
         , m_rootLayer(CCLayerImpl::create(1))
     {
         m_rootLayer->createRenderSurface();
+        m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface());
     }
 
     // CCRendererClient methods.
@@ -81,12 +82,13 @@ public:
     // Methods added for test.
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
 
-    CCLayerImpl* rootLayer() { return m_rootLayer.get(); }
+    CCRenderPass* rootRenderPass() { return m_rootRenderPass.get(); }
 
 private:
     int m_setFullRootLayerDamageCount;
     DebugScopedSetImplThread m_implThread;
     OwnPtr<CCLayerImpl> m_rootLayer;
+    OwnPtr<CCRenderPass> m_rootRenderPass;
 };
 
 class FakeLayerRendererChromium : public LayerRendererChromium {
@@ -194,7 +196,7 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatredForScopeDuratio
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
-    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootLayer()->renderSurface());
+    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootRenderPass());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();

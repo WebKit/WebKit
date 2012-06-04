@@ -1388,7 +1388,7 @@ TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorPartialSwap)
         ASSERT_EQ(1U, frame.renderPasses[0]->quadList().size());
         ASSERT_EQ(1U, frame.renderPasses[1]->quadList().size());
         EXPECT_EQ(CCDrawQuad::SolidColor, frame.renderPasses[0]->quadList()[0]->material());
-        EXPECT_EQ(CCDrawQuad::RenderSurface, frame.renderPasses[1]->quadList()[0]->material());
+        EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
     }
 }
 
@@ -1409,7 +1409,7 @@ TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorNoPartialSwap)
         ASSERT_EQ(1U, frame.renderPasses[0]->quadList().size());
         ASSERT_EQ(1U, frame.renderPasses[1]->quadList().size());
         EXPECT_EQ(CCDrawQuad::SolidColor, frame.renderPasses[0]->quadList()[0]->material());
-        EXPECT_EQ(CCDrawQuad::RenderSurface, frame.renderPasses[1]->quadList()[0]->material());
+        EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
     }
 }
 

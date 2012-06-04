@@ -31,7 +31,7 @@
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCRenderSurfaceDrawQuad.h"
+#include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
@@ -84,10 +84,10 @@ const CCIOSurfaceDrawQuad* CCDrawQuad::toIOSurfaceDrawQuad() const
     return static_cast<const CCIOSurfaceDrawQuad*>(this);
 }
 
-const CCRenderSurfaceDrawQuad* CCDrawQuad::toRenderSurfaceDrawQuad() const
+const CCRenderPassDrawQuad* CCDrawQuad::toRenderPassDrawQuad() const
 {
-    ASSERT(m_material == RenderSurface);
-    return static_cast<const CCRenderSurfaceDrawQuad*>(this);
+    ASSERT(m_material == RenderPass);
+    return static_cast<const CCRenderPassDrawQuad*>(this);
 }
 
 const CCSolidColorDrawQuad* CCDrawQuad::toSolidColorDrawQuad() const
