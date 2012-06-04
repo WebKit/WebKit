@@ -9,7 +9,7 @@
 <script src=../../media-resources/media-file.js></script>
 <script>
     waitForEvent("ended", ended);
-    waitForEvent('playing', function() {
+    waitForEventOnce('playing', function() {
         testExpected("video.buffered.length", 1, "==");
         run("video.currentTime = video.duration - 0.5");
     });
