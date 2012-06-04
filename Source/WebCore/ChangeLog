@@ -1,3 +1,15 @@
+2012-06-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        Document cleanup can get confused if parser still exists
+        https://bugs.webkit.org/show_bug.cgi?id=88250
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests; no behavior changes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): Detach parser earlier
+
 2012-06-04  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Split AnimationFrameRateController into its own file
