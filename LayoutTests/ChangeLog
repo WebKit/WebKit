@@ -1,3 +1,62 @@
+2012-06-03  Shawn Singh  <shawnsingh@chromium.org>
+
+        Unreviewed rebasline for transforms/3d test cases.
+
+        9 tests re-baselined.
+        The remainin 6 tests are explicitly enumerated in the TestExpectations file now.
+
+        * platform/chromium-linux/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+        * platform/chromium-mac-leopard/transforms/3d/general/perspective-units-expected.png:
+        * platform/chromium-mac-leopard/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/chromium-mac-leopard/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/chromium-mac-leopard/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-mac-leopard/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-mac-leopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-mac-leopard/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png:
+        * platform/chromium-mac-leopard/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/general/perspective-units-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/chromium-mac-snowleopard/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-mac/transforms/3d/general/matrix-with-zoom-3d-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+        * platform/chromium-win/transforms/3d/general/matrix-with-zoom-3d-expected.png: Added.
+        * platform/chromium-win/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/chromium-win/transforms/3d/general/perspective-units-expected.txt: Added.
+        * platform/chromium-win/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/chromium-win/transforms/3d/hit-testing/backface-hit-test-expected.txt: Added.
+        * platform/chromium-win/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/chromium-win/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.txt: Added.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-3-expected.txt: Added.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-expected.txt:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.txt:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.txt: Added.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-06-03  Hayato Ito  <hayato@chromium.org>
 
         Supports traversing nodes in an orphaned shadow subtree in ComposedShadowTreeParentWalker.
