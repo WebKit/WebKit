@@ -1,3 +1,17 @@
+2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leak in WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=88214
+
+        Reviewed by Martin Robinson.
+
+        Fixed a memory leak in WebKitWebView by making
+        GeolocationClientMock to be owned by the WebView.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        * webkit/webkitwebviewprivate.h:
+
 2012-06-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and configure.ac for 1.9.3 release

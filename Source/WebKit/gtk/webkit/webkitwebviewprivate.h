@@ -25,6 +25,7 @@
 
 #include "AcceleratedCompositingContext.h"
 #include "FullscreenVideoController.h"
+#include "GeolocationClientMock.h"
 #include "GtkClickCounter.h"
 #include "GtkDragAndDropHelper.h"
 #include "Page.h"
@@ -111,6 +112,10 @@ struct _WebKitWebViewPrivate {
 
 #if ENABLE(MEDIA_STREAM)
     OwnPtr<WebKit::UserMediaClientGtk> userMediaClient;
+#endif
+
+#if ENABLE(GEOLOCATION)
+    OwnPtr<WebCore::GeolocationClientMock> geolocationClientMock;
 #endif
 };
 
