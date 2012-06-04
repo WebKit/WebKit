@@ -1,5 +1,37 @@
 2012-06-03  Kentaro Hara  <haraken@chromium.org>
 
+        [perf-test] Add a benchmark of querySelector() for an element that appears in the depths in the document
+        https://bugs.webkit.org/show_bug.cgi?id=88202
+
+        Reviewed by Ryosuke Niwa.
+
+        query-selector-first.html tests querySelector() for an element
+        that appears at the head of the document. query-selector-last.html
+        tests querySelector() for an element that appears at the tail of
+        the document. In addition, we want a benchmark of querySelector()
+        for an element that appears in the depths in the document.
+
+        Test results in my Linux desktop:
+
+        RESULT Parser: query-selector-deep= 460.776980611 runs/s
+        median= 460.947503201 runs/s, stdev= 1.72274941942 runs/s, min= 455.696202532 runs/s, max= 463.32046332 runs/s
+
+        RESULT Parser: query-selector-deep= 458.925050915 runs/s
+        median= 459.183673469 runs/s, stdev= 1.47930124139 runs/s, min= 454.545454545 runs/s, max= 460.947503201 runs/s
+
+        RESULT Parser: query-selector-deep= 461.866981491 runs/s
+        median= 461.538461538 runs/s, stdev= 1.14613123359 runs/s, min= 459.183673469 runs/s, max= 463.917525773 runs/s
+
+        RESULT Parser: query-selector-deep= 453.922010788 runs/s
+        median= 454.258855898 runs/s, stdev= 1.77279123317 runs/s, min= 447.204968944 runs/s, max= 455.696202532 runs/s
+
+        RESULT Parser: query-selector-deep= 454.666321221 runs/s
+        median= 454.545454545 runs/s, stdev= 1.65775667417 runs/s, min= 451.127819549 runs/s, max= 456.852791878 runs/s
+
+        * Parser/query-selector-deep.html: Added.
+
+2012-06-03  Kentaro Hara  <haraken@chromium.org>
+
         [perf-test] Make query-selector-last.html more realistic
         https://bugs.webkit.org/show_bug.cgi?id=88203
 
