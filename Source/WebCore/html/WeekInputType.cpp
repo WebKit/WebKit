@@ -42,9 +42,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double weekDefaultStepBase = -259200000.0; // The first day of 1970-W01.
-static const double weekDefaultStep = 1.0;
-static const double weekStepScaleFactor = 604800000.0;
+static const int weekDefaultStepBase = -259200000; // The first day of 1970-W01.
+static const int weekDefaultStep = 1;
+static const int weekStepScaleFactor = 604800000;
 
 PassOwnPtr<InputType> WeekInputType::create(HTMLInputElement* element)
 {
@@ -65,10 +65,10 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumWeek());
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());
+    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumWeek());
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

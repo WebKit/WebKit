@@ -55,7 +55,7 @@ StepRange::StepRange(const StepRange& stepRange)
 {
 }
 
-StepRange::StepRange(const DoubleWithDecimalPlaces& stepBase, double minimum, double maximum, const DoubleWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
+StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, double minimum, double maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
     : m_maximum(maximum)
     , m_minimum(minimum)
     , m_step(step.value.value)
@@ -105,26 +105,26 @@ double StepRange::clampValue(double value) const
     return clampedValue;
 }
 
-StepRange::DoubleWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
+StepRange::NumberWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
 {
     if (stepString.isEmpty())
-        return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+        return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
 
     if (equalIgnoringCase(stepString, "any")) {
         switch (anyStepHandling) {
         case RejectAny:
-            return DoubleWithDecimalPlacesOrMissing(DoubleWithDecimalPlaces(1), false);
+            return NumberWithDecimalPlacesOrMissing(NumberWithDecimalPlaces(1), false);
         case AnyIsDefaultStep:
-            return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+            return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
         default:
             ASSERT_NOT_REACHED();
         }
     }
 
-    DoubleWithDecimalPlacesOrMissing step(0);
+    NumberWithDecimalPlacesOrMissing step(0);
     step.value.value = parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.value.decimalPlaces);
     if (!isfinite(step.value.value) || step.value.value <= 0.0)
-        return DoubleWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+        return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
 
     switch (stepDescription.stepValueShouldBe) {
     case StepValueShouldBeReal:
@@ -148,24 +148,24 @@ StepRange::DoubleWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling
     return step;
 }
 
-bool StepRange::stepMismatch(double doubleValue) const
+bool StepRange::stepMismatch(double valueForCheck) const
 {
     if (!m_hasStep)
         return false;
-    if (!isfinite(doubleValue))
+    if (!isfinite(valueForCheck))
         return false;
-    doubleValue = fabs(doubleValue - m_stepBase);
-    if (isinf(doubleValue))
+    double value = fabs(valueForCheck - m_stepBase);
+    if (isinf(value))
         return false;
     // double's fractional part size is DBL_MAN_DIG-bit. If the current value
     // is greater than step*2^DBL_MANT_DIG, the following computation for
     // remainder makes no sense.
-    if (doubleValue / pow(2.0, DBL_MANT_DIG) > m_step)
+    if (value / pow(2.0, DBL_MANT_DIG) > m_step)
         return false;
     // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
     // ... that number subtracted from the step base is not an integral multiple
     // of the allowed value step, the element is suffering from a step mismatch.
-    double remainder = fabs(doubleValue - m_step * round(doubleValue / m_step));
+    double remainder = fabs(value - m_step * round(value / m_step));
     // Accepts erros in lower fractional part which IEEE 754 single-precision
     // can't represent.
     double computedAcceptableError = acceptableError();

@@ -45,9 +45,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double timeDefaultStep = 60.0;
-static const double timeDefaultStepBase = 0.0;
-static const double timeStepScaleFactor = 1000.0;
+static const int timeDefaultStep = 60;
+static const int timeDefaultStepBase = 0;
+static const int timeStepScaleFactor = 1000;
 
 PassOwnPtr<InputType> TimeInputType::create(HTMLInputElement* element)
 {
@@ -83,10 +83,10 @@ StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
-    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), 0);
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumTime());
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumTime());
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumTime());
+    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumTime());
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

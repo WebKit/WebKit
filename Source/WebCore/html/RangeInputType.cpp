@@ -54,11 +54,16 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-static const double rangeDefaultMinimum = 0.0;
-static const double rangeDefaultMaximum = 100.0;
-static const double rangeDefaultStep = 1.0;
-static const double rangeDefaultStepBase = 0.0;
-static const double rangeStepScaleFactor = 1.0;
+static const int rangeDefaultMinimum = 0;
+static const int rangeDefaultMaximum = 100;
+static const int rangeDefaultStep = 1;
+static const int rangeDefaultStepBase = 0;
+static const int rangeStepScaleFactor = 1;
+
+static double ensureMaximum(double proposedValue, double minimum, double fallbackValue)
+{
+    return proposedValue >= minimum ? proposedValue : std::max(minimum, fallbackValue);
+}
 
 PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
 {
@@ -77,7 +82,7 @@ const AtomicString& RangeInputType::formControlType() const
 
 double RangeInputType::valueAsNumber() const
 {
-    return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+    return parseToNumber(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
 void RangeInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode&) const
@@ -94,18 +99,16 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor));
 
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), rangeDefaultMinimum);
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), rangeDefaultMaximum);
-    if (maximum < minimum)
-        maximum = max(minimum, rangeDefaultMaximum);
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), rangeDefaultMinimum);
+    double maximum = ensureMaximum(parseToNumber(element()->fastGetAttribute(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
 
     const AtomicString& precisionValue = element()->fastGetAttribute(precisionAttr);
     if (!precisionValue.isNull()) {
-        StepRange::DoubleWithDecimalPlacesOrMissing step(1, !equalIgnoringCase(precisionValue, "float"));
+        StepRange::NumberWithDecimalPlacesOrMissing step(1, !equalIgnoringCase(precisionValue, "float"));
         return StepRange(minimum, minimum, maximum, step, stepDescription);
     }
 
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(minimum, minimum, maximum, step, stepDescription);
 }
 
@@ -138,7 +141,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
     const String& key = event->keyIdentifier();
 
-    double current = parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+    double current = parseToNumber(element()->value(), numeric_limits<double>::quiet_NaN());
     ASSERT(isfinite(current));
 
     StepRange stepRange(createStepRange(RejectAny));
@@ -219,7 +222,7 @@ RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) c
     return new (arena) RenderSlider(element());
 }
 
-double RangeInputType::parseToDouble(const String& src, double defaultValue) const
+double RangeInputType::parseToNumber(const String& src, double defaultValue) const
 {
     return parseToDoubleForNumberType(src, defaultValue);
 }
@@ -269,7 +272,7 @@ String RangeInputType::fallbackValue() const
 String RangeInputType::sanitizeValue(const String& proposedValue) const
 {
     StepRange stepRange(createStepRange(RejectAny));
-    double proposedDoubleValue = parseToDouble(proposedValue, stepRange.defaultValue());
+    double proposedDoubleValue = parseToNumber(proposedValue, stepRange.defaultValue());
     return serializeForNumberType(stepRange.clampValue(proposedDoubleValue));
 }
 

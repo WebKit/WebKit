@@ -42,9 +42,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double dateTimeLocalDefaultStep = 60.0;
-static const double dateTimeLocalDefaultStepBase = 0.0;
-static const double dateTimeLocalStepScaleFactor = 1000.0;
+static const int dateTimeLocalDefaultStep = 60;
+static const int dateTimeLocalDefaultStepBase = 0;
+static const int dateTimeLocalStepScaleFactor = 1000;
 
 PassOwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement* element)
 {
@@ -77,10 +77,10 @@ StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandlin
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
-    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), 0);
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumDateTime());
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumDateTime());
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumDateTime());
+    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumDateTime());
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

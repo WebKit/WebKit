@@ -42,7 +42,7 @@ class BaseDateAndTimeInputType : public TextFieldInputType {
 protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual double parseToDouble(const String&, double) const OVERRIDE;
+    virtual double parseToNumber(const String&, double) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
 

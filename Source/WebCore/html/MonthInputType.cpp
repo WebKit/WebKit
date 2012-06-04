@@ -45,9 +45,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double monthDefaultStep = 1.0;
-static const double monthDefaultStepBase = 0.0;
-static const double monthStepScaleFactor = 1.0;
+static const int monthDefaultStep = 1;
+static const int monthDefaultStepBase = 0;
+static const int monthStepScaleFactor = 1;
 
 PassOwnPtr<InputType> MonthInputType::create(HTMLInputElement* element)
 {
@@ -101,14 +101,14 @@ StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    double stepBase = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumMonth());
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
+    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumMonth());
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
-double MonthInputType::parseToDouble(const String& src, double defaultValue) const
+double MonthInputType::parseToNumber(const String& src, double defaultValue) const
 {
     DateComponents date;
     if (!parseToDateComponents(src, &date))

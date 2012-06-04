@@ -54,7 +54,7 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
-    virtual double parseToDouble(const String&, double) const OVERRIDE;
+    virtual double parseToNumber(const String&, double) const OVERRIDE;
     virtual String serialize(double) const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual void minOrMaxAttributeChanged() OVERRIDE;

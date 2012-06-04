@@ -32,22 +32,22 @@ enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
 class StepRange {
 public:
-    struct DoubleWithDecimalPlaces {
+    struct NumberWithDecimalPlaces {
         unsigned decimalPlaces;
         double value;
 
-        DoubleWithDecimalPlaces(double value = 0, unsigned decimalPlaces = 0)
+        NumberWithDecimalPlaces(double value = 0, unsigned decimalPlaces = 0)
             : decimalPlaces(decimalPlaces)
             , value(value)
         {
         }
     };
 
-    struct DoubleWithDecimalPlacesOrMissing {
+    struct NumberWithDecimalPlacesOrMissing {
         bool hasValue;
-        DoubleWithDecimalPlaces value;
+        NumberWithDecimalPlaces value;
 
-        DoubleWithDecimalPlacesOrMissing(DoubleWithDecimalPlaces value, bool hasValue = true)
+        NumberWithDecimalPlacesOrMissing(NumberWithDecimalPlaces value, bool hasValue = true)
             : hasValue(hasValue)
             , value(value)
         {
@@ -90,14 +90,14 @@ public:
 
     StepRange();
     StepRange(const StepRange&);
-    StepRange(const DoubleWithDecimalPlaces& stepBase, double minimum, double maximum, const DoubleWithDecimalPlacesOrMissing& step, const StepDescription&);
+    StepRange(const NumberWithDecimalPlaces& stepBase, double minimum, double maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription&);
     double acceptableError() const;
     double alignValueForStep(double currentValue, unsigned currentDecimalPlaces, double newValue) const;
     double clampValue(double value) const;
     bool hasStep() const { return m_hasStep; }
     double maximum() const { return m_maximum; }
     double minimum() const { return m_minimum; }
-    static DoubleWithDecimalPlacesOrMissing parseStep(AnyStepHandling, const StepDescription&, const String&);
+    static NumberWithDecimalPlacesOrMissing parseStep(AnyStepHandling, const StepDescription&, const String&);
     double step() const { return m_step; }
     double stepBase() const { return m_stepBase; }
     unsigned stepBaseDecimalPlaces() const { return m_stepBaseDecimalPlaces; }

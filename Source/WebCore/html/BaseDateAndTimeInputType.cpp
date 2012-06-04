@@ -52,7 +52,7 @@ static const double msecPerSecond = 1000;
 
 double BaseDateAndTimeInputType::valueAsDate() const
 {
-    return parseToDouble(element()->value(), DateComponents::invalidMilliseconds());
+    return parseToNumber(element()->value(), DateComponents::invalidMilliseconds());
 }
 
 void BaseDateAndTimeInputType::setValueAsDate(double value, ExceptionCode&) const
@@ -62,7 +62,7 @@ void BaseDateAndTimeInputType::setValueAsDate(double value, ExceptionCode&) cons
 
 double BaseDateAndTimeInputType::valueAsNumber() const
 {
-    return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+    return parseToNumber(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
 void BaseDateAndTimeInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode&) const
@@ -108,7 +108,7 @@ void BaseDateAndTimeInputType::handleWheelEvent(WheelEvent* event)
         handleWheelEventForSpinButton(event);
 }
 
-double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const
+double BaseDateAndTimeInputType::parseToNumber(const String& src, double defaultValue) const
 {
     DateComponents date;
     if (!parseToDateComponents(src, &date))

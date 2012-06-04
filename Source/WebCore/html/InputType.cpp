@@ -251,11 +251,11 @@ bool InputType::rangeUnderflow(const String& value) const
     if (!isSteppable())
         return false;
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return false;
 
-    return doubleValue < createStepRange(RejectAny).minimum();
+    return numericValue < createStepRange(RejectAny).minimum();
 }
 
 bool InputType::rangeOverflow(const String& value) const
@@ -263,11 +263,11 @@ bool InputType::rangeOverflow(const String& value) const
     if (!isSteppable())
         return false;
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return false;
 
-    return doubleValue > createStepRange(RejectAny).maximum();
+    return numericValue > createStepRange(RejectAny).maximum();
 }
 
 double InputType::defaultValueForStepUp() const
@@ -296,12 +296,12 @@ bool InputType::isInRange(const String& value) const
     if (!isSteppable())
         return false;
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return true;
 
     StepRange stepRange(createStepRange(RejectAny));
-    return doubleValue >= stepRange.minimum() && doubleValue <= stepRange.maximum();
+    return numericValue >= stepRange.minimum() && numericValue <= stepRange.maximum();
 }
 
 bool InputType::isOutOfRange(const String& value) const
@@ -309,12 +309,12 @@ bool InputType::isOutOfRange(const String& value) const
     if (!isSteppable())
         return false;
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return true;
 
     StepRange stepRange(createStepRange(RejectAny));
-    return doubleValue < stepRange.minimum() || doubleValue > stepRange.maximum();
+    return numericValue < stepRange.minimum() || numericValue > stepRange.maximum();
 }
 
 bool InputType::stepMismatch(const String& value) const
@@ -322,11 +322,11 @@ bool InputType::stepMismatch(const String& value) const
     if (!isSteppable())
         return false;
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return false;
 
-    return createStepRange(RejectAny).stepMismatch(doubleValue);
+    return createStepRange(RejectAny).stepMismatch(numericValue);
 }
 
 String InputType::typeMismatchText() const
@@ -360,19 +360,19 @@ String InputType::validationMessage() const
     if (!isSteppable())
         return emptyString();
 
-    double doubleValue = parseToDouble(value, numeric_limits<double>::quiet_NaN());
-    if (isnan(doubleValue))
+    double numericValue = parseToNumber(value, numeric_limits<double>::quiet_NaN());
+    if (isnan(numericValue))
         return emptyString();
 
     StepRange stepRange(createStepRange(RejectAny));
 
-    if (doubleValue < stepRange.minimum())
+    if (numericValue < stepRange.minimum())
         return validationMessageRangeUnderflowText(serialize(stepRange.minimum()));
 
-    if (doubleValue < stepRange.maximum())
+    if (numericValue < stepRange.maximum())
         return validationMessageRangeOverflowText(serialize(stepRange.maximum()));
 
-    if (stepRange.stepMismatch(doubleValue)) {
+    if (stepRange.stepMismatch(numericValue)) {
         const String stepString = stepRange.hasStep() ? serializeForNumberType(stepRange.step() / stepRange.stepScaleFactor()) : emptyString();
         return validationMessageStepMismatchText(serialize(stepRange.stepBase()), stepString);
     }
@@ -453,17 +453,17 @@ void InputType::destroyShadowSubtree()
     }
 }
 
-double InputType::parseToDouble(const String&, double defaultValue) const
+double InputType::parseToNumber(const String&, double defaultValue) const
 {
     ASSERT_NOT_REACHED();
     return defaultValue;
 }
 
-double InputType::parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
+double InputType::parseToNumberWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
 {
     if (decimalPlaces)
         *decimalPlaces = 0;
-    return parseToDouble(src, defaultValue);
+    return parseToNumber(src, defaultValue);
 }
 
 bool InputType::parseToDateComponents(const String&, DateComponents*) const
@@ -878,7 +878,7 @@ void InputType::applyStep(double count, AnyStepHandling anyStepHandling, TextFie
 
     const double nan = numeric_limits<double>::quiet_NaN();
     unsigned currentDecimalPlaces;
-    double current = parseToDoubleWithDecimalPlaces(element()->value(), nan, &currentDecimalPlaces);
+    double current = parseToNumberWithDecimalPlaces(element()->value(), nan, &currentDecimalPlaces);
     if (!isfinite(current)) {
         ec = INVALID_STATE_ERR;
         return;
@@ -999,7 +999,7 @@ void InputType::stepUpFromRenderer(int n)
 
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = element()->value();
-    double current = parseToDouble(currentStringValue, nan);
+    double current = parseToNumber(currentStringValue, nan);
     if (!isfinite(current)) {
         ExceptionCode ec;
         current = defaultValueForStepUp();

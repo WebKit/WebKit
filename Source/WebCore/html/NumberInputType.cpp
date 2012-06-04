@@ -50,9 +50,9 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-static const double numberDefaultStep = 1.0;
-static const double numberDefaultStepBase = 0.0;
-static const double numberStepScaleFactor = 1.0;
+static const int numberDefaultStep = 1;
+static const int numberDefaultStepBase = 0;
+static const int numberStepScaleFactor = 1;
 
 static unsigned lengthBeforeDecimalPoint(double value)
 {
@@ -81,7 +81,7 @@ const AtomicString& NumberInputType::formControlType() const
 
 double NumberInputType::valueAsNumber() const
 {
-    return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+    return parseToNumber(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
 void NumberInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
@@ -113,12 +113,12 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
 
     unsigned stepBaseDecimalPlaces;
-    double stepBaseValue = parseToDoubleWithDecimalPlaces(element()->fastGetAttribute(minAttr), numberDefaultStepBase, &stepBaseDecimalPlaces);
-    StepRange::DoubleWithDecimalPlaces stepBase(stepBaseValue, min(stepBaseDecimalPlaces, 16u));
-    double minimum = parseToDouble(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
-    double maximum = parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
+    double stepBaseValue = parseToNumberWithDecimalPlaces(element()->fastGetAttribute(minAttr), numberDefaultStepBase, &stepBaseDecimalPlaces);
+    StepRange::NumberWithDecimalPlaces stepBase(stepBaseValue, min(stepBaseDecimalPlaces, 16u));
+    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
+    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
 
-    StepRange::DoubleWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
@@ -186,12 +186,12 @@ void NumberInputType::handleWheelEvent(WheelEvent* event)
     handleWheelEventForSpinButton(event);
 }
 
-double NumberInputType::parseToDouble(const String& src, double defaultValue) const
+double NumberInputType::parseToNumber(const String& src, double defaultValue) const
 {
     return parseToDoubleForNumberType(src, defaultValue);
 }
 
-double NumberInputType::parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
+double NumberInputType::parseToNumberWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
 {
     return parseToDoubleForNumberTypeWithDecimalPlaces(src, decimalPlaces, defaultValue);
 }

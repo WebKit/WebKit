@@ -51,8 +51,8 @@ private:
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
-    virtual double parseToDouble(const String&, double) const OVERRIDE;
-    virtual double parseToDoubleWithDecimalPlaces(const String&, double, unsigned*) const OVERRIDE;
+    virtual double parseToNumber(const String&, double) const OVERRIDE;
+    virtual double parseToNumberWithDecimalPlaces(const String&, double, unsigned*) const OVERRIDE;
     virtual String serialize(double) const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
     virtual String localizeValue(const String&) const OVERRIDE;

@@ -263,12 +263,12 @@ public:
     // the double value for the parsing result if the parsing
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
-    virtual double parseToDouble(const String&, double defaultValue) const;
+    virtual double parseToNumber(const String&, double defaultValue) const;
 
     // Parses the specified string for the type as parseToDouble() does.
     // In addition, it stores the number of digits after the decimal point
     // into *decimalPlaces.
-    virtual double parseToDoubleWithDecimalPlaces(const String&, double defaultValue, unsigned* decimalPlaces) const;
+    virtual double parseToNumberWithDecimalPlaces(const String&, double defaultValue, unsigned* decimalPlaces) const;
 
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
