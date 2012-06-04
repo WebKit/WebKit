@@ -1,5 +1,19 @@
 2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        [GTK] Memory leaks in AccessibilityUIElementGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88215
+
+        Reviewed by Martin Robinson.
+
+        Fixed memory leaks in AccessibilityUIElement by using GOwnPtr
+        for newly allocated strings.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (attributeSetToString):
+        (AccessibilityUIElement::allAttributes):
+
+2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         [GTK] Memory leaks in DumpRenderTree.cpp
         https://bugs.webkit.org/show_bug.cgi?id=88213
 

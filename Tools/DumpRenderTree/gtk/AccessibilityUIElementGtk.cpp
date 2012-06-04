@@ -140,7 +140,8 @@ gchar* attributeSetToString(AtkAttributeSet* attributeSet)
     GString* str = g_string_new(0);
     for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
-        g_string_append(str, g_strconcat(attribute->name, ":", attribute->value, NULL));
+        GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
+        g_string_append(str, attributeData.get());
         if (attributes->next)
             g_string_append(str, ", ");
     }
@@ -154,7 +155,8 @@ JSStringRef AccessibilityUIElement::allAttributes()
         return JSStringCreateWithCharacters(0, 0);
 
     ASSERT(ATK_IS_OBJECT(m_element));
-    return JSStringCreateWithUTF8CString(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element))));
+    GOwnPtr<gchar> attributeData(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element))));
+    return JSStringCreateWithUTF8CString(attributeData.get());
 }
 
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
