@@ -25,7 +25,7 @@
             function onTimeUpdate(event)
             {
                 var videoTag = event.target;
-                if (videoTag.currentTime > 2 && doSeek) {
+                if (videoTag.currentTime > 0.5 && doSeek) {
                     consoleWrite("EVENT(timeupdate) : seeking to " + seekTime.toFixed(2));
                     videoTag.pause();
                     videoTag.currentTime = seekTime;
@@ -36,6 +36,10 @@
             function onSeeking(event)
             {
                 var videoTag = event.target;
+
+                // Call abort to make sure the source buffer is in a state where it can accept new segments.
+                videoTag.webkitSourceAbort(segmentHelper.SourceID);
+
                 var startIndex = segmentHelper.getMediaSegmentIndexForTimestamp(videoTag.currentTime);
                 segmentHelper.appendUntilEndOfStream(startIndex);
             }
@@ -77,7 +81,7 @@
                         return;
                     }
 
-                    seekTime = segmentHelper.getTimeForMediaSegment(3);
+                    seekTime = segmentHelper.getTimeForMediaSegment(segmentHelper.MediaSegmentsToLoad - 1);
                     MediaSourceTest.setSrcToMediaSourceTestURL(video);
                 });
             }

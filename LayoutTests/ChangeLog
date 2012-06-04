@@ -1,3 +1,18 @@
+2012-06-04  Aaron Colwell  <acolwell@chromium.org>
+
+        Speed up video-media-source-play & video-media-source-seek LayoutTests.
+        https://bugs.webkit.org/show_bug.cgi?id=87986
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-source/video-media-source-play.html: Updated test to only play 1 second of media data instead of ~3 seconds.
+        * http/tests/media/media-source/video-media-source-seek-expected.txt:
+        * http/tests/media/media-source/video-media-source-seek.html:
+            - Triggers seek after playing 0.5 seconds instead of 2 seconds.
+            - Seeks to the last segment instead of a segment that is ~2 seconds from the end.
+            - Added an webkitSourceAbort() call before appending the segments for the seek. This is to prevent this test from failing
+              when the old v0.3 "flush on seek" behavior is removed from the Chromium code.
+
 2012-06-04  Abhishek Arya  <inferno@chromium.org>
 
         Crash in multi-column layout.

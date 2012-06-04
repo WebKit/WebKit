@@ -4,7 +4,7 @@ EVENT(loadstart)
 EVENT(webkitsourceopen)
 EVENT(webkitsourceended)
 EVENT(playing)
-EVENT(timeupdate) : seeking to 1.17
+EVENT(timeupdate) : seeking to 2.78
 EVENT(webkitsourceopen)
 EVENT(seeking)
 EVENT(webkitsourceended)
