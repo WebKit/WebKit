@@ -2,6 +2,8 @@
 // SVG CSS property names
 //
 
+#if defined(ENABLE_SVG) && ENABLE_SVG
+
 // SVG style props
 clip-path
 clip-rule
@@ -49,3 +51,5 @@ vector-effect
 writing-mode
 
 -webkit-svg-shadow
+
+#endif
