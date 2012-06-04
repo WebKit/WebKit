@@ -1,3 +1,27 @@
+2012-06-04  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Implementation of GraphicsContext does not save/restore ImageInterpolation correctly
+        https://bugs.webkit.org/show_bug.cgi?id=87985
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Moving image interpolation quality setting into state so that it's saved and restored.
+
+        Covered by existing test fast/canvas/canvas-imageSmoothingEnabled.html which is now passing.
+
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (GraphicsContextPlatformPrivate): Removing stale member that was never used.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::State::State):
+        (PlatformContextCairo::State):
+        (WebCore::PlatformContextCairo::PlatformContextCairo):
+        (WebCore::PlatformContextCairo::drawSurfaceToContext):
+        (WebCore::PlatformContextCairo::setImageInterpolationQuality):
+        (WebCore):
+        (WebCore::PlatformContextCairo::imageInterpolationQuality):
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        (PlatformContextCairo): Moving implementations for image interpolation quality setter into implementation file.
+
 2012-06-04  Philip Rogers  <pdr@google.com>
 
         Fix assert in non-scaling strokes in patterns

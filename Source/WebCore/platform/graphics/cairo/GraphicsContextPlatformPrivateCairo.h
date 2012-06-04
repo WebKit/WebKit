@@ -94,7 +94,6 @@ public:
 
     PlatformContextCairo* platformContext;
     Vector<float> layers;
-    InterpolationQuality imageInterpolationQuality;
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;

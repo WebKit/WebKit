@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (c) 2008, Google Inc. All rights reserved.
+ * Copyright (c) 2012, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,11 +63,13 @@ class PlatformContextCairo::State {
 public:
     State()
         : m_globalAlpha(1)
+        , m_imageInterpolationQuality(InterpolationDefault)
     {
     }
 
     State(const State& state)
         : m_globalAlpha(state.m_globalAlpha)
+        , m_imageInterpolationQuality(state.m_imageInterpolationQuality)
     {
         // We do not copy m_imageMaskInformation because otherwise it would be applied
         // more than once during subsequent calls to restore().
@@ -74,11 +77,11 @@ public:
 
     ImageMaskInformation m_imageMaskInformation;
     float m_globalAlpha;
+    InterpolationQuality m_imageInterpolationQuality;
 };
 
 PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
     : m_cr(cr)
-    , m_imageInterpolationQuality(InterpolationDefault)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -158,7 +161,8 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
     RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(surface));
 
-    switch (m_imageInterpolationQuality) {
+    ASSERT(m_state);
+    switch (m_state->m_imageInterpolationQuality) {
     case InterpolationNone:
     case InterpolationLow:
         cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_FAST);
@@ -190,6 +194,19 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, globalAlpha());
     cairo_restore(m_cr.get());
 }
+
+void PlatformContextCairo::setImageInterpolationQuality(InterpolationQuality quality)
+{
+    ASSERT(m_state);
+    m_state->m_imageInterpolationQuality = quality;
+}
+
+InterpolationQuality PlatformContextCairo::imageInterpolationQuality() const
+{
+    ASSERT(m_state);
+    return m_state->m_imageInterpolationQuality;
+}
+
 
 float PlatformContextCairo::globalAlpha() const
 {
