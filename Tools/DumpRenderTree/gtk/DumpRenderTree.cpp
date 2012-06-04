@@ -131,7 +131,7 @@ void displayWebView()
     gtk_widget_queue_draw(GTK_WIDGET(webView));
 }
 
-static void appendString(gchar*& target, gchar* string)
+static void appendString(gchar*& target, const gchar* string)
 {
     gchar* oldString = target;
     target = g_strconcat(target, string, NULL);
@@ -246,8 +246,10 @@ static gchar* dumpFramesAsText(WebKitWebFrame* frame)
 
     if (gLayoutTestController->dumpChildFramesAsText()) {
         GSList* children = DumpRenderTreeSupportGtk::getFrameChildren(frame);
-        for (GSList* child = children; child; child = g_slist_next(child))
-            appendString(result, dumpFramesAsText(static_cast<WebKitWebFrame* >(child->data)));
+        for (GSList* child = children; child; child = g_slist_next(child)) {
+            GOwnPtr<gchar> childData(dumpFramesAsText(static_cast<WebKitWebFrame*>(child->data)));
+            appendString(result, childData.get());
+        }
         g_slist_free(children);
     }
 
@@ -278,8 +280,10 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
     gchar* uriScheme = g_uri_parse_scheme(uri);
     if (g_strcmp0(uriScheme, "file") == 0) {
         gchar* pos = g_strstr_len(uri, -1, "/LayoutTests/");
-        if (!pos)
+        if (!pos) {
+            g_free(uriScheme);
             return;
+        }
 
         GString* result = g_string_sized_new(strlen(uri));
         result = g_string_append(result, "(file test):");

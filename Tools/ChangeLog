@@ -1,3 +1,17 @@
+2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leaks in DumpRenderTree.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88213
+
+        Reviewed by Martin Robinson.
+
+        Fixed memory leaks in DumpRenderTree.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (appendString): Accepts const gchar* as the second argument.
+        (dumpFramesAsText): Free the string returned by g_strdup_printf().
+        (dumpHistoryItem): Free the string returned by g_uri_parse_scheme().
+
 2012-06-04  David Dorwin  <ddorwin@chromium.org>
 
         Enable Chromium media player to instantiate a plugin
