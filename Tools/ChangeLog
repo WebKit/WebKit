@@ -1,3 +1,17 @@
+2012-06-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Reset "WebKitTabToLinksPreferenceKey" in DumpRenderTreeChrome::resetDefaultsToConsistentValues
+        https://bugs.webkit.org/show_bug.cgi?id=87668
+
+        Reviewed by Ryosuke Niwa.
+
+        Layout test controller "WebKitTabToLinksPreferenceKey" setting should be reset to false
+        otherwise LayoutTests/fast/html/tab-order.html is failing as it has a link inside the test description which might 
+        be included in focus chain (if "WebKitTabToLinksPreferenceKey" setting is set to true). 
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-06-04  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Refactor ewk_view_context_paint code.

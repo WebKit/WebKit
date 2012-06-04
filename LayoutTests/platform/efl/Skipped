@@ -555,7 +555,6 @@ fast/forms/search-transformed.html
 fast/forms/search-zoomed.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/harness/results.html
-fast/html/tab-order.html
 fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html

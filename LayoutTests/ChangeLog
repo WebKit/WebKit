@@ -1,3 +1,12 @@
+2012-06-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Reset "WebKitTabToLinksPreferenceKey" in DumpRenderTreeChrome::resetDefaultsToConsistentValues
+        https://bugs.webkit.org/show_bug.cgi?id=87668
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/efl/Skipped: Unskipped fast/html/tab-order.html.
+
 2012-05-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] DataTransferItem.webkitGetAsEntry() should synchronously return entry

@@ -240,7 +240,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_setting_minimum_timer_interval_set(browser->mainView(), 0.010); // 10 milliseconds (DOMTimer::s_minDefaultTimerInterval)
     ewk_view_setting_enable_webgl_set(mainView(), EINA_TRUE);
     ewk_view_setting_enable_hyperlink_auditing_set(mainView(), EINA_FALSE);
-    ewk_view_setting_include_links_in_focus_chain_set(mainView(), EINA_TRUE);
+    ewk_view_setting_include_links_in_focus_chain_set(mainView(), EINA_FALSE);
     ewk_view_setting_scripts_can_access_clipboard_set(mainView(), EINA_TRUE);
 
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);
