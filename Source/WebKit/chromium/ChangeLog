@@ -1,5 +1,23 @@
 2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
+        [chromium] Fix software rendering for larger device-scale-factor
+        https://bugs.webkit.org/show_bug.cgi?id=88136
+
+        Reviewed by Darin Fisher.
+
+        The fix is to apply the device-scale factor on the GraphicsContext.
+        (and add a WebWidgetClient::deviceScaleFactor method to facilitate that).
+
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::deviceScaleFactor):
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::paint):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::paint):
+
+2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
         Combobox options and autofill options should not be scaled for device-scale factor.
         https://bugs.webkit.org/show_bug.cgi?id=87921
 

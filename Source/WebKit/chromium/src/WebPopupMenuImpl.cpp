@@ -198,8 +198,12 @@ void WebPopupMenuImpl::paint(WebCanvas* canvas, const WebRect& rect)
     if (!m_widget)
         return;
 
-    if (!rect.isEmpty())
-        m_widget->paint(&GraphicsContextBuilder(canvas).context(), rect);
+    if (!rect.isEmpty()) {
+        GraphicsContextBuilder builder(canvas);
+        GraphicsContext& context = builder.context();
+        context.applyDeviceScaleFactor(m_client->deviceScaleFactor());
+        m_widget->paint(&context, rect);
+    }
 }
 
 void WebPopupMenuImpl::themeChanged()

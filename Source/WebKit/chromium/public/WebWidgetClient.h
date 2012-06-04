@@ -131,6 +131,9 @@ public:
     // displayed.
     virtual WebScreenInfo screenInfo() { return WebScreenInfo(); }
 
+    // Called to get the scale factor of the display.
+    virtual float deviceScaleFactor() { return 1; }
+
     // When this method gets called, WebWidgetClient implementation should
     // reset the input method by cancelling any ongoing composition.
     virtual void resetInputMethod() { }

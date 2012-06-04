@@ -207,6 +207,8 @@ EXPORTS
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?setDefaultDeviceScaleFactor@Settings@WebCore@@QAEXH@Z
+        ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z

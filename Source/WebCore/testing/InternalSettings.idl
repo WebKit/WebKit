@@ -42,6 +42,7 @@ module window {
         void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
         void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
         void setDeviceSupportsTouch(in boolean enabled) raises(DOMException);
+        void setDeviceScaleFactor(in float scaleFactor) raises(DOMException);
         void setShadowDOMEnabled(in boolean enabled) raises(DOMException);
         void setStandardFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setSerifFontFamily(in DOMString family, in DOMString script) raises(DOMException);

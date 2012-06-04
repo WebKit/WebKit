@@ -88,6 +88,7 @@ void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas*
         return;
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
+    gc.applyDeviceScaleFactor(page->deviceScaleFactor());
     IntRect dirtyRect(rect);
     gc.save();
     FrameView* view = mainFrameView(page);

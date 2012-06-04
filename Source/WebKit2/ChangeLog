@@ -1,3 +1,15 @@
+2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Fix software rendering for device-scale-factor > 1
+        https://bugs.webkit.org/show_bug.cgi?id=88136
+
+        Reviewed by Darin Fisher.
+
+        Export WebCore::Page::setDeviceScaleFactor and WebCore::Settings::setDefaultDeviceScaleFactor.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-06-04  Andy Estes  <aestes@apple.com>
 
         Use ENABLE() and USE() macros in a few more places

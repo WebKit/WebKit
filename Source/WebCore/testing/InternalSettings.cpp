@@ -268,6 +268,14 @@ void InternalSettings::setDeviceSupportsTouch(bool enabled, ExceptionCode& ec)
     settings()->setDeviceSupportsTouch(enabled);
 }
 
+void InternalSettings::setDeviceScaleFactor(float scaleFactor, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setDefaultDeviceScaleFactor(scaleFactor);
+    InternalSettingsGuardForPage();
+    page()->setDeviceScaleFactor(scaleFactor);
+}
+
 typedef void (Settings::*SetFontFamilyFunction)(const AtomicString&, UScriptCode);
 static void setFontFamily(Settings* settings, const String& family, const String& script, SetFontFamilyFunction setter)
 {

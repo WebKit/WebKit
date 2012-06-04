@@ -1,3 +1,13 @@
+2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Fix software rendering for device-scale-factor > 1
+        https://bugs.webkit.org/show_bug.cgi?id=88136
+
+        Reviewed by Darin Fisher.
+
+        * fast/hidpi/device-scale-factor-paint.html: Added.
+        * platform/chromium/fast/hidpi/device-scale-factor-paint-expected.html: Added.
+
 2012-06-04  Ami Fischman  <fischman@chromium.org>
 
         [Gtk] http/tests/media/video-buffered.html is failing after r119268
