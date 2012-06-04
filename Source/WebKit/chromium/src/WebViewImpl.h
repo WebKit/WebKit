@@ -90,6 +90,7 @@ class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
+class WebHelperPluginImpl;
 class NonCompositedContentHost;
 class PrerendererClientImpl;
 class SpeechInputClientImpl;
@@ -162,6 +163,7 @@ public:
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
+    virtual void initializeHelperPluginFrame(WebFrameClient*);
     virtual void setAutofillClient(WebAutofillClient*);
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*);
     virtual void setPermissionClient(WebPermissionClient*);
@@ -487,6 +489,8 @@ public:
 #endif
 
     void hideAutofillPopup();
+
+    WebHelperPluginImpl* createHelperPlugin(const String& pluginType);
 
     // Returns the input event we're currently processing. This is used in some
     // cases where the WebCore DOM event doesn't have the information we need.

@@ -127,6 +127,7 @@
 #include "WebDevToolsAgentImpl.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebFrameImpl.h"
+#include "WebHelperPluginImpl.h"
 #include "WebInputElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
@@ -308,11 +309,16 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
     // and releases that reference once the corresponding Frame is destroyed.
     RefPtr<WebFrameImpl> frame = WebFrameImpl::create(frameClient);
 
-    frame->initializeAsMainFrame(this);
+    frame->initializeAsMainFrame(page());
 
     // Restrict the access to the local file system
     // (see WebView.mm WebView::_commonInitializationWithFrameName).
     SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForLocalOnly);
+}
+
+void WebViewImpl::initializeHelperPluginFrame(WebFrameClient* client)
+{
+    RefPtr<WebFrameImpl> frame = WebFrameImpl::create(client);
 }
 
 void WebViewImpl::setAutofillClient(WebAutofillClient* autofillClient)
@@ -1264,6 +1270,19 @@ void WebViewImpl::hideAutofillPopup()
         m_autofillPopup->hidePopup();
         m_autofillPopupShowing = false;
     }
+}
+
+WebHelperPluginImpl* WebViewImpl::createHelperPlugin(const String& pluginType)
+{
+    WebWidget* popupWidget = m_client->createPopupMenu(WebPopupTypeHelperPlugin);
+    ASSERT(popupWidget);
+    WebHelperPluginImpl* helperPlugin = static_cast<WebHelperPluginImpl*>(popupWidget);
+
+    if (!helperPlugin->init(this, pluginType)) {
+        helperPlugin->closeHelperPlugin();
+        helperPlugin = 0;
+    }
+    return helperPlugin;
 }
 
 Frame* WebViewImpl::focusedWebCoreFrame() const

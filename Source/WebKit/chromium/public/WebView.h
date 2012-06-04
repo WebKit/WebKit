@@ -103,6 +103,8 @@ public:
     // child frames.  It is valid to pass a null WebFrameClient pointer.
     virtual void initializeMainFrame(WebFrameClient*) = 0;
 
+    virtual void initializeHelperPluginFrame(WebFrameClient*) = 0;
+
     // Initializes the various client interfaces.
     virtual void setAutofillClient(WebAutofillClient*) = 0;
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;

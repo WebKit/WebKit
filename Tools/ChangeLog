@@ -1,3 +1,15 @@
+2012-06-04  David Dorwin  <ddorwin@chromium.org>
+
+        Enable Chromium media player to instantiate a plugin
+        https://bugs.webkit.org/show_bug.cgi?id=87399
+
+        Reviewed by Kent Tamura.
+
+        Adds WebHelperPlugin, an off-screen widget that contains an <object> tag.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPopupMenu):
+
 2012-06-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK][WK2] Implement geolocation provider for the GTK port

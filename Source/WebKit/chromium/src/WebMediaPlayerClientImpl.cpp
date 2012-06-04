@@ -23,6 +23,7 @@
 #include "WebAudioSourceProvider.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebHelperPluginImpl.h"
 #include "WebKit.h"
 #include "WebMediaPlayer.h"
 #include "WebViewImpl.h"
@@ -96,6 +97,8 @@ WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
     if (m_webMediaPlayer)
         m_webMediaPlayer->setStreamTextureClient(0);
 #endif
+    if (m_helperPlugin)
+        closeHelperPlugin();
 }
 
 void WebMediaPlayerClientImpl::networkStateChanged()
@@ -263,6 +266,20 @@ void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebSt
     UNUSED_PARAM(initData);
     UNUSED_PARAM(initDataLength);
 #endif
+}
+
+void WebMediaPlayerClientImpl::createHelperPlugin(const WebString& pluginType, WebFrame* frame)
+{
+    ASSERT(!m_helperPlugin);
+    WebViewImpl* webView = static_cast<WebViewImpl*>(frame->view());
+    m_helperPlugin = webView->createHelperPlugin(pluginType);
+}
+
+void WebMediaPlayerClientImpl::closeHelperPlugin()
+{
+    ASSERT(m_helperPlugin);
+    m_helperPlugin->closeHelperPlugin();
+    m_helperPlugin = 0;
 }
 
 void WebMediaPlayerClientImpl::disableAcceleratedCompositing()

@@ -47,6 +47,7 @@ namespace WebCore { class AudioSourceProviderClient; }
 
 namespace WebKit {
 
+class WebHelperPluginImpl;
 class WebAudioSourceProvider;
 class WebMediaPlayer;
 
@@ -89,6 +90,8 @@ public:
     virtual void keyError(const WebString& keySystem, const WebString& sessionId, MediaKeyErrorCode, unsigned short systemCode);
     virtual void keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength);
     virtual void keyNeeded(const WebString& keySystem, const WebString& sessionId, const unsigned char* initData, unsigned initDataLength);
+    virtual void createHelperPlugin(const WebString& pluginType, WebFrame*);
+    virtual void closeHelperPlugin();
     virtual void disableAcceleratedCompositing();
 
     // MediaPlayerPrivateInterface methods:
@@ -198,6 +201,7 @@ private:
     String m_url;
     bool m_delayingLoad;
     WebCore::MediaPlayer::Preload m_preload;
+    RefPtr<WebHelperPluginImpl> m_helperPlugin;
 #if USE(ACCELERATED_COMPOSITING)
     WebVideoLayer m_videoLayer;
     bool m_supportsAcceleratedCompositing;

@@ -1,3 +1,69 @@
+2012-06-04  David Dorwin  <ddorwin@chromium.org>
+
+        Enable Chromium media player to instantiate a plugin
+        https://bugs.webkit.org/show_bug.cgi?id=87399
+
+        Reviewed by Kent Tamura.
+
+        Adds WebHelperPlugin, an off-screen widget that contains an <object> tag.
+
+        * WebKit.gyp:
+        * public/WebHelperPlugin.h: Copied from Source/WebKit/chromium/public/WebPopupType.h.
+        (WebKit):
+        (WebHelperPlugin):
+        (WebKit::WebHelperPlugin::~WebHelperPlugin):
+        * public/WebMediaPlayerClient.h:
+        (WebKit):
+        * public/WebPopupType.h:
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit):
+        (WebViewClient):
+        (WebKit::WebViewClient::initializeHelperPluginWebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::initializeAsMainFrame):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebHelperPluginImpl.cpp: Added.
+        (WebKit):
+        (WebKit::addString):
+        (WebKit::writeDocument):
+        (HelperPluginChromeClient):
+        (WebKit::HelperPluginChromeClient::HelperPluginChromeClient):
+        (WebKit::WebHelperPluginImpl::WebHelperPluginImpl):
+        (WebKit::WebHelperPluginImpl::~WebHelperPluginImpl):
+        (WebKit::WebHelperPluginImpl::init):
+        (WebKit::WebHelperPluginImpl::initializeFrame):
+        (WebKit::WebHelperPluginImpl::initPage):
+        (WebKit::WebHelperPluginImpl::setCompositorSurfaceReady):
+        (WebKit::WebHelperPluginImpl::composite):
+        (WebKit::WebHelperPluginImpl::layout):
+        (WebKit::WebHelperPluginImpl::setFocus):
+        (WebKit::WebHelperPluginImpl::close):
+        (WebKit::WebHelperPluginImpl::closeHelperPlugin):
+        (WebKit::WebHelperPlugin::create):
+        * src/WebHelperPluginImpl.h: Copied from Source/WebKit/chromium/public/WebPopupType.h.
+        (WebCore):
+        (WebKit):
+        (WebHelperPluginImpl):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::createHelperPlugin):
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::closeHelperPlugin):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit):
+        (WebMediaPlayerClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::initializeMainFrame):
+        (WebKit::WebViewImpl::initializeHelperPluginFrame):
+        (WebKit):
+        (WebKit::WebViewImpl::createHelperPlugin):
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+
 2012-06-04  Raymes Khoury  <raymes@chromium.org>
 
         Remove obsolete acceptMIMETypes member.

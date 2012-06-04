@@ -2023,6 +2023,7 @@ PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)
 WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     : m_frameLoaderClient(this)
     , m_client(client)
+    , m_frame(0)
     , m_currentActiveMatchFrame(0)
     , m_activeMatchIndexInCurrentFrame(-1)
     , m_locatingActiveRect(false)
@@ -2048,9 +2049,9 @@ WebFrameImpl::~WebFrameImpl()
     cancelPendingScopingEffort();
 }
 
-void WebFrameImpl::initializeAsMainFrame(WebViewImpl* webViewImpl)
+void WebFrameImpl::initializeAsMainFrame(WebCore::Page* page)
 {
-    RefPtr<Frame> frame = Frame::create(webViewImpl->page(), 0, &m_frameLoaderClient);
+    RefPtr<Frame> frame = Frame::create(page, 0, &m_frameLoaderClient);
     m_frame = frame.get();
 
     // Add reference on behalf of FrameLoader.  See comments in

@@ -235,8 +235,8 @@ public:
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     virtual ~WebFrameImpl();
 
-    // Called by the WebViewImpl to initialize its main frame:
-    void initializeAsMainFrame(WebViewImpl*);
+    // Called by the WebViewImpl to initialize the main frame for the page.
+    void initializeAsMainFrame(WebCore::Page*);
 
     PassRefPtr<WebCore::Frame> createChildFrame(
         const WebCore::FrameLoadRequest&, WebCore::HTMLFrameOwnerElement*);
