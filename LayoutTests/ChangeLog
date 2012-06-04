@@ -1,3 +1,14 @@
+2012-06-04  Philip Rogers  <pdr@google.com>
+
+        Update test expectations after 119392
+        https://bugs.webkit.org/show_bug.cgi?id=88230
+
+        Unreviewed update of test expectations.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-04  Justin Novosad  <junov@chromium.org>
 
         Canvas 2D - Source rectangles that overlap the source image boundary, not supported by drawImage

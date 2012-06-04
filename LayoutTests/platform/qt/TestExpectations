@@ -71,6 +71,8 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
+BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
+
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 

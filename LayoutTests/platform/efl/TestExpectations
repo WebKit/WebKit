@@ -95,6 +95,8 @@ BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
 BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
+BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
+
 // Missing drag'n'drop, needs baselines
 BUGWK86623 : editing/pasteboard/drag-drop-dead-frame.html = MISSING
 BUGWK86623 : editing/pasteboard/drag-drop-modifies-page.html = MISSING

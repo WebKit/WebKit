@@ -426,6 +426,8 @@ BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
 
 BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
 
+BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
+
 BUGWK51027 : plugins/refcount-leaks.html = PASS TEXT
 BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
 
