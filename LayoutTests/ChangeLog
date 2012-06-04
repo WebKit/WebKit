@@ -1,3 +1,25 @@
+2012-06-04  Justin Novosad  <junov@chromium.org>
+
+        Canvas 2D - Source rectangles that overlap the source image boundary, not supported by drawImage
+        https://bugs.webkit.org/show_bug.cgi?id=66574
+
+        Reviewed by Stephen White.
+
+        Adding a new layout test that verifies that the source and destination
+        rectangle arguments to drawImage are properly clipped when the source
+        rectangle is not entirely contained whithin the domian of the source
+        image. Tests image to canvas draws and canvas to canvas draws.
+
+        * fast/canvas/drawImage-clipped-source-expected.txt: Added.
+        * fast/canvas/drawImage-clipped-source.html: Added.
+        * fast/canvas/drawImage-clipped-source.js: Added.
+        (patternTest.this.testPixel):
+        (patternTest.this.testRedSquare):
+        (patternTest.this.testAggregatePattern):
+        (patternTest):
+        (drawTestPattern):
+        (executeTest):
+
 2012-06-04  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Implementation of GraphicsContext does not save/restore ImageInterpolation correctly
