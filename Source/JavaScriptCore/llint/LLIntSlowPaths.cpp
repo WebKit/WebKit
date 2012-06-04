@@ -987,7 +987,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
         exec->uncheckedR(unmodifiedArgumentsRegister(pc[2].u.operand)) = arguments;
     }
     
-    LLINT_RETURN(getByVal(exec, arguments, LLINT_OP_C(3).jsValue()));
+    LLINT_RETURN_PROFILED(op_get_argument_by_val, getByVal(exec, arguments, LLINT_OP_C(3).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_by_pname)

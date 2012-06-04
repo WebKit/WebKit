@@ -1672,7 +1672,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     JITStubCall stubCall(this, cti_op_get_by_val);
     stubCall.addArgument(arguments);
     stubCall.addArgument(property);
-    stubCall.call(dst);
+    stubCall.callWithValueProfiling(dst);
 }
 
 } // namespace JSC
