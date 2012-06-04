@@ -1,3 +1,16 @@
+2012-06-04  Rob Buis  <rbuis@rim.com>
+
+        Hit ASSERT when editing attribute value in Element in SVG Document
+        https://bugs.webkit.org/show_bug.cgi?id=88179
+
+        Reviewed by Pavel Feldman.
+
+        Make sure the <span> is created as a HTML Element regardless of document in use.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+
 2012-06-04  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Change function and variable names independent from "double" type

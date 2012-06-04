@@ -61,9 +61,9 @@
 #include "EventTarget.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "HitTestResult.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HitTestResult.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
 #include "InspectorClient.h"
@@ -89,6 +89,7 @@
 #include "Text.h"
 #include "XPathResult.h"
 
+#include "htmlediting.h"
 #include "markup.h"
 
 #include <wtf/text/CString.h>
@@ -99,6 +100,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 namespace DOMAgentState {
 static const char documentRequested[] = "documentRequested";
@@ -576,14 +579,9 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     if (!element)
         return;
 
+    RefPtr<HTMLElement> parsedElement = createHTMLElement(element->document(), spanTag);
     ExceptionCode ec = 0;
-    RefPtr<Element> parsedElement = element->document()->createElement("span", ec);
-    if (ec) {
-        *errorString = InspectorDOMAgent::toErrorString(ec);
-        return;
-    }
-
-    toHTMLElement(parsedElement.get())->setInnerHTML("<span " + text + "></span>", ec);
+    parsedElement.get()->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {
         *errorString = InspectorDOMAgent::toErrorString(ec);
         return;
