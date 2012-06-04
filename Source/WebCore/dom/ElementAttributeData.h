@@ -54,37 +54,32 @@ public:
     {
         return adoptPtr(new ElementAttributeData);
     }
-    static PassOwnPtr<ElementAttributeData> createImmutable(const Vector<Attribute>&);
-    ~ElementAttributeData();
 
     void clearClass() { m_classNames.clear(); }
-    void setClass(const AtomicString& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
+    void setClass(const String& className, bool shouldFoldCase);
     const SpaceSplitString& classNames() const { return m_classNames; }
 
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
-    void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
+    void setIdForStyleResolution(const AtomicString& newId) { m_idForStyleResolution = newId; }
 
-    const StylePropertySet* inlineStyle() const { return m_inlineStyleDecl.get(); }
     StylePropertySet* inlineStyle() { return m_inlineStyleDecl.get(); }
     StylePropertySet* ensureInlineStyle(StyledElement*);
     StylePropertySet* ensureMutableInlineStyle(StyledElement*);
     void updateInlineStyleAvoidingMutation(StyledElement*, const String& text);
-    void destroyInlineStyle(StyledElement*) const;
+    void destroyInlineStyle(StyledElement*);
 
     StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
-    void setAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_attributeStyle = style; }
+    void setAttributeStyle(PassRefPtr<StylePropertySet> style) { m_attributeStyle = style; }
 
-    size_t length() const;
-    bool isEmpty() const;
+    size_t length() const { return m_attributes.size(); }
+    bool isEmpty() const { return m_attributes.isEmpty(); }
 
     PassRefPtr<Attr> getAttributeNode(const String&, bool shouldIgnoreAttributeCase, Element*) const;
     PassRefPtr<Attr> getAttributeNode(const QualifiedName&, Element*) const;
 
     // Internal interface.
-    const Attribute* attributeItem(unsigned index) const;
-    const Attribute* getAttributeItem(const QualifiedName&) const;
-    Attribute* getAttributeItem(const QualifiedName&);
-    Attribute* attributeItem(unsigned index);
+    Attribute* attributeItem(unsigned index) const { return &const_cast<ElementAttributeData*>(this)->m_attributes[index]; }
+    Attribute* getAttributeItem(const QualifiedName& name) const { return findAttributeInVector(m_attributes, name); }
     size_t getAttributeItemIndex(const QualifiedName&) const;
     size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
 
@@ -99,73 +94,35 @@ public:
 
     bool isEquivalent(const ElementAttributeData* other) const;
 
-    void setAttr(Element*, const QualifiedName&, Attr*) const;
-    void removeAttr(Element*, const QualifiedName&) const;
-    PassRefPtr<Attr> attrIfExists(Element*, const QualifiedName&) const;
-    PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&) const;
+    void setAttr(Element*, const QualifiedName&, Attr*);
+    void removeAttr(Element*, const QualifiedName&);
+    PassRefPtr<Attr> attrIfExists(Element*, const QualifiedName&);
+    PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&);
 
 private:
     friend class Element;
     friend class HTMLConstructionSite;
 
-    ElementAttributeData();
-    ElementAttributeData(const ElementAttributeData&);
-    ElementAttributeData(const Vector<Attribute>&);
+    ElementAttributeData()
+    {
+    }
 
-    Vector<Attribute> clonedAttributeVector() const;
+    const Vector<Attribute>& attributeVector() const { return m_attributes; }
+    Vector<Attribute> clonedAttributeVector() const { return m_attributes; }
 
     void detachAttrObjectsFromElement(Element*);
-    const Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
-    Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase);
+    Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
     void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
     void clearAttributes(Element*);
     void replaceAttribute(size_t index, const Attribute&, Element*);
 
-    bool isMutable() const { return m_isMutable; }
-    PassOwnPtr<ElementAttributeData> makeMutable() const { return adoptPtr(new ElementAttributeData(*this)); }
-
-    Attribute* array();
-    const Attribute* array() const;
-
     RefPtr<StylePropertySet> m_inlineStyleDecl;
-    mutable RefPtr<StylePropertySet> m_attributeStyle;
-    mutable SpaceSplitString m_classNames;
-    mutable AtomicString m_idForStyleResolution;
-
-    unsigned m_isMutable : 1;
-    unsigned m_arraySize : 31;
-
-    union {
-        Vector<Attribute, 4>* m_mutableAttributeVector;
-        void* m_attributes;
-    };
+    RefPtr<StylePropertySet> m_attributeStyle;
+    SpaceSplitString m_classNames;
+    AtomicString m_idForStyleResolution;
+    Vector<Attribute> m_attributes;
 };
-
-inline size_t ElementAttributeData::length() const
-{
-    if (isMutable())
-        return m_mutableAttributeVector->size();
-    return m_arraySize;
-}
-
-inline bool ElementAttributeData::isEmpty() const
-{
-    return !length();
-}
-
-inline Attribute* ElementAttributeData::array()
-{
-    // FIXME: It doesn't really make sense to have a non-const array(), at least not in the header file.
-    ASSERT(!isMutable());
-    return reinterpret_cast<Attribute*>(&m_attributes);
-}
-
-inline const Attribute* ElementAttributeData::array() const
-{
-    ASSERT(!isMutable());
-    return reinterpret_cast<const Attribute*>(&m_attributes);
-}
 
 inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Element* element)
 {
@@ -177,42 +134,18 @@ inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Ele
     return;
 }
 
-inline const Attribute* ElementAttributeData::attributeItem(unsigned index) const
-{
-    ASSERT(index < length());
-    if (isMutable())
-        return &m_mutableAttributeVector->at(index);
-    return &array()[index];
-}
-
-inline Attribute* ElementAttributeData::attributeItem(unsigned index)
-{
-    ASSERT(index < length());
-    if (isMutable())
-        return &m_mutableAttributeVector->at(index);
-    return &array()[index];
-}
-
-inline Attribute* ElementAttributeData::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase)
+inline Attribute* ElementAttributeData::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const
 {
     size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
     if (index != notFound)
-        return attributeItem(index);
-    return 0;
-}
-
-inline const Attribute* ElementAttributeData::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const
-{
-    size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
-    if (index != notFound)
-        return attributeItem(index);
+        return &const_cast<ElementAttributeData*>(this)->m_attributes[index];
     return 0;
 }
 
 inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& name) const
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        if (attributeItem(i)->name().matches(name))
+    for (unsigned i = 0; i < m_attributes.size(); ++i) {
+        if (m_attributes.at(i).name().matches(name))
             return i;
     }
     return notFound;
@@ -227,9 +160,8 @@ inline size_t ElementAttributeData::getAttributeItemIndex(const String& name, bo
 
     // Optimize for the case where the attribute exists and its name exactly matches.
     for (unsigned i = 0; i < len; ++i) {
-        const Attribute* attribute = attributeItem(i);
-        if (!attribute->name().hasPrefix()) {
-            if (name == attribute->localName())
+        if (!m_attributes[i].name().hasPrefix()) {
+            if (name == m_attributes[i].localName())
                 return i;
         } else
             doSlowCheck = true;
@@ -238,24 +170,6 @@ inline size_t ElementAttributeData::getAttributeItemIndex(const String& name, bo
     if (doSlowCheck)
         return getAttributeItemIndexSlowCase(name, shouldIgnoreAttributeCase);
     return notFound;
-}
-
-inline const Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name) const
-{
-    for (unsigned i = 0; i < length(); ++i) {
-        if (attributeItem(i)->name().matches(name))
-            return attributeItem(i);
-    }
-    return 0;
-}
-
-inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name)
-{
-    for (unsigned i = 0; i < length(); ++i) {
-        if (attributeItem(i)->name().matches(name))
-            return attributeItem(i);
-    }
-    return 0;
 }
 
 }

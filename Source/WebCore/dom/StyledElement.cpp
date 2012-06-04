@@ -143,7 +143,7 @@ StyledElement::~StyledElement()
 
 CSSStyleDeclaration* StyledElement::style()
 {
-    return mutableAttributeData()->ensureMutableInlineStyle(this)->ensureInlineCSSStyleDeclaration(this); 
+    return ensureAttributeData()->ensureMutableInlineStyle(this)->ensureInlineCSSStyleDeclaration(this); 
 }
 
 void StyledElement::attributeChanged(const Attribute& attribute)
@@ -170,11 +170,11 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     bool hasClass = i < length;
     if (hasClass) {
         const bool shouldFoldCase = document()->inQuirksMode();
-        attributeData()->setClass(newClassString, shouldFoldCase);
+        ensureAttributeData()->setClass(newClassString, shouldFoldCase);
         if (DOMTokenList* classList = optionalClassList())
             static_cast<ClassList*>(classList)->reset(newClassString);
     } else
-        mutableAttributeData()->clearClass();
+        attributeData()->clearClass();
     setNeedsStyleRecalc();
 }
 
@@ -230,9 +230,10 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
 
 bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 {
-    if (!attributeData() || !attributeData()->inlineStyle())
+    StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0;
+    if (!inlineStyle)
         return false;
-    bool changes = mutableAttributeData()->inlineStyle()->removeProperty(propertyID);
+    bool changes = inlineStyle->removeProperty(propertyID);
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -240,7 +241,7 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (const StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)
+    if (StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)
         inlineStyle->addSubresourceStyleURLs(urls, document()->elementSheet()->contents());
 }
 

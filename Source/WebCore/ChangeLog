@@ -1,3 +1,78 @@
+2012-06-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119421 and r119425.
+        http://trac.webkit.org/changeset/119421
+        http://trac.webkit.org/changeset/119425
+        https://bugs.webkit.org/show_bug.cgi?id=88256
+
+        not reliable, let's have a do-over (Requested by kling on
+        #webkit).
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::attributes):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::hasEquivalentAttributes):
+        (WebCore::Element::createAttributeData):
+        (WebCore):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        (WebCore::Element::attributeData):
+        (Element):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore::Element::updatedAttributeData):
+        (WebCore::Element::ensureUpdatedAttributeData):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::attrIfExists):
+        (WebCore::ElementAttributeData::ensureAttr):
+        (WebCore::ElementAttributeData::setAttr):
+        (WebCore::ElementAttributeData::removeAttr):
+        (WebCore::ElementAttributeData::setClass):
+        (WebCore):
+        (WebCore::ElementAttributeData::ensureInlineStyle):
+        (WebCore::ElementAttributeData::ensureMutableInlineStyle):
+        (WebCore::ElementAttributeData::destroyInlineStyle):
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::isEquivalent):
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        (WebCore::ElementAttributeData::cloneDataFrom):
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::replaceAttribute):
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::create):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::setIdForStyleResolution):
+        (WebCore::ElementAttributeData::setAttributeStyle):
+        (WebCore::ElementAttributeData::length):
+        (WebCore::ElementAttributeData::isEmpty):
+        (WebCore::ElementAttributeData::attributeItem):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (WebCore::ElementAttributeData::attributeVector):
+        (WebCore::ElementAttributeData::clonedAttributeVector):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::classAttributeChanged):
+        (WebCore::StyledElement::removeInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2012-06-04  Andreas Kling  <kling@webkit.org>
 
         Unreviewed build fixes for cr-android and Qt.
