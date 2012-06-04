@@ -1,3 +1,21 @@
+2012-06-04  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: speed up _calculateRetainedSizes function
+        https://bugs.webkit.org/show_bug.cgi?id=87863
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/heap-snapshot-advanced.html: Added.
+        * inspector/heap-snapshot-performance-test.js: Copied from PerformanceTests/inspector/heap-snapshot.html.
+        (test.performanceTest.step0):
+        (test.performanceTest.step1):
+        (test.performanceTest.step2):
+        (test.performanceTest.cleanup):
+        (test.performanceTest.done):
+        (test.performanceTest):
+        (test):
+        * inspector/heap-snapshot.html:
+
 2012-06-03  Kentaro Hara  <haraken@chromium.org>
 
         [perf-test] Add a benchmark of querySelector() for an element that appears in the depths in the document

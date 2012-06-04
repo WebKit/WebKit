@@ -1,3 +1,13 @@
+2012-06-04  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: speed up _calculateRetainedSizes function
+        https://bugs.webkit.org/show_bug.cgi?id=87863
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._calculateRetainedSizes):
+
 2012-06-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add unknown size to the memory pie-chart legend

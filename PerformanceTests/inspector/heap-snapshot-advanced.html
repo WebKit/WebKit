@@ -6,25 +6,27 @@
   <script src="heap-snapshot-performance-test.js"></script>
 <script>
 
-var counter = 0;
-
-function makeObjectsTree(deep)
+function makeLinkedList(n)
 {
     var node = {};
-    node.text = "some text " + counter;
-    if (deep === 0)
-        return node;
-    for (var i = 0; i < 2; ++i)
-        node[counter++] = makeObjectsTree(deep - 1);
+    while (--n)
+        node = { next: node };
     return node;
 }
 
-function makeObjectsTree2(name, deep)
+function makeDoubleLinkedList(n)
 {
-    window[name] = makeObjectsTree(deep);
+  var tail = {};
+  var head = tail;
+  while (--n) {
+    head = { next: head };
+    head.next.prev = head;
+  }
+  return { head: head, tail: tail };
 }
 
-makeObjectsTree2("t", 16);
+var list = makeLinkedList(20000);
+var double_list = makeDoubleLinkedList(5000);
 
 </script>
 </head>
