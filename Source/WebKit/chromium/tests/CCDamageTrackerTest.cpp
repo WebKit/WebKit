@@ -58,7 +58,8 @@ void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLay
 
     root->renderSurface()->clearLayerList();
     renderSurfaceLayerList.append(root);
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(root, root, identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, &layerSorter, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, &layerSorter, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, root->renderSurface()->contentRect());
 }
 
 void emulateDrawingOneFrame(CCLayerImpl* root)

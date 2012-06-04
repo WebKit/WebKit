@@ -386,7 +386,7 @@ void LayerRendererChromium::viewportChanged()
     m_currentRenderSurface = 0;
 }
 
-void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect)
+void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, CCRenderSurface* rootRenderSurface, const FloatRect& rootScissorRectInCurrentSurface)
 {
     // Non-root layers should clear their entire contents to transparent. On DEBUG builds, the root layer
     // is cleared to blue to easily see regions that were not drawn on the screen. If we
@@ -400,7 +400,7 @@ void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, C
         GLC(m_context, m_context->clearColor(0, 0, 1, 1));
 
     if (m_capabilities.usingPartialSwap)
-        setScissorToRect(enclosingIntRect(surfaceDamageRect));
+        setScissorToRect(enclosingIntRect(rootScissorRectInCurrentSurface));
     else
         GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
@@ -454,36 +454,28 @@ void LayerRendererChromium::doNoOp()
     GLC(m_context, m_context->flush());
 }
 
-void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass)
+void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass, const FloatRect& rootScissorRectInCurrentSurface)
 {
     CCRenderSurface* renderSurface = renderPass->targetSurface();
     if (!useRenderSurface(renderSurface))
         return;
 
-    clearRenderSurface(renderSurface, m_defaultRenderSurface, renderPass->surfaceDamageRect());
+    clearRenderSurface(renderSurface, m_defaultRenderSurface, rootScissorRectInCurrentSurface);
 
     const CCQuadList& quadList = renderPass->quadList();
     for (CCQuadList::constBackToFrontIterator it = quadList.backToFrontBegin(); it != quadList.backToFrontEnd(); ++it)
-        drawQuad(it->get(), renderPass->surfaceDamageRect());
+        drawQuad(it->get());
 }
 
-void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& surfaceDamageRect)
+void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
 {
-    IntRect scissorRect;
-    if (m_capabilities.usingPartialSwap) {
-        FloatRect clipAndDamageRect = surfaceDamageRect;
-        if (!quad->clipRect().isEmpty())
-            clipAndDamageRect.intersect(quad->clipRect());
-        scissorRect = enclosingIntRect(clipAndDamageRect);
-        if (scissorRect.isEmpty())
-            return;
-    } else
-        scissorRect = quad->clipRect();
+    IntRect scissorRect = quad->scissorRect();
 
+    ASSERT(!scissorRect.isEmpty());
     if (scissorRect.isEmpty())
-        GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-    else
-        setScissorToRect(scissorRect);
+        return;
+
+    setScissorToRect(scissorRect);
 
     if (quad->needsBlending())
         GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
@@ -675,9 +667,6 @@ void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*
     }
 
     drawBackgroundFilters(quad, contentsDeviceTransform);
-
-    // FIXME: Remove this call when the quad's scissorRect() is set correctly.
-    drawingSurface->setScissorRect(this, quad->surfaceDamageRect());
 
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.

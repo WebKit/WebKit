@@ -91,6 +91,9 @@ public:
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
 
+    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
+
     void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
 
@@ -115,10 +118,12 @@ public:
     bool hasMask() const;
     bool replicaHasMask() const;
 
+    FloatRect computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const;
 private:
     LayerChromium* m_owningLayer;
     LayerChromium* m_maskLayer;
 
+    // Uses this surface's space.
     IntRect m_contentRect;
     bool m_skipsDraw;
 
@@ -134,7 +139,16 @@ private:
     bool m_screenSpaceTransformsAreAnimating;
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;
+
+    // Uses the space of the surface's target surface.
     IntRect m_clipRect;
+
+    // During drawing, identifies the region outside of which nothing should be drawn.
+    // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise
+    // it's targetRenderSurface's contentRect.
+    // Uses the space of the surface's target surface.
+    IntRect m_scissorRect;
+
     Vector<RefPtr<LayerChromium> > m_layerList;
 
     // The nearest ancestor target surface that will contain the contents of this surface, and that is going

@@ -261,7 +261,10 @@ protected:
         root->setClipRect(IntRect(IntPoint::zero(), root->bounds()));
         m_renderSurfaceLayerListImpl.append(m_root.get());
 
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, 0, dummyMaxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, 0, dummyMaxTextureSize);
+
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListImpl, root->renderSurface()->contentRect());
+
         m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListImpl);
     }
 
@@ -277,7 +280,10 @@ protected:
         root->setClipRect(IntRect(IntPoint::zero(), root->bounds()));
         m_renderSurfaceLayerListChromium.append(m_root);
 
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListChromium, dummyLayerList, dummyMaxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListChromium, dummyLayerList, dummyMaxTextureSize);
+
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListChromium, root->renderSurface()->contentRect());
+
         m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListChromium);
     }
 

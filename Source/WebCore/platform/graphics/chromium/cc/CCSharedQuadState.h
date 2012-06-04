@@ -36,27 +36,26 @@ namespace WebCore {
 class CCSharedQuadState {
     WTF_MAKE_NONCOPYABLE(CCSharedQuadState);
 public:
-    static PassOwnPtr<CCSharedQuadState> create(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
+    static PassOwnPtr<CCSharedQuadState> create(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& scissorRect, float opacity, bool opaque);
 
     // The transform that quads in a CCDrawQuad should be transformed with.
     const WebKit::WebTransformationMatrix& quadTransform() const { return m_quadTransform; }
     // The transform that layerRect() should be transformed with.
     const WebKit::WebTransformationMatrix& layerTransform() const { return m_layerTransform; }
     const IntRect& layerRect() const { return m_layerRect; }
-    // Usage: if clipRect is empty, this clipRect should not be used.
-    const IntRect& clipRect() const { return m_clipRect; }
+    const IntRect& scissorRect() const { return m_scissorRect; }
 
     float opacity() const { return m_opacity; }
     bool isOpaque() const { return m_opaque; }
     bool isLayerAxisAlignedIntRect() const;
 
 private:
-    CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& clipRect, float opacity, bool opaque);
+    CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& scissorRect, float opacity, bool opaque);
 
     WebKit::WebTransformationMatrix m_quadTransform;
     WebKit::WebTransformationMatrix m_layerTransform;
     IntRect m_layerRect;
-    IntRect m_clipRect;
+    IntRect m_scissorRect;
     float m_opacity;
     bool m_opaque;
 };

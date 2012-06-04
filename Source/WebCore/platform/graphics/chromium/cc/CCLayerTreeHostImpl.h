@@ -241,7 +241,7 @@ private:
 
     CCLayerSorter m_layerSorter;
 
-    FloatRect m_rootDamageRect;
+    FloatRect m_rootScissorRect;
 
     OwnPtr<CCFrameRateCounter> m_fpsCounter;
     OwnPtr<CCDebugRectHistory> m_debugRectHistory;

@@ -36,10 +36,12 @@
 #include "cc/CCQuadCuller.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
+#include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTextureLayerImpl.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCTiledLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebVideoFrame.h>
 #include <public/WebVideoFrameProvider.h>
@@ -48,6 +50,12 @@ using namespace CCLayerTestCommon;
 using namespace WebCore;
 using namespace WebKit;
 using namespace WebKitTests;
+
+using ::testing::Mock;
+using ::testing::Return;
+using ::testing::AnyNumber;
+using ::testing::AtLeast;
+using ::testing::_;
 
 namespace {
 
@@ -69,6 +77,28 @@ public:
     virtual void setNeedsCommitOnImplThread() OVERRIDE { m_didRequestCommit = true; }
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE { }
     virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) OVERRIDE { }
+
+    PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHost(bool partialSwap, PassRefPtr<CCGraphicsContext> graphicsContext, PassOwnPtr<CCLayerImpl> rootPtr)
+    {
+        CCSettings settings;
+
+        settings.partialSwapEnabled = partialSwap;
+
+        OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+        myHostImpl->initializeLayerRenderer(graphicsContext, UnthrottledUploader);
+        myHostImpl->setViewportSize(IntSize(10, 10));
+
+        OwnPtr<CCLayerImpl> root = rootPtr;
+
+        root->setAnchorPoint(FloatPoint(0, 0));
+        root->setPosition(FloatPoint(0, 0));
+        root->setBounds(IntSize(10, 10));
+        root->setVisibleLayerRect(IntRect(0, 0, 10, 10));
+        root->setDrawsContent(true);
+        myHostImpl->setRootLayer(root.release());
+        return myHostImpl.release();
+    }
 
     static void expectClearedScrollDeltasRecursive(CCLayerImpl* layer)
     {
@@ -1099,6 +1129,288 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
     EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
     EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
+}
+
+class FakeLayerWithQuads : public CCLayerImpl {
+public:
+    static PassOwnPtr<FakeLayerWithQuads> create(int id) { return adoptPtr(new FakeLayerWithQuads(id)); }
+
+    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
+    {
+        const Color gray(100, 100, 100);
+        IntRect quadRect(0, 0, 5, 5);
+        OwnPtr<CCDrawQuad> myQuad = CCSolidColorDrawQuad::create(sharedQuadState, quadRect, gray);
+        quadList.append(myQuad.release());
+    }
+
+private:
+    FakeLayerWithQuads(int id)
+        : CCLayerImpl(id)
+    {
+    }
+};
+
+class MockContext : public FakeWebGraphicsContext3D {
+public:
+    MOCK_METHOD1(useProgram, void(WebGLId program));
+    MOCK_METHOD5(uniform4f, void(WGC3Dint location, WGC3Dfloat x, WGC3Dfloat y, WGC3Dfloat z, WGC3Dfloat w));
+    MOCK_METHOD4(uniformMatrix4fv, void(WGC3Dint location, WGC3Dsizei count, WGC3Dboolean transpose, const WGC3Dfloat* value));
+    MOCK_METHOD4(drawElements, void(WGC3Denum mode, WGC3Dsizei count, WGC3Denum type, WGC3Dintptr offset));
+    MOCK_METHOD1(getString, WebString(WGC3Denum name));
+    MOCK_METHOD0(getRequestableExtensionsCHROMIUM, WebString());
+    MOCK_METHOD1(enable, void(WGC3Denum cap));
+    MOCK_METHOD4(scissor, void(WGC3Dint x, WGC3Dint y, WGC3Dsizei width, WGC3Dsizei height));
+};
+
+class MockContextHarness {
+private:
+    MockContext* m_context;
+public:
+    MockContextHarness(MockContext* context)
+        : m_context(context)
+    {
+        // Catch "uninteresting" calls
+        EXPECT_CALL(*m_context, useProgram(_))
+            .Times(0);
+
+        EXPECT_CALL(*m_context, drawElements(_, _, _, _))
+            .Times(0);
+
+        // These are not asserted
+        EXPECT_CALL(*m_context, uniformMatrix4fv(_, _, _, _))
+            .WillRepeatedly(Return());
+
+        EXPECT_CALL(*m_context, uniform4f(_, _, _, _, _))
+            .WillRepeatedly(Return());
+
+        // Any other strings are empty
+        EXPECT_CALL(*m_context, getString(_))
+            .WillRepeatedly(Return(WebString()));
+
+        // Support for partial swap, if needed
+        EXPECT_CALL(*m_context, getString(GraphicsContext3D::EXTENSIONS))
+            .WillRepeatedly(Return(WebString("GL_CHROMIUM_post_sub_buffer")));
+
+        EXPECT_CALL(*m_context, getRequestableExtensionsCHROMIUM())
+            .WillRepeatedly(Return(WebString("GL_CHROMIUM_post_sub_buffer")));
+
+        // Any un-sanctioned calls to enable() are OK
+        EXPECT_CALL(*m_context, enable(_))
+            .WillRepeatedly(Return());
+    }
+
+    void mustDrawSolidQuad()
+    {
+        EXPECT_CALL(*m_context, drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0))
+            .WillOnce(Return())
+            .RetiresOnSaturation();
+
+        // 1 is hardcoded return value of fake createProgram()
+        EXPECT_CALL(*m_context, useProgram(1))
+            .WillOnce(Return())
+            .RetiresOnSaturation();
+
+    }
+
+    void mustSetScissor(int x, int y, int width, int height)
+    {
+        EXPECT_CALL(*m_context, enable(GraphicsContext3D::SCISSOR_TEST))
+            .WillRepeatedly(Return());
+
+        EXPECT_CALL(*m_context, scissor(x, y, width, height))
+            .Times(AtLeast(1))
+            .WillRepeatedly(Return());
+    }
+
+};
+
+TEST_F(CCLayerTreeHostImplTest, noPartialSwap)
+{
+    MockContext* mockContext = new MockContext();
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(mockContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+    MockContextHarness harness(mockContext);
+
+    harness.mustDrawSolidQuad();
+    harness.mustSetScissor(0, 0, 10, 10);
+
+    // Run test case
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(false, context, FakeLayerWithQuads::create(1));
+
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+    Mock::VerifyAndClearExpectations(&mockContext);
+}
+
+TEST_F(CCLayerTreeHostImplTest, partialSwap)
+{
+    MockContext* mockContext = new MockContext();
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(mockContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+    MockContextHarness harness(mockContext);
+
+    harness.mustDrawSolidQuad();
+    harness.mustSetScissor(0, 0, 10, 10);
+
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(true, context, FakeLayerWithQuads::create(1));
+
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+    Mock::VerifyAndClearExpectations(&mockContext);
+}
+
+TEST_F(CCLayerTreeHostImplTest, partialSwapNoUpdate)
+{
+    MockContext* mockContext = new MockContext();
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(mockContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+    MockContextHarness harness(mockContext);
+
+    harness.mustDrawSolidQuad();
+    harness.mustSetScissor(0, 8, 2, 2);
+    harness.mustDrawSolidQuad();
+    harness.mustSetScissor(0, 0, 10, 10);
+
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(true, context, FakeLayerWithQuads::create(1));
+    
+    // Draw once to make sure layer is not new
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+
+    // Generate update in layer
+    CCLayerImpl* root = myHostImpl->rootLayer();
+    root->setUpdateRect(FloatRect(0, 0, 2, 2));
+
+    // This draw should generate no new udpates
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+
+    Mock::VerifyAndClearExpectations(&mockContext);
+}
+
+class PartialSwapContext: public FakeWebGraphicsContext3D {
+public:
+    WebString getString(WGC3Denum name)
+    {
+        if (name == GraphicsContext3D::EXTENSIONS)
+            return WebString("GL_CHROMIUM_post_sub_buffer");
+        return WebString();
+    }
+    
+    WebString getRequestableExtensionsCHROMIUM()
+    {
+        return WebString("GL_CHROMIUM_post_sub_buffer");
+    }
+};
+
+static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, CCLayerTreeHostImplClient* client)
+{
+    CCSettings settings;
+    settings.partialSwapEnabled = partialSwap;
+
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new PartialSwapContext()), GraphicsContext3D::RenderDirectlyToHostWindow));
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, client);
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(100, 100));
+
+    /*
+      Layers are created as follows:
+
+         +--------------------+
+         |                  1 |
+         |  +-----------+     |
+         |  |         2 |     |
+         |  | +-------------------+
+         |  | |   3               |
+         |  | +-------------------+
+         |  |           |     |
+         |  +-----------+     |
+         |                    |
+         |                    |
+         +--------------------+
+
+         Layers 1, 2 have render surfaces
+     */
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> grandChild = FakeLayerWithQuads::create(3);
+
+    IntRect rootRect(0, 0, 100, 100);
+    IntRect childRect(10, 10, 50, 50);
+    IntRect grandChildRect(5, 5, 150, 150);
+
+    root->createRenderSurface();
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
+    root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setVisibleLayerRect(rootRect);
+    root->setDrawsContent(false);
+    root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
+
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setPosition(FloatPoint(childRect.x(), childRect.y()));
+    child->setOpacity(0.5f);
+    child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setVisibleLayerRect(childRect);
+    child->setDrawsContent(false);
+
+    grandChild->setAnchorPoint(FloatPoint(0, 0));
+    grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
+    grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setVisibleLayerRect(grandChildRect);
+    grandChild->setDrawsContent(true);
+
+    child->addChild(grandChild.release());
+    root->addChild(child.release());
+
+    myHostImpl->setRootLayer(root.release());
+    return myHostImpl.release();
+}
+
+TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorPartialSwap)
+{
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = setupLayersForOpacity(true, this);
+
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Just for consistency, the most interesting stuff already happened
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+
+        // Verify all quads have been computed
+        ASSERT_EQ(2U, frame.renderPasses.size());
+        ASSERT_EQ(1U, frame.renderPasses[0]->quadList().size());
+        ASSERT_EQ(1U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(CCDrawQuad::SolidColor, frame.renderPasses[0]->quadList()[0]->material());
+        EXPECT_EQ(CCDrawQuad::RenderSurface, frame.renderPasses[1]->quadList()[0]->material());
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorNoPartialSwap)
+{
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = setupLayersForOpacity(false, this);
+
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Just for consistency, the most interesting stuff already happened
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+
+        // Verify all quads have been computed
+        ASSERT_EQ(2U, frame.renderPasses.size());
+        ASSERT_EQ(1U, frame.renderPasses[0]->quadList().size());
+        ASSERT_EQ(1U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(CCDrawQuad::SolidColor, frame.renderPasses[0]->quadList()[0]->material());
+        EXPECT_EQ(CCDrawQuad::RenderSurface, frame.renderPasses[1]->quadList()[0]->material());
+    }
 }
 
 // Make sure that context lost notifications are propagated through the tree.

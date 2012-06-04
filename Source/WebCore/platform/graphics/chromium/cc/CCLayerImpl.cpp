@@ -138,10 +138,7 @@ bool CCLayerImpl::descendantDrawsContent()
 
 PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 {
-    IntRect layerClipRect;
-    if (usesLayerClipping())
-        layerClipRect = clipRect();
-    return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
+    return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), m_scissorRect, drawOpacity(), opaque());
 }
 
 void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)

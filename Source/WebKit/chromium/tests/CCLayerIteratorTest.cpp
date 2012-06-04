@@ -140,10 +140,11 @@ TEST(CCLayerIteratorTest, simpleTree)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                WebTransformationMatrix(), WebTransformationMatrix(),
-                                                                renderSurfaceLayerList, layerList,
-                                                                256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
+                                                   WebTransformationMatrix(), WebTransformationMatrix(),
+                                                   renderSurfaceLayerList, layerList,
+                                                   256);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);
     EXPECT_COUNT(rootLayer, 0, -1, 1);
@@ -187,10 +188,11 @@ TEST(CCLayerIteratorTest, complexTree)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                WebTransformationMatrix(), WebTransformationMatrix(),
-                                                                renderSurfaceLayerList, layerList,
-                                                                256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
+                                                   WebTransformationMatrix(), WebTransformationMatrix(),
+                                                   renderSurfaceLayerList, layerList,
+                                                   256);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);
     EXPECT_COUNT(rootLayer, 0, -1, 1);
@@ -246,10 +248,11 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
-                                                                WebTransformationMatrix(), WebTransformationMatrix(),
-                                                                renderSurfaceLayerList, layerList,
-                                                                256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
+                                                   WebTransformationMatrix(), WebTransformationMatrix(),
+                                                   renderSurfaceLayerList, layerList,
+                                                   256);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);
     EXPECT_COUNT(rootLayer, 0, -1, 1);

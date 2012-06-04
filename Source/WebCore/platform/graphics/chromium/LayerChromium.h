@@ -138,6 +138,9 @@ public:
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
+    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
+
     void setScrollPosition(const IntPoint&);
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
 
@@ -305,7 +308,15 @@ private:
 
     // Layer properties.
     IntSize m_bounds;
+
+    // Uses layer's content space.
     IntRect m_visibleLayerRect;
+
+    // During drawing, identifies the region outside of which nothing should be drawn.
+    // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise
+    // it's targetRenderSurface's contentRect.
+    // Uses target surface's space.
+    IntRect m_scissorRect;
     IntPoint m_scrollPosition;
     bool m_scrollable;
     bool m_shouldScrollOnMainThread;
@@ -343,12 +354,16 @@ private:
     OwnPtr<RenderSurfaceChromium> m_renderSurface;
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
+
+    // Uses target surface space.
     IntRect m_clipRect;
     RenderSurfaceChromium* m_targetRenderSurface;
     WebKit::WebTransformationMatrix m_drawTransform;
     WebKit::WebTransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;
     bool m_screenSpaceTransformIsAnimating;
+
+    // Uses target surface space.
     IntRect m_drawableContentRect;
     float m_contentsScale;
 

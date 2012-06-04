@@ -69,7 +69,7 @@ public:
     const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
     virtual void beginDrawingFrame(CCRenderSurface* defaultRenderSurface) = 0;
-    virtual void drawRenderPass(const CCRenderPass*) = 0;
+    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentSurface) = 0;
     virtual void finishDrawingFrame() = 0;
 
     virtual void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize) = 0;

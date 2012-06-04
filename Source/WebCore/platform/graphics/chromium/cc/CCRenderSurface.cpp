@@ -37,10 +37,14 @@
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
+#include <public/WebTransformationMatrix.h>
 #include <wtf/text/CString.h>
+
+using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
@@ -136,20 +140,6 @@ void CCRenderSurface::releaseBackgroundTexture()
 bool CCRenderSurface::hasValidBackgroundTexture() const
 {
     return m_backgroundTexture && m_backgroundTexture->isReserved() && m_backgroundTexture->isValid(m_contentRect.size(), GraphicsContext3D::RGBA);
-}
-
-void CCRenderSurface::setScissorRect(LayerRendererChromium* layerRenderer, const FloatRect& surfaceDamageRect) const
-{
-    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping() && layerRenderer->capabilities().usingPartialSwap) {
-        FloatRect clipAndDamageRect = m_clipRect;
-        clipAndDamageRect.intersect(surfaceDamageRect);
-        layerRenderer->setScissorToRect(enclosingIntRect(clipAndDamageRect));
-    } else if (layerRenderer->capabilities().usingPartialSwap)
-        layerRenderer->setScissorToRect(enclosingIntRect(surfaceDamageRect));
-    else if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerClipping())
-        layerRenderer->setScissorToRect(m_clipRect);
-    else
-        GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));
 }
 
 String CCRenderSurface::name() const
@@ -251,16 +241,22 @@ bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState() const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(originTransform(), drawTransform(), contentRect(), clipRect(), drawOpacity(), isOpaque);
+    return CCSharedQuadState::create(originTransform(), drawTransform(), contentRect(), m_scissorRect, drawOpacity(), isOpaque);
 }
 
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState() const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(replicaOriginTransform(), replicaDrawTransform(), contentRect(), clipRect(), drawOpacity(), isOpaque);
+    return CCSharedQuadState::create(replicaOriginTransform(), replicaDrawTransform(), contentRect(), m_scissorRect, drawOpacity(), isOpaque);
 }
 
-void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, const FloatRect& surfaceDamageRect)
+FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const
+{
+    WebTransformationMatrix inverseScreenSpaceTransform = m_screenSpaceTransform.inverse();
+    return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
+}
+
+void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica)
 {
     ASSERT(!forReplica || hasReplica());
 
@@ -290,7 +286,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
 
     int maskTextureId = maskLayer ? maskLayer->contentsTextureId() : 0;
 
-    quadList.appendSurface(CCRenderSurfaceDrawQuad::create(sharedQuadState, contentRect(), m_owningLayer, surfaceDamageRect, forReplica, filters(), backgroundFilters(), maskTextureId));
+    quadList.appendSurface(CCRenderSurfaceDrawQuad::create(sharedQuadState, contentRect(), m_owningLayer, forReplica, filters(), backgroundFilters(), maskTextureId));
 }
 
 }

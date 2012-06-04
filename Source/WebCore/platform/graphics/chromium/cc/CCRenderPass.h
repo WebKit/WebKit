@@ -62,16 +62,12 @@ public:
     const CCQuadList& quadList() const { return m_quadList; }
     CCRenderSurface* targetSurface() const { return m_targetSurface; }
 
-    void setSurfaceDamageRect(const FloatRect& surfaceDamageRect) { m_surfaceDamageRect = surfaceDamageRect; }
-    const FloatRect& surfaceDamageRect() const { return m_surfaceDamageRect; }
-
 private:
     explicit CCRenderPass(CCRenderSurface*);
 
     CCRenderSurface* m_targetSurface;
     CCQuadList m_quadList;
     Vector<OwnPtr<CCSharedQuadState> > m_sharedQuadStateList;
-    FloatRect m_surfaceDamageRect;
 };
 
 typedef Vector<OwnPtr<CCRenderPass> > CCRenderPassList;

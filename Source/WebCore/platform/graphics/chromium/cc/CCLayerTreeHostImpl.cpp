@@ -40,6 +40,7 @@
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -230,26 +231,6 @@ void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, 
     }
 }
 
-static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const FloatRect& rootDamageRect)
-{
-    FloatRect surfaceDamageRect;
-    // For now, we conservatively use the root damage as the damage for
-    // all surfaces, except perspective transforms.
-    const WebTransformationMatrix& screenSpaceTransform = renderSurfaceLayer->renderSurface()->screenSpaceTransform();
-    if (screenSpaceTransform.hasPerspective()) {
-        // Perspective projections do not play nice with mapRect of
-        // inverse transforms. In this uncommon case, its simpler to
-        // just redraw the entire surface.
-        // FIXME: use calculateVisibleRect to handle projections.
-        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
-        surfaceDamageRect = renderSurface->contentRect();
-    } else {
-        WebTransformationMatrix inverseScreenSpaceTransform = screenSpaceTransform.inverse();
-        surfaceDamageRect = inverseScreenSpaceTransform.mapRect(rootDamageRect);
-    }
-    return surfaceDamageRect;
-}
-
 void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSurfaceLayerList)
 {
     ASSERT(renderSurfaceLayerList.isEmpty());
@@ -268,7 +249,16 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
         WebTransformationMatrix identityMatrix;
         WebTransformationMatrix deviceScaleTransform;
         deviceScaleTransform.scale(m_settings.deviceScaleFactor);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
+
+        if (layerRendererCapabilities().usingPartialSwap || settings().showSurfaceDamageRects)
+            trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
+        m_rootScissorRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
+
+        if (!layerRendererCapabilities().usingPartialSwap)
+            m_rootScissorRect = FloatRect(FloatPoint(0, 0), deviceViewportSize());
+    
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, m_rootScissorRect);
     }
 }
 
@@ -280,9 +270,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
     TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
-    if (layerRendererCapabilities().usingPartialSwap || settings().showSurfaceDamageRects)
-        trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
-    m_rootDamageRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
+    m_rootLayerImpl->setScissorRect(enclosingIntRect(m_rootScissorRect));
 
     // Create the render passes in dependency order.
     HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
@@ -291,24 +279,12 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
         OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface);
-
-        FloatRect surfaceDamageRect;
-        if (layerRendererCapabilities().usingPartialSwap)
-            surfaceDamageRect = damageInSurfaceSpace(renderSurfaceLayer, m_rootDamageRect);
-        pass->setSurfaceDamageRect(surfaceDamageRect);
-
         surfacePassMap.add(renderSurface, pass.get());
         passes.append(pass.release());
     }
 
-    IntRect scissorRect;
-    if (layerRendererCapabilities().usingPartialSwap)
-        scissorRect = enclosingIntRect(m_rootDamageRect);
-    else
-        scissorRect = IntRect(IntPoint(), deviceViewportSize());
-
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
-    CCOcclusionTrackerImpl occlusionTracker(scissorRect, recordMetricsForFrame);
+    CCOcclusionTrackerImpl occlusionTracker(enclosingIntRect(m_rootScissorRect), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(CCOcclusionTrackerImpl::preferredMinimumTrackingSize());
 
     // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
@@ -327,9 +303,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
         occlusionTracker.enterLayer(it);
 
-        if (it.representsContributingRenderSurface())
+        if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty())
             pass->appendQuadsForRenderSurfaceLayer(*it, &occlusionTracker);
-        else if (it.representsItself() && !it->visibleLayerRect().isEmpty()) {
+        else if (it.representsItself() && !it->visibleLayerRect().isEmpty() &&  !it->scissorRect().isEmpty()) {
             it->willDraw(m_layerRenderer.get(), context());
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
@@ -431,8 +407,12 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     m_fpsCounter->markBeginningOfFrame(currentTime());
     m_layerRenderer->beginDrawingFrame(m_rootLayerImpl->renderSurface());
 
-    for (size_t i = 0; i < frame.renderPasses.size(); ++i)
-        m_layerRenderer->drawRenderPass(frame.renderPasses[i].get());
+    for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
+        CCRenderPass* renderPass = frame.renderPasses[i].get();
+
+        FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(m_rootScissorRect);
+        m_layerRenderer->drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
+    }
 
     if (m_debugRectHistory->enabled(settings()))
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), frame.renderSurfaceLayerList, settings());
@@ -485,7 +465,7 @@ bool CCLayerTreeHostImpl::swapBuffers()
     ASSERT(m_layerRenderer);
 
     m_fpsCounter->markEndOfFrame();
-    return m_layerRenderer->swapBuffers(enclosingIntRect(m_rootDamageRect));
+    return m_layerRenderer->swapBuffers(enclosingIntRect(m_rootScissorRect));
 }
 
 void CCLayerTreeHostImpl::didLoseContext()

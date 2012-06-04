@@ -31,7 +31,12 @@
 #include "LayerChromium.h"
 #include "TranslateTransformOperation.h"
 #include "cc/CCLayerAnimationController.h"
+#include "cc/CCLayerImpl.h"
+#include "cc/CCLayerSorter.h"
 #include "cc/CCMathUtil.h"
+#include "cc/CCProxy.h"
+#include "cc/CCSingleThreadProxy.h"
+#include "cc/CCThread.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -59,7 +64,8 @@ void executeCalculateDrawTransformsAndVisibility(LayerChromium* rootLayer)
     Vector<RefPtr<LayerChromium> > dummyRenderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
     int dummyMaxTextureSize = 512;
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, dummyRenderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, identityMatrix, identityMatrix, dummyRenderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(dummyRenderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 }
 
 WebTransformationMatrix remove3DComponentOfMatrix(const WebTransformationMatrix& mat)
@@ -175,7 +181,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
 
     // Case 7: Verify that position pre-multiplies the layer transform.
-    //         The current implementation of calculateDrawTransformsAndVisibility does this implicitly, but it is
+    //         The current implementation of calculateDrawTransforms does this implicitly, but it is
     //         still worth testing to detect accidental regressions.
     expectedResult = positionTransform * translationToAnchor * layerTransform * translationToAnchor.inverse();
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5f, 0.0f), FloatPoint(5.0f, 1.2f), IntSize(10, 12), false);
@@ -316,6 +322,558 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
 
     // The screen space is the same as the target since the child surface draws into the root.
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->screenSpaceTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
+{
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    /*
+      Layers are created as follows:
+
+         +--------------------+
+         |                  1 |
+         |  +-----------+     |
+         |  |         2 |     |
+         |  | +-------------------+
+         |  | |   3               |
+         |  | +-------------------+
+         |  |           |     |
+         |  +-----------+     |
+         |                    |
+         |                    |
+         +--------------------+
+
+         Layers 1, 2 have render surfaces
+     */
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> grandChild = CCLayerImpl::create(3);
+
+    IntRect rootRect(0, 0, 100, 100);
+    IntRect childRect(10, 10, 50, 50);
+    IntRect grandChildRect(5, 5, 150, 150);
+
+    root->createRenderSurface();
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
+    root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setDrawsContent(true);
+    root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
+
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setPosition(FloatPoint(childRect.x(), childRect.y()));
+    child->setOpacity(0.5f);
+    child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setDrawsContent(true);
+
+    grandChild->setAnchorPoint(FloatPoint(0, 0));
+    grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
+    grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setDrawsContent(true);
+
+    CCLayerImpl* childPtr = child.get();
+    CCLayerImpl* grandChildPtr = grandChild.get();
+
+    child->addChild(grandChild.release());
+    root->addChild(child.release());
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    {
+        WebTransformationMatrix identityMatrix;
+        Vector<CCLayerImpl*> layerList;
+        int dummyMaxTextureSize = 512;
+        CCLayerSorter layerSorter;
+
+        renderSurfaceLayerList.append(root.get());
+
+        CCLayerTreeHostCommon::calculateDrawTransforms(root.get(), root.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, layerList, &layerSorter, dummyMaxTextureSize);
+
+        FloatRect dummyDamageRect;
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, dummyDamageRect);
+    }
+    
+    ASSERT_TRUE(childPtr->renderSurface());
+    ASSERT_TRUE(root->renderSurface());
+    ASSERT_FALSE(grandChildPtr->renderSurface());
+    
+    EXPECT_EQ(renderSurfaceLayerList.size(), 2U);
+    
+    ASSERT_EQ(root->clipRect(), IntRect(0, 0, 0, 0));
+
+    // Layer's clipRect is a union of all its children's bounds
+    ASSERT_EQ(childPtr->clipRect(), IntRect(0, 0, grandChildRect.x() + grandChildRect.width(), grandChildRect.y() + grandChildRect.height()));
+    ASSERT_EQ(grandChildPtr->clipRect(), IntRect(0, 0, 0, 0));
+
+    ASSERT_EQ(root->renderSurface()->clipRect(), IntRect(0, 0, 0, 0));
+    ASSERT_EQ(childPtr->renderSurface()->clipRect(), IntRect(0, 0, 0, 0));
+    
+    ASSERT_FALSE(root->usesLayerClipping());
+    ASSERT_FALSE(childPtr->usesLayerClipping());
+    ASSERT_FALSE(grandChildPtr->usesLayerClipping());
+    
+    // Damage the entire screen
+    IntRect rootDamage(rootRect);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // child surface doesn't have a clip rect, therefore it will be computed as intersection
+    // between root surface's contentrect and child surface's drawable content rect.
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(childRect.x(), childRect.y(), rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+
+    EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
+
+    // The damage is the entire rootRect, but child layer starts at an offset.
+    // Even though it has bounds, it is not clipping to bounds so its children
+    // (which extend beyond the bounds) extend the scissor rect
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+
+    // Grand child will have the same scissor rect as it doesn't have a surface
+    // of its own
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+    
+    // Empty damage
+    rootDamage = IntRect(0, 0, 0, 0);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Empty damage == empty scissor
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    // Partial damage within child
+    rootDamage = IntRect(10, 10, 20, 20);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child does not have its own surface, so its scissor rect is identical to child's
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Partial damage beyond child
+    rootDamage = IntRect(10, 10, 80, 80);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child does not have its own surface, so its scissor rect is identical to child's
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Partial damage beyond root
+    rootDamage = IntRect(10, 10, 110, 110);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    
+    // Root does not use layer clipping, so its content rect will be used to intersect with damage
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(root->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+
+    // Children's content rects are bigger than the root's so they don't clip the damage rect, but change its offset.
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+}
+
+TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
+{
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    /*
+      Layers are created as follows:
+
+         +--------------------+
+         |                  1 |
+         |  +-----------+     |
+         |  |         2 |     |
+         |  | +-------------------+
+         |  | |   3               |
+         |  | +-------------------+
+         |  |           |     |
+         |  +-----------+     |
+         |                    |
+         |                    |
+         +--------------------+
+
+         Layers 1, 2 have render surfaces
+     */
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> grandChild = CCLayerImpl::create(3);
+
+    IntRect rootRect(0, 0, 100, 100);
+    IntRect childRect(10, 10, 50, 50);
+    IntRect grandChildRect(5, 5, 150, 150);
+
+    root->createRenderSurface();
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
+    root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setDrawsContent(true);
+    root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
+
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setPosition(FloatPoint(childRect.x(), childRect.y()));
+    child->setOpacity(0.5f);
+    child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setDrawsContent(true);
+
+    grandChild->setAnchorPoint(FloatPoint(0, 0));
+    grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
+    grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setDrawsContent(true);
+
+    CCLayerImpl* childPtr = child.get();
+    CCLayerImpl* grandChildPtr = grandChild.get();
+
+    child->addChild(grandChild.release());
+    root->addChild(child.release());
+
+    root->setMasksToBounds(true);
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    {
+        WebTransformationMatrix identityMatrix;
+        Vector<CCLayerImpl*> layerList;
+        int dummyMaxTextureSize = 512;
+        CCLayerSorter layerSorter;
+
+        renderSurfaceLayerList.append(root.get());
+
+        CCLayerTreeHostCommon::calculateDrawTransforms(root.get(), root.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, layerList, &layerSorter, dummyMaxTextureSize);
+
+        FloatRect dummyDamageRect;
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, dummyDamageRect);
+    }
+    
+    ASSERT_TRUE(childPtr->renderSurface());
+    ASSERT_TRUE(root->renderSurface());
+    ASSERT_FALSE(grandChildPtr->renderSurface());
+    
+    EXPECT_EQ(renderSurfaceLayerList.size(), 2U);
+    
+    // Now root is clipping to its bounds
+    ASSERT_EQ(root->clipRect(), rootRect);
+
+    // Layer's clipRect is a union of all its children's bounds
+    ASSERT_EQ(childPtr->clipRect(), IntRect(0, 0, grandChildRect.x() + grandChildRect.width(), grandChildRect.y() + grandChildRect.height()));
+    ASSERT_EQ(grandChildPtr->clipRect(), IntRect(0, 0, 0, 0));
+
+    ASSERT_EQ(root->renderSurface()->clipRect(), IntRect(0, 0, 0, 0));
+
+    // Child surface's clipping rect is now set to root's
+    ASSERT_EQ(childPtr->renderSurface()->clipRect(), rootRect);
+    
+    ASSERT_TRUE(root->usesLayerClipping());
+    ASSERT_FALSE(childPtr->usesLayerClipping());
+    ASSERT_FALSE(grandChildPtr->usesLayerClipping());
+    
+    // Damage the entire screen
+    IntRect rootDamage(rootRect);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootRect));
+    
+    EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
+
+    // The damage is the entire rootRect, but child layer starts at an offset.
+    // Even though it has bounds, it is not clipping to bounds so its children
+    // (which extend beyond the bounds) extend the scissor rect
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+
+    // Grand child will have the same scissor rect as it doesn't have a surface
+    // of its own
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+    
+    // Empty damage
+    rootDamage = IntRect(0, 0, 0, 0);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Empty damage == empty scissor
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    // Partial damage within child
+    rootDamage = IntRect(10, 10, 20, 20);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child does not have its own surface, so its scissor rect is identical to child's
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Partial damage beyond child
+    rootDamage = IntRect(10, 10, 80, 80);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child does not have its own surface, so its scissor rect is identical to child's
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Partial damage beyond root
+    rootDamage = IntRect(10, 10, 110, 110);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    
+    // Root does not use layer clipping, so its content rect will be used to intersect with damage
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(root->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+
+    // Now the scissor rects are clipped by surfaces contentRect
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+}
+
+TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
+{
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    /*
+      Layers are created as follows:
+
+         +--------------------+
+         |                  1 |
+         |  +-----------+     |
+         |  |         2 |     |
+         |  | +-------------------+
+         |  | |   3,4             |
+         |  | +-------------------+
+         |  |           |     |
+         |  +-----------+     |
+         |                    |
+         |                    |
+         +--------------------+
+
+         Layers 1, 2 and 3 have render surfaces
+     */
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> grandChild = CCLayerImpl::create(3);
+    OwnPtr<CCLayerImpl> grandChild2 = CCLayerImpl::create(4);
+
+    IntRect rootRect(0, 0, 100, 100);
+    IntRect childRect(10, 10, 50, 50);
+    IntRect grandChildRect(5, 5, 150, 150);
+
+    root->createRenderSurface();
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
+    root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setDrawsContent(true);
+    root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
+
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setPosition(FloatPoint(childRect.x(), childRect.y()));
+    child->setOpacity(0.5f);
+    child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setDrawsContent(true);
+
+    grandChild->setAnchorPoint(FloatPoint(0, 0));
+    grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
+    grandChild->setOpacity(0.5f);
+    grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setDrawsContent(true);
+
+    grandChild2->setAnchorPoint(FloatPoint(0, 0));
+    grandChild2->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
+    grandChild2->setOpacity(0.5f);
+    grandChild2->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild2->setDrawsContent(true);
+
+    CCLayerImpl* childPtr = child.get();
+    CCLayerImpl* grandChildPtr = grandChild.get();
+
+    grandChild->addChild(grandChild2.release());
+    child->addChild(grandChild.release());
+    root->addChild(child.release());
+
+    root->setMasksToBounds(true);
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    {
+        WebTransformationMatrix identityMatrix;
+        Vector<CCLayerImpl*> layerList;
+        int dummyMaxTextureSize = 512;
+        CCLayerSorter layerSorter;
+
+        renderSurfaceLayerList.append(root.get());
+
+        CCLayerTreeHostCommon::calculateDrawTransforms(root.get(), root.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, layerList, &layerSorter, dummyMaxTextureSize);
+
+        FloatRect dummyDamageRect;
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, dummyDamageRect);
+    }
+    
+    ASSERT_TRUE(childPtr->renderSurface());
+    ASSERT_TRUE(root->renderSurface());
+    ASSERT_TRUE(grandChildPtr->renderSurface());
+    
+    EXPECT_EQ(renderSurfaceLayerList.size(), 3U);
+    
+    // Now root is clipping to its bounds
+    ASSERT_EQ(root->clipRect(), rootRect);
+
+    ASSERT_EQ(childPtr->clipRect(), IntRect(0, 0, childRect.x() + grandChildRect.width() , childRect.y() + grandChildRect.height()));
+
+    // Grandchild now clips
+    ASSERT_EQ(grandChildPtr->clipRect(), IntRect(0, 0, grandChildRect.x() + grandChildRect.width(), grandChildRect.y() + grandChildRect.height()));
+
+    ASSERT_EQ(root->renderSurface()->clipRect(), IntRect(0, 0, 0, 0));
+
+    // Child surface's clipping rect is now set to root's
+    ASSERT_EQ(childPtr->renderSurface()->clipRect(), rootRect);
+    
+    ASSERT_TRUE(root->usesLayerClipping());
+    ASSERT_FALSE(childPtr->usesLayerClipping());
+    ASSERT_FALSE(grandChildPtr->usesLayerClipping());
+    
+    // Damage the entire screen
+    IntRect rootDamage(rootRect);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootRect));
+    
+    EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
+
+    // The damage is the entire rootRect, but child layer starts at an offset.
+    // Even though it has bounds, it is not clipping to bounds so its children
+    // (which extend beyond the bounds) extend the scissor rect
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+
+    // Grand child is now scissored by the render surface
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, rootRect.width() - childRect.x() - grandChildRect.x(), rootRect.height() - childRect.y() - grandChildRect.y()));
+    
+    // Empty damage
+    rootDamage = IntRect(0, 0, 0, 0);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Empty damage == empty scissor
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(0, 0, 0, 0));
+    
+    // Partial damage within child
+    rootDamage = IntRect(10, 10, 20, 20);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child now gets scissored by its target surface as well as root
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width() - grandChildRect.x(), rootDamage.height() - grandChildRect.y()));
+
+    // Partial damage beyond child
+    rootDamage = IntRect(10, 10, 80, 80);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Entire damage rect is within the root surface
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    
+    // Entire damage rect is within the layer
+    EXPECT_EQ(root->scissorRect(), rootDamage);
+
+    // Entire damage rect is within the layer, but with different offset
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width(), rootDamage.height()));
+
+    // Grand child now gets scissored by its target surface as well as root
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width() - grandChildRect.x(), rootDamage.height() - grandChildRect.y()));
+
+    // Partial damage beyond root
+    rootDamage = IntRect(10, 10, 110, 110);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
+    
+    // Scissors are not computed for root
+    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+
+    // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    
+    // Root does not use layer clipping, so its content rect will be used to intersect with damage
+    // Result is that root damage rect is clipped at root layer boundary
+    EXPECT_EQ(root->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+
+    // Now the scissor rects are clipped by surfaces contentRect
+    EXPECT_EQ(childPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+
+    // Grandchild's scissor rect is clipped by its target surface
+    EXPECT_EQ(grandChildPtr->scissorRect(), IntRect(rootDamage.x() - childRect.x(), rootDamage.y() - childRect.y(), rootDamage.width() - grandChildRect.x(), rootDamage.height() - grandChildRect.y()));
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForReplica)
@@ -545,7 +1103,10 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
     int dummyMaxTextureSize = 512;
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    FloatRect dummyDamageRect;
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
 
     // The child layer's content is entirely outside the parent's clip rect, so the intermediate
     // render surface should have been removed. Render surfaces without children or visible
@@ -573,7 +1134,9 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForTransparentChild)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
     int dummyMaxTextureSize = 512;
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
 
     // Since the layer is transparent, renderSurface1->renderSurface() should not have gotten added anywhere.
     // Also, the drawable content rect should not have been extended by the children.
@@ -601,14 +1164,14 @@ TEST(CCLayerTreeHostCommonTest, verifyForceRenderSurface)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
     int dummyMaxTextureSize = 512;
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     EXPECT_TRUE(renderSurface1->renderSurface());
     EXPECT_EQ(renderSurfaceLayerList.size(), 1U);
 
     renderSurfaceLayerList.clear();
     renderSurface1->setForceRenderSurface(false);
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
     EXPECT_FALSE(renderSurface1->renderSurface());
     EXPECT_EQ(renderSurfaceLayerList.size(), 0U);
 }
@@ -666,7 +1229,11 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    FloatRect dummyDamageRect;
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
+
 
     ASSERT_EQ(2U, renderSurfaceLayerList.size());
     EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
@@ -725,7 +1292,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfacesCrashRepro)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
 
     ASSERT_EQ(2U, renderSurfaceLayerList.size());
     EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
@@ -776,7 +1345,7 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsSurfaceWithoutVisibleContent)
     parent->createRenderSurface();
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     // Without an animation, we should cull child and grandChild from the renderSurfaceLayerList.
     ASSERT_EQ(1U, renderSurfaceLayerList.size());
@@ -795,7 +1364,7 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsSurfaceWithoutVisibleContent)
     parent->createRenderSurface();
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     // With an animating transform, we should keep child and grandChild in the renderSurfaceLayerList.
     ASSERT_EQ(3U, renderSurfaceLayerList.size());
@@ -855,7 +1424,10 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToLayers)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
+
 
     EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(20, 20)), grandChild1->clipRect());
     EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(20, 20)), grandChild2->clipRect());
@@ -927,7 +1499,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToSurfaces)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
 
     ASSERT_TRUE(grandChild1->renderSurface());
     ASSERT_TRUE(grandChild2->renderSurface());
@@ -1408,7 +1982,7 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithoutPreserves3d)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     // Verify which renderSurfaces were created.
     EXPECT_FALSE(frontFacingChild->renderSurface());
@@ -1513,7 +2087,7 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3d)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     // Verify which renderSurfaces were created.
     EXPECT_FALSE(frontFacingChild->renderSurface());
@@ -1598,7 +2172,9 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithAnimatingTransforms)
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, parent->renderSurface()->contentRect());
 
     EXPECT_FALSE(child->renderSurface());
     EXPECT_TRUE(animatingSurface->renderSurface());
@@ -1670,7 +2246,7 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3dForFlattenin
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
     renderSurfaceLayerList.append(parent.get());
 
-    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
     // Verify which renderSurfaces were created.
     EXPECT_TRUE(frontFacingSurface->renderSurface());

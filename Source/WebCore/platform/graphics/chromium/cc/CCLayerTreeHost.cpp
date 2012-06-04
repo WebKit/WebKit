@@ -518,7 +518,10 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
         WebTransformationMatrix identityMatrix;
         WebTransformationMatrix deviceScaleTransform;
         deviceScaleTransform.scale(m_settings.deviceScaleFactor);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+
+        FloatRect rootScissorRect(FloatPoint(0, 0), viewportSize());
+        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(updateList, rootScissorRect);
     }
 
     // Reset partial texture update requests.

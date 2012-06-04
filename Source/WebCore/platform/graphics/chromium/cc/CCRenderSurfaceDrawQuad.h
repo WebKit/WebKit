@@ -37,24 +37,19 @@ class CCLayerImpl;
 class CCRenderSurfaceDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderSurfaceDrawQuad);
 public:
-    static PassOwnPtr<CCRenderSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, const FloatRect& surfaceDamageRect, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
+    static PassOwnPtr<CCRenderSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
 
     CCLayerImpl* layer() const { return m_layer; }
     bool isReplica() const { return m_isReplica; }
     unsigned maskTextureId() const { return m_maskTextureId; }
 
-    // The surface damage rect for the target surface this quad draws into.
-    // FIXME: This can be removed once render surfaces get their own layer type.
-    const FloatRect& surfaceDamageRect() const { return m_surfaceDamageRect; }
-
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
     const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
 private:
-    CCRenderSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, const FloatRect& surfaceDamageRect, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
+    CCRenderSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
 
     CCLayerImpl* m_layer;
-    FloatRect m_surfaceDamageRect;
     bool m_isReplica;
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;

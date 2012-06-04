@@ -76,7 +76,7 @@ public:
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
     virtual void beginDrawingFrame(CCRenderSurface* defaultRenderSurface) OVERRIDE;
-    virtual void drawRenderPass(const CCRenderPass*) OVERRIDE;
+    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentSurface) OVERRIDE;
     virtual void finishDrawingFrame() OVERRIDE;
 
     virtual void drawHeadsUpDisplay(ManagedTexture*, const IntSize& hudSize) OVERRIDE;
@@ -125,7 +125,7 @@ protected:
 private:
     static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
 
-    void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
+    void drawQuad(const CCDrawQuad*);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
     void drawBackgroundFilters(const CCRenderSurfaceDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
@@ -153,7 +153,7 @@ private:
 
     bool bindFramebufferToTexture(ManagedTexture*, const IntRect& viewportRect);
 
-    void clearRenderSurface(CCRenderSurface*, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect);
+    void clearRenderSurface(CCRenderSurface*, CCRenderSurface* rootRenderSurface, const FloatRect& rootScissorRectInCurrentSurface);
 
     void releaseRenderSurfaceTextures();
 

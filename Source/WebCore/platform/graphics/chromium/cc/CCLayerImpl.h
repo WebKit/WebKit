@@ -164,6 +164,10 @@ public:
     // Usage: if this->usesLayerClipping() is false, then this clipRect should not be used.
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& rect) { m_clipRect = rect; }
+
+    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
+
     CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
@@ -298,6 +302,7 @@ private:
     // Tracks if drawing-related properties have changed since last redraw.
     bool m_layerPropertyChanged;
 
+    // Uses layer's content space.
     IntRect m_visibleLayerRect;
     bool m_masksToBounds;
     bool m_opaque;
@@ -352,17 +357,24 @@ private:
     // The rect that contributes to the scissor when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks
     // to bounds.
+    // Uses target surface's space.
     IntRect m_clipRect;
+
+    // During drawing, identifies the region outside of which nothing should be drawn.
+    // Uses target surface's space.
+    IntRect m_scissorRect;
 
     // Render surface associated with this layer. The layer and its descendants
     // will render to this surface.
     OwnPtr<CCRenderSurface> m_renderSurface;
 
     // Hierarchical bounding rect containing the layer and its descendants.
+    // Uses target surface's space.
     IntRect m_drawableContentRect;
 
     // Rect indicating what was repainted/updated during update.
     // Note that plugin layers bypass this and leave it empty.
+    // Uses layer's content space.
     FloatRect m_updateRect;
 
     // Manages animations for this layer.
