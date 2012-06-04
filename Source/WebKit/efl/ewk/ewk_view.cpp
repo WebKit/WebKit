@@ -60,6 +60,7 @@
 #include "ewk_frame_private.h"
 #include "ewk_history_private.h"
 #include "ewk_js_private.h"
+#include "ewk_paint_context_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include "ewk_view_private.h"
@@ -2761,154 +2762,119 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
     _ewk_view_scrolls_flush(priv);
 }
 
-/**
- * @brief Structure that keeps the paint context.
- *
- * @internal
- *
- * @note This is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
-struct _Ewk_View_Paint_Context {
-    WebCore::FrameView* view;
-    OwnPtr<WebCore::GraphicsContext> graphicContext;
-    RefPtr<cairo_t> cairo;
-};
-
-Ewk_View_Paint_Context* ewk_view_paint_context_new(Ewk_View_Private_Data* priv, cairo_t* cairo)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(cairo, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->mainFrame, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->mainFrame->view(), 0);
-
-    Ewk_View_Paint_Context* context = new Ewk_View_Paint_Context;
-    context->view = priv->mainFrame->view();
-    context->graphicContext = adoptPtr(new WebCore::GraphicsContext(cairo));
-    context->cairo = adoptRef(cairo_reference(cairo));
-
-    return context;
-}
-
-void ewk_view_paint_context_free(Ewk_View_Paint_Context* context)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-
-    delete context;
-}
-
-void ewk_view_paint_context_save(Ewk_View_Paint_Context* context)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-
-    cairo_save(context->cairo.get());
-    context->graphicContext->save();
-}
-
-void ewk_view_paint_context_restore(Ewk_View_Paint_Context* context)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-
-    context->graphicContext->restore();
-    cairo_restore(context->cairo.get());
-}
-
-void ewk_view_paint_context_clip(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-    EINA_SAFETY_ON_NULL_RETURN(area);
-    context->graphicContext->clip(WebCore::IntRect(*area));
-}
-
-void ewk_view_paint_context_paint(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-    EINA_SAFETY_ON_NULL_RETURN(area);
-
-    WebCore::IntRect rect(*area);
-
-    if (context->view->isTransparent())
-        context->graphicContext->clearRect(rect);
-    context->view->paint(context->graphicContext.get(), rect);
-}
-
-void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-    EINA_SAFETY_ON_NULL_RETURN(area);
-
-    WebCore::IntRect rect(*area);
-
-    if (context->view->isTransparent())
-        context->graphicContext->clearRect(rect);
-
-    context->view->paintContents(context->graphicContext.get(), rect);
-}
-
-void ewk_view_paint_context_scale(Ewk_View_Paint_Context* context, float scaleX, float scaleY)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-
-    context->graphicContext->scale(WebCore::FloatSize(scaleX, scaleY));
-}
-
-void ewk_view_paint_context_translate(Ewk_View_Paint_Context* context, float x, float y)
-{
-    EINA_SAFETY_ON_NULL_RETURN(context);
-
-    context->graphicContext->translate(x, y);
-}
-
 Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(cr, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
-    WebCore::FrameView* view = priv->mainFrame->view();
-    EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
-    view->updateLayoutAndStyleIfNeededRecursive();
-    WebCore::GraphicsContext graphicsContext(cr);
-    WebCore::IntRect rect(*area);
+    Ewk_Paint_Context* context = ewk_paint_context_new(cr);
+    bool result = ewk_view_paint(priv, context, area);
+    ewk_paint_context_free(context);
 
-    cairo_save(cr);
-    graphicsContext.save();
-    graphicsContext.clip(rect);
-    if (view->isTransparent())
-        graphicsContext.clearRect(rect);
-    view->paint(&graphicsContext, rect);
-    graphicsContext.restore();
-    cairo_restore(cr);
-
-    return true;
+    return result;
 }
 
 Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(cr, false);
+
+    Ewk_Paint_Context* context = ewk_paint_context_new(cr);
+    bool result = ewk_view_paint_contents(priv, context, area);
+    ewk_paint_context_free(context);
+
+    return result;
+}
+
+/* internal methods ****************************************************/
+/**
+ * @internal
+ * Paints using given graphics context the given area.
+ *
+ * This uses viewport relative area and will also handle scrollbars
+ * and other extra elements. See ewk_view_paint_contents() for the
+ * alternative function.
+ *
+ * @param priv the pointer to the private data of the view to use as paint source
+ * @param cr the cairo context to use as paint destination, its state will
+ *        be saved before operation and restored afterwards
+ * @param area viewport relative geometry to paint
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @note This is an easy to use version, but internal structures are
+ *       always created, then graphics context is clipped, then
+ *       painted, restored and destroyed. This might not be optimum,
+ *       so using @a Ewk_Paint_Context may be a better solutions
+ *       for large number of operations.
+ *
+ * @see ewk_view_paint_contents()
+ * @see ewk_paint_context_paint()
+ *
+ * @note This is not for general use but just for subclasses that want
+ *       to define their own backing store.
+*/
+Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(context, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
     WebCore::FrameView* view = priv->mainFrame->view();
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
-    WebCore::GraphicsContext graphicsContext(cr);
-    WebCore::IntRect rect(*area);
-
     view->updateLayoutAndStyleIfNeededRecursive();
-    cairo_save(cr);
-    graphicsContext.save();
-    graphicsContext.clip(rect);
-    if (view->isTransparent())
-        graphicsContext.clearRect(rect);
-    view->paintContents(&graphicsContext,  rect);
-    graphicsContext.restore();
-    cairo_restore(cr);
+
+    ewk_paint_context_save(context);
+    ewk_paint_context_clip(context, area);
+    ewk_paint_context_paint(context, view, area);
+    ewk_paint_context_restore(context);
 
     return true;
 }
 
+/**
+ * @internal
+ * Paints just contents using given graphics context the given area.
+ *
+ * This uses absolute coordinates for area and will just handle
+ * contents, no scrollbars or extras. See ewk_view_paint() for the
+ * alternative solution.
+ *
+ * @param priv the pointer to the private data of the view to use as paint source
+ * @param cr the cairo context to use as paint destination, its state will
+ *        be saved before operation and restored afterwards
+ * @param area absolute geometry to paint
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @note This is an easy to use version, but internal structures are
+ *       always created, then graphics context is clipped, then
+ *       painted, restored and destroyed. This might not be optimum,
+ *       so using @a Ewk_Paint_Context may be a better solutions
+ *       for large number of operations.
+ *
+ * @see ewk_view_paint()
+ * @see ewk_paint_context_paint_contents()
+ *
+ * @note This is not for general use but just for subclasses that want
+ *       to define their own backing store.
+ */
+Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(context, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
+    WebCore::FrameView* view = priv->mainFrame->view();
+    EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
-/* internal methods ****************************************************/
+    view->updateLayoutAndStyleIfNeededRecursive();
+
+    ewk_paint_context_save(context);
+    ewk_paint_context_clip(context, area);
+    ewk_paint_context_paint_contents(context, view, area);
+    ewk_paint_context_restore(context);
+
+    return true;
+}
+
 /**
  * @internal
  * Reports the view is ready to be displayed as all elements are aready.

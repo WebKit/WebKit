@@ -1,3 +1,48 @@
+2012-06-04  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Refactor ewk_view_context_paint code.
+        https://bugs.webkit.org/show_bug.cgi?id=85588
+
+        Reviewed by Hajime Morita.
+
+        The main purpose of this change is reduce size of ewk_view.h/cpp files and make use of ewk_view_context_paint
+        object by ewk_view_single and ewk_view_tiled instead of direct operations on cairo.
+        The code is more objective and looks very simple now.
+        Remove ewk_view_context_paint code from ewk_view h/cpp file and move it to separate new ewk_context_paint file.
+        The ewk_view_context_paint has been renamed to ewk_context_paint and it is not binded to view on creation time.
+
+        * ewk/ewk_paint_context.cpp: Added.
+        Functions renamed and moved from ewk_view to ewk_paint_context file.
+        (ewk_paint_context_new):
+        (ewk_paint_context_from_image_new): New function.
+        (ewk_paint_context_from_image_data_new): New function.
+        (ewk_paint_context_free):
+        (ewk_paint_context_save):
+        (ewk_paint_context_restore):
+        (ewk_paint_context_clip):
+        (ewk_paint_context_scale):
+        (ewk_paint_context_translate):
+        (ewk_paint_context_paint): Added FrameView parameter.
+        (ewk_paint_context_paint_contents): Added FrameView parameter.
+        * ewk/ewk_paint_context_private.h: Added.
+        (_Ewk_Paint_Context):
+        * ewk/ewk_private.h: Functions ewk_view_paint and ewk_view_paint_contents moved from ewk_view.h.
+        * ewk/ewk_tiled_backing_store.h: Removed unused include.
+        * ewk/ewk_view.cpp: Moved all function releated to paint context object to new ewk_paint_context file.
+        (_Ewk_View_Private_Data):
+        (ewk_view_paint): Changed function according change in ewk_paint_context_paint function.
+        (ewk_view_paint_contents): Changed function according change in ewk_paint_context_paint_contents function.
+        * ewk/ewk_view.h: Removed all paint context functions and ewk_view_paint, ewk_view_paint_contents function from
+        public API.
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+        Refactor of _ewk_view_single_smart_repaints_process function.
+        Removed goto statements.
+        Removed variables declaration from function beginning.
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_render_cb): Make use of ewk_paint_context object instead of direction operation on cairo.
+        Looks simpler and more objective.
+
 2012-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add ewk_custom_handler_private.h for ewk_custom_handler.cpp

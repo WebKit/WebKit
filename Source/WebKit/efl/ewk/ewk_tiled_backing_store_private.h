@@ -23,7 +23,6 @@
 
 #include "EWebKit.h"
 #include <Evas.h>
-#include <cairo.h>
 
 /* Enable accounting of render time in tile statistics */
 // #define TILE_STATS_ACCOUNT_RENDER_TIME

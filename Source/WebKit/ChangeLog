@@ -1,3 +1,14 @@
+2012-06-04  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Refactor ewk_view_context_paint code.
+        https://bugs.webkit.org/show_bug.cgi?id=85588
+
+        Reviewed by Hajime Morita.
+
+        Added new ewk_paint_context.cpp file to source list.
+
+        * PlatformEfl.cmake:
+
 2012-06-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController needs to implement deliverWebIntent

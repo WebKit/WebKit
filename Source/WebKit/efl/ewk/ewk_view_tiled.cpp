@@ -25,7 +25,6 @@
 #include "ewk_tiled_backing_store_private.h"
 #include "ewk_view_private.h"
 #include <Evas.h>
-#include <RefPtrCairo.h>
 #include <eina_safety_checks.h>
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
@@ -33,44 +32,17 @@ static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* tile, const Eina_Rectangle* area)
 {
     Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
-    Eina_Rectangle rect = {area->x + tile->x, area->y + tile->y, area->w, area->h};    
-    int stride;
-    cairo_format_t format;
-
-    if (tile->cspace == EVAS_COLORSPACE_ARGB8888) {
-        stride = tile->width * 4;
-        format = CAIRO_FORMAT_ARGB32;
-    } else if (tile->cspace == EVAS_COLORSPACE_RGB565_A5P) {
-        stride = tile->width * 2;
-        format = CAIRO_FORMAT_RGB16_565;
-    } else {
-        ERR("unknown color space: %d", tile->cspace);
-        return false;
-    }
+    Eina_Rectangle rect = {area->x + tile->x, area->y + tile->y, area->w, area->h};
 
     uint8_t* pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, true));
-    if (!pixels) {
-        ERR("fail to get the pixel data from the image object");
-        return false;
-    }
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(pixels, format, tile->width, tile->height, stride));
-    cairo_status_t status = cairo_surface_status(surface.get());
-    if (status != CAIRO_STATUS_SUCCESS) {
-        ERR("failed to create cairo surface: %s", cairo_status_to_string(status));
-        return false;
-    }
+    Ewk_Paint_Context* context = ewk_paint_context_from_image_data_new(pixels, tile->width, tile->height, tile->cspace);
 
-    RefPtr<cairo_t> cairo = adoptRef(cairo_create(surface.get()));
-    status = cairo_status(cairo.get());
-    if (status != CAIRO_STATUS_SUCCESS) {
-        ERR("failed to create cairo: %s", cairo_status_to_string(status));
-        return false;
-    }
+    ewk_paint_context_translate(context, -tile->x, -tile->y);
+    Eina_Bool result = ewk_view_paint_contents(priv, context, &rect);
+    ewk_paint_context_free(context);
 
-    cairo_translate(cairo.get(), -tile->x, -tile->y);
-
-    bool result = ewk_view_paint_contents(priv, cairo.get(), &rect);
     evas_object_image_data_set(tile->image, pixels);
+
     return result;
 }
 
