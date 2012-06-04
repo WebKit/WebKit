@@ -258,7 +258,7 @@ Vector<GdkAtom> PasteboardHelper::dropAtomsForContext(GtkWidget* widget, GdkDrag
     dropAtoms.append(netscapeURLAtom);
 
     // For images, try to find the most applicable image type.
-    GRefPtr<GtkTargetList> list(gtk_target_list_new(0, 0));
+    GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(0, 0));
     gtk_target_list_add_image_targets(list.get(), TargetTypeImage, TRUE);
     GdkAtom atom = gtk_drag_dest_find_target(widget, context, list.get());
     if (atom != GDK_NONE)

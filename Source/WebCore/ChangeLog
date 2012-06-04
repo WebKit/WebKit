@@ -1,3 +1,18 @@
+2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leak in PasteboardHelper
+        https://bugs.webkit.org/show_bug.cgi?id=88216
+
+        Reviewed by Martin Robinson.
+
+        Fixed a memory leak in PasteboardHelper by using adoptRef instead
+        of just getting a new reference of TargetList.
+
+        No new tests because of no behavior changes.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::dropAtomsForContext):
+
 2012-06-04  Rob Buis  <rbuis@rim.com>
 
         Hit ASSERT when editing attribute value in Element in SVG Document
