@@ -1,3 +1,9 @@
+2012-06-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.3 release
+
+        * configure.ac: Bump version number.
+
 2012-06-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Temporarily disable DerivedSources cleanup on Windows.
