@@ -1,5 +1,27 @@
 2012-06-04  Tony Chang  <tony@chromium.org>
 
+        Rename CSS flexbox test files to match new property names
+        https://bugs.webkit.org/show_bug.cgi?id=88174
+
+        Reviewed by Ojan Vafai.
+
+        flex-pack became justify-content and flex-line-pack became
+        align-content. Rename the tests to match the new names.
+
+        * css3/flexbox/flex-justify-content-expected.txt: Renamed from LayoutTests/css3/flexbox/flex-pack-expected.txt.
+        * css3/flexbox/flex-justify-content.html: Renamed from LayoutTests/css3/flexbox/flex-pack.html.
+        * css3/flexbox/multiline-align-content-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-line-pack-expected.txt.
+        * css3/flexbox/multiline-align-content-horizontal-column-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-line-pack-horizontal-column-expected.txt.
+        * css3/flexbox/multiline-align-content-horizontal-column.html: Renamed from LayoutTests/css3/flexbox/multiline-line-pack-horizontal-column.html.
+        * css3/flexbox/multiline-align-content.html: Renamed from LayoutTests/css3/flexbox/multiline-line-pack.html.
+        * css3/flexbox/multiline-align-self-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-align-expected.txt.
+        * css3/flexbox/multiline-align-self.html: Renamed from LayoutTests/css3/flexbox/multiline-align.html.
+        * css3/flexbox/multiline-justify-content-expected.txt: Renamed from LayoutTests/css3/flexbox/multiline-pack-expected.txt.
+        * css3/flexbox/multiline-justify-content.html: Renamed from LayoutTests/css3/flexbox/multiline-pack.html.
+        * platform/chromium/TestExpectations:
+
+2012-06-04  Tony Chang  <tony@chromium.org>
+
         Fix a couple flexbox tests to use flex-start and flex-end
         https://bugs.webkit.org/show_bug.cgi?id=88170
 
