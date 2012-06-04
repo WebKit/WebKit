@@ -1,3 +1,17 @@
+2012-06-04  Raymes Khoury  <raymes@chromium.org>
+
+        Remove obsolete acceptMIMETypes member.
+        https://bugs.webkit.org/show_bug.cgi?id=88241
+
+        Reviewed by Darin Fisher.
+
+        Obsoleted by https://bugs.webkit.org/show_bug.cgi?id=87271 and http://codereview.chromium.org/10414085/.
+
+        * public/WebFileChooserParams.h:
+        (WebFileChooserParams):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+
 2012-06-04  Zeev Lieber  <zlieber@chromium.org>
 
         [chromium] Cleanup scissor rect computation/use with damage

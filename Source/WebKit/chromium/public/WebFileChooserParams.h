@@ -57,7 +57,6 @@ struct WebFileChooserParams {
     // This list comes from an 'accept' attribute value of an INPUT element, and
     // it contains only lower-cased MIME type strings and file extensions.
     WebVector<WebString> acceptTypes;
-    WebVector<WebString> acceptMIMETypes; // FIXME: Remove this once https://chromiumcodereview.appspot.com/10414085 lands.
     // |selectedFiles| has filenames which a file upload control already selected.
     // A WebViewClient implementation may ask a user to select
     //  - removing a file from the selected files,

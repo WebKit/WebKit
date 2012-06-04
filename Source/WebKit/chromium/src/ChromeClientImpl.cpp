@@ -726,7 +726,6 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     params.directory = false;
 #endif
     params.acceptTypes = fileChooser->settings().acceptMIMETypes;
-    params.acceptMIMETypes = fileChooser->settings().acceptMIMETypes; // FIXME: Remove this once https://chromiumcodereview.appspot.com/10414085 lands.
     params.selectedFiles = fileChooser->settings().selectedFiles;
     if (params.selectedFiles.size() > 0)
         params.initialValue = params.selectedFiles[0];
