@@ -61,6 +61,13 @@ static size_t computeRAMSize()
     if (pages == -1 || pageSize == -1)
         return ramSizeGuess;
     return pages * pageSize;
+#elif OS(WINCE)
+    MEMORYSTATUS status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatus(&status);
+    if (status.dwTotalPhys <= 0)
+        return ramSizeGuess;
+    return status.dwTotalPhys;
 #elif OS(WINDOWS)
     MEMORYSTATUSEX status;
     status.dwLength = sizeof(status);
