@@ -25,9 +25,9 @@
 
 #include "GeolocationClient.h"
 #include "GeolocationPosition.h"
-#include <geoclue/geoclue-master.h>
-#include <geoclue/geoclue-position.h>
-#include <wtf/gobject/GRefPtr.h>
+#include "GeolocationProviderGeoclue.h"
+#include "GeolocationProviderGeoclueClient.h"
+#include <wtf/RefPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -37,7 +37,7 @@ class Geolocation;
 
 namespace WebKit {
 
-class GeolocationClient : public WebCore::GeolocationClient {
+class GeolocationClient : public WebCore::GeolocationClient, public WebCore::GeolocationProviderGeoclueClient {
 public:
     GeolocationClient(WebKitWebView*);
 
@@ -52,28 +52,15 @@ public:
     void requestPermission(WebCore::Geolocation*);
     void cancelPermissionRequest(WebCore::Geolocation*);
 
-    void positionChanged(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*);
-    void errorOccured(const char*);
-
 private:
-    void updatePosition();
+    // GeolocationProviderGeoclueClient interface.
+    virtual void notifyPositionChanged(int timestamp, double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy);
+    virtual void notifyErrorOccurred(const char* message);
 
     WebKitWebView* m_webView;
 
+    WebCore::GeolocationProviderGeoclue m_provider;
     RefPtr<WebCore::GeolocationPosition> m_lastPosition;
-
-    GRefPtr<GeoclueMasterClient> m_geoclueClient;
-    GRefPtr<GeocluePosition> m_geocluePosition;
-
-    double m_latitude;
-    double m_longitude;
-    double m_altitude;
-    double m_accuracy;
-    double m_altitudeAccuracy;
-    int m_timestamp;
-
-    bool m_enableHighAccuracy;
-    bool m_isUpdating;
 };
 
 } // namespace WebKit
