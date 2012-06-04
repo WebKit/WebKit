@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QtViewportInteractionEngine_h
-#define QtViewportInteractionEngine_h
+#ifndef QtViewportHandler_h
+#define QtViewportHandler_h
 
 #include <QtCore/QObject>
 #include <QtCore/QRectF>
@@ -43,12 +43,12 @@ namespace WebKit {
 class WebPageProxy;
 class ViewportUpdateDeferrer;
 
-class QtViewportInteractionEngine : public QObject {
+class QtViewportHandler : public QObject {
     Q_OBJECT
 
 public:
-    QtViewportInteractionEngine(WebPageProxy*, QQuickWebView*, QQuickWebPage*);
-    ~QtViewportInteractionEngine();
+    QtViewportHandler(WebPageProxy*, QQuickWebView*, QQuickWebPage*);
+    ~QtViewportHandler();
 
     void touchBegin();
     void touchEnd();
@@ -172,4 +172,4 @@ private:
 
 } // namespace WebKit
 
-#endif // QtViewportInteractionEngine_h
+#endif // QtViewportHandler_h

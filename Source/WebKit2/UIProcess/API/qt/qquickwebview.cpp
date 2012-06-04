@@ -25,7 +25,7 @@
 #include "DrawingAreaProxyImpl.h"
 #include "QtDialogRunner.h"
 #include "QtDownloadManager.h"
-#include "QtViewportInteractionEngine.h"
+#include "QtViewportHandler.h"
 #include "QtWebContext.h"
 #include "QtWebError.h"
 #include "QtWebIconDatabaseClient.h"
@@ -821,7 +821,7 @@ QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* view
 
 QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate()
 {
-    interactionEngine->disconnect();
+    m_viewportHandler->disconnect();
 }
 
 void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -834,8 +834,8 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 {
     Q_Q(QQuickWebView);
 
-    interactionEngine.reset(new QtViewportInteractionEngine(webPageProxy.get(), q, pageView.data()));
-    pageView->eventHandler()->setViewportInteractionEngine(interactionEngine.data());
+    m_viewportHandler.reset(new QtViewportHandler(webPageProxy.get(), q, pageView.data()));
+    pageView->eventHandler()->setViewportHandler(m_viewportHandler.data());
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
@@ -843,20 +843,20 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
 {
-    if (interactionEngine)
-        interactionEngine->viewportAttributesChanged(newAttributes);
+    if (m_viewportHandler)
+        m_viewportHandler->viewportAttributesChanged(newAttributes);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
 {
-    // FIXME: Examine why there is not an interactionEngine here in the beginning.
-    if (interactionEngine)
-        interactionEngine->viewportItemSizeChanged();
+    // FIXME: Examine why there is not an viewportHandler here in the beginning.
+    if (m_viewportHandler)
+        m_viewportHandler->viewportItemSizeChanged();
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    interactionEngine->pageContentPositionRequested(pos);
+    m_viewportHandler->pageContentPositionRequested(pos);
 }
 
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
@@ -864,7 +864,7 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
     Q_Q(QQuickWebView);
 
     pageView->setContentsSize(newSize); // emits contentsSizeChanged()
-    interactionEngine->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
+    m_viewportHandler->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
 }
 
 /*!

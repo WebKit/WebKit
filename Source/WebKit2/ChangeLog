@@ -1,3 +1,112 @@
+2012-06-04  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Rename QtViewportInteractionEngine to QtViewportHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=88226
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebKit):
+        (QQuickWebViewPrivate::viewportHandler):
+        (QQuickWebViewFlickablePrivate::viewportHandler):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::contentsScale):
+        (QWebKitTest::devicePixelRatio):
+        (QWebKitTest::initialScale):
+        (QWebKitTest::minimumScale):
+        (QWebKitTest::maximumScale):
+        (QWebKitTest::isScalable):
+        (QWebKitTest::layoutSize):
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        (WebKit::QtGestureRecognizer::viewportHandler):
+        * UIProcess/qt/QtGestureRecognizer.h:
+        (WebKit):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::update):
+        (WebKit::QtPanGestureRecognizer::finish):
+        (WebKit::QtPanGestureRecognizer::cancel):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::update):
+        (WebKit::QtPinchGestureRecognizer::finish):
+        (WebKit::QtPinchGestureRecognizer::cancel):
+        * UIProcess/qt/QtViewportHandler.cpp: Copied from Source/WebKit2/UIProcess/qt/QtViewportInteractionEngine.cpp.
+        (WebKit::ViewportUpdateDeferrer::ViewportUpdateDeferrer):
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (ViewportUpdateDeferrer):
+        (WebKit::QtViewportHandler::suspendPageContent):
+        (WebKit::QtViewportHandler::resumePageContent):
+        (WebKit::QtViewportHandler::cssScaleFromItem):
+        (WebKit::QtViewportHandler::itemScaleFromCSS):
+        (WebKit::QtViewportHandler::itemCoordFromCSS):
+        (WebKit::QtViewportHandler::itemRectFromCSS):
+        (WebKit::QtViewportHandler::QtViewportHandler):
+        (WebKit::QtViewportHandler::~QtViewportHandler):
+        (WebKit::QtViewportHandler::innerBoundedCSSScale):
+        (WebKit::QtViewportHandler::outerBoundedCSSScale):
+        (WebKit::QtViewportHandler::viewportAttributesChanged):
+        (WebKit::QtViewportHandler::pageContentsSizeChanged):
+        (WebKit::QtViewportHandler::setPageItemRectVisible):
+        (WebKit::QtViewportHandler::animatePageItemRectVisible):
+        (WebKit::QtViewportHandler::flickMoveStarted):
+        (WebKit::QtViewportHandler::flickMoveEnded):
+        (WebKit::QtViewportHandler::pageItemPositionChanged):
+        (WebKit::QtViewportHandler::pageContentPositionRequested):
+        (WebKit::QtViewportHandler::scaleAnimationStateChanged):
+        (WebKit::QtViewportHandler::scaleAnimationValueChanged):
+        (WebKit::QtViewportHandler::touchBegin):
+        (WebKit::QtViewportHandler::touchEnd):
+        (WebKit::QtViewportHandler::computePosRangeForPageItemAtScale):
+        (WebKit::QtViewportHandler::focusEditableArea):
+        (WebKit::QtViewportHandler::zoomToAreaGestureEnded):
+        (WebKit::QtViewportHandler::nearestValidBounds):
+        (WebKit::QtViewportHandler::setCSSScale):
+        (WebKit::QtViewportHandler::currentCSSScale):
+        (WebKit::QtViewportHandler::scrollAnimationActive):
+        (WebKit::QtViewportHandler::panGestureActive):
+        (WebKit::QtViewportHandler::panGestureStarted):
+        (WebKit::QtViewportHandler::panGestureRequestUpdate):
+        (WebKit::QtViewportHandler::panGestureEnded):
+        (WebKit::QtViewportHandler::panGestureCancelled):
+        (WebKit::QtViewportHandler::scaleAnimationActive):
+        (WebKit::QtViewportHandler::cancelScrollAnimation):
+        (WebKit::QtViewportHandler::interruptScaleAnimation):
+        (WebKit::QtViewportHandler::pinchGestureActive):
+        (WebKit::QtViewportHandler::pinchGestureStarted):
+        (WebKit::QtViewportHandler::pinchGestureRequestUpdate):
+        (WebKit::QtViewportHandler::pinchGestureEnded):
+        (WebKit::QtViewportHandler::pinchGestureCancelled):
+        (WebKit::QtViewportHandler::visibleContentsRect):
+        (WebKit::QtViewportHandler::informVisibleContentChange):
+        (WebKit::QtViewportHandler::viewportItemSizeChanged):
+        (WebKit::QtViewportHandler::scaleContent):
+        * UIProcess/qt/QtViewportHandler.h: Copied from Source/WebKit2/UIProcess/qt/QtViewportInteractionEngine.h.
+        (QtViewportHandler):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp: Removed.
+        * UIProcess/qt/QtViewportInteractionEngine.h: Removed.
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::setViewportHandler):
+        (WebKit::QtWebPageEventHandler::inputPanelVisibleChanged):
+        (WebKit::QtWebPageEventHandler::doneWithTouchEvent):
+        (WebKit::QtWebPageEventHandler::didFindZoomableArea):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (WebKit):
+        (QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::viewportHandler):
+
 2012-06-04  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: FeatureDefines.xcconfig should match across projects

@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "QtViewportInteractionEngine.h"
+#include "QtViewportHandler.h"
 
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -65,33 +65,33 @@ static const int kScaleAnimationDurationMillis = 250;
 class ViewportUpdateDeferrer {
 public:
     enum SuspendContentFlag { DeferUpdate, DeferUpdateAndSuspendContent };
-    ViewportUpdateDeferrer(QtViewportInteractionEngine* engine, SuspendContentFlag suspendContentFlag = DeferUpdate)
-        : engine(engine)
+    ViewportUpdateDeferrer(QtViewportHandler* handler, SuspendContentFlag suspendContentFlag = DeferUpdate)
+        : handler(handler)
     {
-        engine->m_suspendCount++;
+        handler->m_suspendCount++;
 
         // There is no need to suspend content for immediate updates
         // only during animations or longer gestures.
         if (suspendContentFlag == DeferUpdateAndSuspendContent)
-            engine->suspendPageContent();
+            handler->suspendPageContent();
     }
 
     ~ViewportUpdateDeferrer()
     {
-        if (--(engine->m_suspendCount))
+        if (--(handler->m_suspendCount))
             return;
 
-        engine->resumePageContent();
+        handler->resumePageContent();
 
         // Make sure that tiles all around the viewport will be requested.
-        engine->informVisibleContentChange(QPointF());
+        handler->informVisibleContentChange(QPointF());
     }
 
 private:
-    QtViewportInteractionEngine* const engine;
+    QtViewportHandler* const handler;
 };
 
-void QtViewportInteractionEngine::suspendPageContent()
+void QtViewportHandler::suspendPageContent()
 {
     if (m_hasSuspendedContent)
         return;
@@ -100,7 +100,7 @@ void QtViewportInteractionEngine::suspendPageContent()
     m_webPageProxy->suspendActiveDOMObjectsAndAnimations();
 }
 
-void QtViewportInteractionEngine::resumePageContent()
+void QtViewportHandler::resumePageContent()
 {
     if (!m_hasSuspendedContent)
         return;
@@ -114,17 +114,17 @@ static inline bool fuzzyCompare(qreal a, qreal b, qreal epsilon)
     return qAbs(a - b) < epsilon;
 }
 
-inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale) const
+inline qreal QtViewportHandler::cssScaleFromItem(qreal itemScale) const
 {
     return itemScale / m_devicePixelRatio;
 }
 
-inline qreal QtViewportInteractionEngine::itemScaleFromCSS(qreal cssScale) const
+inline qreal QtViewportHandler::itemScaleFromCSS(qreal cssScale) const
 {
     return cssScale * m_devicePixelRatio;
 }
 
-inline qreal QtViewportInteractionEngine::itemCoordFromCSS(qreal value) const
+inline qreal QtViewportHandler::itemCoordFromCSS(qreal value) const
 {
     return value * m_devicePixelRatio;
 }
@@ -135,7 +135,7 @@ static inline QPointF boundPosition(const QPointF minPosition, const QPointF& po
                    qBound(minPosition.y(), position.y(), maxPosition.y()));
 }
 
-inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect) const
+inline QRectF QtViewportHandler::itemRectFromCSS(const QRectF& cssRect) const
 {
     QRectF itemRect;
 
@@ -147,7 +147,7 @@ inline QRectF QtViewportInteractionEngine::itemRectFromCSS(const QRectF& cssRect
     return itemRect;
 }
 
-QtViewportInteractionEngine::QtViewportInteractionEngine(WebKit::WebPageProxy* proxy, QQuickWebView* viewportItem, QQuickWebPage* pageItem)
+QtViewportHandler::QtViewportHandler(WebKit::WebPageProxy* proxy, QQuickWebView* viewportItem, QQuickWebPage* pageItem)
     : m_webPageProxy(proxy)
     , m_viewportItem(viewportItem)
     , m_pageItem(pageItem)
@@ -172,16 +172,16 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(WebKit::WebPageProxy* p
             SLOT(scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), Qt::DirectConnection);
 }
 
-QtViewportInteractionEngine::~QtViewportInteractionEngine()
+QtViewportHandler::~QtViewportHandler()
 {
 }
 
-qreal QtViewportInteractionEngine::innerBoundedCSSScale(qreal cssScale) const
+qreal QtViewportHandler::innerBoundedCSSScale(qreal cssScale) const
 {
     return qBound(m_minimumScale, cssScale, m_maximumScale);
 }
 
-qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale) const
+qreal QtViewportHandler::outerBoundedCSSScale(qreal cssScale) const
 {
     if (m_allowsUserScaling) {
         // Bounded by [0.1, 10.0] like the viewport meta code in WebCore.
@@ -192,7 +192,7 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale) const
     return innerBoundedCSSScale(cssScale);
 }
 
-void QtViewportInteractionEngine::viewportAttributesChanged(const WebCore::ViewportAttributes& newAttributes)
+void QtViewportHandler::viewportAttributesChanged(const WebCore::ViewportAttributes& newAttributes)
 {
     m_rawAttributes = newAttributes;
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
@@ -239,7 +239,7 @@ void QtViewportInteractionEngine::viewportAttributesChanged(const WebCore::Viewp
     setPageItemRectVisible(nearestValidBounds());
 }
 
-void QtViewportInteractionEngine::pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize)
+void QtViewportHandler::pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize)
 {
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, viewportSize, newSize);
 
@@ -261,7 +261,7 @@ void QtViewportInteractionEngine::pageContentsSizeChanged(const QSize& newSize, 
     setPageItemRectVisible(nearestValidBounds());
 }
 
-void QtViewportInteractionEngine::setPageItemRectVisible(const QRectF& itemRect)
+void QtViewportHandler::setPageItemRectVisible(const QRectF& itemRect)
 {
     ASSERT_WITH_MESSAGE(m_suspendCount,
         "setPageItemRectVisible has to be guarded using a ViewportUpdateDeferrer.");
@@ -280,7 +280,7 @@ void QtViewportInteractionEngine::setPageItemRectVisible(const QRectF& itemRect)
     m_viewportItem->setContentPos(newPosition);
 }
 
-void QtViewportInteractionEngine::animatePageItemRectVisible(const QRectF& itemRect)
+void QtViewportHandler::animatePageItemRectVisible(const QRectF& itemRect)
 {
     ASSERT(m_scaleAnimation->state() == QAbstractAnimation::Stopped);
 
@@ -301,7 +301,7 @@ void QtViewportInteractionEngine::animatePageItemRectVisible(const QRectF& itemR
     m_scaleAnimation->start();
 }
 
-void QtViewportInteractionEngine::flickMoveStarted()
+void QtViewportHandler::flickMoveStarted()
 {
     Q_ASSERT(m_viewportItem->isMoving());
     m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
@@ -311,7 +311,7 @@ void QtViewportInteractionEngine::flickMoveStarted()
     connect(m_viewportItem, SIGNAL(contentYChanged()), SLOT(pageItemPositionChanged()));
 }
 
-void QtViewportInteractionEngine::flickMoveEnded()
+void QtViewportHandler::flickMoveEnded()
 {
     Q_ASSERT(!m_viewportItem->isMoving());
     // This method is called on the end of the pan or pan kinetic animation.
@@ -322,7 +322,7 @@ void QtViewportInteractionEngine::flickMoveEnded()
     disconnect(m_viewportItem, SIGNAL(contentYChanged()), this, SLOT(pageItemPositionChanged()));
 }
 
-void QtViewportInteractionEngine::pageItemPositionChanged()
+void QtViewportHandler::pageItemPositionChanged()
 {
     QPointF newPosition = m_viewportItem->contentPos();
 
@@ -331,7 +331,7 @@ void QtViewportInteractionEngine::pageItemPositionChanged()
     m_lastScrollPosition = newPosition;
 }
 
-void QtViewportInteractionEngine::pageContentPositionRequested(const QPoint& cssPosition)
+void QtViewportHandler::pageContentPositionRequested(const QPoint& cssPosition)
 {
     // Ignore the request if suspended. Can only happen due to delay in event delivery.
     if (m_suspendCount)
@@ -348,7 +348,7 @@ void QtViewportInteractionEngine::pageContentPositionRequested(const QPoint& css
     setPageItemRectVisible(endVisibleContentRect);
 }
 
-void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
+void QtViewportHandler::scaleAnimationStateChanged(QAbstractAnimation::State newState, QAbstractAnimation::State /*oldState*/)
 {
     switch (newState) {
     case QAbstractAnimation::Running:
@@ -364,12 +364,12 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
     }
 }
 
-void QtViewportInteractionEngine::scaleAnimationValueChanged(QVariant value)
+void QtViewportHandler::scaleAnimationValueChanged(QVariant value)
 {
     setPageItemRectVisible(value.toRectF());
 }
 
-void QtViewportInteractionEngine::touchBegin()
+void QtViewportHandler::touchBegin()
 {
     m_hadUserInteraction = true;
 
@@ -378,12 +378,12 @@ void QtViewportInteractionEngine::touchBegin()
         m_touchUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 }
 
-void QtViewportInteractionEngine::touchEnd()
+void QtViewportHandler::touchEnd()
 {
     m_touchUpdateDeferrer.clear();
 }
 
-QRectF QtViewportInteractionEngine::computePosRangeForPageItemAtScale(qreal itemScale) const
+QRectF QtViewportHandler::computePosRangeForPageItemAtScale(qreal itemScale) const
 {
     const QSizeF contentItemSize = m_pageItem->contentsSize() * itemScale;
     const QSizeF viewportItemSize = m_viewportItem->boundingRect().size();
@@ -394,7 +394,7 @@ QRectF QtViewportInteractionEngine::computePosRangeForPageItemAtScale(qreal item
     return QRectF(QPointF(0, 0), QSizeF(horizontalRange, verticalRange));
 }
 
-void QtViewportInteractionEngine::focusEditableArea(const QRectF& caretArea, const QRectF& targetArea)
+void QtViewportHandler::focusEditableArea(const QRectF& caretArea, const QRectF& targetArea)
 {
     // This can only happen as a result of a user interaction.
     ASSERT(m_hadUserInteraction);
@@ -431,7 +431,7 @@ void QtViewportInteractionEngine::focusEditableArea(const QRectF& caretArea, con
     animatePageItemRectVisible(endVisibleContentRect);
 }
 
-void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea)
+void QtViewportHandler::zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea)
 {
     // This can only happen as a result of a user interaction.
     ASSERT(m_hadUserInteraction);
@@ -515,7 +515,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     animatePageItemRectVisible(endVisibleContentRect);
 }
 
-QRectF QtViewportInteractionEngine::nearestValidBounds() const
+QRectF QtViewportHandler::nearestValidBounds() const
 {
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale()));
 
@@ -532,7 +532,7 @@ QRectF QtViewportInteractionEngine::nearestValidBounds() const
     return endVisibleContentRect;
 }
 
-void QtViewportInteractionEngine::setCSSScale(qreal scale)
+void QtViewportHandler::setCSSScale(qreal scale)
 {
     ViewportUpdateDeferrer guard(this);
 
@@ -540,22 +540,22 @@ void QtViewportInteractionEngine::setCSSScale(qreal scale)
     m_pageItem->setContentsScale(itemScaleFromCSS(newScale));
 }
 
-qreal QtViewportInteractionEngine::currentCSSScale() const
+qreal QtViewportHandler::currentCSSScale() const
 {
     return cssScaleFromItem(m_pageItem->contentsScale());
 }
 
-bool QtViewportInteractionEngine::scrollAnimationActive() const
+bool QtViewportHandler::scrollAnimationActive() const
 {
     return m_viewportItem->isFlicking();
 }
 
-bool QtViewportInteractionEngine::panGestureActive() const
+bool QtViewportHandler::panGestureActive() const
 {
     return m_viewportItem->isDragging();
 }
 
-void QtViewportInteractionEngine::panGestureStarted(const QPointF& position, qint64 eventTimestampMillis)
+void QtViewportHandler::panGestureStarted(const QPointF& position, qint64 eventTimestampMillis)
 {
     // This can only happen as a result of a user interaction.
     ASSERT(m_hadUserInteraction);
@@ -564,19 +564,19 @@ void QtViewportInteractionEngine::panGestureStarted(const QPointF& position, qin
     m_lastPinchCenterInViewportCoordinates = position;
 }
 
-void QtViewportInteractionEngine::panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis)
+void QtViewportHandler::panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis)
 {
     m_viewportItem->handleFlickableMouseMove(position, eventTimestampMillis);
     m_lastPinchCenterInViewportCoordinates = position;
 }
 
-void QtViewportInteractionEngine::panGestureEnded(const QPointF& position, qint64 eventTimestampMillis)
+void QtViewportHandler::panGestureEnded(const QPointF& position, qint64 eventTimestampMillis)
 {
     m_viewportItem->handleFlickableMouseRelease(position, eventTimestampMillis);
     m_lastPinchCenterInViewportCoordinates = position;
 }
 
-void QtViewportInteractionEngine::panGestureCancelled()
+void QtViewportHandler::panGestureCancelled()
 {
     // Reset the velocity samples of the flickable.
     // This should only be called by the recognizer if we have a recognized
@@ -588,12 +588,12 @@ void QtViewportInteractionEngine::panGestureCancelled()
     m_viewportItem->cancelFlick();
 }
 
-bool QtViewportInteractionEngine::scaleAnimationActive() const
+bool QtViewportHandler::scaleAnimationActive() const
 {
     return m_scaleAnimation->state() == QAbstractAnimation::Running;
 }
 
-void QtViewportInteractionEngine::cancelScrollAnimation()
+void QtViewportHandler::cancelScrollAnimation()
 {
     if (!scrollAnimationActive())
         return;
@@ -608,18 +608,18 @@ void QtViewportInteractionEngine::cancelScrollAnimation()
     setPageItemRectVisible(nearestValidBounds());
 }
 
-void QtViewportInteractionEngine::interruptScaleAnimation()
+void QtViewportHandler::interruptScaleAnimation()
 {
     // This interrupts the scale animation exactly where it is, even if it is out of bounds.
     m_scaleAnimation->stop();
 }
 
-bool QtViewportInteractionEngine::pinchGestureActive() const
+bool QtViewportHandler::pinchGestureActive() const
 {
     return m_pinchStartScale > 0;
 }
 
-void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
+void QtViewportHandler::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
 {
     // This can only happen as a result of a user interaction.
     ASSERT(m_hadUserInteraction);
@@ -636,7 +636,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     m_pinchStartScale = m_pageItem->contentsScale();
 }
 
-void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)
+void QtViewportHandler::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)
 {
     ASSERT(m_suspendCount);
 
@@ -658,7 +658,7 @@ void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinch
     m_viewportItem->setContentPos(m_viewportItem->contentPos() - positionDiff);
 }
 
-void QtViewportInteractionEngine::pinchGestureEnded()
+void QtViewportHandler::pinchGestureEnded()
 {
     ASSERT(m_suspendCount);
 
@@ -671,13 +671,13 @@ void QtViewportInteractionEngine::pinchGestureEnded()
     m_scaleUpdateDeferrer.clear(); // Clear after starting potential animation, which takes over deferring.
 }
 
-void QtViewportInteractionEngine::pinchGestureCancelled()
+void QtViewportHandler::pinchGestureCancelled()
 {
     m_pinchStartScale = -1;
     m_scaleUpdateDeferrer.clear();
 }
 
-QRect QtViewportInteractionEngine::visibleContentsRect() const
+QRect QtViewportHandler::visibleContentsRect() const
 {
     const QRectF visibleRect(m_viewportItem->boundingRect().intersected(m_pageItem->boundingRect()));
 
@@ -686,7 +686,7 @@ QRect QtViewportInteractionEngine::visibleContentsRect() const
     return QRect(floor(mappedRect.x()), floor(mappedRect.y()), floor(mappedRect.width()), floor(mappedRect.height()));
 }
 
-void QtViewportInteractionEngine::informVisibleContentChange(const QPointF& trajectoryVector)
+void QtViewportHandler::informVisibleContentChange(const QPointF& trajectoryVector)
 {
     DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
     if (!drawingArea)
@@ -708,7 +708,7 @@ void QtViewportInteractionEngine::informVisibleContentChange(const QPointF& traj
     m_pageItem->update();
 }
 
-void QtViewportInteractionEngine::viewportItemSizeChanged()
+void QtViewportHandler::viewportItemSizeChanged()
 {
     QSize viewportSize = m_viewportItem->boundingRect().size().toSize();
 
@@ -727,7 +727,7 @@ void QtViewportInteractionEngine::viewportItemSizeChanged()
     informVisibleContentChange(QPointF());
 }
 
-void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)
+void QtViewportHandler::scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale)
 {
     QPointF oldPinchCenterOnViewport = m_viewportItem->mapFromWebContent(centerInCSSCoordinates);
     m_pageItem->setContentsScale(itemScaleFromCSS(cssScale));
@@ -738,6 +738,6 @@ void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordin
 
 } // namespace WebKit
 
-#include "moc_QtViewportInteractionEngine.cpp"
+#include "moc_QtViewportHandler.cpp"
 
 

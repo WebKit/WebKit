@@ -39,7 +39,7 @@ namespace WebKit {
 class DownloadProxy;
 class DrawingAreaProxy;
 class QtDialogRunner;
-class QtViewportInteractionEngine;
+class QtViewportHandler;
 class QtWebContext;
 class QtWebError;
 class QtWebPageLoadClient;
@@ -89,7 +89,7 @@ public:
     int loadProgress() const { return m_loadProgress; }
     void setNeedsDisplay();
 
-    virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
+    virtual WebKit::QtViewportHandler* viewportHandler() { return 0; }
     virtual void updateViewportSize() { }
     void updateTouchViewportSize();
 
@@ -222,14 +222,14 @@ public:
     virtual void onComponentComplete();
 
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
-    virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
+    virtual WebKit::QtViewportHandler* viewportHandler() { return m_viewportHandler.data(); }
     virtual void updateViewportSize();
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);
 
 private:
-    QScopedPointer<WebKit::QtViewportInteractionEngine> interactionEngine;
+    QScopedPointer<WebKit::QtViewportHandler> m_viewportHandler;
 };
 
 #endif // qquickwebview_p_p_h

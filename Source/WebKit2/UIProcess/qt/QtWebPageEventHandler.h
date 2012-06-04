@@ -46,7 +46,7 @@ class IntRect;
 namespace WebKit {
 
 class NativeWebTouchEvent;
-class QtViewportInteractionEngine;
+class QtViewportHandler;
 class ShareableBitmap;
 class WebGestureEvent;
 class WebPageProxy;
@@ -75,7 +75,7 @@ public:
     void handleInputMethodEvent(QInputMethodEvent*);
     void handleTouchEvent(QTouchEvent*);
 
-    void setViewportInteractionEngine(QtViewportInteractionEngine*);
+    void setViewportHandler(QtViewportHandler*);
 
     void activateTapHighlight(const QTouchEvent::TouchPoint&);
     void deactivateTapHighlight();
@@ -90,13 +90,13 @@ public:
 #endif
     void resetGestureRecognizers();
 
-    QtViewportInteractionEngine* interactionEngine() { return m_interactionEngine; }
+    QtViewportHandler* viewportHandler() { return m_viewportHandler; }
 
     void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
 
 protected:
     WebPageProxy* m_webPageProxy;
-    QtViewportInteractionEngine* m_interactionEngine;
+    QtViewportHandler* m_viewportHandler;
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
     QtTapGestureRecognizer m_tapGestureRecognizer;

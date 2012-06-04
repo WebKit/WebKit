@@ -25,7 +25,7 @@
 #include "config.h"
 #include "QtPanGestureRecognizer.h"
 
-#include "QtViewportInteractionEngine.h"
+#include "QtViewportHandler.h"
 #include "QtWebPageEventHandler.h"
 
 namespace WebKit {
@@ -38,7 +38,7 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtWebPageEventHandler* eventHandl
 
 bool QtPanGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint, qint64 eventTimestampMillis)
 {
-    if (!interactionEngine())
+    if (!viewportHandler())
         return false;
 
     m_lastPosition = touchPoint.pos();
@@ -48,7 +48,7 @@ bool QtPanGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint, q
     case NoGesture:
         m_state = GestureRecognitionStarted;
         m_firstScreenPosition = touchPoint.scenePos();
-        interactionEngine()->cancelScrollAnimation();
+        viewportHandler()->cancelScrollAnimation();
         return false;
     case GestureRecognitionStarted: {
         // To start the gesture, the delta from start in screen coordinates
@@ -58,11 +58,11 @@ bool QtPanGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint, q
             return false;
 
         m_state = GestureRecognized;
-        interactionEngine()->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
+        viewportHandler()->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
         return true;
     }
     case GestureRecognized:
-        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
+        viewportHandler()->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
         return true;
     default:
         ASSERT_NOT_REACHED();
@@ -75,8 +75,8 @@ void QtPanGestureRecognizer::finish(const QTouchEvent::TouchPoint& touchPoint, q
     if (m_state == NoGesture)
         return;
 
-    ASSERT(interactionEngine());
-    interactionEngine()->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
+    ASSERT(viewportHandler());
+    viewportHandler()->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
     reset();
 }
 
@@ -85,8 +85,8 @@ void QtPanGestureRecognizer::cancel()
     if (m_state == NoGesture)
         return;
 
-    interactionEngine()->panGestureEnded(m_lastPosition, m_lastEventTimestampMillis);
-    interactionEngine()->panGestureCancelled();
+    viewportHandler()->panGestureEnded(m_lastPosition, m_lastEventTimestampMillis);
+    viewportHandler()->panGestureCancelled();
     reset();
 }
 
