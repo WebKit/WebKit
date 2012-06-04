@@ -223,7 +223,7 @@ IDL_BINDINGS += \
     $$PWD/dom/Event.idl \
     $$PWD/dom/EventException.idl \
 #    $$PWD/dom/EventListener.idl \
-#    $$PWD/dom/EventTarget.idl \
+    $$PWD/dom/EventTarget.idl \
     $$PWD/dom/HashChangeEvent.idl \
     $$PWD/dom/KeyboardEvent.idl \
     $$PWD/dom/MouseEvent.idl \

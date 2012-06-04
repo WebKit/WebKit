@@ -156,7 +156,6 @@
     'bindings_idl_files!': [
       # Custom bindings in bindings/v8/custom exist for these.
       '../dom/EventListener.idl',
-      '../dom/EventTarget.idl',
       '../html/VoidCallback.idl',
 
       # Bindings with custom Objective-C implementations.

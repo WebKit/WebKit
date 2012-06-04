@@ -77,7 +77,7 @@
 #include "JSErrorHandler.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
-#include "JSEventTarget.cpp"
+#include "JSEventTargetCustom.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSFloat32ArrayCustom.cpp"
 #include "JSFloat64ArrayCustom.cpp"

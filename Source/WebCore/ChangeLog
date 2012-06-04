@@ -1,3 +1,35 @@
+2012-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        EventTarget.idl should generate JS bindings
+        https://bugs.webkit.org/show_bug.cgi?id=88120
+
+        This is one step in a larger change to expose a constructor for
+        EventTarget and put EventTarget on the prototype chain of DOM
+        objects that are event targets, in line with DOM Core. See
+        <https://bugs.webkit.org/show_bug.cgi?id=67312>
+
+        Reviewed by Adam Barth.
+
+        No new tests. This change does not change any functionality.
+
+        * CMakeLists.txt: Generate JSEventTarget.
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp: JSEventTarget.cpp was renamed.
+        * bindings/js/JSEventTarget.h: Removed. Generated now.
+        * bindings/js/JSEventTargetCustom.cpp: Renamed from Source/WebCore/bindings/js/JSEventTarget.cpp.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetInternalFields): EventTarget is an EventTarget.
+        * dom/EventTarget.idl: Defer to toJS, toEventTarget in JSEventTargetCustom.cpp.
+
 2012-06-03  Hayato Ito  <hayato@chromium.org>
 
         Supports traversing nodes in an orphaned shadow subtree in ComposedShadowTreeParentWalker.

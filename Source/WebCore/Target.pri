@@ -295,7 +295,7 @@ v8 {
         bindings/js/JSErrorHandler.cpp \
         bindings/js/JSEventCustom.cpp \
         bindings/js/JSEventListener.cpp \
-        bindings/js/JSEventTarget.cpp \
+        bindings/js/JSEventTargetCustom.cpp \
         bindings/js/JSExceptionBase.cpp \
         bindings/js/JSFileReaderCustom.cpp \
         bindings/js/JSFloat32ArrayCustom.cpp \
@@ -1512,7 +1512,6 @@ v8 {
         bindings/js/JSDOMWrapper.h \
         bindings/js/JSErrorHandler.h \
         bindings/js/JSEventListener.h \
-        bindings/js/JSEventTarget.h \
         bindings/js/JSHTMLAppletElementCustom.h \
         bindings/js/JSHTMLEmbedElementCustom.h \
         bindings/js/JSHTMLInputElementCustom.h \

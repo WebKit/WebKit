@@ -24,7 +24,9 @@ module events {
     interface [
         ObjCProtocol,
         CPPPureInterface,
-        OmitConstructor
+        OmitConstructor,
+        JSCustomToJSObject,
+        JSCustomToNativeObject
     ] EventTarget {
         [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
                                              in EventListener listener, 

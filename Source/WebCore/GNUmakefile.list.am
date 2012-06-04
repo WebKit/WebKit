@@ -173,6 +173,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEvent.h \
 	DerivedSources/WebCore/JSEventSource.cpp \
 	DerivedSources/WebCore/JSEventSource.h \
+	DerivedSources/WebCore/JSEventTarget.cpp \
+	DerivedSources/WebCore/JSEventTarget.h \
 	DerivedSources/WebCore/JSFile.cpp \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
@@ -757,6 +759,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/EntityReference.idl \
 	$(WebCore)/dom/ErrorEvent.idl \
 	$(WebCore)/dom/Event.idl \
+	$(WebCore)/dom/EventTarget.idl \
 	$(WebCore)/dom/EventException.idl \
 	$(WebCore)/dom/HashChangeEvent.idl \
 	$(WebCore)/dom/KeyboardEvent.idl \
@@ -1389,8 +1392,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSEventCustom.cpp \
 	Source/WebCore/bindings/js/JSEventListener.cpp \
 	Source/WebCore/bindings/js/JSEventListener.h \
-	Source/WebCore/bindings/js/JSEventTarget.cpp \
-	Source/WebCore/bindings/js/JSEventTarget.h \
+	Source/WebCore/bindings/js/JSEventTargetCustom.cpp \
 	Source/WebCore/bindings/js/JSErrorHandler.cpp \
 	Source/WebCore/bindings/js/JSErrorHandler.h \
 	Source/WebCore/bindings/js/JSExceptionBase.cpp \

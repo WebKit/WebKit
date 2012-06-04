@@ -512,11 +512,13 @@ sub GetInternalFields
     # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
     # FIXME: SVGElementInstance should probably have the EventTarget extended attribute, but doesn't.
+    # FIXME: Simplify this when all EventTargets are subtypes of EventTarget.
     if (!IsNodeSubType($dataNode)
         && ($dataNode->extendedAttributes->{"EventTarget"}
             || $dataNode->extendedAttributes->{"IsWorkerContext"}
             || IsSubType($dataNode, "AbstractWorker")
-            || $name eq "SVGElementInstance")) {
+            || $name eq "SVGElementInstance"
+            || $name eq "EventTarget")) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 

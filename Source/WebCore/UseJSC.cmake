@@ -72,7 +72,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSErrorHandler.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
-    bindings/js/JSEventTarget.cpp
+    bindings/js/JSEventTargetCustom.cpp
     bindings/js/JSExceptionBase.cpp
     bindings/js/JSFloat32ArrayCustom.cpp
     bindings/js/JSFloat64ArrayCustom.cpp
