@@ -1,3 +1,53 @@
+2012-06-03  Kentaro Hara  <haraken@chromium.org>
+
+        [perf-test] Make query-selector-last.html more realistic
+        https://bugs.webkit.org/show_bug.cgi?id=88203
+
+        Reviewed by Ryosuke Niwa.
+
+        query-selector-last.html tests querySelector() for an element
+        that appears after 1000 div elements, all of which have the same
+        id and class. To test the performance of querySelector() under
+        a lot of ids and classes, we should make the ids and classes of
+        the 1000 elements different.
+
+        This patch degrades the performance of query-selector-last.html
+        by 3.6%.
+
+        [Before]
+        RESULT Parser: query-selector-last= 476.382274152 runs/s
+        median= 476.821192053 runs/s, stdev= 1.14578875814 runs/s, min= 474.308300395 runs/s, max= 478.087649402 runs/s
+
+        RESULT Parser: query-selector-last= 478.423061861 runs/s
+        median= 478.723404255 runs/s, stdev= 1.54876867255 runs/s, min= 473.684210526 runs/s, max= 481.347773767 runs/s
+
+        RESULT Parser: query-selector-last= 479.849287174 runs/s
+        median= 480.0 runs/s, stdev= 1.69849752498 runs/s, min= 475.561426684 runs/s, max= 481.927710843 runs/s
+
+        RESULT Parser: query-selector-last= 476.765438846 runs/s
+        median= 477.453580902 runs/s, stdev= 1.8724488664 runs/s, min= 471.821756225 runs/s, max= 478.723404255 runs/s
+
+        RESULT Parser: query-selector-last= 481.715340644 runs/s
+        median= 481.637742305 runs/s, stdev= 1.81446361145 runs/s, min= 475.561426684 runs/s, max= 483.675937122 runs/s
+
+        [After]
+        RESULT Parser: query-selector-last= 458.866623582 runs/s
+        median= 459.183673469 runs/s, stdev= 1.48881464737 runs/s, min= 453.972257251 runs/s, max= 460.947503201 runs/s
+
+        RESULT Parser: query-selector-last= 460.363532897 runs/s
+        median= 460.358056266 runs/s, stdev= 1.58512056995 runs/s, min= 456.273764259 runs/s, max= 462.130937099 runs/s
+
+        RESULT Parser: query-selector-last= 457.727448451 runs/s
+        median= 458.015267176 runs/s, stdev= 1.23681915516 runs/s, min= 453.972257251 runs/s, max= 459.183673469 runs/s
+
+        RESULT Parser: query-selector-last= 465.57336853 runs/s
+        median= 465.717981889 runs/s, stdev= 1.6616925374 runs/s, min= 460.947503201 runs/s, max= 467.532467532 runs/s
+
+        RESULT Parser: query-selector-last= 459.836252019 runs/s
+        median= 459.770114943 runs/s, stdev= 1.84485630505 runs/s, min= 455.696202532 runs/s, max= 462.724935733 runs/s
+
+        * Parser/query-selector-last.html:
+
 2012-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add public page loading performance tests using web-page-replay

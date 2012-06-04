@@ -5,8 +5,8 @@
 <script>
 for (var i = 0; i < 1000; i++) {
     var div = document.createElement("div");
-    div.id = "foo";
-    div.className = "bar";
+    div.id = "foo" + i;
+    div.className = "bar" + i;
     document.body.appendChild(div);
 }
 
