@@ -280,12 +280,6 @@ void QtViewportInteractionEngine::setPageItemRectVisible(const QRectF& itemRect)
     m_viewportItem->setContentPos(newPosition);
 }
 
-// Ease out overshoot of 1.25 combined with ease in correction of 0.25. Both quadratic to have physical motion.
-static qreal physicalOvershoot(qreal t)
-{
-    return (-t * (t - 2)) * 1.25 - (t * t) * 0.25;
-}
-
 void QtViewportInteractionEngine::animatePageItemRectVisible(const QRectF& itemRect)
 {
     ASSERT(m_scaleAnimation->state() == QAbstractAnimation::Stopped);
@@ -298,11 +292,8 @@ void QtViewportInteractionEngine::animatePageItemRectVisible(const QRectF& itemR
     if (itemRect == currentPageItemRectVisible)
         return;
 
-    QEasingCurve easingCurve;
-    easingCurve.setCustomType(physicalOvershoot);
-
     m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
-    m_scaleAnimation->setEasingCurve(easingCurve);
+    m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
 
     m_scaleAnimation->setStartValue(currentPageItemRectVisible);
     m_scaleAnimation->setEndValue(itemRect);
