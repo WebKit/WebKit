@@ -1,3 +1,12 @@
+2012-06-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Disable heap profiler test on mac platform.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-04  Mike West  <mkwst@chromium.org>
 
         Adding explicit console error for duplicated CSP directives.

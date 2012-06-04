@@ -1268,6 +1268,7 @@ inspector/debugger/xhr-breakpoints.html
 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
 inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html
+inspector/profiler/heap-snapshot-comparison-show-all.html
 inspector/profiler/heap-snapshot-loader.html
 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
 inspector/profiler/heap-snapshot-summary-show-ranges.html
