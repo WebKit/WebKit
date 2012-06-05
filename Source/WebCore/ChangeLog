@@ -1,3 +1,23 @@
+2012-06-04  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Chromium tests: "Add support for the Blob constructor" [r115582] regressed blob layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=85174
+
+        Reviewed by Kentaro Hara.
+
+        This fixes a crash problem which could happen when the constructor is
+        given an array which contains String-type item(s).
+
+        There're still some Text mismatches between v8 results and
+        JSC results, most of them are v8 not throwing exception
+        when it is given an object whose toString() method throws
+        exception.  (The issue will be addresse in a separate patch.)
+
+        Test: fast/files/blob-constructor.html
+
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+
 2012-06-05  Kentaro Hara  <haraken@chromium.org>
 
         Remove unnecessary constructor of SelectorQueryCache

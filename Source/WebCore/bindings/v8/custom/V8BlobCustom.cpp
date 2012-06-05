@@ -126,7 +126,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
             ASSERT(blob);
             blobBuilder->append(blob);
         } else {
-            EXCEPTION_BLOCK(String, stringValue, toWebCoreString(item->ToString()));
+            EXCEPTION_BLOCK(String, stringValue, toWebCoreString(item));
             blobBuilder->append(stringValue, endings, ASSERT_NO_EXCEPTION);
         }
     }
