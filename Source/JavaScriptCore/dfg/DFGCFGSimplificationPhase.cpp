@@ -632,6 +632,18 @@ private:
                 
                 NodeIndex atFirstIndex = firstBlock->variablesAtTail.operand(node.local());
                 m_graph.changeEdge(node.children.child1(), Edge(skipGetLocal(atFirstIndex)), node.shouldGenerate());
+                
+                if (node.op() != GetLocal)
+                    break;
+                
+                NodeIndex atFirstHeadIndex = firstBlock->variablesAtHead.operand(node.local());
+                if (atFirstHeadIndex == NoNode)
+                    break;
+                
+                if (m_graph[atFirstHeadIndex].op() != Phi)
+                    break;
+                
+                firstBlock->variablesAtHead.operand(node.local()) = nodeIndex;
                 break;
             }
                 
