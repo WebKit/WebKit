@@ -1,3 +1,14 @@
+2012-06-05  Tim Horton  <timothy_horton@apple.com>
+
+        Assertion failure on mac-lion-wk2 in fast/hidpi/device-scale-factor-paint.html
+        https://bugs.webkit.org/show_bug.cgi?id=88356
+
+        Unreviewed, remove incorrect baselines and skip test on Mac.
+
+        * platform/mac/Skipped:
+        * platform/mac/fast/hidpi/device-scale-factor-paint-expected.png: Removed.
+        * platform/mac/fast/hidpi/device-scale-factor-paint-expected.txt: Removed.
+
 2012-06-05  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Improve variable resolution order on window
