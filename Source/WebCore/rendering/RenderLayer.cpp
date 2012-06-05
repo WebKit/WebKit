@@ -3794,7 +3794,6 @@ void RenderLayer::updateClipRects(const RenderLayer* rootLayer, RenderRegion* re
     else
         m_clipRectsCache->m_clipRects[clipRectsType] = ClipRects::create(clipRects);
 
-    m_clipRectsCache->m_clipRects[clipRectsType]->ref();
 #ifndef NDEBUG
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = rootLayer;
 #endif

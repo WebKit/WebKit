@@ -1,3 +1,19 @@
+2012-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Leaking ClipRects
+        https://bugs.webkit.org/show_bug.cgi?id=88282
+
+        Reviewed by Dan Bernstein.
+
+        In r118562 I made the ClipRectsCache use RefPtr<ClipRects>. However, ClipRects
+        was initialized with m_refCnt=0, not 1 as adoptRef() and friends expect. Also,
+        there was a manual ref() in RenderLayer::updateClipRects() which this patch removes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::ClipRects):
+
 2012-06-04  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
 
         Add missing FractionalLayoutUnit += operator and move LineWidth to use all floats
