@@ -1,3 +1,12 @@
+2012-06-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Chromium unreviewed sheriffing: enable blob tests that are passing since r119454.
+
+        * platform/chromium/TestExpectations:
+        fast/filesystem/file-writer-gc-blob.html
+        fast/filesystem/workers/file-writer-sync-truncate-extend.html
+        fast/filesystem/workers/file-writer-gc-blob.html
+
 2012-06-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119467, r119471, and r119476.
