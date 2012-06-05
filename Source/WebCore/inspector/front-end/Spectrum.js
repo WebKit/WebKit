@@ -70,7 +70,7 @@ WebInspector.Spectrum = function()
     this._displayElement = displayContainer.createChild("span", "source-code spectrum-display-value");
 
     WebInspector.Spectrum.draggable(this._sliderElement, hueDrag.bind(this));
-    WebInspector.Spectrum.draggable(this._draggerElement, colorDrag.bind(this));
+    WebInspector.Spectrum.draggable(this._draggerElement, colorDrag.bind(this), colorDragStart.bind(this));
 
     function hueDrag(element, dragX, dragY)
     {
@@ -79,8 +79,22 @@ WebInspector.Spectrum = function()
         this._onchange();
     }
 
-    function colorDrag(element, dragX, dragY)
+    var initialHelperOffset;
+
+    function colorDragStart(element, dragX, dragY)
     {
+        initialHelperOffset = { x: this._dragHelperElement.offsetLeft, y: this._dragHelperElement.offsetTop };
+    }
+
+    function colorDrag(element, dragX, dragY, event)
+    {
+        if (event.shiftKey) {
+            if (Math.abs(dragX - initialHelperOffset.x) >= Math.abs(dragY - initialHelperOffset.y))
+                dragY = initialHelperOffset.y;
+            else
+                dragX = initialHelperOffset.x;
+        }
+
         this.hsv[1] = dragX / this.dragWidth;
         this.hsv[2] = (this.dragHeight - dragY) / this.dragHeight;
 
@@ -198,7 +212,7 @@ WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
             var dragY = Math.max(0, Math.min(e.pageY - offset.top + scrollOffset.top, maxHeight));
 
             if (onmove)
-                onmove(element, dragX, dragY);
+                onmove(element, dragX, dragY, e);
         }
     }
 

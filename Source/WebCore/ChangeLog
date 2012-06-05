@@ -1,3 +1,19 @@
+2012-06-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: SHIFT key as helper to color adjustment in color picker
+        https://bugs.webkit.org/show_bug.cgi?id=88319
+
+        Reviewed by Pavel Feldman.
+
+        With Shift depressed, the dragger in the color picker will snap to the horizontal
+        or vertical axis while dragging, depending on which axis offset is greater.
+
+        * inspector/front-end/Spectrum.js:
+        (WebInspector.Spectrum.colorDragStart):
+        (WebInspector.Spectrum.colorDrag):
+        (WebInspector.Spectrum.draggable.move):
+        (WebInspector.Spectrum.draggable.start):
+
 2012-06-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: aggregate all events before first frame into a fake frame
