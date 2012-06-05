@@ -74,11 +74,8 @@ private:
 };
 
 class SelectorQueryCache {
-    WTF_MAKE_NONCOPYABLE(SelectorQueryCache);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SelectorQueryCache() { };
-
     SelectorQuery* add(const AtomicString&, Document*, ExceptionCode&);
     void invalidate();
 

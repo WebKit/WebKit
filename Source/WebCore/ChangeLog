@@ -1,5 +1,22 @@
 2012-06-05  Kentaro Hara  <haraken@chromium.org>
 
+        Remove unnecessary constructor of SelectorQueryCache
+        https://bugs.webkit.org/show_bug.cgi?id=87942
+
+        Reviewed by Ryosuke Niwa.
+
+        Per the comment from darin@ (https://bugs.webkit.org/show_bug.cgi?id=87942#c27),
+        this patch removes an inline constructor that has no arguments.
+        To have the compiler generate the constructor,
+        this patch also removes WTF_MAKE_NONCOPYABLE().
+
+        No tests. No change in behavior.
+
+        * dom/SelectorQuery.h:
+        (SelectorQueryCache):
+
+2012-06-05  Kentaro Hara  <haraken@chromium.org>
+
         Remove unused methods from SelectorQuery.h
         https://bugs.webkit.org/show_bug.cgi?id=88289
 
