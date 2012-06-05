@@ -1,3 +1,25 @@
+2012-06-05  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        CSS 2.1 failure: border-conflict-element-021a
+        https://bugs.webkit.org/show_bug.cgi?id=86885
+
+        Reviewed by Julien Chaffraix.
+
+        * css2.1/20110323/border-conflict-element-021a-expected.html: Added.
+        * css2.1/20110323/border-conflict-element-021a.htm: Added.
+        Added ref test under the css2.1 test-suite for border-conflict-element-021a.
+
+        * fast/table/border-collapsing/adjacent-row-groups-expected.html: Added.
+        * fast/table/border-collapsing/adjacent-row-groups.html: Added.
+        Added ref test for verifying 'border-collapse: collapse' table rendering when two
+        adjacent table row-groups have the same border-width and the same border-style. In
+        such a case the color of the border from the top-most table row-group wins.
+
+        * fast/table/border-collapsing/adjacent-row-groups-multi.html: Added.
+        * fast/table/border-collapsing/adjacent-row-groups-multi-expected.html: Added.
+        Additional ref test added for verifying 'border-collapse: collapse' table rendering
+        for adjacent table row-groups when more than one table headers and/or footers are specified.
+
 2012-06-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Chromium unreviewed sheriffing: enable blob tests that are passing since r119454.

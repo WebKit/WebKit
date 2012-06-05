@@ -178,6 +178,8 @@ public:
     {
         return createAnonymousWithParentRenderer(parent);
     }
+    
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -196,7 +198,6 @@ private:
 
     virtual void removeChild(RenderObject* oldChild);
 
-    virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 

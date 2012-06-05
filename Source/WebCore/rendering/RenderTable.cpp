@@ -592,11 +592,10 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         size_t count = m_collapsedBorders.size();
         for (size_t i = 0; i < count; ++i) {
             m_currentBorder = &m_collapsedBorders[i];
-            for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-                if (child->isTableSection()) {
-                    LayoutPoint childPoint = flipForWritingModeForChild(toRenderTableSection(child), paintOffset);
-                    child->paint(info, childPoint);
-                }
+            for (RenderTableSection* section = bottomSection(); section; section = sectionAbove(section)) {
+                LayoutPoint childPoint = flipForWritingModeForChild(section, paintOffset);
+                section->paint(info, childPoint);
+            }
         }
         m_currentBorder = 0;
     }
@@ -1110,6 +1109,21 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
     if (!nextSection && m_foot && (skipEmptySections == DoNotSkipEmptySections || m_foot->numRows()))
         nextSection = m_foot;
     return toRenderTableSection(nextSection);
+}
+
+RenderTableSection* RenderTable::bottomSection() const
+{
+    recalcSectionsIfNeeded();
+
+    if (m_foot)
+        return m_foot;
+
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        if (child->isTableSection())
+            return toRenderTableSection(child);
+    }
+
+    return 0;
 }
 
 RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const

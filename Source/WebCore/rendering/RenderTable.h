@@ -143,6 +143,7 @@ public:
 
     // This function returns 0 if the table has no section.
     RenderTableSection* topSection() const;
+    RenderTableSection* bottomSection() const;
 
     // This function returns 0 if the table has no non-empty sections.
     RenderTableSection* topNonEmptySection() const;

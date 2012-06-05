@@ -1,3 +1,37 @@
+2012-06-05  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        CSS 2.1 failure: border-conflict-element-021a
+        https://bugs.webkit.org/show_bug.cgi?id=86885
+
+        Reviewed by Julien Chaffraix.
+
+        When two adjacent table row groups (thead, tbody, tfoot) have the same border-width
+        and the same border-style in a 'border-collapse: collapse' table the color of the border
+        from the top-most table row wins.
+
+        Tests: fast/table/border-collapsing/adjacent-row-groups-multi.html
+               fast/table/border-collapsing/adjacent-row-groups.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        Currently each row group is sent for paint from top (firstChild) to bottom thereby causing
+        the borders of the bottom-most row group (which is painted last) to overlap over the
+        previous row-group. This breaks the precedence for collapsed borders between adjacent cells.
+
+        This fix thus reverses the order in which the row-groups/sections are passed for painting.
+        Additional change has been done to iterate over the RenderTableSections directly.
+
+        (WebCore):
+        (WebCore::RenderTable::bottomSection):
+        * rendering/RenderTable.h:
+        New function has been added to obtain the last section of the table.
+
+        (RenderTable):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+        RenderTableSection's paint() method has now been made public so as to make it accessible
+        from RenderTable.
+
 2012-06-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] Fix IDL dependency generation
