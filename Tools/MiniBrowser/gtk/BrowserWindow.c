@@ -213,6 +213,21 @@ static void backForwadlistChanged(WebKitBackForwardList *backForwadlist, WebKitB
     browserWindowUpdateNavigationActions(window, backForwadlist);
 }
 
+static void geolocationRequestDialogCallback(GtkDialog *dialog, gint response, WebKitPermissionRequest *request)
+{
+    switch (response) {
+    case GTK_RESPONSE_YES:
+        webkit_permission_request_allow(request);
+        break;
+    default:
+        webkit_permission_request_deny(request);
+        break;
+    }
+
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+    g_object_unref(request);
+}
+
 static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
 {
     gtk_widget_destroy(GTK_WIDGET(window));
@@ -274,6 +289,24 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
     gtk_widget_show(newWindow);
 
     webkit_policy_decision_ignore(decision);
+    return TRUE;
+}
+
+static gboolean webViewDecidePermissionRequest(WebKitWebView *webView, WebKitPermissionRequest *request, BrowserWindow *window)
+{
+    if (!WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(request))
+        return FALSE;
+
+    GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+                                               GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                               GTK_MESSAGE_QUESTION,
+                                               GTK_BUTTONS_YES_NO,
+                                               "Geolocation request");
+
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Allow geolocation request?");
+    g_signal_connect(dialog, "response", G_CALLBACK(geolocationRequestDialogCallback), g_object_ref(request));
+    gtk_widget_show(dialog);
+
     return TRUE;
 }
 
@@ -434,6 +467,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "create", G_CALLBACK(webViewCreate), window);
     g_signal_connect(window->webView, "load-failed", G_CALLBACK(webViewLoadFailed), window);
     g_signal_connect(window->webView, "decide-policy", G_CALLBACK(webViewDecidePolicy), window);
+    g_signal_connect(window->webView, "permission-request", G_CALLBACK(webViewDecidePermissionRequest), window);
     g_signal_connect(window->webView, "mouse-target-changed", G_CALLBACK(webViewMouseTargetChanged), window);
     g_signal_connect(window->webView, "notify::zoom-level", G_CALLBACK(webViewZoomLevelChanged), window);
 

@@ -21,6 +21,7 @@
 #include "WebKitUIClient.h"
 
 #include "WebKitFileChooserRequestPrivate.h"
+#include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -144,6 +145,12 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     webkitWebViewRunFileChooserRequest(WEBKIT_WEB_VIEW(clientInfo), request.get());
 }
 
+static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef request, const void* clientInfo)
+{
+    GRefPtr<WebKitGeolocationPermissionRequest> geolocationPermissionRequest = adoptGRef(webkitGeolocationPermissionRequestCreate(request));
+    webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
+}
+
 void attachUIClientToView(WebKitWebView* webView)
 {
     WKPageUIClient wkUIClient = {
@@ -178,7 +185,7 @@ void attachUIClientToView(WebKitWebView* webView)
         0, // pageDidScroll
         0, // exceededDatabaseQuota
         runOpenPanel,
-        0, // decidePolicyForGeolocationPermissionRequest
+        decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
         0, // footerHeight
         0, // drawHeader

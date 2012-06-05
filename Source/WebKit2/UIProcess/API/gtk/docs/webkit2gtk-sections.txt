@@ -388,6 +388,24 @@ webkit_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitGeolocationPermissionRequest</FILE>
+WebKitGeolocationPermissionRequest
+
+<SUBSECTION Standard>
+WebKitGeolocationPermissionRequestClass
+WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST
+WEBKIT_GEOLOCATION_PERMISSION_REQUEST
+WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST
+WEBKIT_GEOLOCATION_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST_CLASS
+WEBKIT_GEOLOCATION_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitGeolocationPermissionRequestPrivate
+webkit_geolocation_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitPolicyDecision</FILE>
 WebKitPolicyDecision
 webkit_policy_decision_download

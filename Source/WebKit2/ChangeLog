@@ -1,3 +1,62 @@
+2012-06-05  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK][WK2] Implement API for Geolocation permission requests in the GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=83879
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a new kind of permission request for supporting the
+        Geolocation API in WebKit2GTK+.
+
+        New WebKitGeolocationPermissionRequest class, implementing the
+        WebKitPermissionRequest interface, to enabling client applications
+        to allow or deny geolocation permission requests.
+
+        * GNUmakefile.list.am: Added new files.
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp: Added.
+        (_WebKitGeolocationPermissionRequestPrivate):
+        (webkitGeolocationPermissionRequestAllow):
+        (webkitGeolocationPermissionRequestDeny):
+        (webkit_permission_request_interface_init):
+        (webkit_geolocation_permission_request_init):
+        (webkitGeolocationPermissionRequestFinalize):
+        (webkit_geolocation_permission_request_class_init):
+        (webkitGeolocationPermissionRequestCreate):
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h: Added.
+        (_WebKitGeolocationPermissionRequest):
+        (_WebKitGeolocationPermissionRequestClass):
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h: Added.
+
+        Include WKGeolocationPermissionRequest.h in WebKitPrivate.h, so we
+        can use it from the new WebKitGeolocationPermissionRequest class.
+
+        * UIProcess/API/gtk/WebKitPrivate.h: Added new include.
+
+        Implement geolocation permission requests in the UI client.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (decidePolicyForGeolocationPermissionRequest): Create a new
+        instance of the WebKitGeolocationPermissionRequest class and call
+        to webkitWebViewMakePermissionRequest().
+        (attachUIClientToView): Provide an implementation function for
+        decidePolicyForGeolocationPermissionRequest.
+        * UIProcess/API/gtk/WebKitWebView.h: Add new element to
+        WebKitPermissionRequestType enumeration for geolocation requests.
+        * UIProcess/API/gtk/webkit2.h: Added header file for
+        WebKitGeolocationPermissionRequest
+
+        New unit tests to test allowing and denying permission requests.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewPermissionRequests): New test that loads a simple HTML
+        with JavaScript code requesting the current location.
+        (beforeAll): Added new test.
+
+        Updated documentation files.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-06-04  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Fix software rendering for device-scale-factor > 1

@@ -22,6 +22,7 @@
     <xi:include href="xml/WebKitWindowProperties.xml"/>
     <xi:include href="xml/WebKitDownload.xml"/>
     <xi:include href="xml/WebKitPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitGeolocationPermissionRequest.xml"/>
     <xi:include href="xml/WebKitPolicyDecision.xml"/>
     <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
     <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>

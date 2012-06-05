@@ -1,3 +1,20 @@
+2012-06-05  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK][WK2] Implement API for Geolocation permission requests in the GTK port
+        https://bugs.webkit.org/show_bug.cgi?id=83879
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make minibrowser connect to the new 'permission requests' signal
+        to allow users handle the Geolocation permission requests.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (geolocationRequestDialogCallback): Callback for the dialog asking
+        the user for allowing or not geolocation permission requests.
+        (webViewDecidePermissionRequest): Launch a dialog to ask the user
+        whether to allow or deny geolocation permission requests.
+        (browserWindowConstructed): Connect to 'permission-request' signal.
+
 2012-06-04  Chase Phillips  <cmp@google.com>
 
         Make a builder group support+expect multiple loads.

@@ -19,6 +19,8 @@
 
 #include "config.h"
 #include "WebViewTest.h"
+#include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSValueRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -278,15 +280,30 @@ public:
         g_main_loop_quit(test->m_mainLoop);
     }
 
+    static gboolean permissionRequested(WebKitWebView*, WebKitPermissionRequest* request, UIClientTest* test)
+    {
+        g_assert(WEBKIT_IS_PERMISSION_REQUEST(request));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+
+        if (test->m_allowPermissionRequests)
+            webkit_permission_request_allow(request);
+        else
+            webkit_permission_request_deny(request);
+
+        return TRUE;
+    }
+
     UIClientTest()
         : m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
         , m_scriptDialogConfirmed(true)
+        , m_allowPermissionRequests(false)
         , m_mouseTargetModifiers(0)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
         g_signal_connect(m_webView, "create", G_CALLBACK(viewCreate), this);
         g_signal_connect(m_webView, "script-dialog", G_CALLBACK(scriptDialog), this);
         g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
+        g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequested), this);
     }
 
     ~UIClientTest()
@@ -314,6 +331,7 @@ public:
     Vector<WebViewEvents> m_webViewEvents;
     WebKitScriptDialogType m_scriptDialogType;
     bool m_scriptDialogConfirmed;
+    bool m_allowPermissionRequests;
     WindowProperties m_windowProperties;
     HashSet<WTF::String> m_windowPropertiesChanged;
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
@@ -447,6 +465,42 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.ogg");
     g_assert(!test->m_mouseTargetModifiers);
+}
+
+static void testWebViewPermissionRequests(UIClientTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+    static const char* geolocationRequestHTML =
+        "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "    navigator.geolocation.getCurrentPosition(function(p) { document.title = \"OK\" },"
+        "                                             function(e) { document.title = e.code });"
+        "  }"
+        "  </script>"
+        "  <body onload='runTest();'></body>"
+        "</html>";
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(geolocationRequestHTML, 0);
+    test->waitUntilTitleChanged();
+
+    // According to the Geolocation API specification, '1' is the
+    // error code returned for the PERMISSION_DENIED error.
+    // http://dev.w3.org/geo/api/spec-source.html#position_error_interface
+    const gchar* result = webkit_web_view_get_title(test->m_webView);
+    g_assert_cmpstr(result, ==, "1");
+
+    // Test allowing a permission request.
+    test->m_allowPermissionRequests = true;
+    test->loadHtml(geolocationRequestHTML, 0);
+    test->waitUntilTitleChanged();
+
+    // Check that we did not get the PERMISSION_DENIED error now.
+    result = webkit_web_view_get_title(test->m_webView);
+    g_assert_cmpstr(result, !=, "1");
 }
 
 static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
@@ -730,6 +784,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
+    UIClientTest::add("WebKitWebView", "permission-requests", testWebViewPermissionRequests);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
