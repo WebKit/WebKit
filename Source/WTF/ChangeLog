@@ -1,3 +1,22 @@
+2012-06-04  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] Send requires super linear time against data size
+        https://bugs.webkit.org/show_bug.cgi?id=87383
+
+        Reviewed by Kent Tamura.
+
+        * wtf/StreamBuffer.h: Added.
+        (WTF):
+        (StreamBuffer):
+        (WTF::StreamBuffer::StreamBuffer):
+        (WTF::StreamBuffer::~StreamBuffer):
+        (WTF::StreamBuffer::isEmpty):
+        (WTF::StreamBuffer::append):
+        (WTF::StreamBuffer::consume):
+        (WTF::StreamBuffer::size):
+        (WTF::StreamBuffer::firstBlockData):
+        (WTF::StreamBuffer::firstBlockSize):
+
 2012-06-04  Patrick Gansterer  <paroga@webkit.org>
 
         Port RAMSize to WinCE

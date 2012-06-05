@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,7 +34,7 @@
 
 #include "KURL.h"
 
-#include <wtf/Vector.h>
+#include <wtf/StreamBuffer.h>
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ namespace WebCore {
 
         KURL m_url;
         SocketStreamHandleClient* m_client;
-        Vector<char> m_buffer;
+        StreamBuffer<char, 1024 * 1024> m_buffer;
         SocketStreamState m_state;
     };
 

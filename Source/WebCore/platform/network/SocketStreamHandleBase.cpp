@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -117,13 +117,15 @@ bool SocketStreamHandleBase::sendPendingData()
             return false;
         }
     }
-    int bytesWritten = platformSend(m_buffer.data(), m_buffer.size());
-    if (bytesWritten <= 0)
-        return false;
-    Vector<char> remainingData;
-    ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
-    remainingData.append(m_buffer.data() + bytesWritten, m_buffer.size() - bytesWritten);
-    m_buffer.swap(remainingData);
+    bool pending;
+    do {
+        int bytesWritten = platformSend(m_buffer.firstBlockData(), m_buffer.firstBlockSize());
+        pending = bytesWritten != static_cast<int>(m_buffer.firstBlockSize());
+        if (bytesWritten <= 0)
+            return false;
+        ASSERT(m_buffer.size() - bytesWritten <= bufferSize);
+        m_buffer.consume(bytesWritten);
+    } while (!pending && !m_buffer.isEmpty());
     if (m_client)
         m_client->didUpdateBufferedAmount(static_cast<SocketStreamHandle*>(this), bufferedAmount());
     return true;
