@@ -1,3 +1,32 @@
+2012-06-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119467, r119471, and r119476.
+        http://trac.webkit.org/changeset/119467
+        http://trac.webkit.org/changeset/119471
+        http://trac.webkit.org/changeset/119476
+        https://bugs.webkit.org/show_bug.cgi?id=88332
+
+        it broke chromium-mac static initializers test.\ (Requested by
+        loislo on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/FontPlatformData.h:
+        (FontPlatformData):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        * platform/graphics/harfbuzz/ng/HarfBuzzFace.cpp: Removed.
+        * platform/graphics/harfbuzz/ng/HarfBuzzFace.h: Removed.
+        * platform/graphics/harfbuzz/ng/HarfBuzzFaceCoreText.cpp: Removed.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp: Removed.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.h: Removed.
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
 2012-06-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: SHIFT key as helper to color adjustment in color picker

@@ -208,8 +208,6 @@
           '../platform/graphics/mac',
           '../platform/mac',
           '../platform/text/mac',
-          '../platform/graphics/harfbuzz',
-          '../platform/graphics/harfbuzz/ng',
         ],
       }],
       ['OS=="win"', {
@@ -1559,7 +1557,6 @@
           ],
           'dependencies': [
             'webkit_system_interface',
-            '<(chromium_src_dir)/third_party/harfbuzz-ng/harfbuzz.gyp:harfbuzz-ng',
           ],
           'actions': [
             {
@@ -1655,12 +1652,6 @@
             ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$'],
             ['exclude', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
             ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
-
-            # Mac uses Harfbuzz-ng.
-            ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.(cpp|h)$'],
-            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzFaceCoreText\\.cpp$'],
-            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzFace\\.(cpp|h)$'],
-            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzShaper\\.(cpp|h)$'],            
           ],
         },{ # OS!="mac"
           'sources/': [
