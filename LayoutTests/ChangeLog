@@ -1,3 +1,13 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse
+        https://bugs.webkit.org/show_bug.cgi?id=88270
+
+        Reviewed by James Robinson.
+
+        * fast/events/touch/scroll-without-mouse-lacks-mousemove-events-expected.txt: Added.
+        * fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html: Added.
+
 2012-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFG simplification should correct the variables at the head of the predecessor block

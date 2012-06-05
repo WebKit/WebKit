@@ -2664,6 +2664,10 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     ASSERT_UNUSED(timer, timer == &m_fakeMouseMoveEventTimer);
     ASSERT(!m_mousePressed);
 
+    Settings* settings = m_frame->settings();
+    if (settings && !settings->deviceSupportsMouse())
+        return;
+
     FrameView* view = m_frame->view();
     if (!view)
         return;

@@ -1,3 +1,17 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse
+        https://bugs.webkit.org/show_bug.cgi?id=88270
+
+        Reviewed by James Robinson.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDeviceSupportsMouse):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-06-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove redundant setNeedsCommit when prepareToDraw fails

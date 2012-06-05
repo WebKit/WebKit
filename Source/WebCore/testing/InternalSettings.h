@@ -64,6 +64,7 @@ public:
     void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setDeviceSupportsTouch(bool enabled, ExceptionCode&);
+    void setDeviceSupportsMouse(bool enabled, ExceptionCode&);
     void setDeviceScaleFactor(float scaleFactor, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
@@ -107,6 +108,7 @@ private:
 #endif
     bool m_originalWindowFocusRestricted;
     bool m_originalDeviceSupportsTouch;
+    bool m_originalDeviceSupportsMouse;
 };
 
 } // namespace WebCore

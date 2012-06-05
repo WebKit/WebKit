@@ -1,3 +1,33 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse
+        https://bugs.webkit.org/show_bug.cgi?id=88270
+
+        Reviewed by James Robinson.
+
+        This patch adds a setting analogous to deviceSupportsTouch to determine
+        whether the device supports mouse. We then don't dispatch fake mouse
+        events on devices that don't have a mouse in the first place.
+
+        Test: fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setDeviceSupportsMouse):
+        (WebCore::Settings::deviceSupportsMouse):
+        (Settings):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::restoreTo):
+        (WebCore::InternalSettings::setDeviceSupportsMouse):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-06-04  Simon Fraser  <simon.fraser@apple.com>
 
         Leaking ClipRects

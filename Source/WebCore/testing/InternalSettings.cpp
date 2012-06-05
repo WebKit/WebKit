@@ -106,6 +106,7 @@ InternalSettings::InternalSettings(Frame* frame)
 #endif
     , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
     , m_originalDeviceSupportsTouch(settings()->deviceSupportsTouch())
+    , m_originalDeviceSupportsMouse(settings()->deviceSupportsMouse())
 {
 }
 
@@ -126,6 +127,7 @@ void InternalSettings::restoreTo(Settings* settings)
 #endif
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
     settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
+    settings->setDeviceSupportsMouse(m_originalDeviceSupportsMouse);
 }
 
 Settings* InternalSettings::settings() const
@@ -266,6 +268,12 @@ void InternalSettings::setDeviceSupportsTouch(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setDeviceSupportsTouch(enabled);
+}
+
+void InternalSettings::setDeviceSupportsMouse(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setDeviceSupportsMouse(enabled);
 }
 
 void InternalSettings::setDeviceScaleFactor(float scaleFactor, ExceptionCode& ec)

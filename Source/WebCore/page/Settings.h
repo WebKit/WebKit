@@ -578,6 +578,9 @@ namespace WebCore {
         void setDeviceSupportsTouch(bool enabled) { m_deviceSupportsTouch = enabled; }
         bool deviceSupportsTouch() const { return m_deviceSupportsTouch; }
 
+        void setDeviceSupportsMouse(bool enabled) { m_deviceSupportsMouse = enabled; }
+        bool deviceSupportsMouse() const { return m_deviceSupportsMouse; }
+
         void setNeedsDidFinishLoadOrderQuirk(bool needsQuirk) { m_needsDidFinishLoadOrderQuirk = needsQuirk; }
         bool needsDidFinishLoadOrderQuirk() const { return m_needsDidFinishLoadOrderQuirk; }
 
@@ -763,6 +766,7 @@ namespace WebCore {
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
         bool m_requestAnimationFrameEnabled : 1;
         bool m_deviceSupportsTouch : 1;
+        bool m_deviceSupportsMouse : 1;
         bool m_needsDidFinishLoadOrderQuirk : 1;
 
         bool m_fixedPositionCreatesStackingContext : 1;

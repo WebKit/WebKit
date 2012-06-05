@@ -60,6 +60,7 @@ public:
     virtual void setFontBoostingEnabled(bool);
     virtual void setDefaultTextEncodingName(const WebString&);
     virtual void setDeviceSupportsTouch(bool);
+    virtual void setDeviceSupportsMouse(bool);
     virtual bool deviceSupportsTouch();
     virtual void setJavaScriptEnabled(bool);
     virtual void setWebSecurityEnabled(bool);

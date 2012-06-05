@@ -129,6 +129,11 @@ void WebSettingsImpl::setDeviceSupportsTouch(bool deviceSupportsTouch)
     m_settings->setDeviceSupportsTouch(deviceSupportsTouch);
 }
 
+void WebSettingsImpl::setDeviceSupportsMouse(bool deviceSupportsMouse)
+{
+    m_settings->setDeviceSupportsMouse(deviceSupportsMouse);
+}
+
 bool WebSettingsImpl::deviceSupportsTouch()
 {
     return m_settings->deviceSupportsTouch();
