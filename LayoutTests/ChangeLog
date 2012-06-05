@@ -1,3 +1,10 @@
+2012-06-04  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed new baseline for test added in r119423.
+
+        * platform/mac/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/mac/fast/hidpi/device-scale-factor-paint-expected.txt: Added.
+
 2012-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG arguments simplification takes unkindly to direct accesses to the arguments register
