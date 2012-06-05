@@ -28,6 +28,7 @@
 
 import unittest
 import re
+import sys
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.port import test
@@ -37,6 +38,10 @@ from webkitpy.layout_tests.servers.http_server_base import ServerError
 
 class TestHttpServer(unittest.TestCase):
     def test_start_cmd(self):
+        # Fails on win - see https://bugs.webkit.org/show_bug.cgi?id=84726
+        if sys.platform in ('cygwin', 'win32'):
+            return
+
         host = MockHost()
         test_port = test.TestPort(host)
         host.filesystem.write_text_file(

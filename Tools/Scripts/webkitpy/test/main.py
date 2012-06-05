@@ -135,6 +135,10 @@ class Tester(object):
         self.finder.clean_trees()
 
         names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all)
+        if not names:
+            _log.error('No tests to run')
+            return False
+
         return self._run_tests(names)
 
     def _run_tests(self, names):

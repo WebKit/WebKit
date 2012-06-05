@@ -1,3 +1,25 @@
+2012-06-04  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy is failing on win32 after r115054
+        https://bugs.webkit.org/show_bug.cgi?id=88264
+
+        Reviewed by Ryosuke Niwa.
+
+        The failing http_server test was improperly suppressed (the
+        tuple was missing a comma, and so wasn't a tuple at all, just a
+        string) and so we were skipping *all* tests on win32. The right
+        way to skip a single test is to disable it inside the test
+        itself.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_start_cmd):
+        * Scripts/webkitpy/test/test_finder.py:
+        (TestFinder._default_names):
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run): Add error message if we don't find any tests to run.
+        * Scripts/webkitpy/test/main_unittest.py:
+            
+
 2012-06-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Memory leaks in AccessibilityUIElementGtk.cpp
