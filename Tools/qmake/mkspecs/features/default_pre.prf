@@ -23,9 +23,9 @@ isEmpty(pro_file): CONFIG += recursive_include
 }
 
 # Resolve root directories for source and build
-ROOT_WEBKIT_DIR = $$replace(IN_PWD, /Tools/qmake/mkspecs/features,)
+ROOT_WEBKIT_DIR = $$replace(IN_PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
-ROOT_BUILD_DIR = $$replace(OUT_PWD, $$WEBKIT_SUBDIR,)
+ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 
 # We want the QtWebKit API forwarding includes to live in the root build dir,
 # except when we are running the config.tests in Tools/qmake.

@@ -1,3 +1,14 @@
+2012-06-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Building when a top directory is named Source
+        https://bugs.webkit.org/show_bug.cgi?id=77727
+
+        Reviewed by Tor Arne Vestbø.
+
+        Change regex to only replace the last instance of OUT_PWD.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.
