@@ -541,8 +541,6 @@ public:
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;
     bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
-    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
-    const FormElementListHashSet* formElements() const { return &m_formElementsWithState; }
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
@@ -1331,6 +1329,7 @@ private:
     typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)
 
+    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
     FormElementListHashSet m_formElementsWithState;
     typedef ListHashSet<RefPtr<FormAssociatedElement>, 32> FormAssociatedElementListHashSet;
     FormAssociatedElementListHashSet m_formElementsWithFormAttribute;
