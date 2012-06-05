@@ -38,6 +38,9 @@ display: block;
 
 ==== All styles (computed should be there) ====
 [expanded] 
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
 background-attachment: scroll;
     #inspected - initial lazy-computed-style.html:15
 background-clip: border-box;
