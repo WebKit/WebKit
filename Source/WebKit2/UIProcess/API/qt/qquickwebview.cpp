@@ -775,6 +775,8 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
 {
     Q_Q(QQuickWebView);
     QSize viewportSize = q->boundingRect().size().toSize();
+    if (viewportSize.isEmpty())
+        return;
     pageView->setContentsSize(viewportSize);
     // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
     // whether its fixed or not. We still need to tell the drawing area which part of it

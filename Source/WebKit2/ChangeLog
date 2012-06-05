@@ -1,3 +1,19 @@
+2012-06-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Don't propagate viewport size changes if the viewport is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=88336
+
+        Reviewed by Tor Arne Vestbø.
+
+        Qt Quick sequentially set the x, y, width, height of the view. We really want to
+        start propagating further when the size of the viewport becomes valid, i.e. both
+        height and width are defined. In any case lower level classes are discarding an empty
+        size such as WebPage::sendViewportAttributesChanged() so it was pointless to send the size
+        through the IPC bus for nothing.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+
 2012-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_download_get_received_data_length to WebKit2 GTK+ API
