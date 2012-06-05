@@ -2,6 +2,14 @@
 
         Buildbot fix.
 
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: We lose the type attribute earlier
+        in the function. Store in a local variable.
+        (loadBuilderConfig):
+
+2012-06-05  Jon Lee  <jonlee@apple.com>
+
+        Buildbot fix.
+
         * BuildSlaveSupport/build.webkit.org-config/master.cfg:
         (loadBuilderConfig):
 
