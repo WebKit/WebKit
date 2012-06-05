@@ -181,6 +181,12 @@ public:
     // If the selection range is empty, it returns the caret bounds.
     virtual bool selectionBounds(WebRect& start, WebRect& end) const { return false; }
 
+    // Retrieves the bounds of the compostion character. The |index| is
+    // zero-based index of character position in composition text.
+    // If there is no composition string or the |index| is out of range, it
+    // returns false.
+    virtual bool compositionCharacterBounds(size_t index, WebRect&) const { return false; }
+
     // Returns the text direction at the start and end bounds of the current selection.
     // If the selection range is empty, it returns false.
     virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const { return false; }

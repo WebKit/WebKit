@@ -2026,6 +2026,26 @@ WebTextInputType WebViewImpl::textInputType()
     return WebTextInputTypeNone;
 }
 
+bool WebViewImpl::compositionCharacterBounds(size_t index, WebRect& rect) const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame || !frame->editor()->hasComposition())
+        return false;
+
+    ExceptionCode ec = 0;
+    RefPtr<Range> compositionRange = frame->editor()->compositionRange();
+
+    if (compositionRange->text().length() < index + 1)
+        return false;
+
+    RefPtr<Range> tempRange = compositionRange->cloneRange(ec);
+    tempRange->setStart(compositionRange->startContainer(ec), compositionRange->startOffset(ec) + index, ec);
+    tempRange->setEnd(compositionRange->startContainer(ec), compositionRange->startOffset(ec) + index + 1, ec);
+    rect = frame->editor()->firstRectForRange(tempRange.get());
+    rect = frame->view()->contentsToWindow(rect);
+    return true;
+}
+
 bool WebViewImpl::selectionBounds(WebRect& start, WebRect& end) const
 {
     const Frame* frame = focusedWebCoreFrame();

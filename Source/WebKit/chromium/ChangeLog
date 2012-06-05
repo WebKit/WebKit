@@ -1,3 +1,23 @@
+2012-06-05  Seigo Nonaka  <nona@chromium.org>
+
+        [chromium] There is no way to retrieve composition character rectangle in WebKit/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=87911
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an API for retreieving each character bounds in composition text.
+        This API is necessary for implementing IMR_QUERYCHARPOSITION message in Windows.
+        The message is used by Japanese IME for showing their window at the correct position.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::compositionCharacterBounds):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::compositionCharacterBounds):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.
