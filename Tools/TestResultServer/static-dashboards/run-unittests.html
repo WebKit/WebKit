@@ -52,9 +52,11 @@ function g_handleBuildersListLoaded() {};
 
 <script>
 window.location.href = '#useTestData=true';
-var builderGroup = '@ToT - chromium.org';
+var groupName = '@ToT - chromium.org';
 var builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.5': '', 'Webkit Win': ''};
-onBuilderListLoad(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, builderGroup, BuilderGroup.TOT_WEBKIT, builders);
+LAYOUT_TESTS_BUILDER_GROUPS[groupName] = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
+LAYOUT_TESTS_BUILDER_GROUPS[groupName].expectedGroups = 4;
+onBuilderListLoad(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.TOT_WEBKIT, builders);
 initBuilders();
 </script>
 

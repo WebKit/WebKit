@@ -630,16 +630,35 @@ test('addBuilderLoadErrors', 1, function() {
 test('builderGroupIsToTWebKitAttribute', 2, function() {
     var dummyMaster = new BuilderMaster('dummy.org', 'http://build.dummy.org');
     var testBuilderGroups = {
-        '@ToT - dummy.org': null,
-        '@DEPS - dummy.org': null,
+        '@ToT - dummy.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT),
+        '@DEPS - dummy.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT),
     }
-    var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
+    testBuilderGroups['@ToT - dummy.org'].expectedGroups = 1;
+    testBuilderGroups['@DEPS - dummy.org'].expectedGroups = 1;
 
+    var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
     onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
     equal(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
-
     onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@DEPS - dummy.org', BuilderGroup.DEPS_WEBKIT, JSON.parse(testJSONData));
     equal(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
+});
+
+test('builderGroupExpectedGroups', 4, function() {
+    var dummyMaster = new BuilderMaster('dummy.org', 'http://build.dummy.org');
+    var testBuilderGroups = {
+        '@ToT - dummy.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT),
+    }
+    testBuilderGroups['@ToT - dummy.org'].expectedGroups = 3;
+
+    var testJSONData = "{ \"Dummy Builder 1\": null }";
+    equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 3);
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    equal(testBuilderGroups['@ToT - dummy.org'].groups, 1);
+    var testJSONData = "{ \"Dummy Builder 2\": null }";
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    equal(testBuilderGroups['@ToT - dummy.org'].groups, 2);
+    onErrorLoadingBuilderList('http://build.dummy.org', testBuilderGroups,  '@ToT - dummy.org');
+    equal(testBuilderGroups['@ToT - dummy.org'].groups, 3);
 });
 
 test('sortTests', 4, function() {
