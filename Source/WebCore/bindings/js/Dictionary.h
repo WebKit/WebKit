@@ -61,7 +61,7 @@ public:
     bool isObject() const { return m_dictionary.isValid(); }
     bool isUndefinedOrNull() const { return !m_dictionary.isValid(); }
     bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
-    bool getWithUndefinedOrNullCheck(const String&, String&) const { notImplemented(); return false; }
+    bool getWithUndefinedOrNullCheck(const String& propertyName, String& value) const;
 
 private:
     template <typename T>

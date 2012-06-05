@@ -1,3 +1,22 @@
+2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        JSC:need to implement Dictionary::getWithUndefinedOrNullCheck for IDB
+        https://bugs.webkit.org/show_bug.cgi?id=88283
+
+        Reviewed by Kentaro Hara.
+
+        No new tests, idb not working for JSC yet.
+
+        * bindings/js/Dictionary.cpp:
+        (WebCore::Dictionary::getWithUndefinedOrNullCheck):
+        * bindings/js/Dictionary.h:
+        (Dictionary):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::getWithUndefinedOrNullCheck):
+        (WebCore):
+        * bindings/js/JSDictionary.h:
+        (JSDictionary):
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.

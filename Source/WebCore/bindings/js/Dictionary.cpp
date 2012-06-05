@@ -79,5 +79,9 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& m
     return true;
 }
 
-};
+bool Dictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& value) const
+{
+    return m_dictionary.getWithUndefinedOrNullCheck(propertyName, value);
+}
 
+};

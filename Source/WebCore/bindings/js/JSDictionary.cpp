@@ -167,4 +167,14 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicSt
 }
 #endif
 
+bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& result) const
+{
+    JSValue value;
+    if (tryGetProperty(propertyName.utf8().data(), value) != PropertyFound || value.isUndefinedOrNull())
+        return false;
+
+    result = ustringToString(value.toString(m_exec)->value(m_exec));
+    return true;
+}
+
 } // namespace WebCore

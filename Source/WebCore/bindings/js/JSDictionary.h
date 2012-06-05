@@ -58,6 +58,7 @@ public:
     // Returns true if the property was found in the dictionary, and the value could be converted to the desired type.
     template <typename Result>
     bool get(const char* propertyName, Result&) const;
+    bool getWithUndefinedOrNullCheck(const String& propertyName, String& value) const;
 
     JSC::ExecState* execState() const { return m_exec; }
     JSC::JSObject* initializerObject() const { return m_initializerObject; }
