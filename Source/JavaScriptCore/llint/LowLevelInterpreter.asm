@@ -727,19 +727,13 @@ _llint_op_throw_reference_error:
 
 _llint_op_profile_will_call:
     traceExecution()
-    loadp JITStackFrame::enabledProfilerReference[sp], t0
-    btpz [t0], .opProfileWillCallDone
     callSlowPath(_llint_slow_path_profile_will_call)
-.opProfileWillCallDone:
     dispatch(2)
 
 
 _llint_op_profile_did_call:
     traceExecution()
-    loadp JITStackFrame::enabledProfilerReference[sp], t0
-    btpz [t0], .opProfileWillCallDone
     callSlowPath(_llint_slow_path_profile_did_call)
-.opProfileDidCallDone:
     dispatch(2)
 
 

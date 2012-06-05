@@ -70,6 +70,7 @@ namespace JSC {
     class LLIntOffsetsExtractor;
     class NativeExecutable;
     class ParserArena;
+    class Profiler;
     class RegExpCache;
     class Stringifier;
     class Structure;
@@ -255,6 +256,11 @@ namespace JSC {
             return m_inDefineOwnProperty;
         }
 
+        Profiler* enabledProfiler()
+        {
+            return m_enabledProfiler;
+        }
+
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
 #endif
@@ -346,6 +352,7 @@ namespace JSC {
 
         int maxReentryDepth;
 
+        Profiler* m_enabledProfiler;
         RegExpCache* m_regExpCache;
         BumpPointerAllocator m_regExpAllocator;
 

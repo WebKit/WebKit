@@ -119,10 +119,8 @@ JSGlobalObject::~JSGlobalObject()
     if (m_debugger)
         m_debugger->detach(this);
 
-    Profiler** profiler = Profiler::enabledProfilerReference();
-    if (UNLIKELY(*profiler != 0)) {
-        (*profiler)->stopProfiling(this);
-    }
+    if (Profiler* profiler = globalData().enabledProfiler())
+        profiler->stopProfiling(this);
 }
 
 void JSGlobalObject::destroy(JSCell* cell)

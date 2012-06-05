@@ -51,7 +51,6 @@ static unsigned ProfilesUID = 0;
 static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSObject*, const UString& defaultSourceURL, int defaultLineNumber);
 
 Profiler* Profiler::s_sharedProfiler = 0;
-Profiler* Profiler::s_sharedEnabledProfilerReference = 0;
 
 Profiler* Profiler::profiler()
 {
@@ -74,7 +73,7 @@ void Profiler::startProfiling(ExecState* exec, const UString& title)
             return;
     }
 
-    s_sharedEnabledProfilerReference = this;
+    exec->globalData().m_enabledProfiler = this;
     RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(exec, title, ++ProfilesUID);
     m_currentProfiles.append(profileGenerator);
 }
@@ -90,7 +89,7 @@ PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& titl
 
             m_currentProfiles.remove(i);
             if (!m_currentProfiles.size())
-                s_sharedEnabledProfilerReference = 0;
+                exec->globalData().m_enabledProfiler = 0;
             
             return returnProfile;
         }
@@ -107,7 +106,7 @@ void Profiler::stopProfiling(JSGlobalObject* origin)
             profileGenerator->stopProfiling();
             m_currentProfiles.remove(i);
             if (!m_currentProfiles.size())
-                s_sharedEnabledProfilerReference = 0;
+                origin->globalData().m_enabledProfiler = 0;
         }
     }
 }

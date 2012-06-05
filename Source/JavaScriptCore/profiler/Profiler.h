@@ -48,11 +48,6 @@ namespace JSC {
     class Profiler {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static Profiler** enabledProfilerReference()
-        {
-            return &s_sharedEnabledProfilerReference;
-        }
-
         JS_EXPORT_PRIVATE static Profiler* profiler(); 
         static CallIdentifier createCallIdentifier(ExecState* exec, JSValue, const UString& sourceURL, int lineNumber);
 
@@ -72,7 +67,6 @@ namespace JSC {
     private:
         Vector<RefPtr<ProfileGenerator> > m_currentProfiles;
         static Profiler* s_sharedProfiler;
-        static Profiler* s_sharedEnabledProfilerReference;
     };
 
 } // namespace JSC

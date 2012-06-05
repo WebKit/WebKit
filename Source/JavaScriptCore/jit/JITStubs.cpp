@@ -205,7 +205,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define REGISTER_FILE_OFFSET             0x60
 #define CALLFRAME_OFFSET                 0x64
 #define EXCEPTION_OFFSET                 0x64
-#define ENABLE_PROFILER_REFERENCE_OFFSET 0x68
+#define FIRST_STACK_ARGUMENT             0x68
 
 #elif (COMPILER(GCC) || COMPILER(MSVC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
@@ -225,7 +225,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x50, JITStackFrame_code_
 
 extern "C" {
 
-    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*)
+    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
     {
         __asm {
             push ebp;
@@ -284,12 +284,11 @@ extern "C" {
 #define REGISTER_FILE_OFFSET        84
 #define CALLFRAME_OFFSET            88
 #define EXCEPTION_OFFSET            92
-#define ENABLE_PROFILER_REFERENCE_OFFSET 96
 #define GLOBAL_DATA_OFFSET         100
 #define STACK_LENGTH               104
 #elif CPU(SH4)
 #define SYMBOL_STRING(name) #name
-/* code (r4), RegisterFile* (r5), CallFrame* (r6), JSValue* exception (r7), Profiler**(sp), JSGlobalData (sp)*/
+/* code (r4), RegisterFile* (r5), CallFrame* (r6), void* unused1 (r7), void* unused2(sp), JSGlobalData (sp)*/
 
 asm volatile (
 ".text\n"
@@ -465,9 +464,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store registerFile to current stack" "\n"
     "sw    $6," STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "($29)     # store callFrame to curent stack" "\n"
     "sw    $7," STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "($29)     # store exception to current stack" "\n"
-    "lw    $8," STRINGIZE_VALUE_OF(STACK_LENGTH + 16) "($29)    # load enableProfilerReference from previous stack" "\n"
     "lw    $9," STRINGIZE_VALUE_OF(STACK_LENGTH + 20) "($29)    # load globalData from previous stack" "\n"
-    "sw    $8," STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "($29)   # store enableProfilerReference to current stack" "\n"
     "jalr  $25" "\n"
     "sw    $9," STRINGIZE_VALUE_OF(GLOBAL_DATA_OFFSET) "($29)   # store globalData to current stack" "\n"
     "lw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
@@ -543,7 +540,7 @@ HIDE_SYMBOL(ctiTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "sub sp, sp, #" STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "\n"
+    "sub sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
     "str lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
     "str r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
     "str r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
@@ -568,7 +565,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
     "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "\n"
+    "add sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
     "bx lr" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
@@ -597,7 +594,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
     "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "\n"
+    "add sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
     "bx lr" "\n"
 );
 
@@ -618,7 +615,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
     "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
     "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(ENABLE_PROFILER_REFERENCE_OFFSET) "\n"
+    "add sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
     "bx lr" "\n"
 );
 
@@ -661,10 +658,10 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(RVCT) && CPU(ARM_THUMB2)
 
-__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, Profiler**, JSGlobalData*)
+__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
 {
     PRESERVE8
-    sub sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    sub sp, sp, # FIRST_STACK_ARGUMENT
     str lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
     str r4, [sp, # PRESERVED_R4_OFFSET ]
     str r5, [sp, # PRESERVED_R5_OFFSET ]
@@ -689,7 +686,7 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, P
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
     ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
-    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    add sp, sp, # FIRST_STACK_ARGUMENT
     bx lr
 }
 
@@ -708,7 +705,7 @@ __asm void ctiVMThrowTrampoline()
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
     ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
-    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    add sp, sp, # FIRST_STACK_ARGUMENT
     bx lr
 }
 
@@ -725,13 +722,13 @@ __asm void ctiOpThrowNotCaught()
     ldr r5, [sp, # PRESERVED_R5_OFFSET ]
     ldr r4, [sp, # PRESERVED_R4_OFFSET ]
     ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
-    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    add sp, sp, # FIRST_STACK_ARGUMENT
     bx lr
 }
 
 #elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
 
-__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*)
+__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
 {
     ARM
     stmdb sp!, {r1-r3}
@@ -800,7 +797,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
     // The fifth argument is the first item already on the stack.
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == ENABLE_PROFILER_REFERENCE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused2) == FIRST_STACK_ARGUMENT);
 
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
 
@@ -820,7 +817,6 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused1) == EXCEPTION_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == ENABLE_PROFILER_REFERENCE_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == GLOBAL_DATA_OFFSET);
 
 #endif
@@ -2355,16 +2351,16 @@ DEFINE_STUB_FUNCTION(void, op_profile_will_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    ASSERT(*stackFrame.enabledProfilerReference);
-    (*stackFrame.enabledProfilerReference)->willExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
+    if (Profiler* profiler = stackFrame.globalData->enabledProfiler())
+        profiler->willExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(void, op_profile_did_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    ASSERT(*stackFrame.enabledProfilerReference);
-    (*stackFrame.enabledProfilerReference)->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
+    if (Profiler* profiler = stackFrame.globalData->enabledProfiler())
+        profiler->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array)

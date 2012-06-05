@@ -104,7 +104,7 @@ namespace JSC {
         RegisterFile* registerFile;
         CallFrame* callFrame;
         void* unused1;
-        Profiler** enabledProfilerReference;
+        void* unused2;
         JSGlobalData* globalData;
 
         void* savedRBX;
@@ -140,7 +140,7 @@ namespace JSC {
         RegisterFile* registerFile;
         CallFrame* callFrame;
         void* unused1;
-        Profiler** enabledProfilerReference;
+        void* unused2;
         JSGlobalData* globalData;
         
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
@@ -171,7 +171,7 @@ namespace JSC {
         CallFrame* callFrame;
 
         // These arguments passed on the stack.
-        Profiler** enabledProfilerReference;
+        void* unused1;
         JSGlobalData* globalData;
         
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
@@ -199,7 +199,7 @@ namespace JSC {
         void* unused1;
 
         // These arguments passed on the stack.
-        Profiler** enabledProfilerReference;
+        void* unused2;
         JSGlobalData* globalData;
 
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
@@ -231,7 +231,7 @@ namespace JSC {
         void* unused1;
 
         // These arguments passed on the stack.
-        Profiler** enabledProfilerReference;
+        void* unused2;
         JSGlobalData* globalData;
 
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
@@ -252,7 +252,7 @@ namespace JSC {
         RegisterFile* registerFile;
         CallFrame* callFrame;
         JSValue* exception;
-        Profiler** enabledProfilerReference;
+        void* unused1;
         JSGlobalData* globalData;
 
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
@@ -282,7 +282,7 @@ namespace JSC {
 
     extern "C" void ctiVMThrowTrampoline();
     extern "C" void ctiOpThrowNotCaught();
-    extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*);
+    extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*);
 #if ENABLE(DFG_JIT)
     extern "C" void ctiTrampolineEnd();
 

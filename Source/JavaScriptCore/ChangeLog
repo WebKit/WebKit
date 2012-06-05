@@ -1,3 +1,63 @@
+2012-06-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove enabledProfilerReference
+        https://bugs.webkit.org/show_bug.cgi?id=88258
+
+        Reviewed by Michael Saboff.
+
+        Make the enabled profiler a member of JSGlobalData, and switch code that accesses it to do so directly
+        via the JSGlobalData, rather than holding a Profiler** reference to it. Do not pass the Profiler**
+        reference to JIT code. This patch does not change the stack layout on entry into JIT code (passing an
+        unused void* instead), since this is an intrusive change better handled in a separate patch.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITCode.h:
+        (JSC::JITCode::execute):
+            - Don't pass Profiler** to JIT code.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        * jit/JITStubs.cpp:
+        (JSC):
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+        (JSC::JITThunks::JITThunks):
+        (JSC::DEFINE_STUB_FUNCTION):
+            - For ARM_THUMB2, rename ENABLE_PROFILER_REFERENCE_OFFSET to FIRST_STACK_ARGUMENT (which is how it is being used).
+            - For MIPS, remove ENABLE_PROFILER_REFERENCE_OFFSET.
+        * jit/JITStubs.h:
+        (JITStackFrame):
+        (JSC):
+            - Renamed enabledProfilerReference to unusedX.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * profiler/Profiler.cpp:
+        (JSC):
+        (JSC::Profiler::startProfiling):
+        (JSC::Profiler::stopProfiling):
+        * profiler/Profiler.h:
+        (Profiler):
+            - Removed s_sharedEnabledProfilerReference, enabledProfilerReference().
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSC::JSGlobalData::enabledProfiler):
+        (JSGlobalData):
+            - Added m_enabledProfiler, enabledProfiler().
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+
 2012-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         get_argument_by_val should be profiled everywhere

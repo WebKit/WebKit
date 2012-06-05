@@ -124,7 +124,7 @@ namespace JSC {
         // Execute the code!
         inline JSValue execute(RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData)
         {
-            JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), registerFile, callFrame, 0, Profiler::enabledProfilerReference(), globalData));
+            JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), registerFile, callFrame, 0, 0, globalData));
             return globalData->exception ? jsNull() : result;
         }
 

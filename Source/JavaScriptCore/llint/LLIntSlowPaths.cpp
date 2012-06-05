@@ -1546,14 +1546,16 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 LLINT_SLOW_PATH_DECL(slow_path_profile_will_call)
 {
     LLINT_BEGIN();
-    (*Profiler::enabledProfilerReference())->willExecute(exec, LLINT_OP(1).jsValue());
+    if (Profiler* profiler = globalData.enabledProfiler())
+        profiler->willExecute(exec, LLINT_OP(1).jsValue());
     LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
 {
     LLINT_BEGIN();
-    (*Profiler::enabledProfilerReference())->didExecute(exec, LLINT_OP(1).jsValue());
+    if (Profiler* profiler = globalData.enabledProfiler())
+        profiler->didExecute(exec, LLINT_OP(1).jsValue());
     LLINT_END();
 }
 
