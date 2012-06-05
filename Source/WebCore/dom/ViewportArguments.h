@@ -59,7 +59,7 @@ struct ViewportArguments {
     enum Type {
         // These are ordered in increasing importance.
         Implicit,
-#if USE(LEGACY_VIEWPORT_ADAPTION)
+#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
         XHTMLMobileProfile,
         HandheldFriendlyMeta,
         MobileOptimizedMeta,

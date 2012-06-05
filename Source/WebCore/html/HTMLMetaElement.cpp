@@ -75,7 +75,7 @@ void HTMLMetaElement::process()
         document()->processViewport(contentValue, ViewportArguments::ViewportMeta);
     else if (equalIgnoringCase(name(), "referrer"))
         document()->processReferrerPolicy(contentValue);
-#if USE(LEGACY_VIEWPORT_ADAPTION)
+#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
     else if (equalIgnoringCase(name(), "handheldfriendly") && equalIgnoringCase(contentValue, "true"))
         document()->processViewport("width=device-width", ViewportArguments::HandheldFriendlyMeta);
     else if (equalIgnoringCase(name(), "mobileoptimized"))
