@@ -1,3 +1,36 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Block selection gaps painted not properly pixel snapped
+        https://bugs.webkit.org/show_bug.cgi?id=88000
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixes for selection painting in both inline line heights and block gaps. We were unintentionally
+        flooring inline and block offsets in RenderBlock, but actually need to intentionally floor the
+        logical left and right values in logical(Left|Right)SelectionGap to properly align our block
+        selection gaps. This is to properly mirror the behavior in pixelSnappedLogicalRightOffsetForLine.
+
+        We were also unintentionally upcasting LayoutUnits to floats in InlineTextBox's selection painting
+        routine. Now we're properly rounding.
+
+        Test: fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection): Move paint values to integers and do proper rounding.
+        * rendering/RenderBlock.cpp:
+        (WebCore::blockDirectionOffset): Fix incorrect flooring in return value.
+        (WebCore::inlineDirectionOffset): Ditto.
+        (WebCore): Removing previous attempt to properly mirror inline box selection pixel alignment. This
+        implementation rounded the final x value instead of properly rounding our block offset then flooring
+        the offset that corresponds to the behavior in InlineTextBox. It also didn't properly pixel snap
+        the y offset and height.
+        (WebCore::RenderBlock::blockSelectionGap): Properly pixel snapping the gap rect before painting.
+        (WebCore::RenderBlock::logicalLeftSelectionGap): Correctly match InlineTextBox's selection pixel
+        alignment by flooring the logicalLeft and pixel snapping the subsequent rect. We do this in order
+        to maintain proper render tree pixel snapping while simultaneously mirroring the flooring in the
+        inline direction that occurs in InlineTextBox.cpp's alignSelectionRectToDevicePixels method.
+        (WebCore::RenderBlock::logicalRightSelectionGap): Ditto with the right.
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         Remove support for target-densitydpi in the viewport meta tag

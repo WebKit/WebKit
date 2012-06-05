@@ -1,3 +1,53 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Block selection gaps painted not properly pixel snapped
+        https://bugs.webkit.org/show_bug.cgi?id=88000
+
+        Reviewed by Ryosuke Niwa.
+
+        One new selection test and updated snowleopard expectations for a handful that improved.
+
+        Note: a couple of the RTL results appear worse, but sadly are only returning to our old pre-sub-pixel results.
+
+        * fast/sub-pixel/selection: Added.
+        * fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.txt: Added.
+        * fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/selection: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         Remove support for target-densitydpi in the viewport meta tag
