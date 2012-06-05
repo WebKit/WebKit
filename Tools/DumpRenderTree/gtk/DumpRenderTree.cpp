@@ -295,9 +295,9 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
 
     g_free(uriScheme);
 
-    const gchar* target = webkit_web_history_item_get_target(item);
-    if (target && strlen(target) > 0)
-        printf(" (in frame \"%s\")", target);
+    GOwnPtr<gchar> target(webkit_web_history_item_get_target(item));
+    if (target.get() && strlen(target.get()) > 0)
+        printf(" (in frame \"%s\")", target.get());
     if (webkit_web_history_item_is_target_item(item))
         printf("  **nav target**");
     putchar('\n');

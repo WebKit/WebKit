@@ -69,5 +69,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
         cairo_stroke(context);
     }
 
+    cairo_surface_destroy(imageSurface);
     return BitmapContext::createByAdoptingBitmapAndContext(0, context);
 }

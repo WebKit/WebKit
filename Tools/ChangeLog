@@ -1,3 +1,18 @@
+2012-06-05  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Fix two more memory leaks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=88255
+
+        Reviewed by Martin Robinson.
+
+        Fixed memory leaks in GTK's DRT code.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpHistoryItem): webkit_web_history_item_get_target() returns a
+        g_strdup()'d string. So, use GOwnPtr to manage memory automatically.
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp:
+        (createBitmapContextFromWebView): Free the cairo surface.
+
 2012-06-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Building when a top directory is named Source
