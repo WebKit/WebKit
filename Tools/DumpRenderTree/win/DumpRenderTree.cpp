@@ -37,6 +37,7 @@
 #include "PolicyDelegate.h"
 #include "ResourceLoadDelegate.h"
 #include "UIDelegate.h"
+#include "WebCoreTestSupport.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 
@@ -892,6 +893,11 @@ static void resetWebViewToConsistentStateBeforeTesting()
     COMPtr<IWebPreferences> preferences;
     if (SUCCEEDED(webView->preferences(&preferences)))
         resetDefaultsToConsistentValues(preferences.get());
+
+    if (gLayoutTestController) {
+        JSGlobalContextRef context = frame->globalContext();
+        WebCoreTestSupport::resetInternalsObject(context);
+    }
 
     COMPtr<IWebViewEditing> viewEditing;
     if (SUCCEEDED(webView->QueryInterface(&viewEditing)))

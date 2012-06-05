@@ -1,3 +1,15 @@
+2012-06-05  Jessie Berlin  <jberlin@apple.com>
+
+        [Win] DumpRenderTree should call resetInternalsObject
+        https://bugs.webkit.org/show_bug.cgi?id=88346
+
+        Reviewed by Simon Fraser.
+
+        Invoke it on Windows in the same place it is invoked on Mac.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2012-06-05  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Fix two more memory leaks in DRT
