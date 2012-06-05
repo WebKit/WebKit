@@ -1,3 +1,33 @@
+2012-06-05  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: serialize edge counts instead of indexes in heap snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=88324
+
+        The serialized node structure currently holds an index
+        of its first containment edge in the edges array.
+        The index can be quite big (up to 7 digits for large snapshots).
+        The patch changes the serialization format to pass
+        node containment edge count instead. For most nodes the count
+        is just a single digit number.
+        This reduces serialized snapshot size and therefore its transfer time.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype._edgeIndexesStart):
+        (WebInspector.HeapSnapshotNode.prototype._edgeIndexesEnd):
+        (WebInspector.HeapSnapshotNode.prototype._ordinal):
+        (WebInspector.HeapSnapshotNodeIterator):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype._buildEdgeIndexes):
+        (WebInspector.HeapSnapshot.prototype._buildRetainers):
+        (WebInspector.HeapSnapshot.prototype._bfs):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._buildPostOrderIndex):
+        (WebInspector.HeapSnapshot.prototype._buildDominatorTree):
+        (WebInspector.HeapSnapshot.prototype._markPageOwnedNodes):
+        (WebInspector.HeapSnapshot.prototype._markQueriableHeapObjects):
+
 2012-06-05  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         CSS 2.1 failure: border-conflict-element-021a

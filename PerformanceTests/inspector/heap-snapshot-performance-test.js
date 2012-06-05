@@ -1,5 +1,6 @@
 function test()
 {
+    InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildEdgeIndexes");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildRetainers");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatedNodes");
     InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");

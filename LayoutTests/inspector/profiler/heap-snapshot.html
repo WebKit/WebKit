@@ -95,6 +95,17 @@ function test()
             next();
         },
 
+        function heapSnapshotContainmentEdgeIndexesTest(next)
+        {
+            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
+            var actual = snapshot._firstEdgeIndexes;
+            var expected = [0, 6, 12, 18, 21, 21, 21];
+            InspectorTest.assertEquals(expected.length, actual.length, "Edge indexes size");
+            for (var i = 0; i < expected.length; ++i)
+                InspectorTest.assertEquals(expected[i], actual[i], "Edge indexes");
+            next();
+        },
+
         function heapSnapshotPostOrderIndexTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

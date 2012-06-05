@@ -6,9 +6,7 @@ InspectorTest.createHeapSnapshotMockObject = function()
         _rootNodeIndex: 0,
         _nodeTypeOffset: 0,
         _nodeNameOffset: 1,
-        _edgesCountOffset: 2,
-        _firstEdgeIndexOffset: 2,
-        _firstEdgeOffset: 3,
+        _nodeEdgeCountOffset: 2,
         _nodeFieldCount: 3,
         _edgeFieldsCount: 3,
         _edgeTypeOffset: 0,
@@ -30,13 +28,12 @@ InspectorTest.createHeapSnapshotMockObject = function()
         //         -> B (6) -bd- D (12)
         //
         _nodes: [
-            0, 0, 0,    //  0: root
-            1, 1, 6,    //  3: A
-            1, 2, 12,   //  6: B
-            1, 3, 18,   //  9: C
-            1, 4, 21,   // 12: D
-            1, 5, 21,   // 15: E
-            0, 0, 21],  // 18: (extra node)
+            0, 0, 2,    //  0: root
+            1, 1, 2,    //  3: A
+            1, 2, 2,    //  6: B
+            1, 3, 1,    //  9: C
+            1, 4, 0,    // 12: D
+            1, 5, 0],   // 15: E
         _containmentEdges: [
             2,  6, 3,   //  0: shortcut 'a' to node 'A'
             1,  7, 6,   //  3: property 'b' to node 'B'
@@ -45,7 +42,8 @@ InspectorTest.createHeapSnapshotMockObject = function()
             1,  9, 9,   // 12: property 'bc' to node 'C'
             1, 10, 12,  // 15: property 'bd' to node 'D'
             1, 11, 15], // 18: property 'ce' to node 'E'
-        _strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"]
+        _strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"],
+        _firstEdgeIndexes: [0, 6, 12, 18, 21, 21, 21]
     };
 };
 
@@ -66,7 +64,7 @@ InspectorTest.createHeapSnapshotMockRaw = function()
     return {
         snapshot: {
             meta: {
-                node_fields: ["type", "name", "id", "self_size", "retained_size", "dominator", "edges_index"],
+                node_fields: ["type", "name", "id", "self_size", "retained_size", "dominator", "edge_count"],
                 node_types: [["hidden", "object"], "", "", "", "", "", ""],
                 edge_fields: ["type", "name_or_index", "to_node"],
                 edge_types: [["element", "property", "shortcut"], "", ""]
@@ -74,12 +72,12 @@ InspectorTest.createHeapSnapshotMockRaw = function()
             node_count: 6,
             edge_count: 7},
         nodes: [
-            0, 0, 1, 0, 20,  0,  0, // root (0)
-            1, 1, 2, 2,  2,  0,  6, // A (7)
-            1, 2, 3, 3,  8,  0, 12, // B (14)
-            1, 3, 4, 4, 10,  0, 18, // C (21)
-            1, 4, 5, 5,  5, 14, 21, // D (28)
-            1, 5, 6, 6,  6, 21, 21],// E (35)
+            0, 0, 1, 0, 20,  0, 2,  // root (0)
+            1, 1, 2, 2,  2,  0, 2,  // A (7)
+            1, 2, 3, 3,  8,  0, 2,  // B (14)
+            1, 3, 4, 4, 10,  0, 1,  // C (21)
+            1, 4, 5, 5,  5, 14, 0,  // D (28)
+            1, 5, 6, 6,  6, 21, 0], // E (35)
         edges: [
             // root node edges
             2,  6,  7, // shortcut 'a' to node 'A'
@@ -116,7 +114,7 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
     return InspectorTest._postprocessHeapSnapshotMock({
         snapshot: {
             meta: {
-                node_fields: ["type", "name", "id", "edges_index"],
+                node_fields: ["type", "name", "id", "edge_count"],
                 node_types: [["hidden", "object"], "", "", ""],
                 edge_fields: ["type", "name_or_index", "to_node"],
                 edge_types: [["element", "hidden", "internal"], "", ""]
@@ -137,19 +135,19 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
             //    |                   v
             //    |----->F--->G       M
             //
-            /* (root) */    0,  0,  1,  0,
-            /* Window */    1, 11,  2, 12,
-            /* Window */    1, 11,  3, 18,
-            /* E */         1,  5,  4, 27,
-            /* F */         1,  6,  5, 27,
-            /* A */         1,  1,  6, 30,
-            /* B */         1,  2,  7, 30,
-            /* D */         1,  4,  8, 33,
-            /* H */         1,  8,  9, 39,
-            /* G */         1,  7, 10, 39,
-            /* C */         1,  3, 11, 39,
-            /* N */         1, 10, 12, 39,
-            /* M */         1,  9, 13, 39
+            /* (root) */    0,  0,  1, 4,
+            /* Window */    1, 11,  2, 2,
+            /* Window */    1, 11,  3, 3,
+            /* E */         1,  5,  4, 0,
+            /* F */         1,  6,  5, 1,
+            /* A */         1,  1,  6, 0,
+            /* B */         1,  2,  7, 1,
+            /* D */         1,  4,  8, 2,
+            /* H */         1,  8,  9, 0,
+            /* G */         1,  7, 10, 0,
+            /* C */         1,  3, 11, 0,
+            /* N */         1, 10, 12, 0,
+            /* M */         1,  9, 13, 0
             ],
         edges: [
             /* from (root) */  0,  1,  4, 0, 2,  8, 0, 3, 12, 0, 4, 16,
@@ -460,9 +458,9 @@ InspectorTest.HeapNode.prototype = {
         // and even ids based on a hash for native DOMObject groups.
         rawSnapshot.nodes.push(this._id || this._ordinal * 2 + 1);
         rawSnapshot.nodes.push(this._selfSize);
-        rawSnapshot.nodes.push(0);                        // retained_size
-        rawSnapshot.nodes.push(0);                        // dominator
-        rawSnapshot.nodes.push(rawSnapshot.edges.length); // edges_index
+        rawSnapshot.nodes.push(0);                               // retained_size
+        rawSnapshot.nodes.push(0);                               // dominator
+        rawSnapshot.nodes.push(Object.keys(this._edges).length); // edge_count
 
         for (var i in this._edges)
             this._edges[i]._serialize(rawSnapshot);
@@ -528,7 +526,7 @@ InspectorTest.HeapSnapshotBuilder.prototype = {
         var rawSnapshot = {
             "snapshot": {
                 "meta": {
-                    "node_fields": ["type","name","id","self_size","retained_size","dominator","edges_index"],
+                    "node_fields": ["type","name","id","self_size","retained_size","dominator","edge_count"],
                     "node_types": [
                         this._nodeTypesArray,
                         "string",

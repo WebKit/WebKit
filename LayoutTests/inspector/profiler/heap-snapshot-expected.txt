@@ -13,6 +13,8 @@ Running: heapSnapshotNodeAndEdgeTest
 
 Running: heapSnapshotSimpleTest
 
+Running: heapSnapshotContainmentEdgeIndexesTest
+
 Running: heapSnapshotPostOrderIndexTest
 
 Running: heapSnapshotDominatorsTreeTest
