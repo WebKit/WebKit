@@ -59,8 +59,7 @@ private:
         NoFlipForRowReverse,
     };
 
-    struct OrderHashTraits;
-    typedef HashSet<int, DefaultHash<int>::Hash, OrderHashTraits> OrderHashSet;
+    typedef HashSet<float> OrderHashSet;
 
     class OrderIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;

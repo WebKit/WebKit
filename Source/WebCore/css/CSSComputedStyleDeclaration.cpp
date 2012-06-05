@@ -278,7 +278,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitMaskRepeat,
     CSSPropertyWebkitMaskSize,
     CSSPropertyWebkitNbspMode,
+#if ENABLE(CSS3_FLEXBOX)
     CSSPropertyWebkitOrder,
+#endif
 #if ENABLE(OVERFLOW_SCROLLING)
     CSSPropertyWebkitOverflowScrolling,
 #endif
@@ -1651,7 +1653,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return list.release();
         }
         case CSSPropertyWebkitOrder:
-            return cssValuePool().createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
+            return cssValuePool().createValue(style->order());
         case CSSPropertyWebkitJustifyContent:
             return cssValuePool().createValue(style->justifyContent());
         case CSSPropertyWebkitAlignItems:

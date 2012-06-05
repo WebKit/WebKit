@@ -2096,12 +2096,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             parsedValue = parseFlex(m_valueList.get());
         break;
     case CSSPropertyWebkitOrder:
-        if (validUnit(value, FInteger, CSSStrictMode)) {
-            // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
-            parsedValue = cssValuePool().createValue(max(static_cast<double>(std::numeric_limits<int>::min() + 2), value->fValue),
-                                                             static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
-            m_valueList->next();
-        }
+        validPrimitive = validUnit(value, FNumber);
         break;
 #endif
     case CSSPropertyWebkitMarquee:

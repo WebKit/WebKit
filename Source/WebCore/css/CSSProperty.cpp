@@ -547,6 +547,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
+    case CSSPropertyWebkitOrder:
 #endif
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitGridColumns:
@@ -595,7 +596,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitMaxLogicalHeight:
     case CSSPropertyWebkitMinLogicalWidth:
     case CSSPropertyWebkitMinLogicalHeight:
-    case CSSPropertyWebkitOrder:
     case CSSPropertyWebkitPaddingAfter:
     case CSSPropertyWebkitPaddingBefore:
     case CSSPropertyWebkitPaddingEnd:

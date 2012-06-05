@@ -4131,6 +4131,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
+    case CSSPropertyWebkitOrder:
 #endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
@@ -4171,7 +4172,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyWebkitMaskSize:
     case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
     case CSSPropertyWebkitNbspMode:
-    case CSSPropertyWebkitOrder:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:

@@ -146,7 +146,7 @@ public:
     Color m_visitedLinkBorderTopColor;
     Color m_visitedLinkBorderBottomColor;
 
-    int m_order;
+    float m_order;
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;

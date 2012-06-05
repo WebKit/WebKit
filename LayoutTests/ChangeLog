@@ -1,3 +1,14 @@
+2012-06-04  Tony Chang  <tony@chromium.org>
+
+        CSS property 'order' should be a number rather than an int
+        https://bugs.webkit.org/show_bug.cgi?id=88111
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html: Allow decimal values.
+        * css3/flexbox/flex-order.html: Fix tests based on float limits.
+
 2012-06-04  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Syntax error in fast/filesystem/resources/file-writer-gc-blob.js

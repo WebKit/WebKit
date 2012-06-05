@@ -1,3 +1,35 @@
+2012-06-04  Tony Chang  <tony@chromium.org>
+
+        CSS property 'order' should be a number rather than an int
+        https://bugs.webkit.org/show_bug.cgi?id=88111
+
+        Reviewed by Ojan Vafai.
+
+        This changed in the spec:
+        http://dev.w3.org/csswg/css3-flexbox/#order
+
+        I also fixed the compile with CSS3_FLEXBOX disabled.
+
+        No new tests, covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp: Parse as float, remove clamping for HashMap<int>.
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * rendering/RenderFlexibleBox.cpp: Remove traits for HashMap<int>.
+        (RenderFlexibleBox::OrderIterator):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-06-04  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Turn LEGACY_VIEWPORT_ADAPTION USE flag into an ENABLE flag.
