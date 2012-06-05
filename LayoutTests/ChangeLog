@@ -1,5 +1,12 @@
 2012-06-04  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium windows rebaseline for r119456.
+
+        * platform/chromium-win-vista/fast/multicol: Removed.
+        * platform/chromium-win/fast/multicol/float-multicol-expected.png:
+
+2012-06-04  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium test expectation updates for new tests.
 
         * fast/sub-pixel/inline-block-with-padding-expected.txt:
