@@ -7,6 +7,9 @@ name in the DOM. If the test passes, you'll see a PASS message below.
 
 <script>
 
+// ECMAScript 5.2 fixes this behavior to better match Internet Explorer and Firefox.
+// https://bugs.ecmascript.org/show_bug.cgi?id=78
+
 function log(result)
 {
     document.querySelector("pre").textContent = result;
@@ -19,8 +22,8 @@ if (window.layoutTestController) {
 var name = "test";
 var w = window.open("javascript:void 0", "test");
 if (w === window)
-    log("PASS");
-else
     log("FAIL");
+else
+    log("PASS");
 
 </script>

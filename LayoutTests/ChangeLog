@@ -1,3 +1,19 @@
+2012-06-05  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Improve variable resolution order on window
+        https://bugs.webkit.org/show_bug.cgi?id=84247
+
+        Reviewed by Ojan Vafai.
+
+        This changes the V8 flag to turn on es52_globals and updates the layout tests to reflect the fixed behavior.
+
+        * fast/dom/Window/window-property-shadowing-name-expected.txt: The expectation is now reversed.
+        * fast/dom/Window/window-property-shadowing-name.html: JSC fails so this test says fail. Bug 75575 tracks JSC.
+        * fast/dom/Window/window-property-shadowing-onclick-expected.txt: Added.
+        * fast/dom/Window/window-property-shadowing-onclick.html: Added.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-name-expected.txt: Copied from LayoutTests/fast/dom/Window/window-property-shadowing-name-expected.txt.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-onclick-expected.txt: Added.
+
 2012-06-05  Emil A Eklund  <eae@chromium.org>
 
         Change fast/sub-pixel/float-containing-block-with-margin.html to pixel test

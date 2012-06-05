@@ -1,3 +1,19 @@
+2012-06-05  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Improve variable resolution order on window
+        https://bugs.webkit.org/show_bug.cgi?id=84247
+
+        Reviewed by Ojan Vafai.
+
+        This changes the V8 flag to turn on es52_globals and updates the layout tests to reflect the fixed behavior.
+
+        Test: fast/dom/Window/window-property-shadowing-onclick.html
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded): Set the flag as we initialize V8.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initIsolate): Ditto.
+
 2012-06-05  Ojan Vafai  <ojan@chromium.org>
 
         Delete dead code from RenderBox::computeLogicalWidthInRegion
