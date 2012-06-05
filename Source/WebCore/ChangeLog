@@ -1,3 +1,64 @@
+2012-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Move some function definitions in EmptyClients.h to EmptyClients.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88285
+
+        Reviewed by Ryosuke Niwa.
+
+        If we have definitions of functions with RefPtr<> in EmptyClients.h like
+
+            virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
+
+        and a source file includes EmptyClient.h, the source file needs to
+        include FileChooser.h though the source file doesn't use FileChooser
+        class explicitly because the definition of runOpenPanel() needs to call
+        FileChooser::deref().
+        To avoid this, we had better move such functions to EmptyClients.cpp.
+
+        No new tests. No behavior changes.
+
+        * loader/EmptyClients.cpp: Move such functions from EmptyClients.h to
+        here, and move EmptyPopupMenu and EmptySearchPopupMenu too because
+        they're used only by EmptyChromeClient.
+        (WebCore):
+        (EmptyPopupMenu):
+        (WebCore::EmptyPopupMenu::show):
+        (WebCore::EmptyPopupMenu::hide):
+        (WebCore::EmptyPopupMenu::updateFromElement):
+        (WebCore::EmptyPopupMenu::disconnectClient):
+        (EmptySearchPopupMenu):
+        (WebCore::EmptySearchPopupMenu::popupMenu):
+        (WebCore::EmptySearchPopupMenu::saveRecentSearches):
+        (WebCore::EmptySearchPopupMenu::loadRecentSearches):
+        (WebCore::EmptySearchPopupMenu::enabled):
+        (WebCore::EmptyChromeClient::createPopupMenu):
+        (WebCore::EmptyChromeClient::createSearchPopupMenu):
+        (WebCore::EmptyChromeClient::createColorChooser):
+        (WebCore::EmptyChromeClient::runOpenPanel):
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebCore::EmptyFrameLoaderClient::dispatchWillSendSubmitEvent):
+        (WebCore::EmptyFrameLoaderClient::dispatchWillSubmitForm):
+        (WebCore::EmptyFrameLoaderClient::createDocumentLoader):
+        (WebCore::EmptyFrameLoaderClient::createFrame):
+        (WebCore::EmptyFrameLoaderClient::createPlugin):
+        (WebCore::EmptyFrameLoaderClient::createJavaAppletWidget):
+        (WebCore::EmptyFrameLoaderClient::createMediaPlayerProxyPlugin):
+        (WebCore::EmptyFrameLoaderClient::createNetworkingContext):
+        (WebCore::EmptyFrameLoaderClient::dispatchIntent):
+        (WebCore::EmptyTextCheckerClient::requestCheckingOfString):
+        (WebCore::EmptyEditorClient::registerUndoStep):
+        (WebCore::EmptyEditorClient::registerRedoStep):
+        (WebCore::EmptyContextMenuClient::customizeMenu):
+        * loader/EmptyClients.h: Move such function definitions to
+        EmptyClient.cpp, and append OVERRIDE.
+        (EmptyChromeClient):
+        (EmptyFrameLoaderClient):
+        (EmptyTextCheckerClient):
+        (EmptyEditorClient):
+        (EmptyContextMenuClient):
+        * svg/graphics/SVGImage.cpp: Remove unnecessary #includes.
+
 2012-06-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: "-webkit"-prefixed properties are considered inherited in the Computed Style pane

@@ -1,3 +1,13 @@
+2012-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Move some function definitions in EmptyClients.h to EmptyClients.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88285
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/WebHelperPluginImpl.cpp: Remove unnecessary #includes, and add necessary #includes.
+        * src/WebPagePopupImpl.cpp: ditto.
+
 2012-06-05  Noel Gordon  <noel.gordon@gmail.com>
 
         Unreviewed.  Rolled DEPS.

@@ -28,13 +28,20 @@
 #include "config.h"
 #include "EmptyClients.h"
 
-#if ENABLE(SVG) || ENABLE(PAGE_POPUP)
+#include "DocumentLoader.h"
 #include "FileChooser.h"
 #include "FormState.h"
+#include "Frame.h"
+#include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
+
+#if ENABLE(INPUT_TYPE_COLOR)
+#include "ColorChooser.h"
+#endif
 
 namespace WebCore {
 
+#if ENABLE(SVG) || ENABLE(PAGE_POPUP)
 void fillWithEmptyClients(Page::PageClients& pageClients)
 {
 #if ENABLE(CONTEXT_MENUS)
@@ -53,6 +60,121 @@ void fillWithEmptyClients(Page::PageClients& pageClients)
     static InspectorClient* dummyInspectorClient = adoptPtr(new EmptyInspectorClient).leakPtr();
     pageClients.inspectorClient = dummyInspectorClient;
 }
+#endif
 
+class EmptyPopupMenu : public PopupMenu {
+public:
+    virtual void show(const IntRect&, FrameView*, int) { }
+    virtual void hide() { }
+    virtual void updateFromElement() { }
+    virtual void disconnectClient() { }
+};
+
+class EmptySearchPopupMenu : public SearchPopupMenu {
+public:
+    virtual PopupMenu* popupMenu() { return m_popup.get(); }
+    virtual void saveRecentSearches(const AtomicString&, const Vector<String>&) { }
+    virtual void loadRecentSearches(const AtomicString&, Vector<String>&) { }
+    virtual bool enabled() { return false; }
+
+private:
+    RefPtr<EmptyPopupMenu> m_popup;
+};
+
+PassRefPtr<PopupMenu> EmptyChromeClient::createPopupMenu(PopupMenuClient*) const
+{
+    return adoptRef(new EmptyPopupMenu());
+}
+
+PassRefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient*) const
+{
+    return adoptRef(new EmptySearchPopupMenu());
+}
+
+#if ENABLE(INPUT_TYPE_COLOR)
+PassOwnPtr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+{
+    return nullptr;
 }
 #endif
+
+void EmptyChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<FormState>)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>)
+{
+}
+
+PassRefPtr<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
+{
+    return DocumentLoader::create(request, substituteData);
+}
+
+PassRefPtr<Frame> EmptyFrameLoaderClient::createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int)
+{
+    return 0;
+}
+
+PassRefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
+{
+    return 0;
+}
+
+PassRefPtr<Widget> EmptyFrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&, const Vector<String>&, const Vector<String>&)
+{
+    return 0;
+}
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+PassRefPtr<Widget> EmptyFrameLoaderClient::createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&)
+{
+    return 0;
+}
+#endif
+
+PassRefPtr<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingContext()
+{
+    return PassRefPtr<FrameNetworkingContext>();
+}
+
+#if ENABLE(WEB_INTENTS)
+void EmptyFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest>)
+{
+}
+#endif
+
+void EmptyTextCheckerClient::requestCheckingOfString(PassRefPtr<TextCheckingRequest>)
+{
+}
+
+void EmptyEditorClient::registerUndoStep(PassRefPtr<UndoStep>)
+{
+}
+
+void EmptyEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
+{
+}
+
+#if ENABLE(CONTEXT_MENUS)
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+PassOwnPtr<ContextMenu> EmptyContextMenuClient::customizeMenu(PassOwnPtr<ContextMenu>)
+{
+    return nullptr;
+}
+#endif
+#endif
+
+}
