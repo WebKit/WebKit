@@ -69,13 +69,13 @@ layer at (0,0) size 800x318
         RenderText {#text} at (641,105) size 15x16
           text run at (641,105) width 15: " "
         RenderImage {IMG} at (656,104) size 15x15
-        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (671,105) size 15x16
+          text run at (671,105) width 15: " "
         RenderInline {BIG} at (0,0) size 60x21 [color=#C0C0C0]
-          RenderText {#text} at (9,171) size 60x21
-            text run at (9,171) width 60: "xxx"
-        RenderText {#text} at (69,175) size 15x16
-          text run at (69,175) width 15: " "
-        RenderImage {IMG} at (84,136) size 90x91
-        RenderText {#text} at (174,175) size 60x16
-          text run at (174,175) width 15: " "
-          text run at (189,175) width 45: "\x{C9}\x{C9}\x{C9}"
+          RenderText {#text} at (686,101) size 60x21
+            text run at (686,101) width 60: "xxx"
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (9,136) size 90x91
+        RenderText {#text} at (99,175) size 60x16
+          text run at (99,175) width 15: " "
+          text run at (114,175) width 45: "\x{C9}\x{C9}\x{C9}"
