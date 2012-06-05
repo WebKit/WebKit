@@ -1689,25 +1689,19 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
         // Calculate MaxLogicalWidth
         if (!styleToUse->logicalMaxWidth().isUndefined()) {
             LayoutUnit maxLogicalWidth = computeLogicalWidthInRegionUsing(MaxLogicalWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
-            if (logicalWidth() > maxLogicalWidth) {
+            if (logicalWidth() > maxLogicalWidth)
                 setLogicalWidth(maxLogicalWidth);
-                logicalWidthLength = styleToUse->logicalMaxWidth();
-            }
         }
 
         // Calculate MinLogicalWidth
         LayoutUnit minLogicalWidth = computeLogicalWidthInRegionUsing(MinLogicalWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
-        if (logicalWidth() < minLogicalWidth) {
+        if (logicalWidth() < minLogicalWidth)
             setLogicalWidth(minLogicalWidth);
-            logicalWidthLength = styleToUse->logicalMinWidth();
-        }
     }
 
     // Fieldsets are currently the only objects that stretch to their minimum width.
-    if (stretchesToMinIntrinsicLogicalWidth()) {
+    if (stretchesToMinIntrinsicLogicalWidth())
         setLogicalWidth(max(logicalWidth(), minPreferredLogicalWidth()));
-        logicalWidthLength = Length(logicalWidth(), Fixed);
-    }
 
     // Margin calculations.
     if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
