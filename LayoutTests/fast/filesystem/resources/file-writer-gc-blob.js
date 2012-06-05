@@ -23,7 +23,7 @@ function tenXBlob(blob) {
 
 function startWrite(writer) {
     // Let's make it about a megabyte.
-    var blob = tenXBlob(new Blob["lorem ipsum"]);
+    var blob = tenXBlob(new Blob(["lorem ipsum"]));
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);
