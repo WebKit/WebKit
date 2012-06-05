@@ -1,3 +1,18 @@
+2012-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Implement log channel initialization for WebKit2
+
+        Reviewed by Alexis Menard.
+
+        * Platform/Logging.cpp:
+        (WebKit):
+        * Platform/Logging.h:
+        (WebKit):
+        * Platform/qt/LoggingQt.cpp: Copied from Source/WebKit2/Platform/gtk/LoggingGtk.cpp
+        (WebKit):
+        (WebKit::initializeLogChannel):
+        * Target.pri:
+
 2012-06-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         WebLayerTreeRenderer behaves wrongly when no contentsScale is set.

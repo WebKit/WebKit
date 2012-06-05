@@ -388,6 +388,7 @@ SOURCES += \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/WorkQueue.cpp \
+    Platform/qt/LoggingQt.cpp \
     Platform/qt/ModuleQt.cpp \
     PluginProcess/PluginControllerProxy.cpp \
     PluginProcess/PluginCreationParameters.cpp \

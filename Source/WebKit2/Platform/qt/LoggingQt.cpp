@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +24,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#include "config.h"
+#include "Logging.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include <QDebug>
+#include <QStringList>
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
+#if !LOG_DISABLED
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+void initializeLogChannel(WTFLogChannel* channel)
+{
+    static Vector<WTFLogChannel*> activatedChannels;
 
-} // namespace WebKit
+    QByteArray loggingEnv = qgetenv("QT_WEBKIT_LOG");
+    if (loggingEnv.isEmpty())
+        return;
 
-#endif // LOG_DISABLED
+    // Fill activatedChannels vector only once based on names set in logValue.
+    if (activatedChannels.isEmpty()) {
+        QStringList channels = QString::fromLocal8Bit(loggingEnv).split(QLatin1String(","));
+        for (int i = 0; i < channels.count(); i++) {
+            if (WTFLogChannel* activeChannel = getChannelFromName(channels.at(i)))
+                activatedChannels.append(activeChannel);
+        }
+    }
 
-#endif // Logging_h
+    if (activatedChannels.contains(channel))
+        channel->state = WTFLogChannelOn;
+}
+
+#endif // !LOG_DISABLED
+
+}
