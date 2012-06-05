@@ -217,7 +217,7 @@ public:
         const WebSecurityOrigin& intendedTargetOrigin,
         const WebDOMEvent&);
 
-    virtual void deliverIntent(const WebIntent&, WebDeliveredIntentClient*);
+    virtual void deliverIntent(const WebIntent&, WebMessagePortChannelArray*, WebDeliveredIntentClient*);
 
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;

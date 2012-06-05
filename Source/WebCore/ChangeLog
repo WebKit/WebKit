@@ -1,3 +1,16 @@
+2012-06-05  Greg Billock  <gbillock@google.com>
+
+        New constructor for WebIntent to be used for delivery
+        https://bugs.webkit.org/show_bug.cgi?id=87143
+
+        Reviewed by Darin Fisher.
+
+        * Modules/intents/Intent.cpp:
+        (WebCore::Intent::setExtras):
+        (WebCore):
+        * Modules/intents/Intent.h:
+        (Intent):
+
 2012-06-01  Ojan Vafai  <ojan@chromium.org>
 
         Change overrideSizes to be content-box instead of border-box

@@ -32,6 +32,7 @@
 #define WebFrame_h
 
 #include "WebIconURL.h"
+#include "WebMessagePortChannel.h"
 #include "WebNode.h"
 #include "WebURLLoaderOptions.h"
 #include "platform/WebCanvas.h"
@@ -591,7 +592,9 @@ public:
     // Web Intents ---------------------------------------------------------
 
     // Called on a target service page to deliver an intent to the window.
-    virtual void deliverIntent(const WebIntent&, WebDeliveredIntentClient*) = 0;
+    // The ports are any transferred ports that accompany the intent as a result
+    // of MessagePort transfer.
+    virtual void deliverIntent(const WebIntent&, WebMessagePortChannelArray* ports, WebDeliveredIntentClient*) = 0;
 
 
     // Utility -------------------------------------------------------------

@@ -48,7 +48,6 @@ namespace WebKit {
 class WebIntent {
 public:
     WebIntent() { }
-    WEBKIT_EXPORT WebIntent(const WebString& action, const WebString& type, const WebString& data);
     WebIntent(const WebIntent& other) { assign(other); }
     ~WebIntent() { reset(); }
 
@@ -57,6 +56,10 @@ public:
        assign(other);
        return *this;
     }
+
+    WEBKIT_EXPORT static WebIntent create(const WebString& action, const WebString& type, const WebString& data,
+                                          const WebVector<WebString>& extrasNames, const WebVector<WebString>& extrasValues);
+
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT bool isNull() const;
     WEBKIT_EXPORT bool equals(const WebIntent&) const;

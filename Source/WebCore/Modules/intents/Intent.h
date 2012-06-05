@@ -65,6 +65,8 @@ public:
     const HashMap<String, String>& extras() const { return m_extras; }
     const Vector<KURL>& suggestions() const { return m_suggestions; }
 
+    void setExtras(const WTF::HashMap<String, String>&);
+
 protected:
     Intent(const String& action, const String& type,
            PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports,

@@ -2159,9 +2159,9 @@ void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, Cp
     WebSerializedScriptValue serializedData = WebSerializedScriptValue::serialize(
         v8::String::New(data.data(), data.length()));
 
-    WebIntent intent(action, type, serializedData.toString());
+    WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
 
-    m_shell->webView()->mainFrame()->deliverIntent(intent, m_intentClient.get());
+    m_shell->webView()->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

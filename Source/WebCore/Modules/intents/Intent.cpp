@@ -135,6 +135,11 @@ Intent::Intent(const String& action, const String& type,
         m_data = SerializedScriptValue::nullValue();
 }
 
+void Intent::setExtras(const WTF::HashMap<String, String>& extras)
+{
+    m_extras = extras;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_INTENTS)

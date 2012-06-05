@@ -109,10 +109,12 @@
 #include "IconURL.h"
 #include "InspectorController.h"
 #include "KURL.h"
+#include "MessagePort.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "Performance.h"
+#include "PlatformMessagePortChannel.h"
 #include "PlatformSupport.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
@@ -1901,15 +1903,27 @@ void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& 
     m_frame->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
 }
 
-void WebFrameImpl::deliverIntent(const WebIntent& intent, WebDeliveredIntentClient* intentClient)
+void WebFrameImpl::deliverIntent(const WebIntent& intent, WebMessagePortChannelArray* ports, WebDeliveredIntentClient* intentClient)
 {
 #if ENABLE(WEB_INTENTS)
     OwnPtr<WebCore::DeliveredIntentClient> client(adoptPtr(new DeliveredIntentClientImpl(intentClient)));
 
-    OwnPtr<MessagePortArray> ports;
     WebSerializedScriptValue intentData = WebSerializedScriptValue::fromString(intent.data());
     const WebCore::Intent* webcoreIntent = intent;
-    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_frame, client.release(), intent.action(), intent.type(), intentData, ports.release(), webcoreIntent->extras());
+
+    // See PlatformMessagePortChannel.cpp
+    OwnPtr<MessagePortChannelArray> channels;
+    if (ports && ports->size()) {
+        channels = adoptPtr(new MessagePortChannelArray(ports->size()));
+        for (size_t i = 0; i < ports->size(); ++i) {
+            RefPtr<PlatformMessagePortChannel> platformChannel = PlatformMessagePortChannel::create((*ports)[i]);
+            (*ports)[i]->setClient(platformChannel.get());
+            (*channels)[i] = MessagePortChannel::create(platformChannel);
+        }
+    }
+    OwnPtr<MessagePortArray> portArray = WebCore::MessagePort::entanglePorts(*(m_frame->domWindow()->scriptExecutionContext()), channels.release());
+
+    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_frame, client.release(), intent.action(), intent.type(), intentData, portArray.release(), webcoreIntent->extras());
 
     DOMWindowIntents::from(m_frame->domWindow())->deliver(deliveredIntent.release());
 #endif

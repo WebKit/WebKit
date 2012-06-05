@@ -35,20 +35,27 @@
 #include "MessagePort.h"
 #include "PlatformMessagePortChannel.h"
 #include "SerializedScriptValue.h"
+#include "platform/WebSerializedScriptValue.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 
-WebIntent::WebIntent(const WebString& action, const WebString& type, const WebString& data)
+WebIntent WebIntent::create(const WebString& action, const WebString& type, const WebString& data,
+                            const WebVector<WebString>& extrasNames, const WebVector<WebString>& extrasValues)
 {
 #if ENABLE(WEB_INTENTS)
     WebCore::ExceptionCode ec = 0;
-    WebCore::MessagePortArray ports;
-    RefPtr<WebCore::Intent> intent = WebCore::Intent::create(action, type, WebCore::SerializedScriptValue::createFromWire(data), ports, ec);
+    WebCore::MessagePortArray dummyPorts;
+    RefPtr<WebCore::Intent> intent = WebCore::Intent::create(action, type, WebCore::SerializedScriptValue::createFromWire(data), dummyPorts, ec);
     if (ec)
-        return;
+        return WebIntent();
 
-    m_private = intent.release();
+    HashMap<String, String> extras;
+    for (size_t i = 0; i < extrasNames.size() && i < extrasValues.size(); ++i)
+        extras.add(extrasNames[i], extrasValues[i]);
+    intent->setExtras(extras);
+
+    return WebIntent(intent.release());
 #endif
 }
 
