@@ -1,3 +1,19 @@
+2012-06-05  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move createLocalStorageNamespace to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=85766
+
+        Reviewed by James Robinson.
+        
+        Part of a refactoring series. See tracking bug 82948.
+
+        * WebKit.gyp:
+        * public/WebStorageArea.h:
+        * public/WebStorageNamespace.h:
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+
 2012-06-05  Greg Billock  <gbillock@google.com>
 
         New constructor for WebIntent to be used for delivery

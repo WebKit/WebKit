@@ -96,6 +96,8 @@
             'chromium/public/WebSocketStreamHandle.h',
             'chromium/public/WebSocketStreamHandleClient.h',
             'chromium/public/WebSolidColorLayer.h',
+            'chromium/public/WebStorageArea.h',
+            'chromium/public/WebStorageNamespace.h',
             'chromium/public/WebString.h',
             'chromium/public/WebThread.h',
             'chromium/public/WebThreadSafeData.h',

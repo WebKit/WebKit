@@ -58,6 +58,7 @@ class WebURL;
 class WebURLLoader;
 class WebSandboxSupport;
 class WebSocketStreamHandle;
+class WebStorageNamespace;
 class WebThemeEngine;
 class WebThread;
 class WebWorkerRunLoop;
@@ -99,6 +100,12 @@ public:
 
     // Must return non-null.
     virtual WebBlobRegistry* blobRegistry() { return 0; }
+
+
+    // DOM Storage --------------------------------------------------
+
+    // Return a LocalStorage namespace that corresponds to the following path.
+    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
 
 
     // FileSystem ----------------------------------------------------------
@@ -347,7 +354,7 @@ public:
     // This value must be checked again after a context loss event as the platform's capabilities may have changed.
     virtual bool canAccelerate2dCanvas() { return false; }
 
-    
+
     // WebRTC ----------------------------------------------------------
 
     // DEPRECATED

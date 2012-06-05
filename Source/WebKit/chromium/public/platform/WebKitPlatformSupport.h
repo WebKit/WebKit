@@ -54,17 +54,10 @@ class WebIDBKeyPath; // FIXME: Does this belong in platform?
 class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
-class WebStorageNamespace; // FIXME: Does this belong in platform?
 
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
 public:
-    // DOM Storage --------------------------------------------------
-
-    // Return a LocalStorage namespace that corresponds to the following path.
-    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
-
-
     // HTML5 Database ------------------------------------------------------
 
 #ifdef WIN32
