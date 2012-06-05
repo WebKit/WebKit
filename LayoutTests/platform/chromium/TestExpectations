@@ -3813,3 +3813,5 @@ BUG_eae WIN MAC : tables/mozilla/bugs/bug1318.html = PASS FAIL
 BUG_eae WIN MAC : tables/mozilla/bugs/bug4527.html = PASS FAIL
 
 BUG_eae WIN MAC : fast/sub-pixel/float-containing-block-with-margin.html = PASS FAIL
+
+BUGWK69826 MAC : css3/font-feature-settings-rendering.html = IMAGE IMAGE+TEXT
