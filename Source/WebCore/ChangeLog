@@ -1,3 +1,19 @@
+2012-06-05  Li Yin  <li.yin@intel.com>
+
+        IETC: FileList.item(-1) should return null instead of raising
+        https://bugs.webkit.org/show_bug.cgi?id=77899
+
+        Reviewed by Kentaro Hara.
+
+        IETC: http://samples.msdn.microsoft.com/ietestcenter/fileapi/filelist.htm
+        Accroding to http://es5.github.com/#x9.6
+        When the index is negative, it should not raise exception.
+        Firefox and IE returns null when there is not indexth File object.
+
+        Test: fast/files/file-list-test.html
+
+        * fileapi/FileList.idl:
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse

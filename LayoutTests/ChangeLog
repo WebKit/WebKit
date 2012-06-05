@@ -1,3 +1,18 @@
+2012-06-05  Li Yin  <li.yin@intel.com>
+
+        IETC: FileList.item(-1) should return null instead of raising
+        https://bugs.webkit.org/show_bug.cgi?id=77899
+
+        Reviewed by Kentaro Hara.
+
+        IETC: http://samples.msdn.microsoft.com/ietestcenter/fileapi/filelist.htm
+        Ref: http://es5.github.com/#x9.6
+        Some index values have been covered in this test, including negative index,
+        undefined, null, normal index(0~length-1), more than length index.
+
+        * fast/files/file-list-test-expected.txt:
+        * fast/files/file-list-test.html:
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse

@@ -30,7 +30,7 @@ module html {
         JSNoStaticTables
     ] FileList {
         readonly attribute unsigned long length;
-        File item(in [IsIndex] unsigned long index);
+        File item(in unsigned long index);
     };
 
 }
