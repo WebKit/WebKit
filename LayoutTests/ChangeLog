@@ -1,3 +1,21 @@
+2012-06-05  Emil A Eklund  <eae@chromium.org>
+
+        Change fast/sub-pixel/float-containing-block-with-margin.html to pixel test
+        https://bugs.webkit.org/show_bug.cgi?id=88351
+
+        Reviewed by Levi Weintraub.
+
+        Change fast/sub-pixel/float-containing-block-with-margin.html to pixel
+        test to allow for platform differences as the default styling makes it
+        very hard to use a reftests for this.
+
+        * fast/sub-pixel/float-containing-block-with-margin-expected.html: Removed.
+        * fast/sub-pixel/float-containing-block-with-margin-expected.png: Added.
+        * fast/sub-pixel/float-containing-block-with-margin-expected.txt: Added.
+        * fast/sub-pixel/float-containing-block-with-margin.html:
+        * platform/chromium-mac/fast/sub-pixel/float-containing-block-with-margin-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Fixing improper text expectation following r119503.
