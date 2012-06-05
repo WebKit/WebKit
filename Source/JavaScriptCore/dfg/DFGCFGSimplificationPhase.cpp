@@ -389,7 +389,7 @@ private:
             if (myNode.op() == GetLocal)
                 myNodeIndex = myNode.child1().index();
             for (unsigned j = 0; j < AdjacencyList::Size; ++j)
-                removePotentiallyDeadPhiReference(myNodeIndex, phiNode, j);
+                removePotentiallyDeadPhiReference(myNodeIndex, phiNode, j, sourceBlock->isReachable);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("\n");
 #endif
@@ -414,14 +414,14 @@ private:
         fixPhis(blockIndex, jettisonedBlockIndex);
     }
     
-    void removePotentiallyDeadPhiReference(NodeIndex myNodeIndex, Node& phiNode, unsigned edgeIndex)
+    void removePotentiallyDeadPhiReference(NodeIndex myNodeIndex, Node& phiNode, unsigned edgeIndex, bool changeRef)
     {
         if (phiNode.children.child(edgeIndex).indexUnchecked() != myNodeIndex)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog(" Removing reference at child %u.", edgeIndex);
 #endif
-        if (phiNode.shouldGenerate())
+        if (changeRef && phiNode.shouldGenerate())
             m_graph.deref(myNodeIndex);
         phiNode.children.removeEdgeFromBag(edgeIndex);
     }

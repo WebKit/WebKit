@@ -1,3 +1,14 @@
+2012-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFG simplification should not attempt to deref nodes inside of an unreachable subgraph
+        https://bugs.webkit.org/show_bug.cgi?id=88362
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::fixPhis):
+        (JSC::DFG::CFGSimplificationPhase::removePotentiallyDeadPhiReference):
+
 2012-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Entry into JSC should CRASH() if the Heap is busy
