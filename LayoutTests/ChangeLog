@@ -1,3 +1,12 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Fixing improper text expectation following r119503.
+
+        * platform/chromium-mac/fast/line-grid/line-align-left-edges-expected.txt: Removed.
+        * platform/chromium-win/fast/line-grid/line-align-left-edges-expected.txt: Removed.
+        * platform/chromium/fast/line-grid: Added.
+        * platform/chromium/fast/line-grid/line-align-left-edges-expected.txt: Added.
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline per Chromium r140536.
