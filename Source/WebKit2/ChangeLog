@@ -1,3 +1,16 @@
+2012-06-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_download_get_received_data_length to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=88323
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_get_received_data_length):
+        * UIProcess/API/gtk/WebKitDownload.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.

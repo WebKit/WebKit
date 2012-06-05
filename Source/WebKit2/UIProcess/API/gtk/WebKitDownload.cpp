@@ -512,3 +512,19 @@ gdouble webkit_download_get_elapsed_time(WebKitDownload* download)
 
     return g_timer_elapsed(priv->timer.get(), 0);
 }
+
+/**
+ * webkit_download_get_received_data_length:
+ * @download: a #WebKitDownload
+ *
+ * Gets the length of the data already downloaded for @download
+ * in bytes.
+ *
+ * Returns: the amount of bytes already downloaded.
+ */
+guint64 webkit_download_get_received_data_length(WebKitDownload* download)
+{
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
+
+    return download->priv->currentSize;
+}

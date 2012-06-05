@@ -355,6 +355,7 @@ webkit_download_get_response
 webkit_download_cancel
 webkit_download_get_estimated_progress
 webkit_download_get_elapsed_time
+webkit_download_get_received_data_length
 
 <SUBSECTION Standard>
 WebKitDownloadClass

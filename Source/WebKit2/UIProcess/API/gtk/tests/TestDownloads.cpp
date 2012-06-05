@@ -136,6 +136,7 @@ public:
 
     virtual void finished(WebKitDownload* download)
     {
+        g_assert_cmpuint(m_downloadSize, ==, webkit_download_get_received_data_length(download));
         m_downloadEvents.append(Finished);
         g_main_loop_quit(m_mainLoop);
     }
