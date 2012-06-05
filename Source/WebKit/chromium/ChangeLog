@@ -1,3 +1,9 @@
+2012-06-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         EventHandler shouldn't dispatch fake mousemove events when scrolling on devices that don't have a mouse
