@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
  * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +128,11 @@ public:
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
     virtual void registerProtocolHandler(const String&, const String&, const String&, const String&) { }
+#endif
+
+#if ENABLE(CUSTOM_SCHEME_HANDLER)
+    virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const String&, const String&) { return CustomHandlersDeclined; }
+    virtual void unregisterProtocolHandler(const String&, const String&, const String&) { }
 #endif
 
     virtual void setStatusbarText(const String&) { }

@@ -1,0 +1,20 @@
+This test makes sure that navigator.unregisterProtocolHandler throws the proper exceptions and has no-op default implementation.
+
+Fail: window.navigator.unregisterProtocolHandler is not defined.
+Fail: Invalid protocol "http" allowed.
+Fail: Invalid protocol "https" allowed.
+Fail: Invalid protocol "file" allowed.
+Fail: Valid protocol "irc" failed.
+Fail: Valid protocol "mailto" failed.
+Fail: Valid protocol "mms" failed.
+Fail: Valid protocol "news" failed.
+Fail: Valid protocol "nntp" failed.
+Fail: Valid protocol "sms" failed.
+Fail: Valid protocol "smsto" failed.
+Fail: Valid protocol "tel" failed.
+Fail: Valid protocol "urn" failed.
+Fail: Valid protocol "webcal" failed.
+Fail: Invalid url "" allowed.
+Fail: Invalid url "%S" allowed.
+Fail: Invalid call did not succeed.
+

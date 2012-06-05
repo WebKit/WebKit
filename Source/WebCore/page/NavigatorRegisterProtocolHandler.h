@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -26,7 +27,7 @@
 #ifndef NavigatorRegisterProtocolHandler_h
 #define NavigatorRegisterProtocolHandler_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +40,14 @@ typedef int ExceptionCode;
 
 class NavigatorRegisterProtocolHandler {
 public:
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
     static void registerProtocolHandler(Navigator*, const String& scheme, const String& url, const String& title, ExceptionCode&);
+#endif 
+
+#if ENABLE(CUSTOM_SCHEME_HANDLER)
+    static String isProtocolHandlerRegistered(Navigator*, const String& scheme, const String& url, ExceptionCode&);
+    static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
+#endif
 
 private:
     NavigatorRegisterProtocolHandler();
@@ -48,6 +56,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 
 #endif // NavigatorRegisterProtocolHandler_h

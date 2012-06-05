@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012, Samsung Electronics. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,10 +21,13 @@
 module window {
 
     interface [
-        Conditional=REGISTER_PROTOCOL_HANDLER,
         Supplemental=Navigator
     ] NavigatorRegisterProtocolHandler {
-        void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+        [Conditional=REGISTER_PROTOCOL_HANDLER] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+            raises(DOMException);
+        [Conditional=CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
+            raises(DOMException);
+        [Conditional=CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
             raises(DOMException);
     };
 

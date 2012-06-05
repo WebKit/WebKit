@@ -75,6 +75,8 @@
  *  - "perform,client,redirect", Ewk_View_Redirection_Data*: reports that view performed a client redirect and gives the redirection details.
  *  - "perform,server,redirect", Ewk_View_Redirection_Data*: reports that view performed a server redirect and gives the redirection details.
  *  - "protocolhandler,registration,requested", Ewk_Custom_Handler_Data: add a handler url for the given protocol.
+ *  - "protocolhandler,isregistered", Ewk_Custom_Handler_Data: query whether the handler is registered or not.
+ *  - "protocolhandler,unregistration,requested", Ewk_Custom_Handler_Data: remove a handler url for the given protocol.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "populate,visited,links": tells the client to fill the visited links set.
  *  - "ready", void: page is fully loaded.
@@ -345,6 +347,15 @@ struct _Ewk_Color {
     unsigned char a; /**< Alpha channel. */
 };
 
+/// Defines the handler states.
+enum _Ewk_Custom_Handlers_State {
+    EWK_CUSTOM_HANDLERS_NEW,
+    EWK_CUSTOM_HANDLERS_REGISTERED,
+    EWK_CUSTOM_HANDLERS_DECLINED
+};
+/// Creates a type name for @a _Ewk_Custom_Handlers_State.
+typedef enum _Ewk_Custom_Handlers_State Ewk_Custom_Handlers_State;
+
 /// Creates a type name for @a _Ewk_Custom_Handler_Data.
 typedef struct _Ewk_Custom_Handler_Data Ewk_Custom_Handler_Data;
 /// Contains the target scheme and the url which take care of the target.
@@ -354,6 +365,7 @@ struct _Ewk_Custom_Handler_Data {
     const char *base_url; /**< Reference to the resolved url if the url is relative url. (eg. "https://www.example.com/") */
     const char *url; /**< Reference to the url which will handle the given protocol. (eg. "soup?url=%s") */
     const char *title; /**< Reference to the descriptive title of the handler. (eg. "SoupWeb") */
+    Ewk_Custom_Handlers_State result; /**< Result of the query that the protocol handler is registered or not. */
 };
 
 /**

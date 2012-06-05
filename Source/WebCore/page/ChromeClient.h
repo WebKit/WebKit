@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple, Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -142,6 +143,17 @@ namespace WebCore {
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
         virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
+#endif
+
+#if ENABLE(CUSTOM_SCHEME_HANDLER)
+        enum CustomHandlersState {
+            CustomHandlersNew,
+            CustomHandlersRegistered,
+            CustomHandlersDeclined
+        };
+
+        virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url) = 0;
+        virtual void unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url) = 0;
 #endif
 
         virtual IntRect windowResizerRect() const = 0;

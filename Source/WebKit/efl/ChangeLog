@@ -1,3 +1,31 @@
+2012-06-05  Dongwoo Im  <dw.im@samsung.com>
+
+        Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.
+        https://bugs.webkit.org/show_bug.cgi?id=73176
+
+        Reviewed by Adam Barth.
+
+        Two more APIs are added in Custom Scheme Handler specification.
+        http://dev.w3.org/html5/spec/Overview.html#custom-handlers
+        One is 'isProtocolHandlerRegistered' to query whether the specific URL
+        is registered or not.
+        The other is 'unregisterProtocolHandler' to remove the registered URL.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::customHandlerDataCreate):
+        (WebCore::customHandlerDataDelete):
+        (WebCore::ChromeClientEfl::registerProtocolHandler):
+        (WebCore):
+        (WebCore::ChromeClientEfl::isProtocolHandlerRegistered): Query if the handler is registered.
+        (WebCore::ChromeClientEfl::unregisterProtocolHandler): Unregister the registered handler.
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+        * ewk/ewk_custom_handler.cpp:
+        (ewk_custom_handler_is_protocol_handler_registered): Query if the handler is registered.
+        (ewk_custom_handler_unregister_protocol_handler): Unregister the registered handler.
+        * ewk/ewk_custom_handler_private.h: Adds private function.
+        * ewk/ewk_view.h: Adds enumeration.
+
 2012-06-04  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Refactor ewk_view_context_paint code.
