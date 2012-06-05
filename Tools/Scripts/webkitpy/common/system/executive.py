@@ -454,6 +454,8 @@ class Executive(object):
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""
+        if sys.platform in ('cygwin', 'win32'):
+            return map(_run_command_thunk, command_lines_and_cwds)
         return multiprocessing.Pool(processes=processes).map(_run_command_thunk, command_lines_and_cwds)
 
 
