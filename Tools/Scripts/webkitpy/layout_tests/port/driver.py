@@ -150,7 +150,10 @@ class Driver(object):
 
         """
         if uri.startswith("file:///"):
-            return uri[len(path.abspath_to_uri(self._port.layout_tests_dir()) + "/"):]
+            prefix = path.abspath_to_uri(self._port.layout_tests_dir())
+            if not prefix.endswith('/'):
+                prefix += '/'
+            return uri[len(prefix):]
         if uri.startswith("http://"):
             return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
         if uri.startswith("https://"):
