@@ -1,3 +1,22 @@
+2012-06-05  Kentaro Hara  <haraken@chromium.org>
+
+        Remove unused methods from SelectorQuery.h
+        https://bugs.webkit.org/show_bug.cgi?id=88289
+
+        Reviewed by Antti Koivisto.
+
+        This patch removes SelectorDataList::size() and
+        SelectorDataList::SelectorDataList().
+        SelectorDataList::size() is not used by anybody.
+        SelectorDataList::SelectorDataList() can be auto-generated
+        by a compiler.
+
+        No tests. No change in behavior.
+
+        * dom/SelectorQuery.cpp:
+        * dom/SelectorQuery.h:
+        (SelectorDataList):
+
 2012-06-05  Kent Tamura  <tkent@chromium.org>
 
         Build fix for r119470.

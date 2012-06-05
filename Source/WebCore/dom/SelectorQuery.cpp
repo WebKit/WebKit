@@ -35,10 +35,6 @@
 
 namespace WebCore {
 
-SelectorDataList::SelectorDataList()
-{
-}
-
 void SelectorDataList::initialize(const CSSSelectorList& selectorList)
 {
     ASSERT(m_selectors.isEmpty());

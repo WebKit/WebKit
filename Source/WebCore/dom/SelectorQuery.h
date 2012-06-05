@@ -41,12 +41,7 @@ class NodeList;
 
 class SelectorDataList {
 public:
-    SelectorDataList();
-
     void initialize(const CSSSelectorList&);
-
-    int size() const { return m_selectors.size(); }
-
     bool matches(const SelectorChecker&, Element*) const;
     PassRefPtr<NodeList> queryAll(const SelectorChecker&, Node* rootNode) const;
     PassRefPtr<Element> queryFirst(const SelectorChecker&, Node* rootNode) const;
