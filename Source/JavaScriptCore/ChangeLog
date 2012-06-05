@@ -1,3 +1,34 @@
+2012-06-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed.
+
+        Rolled out r119364 because it's still causing crashes (when running
+        v8-earley in release builds of DRT)
+
+        This time for sure!
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::resetAllocator):
+        (JSC):
+        * heap/MarkedSpace.cpp:
+        (JSC::ResetAllocator::operator()):
+        (JSC):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::sweepWeakSets):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::sweep):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep):
+        (JSC::WeakSet::tryFindAllocator):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::shrink):
+
 2012-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG arguments simplification should have rationalized handling of TearOffArguments

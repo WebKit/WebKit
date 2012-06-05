@@ -129,6 +129,7 @@ namespace JSC {
         FreeList sweep(SweepMode = SweepOnly);
 
         void shrink();
+        void resetAllocator();
 
         void visitWeakSet(HeapRootVisitor&);
         void reapWeakSet();
@@ -271,6 +272,11 @@ namespace JSC {
     inline void MarkedBlock::shrink()
     {
         m_weakSet.shrink();
+    }
+
+    inline void MarkedBlock::resetAllocator()
+    {
+        m_weakSet.resetAllocator();
     }
 
     inline void MarkedBlock::visitWeakSet(HeapRootVisitor& heapRootVisitor)

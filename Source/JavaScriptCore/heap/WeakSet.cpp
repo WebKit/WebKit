@@ -42,10 +42,17 @@ WeakSet::~WeakSet()
 
 void WeakSet::sweep()
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->sweep();
+    WeakBlock* next;
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
 
-    resetAllocator();
+        // If a block is completely empty, a new sweep won't have any effect.
+        if (block->isEmpty())
+            continue;
+
+        block->takeSweepResult(); // Force a new sweep by discarding the last sweep.
+        block->sweep();
+    }
 }
 
 WeakBlock::FreeCell* WeakSet::findAllocator()
@@ -62,6 +69,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
         WeakBlock* block = m_nextAllocator;
         m_nextAllocator = m_nextAllocator->next();
 
+        block->sweep();
         WeakBlock::SweepResult sweepResult = block->takeSweepResult();
         if (sweepResult.freeList)
             return sweepResult.freeList;

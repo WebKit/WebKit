@@ -112,6 +112,10 @@ void MarkedSpace::lastChanceToFinalize()
     forEachBlock<LastChanceToFinalize>();
 }
 
+struct ResetAllocator : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->resetAllocator(); }
+};
+
 void MarkedSpace::resetAllocators()
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
@@ -123,6 +127,8 @@ void MarkedSpace::resetAllocators()
         allocatorFor(cellSize).reset();
         destructorAllocatorFor(cellSize).reset();
     }
+
+    forEachBlock<ResetAllocator>();
 }
 
 void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
@@ -134,6 +140,11 @@ void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
 void MarkedSpace::reapWeakSets()
 {
     forEachBlock<ReapWeakSet>();
+}
+
+void MarkedSpace::sweepWeakSets()
+{
+    forEachBlock<SweepWeakSet>();
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()

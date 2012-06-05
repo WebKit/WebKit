@@ -69,8 +69,7 @@ void WeakBlock::lastChanceToFinalize()
 
 void WeakBlock::sweep()
 {
-    // If a block is completely empty, a sweep won't have any effect.
-    if (isEmpty())
+    if (!m_sweepResult.isNull())
         return;
 
     SweepResult sweepResult;

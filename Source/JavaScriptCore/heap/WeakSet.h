@@ -118,8 +118,6 @@ inline void WeakSet::shrink()
         if (block->isEmpty())
             removeAllocator(block);
     }
-
-    resetAllocator();
 }
 
 inline void WeakSet::resetAllocator()
