@@ -1,3 +1,26 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        Remove support for target-densitydpi in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=88047
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        These tests are no longer needed because they're testing a feature we
+        no longer support.
+
+        * fast/viewport/viewport-133-expected.txt: Removed.
+        * fast/viewport/viewport-133.html: Removed.
+        * fast/viewport/viewport-92-expected.txt: Removed.
+        * fast/viewport/viewport-92.html: Removed.
+        * fast/viewport/viewport-93-expected.txt: Removed.
+        * fast/viewport/viewport-93.html: Removed.
+        * fast/viewport/viewport-94-expected.txt: Removed.
+        * fast/viewport/viewport-94.html: Removed.
+        * fast/viewport/viewport-95-expected.txt: Removed.
+        * fast/viewport/viewport-95.html: Removed.
+        * fast/viewport/viewport-96-expected.txt: Removed.
+        * fast/viewport/viewport-96.html: Removed.
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectations.

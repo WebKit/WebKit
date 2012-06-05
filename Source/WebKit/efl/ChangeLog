@@ -1,3 +1,13 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        Remove support for target-densitydpi in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=88047
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.

@@ -39,7 +39,7 @@ enum ViewportErrorCode {
     UnrecognizedViewportArgumentValueError,
     TruncatedViewportArgumentValueError,
     MaximumScaleTooLargeError,
-    TargetDensityDpiTooSmallOrLargeError
+    TargetDensityDpiUnsupported
 };
 
 struct ViewportAttributes {
@@ -85,7 +85,6 @@ struct ViewportArguments {
         , maximumScale(ValueAuto)
         , width(ValueAuto)
         , height(ValueAuto)
-        , targetDensityDpi(ValueAuto)
         , userScalable(ValueAuto)
     {
     }
@@ -95,7 +94,6 @@ struct ViewportArguments {
     float maximumScale;
     float width;
     float height;
-    float targetDensityDpi;
     float userScalable;
 
     bool operator==(const ViewportArguments& other) const
@@ -107,7 +105,6 @@ struct ViewportArguments {
             && maximumScale == other.maximumScale
             && width == other.width
             && height == other.height
-            && targetDensityDpi == other.targetDensityDpi
             && userScalable == other.userScalable;
     }
 };

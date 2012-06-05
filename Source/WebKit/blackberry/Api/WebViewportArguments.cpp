@@ -87,12 +87,11 @@ void WebViewportArguments::setHeight(float height)
 
 float WebViewportArguments::targetDensityDpi() const
 {
-    return d->targetDensityDpi;
+    return 0;
 }
 
-void WebViewportArguments::setTargetDensityDpi(float dpi)
+void WebViewportArguments::setTargetDensityDpi(float)
 {
-    d->targetDensityDpi = dpi;
 }
 
 float WebViewportArguments::userScalable() const

@@ -1,3 +1,35 @@
+2012-06-05  Adam Barth  <abarth@webkit.org>
+
+        Remove support for target-densitydpi in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=88047
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The target-densitydpi parameter was originally implemented on Android,
+        but it does not appear to be widely used and introduces significant
+        implementation complexity because it forces us to track three scale
+        factors (defaultDeviceScaleFactor, deviceScaleFactor, and
+        pageScaleFactor) rather than just two (deviceScaleFactor and
+        pageScaleFactor).
+
+        There don't appear to be many web sites that use target-densitydpi
+        because it is not supported on iOS.  There are also concerns from the
+        standards community about the design of the feature.  It seems our best
+        course of action is to remove target-densitydpi and address these use
+        cases via other mechanisms, such as responsive images and device units
+        in CSS because those approaches are likely to be implemented broadly.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        (WebCore):
+        (WebCore::setViewportFeature):
+        (WebCore::viewportErrorMessageTemplate):
+        (WebCore::viewportErrorMessageLevel):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+        (ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+
 2012-06-05  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Improve variable resolution order on window

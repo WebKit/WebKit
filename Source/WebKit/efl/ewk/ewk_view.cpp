@@ -752,7 +752,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->viewportArguments.initialScale = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.minimumScale = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.maximumScale = WebCore::ViewportArguments::ValueAuto;
-    priv->viewportArguments.targetDensityDpi = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.userScalable = true;
 
     priv->pageSettings->setLoadsImagesAutomatically(true);

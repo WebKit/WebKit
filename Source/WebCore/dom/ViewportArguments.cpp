@@ -41,6 +41,10 @@ using namespace std;
 
 namespace WebCore {
 
+// FIXME: We shouldn't hardcode the targetDPI to 160.
+// See https://bugs.webkit.org/show_bug.cgi?id=88114
+static float targetDPI = 160;
+
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport)
 {
     ViewportAttributes result;
@@ -57,29 +61,11 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
         autoDPI = deviceDPI;
         break;
     case ViewportArguments::ViewportMeta:
-        autoDPI = 160;
+        autoDPI = targetDPI;
         break;
     }
 
-    switch (int(args.targetDensityDpi)) {
-    case ViewportArguments::ValueDeviceDPI:
-        args.targetDensityDpi = deviceDPI;
-        break;
-    case ViewportArguments::ValueLowDPI:
-        args.targetDensityDpi = 120;
-        break;
-    case ViewportArguments::ValueAuto:
-        args.targetDensityDpi = autoDPI;
-        break;
-    case ViewportArguments::ValueMediumDPI:
-        args.targetDensityDpi = 160;
-        break;
-    case ViewportArguments::ValueHighDPI:
-        args.targetDensityDpi = 240;
-        break;
-    }
-
-    result.devicePixelRatio = float(deviceDPI / args.targetDensityDpi);
+    result.devicePixelRatio = deviceDPI / targetDPI;
 
     // Resolve non-'auto' width and height to pixel values.
     if (result.devicePixelRatio != 1.0) {
@@ -315,30 +301,6 @@ static float findUserScalableValue(const String& keyString, const String& valueS
     return 1;
 }
 
-static float findTargetDensityDPIValue(const String& keyString, const String& valueString, Document* document)
-{
-    if (equalIgnoringCase(valueString, "device-dpi"))
-        return ViewportArguments::ValueDeviceDPI;
-    if (equalIgnoringCase(valueString, "low-dpi"))
-        return ViewportArguments::ValueLowDPI;
-    if (equalIgnoringCase(valueString, "medium-dpi"))
-        return ViewportArguments::ValueMediumDPI;
-    if (equalIgnoringCase(valueString, "high-dpi"))
-        return ViewportArguments::ValueHighDPI;
-
-    bool ok;
-    float value = numericPrefix(keyString, valueString, document, &ok);
-    if (!ok)
-        return ViewportArguments::ValueAuto;
-
-    if (value < 70 || value > 400) {
-        reportViewportWarning(document, TargetDensityDpiTooSmallOrLargeError, String(), String());
-        return ViewportArguments::ValueAuto;
-    }
-
-    return value;
-}
-
 void setViewportFeature(const String& keyString, const String& valueString, Document* document, void* data)
 {
     ViewportArguments* arguments = static_cast<ViewportArguments*>(data);
@@ -356,7 +318,7 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
     else if (keyString == "user-scalable")
         arguments->userScalable = findUserScalableValue(keyString, valueString, document);
     else if (keyString == "target-densitydpi")
-        arguments->targetDensityDpi = findTargetDensityDPIValue(keyString, valueString, document);
+        reportViewportWarning(document, TargetDensityDpiUnsupported, String(), String());
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, keyString, String());
 }
@@ -368,7 +330,7 @@ static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" not recognized. Content ignored.",
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix.",
         "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.",
-        "Viewport target-densitydpi has to take a number between 70 and 400 as a valid target dpi, try using \"device-dpi\", \"low-dpi\", \"medium-dpi\" or \"high-dpi\" instead for future compatibility."
+        "Viewport target-densitydpi is not supported.",
     };
 
     return errors[errorCode];
@@ -378,7 +340,7 @@ static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
     case TruncatedViewportArgumentValueError:
-    case TargetDensityDpiTooSmallOrLargeError:
+    case TargetDensityDpiUnsupported:
         return TipMessageLevel;
     case UnrecognizedViewportArgumentKeyError:
     case UnrecognizedViewportArgumentValueError:

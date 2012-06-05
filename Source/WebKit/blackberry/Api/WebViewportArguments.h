@@ -71,6 +71,7 @@ public:
     float height() const;
     void setHeight(float);
 
+    // FIXME: Can we remove these functions? WebKit no longer supports targetDensityDpi.
     float targetDensityDpi() const;
     void setTargetDensityDpi(float);
 
