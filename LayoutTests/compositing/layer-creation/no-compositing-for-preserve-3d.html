@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <style type="text/css" media="screen">
+  <style>
     .box {
       position: relative;
       height: 100px;
@@ -13,15 +13,12 @@
       background-color: silver;
     }
     
-    .perspective {
+    .preserve3d {
       width: 300px;
       border: 1px solid black;
       padding: 20px;
-      -webkit-perspective: 500px;
-    }
-    
-    .composited {
-      -webkit-transform: translateZ(1px);
+      margin: 10px;
+      -webkit-transform-style: preserve-3d;
     }
   </style>
 
@@ -42,15 +39,22 @@
 </head>
 <body>
 
-  <div class="perspective">
-    This layer should not have backing store.
-    <div class="perspective">
-      This layer should not have backing store.
-      <div class="box composited">
-      </div>
+  <div class="preserve3d">
+    This layer should not be composited.
+    <div class="box"></div>
     </div>
   </div>
 
+  <div class="preserve3d">
+    This layer should not be composited.
+    <div class="box" style="-webkit-transform: rotate(10deg)"></div>
+    </div>
+  </div>
+
+  <div class="preserve3d">
+    This layer should be composited.
+    <div class="box" style="-webkit-transform: rotateY(10deg)"></div>
+  </div>
 <pre id="layers">Layer tree goes here in DRT</pre>
 
 </body>

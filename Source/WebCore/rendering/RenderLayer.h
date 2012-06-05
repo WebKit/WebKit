@@ -816,8 +816,18 @@ private:
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     
-    bool mustOverlapCompositedLayers() const { return m_mustOverlapCompositedLayers; }
-    void setMustOverlapCompositedLayers(bool b) { m_mustOverlapCompositedLayers = b; }
+    enum IndirectCompositingReason {
+        NoIndirectCompositingReason,
+        IndirectCompositingForOverlap,
+        IndirectCompositingForBackgroundLayer,
+        IndirectCompositingForGraphicalEffect, // opacity, mask, filter, transform etc.
+        IndirectCompositingForPerspective,
+        IndirectCompositingForPreserve3D
+    };
+    
+    void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = reason; }
+    IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
+    bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
 #endif
 
     friend class RenderLayerBacking;
@@ -875,7 +885,7 @@ protected:
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
 #if USE(ACCELERATED_COMPOSITING)
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
-    bool m_mustOverlapCompositedLayers : 1;
+    unsigned m_indirectCompositingReason : 3;
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;

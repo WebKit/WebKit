@@ -1,3 +1,53 @@
+2012-06-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid creating compositing layers for preserve-3d without transformed descendants
+        https://bugs.webkit.org/show_bug.cgi?id=88115
+
+        Reviewed by Antti Koivisto.
+        
+        Avoid creating compositing layers, and therefore using excess backing store,
+        for elements that have -webkit-transform-style: preserve-3d, but no 3D-transformed
+        descendants that would be affected by that preserve-3d.
+        
+        Test: compositing/layer-creation/no-compositing-for-preserve-3d.html
+
+        * rendering/RenderLayer.h: Replace the "mustOverlap" flag with a enum
+        that describes the different reasons for indirect compositing, so that
+        we can use that information to decide whether to allocate backing store.
+        (WebCore::RenderLayer::setIndirectCompositingReason):
+        (WebCore::RenderLayer::indirectCompositingReason):
+        (WebCore::RenderLayer::mustCompositeForIndirectReasons):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initialize m_indirectCompositingReason
+
+        * rendering/RenderLayerCompositor.h: New out param for computeCompositingRequirements()
+        that is uses to indicate that a 3d-transformed descendant has been encountered.
+        Rename requiresCompositingWhenDescendantsAreCompositing() to requiresCompositingForIndirectReason(),
+        and return the reason as an out param.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Pass in the saw3DTransform
+        param to computeCompositingRequirements().
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Return a flag
+        from computeCompositingRequirements() that is set to true if we've seen descendants
+        that have 3d transforms. This is later used to decide whether to composite for
+        perspective or preserve-3d.
+        Change the "mustOverlapCompositedLayers" code to use the new "indirect compositing"
+        enum flags.
+        After enumerating children, call requiresCompositingForIndirectReason() and 
+        record the reason in the layer.
+        (WebCore::RenderLayerCompositor::needsToBeComposited): Use mustCompositeForIndirectReasons() now.
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Consult the indirect compositing
+        reason rather than just looking for the overlap flag.
+        (WebCore::RenderLayerCompositor::reasonForCompositing): Now that we have more information
+        about indirect compositing reasons, the logging can be more detailed.
+        (WebCore::RenderLayerCompositor::requiresCompositingForTransform): This now only looks
+        for 3d transforms. We now treat perspective and perserve-3d as "indirect" reasons, because
+        whether they composite depends on descendants having non-affine transforms.
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason): Includes the logic
+        previously in requiresCompositingWhenDescendantsAreCompositing(), and now determines
+        whether to composite for preserve-3d and perspective, based on whether we have transformed descendants.
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Block selection gaps painted not properly pixel snapped

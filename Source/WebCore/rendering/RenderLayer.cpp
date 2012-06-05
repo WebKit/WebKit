@@ -142,7 +142,7 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_has3DTransformedDescendant(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_hasCompositingDescendant(false)
-    , m_mustOverlapCompositedLayers(false)
+    , m_indirectCompositingReason(NoIndirectCompositingReason)
 #endif
     , m_containsDirtyOverlayScrollbars(false)
 #if !ASSERT_DISABLED

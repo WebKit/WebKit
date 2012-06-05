@@ -1,3 +1,16 @@
+2012-06-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid creating compositing layers for preserve-3d without transformed descendants
+        https://bugs.webkit.org/show_bug.cgi?id=88115
+
+        Reviewed by Antti Koivisto.
+        
+        * compositing/backing/no-backing-for-perspective-expected.txt:
+        * compositing/backing/no-backing-for-perspective.html: Change the transform to be non-affine so that
+        we keep making layers for perspective.
+        * compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt: Added.
+        * compositing/layer-creation/no-compositing-for-preserve-3d.html: Copied from LayoutTests/compositing/backing/no-backing-for-perspective.html.
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Block selection gaps painted not properly pixel snapped
