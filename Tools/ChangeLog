@@ -1,3 +1,25 @@
+2012-06-05  Jon Lee  <jonlee@apple.com>
+
+        Workaround buildbot bug when merging build requests.
+        https://bugs.webkit.org/show_bug.cgi?id=88158
+
+        Reviewed by Mark Rowe.
+
+        For expediency, we still want testers to pick the latest build to test, but to ensure
+        that the builders are reporting the correct revision number, we should let the building bots
+        run as they normally would. That is, the builder picks the oldest revision, and merges
+        subsequent requests. Because merged requests get appended to the list of changes for a given
+        build, the last change in that list is also the latest change. When we used pickLatestBuild
+        for the builders, this was not the case (it would always report the penultimate change).
+
+        http://trac.buildbot.net/ticket/2309 is tracking the buildbot bug.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove the mergeRequests override
+        for all Apple builders.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Have only non-building bots pick
+        the latest build to run.
+        (loadBuilderConfig):
+
 2012-06-05  Jessie Berlin  <jberlin@apple.com>
 
         [Win] DumpRenderTree should call resetInternalsObject

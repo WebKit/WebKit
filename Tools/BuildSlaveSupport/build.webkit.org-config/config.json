@@ -70,13 +70,11 @@
 
     "builders":   [ { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-4", "test-slave"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-xserve-4", "test-slave"]
                     },
                     { "name": "SnowLeopard Intel Debug (Build)", "type": "Build", "builddir": "snowleopard-intel-debug",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-9"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-xserve-9"]
                     },
                     { "name": "Lion Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
@@ -85,14 +83,12 @@
                     { "name": "Lion Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["lion-intel-debug-tests", "lion-intel-debug-tests-wk2"],
-                      "slavenames": ["apple-xserve-2", "apple-xserve-10"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-xserve-2", "apple-xserve-10"]
                     },
                     { "name": "Lion Release (Build)", "type": "Build", "builddir": "lion-intel-release",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2", "lion-intel-release-perf"],
-                      "slavenames": ["apple-xserve-3"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-xserve-3"]
                     },
                     { "name": "Lion Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
@@ -119,8 +115,7 @@
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["win-release-tests", "win-release-tests-wk2"],
-                      "slavenames": ["apple-windows-2", "test-slave"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-windows-2", "test-slave"]
                     },
                     {
                       "name": "Windows 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
@@ -131,8 +126,7 @@
                       "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "triggers": ["win-debug-tests"],
-                      "slavenames": ["apple-windows-1", "test-slave"],
-                      "mergeRequests": false
+                      "slavenames": ["apple-windows-1", "test-slave"]
                     },
                     {
                       "name": "Windows XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
