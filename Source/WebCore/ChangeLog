@@ -1,3 +1,10 @@
+2012-06-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed build fix on Chromium mac
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::isAATFont):
+
 2012-06-05  Kent Tamura  <tkent@chromium.org>
 
         Move some function definitions in EmptyClients.h to EmptyClients.cpp

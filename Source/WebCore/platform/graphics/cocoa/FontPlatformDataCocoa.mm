@@ -302,12 +302,12 @@ CTFontRef FontPlatformData::ctFont() const
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
 static bool isAATFont(CTFontRef ctFont)
 {
-    CFDataRef table = CTFontCopyTable(ctFont, kCTFontTableMort, kCTFontOptionsDefault);
+    CFDataRef table = CTFontCopyTable(ctFont, kCTFontTableMort, 0);
     if (table) {
         CFRelease(table);
         return true;
     }
-    table = CTFontCopyTable(ctFont, kCTFontTableMorx, kCTFontOptionsDefault);
+    table = CTFontCopyTable(ctFont, kCTFontTableMorx, 0);
     if (table) {
         CFRelease(table);
         return true;
