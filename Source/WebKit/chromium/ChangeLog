@@ -1,5 +1,14 @@
 2012-06-04  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Remove redundant setNeedsCommit when prepareToDraw fails
+        https://bugs.webkit.org/show_bug.cgi?id=88246
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
+2012-06-04  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Allow CCLayerImpl to find its layer tree host, and use this for CCVideoLayerImpl instead of always-null pointer.
         https://bugs.webkit.org/show_bug.cgi?id=88252
 

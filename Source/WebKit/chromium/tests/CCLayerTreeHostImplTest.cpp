@@ -592,9 +592,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->addChild(MissingTextureAnimatingLayer::create(1, true, false, true));
 
-    m_didRequestCommit = false;
     EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
-    EXPECT_TRUE(m_didRequestCommit);
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);
 

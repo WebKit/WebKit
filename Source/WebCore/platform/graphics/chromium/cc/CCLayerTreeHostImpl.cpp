@@ -380,11 +380,8 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     frame.renderPasses.clear();
     frame.renderSurfaceLayerList.clear();
 
-    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList)) {
-        // We're missing textures on an animating layer. Request a commit.
-        m_client->setNeedsCommitOnImplThread();
+    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
         return false;
-    }
 
     // If we return true, then we expect drawLayers() to be called before this function is called again.
     return true;
