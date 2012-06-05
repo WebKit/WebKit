@@ -1,3 +1,11 @@
+2012-06-05  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac rebaseline for float-containing-block-with-margin.
+
+        * platform/chromium-mac-leopard/fast/sub-pixel: Added.
+        * platform/chromium-mac-leopard/fast/sub-pixel/float-containing-block-with-margin-expected.png: Added.
+        * platform/chromium-mac/fast/sub-pixel/float-containing-block-with-margin-expected.png:
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Chromium test failure expectations per Skia roll:
