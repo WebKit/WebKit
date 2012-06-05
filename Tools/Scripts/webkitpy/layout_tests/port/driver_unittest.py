@@ -29,7 +29,6 @@
 import sys
 import unittest
 
-from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
@@ -105,20 +104,14 @@ class DriverTest(unittest.TestCase):
     def test_test_to_uri(self):
         port = self.make_port()
         driver = Driver(port, None, pixel_tests=False)
-        if sys.platform in ('cygwin', 'win32'):
-            self.assertEqual(driver.test_to_uri('foo/bar.html'), 'file:///%s/foo/bar.html' % port.layout_tests_dir())
-        else:
-            self.assertEqual(driver.test_to_uri('foo/bar.html'), 'file://%s/foo/bar.html' % port.layout_tests_dir())
+        self.assertEqual(driver.test_to_uri('foo/bar.html'), 'file://%s/foo/bar.html' % port.layout_tests_dir())
         self.assertEqual(driver.test_to_uri('http/tests/foo.html'), 'http://127.0.0.1:8000/foo.html')
         self.assertEqual(driver.test_to_uri('http/tests/ssl/bar.html'), 'https://127.0.0.1:8443/ssl/bar.html')
 
     def test_uri_to_test(self):
         port = self.make_port()
         driver = Driver(port, None, pixel_tests=False)
-        if sys.platform in ('cygwin', 'win32'):
-            self.assertEqual(driver.uri_to_test('file:///%s/foo/bar.html' % port.layout_tests_dir()), 'foo/bar.html')
-        else:
-            self.assertEqual(driver.uri_to_test('file://%s/foo/bar.html' % port.layout_tests_dir()), 'foo/bar.html')
+        self.assertEqual(driver.uri_to_test('file://%s/foo/bar.html' % port.layout_tests_dir()), 'foo/bar.html')
         self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/foo.html'), 'http/tests/foo.html')
         self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.html'), 'http/tests/ssl/bar.html')
 

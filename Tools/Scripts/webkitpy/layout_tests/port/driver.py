@@ -132,7 +132,7 @@ class Driver(object):
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
         if not self.is_http_test(test_name):
-            return path.abspath_to_uri(self._port.abspath_for_test(test_name))
+            return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
 
         relative_path = test_name[len(self.HTTP_DIR):]
 
@@ -150,7 +150,7 @@ class Driver(object):
 
         """
         if uri.startswith("file:///"):
-            prefix = path.abspath_to_uri(self._port.layout_tests_dir())
+            prefix = path.abspath_to_uri(self._port.host.platform, self._port.layout_tests_dir())
             if not prefix.endswith('/'):
                 prefix += '/'
             return uri[len(prefix):]

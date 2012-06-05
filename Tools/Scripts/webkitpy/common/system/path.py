@@ -35,11 +35,9 @@ import threading
 import urllib
 
 
-def abspath_to_uri(path, platform=None):
+def abspath_to_uri(platform, path):
     """Converts a platform-specific absolute path to a file: URL."""
-    if platform is None:
-        platform = sys.platform
-    return "file:" + _escape(_convert_path(path, platform))
+    return "file:" + _escape(_convert_path(platform, path))
 
 
 def cygpath(path):
@@ -118,12 +116,12 @@ def _escape(path):
     return urllib.quote(path, safe='/+:')
 
 
-def _convert_path(path, platform):
+def _convert_path(platform, path):
     """Handles any os-specific path separators, mappings, etc."""
-    if platform == 'win32':
-        return _winpath_to_uri(path)
-    if platform == 'cygwin':
+    if platform.is_cygwin():
         return _winpath_to_uri(cygpath(path))
+    if platform.is_win():
+        return _winpath_to_uri(path)
     return _unixypath_to_uri(path)
 
 

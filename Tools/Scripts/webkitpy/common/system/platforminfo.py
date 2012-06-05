@@ -54,12 +54,16 @@ class PlatformInfo(object):
             self.os_version = self._determine_mac_version(platform_module.mac_ver()[0])
         if self.os_name.startswith('win'):
             self.os_version = self._determine_win_version(self._win_version_tuple(sys_module))
+        self._is_cygwin = sys_module.platform == 'cygwin'
 
     def is_mac(self):
         return self.os_name == 'mac'
 
     def is_win(self):
         return self.os_name == 'win'
+
+    def is_cygwin(self):
+        return self._is_cygwin
 
     def is_linux(self):
         return self.os_name == 'linux'

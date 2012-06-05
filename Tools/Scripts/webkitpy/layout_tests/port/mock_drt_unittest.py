@@ -49,11 +49,6 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def make_port(self, options=mock_options):
         host = MockSystemHost()
         test.add_unit_tests_to_mock_filesystem(host.filesystem)
-        if sys.platform == 'win32':
-            # We use this because the 'win' port doesn't work yet.
-            host.platform.os_name = 'win'
-            host.platform.os_version = 'xp'
-            return mock_drt.MockDRTPort(host, port_name='mock-chromium-win', options=options)
         return mock_drt.MockDRTPort(host, port_name='mock-mac', options=options)
 
     def test_port_name_in_constructor(self):
@@ -93,10 +88,7 @@ class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):
         url = port.create_driver(0).test_to_uri(test_name)
         if url.startswith('file://'):
-            if sys.platform == 'win32':
-                url = url[len('file:///'):]
-            else:
-                url = url[len('file://'):]
+            url = url[len('file://'):]
 
         if checksum:
             return url + "'" + checksum + '\n'
@@ -247,9 +239,6 @@ class MockChromiumDRTTest(MockDRTTest):
     def test_pixeltest__fails(self):
         host = MockSystemHost()
         url = '#URL:file://'
-        if sys.platform == 'win32':
-            host = MockSystemHost(os_name='win', os_version='xp')
-            url = '#URL:file:///'
         url = url + '%s/failures/expected/image_checksum.html' % PortFactory(host).get('test').layout_tests_dir()
         self.assertTest('failures/expected/image_checksum.html', pixel_tests=True,
             expected_checksum='image_checksum',

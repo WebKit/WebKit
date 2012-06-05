@@ -30,6 +30,7 @@ import logging
 import re
 import sys
 
+from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.layout_tests.port.apple import ApplePort
@@ -75,7 +76,7 @@ class WinPort(ApplePort):
         return 'win'
 
     def show_results_html_file(self, results_filename):
-        self._run_script('run-safari', [abspath_to_uri(results_filename)])
+        self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
 
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.

@@ -29,69 +29,41 @@
 import unittest
 import sys
 
-import path
+from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.common.system.platforminfo import PlatformInfo
+from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
+from webkitpy.common.system import path
 
 class AbspathTest(unittest.TestCase):
-    def assertMatch(self, test_path, expected_uri,
-                    platform=None):
-        if platform == 'cygwin' and sys.platform != 'cygwin':
-            return
-        self.assertEqual(path.abspath_to_uri(test_path, platform=platform),
-                         expected_uri)
+    def platforminfo(self):
+        return SystemHost().platform
 
     def test_abspath_to_uri_cygwin(self):
         if sys.platform != 'cygwin':
             return
+        self.assertEquals(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar.html'),
+                          'file:///C:/foo/bar.html')
 
-        self.assertMatch('/cygdrive/c/foo/bar.html',
-                         'file:///C:/foo/bar.html',
-                         platform='cygwin')
-        self.assertEqual(path.abspath_to_uri('/cygdrive/c/foo/bar.html',
-                                             platform='cygwin'),
-                         'file:///C:/foo/bar.html')
-
-    def test_abspath_to_uri_darwin(self):
-        self.assertMatch('/foo/bar.html',
-                         'file:///foo/bar.html',
-                         platform='darwin')
-        self.assertEqual(path.abspath_to_uri("/foo/bar.html",
-                                             platform='darwin'),
-                         "file:///foo/bar.html")
-
-    def test_abspath_to_uri_linux2(self):
-        self.assertMatch('/foo/bar.html',
-                         'file:///foo/bar.html',
-                         platform='darwin')
-        self.assertEqual(path.abspath_to_uri("/foo/bar.html",
-                                             platform='linux2'),
-                         "file:///foo/bar.html")
-        self.assertEqual(path.abspath_to_uri("/foo/bar.html",
-                                             platform='linux3'),
-                         "file:///foo/bar.html")
+    def test_abspath_to_uri_unixy(self):
+        self.assertEquals(path.abspath_to_uri(MockPlatformInfo(), "/foo/bar.html"),
+                          'file:///foo/bar.html')
 
     def test_abspath_to_uri_win(self):
-        self.assertMatch('c:\\foo\\bar.html',
-                         'file:///c:/foo/bar.html',
-                         platform='win32')
-        self.assertEqual(path.abspath_to_uri("c:\\foo\\bar.html",
-                                             platform='win32'),
-                         "file:///c:/foo/bar.html")
+        if sys.platform != 'win32':
+            return
+        self.assertEquals(path.abspath_to_uri(self.platforminfo(), 'c:\\foo\\bar.html'),
+                         'file:///c:/foo/bar.html')
 
-    def test_abspath_to_uri_escaping(self):
-        self.assertMatch('/foo/bar + baz%?.html',
-                         'file:///foo/bar%20+%20baz%25%3F.html',
-                         platform='darwin')
-        self.assertMatch('/foo/bar + baz%?.html',
-                         'file:///foo/bar%20+%20baz%25%3F.html',
-                         platform='linux2')
-        self.assertMatch('/foo/bar + baz%?.html',
-                         'file:///foo/bar%20+%20baz%25%3F.html',
-                         platform='linux3')
+    def test_abspath_to_uri_escaping_unixy(self):
+        self.assertEquals(path.abspath_to_uri(MockPlatformInfo(), '/foo/bar + baz%?.html'),
+                         'file:///foo/bar%20+%20baz%25%3F.html')
 
         # Note that you can't have '?' in a filename on windows.
-        self.assertMatch('/cygdrive/c/foo/bar + baz%.html',
-                         'file:///C:/foo/bar%20+%20baz%25.html',
-                         platform='cygwin')
+    def test_abspath_to_uri_escaping_cygwin(self):
+        if sys.platform != 'cygwin':
+            return
+        self.assertEquals(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar + baz%.html'),
+                          'file:///C:/foo/bar%20+%20baz%25.html')
 
     def test_stop_cygpath_subprocess(self):
         if sys.platform != 'cygwin':
@@ -106,6 +78,3 @@ class AbspathTest(unittest.TestCase):
 
         # Ensure that it is stopped.
         self.assertFalse(path._CygPath._singleton.is_running())
-
-if __name__ == '__main__':
-    unittest.main()

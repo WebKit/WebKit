@@ -233,12 +233,8 @@ layer at (0,0) size 800x34
 # this works. The path contains a '.' in the name because we've seen bugs
 # related to this before.
 
-if sys.platform == 'win32':
-    LAYOUT_TEST_DIR = 'c:/test.checkout/LayoutTests'
-    PERF_TEST_DIR = 'c:/test.checkout/PerformanceTests'
-else:
-    LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
-    PERF_TEST_DIR = '/test.checkout/PerformanceTests'
+LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
+PERF_TEST_DIR = '/test.checkout/PerformanceTests'
 
 
 # Here we synthesize an in-memory filesystem from the test list
