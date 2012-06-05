@@ -47,6 +47,7 @@ inline void* MarkedAllocator::tryAllocateHelper()
     
 inline void* MarkedAllocator::tryAllocate()
 {
+    ASSERT(!m_heap->isBusy());
     m_heap->m_operationInProgress = Allocation;
     void* result = tryAllocateHelper();
     m_heap->m_operationInProgress = NoOperation;

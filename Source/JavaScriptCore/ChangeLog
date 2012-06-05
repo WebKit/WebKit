@@ -1,3 +1,39 @@
+2012-06-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Entry into JSC should CRASH() if the Heap is busy
+        https://bugs.webkit.org/show_bug.cgi?id=88355
+
+        Reviewed by Geoffrey Garen.
+
+        Interpreter::execute() returns jsNull() right now if we try to enter it while 
+        the Heap is busy (e.g. with a collection), which is okay, but some code paths 
+        that call Interpreter::execute() allocate objects before checking if the Heap 
+        is busy. Attempting to execute JS code while the Heap is busy should not be 
+        allowed and should be enforced by a release-mode CRASH() to prevent vague, 
+        unhelpful backtraces later on if somebody makes a mistake. Normally, recursively 
+        executing JS code is okay, e.g. for evals, but it should not occur during a 
+        Heap allocation or collection because the Heap is not guaranteed to be in a 
+        consistent state (especially during collections). We are protected from 
+        executing JS on the same Heap concurrently on two separate threads because 
+        they must each take a JSLock first. However, we are not protected from reentrant 
+        execution of JS on the same thread because JSLock allows reentrancy. Therefore, 
+        we should fail early if we detect an entrance into JS code while the Heap is busy.
+
+        * heap/Heap.cpp: Changed Heap::collect so that it sets the m_operationInProgress field 
+        at the beginning of collection and then unsets it at the end so that it is set at all 
+        times throughout the duration of a collection rather than sporadically during various 
+        phases. There is no reason to unset during a collection because our collector does 
+        not currently support running additional JS between the phases of a collection.
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute): Crash if the Heap is busy.
+        * runtime/Completion.cpp: Crash if the Heap is busy. We do it here before we call 
+        Interpreter::execute() because we do some allocation prior to calling execute() which 
+        could cause Heap corruption if, for example, that allocation caused a collection.
+        (JSC::evaluate):
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.

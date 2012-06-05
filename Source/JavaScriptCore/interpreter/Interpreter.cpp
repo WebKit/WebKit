@@ -1097,7 +1097,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     ASSERT(!scopeChain->globalData->exception);
     ASSERT(!callFrame->globalData().isCollectorBusy());
     if (callFrame->globalData().isCollectorBusy())
-        return jsNull();
+        CRASH();
 
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));

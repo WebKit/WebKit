@@ -403,9 +403,6 @@ inline RegisterFile& Heap::registerFile()
 void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
 {
     ASSERT(isValidThreadState(m_globalData));
-    if (m_operationInProgress != NoOperation)
-        CRASH();
-    m_operationInProgress = Collection;
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
     registerFile().gatherConservativeRoots(registerFileRoots);
     size_t registerFileRootCount = registerFileRoots.size();
@@ -414,7 +411,6 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
         setMarked(registerRoots[i]);
         roots.add(registerRoots[i]);
     }
-    m_operationInProgress = NoOperation;
 }
 
 void Heap::markRoots(bool fullGC)
@@ -424,9 +420,6 @@ void Heap::markRoots(bool fullGC)
     COND_GCPHASE(fullGC, MarkFullRoots, MarkYoungRoots);
     UNUSED_PARAM(fullGC);
     ASSERT(isValidThreadState(m_globalData));
-    if (m_operationInProgress != NoOperation)
-        CRASH();
-    m_operationInProgress = Collection;
 
     void* dummy;
     
@@ -582,7 +575,6 @@ void Heap::markRoots(bool fullGC)
     m_sharedData.reset();
     m_storageSpace.doneCopying();
 
-    m_operationInProgress = NoOperation;
 }
 
 size_t Heap::objectCount()
@@ -654,6 +646,9 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
+    if (m_operationInProgress != NoOperation)
+        CRASH();
+    m_operationInProgress = Collection;
 
     m_activityCallback->willCollect();
 
@@ -728,6 +723,9 @@ void Heap::collect(SweepToggle sweepToggle)
     m_bytesAllocated = 0;
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
+    if (m_operationInProgress != Collection)
+        CRASH();
+    m_operationInProgress = NoOperation;
     JAVASCRIPTCORE_GC_END();
 }
 

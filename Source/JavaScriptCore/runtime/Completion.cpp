@@ -55,6 +55,8 @@ JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& 
 {
     JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
+    if (exec->globalData().isCollectorBusy())
+        CRASH();
 
     CodeProfiling profile(source);
 
