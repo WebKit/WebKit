@@ -1,3 +1,32 @@
+2012-06-04  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
+
+        Add missing FractionalLayoutUnit += operator and move LineWidth to use all floats
+        https://bugs.webkit.org/show_bug.cgi?id=88259
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix two rounding bugs in LineLayout and RenderBlock that caused inlines
+        and floats to wrap incorrectly.
+
+        Tests: fast/sub-pixel/float-containing-block-with-margin.html
+               fast/sub-pixel/float-with-right-margin-zoom.html
+               fast/sub-pixel/inline-block-with-padding.html
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::operator+=):
+        Add missing float version of += operator thus avoiding a silent cast to
+        int loosing precision.
+        
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight):
+        (WebCore::LineWidth::updateAvailableWidth):
+        Change LineWidth left/right to floating point and instead of rounding the
+        left and right edge separately.
+        
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        Use explicit cast to avoid compiler ambiguity warning.
+
 2012-06-04  Tony Chang  <tony@chromium.org>
 
         CSS property 'order' should be a number rather than an int

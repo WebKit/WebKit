@@ -1,3 +1,56 @@
+2012-06-04  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
+
+        Add missing FractionalLayoutUnit += operator and move LineWidth to use all floats
+        https://bugs.webkit.org/show_bug.cgi?id=88259
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/elementFromPoint-relative-to-viewport.html:
+        * fast/events/offsetX-offsetY.html:
+        Remove special casing for subpixel layout as it is no longer needed.
+        
+        * fast/sub-pixel/float-containing-block-with-margin-expected.html: Added.
+        * fast/sub-pixel/float-containing-block-with-margin.html: Added.
+        * fast/sub-pixel/float-with-right-margin-zoom-expected.txt: Added.
+        * fast/sub-pixel/float-with-right-margin-zoom.html: Added.
+        * fast/sub-pixel/inline-block-with-padding-expected.txt: Added.
+        * fast/sub-pixel/inline-block-with-padding.html: Added.
+        New tests for wrapping logic.
+        
+        * platform/chromium-linux/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-linux/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/chromium-linux/fast/line-grid/line-align-left-edges-expected.png:
+        * platform/chromium-linux/fast/line-grid/line-grid-contains-value-expected.png:
+        * platform/chromium-linux/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-win/fast/events/offsetX-offsetY-expected.txt:
+        * platform/chromium-win/fast/line-grid/line-grid-contains-value-expected.txt:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.txt:
+        Update expectations to match pre-subpixel rendering.
+        
+        * platform/chromium/TestExpectations:
+        Mark updated tests as failing on mac and windows temporarily.
+        
+        * platform/chromium/fast/dom/elementFromPoint-relative-to-viewport-expected.txt:
+        Remove special casing for subpixel layout as it is no longer needed.
+        
+        * platform/chromium/fast/line-grid/line-align-left-edges-expected.txt:
+        Update expectations to match pre-subpixel rendering.
+
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+        Skip new sub-pixel tests on platforms that does not enable sub-pixel layout.
+
 2012-06-04  Tony Chang  <tony@chromium.org>
 
         CSS property 'order' should be a number rather than an int

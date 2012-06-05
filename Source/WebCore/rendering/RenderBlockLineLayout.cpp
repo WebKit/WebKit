@@ -98,7 +98,7 @@ public:
 private:
     void computeAvailableWidthFromLeftAndRight()
     {
-        m_availableWidth = max(0, m_right - m_left) + m_overhangWidth;
+        m_availableWidth = max(0.0f, m_right - m_left) + m_overhangWidth;
     }
 
 private:
@@ -106,8 +106,8 @@ private:
     float m_uncommittedWidth;
     float m_committedWidth;
     float m_overhangWidth; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
-    int m_left;
-    int m_right;
+    float m_left;
+    float m_right;
     float m_availableWidth;
     bool m_isFirstLine;
 };
@@ -115,8 +115,8 @@ private:
 inline void LineWidth::updateAvailableWidth()
 {
     LayoutUnit height = m_block->logicalHeight();
-    m_left = m_block->pixelSnappedLogicalLeftOffsetForLine(height, m_isFirstLine);
-    m_right = m_block->pixelSnappedLogicalRightOffsetForLine(height, m_isFirstLine);
+    m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine);
+    m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine);
 
     computeAvailableWidthFromLeftAndRight();
 }

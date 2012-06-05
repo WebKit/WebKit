@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            a {
+                padding: .3em 1.6em;
+            }
+        </style>
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p>
+            Both links should render the same and not wrap.
+        </p>
+        <div>
+            <a style="display: inline-block;" href="#">This shouldn't wrap</a>
+        </div>
+        <div>
+            <a href="#">This shouldn't wrap</a>
+        </div>
+        <script>
+            var links = document.getElementsByTagName('a');
+            shouldBe('links[0].offsetWidth', 'links[1].offsetWidth');
+        </script>
+    </body>
+</html>

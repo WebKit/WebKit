@@ -9,8 +9,8 @@ layer at (8,8) size 784x201
       RenderText {#text} at (0,3) size 312x24
         text run at (0,3) width 312: "X X X X X X X"
     RenderBlock {DIV} at (37,67) size 710x37 [border: (3px solid #000000)]
-      RenderText {#text} at (10,6) size 264x24
-        text run at (10,6) width 264: "X X X X X X"
+      RenderText {#text} at (11,6) size 264x24
+        text run at (11,6) width 264: "X X X X X X"
     RenderBlock (floating) {DIV} at (0,141) size 78x78 [bgcolor=#FFFF00]
     RenderBlock (anonymous) at (0,141) size 784x60
       RenderText {#text} at (96,3) size 216x24
@@ -21,5 +21,5 @@ layer at (8,8) size 784x201
         text run at (192,33) width 216: "X X X X X"
 layer at (181,308) size 300x30
   RenderBlock (positioned) {DIV} at (172,300) size 301x30 [bgcolor=#DDDDDD]
-    RenderText {#text} at (19,3) size 120x24
-      text run at (19,3) width 120: "X X X"
+    RenderText {#text} at (20,3) size 120x24
+      text run at (20,3) width 120: "X X X"

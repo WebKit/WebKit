@@ -1,0 +1,5 @@
+FAIL links[0].offsetWidth should be 167. Was 168.
+Both links should render the same and not wrap.
+
+This shouldn't wrap
+This shouldn't wrap

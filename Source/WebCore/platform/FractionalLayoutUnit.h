@@ -553,6 +553,12 @@ inline FractionalLayoutUnit& operator+=(FractionalLayoutUnit& a, int b)
     return a;
 }
 
+inline FractionalLayoutUnit& operator+=(FractionalLayoutUnit& a, float b)
+{
+    a = a + b;
+    return a;
+}
+
 inline float& operator+=(float& a, const FractionalLayoutUnit& b)
 {
     a = a + b;
