@@ -1,3 +1,21 @@
+2012-06-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] [OpenGL] Enable GL_OES_standard_derivatives
+        https://bugs.webkit.org/show_bug.cgi?id=87583
+
+        Reviewed by Alejandro G. Castro.
+
+        No new tests. This is covered by oes-standard-derivatives.html
+        in the Khronos WebGL conformance tests, which may one day be part
+        of the WebKit test suite.
+
+        Activate the GL_OES_standard_derivatives on Cairo along with
+        Qt and Mac.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+        (WebCore::Extensions3DOpenGL::isEnabled):
+
 2012-06-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid creating compositing layers for preserve-3d without transformed descendants
