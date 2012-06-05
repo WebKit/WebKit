@@ -39,6 +39,10 @@
 #include "ColorChooser.h"
 #endif
 
+#if ENABLE(WEB_INTENTS) 
+#include "IntentRequest.h" 
+#endif 
+
 namespace WebCore {
 
 #if ENABLE(SVG) || ENABLE(PAGE_POPUP)

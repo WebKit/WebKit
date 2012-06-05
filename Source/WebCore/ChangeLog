@@ -1,5 +1,11 @@
 2012-06-05  Kent Tamura  <tkent@chromium.org>
 
+        Build fix for r119470.
+
+        * loader/EmptyClients.cpp: Add #include "IntentRequest.h".
+
+2012-06-05  Kent Tamura  <tkent@chromium.org>
+
         Remove unused function: Document::formElements
         https://bugs.webkit.org/show_bug.cgi?id=88272
 
