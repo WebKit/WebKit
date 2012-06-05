@@ -86,7 +86,8 @@ static IntPoint boundedScrollPosition(const IntPoint& scrollPosition, const IntR
 }
 
 WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeHostProxy* layerTreeHostProxy)
-    : m_layerTreeHostProxy(layerTreeHostProxy)
+    : m_contentsScale(1)
+    , m_layerTreeHostProxy(layerTreeHostProxy)
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
 {
