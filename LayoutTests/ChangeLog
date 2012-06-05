@@ -1,3 +1,11 @@
+2012-06-04  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium test and expectation updates for r119456.
+
+        * fast/sub-pixel/inline-block-with-padding.html:
+        * platform/chromium-mac-snowleopard/fast/events/offsetX-offsetY-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-06-04  Emil A Eklund  <eae@chromium.org> and Levi Weintraub  <leviw@chromium.org>
 
         Add missing FractionalLayoutUnit += operator and move LineWidth to use all floats
