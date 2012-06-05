@@ -1,3 +1,18 @@
+2012-06-01  Ojan Vafai  <ojan@chromium.org>
+
+        Change overrideSizes to be content-box instead of border-box
+        https://bugs.webkit.org/show_bug.cgi?id=88116
+
+        Reviewed by Tony Chang.
+
+        * fast/table/padding-height-and-override-height-expected.txt:
+        * fast/table/padding-height-and-override-height.html:
+        Tests the change in RenderBox::availableLogicalHeightUsing to correctly subtract the
+        borderAndPaddingLogicalHeight instead of the borderAndPaddingLogicalWidth.
+        * platform/chromium-linux/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug131020-expected.txt:
+        The new results are more correct. The table cell had 2px too much padding-top and padding-bottom before.
+
 2012-06-05  Tim Horton  <timothy_horton@apple.com>
 
         http/tests/media/remove-while-loading.html times out on mac-lion-wk2

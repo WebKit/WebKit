@@ -593,7 +593,7 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     if (!isColumnFlow())
         contentExtent = mainAxisContentExtent();
     else if (hasOverrideHeight())
-        contentExtent = overrideHeight() - (logicalHeight() - contentLogicalHeight());
+        contentExtent = overrideLogicalContentHeight();
     else {
         LayoutUnit heightResult = computeContentLogicalHeightUsing(style()->logicalHeight());
         if (heightResult == -1)
@@ -918,11 +918,10 @@ static LayoutUnit justifyContentSpaceBetweenChildren(LayoutUnit availableFreeSpa
 
 void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize)
 {
-    // FIXME: Rename setOverrideWidth/setOverrideHeight to setOverrideLogicalWidth/setOverrideLogicalHeight.
     if (hasOrthogonalFlow(child))
-        child->setOverrideHeight(childPreferredSize);
+        child->setOverrideLogicalContentHeight(childPreferredSize - child->borderAndPaddingLogicalHeight());
     else
-        child->setOverrideWidth(childPreferredSize);
+        child->setOverrideLogicalContentWidth(childPreferredSize - child->borderAndPaddingLogicalWidth());
 }
 
 void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode layoutMode)
@@ -1207,7 +1206,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
 
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         if (child->logicalHeight() != logicalHeightBefore) {
-            child->setOverrideHeight(child->logicalHeight());
+            child->setOverrideLogicalContentHeight(child->logicalHeight() - child->borderAndPaddingLogicalHeight());
             child->setLogicalHeight(0);
             child->setChildNeedsLayout(true);
             child->layoutIfNeeded();
@@ -1215,7 +1214,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
         // FIXME: Handle min-width and max-width.
         LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
-        child->setOverrideWidth(std::max(ZERO_LAYOUT_UNIT, childWidth));
+        child->setOverrideLogicalContentWidth(std::max(ZERO_LAYOUT_UNIT, childWidth));
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
     }

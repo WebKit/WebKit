@@ -1,3 +1,48 @@
+2012-06-01  Ojan Vafai  <ojan@chromium.org>
+
+        Change overrideSizes to be content-box instead of border-box
+        https://bugs.webkit.org/show_bug.cgi?id=88116
+
+        Reviewed by Tony Chang.
+
+        Previously, the code used border-box everywhere except for one place
+        where it used content-box when setting the override size. Conversely,
+        it subtracted the borderAndPaddingSize everywhere it grabbed the override
+        size except for one.
+
+        Instead, make the override size override the content-box size.
+        Converging on using the border-box size would be tricky given RenderTableCell's
+        tricky management of intrinsic padding.
+
+        There is no behavior change except in RenderBox::availableLogicalHeightUsing,
+        which fixes a table test.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setOverrideLogicalContentHeight):
+        (WebCore::RenderBox::setOverrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentHeight):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        We were incorrectly subtracting the borderAndPaddingLogicalWidth instead
+        of the borderAndPaddingLogicalHeight.
+
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeAvailableFreeSpace):
+        (WebCore::RenderFlexibleBox::setLogicalOverrideSize):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setOverrideHeightFromRowHeight):
+
 2012-06-05  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r118197): PluginStrategy should be used even if ENABLE(NETSCAPE_PLUGIN_API) is false

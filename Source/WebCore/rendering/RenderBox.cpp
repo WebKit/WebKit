@@ -677,14 +677,14 @@ bool RenderBox::hasOverrideWidth() const
     return gOverrideWidthMap && gOverrideWidthMap->contains(this);
 }
 
-void RenderBox::setOverrideHeight(LayoutUnit height)
+void RenderBox::setOverrideLogicalContentHeight(LayoutUnit height)
 {
     if (!gOverrideHeightMap)
         gOverrideHeightMap = new OverrideSizeMap();
     gOverrideHeightMap->set(this, height);
 }
 
-void RenderBox::setOverrideWidth(LayoutUnit width)
+void RenderBox::setOverrideLogicalContentWidth(LayoutUnit width)
 {
     if (!gOverrideWidthMap)
         gOverrideWidthMap = new OverrideSizeMap();
@@ -699,14 +699,14 @@ void RenderBox::clearOverrideSize()
         gOverrideWidthMap->remove(this);
 }
 
-LayoutUnit RenderBox::overrideWidth() const
+LayoutUnit RenderBox::overrideLogicalContentWidth() const
 {
-    return hasOverrideWidth() ? gOverrideWidthMap->get(this) : width();
+    return hasOverrideWidth() ? gOverrideWidthMap->get(this) : contentWidth();
 }
 
-LayoutUnit RenderBox::overrideHeight() const
+LayoutUnit RenderBox::overrideLogicalContentHeight() const
 {
-    return hasOverrideHeight() ? gOverrideHeightMap->get(this) : height();
+    return hasOverrideHeight() ? gOverrideHeightMap->get(this) : contentHeight();
 }
 
 LayoutUnit RenderBox::computeBorderBoxLogicalWidth(LayoutUnit width) const
@@ -1649,7 +1649,7 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     if (hasOverrideWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
-        setLogicalWidth(overrideWidth());
+        setLogicalWidth(overrideLogicalContentWidth() + borderAndPaddingLogicalWidth());
         return;
     }
 
@@ -1983,7 +1983,7 @@ void RenderBox::computeLogicalHeight()
         // https://bugs.webkit.org/show_bug.cgi?id=46418
         RenderStyle* styleToUse = style();
         if (hasOverrideHeight() && parent()->isFlexibleBoxIncludingDeprecated())
-            h = Length(overrideHeight() - borderAndPaddingLogicalHeight(), Fixed);
+            h = Length(overrideLogicalContentHeight(), Fixed);
         else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight(), Fixed);
         else {
@@ -2122,7 +2122,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
                     return 0;
                 return -1;
             }
-            result = cb->overrideHeight();
+            result = cb->overrideLogicalContentHeight();
             includeBorderPadding = true;
         }
     }
@@ -2286,7 +2286,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
     if (isTableCell() && (h.isAuto() || h.isPercent()))
-        return overrideHeight() - borderAndPaddingLogicalWidth();
+        return overrideLogicalContentHeight();
 
     if (h.isPercent()) {
         LayoutUnit availableHeight;

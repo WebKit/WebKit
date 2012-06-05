@@ -84,5 +84,8 @@ BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
 BUGWK85405 SKIP: tables/mozilla/bugs/bug10296-1.html = TEXT
 
+// Needs rebaseline after the bots cycle.
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
+
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL

@@ -1302,6 +1302,9 @@ BUGWK87734 : svg/dom/viewspec-parser-5.html = TEXT
 
 BUGWK88061 : fast/replaced/border-radius-clip.html = TEXT PASS
 
+// Needs rebaseline after the bots cycle.
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
+
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
