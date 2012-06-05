@@ -34,13 +34,32 @@
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(CHROMIUM)
+#include "HarfBuzzShaper.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
 
+#if PLATFORM(CHROMIUM)
+static bool preferHarfBuzz(const Font* font)
+{
+    const FontDescription& description = font->fontDescription();
+    return description.featureSettings() && description.featureSettings()->size() > 0;
+}
+#endif
+
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h,
                                             int from, int to) const
 {
+#if PLATFORM(CHROMIUM)
+    if (preferHarfBuzz(this)) {
+        HarfBuzzShaper shaper(this, run);
+        if (shaper.shape())
+            return shaper.selectionRect(point, h, from, to);
+    }
+#endif
     ComplexTextController controller(this, run);
     controller.advance(from);
     float beforeWidth = controller.runWidthSoFar();
@@ -82,6 +101,16 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int
 
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
+#if PLATFORM(CHROMIUM)
+    if (preferHarfBuzz(this)) {
+        GlyphBuffer glyphBuffer;
+        HarfBuzzShaper shaper(this, run);
+        if (shaper.shape(&glyphBuffer)) {
+            drawGlyphBuffer(context, run, glyphBuffer, point);
+            return;
+        }
+    }
+#endif
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
 
@@ -109,6 +138,13 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextR
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
+#if PLATFORM(CHROMIUM)
+    if (preferHarfBuzz(this)) {
+        HarfBuzzShaper shaper(this, run);
+        if (shaper.shape())
+            return shaper.totalWidth();
+    }
+#endif
     ComplexTextController controller(this, run, true, fallbackFonts);
     if (glyphOverflow) {
         glyphOverflow->top = max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
@@ -121,6 +157,13 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
+#if PLATFORM(CHROMIUM)
+    if (preferHarfBuzz(this)) {
+        HarfBuzzShaper shaper(this, run);
+        if (shaper.shape())
+            return shaper.offsetForPosition(x);
+    }
+#endif
     ComplexTextController controller(this, run);
     return controller.offsetForPosition(x, includePartialGlyphs);
 }

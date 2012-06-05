@@ -1,3 +1,84 @@
+2012-06-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Implement font shaping with font-feature-settings on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=69826
+
+        Reviewed by Tony Chang.
+
+        Add HarfBuzz-ng text shaper.
+        Chromium mac port uses it as secondary text shaper to support OpenType features.
+        HarfBuzz-ng is only used when -webkit-font-feature-settings is specified and
+        corresponding font is not an AAT font.
+
+        No new tests. css3/font-feature-settings-rendering.html should pass on Chromium mac port.
+
+        * WebCore.gyp/WebCore.gyp: Added harfbuzz-ng dependencies.
+        * WebCore.gypi: Added harfbuzz-ng files.
+        * platform/graphics/FontPlatformData.h:
+        (FontPlatformData): Added m_harfbuzzFace.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::platformDataInit): Copy m_harfbuzzFace.
+        (WebCore::FontPlatformData::platformDataAssign): Ditto.
+        (WebCore):
+        (WebCore::isAATFont):
+        (WebCore::FontPlatformData::harfbuzzFace):
+        * platform/graphics/harfbuzz/ng/HarfBuzzFace.cpp: Added.
+        (WebCore):
+        (WebCore::harfbuzzFaceCache):
+        (WebCore::HarfBuzzFace::HarfBuzzFace):
+        (WebCore::HarfBuzzFace::~HarfBuzzFace):
+        * platform/graphics/harfbuzz/ng/HarfBuzzFace.h: Added.
+        (WebCore):
+        (HarfBuzzFace):
+        (WebCore::HarfBuzzFace::create):
+        * platform/graphics/harfbuzz/ng/HarfBuzzFaceCoreText.cpp: Added.
+        (WebCore):
+        (WebCore::floatToHarfBuzzPosition):
+        (WebCore::getGlyph):
+        (WebCore::getGlyphHorizontalAdvance):
+        (WebCore::getGlyphHorizontalOrigin):
+        (WebCore::getGlyphExtents):
+        (WebCore::harfbuzzCoreTextGetFontFuncs):
+        (WebCore::releaseTableData):
+        (WebCore::harfbuzzCoreTextGetTable):
+        (WebCore::HarfBuzzFace::createFace):
+        (WebCore::HarfBuzzFace::createFont):
+        (WebCore::HarfBuzzShaper::createGlyphBufferAdvance):
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp: Added.
+        (WebCore):
+        (WebCore::harfbuzzPositionToFloat):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::setGlyphAndPositions):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::xPositionForOffset):
+        (WebCore::HarfBuzzShaper::HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::~HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::setFontFeatures):
+        (WebCore::HarfBuzzShaper::shape):
+        (WebCore::HarfBuzzShaper::setupHarfBuzzRun):
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRun):
+        (WebCore::HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun):
+        (WebCore::HarfBuzzShaper::offsetForPosition):
+        (WebCore::HarfBuzzShaper::selectionRect):
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.h: Added.
+        (WebCore):
+        (HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::totalWidth):
+        (HarfBuzzRun):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::create):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::setWidth):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::numCharacters):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::numGlyphs):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::width):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::rtl):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore):
+        (WebCore::preferHarfBuzz): Added.
+        (WebCore::Font::selectionRectForComplexText): Use HarfBuzzShaper if font-feature-settings exists.
+        (WebCore::Font::drawComplexText): Ditto.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Ditto.
+
 2012-06-05  Li Yin  <li.yin@intel.com>
 
         IETC: FileList.item(-1) should return null instead of raising
