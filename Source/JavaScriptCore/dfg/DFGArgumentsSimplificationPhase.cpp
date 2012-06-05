@@ -170,6 +170,12 @@ public:
                     break;
                 }
                     
+                case TearOffArguments: {
+                    // Ignore arguments tear off, because it's only relevant if we actually
+                    // need to create the arguments.
+                    break;
+                }
+                    
                 case SetLocal: {
                     Node& source = m_graph[node.child1()];
                     VariableAccessData* variableAccessData = node.variableAccessData();
@@ -213,9 +219,9 @@ public:
                         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                         break;
                     }
-                    if (variableAccessData->local() == argumentsRegister
-                        || variableAccessData->local() ==
-                            unmodifiedArgumentsRegister(argumentsRegister)) {
+                    if (argumentsRegister != InvalidVirtualRegister
+                        && (variableAccessData->local() == argumentsRegister
+                            || variableAccessData->local() == unmodifiedArgumentsRegister(argumentsRegister))) {
                         if (node.codeOrigin.inlineCallFrame == source.codeOrigin.inlineCallFrame)
                             break;
                         m_createsArguments.add(source.codeOrigin.inlineCallFrame);
@@ -593,6 +599,16 @@ public:
                     break;
                 }
                     
+                case TearOffArguments: {
+                    if (m_createsArguments.contains(node.codeOrigin.inlineCallFrame))
+                        continue;
+                    
+                    node.setOpAndDefaultFlags(Nop);
+                    m_graph.clearAndDerefChild1(node);
+                    node.setRefCount(0);
+                    break;
+                }
+                    
                 default:
                     break;
                 }
@@ -656,7 +672,10 @@ private:
         }
             
         case GetLocal: {
-            if (child.local() == m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin)) {
+            int argumentsRegister = m_graph.uncheckedArgumentsRegisterFor(child.codeOrigin);
+            if (argumentsRegister != InvalidVirtualRegister
+                && (child.local() == argumentsRegister
+                    || child.local() == unmodifiedArgumentsRegister(argumentsRegister))) {
                 m_createsArguments.add(child.codeOrigin.inlineCallFrame);
                 break;
             }
