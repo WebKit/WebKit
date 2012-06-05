@@ -16,7 +16,7 @@ shouldBe("contentSimplest.select", "'foo'");
 contentSimplest.select = "bar"
 shouldBe("contentSimplest.getAttribute('select')", "'bar'");
 shouldBeTrue("0 <= contentSimplest.constructor.toString().indexOf('HTMLContentElement')");
-shouldBe("typeof window.HTMLContentElement", "'function'");
+shouldBe("window.HTMLContentElement", "contentSimplest.constructor");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

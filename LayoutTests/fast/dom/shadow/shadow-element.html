@@ -12,7 +12,7 @@
 var shadow = document.getElementById("shadow");
 shouldBe("shadow.nodeName", "'SHADOW'");
 shouldBeTrue("0 <= shadow.constructor.toString().indexOf('HTMLShadowElement')");
-shouldBe("typeof window.HTMLShadowElement", "'function'");
+shouldBe("window.HTMLShadowElement", "shadow.constructor");
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

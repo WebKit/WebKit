@@ -1,3 +1,15 @@
+2012-06-05  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=88029
+        content-element-api.html and shadow-element.html depend on V8.
+
+        Reviewed by Kentaro Hara.
+
+        Replaced typeof checking with comparison.
+
+        * fast/dom/shadow/content-element-api.html:
+        * fast/dom/shadow/shadow-element.html:
+
 2012-06-04  Kinuko Yasuda  <kinuko@chromium.org>
 
         Chromium tests: "Add support for the Blob constructor" [r115582] regressed blob layout tests

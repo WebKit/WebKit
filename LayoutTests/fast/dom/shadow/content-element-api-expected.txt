@@ -7,7 +7,7 @@ PASS contentSimplest.select is ''
 PASS contentSimplest.select is 'foo'
 PASS contentSimplest.getAttribute('select') is 'bar'
 PASS 0 <= contentSimplest.constructor.toString().indexOf('HTMLContentElement') is true
-PASS typeof window.HTMLContentElement is 'function'
+PASS window.HTMLContentElement is contentSimplest.constructor
 PASS successfullyParsed is true
 
 TEST COMPLETE
