@@ -1,3 +1,12 @@
+2012-06-05  Tim Horton  <timothy_horton@apple.com>
+
+        http/tests/media/remove-while-loading.html times out on mac-lion-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=88348
+
+        Unreviewed skip of this test for greenness.
+
+        * platform/mac-wk2/Skipped:
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating test expectations after r119456.

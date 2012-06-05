@@ -253,6 +253,10 @@ storage/websql/statement-success-callback-isolated-world.html
 storage/websql/transaction-callback-isolated-world.html
 storage/websql/transaction-error-callback-isolated-world.html
 
+# Times out on mac-lion-wk2
+# https://bugs.webkit.org/show_bug.cgi?id=88348
+http/tests/media/remove-while-loading.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
