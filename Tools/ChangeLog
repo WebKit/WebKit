@@ -1,3 +1,10 @@
+2012-06-05  Jon Lee  <jonlee@apple.com>
+
+        Buildbot fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (loadBuilderConfig):
+
 2012-06-04  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up win-specific path handling and tests
