@@ -2448,15 +2448,6 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
         // Let WebCore render the page contents into the drawing surface.
         m_client->frame()->view()->paintContents(&graphicsContext, untransformedContentsRect);
 
-#if ENABLE(INSPECTOR)
-        if (m_webPage->d->m_page->inspectorController()->enabled()) {
-            WebCore::IntPoint scrollPosition = m_client->frame()->view()->scrollPosition();
-            graphicsContext.translate(scrollPosition.x(), scrollPosition.y());
-            if (m_webPage->d->m_inspectorOverlay)
-                m_webPage->d->m_inspectorOverlay->paintWebFrame(graphicsContext);
-        }
-#endif
-
         graphicsContext.restore();
     }
 

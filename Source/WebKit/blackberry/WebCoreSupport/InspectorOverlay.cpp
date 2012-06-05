@@ -77,8 +77,6 @@ InspectorOverlay::~InspectorOverlay() { }
 
 void InspectorOverlay::clear()
 {
-    invalidateWebFrame();
-
 #if USE(ACCELERATED_COMPOSITING)
     if (m_overlay) {
         m_overlay->removeFromParent();
@@ -89,12 +87,10 @@ void InspectorOverlay::clear()
 
 void InspectorOverlay::update()
 {
-    invalidateWebFrame();
-
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_overlay) {
         m_overlay = adoptPtr(new BlackBerry::WebKit::WebOverlay(this));
-        const IntSize size = m_webPage->viewportSize();
+        const IntSize size = m_webPage->contentsSize();
         m_overlay->setSize(FloatSize(size.width(), size.height()));
         m_webPage->m_webPage->addOverlay(m_overlay.get());
     }
@@ -103,26 +99,6 @@ void InspectorOverlay::update()
     m_overlay->setOpacity(1.0);
     m_overlay->invalidate();
 #endif
-}
-
-void InspectorOverlay::paintWebFrame(GraphicsContext& gc)
-{
-    if (!m_webPage->isAcceleratedCompositingActive())
-        m_client->paintInspectorOverlay(gc);
-}
-
-void InspectorOverlay::invalidateWebFrame()
-{
-    // InspectorOverlayClient does the actual painting of the overlay.
-    // Here we just make sure to invalidate.
-    if (!m_webPage->isAcceleratedCompositingActive()) {
-        // FIXME: able to invalidate a smaller rect.
-        // FIXME: Is it important to just invalidate a smaller rect given that
-        // this is not on a critical codepath? In order to do so, we'd
-        // have to take scrolling into account.
-        const IntSize size = m_webPage->viewportSize();
-        IntRect damagedRect(0, 0, size.width(), size.height());
-    }
 }
 
 }

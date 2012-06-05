@@ -46,15 +46,11 @@ void InspectorClientBlackBerry::inspectorDestroyed()
 void InspectorClientBlackBerry::highlight()
 {
     m_webPagePrivate->setInspectorOverlayClient(this);
-    if (!m_webPagePrivate->isAcceleratedCompositingActive())
-        m_webPagePrivate->mainFrame()->document()->documentElement()->renderer()->repaint(true);
 }
 
 void InspectorClientBlackBerry::hideHighlight()
 {
     m_webPagePrivate->setInspectorOverlayClient(0);
-    if (!m_webPagePrivate->isAcceleratedCompositingActive())
-        m_webPagePrivate->mainFrame()->document()->documentElement()->renderer()->repaint(true);
 }
 
 void InspectorClientBlackBerry::openInspectorFrontend(InspectorController*)
