@@ -1,3 +1,9 @@
+2012-06-04  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix a TestExpectations format error.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-04  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium test and expectation updates for r119456.

@@ -3814,4 +3814,4 @@ BUG_eae WIN MAC : fast/replaced/width100percent-radio.html = PASS FAIL
 BUG_eae WIN MAC : tables/mozilla/bugs/bug1318.html = PASS FAIL
 BUG_eae WIN MAC : tables/mozilla/bugs/bug4527.html = PASS FAIL
 
-BUG_eae WIN MAC : fast/sub-pixel/float-containing-block-with-margin.html
+BUG_eae WIN MAC : fast/sub-pixel/float-containing-block-with-margin.html = PASS FAIL
