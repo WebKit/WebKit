@@ -1,3 +1,10 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Fixing two leopard-specific baselines following r119528.
+
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectations.
