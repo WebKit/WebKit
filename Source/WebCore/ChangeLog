@@ -1,3 +1,25 @@
+2012-06-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: render timeline paint category dark green
+        https://bugs.webkit.org/show_bug.cgi?id=88333
+
+        Reviewed by Pavel Feldman.
+
+        - Added a new, dark-green color for timeline events.
+
+        * WebCore.gypi: Added timelineBarDarkGreen.png
+        * inspector/front-end/Images/timelineBarDarkGreen.png: Added.
+        * inspector/front-end/Images/timelineCheckmarks.png: Added a dark-green checkbox.
+        * inspector/front-end/Images/timelineDots.png: Added a dark-green dot.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.categories):
+        * inspector/front-end/WebKit.qrc: Added timelineBarDarkGreen.png.
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-category-statusbar-item.timeline-category-painting .timeline-category-checkbox):
+        (.timeline-category-painting .timeline-graph-bar):
+        (.popover .timeline-painting):
+        (.timeline-category-painting .timeline-tree-icon):
+
 2012-06-05  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: serialize edge counts instead of indexes in heap snapshot

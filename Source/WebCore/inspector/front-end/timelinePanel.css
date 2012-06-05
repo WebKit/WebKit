@@ -201,7 +201,7 @@
 }
 
 .timeline-category-statusbar-item.timeline-category-painting .timeline-category-checkbox {
-    background-position-y: -77px;
+    background-position-y: -88px;
 }
 
 .timeline-tree-item {
@@ -358,7 +358,7 @@
 }
 
 .timeline-category-painting .timeline-graph-bar {
-    -webkit-border-image: url(Images/timelineBarLightPurple.png) 4 4 5 4;
+    -webkit-border-image: url(Images/timelineBarDarkGreen.png) 4 4 5 4;
 }
 
 .timeline-aggregated-category {
@@ -384,7 +384,7 @@
 }
 
 .popover .timeline-painting {
-    -webkit-border-image: url(Images/timelineBarLightPurple.png) 4 4 5 4;
+    -webkit-border-image: url(Images/timelineBarDarkGreen.png) 4 4 5 4;
 }
 
 .popover .timeline-aggregated-category.timeline-loading {
@@ -404,7 +404,7 @@
 }
 
 .timeline-category-painting .timeline-tree-icon {
-    background-position-y: -84px;
+    background-position-y: -96px;
 }
 
 .timeline-details {
