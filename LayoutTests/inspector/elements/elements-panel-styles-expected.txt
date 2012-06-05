@@ -1,6 +1,8 @@
 Tests that elements panel shows proper styles in the sidebar panel.
 
 [expanded] 
+-webkit-font-smoothing: subpixel-antialiased;
+    element.style - subpixel-antialiased 
 border-bottom-left-radius: 5px;
     .foo - 5px elements-panel-styles.css:14
 border-bottom-right-radius: 5px;
@@ -37,6 +39,7 @@ text-align: -webkit-left;
 [expanded] 
 element.style  { ()
 display: none;
+-webkit-font-smoothing: subpixel-antialiased;
 
 ======== Matched CSS Rules ========
 [expanded] 
