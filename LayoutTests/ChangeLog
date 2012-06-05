@@ -1,3 +1,10 @@
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Chromium test failure expectations per Skia roll:
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=140580
+
+        * platform/chromium/TestExpectations:
+
 2012-06-05  Tim Horton  <timothy_horton@apple.com>
 
         Assertion failure on mac-lion-wk2 in fast/hidpi/device-scale-factor-paint.html
