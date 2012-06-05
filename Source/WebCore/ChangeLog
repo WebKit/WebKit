@@ -1,3 +1,23 @@
+2012-06-05  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r118197): PluginStrategy should be used even if ENABLE(NETSCAPE_PLUGIN_API) is false
+        https://bugs.webkit.org/show_bug.cgi?id=88296
+
+        Reviewed by Dan Bernstein.
+
+        refresh() and initPlugins() should call into PluginStrategy even if
+        ENABLE(NETSCAPE_PLUGIN_API) is false. Some ports support non-Netscape
+        plug-ins, so PluginStrategy should be consulted even if Netscape
+        plug-ins specifically are disabled.
+
+        Ports that support platform strategies but not Netscape plug-ins should
+        handle this inside their PluginStrategy rather than modifying generic
+        plug-in code.
+
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::refresh):
+        (WebCore::PluginData::initPlugins):
+
 2012-06-05  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash when modifying fixed-position elements in a detached frame
