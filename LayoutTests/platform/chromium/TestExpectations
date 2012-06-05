@@ -2005,7 +2005,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html =
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
@@ -2740,8 +2739,6 @@ BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html 
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
-
-BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 
 BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
 
@@ -3801,5 +3798,7 @@ BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS FAIL
 
 BUG_EAE WIN : fast/sub-pixel/float-containing-block-with-margin.html = PASS FAIL
 
+//BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+//BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
