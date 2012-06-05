@@ -1,3 +1,15 @@
+2012-06-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: aggregate all events before first frame into a fake frame
+        https://bugs.webkit.org/show_bug.cgi?id=88229
+
+        - in Timeline's frame mode, start aggregating events by frame even before we get first frame marker.
+
+        * inspector/front-end/TimelineFrameController.js:
+        (WebInspector.TimelineFrameController.prototype._addRecord):
+        (WebInspector.TimelineFrameController.prototype._flushFrame):
+        (WebInspector.TimelineFrameController.prototype._createFrame):
+
 2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         JSC:need to implement Dictionary::getWithUndefinedOrNullCheck for IDB

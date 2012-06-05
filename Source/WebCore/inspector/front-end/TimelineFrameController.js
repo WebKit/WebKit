@@ -61,40 +61,30 @@ WebInspector.TimelineFrameController.prototype = {
 
     _addRecord: function(record)
     {
-        if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
+        if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame && this._lastFrame)
             this._flushFrame(record);
-        else if (this._lastFrame) {
+        else {
+            if (!this._lastFrame)
+                this._lastFrame = this._createFrame(record);
             WebInspector.TimelineModel.aggregateTimeForRecord(this._lastFrame.timeByCategory, record);
             this._lastFrame.cpuTime += WebInspector.TimelineModel.durationInSeconds(record);
-        } else {
-            // No frame records so far -- generate a synthetic frame per each top-level record, but only
-            // dispatch these to the overview.
-            this._overviewPane.addFrame(this._createSyntheticFrame(record));
         }
     },
 
     _flushFrame: function(record)
     {
-        var frameBeginTime = WebInspector.TimelineModel.startTimeInSeconds(record);
-        if (this._lastFrame) {
-            this._lastFrame.endTime = frameBeginTime;
-            this._lastFrame.duration = this._lastFrame.endTime - this._lastFrame.startTime;
-            this._overviewPane.addFrame(this._lastFrame);
-            this._presentationModel.addFrame(this._lastFrame);
-        }
-        this._lastFrame = new WebInspector.TimelineFrame();
-        this._lastFrame.startTime = frameBeginTime;
-        this._lastFrame.startTimeOffset = this._model.recordOffsetInSeconds(record);
+        this._lastFrame.endTime = WebInspector.TimelineModel.startTimeInSeconds(record);
+        this._lastFrame.duration = this._lastFrame.endTime - this._lastFrame.startTime;
+        this._overviewPane.addFrame(this._lastFrame);
+        this._presentationModel.addFrame(this._lastFrame);
+        this._lastFrame = this._createFrame(record);
     },
 
-    _createSyntheticFrame: function(record)
+    _createFrame: function(record)
     {
         var frame = new WebInspector.TimelineFrame();
         frame.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
         frame.startTimeOffset = this._model.recordOffsetInSeconds(record);
-        frame.endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
-        frame.duration = WebInspector.TimelineModel.durationInSeconds(record);
-        frame.cpuTime = frame.duration;
         return frame;
     },
 
