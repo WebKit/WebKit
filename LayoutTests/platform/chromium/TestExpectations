@@ -2139,7 +2139,6 @@ BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
 BUGWK87757 VISTA : fast/viewport/viewport-130.html = TIMEOUT TEXT
 BUGWK87757 VISTA : fast/viewport/viewport-131.html = TIMEOUT TEXT
 BUGWK87757 VISTA : fast/viewport/viewport-132.html = TIMEOUT TEXT
-BUGWK87757 VISTA : fast/viewport/viewport-133.html = TIMEOUT TEXT
 BUGWK87757 VISTA : fast/viewport/viewport-legacy-xhtmlmp-misplaced-doctype.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html = PASS
 
