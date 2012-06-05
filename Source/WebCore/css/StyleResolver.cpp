@@ -2069,7 +2069,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 #ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
         || style->position() == FixedPosition
 #else
-        || (style->position() == FixedPosition && e && e->document()->page()->settings()->fixedPositionCreatesStackingContext())
+        || (style->position() == FixedPosition && e && e->document()->page() && e->document()->page()->settings()->fixedPositionCreatesStackingContext())
 #endif
 #if ENABLE(OVERFLOW_SCROLLING)
         // Touch overflow scrolling creates a stacking context.

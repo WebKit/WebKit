@@ -1,3 +1,13 @@
+2012-06-05  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Crash when modifying fixed-position elements in a detached frame
+        https://bugs.webkit.org/show_bug.cgi?id=88288
+
+        Reviewed by James Robinson.
+
+        * fast/block/positioning/fixed-position-detached-frame-expected.txt: Added.
+        * fast/block/positioning/fixed-position-detached-frame.html: Added.
+
 2012-06-05  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: serialize edge counts instead of indexes in heap snapshot
