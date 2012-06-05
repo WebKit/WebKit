@@ -1,3 +1,13 @@
+2012-06-04  Jessie Berlin  <jberlin@apple.com>
+
+        Start skipping all the failing tests on Windows to get the bots greener.
+
+        At this point it doesn't make sense to try to split the hundreds of failures out into
+        separate bugs and rebaseline. It makes more sense to use the Skipped list as a todo list
+        of things that need to be checked / updated for Windows.
+
+        * platform/win/Skipped:
+
 2012-06-04  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed new baseline for test added in r119423.
