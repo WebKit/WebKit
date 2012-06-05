@@ -1,5 +1,13 @@
 2012-06-04  Jessie Berlin  <jberlin@apple.com>
 
+        Skip more tests on Windows to get the bots greener.
+
+        See r119449 for more context.
+
+        * platform/win/Skipped:
+
+2012-06-04  Jessie Berlin  <jberlin@apple.com>
+
         Start skipping all the failing tests on Windows to get the bots greener.
 
         At this point it doesn't make sense to try to split the hundreds of failures out into
