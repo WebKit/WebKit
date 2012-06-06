@@ -1,3 +1,25 @@
+2012-06-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] http/tests/globalhistory testcases do not pass
+        https://bugs.webkit.org/show_bug.cgi?id=82579
+
+        Reviewed by Csaba Osztrogonác.
+
+        DRT has provided callbacks for ewk_view "global history delegate" signals.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (isGlobalHistoryTest): Aux function to ident global history testcase.
+        (createLayoutTestController):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onTitleChanged): Handles also some global history testcases.
+        (DumpRenderTreeChrome::onWebViewNavigatedWithData): New callback function.
+        (DumpRenderTreeChrome::onWebViewServerRedirect): Ditto.
+        (DumpRenderTreeChrome::onWebViewClientRedirect): Ditto.
+        (DumpRenderTreeChrome::onWebViewPopulateVisitedLinks): Ditto.
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-06-06  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] run-qtwebkit-tests hangs with -j1

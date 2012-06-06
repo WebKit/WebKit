@@ -293,9 +293,6 @@ fast/replaced/pdf-as-image.html
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# The EFL port has no global history delegate
-http/tests/globalhistory
-
 # Fails because of the security policy of the user agent?
 # http://webkit.org/b/79604
 fast/mutation/database-callback-delivery.html

@@ -199,6 +199,11 @@ static String getExpectedPixelHash(const String& testURL)
     return (hashSeparatorPos != notFound) ? testURL.substring(hashSeparatorPos + 1) : String();
 }
 
+static inline bool isGlobalHistoryTest(const String& cTestPathOrURL)
+{
+    return cTestPathOrURL.contains("/globalhistory/");
+}
+
 static void createLayoutTestController(const String& testURL, const String& expectedPixelHash)
 {
     gLayoutTestController =
@@ -214,6 +219,7 @@ static void createLayoutTestController(const String& testURL, const String& expe
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
     gLayoutTestController->setDeveloperExtrasEnabled(true);
+    gLayoutTestController->setDumpHistoryDelegateCallbacks(isGlobalHistoryTest(testURL));
 
     if (shouldDumpAsText(testURL)) {
         gLayoutTestController->setDumpAsText(true);

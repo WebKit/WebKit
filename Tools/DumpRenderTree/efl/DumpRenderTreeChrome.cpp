@@ -110,6 +110,10 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "mixedcontent,run", onInsecureContentRun, 0);
     evas_object_smart_callback_add(view, "mixedcontent,displayed", onInsecureContentDisplayed, 0);
     evas_object_smart_callback_add(view, "frame,created", onFrameCreated, 0);
+    evas_object_smart_callback_add(view, "navigate,with,data", onWebViewNavigatedWithData, 0);
+    evas_object_smart_callback_add(view, "perform,server,redirect", onWebViewServerRedirect, 0);
+    evas_object_smart_callback_add(view, "perform,client,redirect", onWebViewClientRedirect, 0);
+    evas_object_smart_callback_add(view, "populate,visited,links", onWebViewPopulateVisitedLinks, 0);
 
     connectEditingCallbacks(view);
 
@@ -454,6 +458,10 @@ void DumpRenderTreeChrome::onFrameTitleChanged(void*, Evas_Object* frame, void* 
 
     if (!done && gLayoutTestController->dumpTitleChanges())
         printf("TITLE CHANGED: %s\n", (titleText && titleText->string) ? titleText->string : "");
+
+    if (!done && gLayoutTestController->dumpHistoryDelegateCallbacks())
+        printf("WebView updated the title for history URL \"%s\" to \"%s\".\n", ewk_frame_uri_get(frame)
+               , (titleText && titleText->string) ? titleText->string : "");
 }
 
 void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eventInfo)
@@ -548,6 +556,57 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     evas_object_smart_callback_add(frame, "redirect,requested", onFrameRedirectRequested, 0);
     evas_object_smart_callback_add(frame, "title,changed", onFrameTitleChanged, 0);
     evas_object_smart_callback_add(frame, "xss,detected", onDidDetectXSS, 0);
+}
+
+void DumpRenderTreeChrome::onWebViewNavigatedWithData(void*, Evas_Object*, void* eventInfo)
+{
+    if (done || !gLayoutTestController->dumpHistoryDelegateCallbacks())
+        return;
+
+    ASSERT(eventInfo);
+    const Ewk_View_Navigation_Data* navigationData = static_cast<Ewk_View_Navigation_Data*>(eventInfo);
+
+    ASSERT(navigationData->request);
+    ASSERT(navigationData->response);
+
+    const bool wasFailure = navigationData->has_substitute_data || navigationData->response->status_code >= 400;
+    const bool wasRedirected = navigationData->client_redirect_source && *(navigationData->client_redirect_source);
+
+    printf("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%s.\n",
+        navigationData->url,
+        navigationData->title,
+        navigationData->request->http_method,
+        wasFailure? "a failure" : "successful",
+        (wasRedirected ? "a client redirect from " : "not a client redirect"),
+        (wasRedirected ? navigationData->client_redirect_source : ""));
+}
+
+void DumpRenderTreeChrome::onWebViewServerRedirect(void*, Evas_Object*, void* eventInfo)
+{
+    if (done || !gLayoutTestController->dumpHistoryDelegateCallbacks())
+        return;
+
+    ASSERT(eventInfo);
+    const Ewk_View_Redirection_Data* data = static_cast<Ewk_View_Redirection_Data*>(eventInfo);
+    printf("WebView performed a server redirect from \"%s\" to \"%s\".\n", data->source_url, data->destination_url);
+}
+
+void DumpRenderTreeChrome::onWebViewClientRedirect(void*, Evas_Object*, void* eventInfo)
+{
+    if (done || !gLayoutTestController->dumpHistoryDelegateCallbacks())
+        return;
+
+    ASSERT(eventInfo);
+    const Ewk_View_Redirection_Data* data = static_cast<Ewk_View_Redirection_Data*>(eventInfo);
+    printf("WebView performed a client redirect from \"%s\" to \"%s\".\n", data->source_url, data->destination_url);
+}
+
+void DumpRenderTreeChrome::onWebViewPopulateVisitedLinks(void*, Evas_Object* ewkView, void*)
+{
+    if (done || !gLayoutTestController->dumpHistoryDelegateCallbacks())
+        return;
+
+    printf("Asked to populate visited links for WebView \"%s\"\n", ewk_view_uri_get(ewkView));
 }
 
 void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, void*)
