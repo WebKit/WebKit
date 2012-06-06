@@ -1,3 +1,28 @@
+2012-06-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Assigning to a static property should not change iteration order
+        https://bugs.webkit.org/show_bug.cgi?id=88401
+
+        Reviewed by Geoff Garen.
+
+        A specific iteration order is not defined by the spec, but test-262 somewhat tenuously
+        requires that it is at least stable, e.g. ch10/10.4/10.4.2/S10.4.2_A1.1_T1.js
+
+        Whilst it is not clear that this behavior really arises from the specification, it
+        would seem like common sense to conform to this.
+
+        The problem here is that we allow properties in the structure to shadow those in the
+        static table, and we iterate the properties in the structure first - which means that
+        as values of existing properties are modified, their iteration order changes too.
+
+        The easy fix is to iterate the properties from the static table first. This has a
+        further benefit, since it will mean that user added properties will come after those
+        present in the static table (respected the expected insertion-order).
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyNames):
+            - Iterate static properties first.
+
 2012-06-06  Andy Wingo  <wingo@igalia.com>
 
         Ensure consistent order of evaluation in LLInt slow paths

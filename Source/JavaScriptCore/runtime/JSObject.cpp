@@ -417,9 +417,9 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
 
 void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
     if (!object->staticFunctionsReified())
         getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
+    object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
 }
 
 double JSObject::toNumber(ExecState* exec) const
