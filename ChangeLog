@@ -1,3 +1,20 @@
+2012-06-06  Sam D  <dsam2912@gmail.com>
+
+        Web Inspector: Option for selecting/deselecting all breakpoints in breakpoint pane
+        https://bugs.webkit.org/show_bug.cgi?id=87644
+
+        Reviewed by Pavel Feldman.
+
+        Added an option to enable/disable all breakpoints in Breakpoint pane.
+
+        * Source/WebCore/English.lproj/localizedStrings.js:
+        * Source/WebCore/inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.enableAllBreakpoints):
+        (WebInspector.BreakpointManager.prototype.disableAllBreakpoints):
+        * Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointContextMenu.enabledBreakpointCount):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointContextMenu):
+
 2012-06-05  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] show the feature list in alphabetical order

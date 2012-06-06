@@ -138,6 +138,18 @@ WebInspector.BreakpointManager.prototype = {
         return result;
     },
 
+    /**
+     * @param {boolean} toggleState
+     */
+    toggleAllBreakpoints: function(toggleState)
+    {
+        for (var i = 0; i < this._breakpoints.length; ++i) {
+            var breakpoint = this._breakpoints[i];
+            if (breakpoint.enabled() != toggleState)
+                breakpoint.setEnabled(toggleState);
+        }
+    },
+
     removeAllBreakpoints: function()
     {
         var breakpoints = this._breakpoints.slice();
