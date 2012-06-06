@@ -53,7 +53,7 @@ void JSGlobalThis::setUnwrappedObject(JSGlobalData& globalData, JSGlobalObject* 
     ASSERT_ARG(globalObject, globalObject);
     m_unwrappedObject.set(globalData, this, globalObject);
     setPrototype(globalData, globalObject->prototype());
-    resetInheritorID();
+    resetInheritorID(globalData);
 }
 
 } // namespace JSC

@@ -311,7 +311,6 @@ macro allocateBasicJSObject(sizeClassIndex, classInfoOffset, structure, result, 
         loadp classInfoOffset[scratch1], scratch2
         storep scratch2, [result]
         storep structure, JSCell::m_structure[result]
-        storep 0, JSObject::m_inheritorID[result]
         addp sizeof JSObject, result, scratch1
         storep scratch1, JSObject::m_propertyStorage[result]
     end
