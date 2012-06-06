@@ -67,6 +67,7 @@ namespace JSC {
         friend class JSGlobalData;
         friend class SpecializedThunkJIT;
         friend class JSRopeString;
+        friend class SlotVisitor;
         friend struct ThunkHelpers;
 
         typedef JSCell Base;

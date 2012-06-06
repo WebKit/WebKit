@@ -1371,6 +1371,8 @@ void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSNonFinalObject::visitChildren(thisObject, visitor);
 
     if (thisObject->m_storage) {
+        MARK_LOG_MESSAGE1("[%u]: ", thisObject->length());
+
         ArrayStorage* storage = thisObject->m_storage;
         void* baseStorage = storage->m_allocBase;
 

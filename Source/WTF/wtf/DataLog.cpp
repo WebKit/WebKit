@@ -95,5 +95,10 @@ void dataLog(const char* format, ...)
     va_end(argList);
 }
 
+void dataLogString(const char* str)
+{
+    fputs(str, dataFile());
+}
+
 } // namespace WTF
 

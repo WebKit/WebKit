@@ -37,10 +37,12 @@ WTF_EXPORT_PRIVATE FILE* dataFile();
 
 WTF_EXPORT_PRIVATE void dataLogV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 WTF_EXPORT_PRIVATE void dataLog(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+WTF_EXPORT_PRIVATE void dataLogString(const char*);
 
 } // namespace WTF
 
 using WTF::dataLog;
+using WTF::dataLogString;
 
 #endif // DataLog_h
 

@@ -84,6 +84,8 @@ namespace JSC {
         void setStructure(JSGlobalData&, Structure*);
         void clearStructure() { m_structure.clear(); }
 
+        const char* className();
+
         // Extracting the value.
         JS_EXPORT_PRIVATE bool getString(ExecState* exec, UString&) const;
         JS_EXPORT_PRIVATE UString getString(ExecState* exec) const; // null string if not a string
@@ -197,6 +199,8 @@ namespace JSC {
 
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
+        MARK_LOG_PARENT(visitor, cell);
+
         visitor.append(&cell->m_structure);
     }
 

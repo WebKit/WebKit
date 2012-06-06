@@ -1,3 +1,15 @@
+2012-06-06  Michael Saboff  <msaboff@apple.com>
+
+        ENH: Add Logging to GC Marking Phase
+        https://bugs.webkit.org/show_bug.cgi?id=88364
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/DataLog.cpp:
+        (WTF::dataLogString): Additional method to support GC Mark logging.
+        * wtf/DataLog.h:
+        * wtf/Platform.h: New ENABLE_OBJECT_MARK_LOGGING flag macro.
+
 2012-06-06  Andy Wingo  <wingo@igalia.com>
 
         [GTK] Enable the LLInt

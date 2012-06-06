@@ -36,6 +36,7 @@
 #include "JSObject.h"
 #include "ScopeChain.h"
 #include "Structure.h"
+#include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
@@ -219,19 +220,35 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other)
 }
 
 #if ENABLE(PARALLEL_GC)
-void MarkStackThreadSharedData::markingThreadMain()
+void MarkStackThreadSharedData::resetChildren()
+{
+    for (unsigned i = 0; i < m_markingThreadsMarkStack.size(); ++i)
+       m_markingThreadsMarkStack[i]->reset();
+}   
+
+size_t MarkStackThreadSharedData::childVisitCount()
+{       
+    unsigned long result = 0;
+    for (unsigned i = 0; i < m_markingThreadsMarkStack.size(); ++i)
+        result += m_markingThreadsMarkStack[i]->visitCount();
+    return result;
+}
+
+void MarkStackThreadSharedData::markingThreadMain(SlotVisitor* slotVisitor)
 {
     WTF::registerGCThread();
     {
-        SlotVisitor slotVisitor(*this);
-        ParallelModeEnabler enabler(slotVisitor);
-        slotVisitor.drainFromShared(SlotVisitor::SlaveDrain);
+        ParallelModeEnabler enabler(*slotVisitor);
+        slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
     }
+    delete slotVisitor;
 }
 
-void MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
-{
-    static_cast<MarkStackThreadSharedData*>(shared)->markingThreadMain();
+void MarkStackThreadSharedData::markingThreadStartFunc(void* myVisitor)
+{               
+    SlotVisitor* slotVisitor = static_cast<SlotVisitor*>(myVisitor);
+
+    slotVisitor->sharedData().markingThreadMain(slotVisitor);
 }
 #endif
 
@@ -244,7 +261,9 @@ MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
 {
 #if ENABLE(PARALLEL_GC)
     for (unsigned i = 1; i < Options::numberOfGCMarkers; ++i) {
-        m_markingThreads.append(createThread(markingThreadStartFunc, this, "JavaScriptCore::Marking"));
+        SlotVisitor* slotVisitor = new SlotVisitor(*this);
+        m_markingThreadsMarkStack.append(slotVisitor);
+        m_markingThreads.append(createThread(markingThreadStartFunc, slotVisitor, "JavaScriptCore::Marking"));
         ASSERT(m_markingThreads.last());
     }
 #endif
@@ -276,7 +295,6 @@ void MarkStackThreadSharedData::reset()
 #else
     ASSERT(m_opaqueRoots.isEmpty());
 #endif
-    
     m_weakReferenceHarvesters.removeAll();
 }
 

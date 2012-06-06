@@ -382,10 +382,13 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         validate(cell);
 #endif
-        m_visitCount++;
         if (Heap::testAndSetMarked(cell) || !cell->structure())
             return;
+
+        m_visitCount++;
         
+        MARK_LOG_CHILD(*this, cell);
+
         // Should never attempt to mark something that is zapped.
         ASSERT(!cell->isZapped());
         

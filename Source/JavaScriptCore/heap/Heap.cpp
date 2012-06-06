@@ -421,6 +421,10 @@ void Heap::markRoots(bool fullGC)
     UNUSED_PARAM(fullGC);
     ASSERT(isValidThreadState(m_globalData));
 
+#if ENABLE(OBJECT_MARK_LOGGING)
+    double gcStartTime = WTF::currentTime();
+#endif
+
     void* dummy;
     
     // We gather conservative roots before clearing mark bits because conservative
@@ -484,28 +488,33 @@ void Heap::markRoots(bool fullGC)
     
         {
             GCPHASE(VisitMachineRoots);
+            MARK_LOG_ROOT(visitor, "C++ Stack");
             visitor.append(machineThreadRoots);
             visitor.donateAndDrain();
         }
         {
             GCPHASE(VisitRegisterFileRoots);
+            MARK_LOG_ROOT(visitor, "Register File");
             visitor.append(registerFileRoots);
             visitor.donateAndDrain();
         }
 #if ENABLE(DFG_JIT)
         {
             GCPHASE(VisitScratchBufferRoots);
+            MARK_LOG_ROOT(visitor, "Scratch Buffers");
             visitor.append(scratchBufferRoots);
             visitor.donateAndDrain();
         }
 #endif
         {
             GCPHASE(VisitProtectedObjects);
+            MARK_LOG_ROOT(visitor, "Protected Objects");
             markProtectedObjects(heapRootVisitor);
             visitor.donateAndDrain();
         }
         {
             GCPHASE(VisitTempSortVectors);
+            MARK_LOG_ROOT(visitor, "Temp Sort Vectors");
             markTempSortVectors(heapRootVisitor);
             visitor.donateAndDrain();
         }
@@ -513,30 +522,35 @@ void Heap::markRoots(bool fullGC)
         {
             GCPHASE(MarkingArgumentBuffers);
             if (m_markListSet && m_markListSet->size()) {
+                MARK_LOG_ROOT(visitor, "Argument Buffers");
                 MarkedArgumentBuffer::markLists(heapRootVisitor, *m_markListSet);
                 visitor.donateAndDrain();
             }
         }
         if (m_globalData->exception) {
             GCPHASE(MarkingException);
+            MARK_LOG_ROOT(visitor, "Exceptions");
             heapRootVisitor.visit(&m_globalData->exception);
             visitor.donateAndDrain();
         }
     
         {
             GCPHASE(VisitStrongHandles);
+            MARK_LOG_ROOT(visitor, "Strong Handles");
             m_handleSet.visitStrongHandles(heapRootVisitor);
             visitor.donateAndDrain();
         }
     
         {
             GCPHASE(HandleStack);
+            MARK_LOG_ROOT(visitor, "Handle Stack");
             m_handleStack.visit(heapRootVisitor);
             visitor.donateAndDrain();
         }
     
         {
             GCPHASE(TraceCodeBlocks);
+            MARK_LOG_ROOT(visitor, "Trace Code Blocks");
             m_dfgCodeBlocks.traceMarkedCodeBlocks(visitor);
             visitor.donateAndDrain();
         }
@@ -553,6 +567,7 @@ void Heap::markRoots(bool fullGC)
     // the liveness of the rest of the object graph.
     {
         GCPHASE(VisitingLiveWeakHandles);
+        MARK_LOG_ROOT(visitor, "Live Weak Handles");
         while (true) {
             m_objectSpace.visitWeakSets(heapRootVisitor);
             harvestWeakReferences();
@@ -571,8 +586,19 @@ void Heap::markRoots(bool fullGC)
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
 
     visitor.doneCopying();
+#if ENABLE(OBJECT_MARK_LOGGING)
+    size_t visitCount = visitor.visitCount();
+#if ENABLE(PARALLEL_GC)
+    visitCount += m_sharedData.childVisitCount();
+#endif
+    MARK_LOG_MESSAGE2("\nNumber of live Objects after full GC %lu, took %.6f secs\n", visitCount, WTF::currentTime() - gcStartTime);
+#endif
+
     visitor.reset();
     m_sharedData.reset();
+#if ENABLE(PARALLEL_GC)
+    m_sharedData.resetChildren();
+#endif
     m_storageSpace.doneCopying();
 
 }

@@ -184,6 +184,11 @@ UString JSCell::className(const JSObject*)
     return UString();
 }
 
+const char* JSCell::className()
+{
+    return classInfo()->className;
+}
+
 void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
 {
     ASSERT_NOT_REACHED();
