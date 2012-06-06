@@ -54,17 +54,6 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
 
     ASSERT(availableWidth > 0 && availableHeight > 0);
 
-    float autoDPI = deviceDPI;
-
-    switch (args.type) {
-    case ViewportArguments::Implicit:
-        autoDPI = deviceDPI;
-        break;
-    case ViewportArguments::ViewportMeta:
-        autoDPI = targetDPI;
-        break;
-    }
-
     result.devicePixelRatio = deviceDPI / targetDPI;
 
     // Resolve non-'auto' width and height to pixel values.
