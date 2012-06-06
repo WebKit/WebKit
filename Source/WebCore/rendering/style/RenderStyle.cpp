@@ -396,6 +396,12 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         if (rareNonInheritedData->m_flexibleBox.get() != other->rareNonInheritedData->m_flexibleBox.get()
             && *rareNonInheritedData->m_flexibleBox.get() != *other->rareNonInheritedData->m_flexibleBox.get())
             return StyleDifferenceLayout;
+        if (rareNonInheritedData->m_order != other->rareNonInheritedData->m_order
+            || rareNonInheritedData->m_alignContent != other->rareNonInheritedData->m_alignContent
+            || rareNonInheritedData->m_alignItems != other->rareNonInheritedData->m_alignItems
+            || rareNonInheritedData->m_alignSelf != other->rareNonInheritedData->m_alignSelf
+            || rareNonInheritedData->m_justifyContent != other->rareNonInheritedData->m_justifyContent)
+            return StyleDifferenceLayout;
 
         // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
         if (!rareNonInheritedData->shadowDataEquivalent(*other->rareNonInheritedData.get()))

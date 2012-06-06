@@ -1,3 +1,16 @@
+2012-06-05  Tony Chang  <tony@chromium.org>
+
+        Changing flexbox justify/alignment doesn't update their positioning
+        https://bugs.webkit.org/show_bug.cgi?id=88366
+
+        Reviewed by Ojan Vafai.
+
+        Test: css3/flexbox/style-change.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Since these member variables were moved
+        out of StyleFlexibleBoxData, we have to compare them in RenderStyle::diff.
+
 2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         JSC implementation of SerializedScriptValue for IndexedDB
