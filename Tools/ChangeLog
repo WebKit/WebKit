@@ -1,3 +1,15 @@
+2012-06-06  Jessie Berlin  <jberlin@apple.com>
+
+        Remove very red Windows WebKit2 testers
+        https://bugs.webkit.org/show_bug.cgi?id=88452
+
+        Reviewed by Steve Falkenburg.
+
+        Remove the Windows 7 Release WK2 testers so that the hardware can be repurposed. We are
+        need to focus on getting the WK1 testers green.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-06-06  Dirk Pranke  <dpranke@chromium.org>
 
         get rebaselining tools to kinda work with the skia overrides file
