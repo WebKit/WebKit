@@ -1,3 +1,20 @@
+2012-06-06  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Expose setPictographFontFamily through the chromium webkit api.
+        https://bugs.webkit.org/show_bug.cgi?id=88393
+
+        Reviewed by Adam Barth.
+
+        This was added to WebCore in
+        https://bugs.webkit.org/show_bug.cgi?id=65197
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setPictographFontFamily):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.  Rolled DEPS.

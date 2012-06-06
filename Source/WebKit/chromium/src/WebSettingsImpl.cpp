@@ -89,6 +89,11 @@ void WebSettingsImpl::setFantasyFontFamily(const WebString& font, UScriptCode sc
     m_settings->setFantasyFontFamily(font, script);
 }
 
+void WebSettingsImpl::setPictographFontFamily(const WebString& font, UScriptCode script)
+{
+    m_settings->setPictographFontFamily(font, script);
+}
+
 void WebSettingsImpl::setDefaultFontSize(int size)
 {
     m_settings->setDefaultFontSize(size);

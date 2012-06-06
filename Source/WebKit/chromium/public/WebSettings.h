@@ -59,6 +59,7 @@ public:
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setCursiveFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setFantasyFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setPictographFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setDefaultFontSize(int) = 0;
     virtual void setDefaultFixedFontSize(int) = 0;
     virtual void setMinimumFontSize(int) = 0;
