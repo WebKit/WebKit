@@ -1,3 +1,12 @@
+2012-06-06  Andy Wingo  <wingo@igalia.com>
+
+        [GTK] Enable the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=88315
+
+        Reviewed by Filip Pizlo.
+
+        * configure.ac: Require Ruby, to build the low-level interpreter.
+
 2012-06-06  Sam D  <dsam2912@gmail.com>
 
         Web Inspector: Option for selecting/deselecting all breakpoints in breakpoint pane

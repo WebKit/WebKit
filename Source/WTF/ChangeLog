@@ -1,3 +1,16 @@
+2012-06-06  Andy Wingo  <wingo@igalia.com>
+
+        [GTK] Enable the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=88315
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/InlineASM.h: Add an implementation of LOCAL_LABEL_STRING for
+        OS(LINUX).
+        * wtf/Platform.h: Add OS(LINUX) to the set of operating systems
+        for ENABLE_LLINT.  Add a specific check for PLATFORM(MAC) or
+        PLATFORM(IOS), and add to that a check for PLATFORM(GTK).
+
 2012-06-05  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         [Qt] Use GraphicsContext3DOpenGLES.cpp when using OpenGL ES

@@ -20,7 +20,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
 	DerivedSources/JavaScriptCore/JSONObject.lut.h \
 	DerivedSources/JavaScriptCore/MathObject.lut.h \
-    DerivedSources/JavaScriptCore/NamePrototype.lut.h \
+	DerivedSources/JavaScriptCore/NamePrototype.lut.h \
 	DerivedSources/JavaScriptCore/NumberConstructor.lut.h \
 	DerivedSources/JavaScriptCore/NumberPrototype.lut.h \
 	DerivedSources/JavaScriptCore/ObjectConstructor.lut.h \
@@ -29,7 +29,9 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/RegExpObject.lut.h \
 	DerivedSources/JavaScriptCore/RegExpPrototype.lut.h \
 	DerivedSources/JavaScriptCore/StringConstructor.lut.h \
-	DerivedSources/JavaScriptCore/StringPrototype.lut.h
+	DerivedSources/JavaScriptCore/StringPrototype.lut.h \
+	DerivedSources/JavaScriptCore/LLIntDesiredOffsets.h \
+	DerivedSources/JavaScriptCore/LLIntAssembly.h
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \
@@ -232,8 +234,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleSet.cpp \
 	Source/JavaScriptCore/heap/HandleSet.h \
 	Source/JavaScriptCore/heap/HeapBlock.h \
-    Source/JavaScriptCore/heap/IncrementalSweeper.h \
-    Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
+	Source/JavaScriptCore/heap/IncrementalSweeper.h \
+	Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
@@ -357,9 +359,18 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
+	Source/JavaScriptCore/llint/LLIntCommon.h \
+	Source/JavaScriptCore/llint/LLIntData.cpp \
 	Source/JavaScriptCore/llint/LLIntData.h \
 	Source/JavaScriptCore/llint/LLIntEntrypoints.cpp \
 	Source/JavaScriptCore/llint/LLIntEntrypoints.h \
+	Source/JavaScriptCore/llint/LLIntExceptions.cpp \
+	Source/JavaScriptCore/llint/LLIntExceptions.h \
+	Source/JavaScriptCore/llint/LLIntOfflineAsmConfig.h \
+	Source/JavaScriptCore/llint/LLIntSlowPaths.cpp \
+	Source/JavaScriptCore/llint/LLIntSlowPaths.h \
+	Source/JavaScriptCore/llint/LLIntThunks.cpp \
+	Source/JavaScriptCore/llint/LLIntThunks.h \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.cpp \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.h \
 	Source/JavaScriptCore/os-win32/stdbool.h \
@@ -626,6 +637,27 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp
 endif
 
+llint_nosources = \
+	Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm \
+	Source/JavaScriptCore/llint/LowLevelInterpreter64.asm \
+	Source/JavaScriptCore/llint/LowLevelInterpreter.asm
+
+offlineasm_nosources = \
+	Source/JavaScriptCore/offlineasm/armv7.rb \
+	Source/JavaScriptCore/offlineasm/asm.rb \
+	Source/JavaScriptCore/offlineasm/ast.rb \
+	Source/JavaScriptCore/offlineasm/backends.rb \
+	Source/JavaScriptCore/offlineasm/generate_offset_extractor.rb \
+	Source/JavaScriptCore/offlineasm/instructions.rb \
+	Source/JavaScriptCore/offlineasm/offsets.rb \
+	Source/JavaScriptCore/offlineasm/opt.rb \
+	Source/JavaScriptCore/offlineasm/parser.rb \
+	Source/JavaScriptCore/offlineasm/registers.rb \
+	Source/JavaScriptCore/offlineasm/self_hash.rb \
+	Source/JavaScriptCore/offlineasm/settings.rb \
+	Source/JavaScriptCore/offlineasm/transform.rb \
+	Source/JavaScriptCore/offlineasm/x86.rb
+
 # minidom
 Programs_minidom_SOURCES = \
 	Source/JavaScriptCore/API/tests/JSNode.c \
@@ -637,6 +669,10 @@ Programs_minidom_SOURCES = \
 	Source/JavaScriptCore/API/tests/NodeList.c \
 	Source/JavaScriptCore/API/tests/NodeList.h \
 	Source/JavaScriptCore/API/tests/minidom.c
+
+Programs_LLIntOffsetsExtractor_SOURCES = \
+	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.cpp \
+	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.h
 
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
 	Source/JavaScriptCore/JSCTypedArrayStubs.h \

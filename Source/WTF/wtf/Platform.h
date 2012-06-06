@@ -883,7 +883,11 @@
 
 /* On some of the platforms where we have a JIT, we want to also have the 
    low-level interpreter. */
-#if !defined(ENABLE_LLINT) && ENABLE(JIT) && (OS(DARWIN) && !PLATFORM(QT)) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2))
+#if !defined(ENABLE_LLINT) \
+    && ENABLE(JIT) \
+    && (OS(DARWIN) || OS(LINUX)) \
+    && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK)) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2))
 #define ENABLE_LLINT 1
 #endif
 

@@ -97,7 +97,7 @@ class Assembler
     end
     
     def self.labelReference(labelName)
-        "\" SYMBOL_STRING(#{labelName}) \""
+        "\" SYMBOL_STRING_RELOCATION(#{labelName}) \""
     end
     
     def self.localLabelReference(labelName)

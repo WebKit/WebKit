@@ -103,7 +103,7 @@ end
 
 # Some common utilities.
 macro crash()
-    storei 0, 0xbbadbeef[]
+    storei t0, 0xbbadbeef[]
     move 0, t0
     call t0
 end

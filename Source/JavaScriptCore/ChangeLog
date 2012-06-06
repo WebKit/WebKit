@@ -1,5 +1,23 @@
 2012-06-06  Andy Wingo  <wingo@igalia.com>
 
+        [GTK] Enable the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=88315
+
+        Reviewed by Filip Pizlo.
+
+        * GNUmakefile.am: Add rules to generate LLIntDesiredOffsets.h and
+        LLIntAssembly.h.
+        * GNUmakefile.list.am: Add offlineasm and llint files to the
+        dist.  Add LLInt source files to the build.
+        * llint/LowLevelInterpreter.asm (crash): Generate a store of
+        0xbbadbeef to a register, not to a constant.  Otherwise, gas was
+        failing to assemble result.
+        * offlineasm/asm.rb (labelReference): Generate a
+        SYMBOL_STRING_RELOCATION instead of a SYMBOL_STRING, so that we go
+        through the PLT on ELF systems.
+
+2012-06-06  Andy Wingo  <wingo@igalia.com>
+
         REGRESSION (r106478): None of the Paper.js JavaScript examples work
         https://bugs.webkit.org/show_bug.cgi?id=87158
 

@@ -75,6 +75,8 @@
 // Don't know about any of the others.
 #if PLATFORM(MAC)
 #define LOCAL_LABEL_STRING(name) "L" #name
+#elif OS(LINUX)
+#define LOCAL_LABEL_STRING(name) ".L" #name
 #endif
 
 #endif // InlineASM_h
