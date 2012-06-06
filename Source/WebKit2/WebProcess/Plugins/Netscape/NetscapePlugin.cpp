@@ -69,6 +69,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_isTransparent(false)
     , m_inNPPNew(false)
     , m_shouldUseManualLoader(false)
+    , m_hasCalledSetWindow(false)
     , m_nextTimerID(0)
 #if PLATFORM(MAC)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
@@ -690,11 +691,11 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
         return;
     }
 
-    bool shouldCallWindow = true;
+    bool shouldCallSetWindow = true;
 
     // If the plug-in doesn't want window relative coordinates, we don't need to call setWindow unless its size or clip rect changes.
-    if (wantsPluginRelativeNPWindowCoordinates() && m_pluginSize == pluginSize && m_clipRect == clipRect)
-        shouldCallWindow = false;
+    if (m_hasCalledSetWindow && wantsPluginRelativeNPWindowCoordinates() && m_pluginSize == pluginSize && m_clipRect == clipRect)
+        shouldCallSetWindow = false;
 
     m_pluginSize = pluginSize;
     m_clipRect = clipRect;
@@ -705,10 +706,11 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
 
     platformGeometryDidChange();
 
-    if (!shouldCallWindow)
+    if (!shouldCallSetWindow)
         return;
 
     callSetWindow();
+    m_hasCalledSetWindow = true;
 }
 
 void NetscapePlugin::visibilityDidChange()
