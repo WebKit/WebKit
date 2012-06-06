@@ -1,3 +1,12 @@
+2012-06-05  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] show the feature list in alphabetical order
+        https://bugs.webkit.org/show_bug.cgi?id=88343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac:
+
 2012-06-05  Dongwoo Im  <dw.im@samsung.com>
 
         Add 'isProtocolHandlerRegistered' and 'unregisterProtocolHandler'.
