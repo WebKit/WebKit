@@ -273,7 +273,7 @@ bool HTMLInputElement::stepMismatch() const
     return willValidate() && m_inputType->stepMismatch(value());
 }
 
-bool HTMLInputElement::getAllowedValueStep(double* step) const
+bool HTMLInputElement::getAllowedValueStep(InputNumber* step) const
 {
     return m_inputType->getAllowedValueStep(step);
 }
@@ -949,7 +949,7 @@ void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
 
 double HTMLInputElement::valueAsNumber() const
 {
-    return m_inputType->valueAsNumber();
+    return m_inputType->valueAsDouble();
 }
 
 void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
@@ -958,7 +958,7 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, Text
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    m_inputType->setValueAsNumber(newValue, eventBehavior, ec);
+    m_inputType->setValueAsDouble(newValue, eventBehavior, ec);
 }
 
 String HTMLInputElement::placeholder() const

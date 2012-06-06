@@ -79,22 +79,39 @@ const AtomicString& NumberInputType::formControlType() const
     return InputTypeNames::number();
 }
 
-double NumberInputType::valueAsNumber() const
+double NumberInputType::valueAsDouble() const
 {
-    return parseToNumber(element()->value(), numeric_limits<double>::quiet_NaN());
+    return parseToDoubleForNumberType(element()->value());
 }
 
-void NumberInputType::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
+void NumberInputType::setValueAsDouble(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
 {
-    if (newValue < -numeric_limits<float>::max()) {
+    // FIXME: We should use numeric_limits<double>::max for number input type.
+    const double floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
+    if (newValue < -floatMax) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue > numeric_limits<float>::max()) {
+    if (newValue > floatMax) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    element()->setValue(serialize(newValue), eventBehavior);
+    element()->setValue(serializeForNumberType(newValue), eventBehavior);
+}
+
+void NumberInputType::setValueAsInputNumber(const InputNumber& newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
+{
+    // FIXME: We should use numeric_limits<double>::max for number input type.
+    const InputNumber floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
+    if (newValue < -floatMax) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    if (newValue > floatMax) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    element()->setValue(serializeForNumberType(newValue), eventBehavior);
 }
 
 bool NumberInputType::typeMismatchFor(const String& value) const
@@ -113,10 +130,13 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
 
     unsigned stepBaseDecimalPlaces;
-    double stepBaseValue = parseToNumberWithDecimalPlaces(element()->fastGetAttribute(minAttr), numberDefaultStepBase, &stepBaseDecimalPlaces);
+    const InputNumber stepBaseValue = parseToNumberWithDecimalPlaces(element()->fastGetAttribute(minAttr), numberDefaultStepBase, &stepBaseDecimalPlaces);
     StepRange::NumberWithDecimalPlaces stepBase(stepBaseValue, min(stepBaseDecimalPlaces, 16u));
-    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), -numeric_limits<float>::max());
-    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
+
+    // FIXME: We should use numeric_limits<double>::max for number input type.
+    const InputNumber floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
+    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), -floatMax);
+    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), floatMax);
 
     StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
@@ -186,17 +206,17 @@ void NumberInputType::handleWheelEvent(WheelEvent* event)
     handleWheelEventForSpinButton(event);
 }
 
-double NumberInputType::parseToNumber(const String& src, double defaultValue) const
+InputNumber NumberInputType::parseToNumber(const String& src, const InputNumber& defaultValue) const
 {
-    return parseToDoubleForNumberType(src, defaultValue);
+    return convertDoubleToInputNumber(parseToDoubleForNumberType(src, defaultValue));
 }
 
-double NumberInputType::parseToNumberWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const
+InputNumber NumberInputType::parseToNumberWithDecimalPlaces(const String& src, const InputNumber& defaultValue, unsigned *decimalPlaces) const
 {
-    return parseToDoubleForNumberTypeWithDecimalPlaces(src, decimalPlaces, defaultValue);
+    return convertDoubleToInputNumber(parseToDoubleForNumberTypeWithDecimalPlaces(src, decimalPlaces, defaultValue));
 }
 
-String NumberInputType::serialize(double value) const
+String NumberInputType::serialize(const InputNumber& value) const
 {
     if (!isfinite(value))
         return String();

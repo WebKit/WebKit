@@ -1,3 +1,144 @@
+2012-06-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce InputNumber type as an alias of double for replacing it to Decimal
+        https://bugs.webkit.org/show_bug.cgi?id=88275
+
+        Reviewed by Kent Tamura.
+
+        This patch introduced InputNumber type as alias of double to be
+        replaced to Decimal and convertDoubleToInputNumber and 
+        convertToInputNumberToDouble for reducing size of patch when we
+        introduce Decimal type.
+
+        This patch added new vairables to use const variable to reduce
+        copy operation when introducing Decimal type.
+
+        In the implementation, we use InputNumber, will be Decimal, however some methods in IDL
+        use double. To clarify internal usage of value and external usage, thit patch renamed
+        following functions:
+
+        - parseToDouble => parseNumber
+        - setValueAsNumber => setValueAsDouble and setValueAsInputNumber
+        - valueAsNumber => valueAsDouble
+
+        This patch is a part of introducing Decimal, https://bugs.webkit.org/show_bug.cgi?id=80009
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::valueAsDate): Replaced parseToNumber() to valueAsDouble()
+        (WebCore::BaseDateAndTimeInputType::setValueAsDate): Inserted convertDoubleToInputNumber.
+        (WebCore::BaseDateAndTimeInputType::valueAsDouble): Use new function parseToDouble().
+        (WebCore::BaseDateAndTimeInputType::setValueAsInputNumber): Added.
+        (WebCore::BaseDateAndTimeInputType::defaultValueForStepUp): Changed return type to InputNumber.
+        (WebCore::BaseDateAndTimeInputType::parseToNumber): This is replacement of parseToDouble().
+        (WebCore::BaseDateAndTimeInputType::parseToDouble): Added for valueAsDate and valueAsDouble.
+        (WebCore::BaseDateAndTimeInputType::serialize): Changed parameter type to InputNumber.
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents): Replace double to InputNumber for getAllowdStep.
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::createStepRange): Replaced double to InputNumber.
+        * html/DateInputType.h:
+        (DateInputType):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::defaultValueForStepUp): Changed return type to InputNumber.
+        (WebCore::DateTimeInputType::createStepRange): Replaced double to InputNumber.
+        * html/DateTimeInputType.h:
+        (DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::createStepRange): Replaced double to InputNumber.
+        * html/DateTimeLocalInputType.h:
+        (DateTimeLocalInputType):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::getAllowedValueStep): Changed parameter type to InputNumber.
+        (WebCore::HTMLInputElement::valueAsNumber): Use InputType::valueAsDouble.
+        (WebCore::HTMLInputElement::setValueAsNumber): Use InputType::valueAsDouble.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore::InputType::valueAsDouble): Replacement of valueAsNumber.
+        (WebCore::InputType::setValueAsDouble): Replacement of valueAsNumber.
+        (WebCore::InputType::setValueAsInputNumber): Replacement of valueAsNumber.
+        (WebCore::InputType::rangeUnderflow): Replaced double to InputNumber.
+        (WebCore::InputType::rangeOverflow): Replaced double to InputNumber.
+        (WebCore::InputType::defaultValueForStepUp): Changed return type to InputNumber.
+        (WebCore::InputType::isInRange): Replaced double to InputNumber.
+        (WebCore::InputType::isOutOfRange): Replaced double to InputNumber.
+        (WebCore::InputType::stepMismatch): Replaced double to InputNumber.
+        (WebCore::InputType::validationMessage): Replaced double to InputNumber.
+        (WebCore::InputType::parseToNumber): Replacement of parseToDouble.
+        (WebCore::InputType::parseToNumberOrNaN): Added for reducing number of std::numeric_limits<double>::quiet_NaN().
+        (WebCore::InputType::parseToNumberWithDecimalPlaces): Replaced double to InputNumber.
+        (WebCore::InputType::serialize): Changed parameter type to InputNumber.
+        (WebCore::InputType::applyStep): Replaced double to InputNumber.
+        (WebCore::InputType::getAllowedValueStep): Changed parameter type to InputNumber.
+        (WebCore::InputType::stepUpFromRenderer): Replaced double to InputNumber.
+        * html/InputType.h:
+        (InputType):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::defaultValueForStepUp): Changed return type to InputNumber.
+        (WebCore::MonthInputType::createStepRange): Replaced double to InputNumber.
+        (WebCore::MonthInputType::parseToNumber): Replacement of parseToDouble.
+        * html/MonthInputType.h:
+        (MonthInputType):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::valueAsDouble): Replacement of valueAsNumber. Changed to use parseToDoubleForNumberType.
+        (WebCore::NumberInputType::setValueAsDouble):  Replacement of setValueAsNumber.  Changed to use serializeForNumberType.
+        (WebCore::NumberInputType::setValueAsInputNumber): Replacement of setValueAsNumber.
+        (WebCore::NumberInputType::createStepRange): Replaced double to InputNumber.
+        (WebCore::NumberInputType::parseToNumber): Replacement of parseToDouble.
+        (WebCore::NumberInputType::parseToNumberWithDecimalPlaces): Replaced double to InputNumber.
+        (WebCore::NumberInputType::serialize):
+        * html/NumberInputType.h:
+        (NumberInputType):
+        * html/RangeInputType.cpp:
+        (WebCore::ensureMaximum): Replaced double to InputNumber.
+        (WebCore::RangeInputType::valueAsDouble): Replacement of valueAsNumber.
+        (WebCore::RangeInputType::setValueAsInputNumber):  Replacement of setValueAsNumber.
+        (WebCore::RangeInputType::createStepRange): Replaced double to InputNumber.
+        (WebCore::RangeInputType::handleKeydownEvent): Replaced double to InputNumber.
+        (WebCore::RangeInputType::parseToNumber): Replacement of parseToDouble.
+        (WebCore::RangeInputType::serialize): Changed parameter type to InputNumber.
+        (WebCore::RangeInputType::sanitizeValue): Replaced double to InputNumber.
+        * html/RangeInputType.h:
+        (RangeInputType):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange): Replaced double to InputNumber.
+        (WebCore::StepRange::acceptableError): Replaced double to InputNumber.
+        (WebCore::StepRange::alignValueForStep): Replaced double to InputNumber.
+        (WebCore):
+        (WebCore::StepRange::clampValue): Replaced double to InputNumber.
+        (WebCore::StepRange::stepMismatch): Replaced double to InputNumber.
+        * html/StepRange.h:
+        (WebCore::convertDoubleToInputNumber): Added.
+        (WebCore::convertInputNumberToDouble): Added.
+        (WebCore::StepRange::NumberWithDecimalPlaces::NumberWithDecimalPlaces): Replaced double to InputNumber.
+        (WebCore::StepRange::StepDescription::defaultValue): Replaced double to InputNumber.
+        (StepRange):
+        (WebCore::StepRange::maximum): Replaced double to InputNumber.
+        (WebCore::StepRange::minimum): Replaced double to InputNumber.
+        (WebCore::StepRange::step): Replaced double to InputNumber.
+        (WebCore::StepRange::stepBase): Replaced double to InputNumber.
+        (WebCore::StepRange::defaultValue): Replaced double to InputNumber.
+        (WebCore::StepRange::proportionFromValue): Replaced double to InputNumber.
+        (WebCore::StepRange::valueFromProportion): Replaced double to InputNumber.
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::defaultValueForStepUp): Replaced double to InputNumber.
+        (WebCore::TimeInputType::createStepRange): Replaced double to InputNumber.
+        * html/TimeInputType.h:
+        (TimeInputType):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::createStepRange): Replaced double to InputNumber.
+        * html/WeekInputType.h:
+        (WeekInputType):
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::writeDocument): Replaced double to InputNumber.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderPosition): Replaced double to InputNumber.
+        (WebCore::RenderSliderThumb::layout): Replaced double to InputNumber.
+        (WebCore::SliderThumbElement::setPositionFromPoint): Replaced double to InputNumber.
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r119527.

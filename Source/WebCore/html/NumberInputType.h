@@ -42,8 +42,9 @@ public:
 private:
     NumberInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual double valueAsNumber() const OVERRIDE;
-    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual double valueAsDouble() const OVERRIDE;
+    virtual void setValueAsDouble(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const OVERRIDE;
@@ -51,9 +52,9 @@ private:
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
-    virtual double parseToNumber(const String&, double) const OVERRIDE;
-    virtual double parseToNumberWithDecimalPlaces(const String&, double, unsigned*) const OVERRIDE;
-    virtual String serialize(double) const OVERRIDE;
+    virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
+    virtual InputNumber parseToNumberWithDecimalPlaces(const String&, const InputNumber&, unsigned*) const OVERRIDE;
+    virtual String serialize(const InputNumber&) const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;

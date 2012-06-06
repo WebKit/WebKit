@@ -46,7 +46,7 @@ private:
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
-    virtual double defaultValueForStepUp() const OVERRIDE;
+    virtual InputNumber defaultValueForStepUp() const OVERRIDE;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateTimeField() const OVERRIDE;

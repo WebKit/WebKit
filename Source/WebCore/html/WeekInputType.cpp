@@ -65,9 +65,9 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
-    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumWeek());
-    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumWeek());
+    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
+    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumWeek()));
+    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumWeek()));
     StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }

@@ -55,7 +55,7 @@ StepRange::StepRange(const StepRange& stepRange)
 {
 }
 
-StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, double minimum, double maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
+StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
     : m_maximum(maximum)
     , m_minimum(minimum)
     , m_step(step.value.value)
@@ -71,35 +71,36 @@ StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, double minimum, do
     ASSERT(isfinite(m_stepBase));
 }
 
-double StepRange::acceptableError() const
+InputNumber StepRange::acceptableError() const
 {
     return m_step / pow(2.0, FLT_MANT_DIG);
 }
 
-double StepRange::alignValueForStep(double currentValue, unsigned currentDecimalPlaces, double newValue) const
+InputNumber StepRange::alignValueForStep(const InputNumber& currentValue, unsigned currentDecimalPlaces, const InputNumber& proposedValue) const
 {
-    if (newValue >= pow(10.0, 21.0))
-        return newValue;
+    if (proposedValue >= pow(10.0, 21.0))
+        return proposedValue;
 
+    InputNumber newValue = proposedValue;
     if (stepMismatch(currentValue)) {
-        double scale = pow(10.0, static_cast<double>(max(m_stepDecimalPlaces, currentDecimalPlaces)));
+        const InputNumber scale = pow(10.0, static_cast<InputNumber>(max(m_stepDecimalPlaces, currentDecimalPlaces)));
         newValue = round(newValue * scale) / scale;
     } else {
-        double scale = pow(10.0, static_cast<double>(max(m_stepDecimalPlaces, m_stepBaseDecimalPlaces)));
+        const InputNumber scale = pow(10.0, static_cast<InputNumber>(max(m_stepDecimalPlaces, m_stepBaseDecimalPlaces)));
         newValue = round((m_stepBase + round((newValue - m_stepBase) / m_step) * m_step) * scale) / scale;
     }
 
     return newValue;
 }
-double StepRange::clampValue(double value) const
+
+InputNumber StepRange::clampValue(const InputNumber& value) const
 {
-    double clampedValue = max(m_minimum, min(value, m_maximum));
+    const InputNumber inRangeValue = max(m_minimum, min(value, m_maximum));
     if (!m_hasStep)
-        return clampedValue;
-    // Rounds clampedValue to minimum + N * step.
-    clampedValue = m_minimum + round((clampedValue - m_minimum) / m_step) * m_step;
-    if (clampedValue > m_maximum)
-       clampedValue -= m_step;
+        return inRangeValue;
+    // Rounds inRangeValue to minimum + N * step.
+    const InputNumber roundedValue = m_minimum + round((inRangeValue - m_minimum) / m_step) * m_step;
+    const InputNumber clampedValue = roundedValue > m_maximum ? roundedValue - m_step : roundedValue;
     ASSERT(clampedValue >= m_minimum);
     ASSERT(clampedValue <= m_maximum);
     return clampedValue;
@@ -148,16 +149,16 @@ StepRange::NumberWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling
     return step;
 }
 
-bool StepRange::stepMismatch(double valueForCheck) const
+bool StepRange::stepMismatch(const InputNumber& valueForCheck) const
 {
     if (!m_hasStep)
         return false;
     if (!isfinite(valueForCheck))
         return false;
-    double value = fabs(valueForCheck - m_stepBase);
+    const InputNumber value = fabs(valueForCheck - m_stepBase);
     if (isinf(value))
         return false;
-    // double's fractional part size is DBL_MAN_DIG-bit. If the current value
+    // InputNumber's fractional part size is DBL_MAN_DIG-bit. If the current value
     // is greater than step*2^DBL_MANT_DIG, the following computation for
     // remainder makes no sense.
     if (value / pow(2.0, DBL_MANT_DIG) > m_step)
@@ -165,10 +166,10 @@ bool StepRange::stepMismatch(double valueForCheck) const
     // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
     // ... that number subtracted from the step base is not an integral multiple
     // of the allowed value step, the element is suffering from a step mismatch.
-    double remainder = fabs(value - m_step * round(value / m_step));
+    const InputNumber remainder = fabs(value - m_step * round(value / m_step));
     // Accepts erros in lower fractional part which IEEE 754 single-precision
     // can't represent.
-    double computedAcceptableError = acceptableError();
+    const InputNumber computedAcceptableError = acceptableError();
     return computedAcceptableError < remainder && remainder < (m_step - computedAcceptableError);
 }
 

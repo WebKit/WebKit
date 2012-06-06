@@ -137,8 +137,9 @@ public:
     virtual String defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
-    virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const;
+    virtual double valueAsDouble() const;
+    virtual void setValueAsDouble(double, TextFieldEventBehavior, ExceptionCode&) const;
+    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const;
 
     // Validation functions
     virtual String validationMessage() const;
@@ -155,12 +156,12 @@ public:
     bool rangeOverflow(const String&) const;
     bool isInRange(const String&) const;
     bool isOutOfRange(const String&) const;
-    virtual double defaultValueForStepUp() const;
+    virtual InputNumber defaultValueForStepUp() const;
     double minimum() const;
     double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
     bool stepMismatch(const String&) const;
-    virtual bool getAllowedValueStep(double*) const;
+    virtual bool getAllowedValueStep(InputNumber*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual void stepUp(int, ExceptionCode&);
     virtual void stepUpFromRenderer(int);
@@ -260,15 +261,15 @@ public:
     virtual String defaultToolTip() const;
 
     // Parses the specified string for the type, and return
-    // the double value for the parsing result if the parsing
+    // the InputNumber value for the parsing result if the parsing
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
-    virtual double parseToNumber(const String&, double defaultValue) const;
+    virtual InputNumber parseToNumber(const String&, const InputNumber& defaultValue) const;
 
-    // Parses the specified string for the type as parseToDouble() does.
+    // Parses the specified string for the type as parseToNumber() does.
     // In addition, it stores the number of digits after the decimal point
     // into *decimalPlaces.
-    virtual double parseToNumberWithDecimalPlaces(const String&, double defaultValue, unsigned* decimalPlaces) const;
+    virtual InputNumber parseToNumberWithDecimalPlaces(const String&, const InputNumber& defaultValue, unsigned* decimalPlaces) const;
 
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
@@ -276,10 +277,10 @@ public:
     // fails. The DateComponents* parameter may be 0.
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
 
-    // Create a string representation of the specified double value for the
+    // Create a string representation of the specified InputNumber value for the
     // input type. If NaN or Infinity is specified, this returns an empty
     // string. This should not be called for types without valueAsNumber.
-    virtual String serialize(double) const;
+    virtual String serialize(const InputNumber&) const;
 
     virtual bool supportsIndeterminateAppearance() const;
 
@@ -293,10 +294,11 @@ protected:
     HTMLInputElement* element() const { return m_element; }
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
     Chrome* chrome() const;
+    InputNumber parseToNumberOrNaN(const String&) const;
 
 private:
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
-    void applyStep(double count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
+    void applyStep(int count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
 
     // Raw pointer because the HTMLInputElement object owns this InputType object.
     HTMLInputElement* m_element;

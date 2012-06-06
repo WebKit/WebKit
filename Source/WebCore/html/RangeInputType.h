@@ -45,8 +45,8 @@ private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool isRangeControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual double valueAsNumber() const OVERRIDE;
-    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual double valueAsDouble() const OVERRIDE;
+    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
@@ -54,8 +54,8 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
-    virtual double parseToNumber(const String&, double) const OVERRIDE;
-    virtual String serialize(double) const OVERRIDE;
+    virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
+    virtual String serialize(const InputNumber&) const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual void minOrMaxAttributeChanged() OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;

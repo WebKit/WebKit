@@ -42,7 +42,7 @@ class BaseDateAndTimeInputType : public TextFieldInputType {
 protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual double parseToNumber(const String&, double) const OVERRIDE;
+    virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
 
@@ -52,19 +52,20 @@ private:
     virtual DateComponents::Type dateType() const = 0;
     virtual double valueAsDate() const OVERRIDE;
     virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;
-    virtual double valueAsNumber() const OVERRIDE;
-    virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual double valueAsDouble() const OVERRIDE;
+    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
-    virtual double defaultValueForStepUp() const OVERRIDE;
+    virtual InputNumber defaultValueForStepUp() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
-    virtual String serialize(double) const OVERRIDE;
+    virtual String serialize(const InputNumber&) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
+    double parseToDouble(const String&) const;
 };
 
 } // namespace WebCore

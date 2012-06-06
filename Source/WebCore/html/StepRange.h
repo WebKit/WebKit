@@ -30,13 +30,26 @@ class HTMLInputElement;
 
 enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
+// FIXME: The type InputNumber will be replaced with Decimal.
+typedef double InputNumber;
+
+inline InputNumber convertDoubleToInputNumber(double doubleValue)
+{
+    return doubleValue;
+}
+
+inline double convertInputNumberToDouble(const InputNumber& numericValue)
+{
+    return numericValue;
+}
+
 class StepRange {
 public:
     struct NumberWithDecimalPlaces {
         unsigned decimalPlaces;
-        double value;
+        InputNumber value;
 
-        NumberWithDecimalPlaces(double value = 0, unsigned decimalPlaces = 0)
+        NumberWithDecimalPlaces(InputNumber value = 0, unsigned decimalPlaces = 0)
             : decimalPlaces(decimalPlaces)
             , value(value)
         {
@@ -82,7 +95,7 @@ public:
         {
         }
 
-        double defaultValue() const
+        InputNumber defaultValue() const
         {
             return defaultStep * stepScaleFactor;
         }
@@ -90,29 +103,29 @@ public:
 
     StepRange();
     StepRange(const StepRange&);
-    StepRange(const NumberWithDecimalPlaces& stepBase, double minimum, double maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription&);
-    double acceptableError() const;
-    double alignValueForStep(double currentValue, unsigned currentDecimalPlaces, double newValue) const;
-    double clampValue(double value) const;
+    StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription&);
+    InputNumber acceptableError() const;
+    InputNumber alignValueForStep(const InputNumber& currentValue, unsigned currentDecimalPlaces, const InputNumber& newValue) const;
+    InputNumber clampValue(const InputNumber& value) const;
     bool hasStep() const { return m_hasStep; }
-    double maximum() const { return m_maximum; }
-    double minimum() const { return m_minimum; }
+    InputNumber maximum() const { return m_maximum; }
+    InputNumber minimum() const { return m_minimum; }
     static NumberWithDecimalPlacesOrMissing parseStep(AnyStepHandling, const StepDescription&, const String&);
-    double step() const { return m_step; }
-    double stepBase() const { return m_stepBase; }
+    InputNumber step() const { return m_step; }
+    InputNumber stepBase() const { return m_stepBase; }
     unsigned stepBaseDecimalPlaces() const { return m_stepBaseDecimalPlaces; }
     unsigned stepDecimalPlaces() const { return m_stepDecimalPlaces; }
     int stepScaleFactor() const { return m_stepDescription.stepScaleFactor; }
-    bool stepMismatch(double) const;
+    bool stepMismatch(const InputNumber&) const;
 
     // Clamp the middle value according to the step
-    double defaultValue() const
+    InputNumber defaultValue() const
     {
         return clampValue((m_minimum + m_maximum) / 2);
     }
 
     // Map value into 0-1 range
-    double proportionFromValue(double value) const
+    InputNumber proportionFromValue(const InputNumber& value) const
     {
         if (m_minimum == m_maximum)
             return 0;
@@ -121,7 +134,7 @@ public:
     }
 
     // Map from 0-1 range to value
-    double valueFromProportion(double proportion) const
+    InputNumber valueFromProportion(const InputNumber& proportion) const
     {
         return m_minimum + proportion * (m_maximum - m_minimum);
     }
@@ -129,10 +142,10 @@ public:
 private:
     StepRange& operator =(const StepRange&);
 
-    const double m_maximum; // maximum must be >= minimum.
-    const double m_minimum;
-    const double m_step;
-    const double m_stepBase;
+    const InputNumber m_maximum; // maximum must be >= minimum.
+    const InputNumber m_minimum;
+    const InputNumber m_step;
+    const InputNumber m_stepBase;
     const StepDescription m_stepDescription;
     const unsigned m_stepBaseDecimalPlaces;
     const unsigned m_stepDecimalPlaces;

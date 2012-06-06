@@ -64,7 +64,7 @@ DateComponents::Type TimeInputType::dateType() const
     return DateComponents::Time;
 }
 
-double TimeInputType::defaultValueForStepUp() const
+InputNumber TimeInputType::defaultValueForStepUp() const
 {
     double current = currentTimeMS();
     double utcOffset = calculateUTCOffset();
@@ -76,16 +76,16 @@ double TimeInputType::defaultValueForStepUp() const
     date.setMillisecondsSinceMidnight(current);
     double milliseconds = date.millisecondsSinceEpoch();
     ASSERT(isfinite(milliseconds));
-    return milliseconds;
+    return convertDoubleToInputNumber(milliseconds);
 }
 
 StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
-    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
-    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumTime());
-    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumTime());
+    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
+    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumTime()));
+    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumTime()));
     StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }

@@ -82,7 +82,7 @@ String MonthInputType::serializeWithMilliseconds(double value) const
     return serializeWithComponents(date);
 }
 
-double MonthInputType::defaultValueForStepUp() const
+InputNumber MonthInputType::defaultValueForStepUp() const
 {
     double current = currentTimeMS();
     double utcOffset = calculateUTCOffset();
@@ -101,14 +101,14 @@ StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
-    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
-    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumMonth());
+    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumMonth()));
+    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumMonth()));
+    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumMonth()));
     StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
-double MonthInputType::parseToNumber(const String& src, double defaultValue) const
+InputNumber MonthInputType::parseToNumber(const String& src, const InputNumber& defaultValue) const
 {
     DateComponents date;
     if (!parseToDateComponents(src, &date))

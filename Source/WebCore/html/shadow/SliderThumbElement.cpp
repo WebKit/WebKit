@@ -51,7 +51,7 @@ using namespace std;
 
 namespace WebCore {
 
-inline static double sliderPosition(HTMLInputElement* element)
+inline static InputNumber sliderPosition(HTMLInputElement* element)
 {
     const StepRange stepRange(element->createStepRange(RejectAny));
     const double oldValue = parseToDoubleForNumberType(element->value(), stepRange.defaultValue());
@@ -110,7 +110,7 @@ void RenderSliderThumb::layout()
     HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
     bool isVertical = style()->appearance() == SliderThumbVerticalPart || style()->appearance() == MediaVolumeSliderThumbPart;
 
-    double fraction = sliderPosition(input) * 100;
+    double fraction = convertInputNumberToDouble(sliderPosition(input) * 100);
     if (isVertical)
         style()->setTop(Length(100 - fraction, Percent));
     else if (style()->isLeftToRightDirection())
@@ -236,11 +236,10 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     if (position == currentPosition)
         return;
 
-    double fraction = static_cast<double>(position) / trackSize;
-    if (isVertical || !renderBox()->style()->isLeftToRightDirection())
-        fraction = 1 - fraction;
+    const InputNumber ratio = convertDoubleToInputNumber(static_cast<double>(position) / trackSize);
+    const InputNumber fraction = isVertical || !renderBox()->style()->isLeftToRightDirection() ? InputNumber(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));
-    double value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
+    const InputNumber value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
     // FIXME: This is no longer being set from renderer. Consider updating the method name.
     input->setValueFromRenderer(serializeForNumberType(value));

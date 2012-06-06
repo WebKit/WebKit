@@ -77,9 +77,9 @@ StepRange DateTimeLocalInputType::createStepRange(AnyStepHandling anyStepHandlin
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateTimeLocalDefaultStep, dateTimeLocalDefaultStepBase, dateTimeLocalStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
-    double stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
-    double minimum = parseToNumber(element()->fastGetAttribute(minAttr), DateComponents::minimumDateTime());
-    double maximum = parseToNumber(element()->fastGetAttribute(maxAttr), DateComponents::maximumDateTime());
+    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
+    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumDateTime()));
+    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumDateTime()));
     StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
