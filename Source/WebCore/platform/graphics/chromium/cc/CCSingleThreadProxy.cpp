@@ -310,8 +310,8 @@ void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr
 
 void CCSingleThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t bytes)
 {
-    // FIXME: This is called via a graphics context callback, on main thread in single threaded mode, because its hard to fake the impl thread. This should need to DebugScopedSetMainThread, but is actually already on the main thread.
-    ASSERT(CCProxy::isMainThread());
+    ASSERT(CCProxy::isImplThread());
+    DebugScopedSetMainThread main;
     ASSERT(m_layerTreeHost);
     m_layerTreeHost->setContentsMemoryAllocationLimitBytes(bytes);
 }

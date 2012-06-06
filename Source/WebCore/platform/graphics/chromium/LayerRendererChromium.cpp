@@ -64,6 +64,7 @@
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCRenderSurfaceFilters.h"
+#include "cc/CCSingleThreadProxy.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
@@ -199,6 +200,26 @@ public:
 
     virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
     {
+        // FIXME: This is called on the main thread in single threaded mode, but we expect it on the impl thread.
+        if (m_bindToImplThread) {
+          ASSERT(CCProxy::isMainThread());
+          DebugScopedSetImplThread impl;
+          onGpuMemoryAllocationChangedOnImpl(allocation);
+        } else {
+          ASSERT(CCProxy::isImplThread());
+          onGpuMemoryAllocationChangedOnImpl(allocation);
+        }
+    }
+
+private:
+    explicit LayerRendererGpuMemoryAllocationChangedCallbackAdapter(LayerRendererChromium* layerRenderer)
+        : m_layerRenderer(layerRenderer), m_bindToImplThread(!CCProxy::hasImplThread())
+    {
+    }
+
+    void onGpuMemoryAllocationChangedOnImpl(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
+    {
+        ASSERT(CCProxy::isImplThread());
         if (!allocation.suggestHaveBackbuffer)
             m_layerRenderer->discardFramebuffer();
         else
@@ -206,15 +227,9 @@ public:
         m_layerRenderer->m_client->setContentsMemoryAllocationLimitBytes(allocation.gpuResourceSizeInBytes);
     }
 
-private:
-    explicit LayerRendererGpuMemoryAllocationChangedCallbackAdapter(LayerRendererChromium* layerRenderer)
-        : m_layerRenderer(layerRenderer)
-    {
-    }
-
     LayerRendererChromium* m_layerRenderer;
+    bool m_bindToImplThread;
 };
-
 
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploaderSetting)
 {
@@ -319,6 +334,8 @@ bool LayerRendererChromium::initialize()
         extensions->ensureEnabled("GL_CHROMIUM_gpu_memory_manager");
         Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
         extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(LayerRendererGpuMemoryAllocationChangedCallbackAdapter::create(this));
+    } else {
+        m_client->setContentsMemoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()));
     }
 
     m_capabilities.usingDiscardFramebuffer = extensions->supports("GL_CHROMIUM_discard_framebuffer");

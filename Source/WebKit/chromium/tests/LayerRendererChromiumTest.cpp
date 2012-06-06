@@ -28,6 +28,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h"
 
 #include <gmock/gmock.h>
@@ -54,7 +55,13 @@ public:
 
     // Methods added for test.
     int frameCount() { return m_frame; }
-    void setMemoryAllocation(WebGraphicsMemoryAllocation allocation) { m_memoryAllocationChangedCallback->onMemoryAllocationChanged(allocation); }
+    void setMemoryAllocation(WebGraphicsMemoryAllocation allocation)
+    {
+        ASSERT(CCProxy::isImplThread());
+        // In single threaded mode we expect this callback on main thread.
+        DebugScopedSetMainThread main;
+        m_memoryAllocationChangedCallback->onMemoryAllocationChanged(allocation);
+    }
 
 private:
     int m_frame;
@@ -66,6 +73,7 @@ public:
     FakeCCRendererClient()
         : m_setFullRootLayerDamageCount(0)
         , m_rootLayer(CCLayerImpl::create(1))
+        , m_memoryAllocationLimitBytes(0)
     {
         m_rootLayer->createRenderSurface();
         m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface());
@@ -77,18 +85,21 @@ public:
     virtual void didLoseContext() OVERRIDE { }
     virtual void onSwapBuffersComplete() OVERRIDE { }
     virtual void setFullRootLayerDamage() OVERRIDE { m_setFullRootLayerDamageCount++; }
-    virtual void setContentsMemoryAllocationLimitBytes(size_t) OVERRIDE { }
+    virtual void setContentsMemoryAllocationLimitBytes(size_t bytes) OVERRIDE { m_memoryAllocationLimitBytes = bytes; }
 
     // Methods added for test.
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
 
     CCRenderPass* rootRenderPass() { return m_rootRenderPass.get(); }
 
+    size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
+
 private:
     int m_setFullRootLayerDamageCount;
     DebugScopedSetImplThread m_implThread;
     OwnPtr<CCLayerImpl> m_rootLayer;
     OwnPtr<CCRenderPass> m_rootRenderPass;
+    size_t m_memoryAllocationLimitBytes;
 };
 
 class FakeLayerRendererChromium : public LayerRendererChromium {
@@ -115,7 +126,13 @@ protected:
 
     virtual void SetUp()
     {
+        WebKit::WebCompositor::initialize(0);
         m_layerRendererChromium.initialize();
+    }
+
+    virtual void TearDown()
+    {
+        WebKit::WebCompositor::shutdown();
     }
 
     void swapBuffers()
@@ -317,4 +334,26 @@ TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAsse
     FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new LoseContextOnFirstGetContext), GraphicsContext3D::RenderDirectlyToHostWindow));
 
     layerRendererChromium.initialize();
+}
+
+class ContextThatDoesNotSupportMemoryManagmentExtensions : public FakeWebGraphicsContext3D {
+public:
+    ContextThatDoesNotSupportMemoryManagmentExtensions() { }
+
+    // WebGraphicsContext3D methods.
+
+    // This method would normally do a glSwapBuffers under the hood.
+    virtual void prepareTexture() { }
+    virtual void setMemoryAllocationChangedCallbackCHROMIUM(WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* callback) { }
+    virtual WebString getString(WebKit::WGC3Denum name) { return WebString(); }
+};
+
+TEST(LayerRendererChromiumTest2, initializationWithoutGpuMemoryManagerExtensionSupportShouldDefaultToNonZeroAllocation)
+{
+    FakeCCRendererClient mockClient;
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextThatDoesNotSupportMemoryManagmentExtensions), GraphicsContext3D::RenderDirectlyToHostWindow));
+
+    layerRendererChromium.initialize();
+
+    EXPECT_GT(mockClient.memoryAllocationLimitBytes(), 0ul);
 }

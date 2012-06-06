@@ -1,3 +1,25 @@
+2012-06-05  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Set default memory allocation limit bytes when GL_CHROMIUM_gpu_memory_manager is not supported by graphics context.
+        https://bugs.webkit.org/show_bug.cgi?id=87996
+
+        Reviewed by James Robinson.
+
+        Soon we hope to have renderers not manage there own memory allocation limits, and rely exclusively on the
+        allocation given by GpuMemoryManager.  However, when the graphics context does not support the
+        GL_CHROMIUM_gpu_memory_manager extension, such as the one used by DumpRenderTree, we must default the
+        memory allocation limit to some non-0 value.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore):
+        (DebugScopedSetMainThreadFromEither):
+        (WebCore::DebugScopedSetMainThreadFromEither::DebugScopedSetMainThreadFromEither):
+        (WebCore::DebugScopedSetMainThreadFromEither::~DebugScopedSetMainThreadFromEither):
+
 2012-06-05  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         [Qt] Use GraphicsContext3DOpenGLES.cpp when using OpenGL ES
