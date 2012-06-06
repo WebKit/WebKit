@@ -306,25 +306,4 @@ TEST_F(WebViewTest, DISABLED_TextInputType)
 
 }
 
-TEST_F(WebViewTest, CompositionCharacterBoundsTest)
-{
-    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "textarea.html");
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "textarea.html");
-    webView->setInitialFocus(true);
-    EXPECT_EQ(WebTextInputTypeText, webView->textInputType());
-
-    WebRect rect;
-    EXPECT_FALSE(webView->compositionCharacterBounds(0, rect));
-
-    WebVector<WebCompositionUnderline> underline;
-    EXPECT_TRUE(webView->setComposition(WebString::fromUTF8("ABCDE"), underline, 0, 1));
-    EXPECT_TRUE(webView->compositionCharacterBounds(1, rect));
-    EXPECT_TRUE(webView->compositionCharacterBounds(2, rect));
-    EXPECT_TRUE(webView->compositionCharacterBounds(3, rect));
-    EXPECT_TRUE(webView->compositionCharacterBounds(4, rect));
-    EXPECT_FALSE(webView->compositionCharacterBounds(5, rect));
-    EXPECT_TRUE(webView->confirmComposition());
-    EXPECT_FALSE(webView->compositionCharacterBounds(0, rect));
-}
-
 }
