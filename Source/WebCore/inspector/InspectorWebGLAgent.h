@@ -63,7 +63,7 @@ public:
 
     bool enabled() { return m_enabled; }
 
-    ScriptObject wrapWebGLRenderingContextForInstrumentation(ScriptObject);
+    ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
 
     // Called from the front-end.
     virtual void enable(ErrorString*);

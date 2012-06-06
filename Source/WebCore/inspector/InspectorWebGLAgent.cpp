@@ -94,7 +94,7 @@ void InspectorWebGLAgent::disable(ErrorString*)
     m_state->setBoolean(WebGLAgentState::webGLAgentEnabled, m_enabled);
 }
 
-ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(ScriptObject glContext)
+ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
     return m_injectedScriptManager->wrapWebGLRenderingContextForInstrumentation(glContext);
 }

@@ -1,3 +1,30 @@
+2012-06-06  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [JSC] Add WebGL instrumentation support
+        https://bugs.webkit.org/show_bug.cgi?id=87975
+
+        Reviewed by Vsevolod Vlasov.
+
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::injectAndExecuteFunction):
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore):
+        (WebCore::InjectedScriptManager::injectWebGLScript):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectWebGLScript):
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorWebGLAgent.cpp:
+        (WebCore::InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InspectorWebGLAgent.h:
+        (InspectorWebGLAgent):
+        * inspector/InspectorWebGLInstrumentation.h:
+        (WebCore::InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation):
+
 2012-06-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Fix a few spelling mistakes in IconDatabase logging

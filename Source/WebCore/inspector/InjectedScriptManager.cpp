@@ -177,7 +177,7 @@ pair<int, ScriptObject> InjectedScriptManager::injectScript(const String& source
 }
 
 #if ENABLE(WEBGL)
-ScriptObject InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation(ScriptObject glContext)
+ScriptObject InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
     return injectWebGLScript(injectedWebGLScriptSource(), glContext);
 }

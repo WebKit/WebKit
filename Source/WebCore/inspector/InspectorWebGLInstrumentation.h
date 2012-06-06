@@ -39,7 +39,7 @@
 namespace WebCore {
 
 #if ENABLE(WEBGL)
-ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, ScriptObject glContext)
+ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const ScriptObject& glContext)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {

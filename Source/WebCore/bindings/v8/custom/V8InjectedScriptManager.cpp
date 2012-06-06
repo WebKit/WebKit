@@ -114,7 +114,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSou
 }
 
 #if ENABLE(WEBGL)
-ScriptObject InjectedScriptManager::injectWebGLScript(const String& scriptSource, ScriptObject glContext)
+ScriptObject InjectedScriptManager::injectWebGLScript(const String& scriptSource, const ScriptObject& glContext)
 {
     v8::HandleScope scope;
 

@@ -65,7 +65,7 @@ public:
     void releaseObjectGroup(const String& objectGroup);
 
 #if ENABLE(WEBGL)
-    ScriptObject wrapWebGLRenderingContextForInstrumentation(ScriptObject);
+    ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
 #endif
 
 private:
@@ -78,7 +78,7 @@ private:
 
 #if ENABLE(WEBGL)
     String injectedWebGLScriptSource();
-    ScriptObject injectWebGLScript(const String& source, ScriptObject);
+    ScriptObject injectWebGLScript(const String& source, const ScriptObject&);
 #endif
 
     static bool canAccessInspectedWindow(ScriptState*);

@@ -238,7 +238,7 @@ public:
 #endif
 
 #if ENABLE(WEBGL)
-    static ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, ScriptObject);
+    static ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const ScriptObject&);
 #endif
 
     static void networkStateChanged(Page*);
