@@ -106,9 +106,11 @@ void MemoryPressureHandler::holdOff(unsigned seconds)
             dispatch_set_context(_timer_event_source, this);
             dispatch_source_set_timer(_timer_event_source, dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, 1 * s_minimumHoldOffTime);
             dispatch_source_set_event_handler(_timer_event_source, ^{
-                dispatch_source_cancel(_timer_event_source);
-                dispatch_release(_timer_event_source);
-                _timer_event_source = 0;
+                if (_timer_event_source) {
+                    dispatch_source_cancel(_timer_event_source);
+                    dispatch_release(_timer_event_source);
+                    _timer_event_source = 0;
+                }
                 memoryPressureHandler().install();
             });
             dispatch_resume(_timer_event_source);

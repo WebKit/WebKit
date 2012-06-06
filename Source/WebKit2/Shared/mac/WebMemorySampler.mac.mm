@@ -33,6 +33,7 @@
 #import <mach/task.h>
 #import <mach/mach_types.h>
 #import <malloc/malloc.h>
+#import <notify.h>
 #import <runtime/JSLock.h>
 #import <WebCore/JSDOMWindow.h>
 #import <wtf/CurrentTime.h>
@@ -175,7 +176,14 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     
     return webKitMemoryStats;
 }
-    
+ 
+void WebMemorySampler::sendMemoryPressureEvent()
+{
+    // Free memory that could be released if we needed more.
+    // We want to track memory that cannot.
+    notify_post("org.WebKit.lowMemory");
+}
+
 }
 
 #endif

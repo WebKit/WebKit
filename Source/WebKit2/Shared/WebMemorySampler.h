@@ -89,6 +89,7 @@ private:
     void sampleTimerFired(WebCore::Timer<WebMemorySampler>*);
     void stopTimerFired(WebCore::Timer<WebMemorySampler>*);
     void appendCurrentMemoryUsageToFile(WebCore::PlatformFileHandle&);
+    void sendMemoryPressureEvent();
     
     SystemMallocStats sampleSystemMalloc() const;
     size_t sampleProcessCommittedBytes() const;

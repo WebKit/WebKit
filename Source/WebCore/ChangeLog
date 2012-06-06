@@ -1,3 +1,19 @@
+2012-06-05  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=88370
+        Memory sampler should trigger low memory signal
+
+        Reviewed by Geoff Garen.
+
+        No new tests. Verify by running stress test which crashes 
+        in a few minutes without the fix.
+
+        Fix assumption in block code.  We could get in a state where timer_event_source
+        had already been released before the block ran.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::holdOff):
+
 2012-06-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce InputNumber type as an alias of double for replacing it to Decimal

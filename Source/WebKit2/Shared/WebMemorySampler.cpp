@@ -153,7 +153,8 @@ void WebMemorySampler::writeHeaders()
 
 void WebMemorySampler::sampleTimerFired(Timer<WebMemorySampler>*)
 {
-    appendCurrentMemoryUsageToFile(m_sampleLogFile); 
+    sendMemoryPressureEvent();
+    appendCurrentMemoryUsageToFile(m_sampleLogFile);
 }
 
 void WebMemorySampler::stopTimerFired(Timer<WebMemorySampler>*)

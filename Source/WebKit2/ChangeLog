@@ -1,3 +1,21 @@
+2012-06-04  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=88370
+        Memory sampler should trigger low memory signal
+
+        Reviewed by Geoff Garen.
+
+        Send low memory signal when running the memory sampler.  We'd
+        like to test memory that cannot be freed.
+
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::sampleTimerFired):
+        * Shared/WebMemorySampler.h:
+        (WebMemorySampler):
+        * Shared/mac/WebMemorySampler.mac.mm:
+        (WebKit):
+        (WebKit::WebMemorySampler::sendMemoryPressureEvent):
+
 2012-06-05  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11575898> and https://bugs.webkit.org/show_bug.cgi?id=88372
