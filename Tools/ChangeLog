@@ -1,3 +1,19 @@
+2012-06-06  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: two manager_worker_broker_unittest tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=88445
+
+        Reviewed by Ojan Vafai.
+
+        These tests were never updated when we removed the
+        --worker-model argument, and we were passing 'inline' instead of
+        1 (for the number of workers) :(. As a result we were creating
+        multiprocessing queues unnecessarily and that was failing on cygwin.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (InterfaceTest.test_managerconnection_is_abstract):
+        (InterfaceTest.test_workerconnection_is_abstract):
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r117789): "webkit-patch rebaseline-expectations" copies contents in skia_test_expectations.txt into test_expectations.txt

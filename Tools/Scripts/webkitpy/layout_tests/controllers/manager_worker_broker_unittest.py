@@ -215,14 +215,14 @@ class InterfaceTest(unittest.TestCase):
     def test_managerconnection_is_abstract(self):
         # Test that all the base class methods are abstract and have the
         # signature we expect.
-        broker = make_broker(self, 'inline')
+        broker = make_broker(self, 1)
         obj = manager_worker_broker._ManagerConnection(broker._broker, self, None)
         self.assertRaises(NotImplementedError, obj.start_worker)
 
     def test_workerconnection_is_abstract(self):
         # Test that all the base class methods are abstract and have the
         # signature we expect.
-        broker = make_broker(self, 'inline')
+        broker = make_broker(self, 1)
         obj = manager_worker_broker._WorkerConnection(broker._broker, _TestWorker, None)
         self.assertRaises(NotImplementedError, obj.cancel)
         self.assertRaises(NotImplementedError, obj.is_alive)
