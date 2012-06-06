@@ -1,17 +1,17 @@
 .help-window-outer {
     position: absolute;
-    top: 12px;
+    top: 64px;
     left: 5%;
     width: 90%;
-    bottom: 12px;
+    bottom: 32px;
     z-index: 2000;
 }
 
 body.compact .help-window-outer {
-    top: 0;
+    top: 34px;
     left: 0;
     width: 100%;
-    bottom: 0;
+    bottom: 23px;
 }
 
 .help-window-main {

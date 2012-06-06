@@ -1,3 +1,17 @@
+2012-06-06  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: help/settings screen does not overlay console in split screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=88352
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen): Mark view as root.
+        (WebInspector.HelpScreen.prototype.showModal): Change view parent.
+        * inspector/front-end/helpScreen.css:
+        (.help-window-outer): Add panel and status bar indent.
+        (body.compact .help-window-outer): Ditto.
+
 2012-06-06  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Form] Changes for InputNumber type

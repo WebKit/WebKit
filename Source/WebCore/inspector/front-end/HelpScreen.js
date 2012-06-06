@@ -36,6 +36,7 @@
 WebInspector.HelpScreen = function(title)
 {
     WebInspector.View.call(this);
+    this.markAsRoot();
     this.registerRequiredCSS("helpScreen.css");
 
     this.element.className = "help-window-outer";
@@ -76,7 +77,7 @@ WebInspector.HelpScreen.prototype = {
         if (visibleHelpScreen)
             visibleHelpScreen.hide();
         WebInspector.HelpScreen._visibleScreen = this;
-        this.show(WebInspector.inspectorView.element);
+        this.show(document.body);
         this.focus();
     },
 
