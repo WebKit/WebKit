@@ -100,6 +100,12 @@ public:
         MediaKeyExceptionKeySystemNotSupported,
     };
 
+    enum CORSMode {
+        CORSModeUnspecified,
+        CORSModeAnonymous,
+        CORSModeUseCredentials,
+    };
+
     virtual ~WebMediaPlayer() {}
 
     virtual void load(const WebURL&) = 0;
