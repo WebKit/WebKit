@@ -1,3 +1,9 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Roll Chromium DEPS from r140700 to r140711.
