@@ -1,5 +1,13 @@
 2012-06-05  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+        The error constant has been renamed.
+
+2012-06-05  Anders Carlsson  <andersca@apple.com>
+
         Rename a plug-in loading error constant
         https://bugs.webkit.org/show_bug.cgi?id=88381
         <rdar://problem/11602601>
