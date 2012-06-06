@@ -1,3 +1,13 @@
+2012-06-06  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Avoid limiting page-scale-factor when device-scale-factor is applied in the compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=88417
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-06-06  Ami Fischman  <fischman@chromium.org>
 
         Unreviewed.  Rolled DEPS.

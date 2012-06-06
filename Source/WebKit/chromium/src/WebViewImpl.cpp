@@ -3482,9 +3482,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_deviceScaleInCompositor = page()->settings()->defaultDeviceScaleFactor();
             layerTreeViewSettings.deviceScaleFactor = m_deviceScaleInCompositor;
             setDeviceScaleFactor(m_deviceScaleInCompositor);
-            // When applying a scale factor in the compositor, we disallow page
-            // scaling as they are currently incompatible.
-            setPageScaleFactorLimits(1, 1);
         }
 
         m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
