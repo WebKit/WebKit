@@ -540,7 +540,6 @@ BUGWK66873:  http/tests/loading/redirect-methods.html = TEXT
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
-BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
 
 // Issue related to hit testing
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL

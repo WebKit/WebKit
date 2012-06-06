@@ -2071,8 +2071,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = validUnit(value, FNumber);
         break;
     case CSSPropertyWebkitBoxFlexGroup:
-    case CSSPropertyWebkitBoxOrdinalGroup:
         validPrimitive = validUnit(value, FInteger | FNonNeg, CSSStrictMode);
+        break;
+    case CSSPropertyWebkitBoxOrdinalGroup:
+        validPrimitive = validUnit(value, FInteger | FNonNeg, CSSStrictMode) && value->fValue;
         break;
 #if ENABLE(CSS_FILTERS)
     case CSSPropertyWebkitFilter:
