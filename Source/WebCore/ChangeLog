@@ -1,3 +1,10 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r119440 now that I have a time to rebaseline them all!
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::thumbLength):
+
 2012-06-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Infinite recursion in IDBObjectStore.openCursor(key, legacy_constant)
