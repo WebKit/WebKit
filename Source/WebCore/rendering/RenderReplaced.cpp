@@ -287,10 +287,9 @@ void RenderReplaced::computeIntrinsicRatioInformationForRenderBox(RenderBox* con
             intrinsicRatio = 1;
         return;
     }
-
-    // This code path can't yield percentage intrinsic sizes, assert that.
     computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
-    ASSERT(!isPercentageIntrinsicSize);
+    if (intrinsicRatio)
+        ASSERT(!isPercentageIntrinsicSize);
 }
 
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const

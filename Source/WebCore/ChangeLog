@@ -1,3 +1,20 @@
+2012-06-05  Joe Thomas  <joethomas@motorola.com>
+
+        ASSERTION FAILED: ASSERT(!isPercentageIntrinsicSize) in RenderReplaced::computeIntrinsicRatioInformationForRenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=88197
+
+        Reviewed by Daniel Bates.
+
+        RenderSVGRoot extends RenderReplaced and it overrides the computeIntrinsicRatioInformation() 
+        method of RenderReplaced. RenderSVGRoot::computeIntrinsicRatioInformation
+        sets isPercentageIntrinsicSize to true while it handles width and height of percentage types.
+        So this assertion should be fired only if intrinsicRatio is non-zero.
+
+        Test: svg/in-html/svg-assert-failure-percentage.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformationForRenderBox):
+
 2012-06-05  Tony Chang  <tony@chromium.org>
 
         Changing flexbox justify/alignment doesn't update their positioning
