@@ -454,6 +454,7 @@ BUGWK82294 : compositing/overflow-trumps-transform-style.html = TEXT
 BUGWK82294 : compositing/tiled-layers-hidpi.html = TEXT
 BUGWK82294 : compositing/visibility/layer-visible-content.html = TEXT
 BUGWK82294 : compositing/visibility/visibility-image-layers-dynamic.html = TEXT
+BUGWK82294 : compositing/layer-creation/no-compositing-for-preserve-3d.html = TEXT
 
 // EFL's LayoutTestController does not implement displayInvalidatedRegion
 BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT
@@ -718,4 +719,5 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
 
 // These tests do not seem to fail anywhere else.
 BUGWK88030 : fast/multicol/column-break-with-balancing.html = IMAGE
-BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = IMAGE+TEXT
+BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
+
