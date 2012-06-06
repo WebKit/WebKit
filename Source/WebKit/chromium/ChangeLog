@@ -1,3 +1,9 @@
+2012-06-06  Ami Fischman  <fischman@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-06  Nico Weber  <thakis@chromium.org>
 
         [chromium] Expose setPictographFontFamily through the chromium webkit api.
