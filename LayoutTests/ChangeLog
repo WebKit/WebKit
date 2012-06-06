@@ -1,3 +1,9 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed. Fixing an incorrect path in lion Skipped file.
+
+        * platform/mac-lion/Skipped:
+
 2012-06-05  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed gardening. Chromium windows test expectation updates.
