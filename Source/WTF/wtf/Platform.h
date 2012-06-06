@@ -1117,4 +1117,11 @@
 #define WTF_USE_ZLIB 1
 #endif
 
+#if PLATFORM(QT)
+#include <qglobal.h>
+#if defined(QT_OPENGL_ES_2) && !defined(WTF_USE_OPENGL_ES_2)
+#define WTF_USE_OPENGL_ES_2 1
+#endif
+#endif
+
 #endif /* WTF_Platform_h */

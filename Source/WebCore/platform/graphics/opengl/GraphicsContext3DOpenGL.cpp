@@ -244,6 +244,18 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     return true;
 }
 
+void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+{
+    makeContextCurrent();
+    ::glDepthRange(zNear, zFar);
+}
+
+void GraphicsContext3D::clearDepth(GC3Dclampf depth)
+{
+    makeContextCurrent();
+    ::glClearDepth(depth);
+}
+
 }
 
 #endif // ENABLE(WEBGL)

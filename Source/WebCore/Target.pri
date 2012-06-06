@@ -3910,18 +3910,21 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \
         platform/graphics/gpu/qt/DrawingBufferQt.cpp \
-        platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp
 
     INCLUDEPATH += $$PWD/platform/graphics/gpu
 
-    !contains(QT_CONFIG, opengles2) {
-        HEADERS += \
-            platform/graphics/opengl/Extensions3DOpenGL.h
+    contains(QT_CONFIG, opengl) | contains(QT_CONFIG, opengles2) {
+        !contains(QT_CONFIG, opengles2) {
+            SOURCES += platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+        } else {
+            SOURCES += platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+        }
+
+        HEADERS += platform/graphics/opengl/Extensions3DOpenGL.h
 
         SOURCES += \
             platform/graphics/opengl/Extensions3DOpenGL.cpp \
-            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
             platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
 
         ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")

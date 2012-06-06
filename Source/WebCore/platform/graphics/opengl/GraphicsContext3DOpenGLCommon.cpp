@@ -167,13 +167,13 @@ void GraphicsContext3D::prepareTexture()
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
 
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     ::glActiveTexture(GL_TEXTURE0);
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
     ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
     ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
     ::glActiveTexture(m_activeTexture);
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+    ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
     ::glFinish();
     m_layerComposited = true;
 }
@@ -188,12 +188,12 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
     bool mustRestoreFBO = false;
     if (m_attrs.antialias) {
         resolveMultisamplingIfNecessary();
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         mustRestoreFBO = true;
     } else {
         if (m_boundFBO != m_fbo) {
             mustRestoreFBO = true;
-            ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+            ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         }
     }
 
@@ -211,7 +211,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
 }
 
 void GraphicsContext3D::reshape(int width, int height)
@@ -249,7 +249,7 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     if (m_attrs.depth) {
         ::glGetFloatv(GL_DEPTH_CLEAR_VALUE, &clearDepth);
-        ::glClearDepth(1);
+        GraphicsContext3D::clearDepth(1);
         ::glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
         ::glDepthMask(GL_TRUE);
         clearMask |= GL_DEPTH_BUFFER_BIT;
@@ -271,7 +271,7 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     ::glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
     if (m_attrs.depth) {
-        ::glClearDepth(clearDepth);
+        GraphicsContext3D::clearDepth(clearDepth);
         ::glDepthMask(depthMask);
     }
     if (m_attrs.stencil) {
@@ -288,7 +288,7 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glDisable(GL_DITHER);
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
 
     ::glFlush();
 }
@@ -422,12 +422,6 @@ void GraphicsContext3D::clear(GC3Dbitfield mask)
     ::glClear(mask);
 }
 
-void GraphicsContext3D::clearDepth(GC3Dclampf depth)
-{
-    makeContextCurrent();
-    ::glClearDepth(depth);
-}
-
 void GraphicsContext3D::clearStencil(GC3Dint s)
 {
     makeContextCurrent();
@@ -497,11 +491,11 @@ void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     makeContextCurrent();
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 }
 
 void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
@@ -509,11 +503,11 @@ void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     makeContextCurrent();
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 }
 
 void GraphicsContext3D::cullFace(GC3Denum mode)
@@ -532,12 +526,6 @@ void GraphicsContext3D::depthMask(GC3Dboolean flag)
 {
     makeContextCurrent();
     ::glDepthMask(flag);
-}
-
-void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
-{
-    makeContextCurrent();
-    ::glDepthRange(zNear, zFar);
 }
 
 void GraphicsContext3D::detachShader(Platform3DObject program, Platform3DObject shader)
@@ -810,12 +798,12 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     ::glFlush();
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
     ::glReadPixels(x, y, width, height, format, type, data);
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 }
 
 void GraphicsContext3D::releaseShaderCompiler()

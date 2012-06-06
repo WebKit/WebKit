@@ -35,7 +35,7 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(QT)
 #include "OpenGLShims.h"
 #endif
 
@@ -72,12 +72,12 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     bool mustRestoreFBO = false;
     if (m_boundFBO != m_fbo) {
         mustRestoreFBO = true;
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
 
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
-    ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
+    ::glFramebufferTexture2DEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
@@ -90,7 +90,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         // Use a 24 bit depth buffer where we know we have it.
         if (supportPackedDepthStencilBuffer) {
             ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
-            ::glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, width, height, 0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, 0);
+            ::glTexImage2D(GL_TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, width, height, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, 0);
             if (m_attrs.stencil)
                 ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
             if (m_attrs.depth)
@@ -98,19 +98,19 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
             ::glBindTexture(GL_TEXTURE_2D, 0);
         } else {
             if (m_attrs.stencil) {
-                ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_stencilBuffer);
-                ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX8, width, height);
-                ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_stencilBuffer);
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
             }
             if (m_attrs.depth) {
-                ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer);
-                ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, width, height);
-                ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBuffer);
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
             }
-            ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+            ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, 0);
         }
     }
-    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT) {
+    if (glCheckFramebufferStatusEXT(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
         // FIXME: cleanup
         notImplemented();
     }
@@ -154,6 +154,18 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     makeContextCurrent();
     ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
     return true;
+}
+
+void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
+{
+    makeContextCurrent();
+    ::glDepthRangef(zNear, zFar);
+}
+
+void GraphicsContext3D::clearDepth(GC3Dclampf depth)
+{
+    makeContextCurrent();
+    ::glClearDepthf(depth);
 }
 
 } // namespace WebCore

@@ -394,6 +394,7 @@ public:
         STENCIL_INDEX = 0x1901,
         STENCIL_INDEX8 = 0x8D48,
         DEPTH_STENCIL = 0x84F9,
+        UNSIGNED_INT_24_8 = 0x84FA,
         RENDERBUFFER_WIDTH = 0x8D42,
         RENDERBUFFER_HEIGHT = 0x8D43,
         RENDERBUFFER_INTERNAL_FORMAT = 0x8D44,
@@ -932,29 +933,21 @@ public:
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
     ANGLEWebKitBridge m_compiler;
-#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
-    friend class Extensions3DQt;
-    OwnPtr<Extensions3DQt> m_extensions;
-#else
+
     friend class Extensions3DOpenGL;
     OwnPtr<Extensions3DOpenGL> m_extensions;
-#endif
 
     Attributes m_attrs;
     Vector<Vector<float> > m_vertexArray;
 
     GC3Duint m_texture, m_compositorTexture;
     GC3Duint m_fbo;
-#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
-    GC3Duint m_depthBuffer;
-    GC3Duint m_stencilBuffer;
-#else
 #if USE(OPENGL_ES_2)
     GC3Duint m_depthBuffer;
     GC3Duint m_stencilBuffer;
 #endif
     GC3Duint m_depthStencilBuffer;
-#endif
+
     bool m_layerComposited;
     GC3Duint m_internalColorFormat;
 
