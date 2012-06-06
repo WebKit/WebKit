@@ -148,7 +148,7 @@ protected:
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
 #if ENABLE(VIDEO)
     void initMediaColors();

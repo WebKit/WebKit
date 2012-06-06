@@ -841,7 +841,7 @@ bool RenderThemeWin::paintSliderThumb(RenderObject* o, const PaintInfo& i, const
 const int sliderThumbWidth = 7;
 const int sliderThumbHeight = 15;
 
-void RenderThemeWin::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeWin::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
     if (part == SliderThumbVerticalPart) {

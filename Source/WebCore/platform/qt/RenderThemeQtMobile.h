@@ -45,7 +45,7 @@ private:
 public:
     static PassRefPtr<RenderTheme> create(Page*);
 
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
 

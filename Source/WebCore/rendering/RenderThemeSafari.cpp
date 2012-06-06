@@ -1006,7 +1006,7 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const PaintInfo& paint
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
 
-void RenderThemeSafari::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeSafari::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     if (style->appearance() == SliderThumbHorizontalPart || style->appearance() == SliderThumbVerticalPart) {
         style->setWidth(Length(sliderThumbWidth, Fixed));

@@ -54,7 +54,7 @@ namespace WebCore {
         virtual Color platformActiveSelectionForegroundColor() const;
         virtual Color platformInactiveSelectionForegroundColor() const;
 
-        virtual void adjustSliderThumbSize(RenderStyle*) const;
+        virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
         static void setCaretBlinkInterval(double interval);
         virtual double caretBlinkIntervalInternal() const;

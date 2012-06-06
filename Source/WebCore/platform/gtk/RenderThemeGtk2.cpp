@@ -524,7 +524,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     return false;
 }
 
-void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
 #if ENABLE(VIDEO)

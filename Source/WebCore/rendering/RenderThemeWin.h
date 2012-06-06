@@ -93,7 +93,7 @@ public:
 
     virtual bool paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r);
     virtual bool paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r);
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     virtual bool popupOptionSupportsTextIndent() const { return true; }
 

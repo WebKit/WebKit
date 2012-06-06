@@ -770,7 +770,7 @@ void RenderThemeEfl::adjustSliderThumbStyle(StyleResolver* styleResolver, Render
     adjustSliderTrackStyle(styleResolver, style, element);
 }
 
-void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
     if (part == SliderThumbVerticalPart || part == SliderThumbHorizontalPart) {

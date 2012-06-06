@@ -391,7 +391,7 @@ Color RenderThemeChromiumWin::systemColor(int cssValueId) const
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
-void RenderThemeChromiumWin::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeChromiumWin::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     // These sizes match what WinXP draws for various menus.
     const int sliderThumbAlongAxis = 11;
@@ -403,7 +403,7 @@ void RenderThemeChromiumWin::adjustSliderThumbSize(RenderStyle* style) const
         style->setWidth(Length(sliderThumbAcrossAxis, Fixed));
         style->setHeight(Length(sliderThumbAlongAxis, Fixed));
     } else
-        RenderThemeChromiumSkia::adjustSliderThumbSize(style);
+        RenderThemeChromiumSkia::adjustSliderThumbSize(style, element);
 }
 
 bool RenderThemeChromiumWin::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r)

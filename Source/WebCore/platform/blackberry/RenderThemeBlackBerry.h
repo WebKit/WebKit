@@ -47,7 +47,7 @@ public:
     void calculateButtonSize(RenderStyle*) const;
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -75,6 +75,8 @@ public:
     virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
+    virtual void adjustMediaControlStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);

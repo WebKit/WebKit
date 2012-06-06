@@ -80,7 +80,7 @@ public:
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     virtual double caretBlinkInterval() const;
 

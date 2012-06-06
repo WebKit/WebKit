@@ -159,7 +159,7 @@ public:
 
     virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 

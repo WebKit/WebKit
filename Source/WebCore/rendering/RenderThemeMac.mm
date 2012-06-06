@@ -1747,7 +1747,7 @@ const int sliderThumbHeight = 15;
 const int mediaSliderThumbWidth = 13;
 const int mediaSliderThumbHeight = 14;
 
-void RenderThemeMac::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeMac::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     float zoomLevel = style->effectiveZoom();
     if (style->appearance() == SliderThumbHorizontalPart || style->appearance() == SliderThumbVerticalPart) {

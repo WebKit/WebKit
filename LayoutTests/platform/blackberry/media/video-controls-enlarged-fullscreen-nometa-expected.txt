@@ -1,0 +1,6 @@
+Test that media controls are rendered at the enlarged size in fullscreen mode.
+
+EVENT(canplaythrough)
+The actual controls height matches the expected controls height. OK
+END OF TEST
+Enter FullScreen

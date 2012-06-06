@@ -840,7 +840,7 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pain
 }
 #endif
 
-void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     // timelineThumbHeight should match the height property of -webkit-media-controls-timeline in mediaControlsQt.css.
     const int timelineThumbHeight = 12;

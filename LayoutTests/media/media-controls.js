@@ -32,6 +32,17 @@ function mediaControlsButtonCoordinates(element, id)
     return new Array(x, y);
 }
 
+function mediaControlsButtonDimensions(element, id)
+{
+    var controlID = "-webkit-media-controls-" + id;
+    var button = mediaControlsElement(internals.shadowRoot(element).firstChild, controlID);
+    if (!button)
+        throw "Failed to find media control element ID '" + id + "'";
+
+    var buttonBoundingRect = button.getBoundingClientRect();
+    return new Array(buttonBoundingRect.width, buttonBoundingRect.height);
+}
+
 function textTrackDisplayElement(parentElement, id, cueNumber)
 {
     var textTrackContainerID = "-webkit-media-text-track-container";

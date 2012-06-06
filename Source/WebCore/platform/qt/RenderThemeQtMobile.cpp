@@ -857,7 +857,7 @@ void RenderThemeQtMobile::setPaletteFromPageClientIfExists(QPalette& palette) co
     return;
 }
 
-void RenderThemeQtMobile::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeQtMobile::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     const ControlPart part = style->appearance();
     if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
@@ -865,7 +865,7 @@ void RenderThemeQtMobile::adjustSliderThumbSize(RenderStyle* style) const
         style->setWidth(Length(size, Fixed));
         style->setHeight(Length(size, Fixed));
     } else
-        RenderThemeQt::adjustSliderThumbSize(style);
+        RenderThemeQt::adjustSliderThumbSize(style, element);
 }
 
 }

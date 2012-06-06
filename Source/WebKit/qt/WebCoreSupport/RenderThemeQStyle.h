@@ -46,7 +46,7 @@ private:
 public:
     static PassRefPtr<RenderTheme> create(Page*);
 
-    virtual void adjustSliderThumbSize(RenderStyle*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
     QStyle* qStyle() const;
 

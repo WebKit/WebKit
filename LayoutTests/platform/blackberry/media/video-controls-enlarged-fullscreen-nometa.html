@@ -1,0 +1,57 @@
+<html>
+    <title>Test of HTML5 Media Controls Enlargement in Fullscreen Mode</title>
+    <body>
+    <p>Test that media controls are rendered at the enlarged size in fullscreen mode.</p>
+
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script src=../../../media/media-controls.js></script>
+    <script>
+        function errorListener(event)
+        {
+            logResult(false, "Caught 'error' event, video.error.code = " + this.error.code);
+            endTest();
+        }
+
+        function fullScreenListener(event)
+        {
+            // The video entered fullscreen mode.
+            document.removeEventListener('webkitfullscreenchange', fullScreenListener);
+            // Calculate the scale of CSS pixels. If CSS pixels are not being
+            // scaled by a factor of at least two, we expect the fullscreen
+            // controls to be shown enlarged. CSS pixels will only be scaled
+            // when viewport width is set to "device-width" by a meta tag (see
+            // above) on devices with high screen DPI's such as BB10 hand-helds.
+            var expected = 64;
+            if (screen.width / document.documentElement.clientWidth >= 2)
+                expected = 32;
+            var actual = mediaControlsButtonDimensions(videoElement, 'play-button')[1];
+            if (actual == expected)
+                logResult(true, "The actual controls height matches the expected controls height.");
+            else
+                logResult(false, "The actual controls height of " + actual + " does not match the expected controls height of " + expected + ".");
+            endTest();
+        }
+
+        function canplaythroughListener(event)
+        {
+            consoleWrite("EVENT(canplaythrough)");
+            // Cannot call this.webkitEnterFullScreen() directly because it
+            // only works when initiated by a user gesture.
+            if (window.eventSender)
+                eventSender.keyDown("a", ["altKey"]);
+            else {
+                logResult(true, "This test uses eventSender and must be run under the DRT framework to be automatic. Otherwise you need to manually press Enter Fullscreen.");
+            }
+        }
+
+        document.write("<video controls></video>");
+        document.write("<button onclick='videoElement.webkitRequestFullScreen()' accessKey='a'>Enter FullScreen</button>");
+        document.addEventListener('webkitfullscreenchange', fullScreenListener);
+        var videoElement = document.getElementsByTagName('video')[0];
+        videoElement.addEventListener('error', errorListener);
+        videoElement.addEventListener('canplaythrough', canplaythroughListener);
+        videoElement.src = findMediaFile("video", "../../../media/content/test");
+    </script>
+</body>
+</html>

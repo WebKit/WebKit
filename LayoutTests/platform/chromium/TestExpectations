@@ -839,7 +839,7 @@ WONTFIX SKIP : storage/indexeddb/database-quota.html = TEXT
 WONTFIX : platform/win/inverted-colors/non-composited.html = IMAGE+TEXT
 
 // Test for BlackBerry port only
-WONTFIX SKIP : platform/blackberry/editing/text-iterator/findString-markers.html = PASS TIMEOUT FAIL
+WONTFIX SKIP : platform/blackberry = PASS TIMEOUT FAIL
 
 // -----------------------------------------------------------------
 // TESTS TO FIX

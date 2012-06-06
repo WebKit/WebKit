@@ -146,7 +146,7 @@ Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
     return m_inactiveSelectionForegroundColor;
 }
 
-void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartSliderThumb);
 
@@ -157,7 +157,7 @@ void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderStyle* style) const
         style->setWidth(Length(size.height(), Fixed));
         style->setHeight(Length(size.width(), Fixed));
     } else
-        RenderThemeChromiumSkia::adjustSliderThumbSize(style);
+        RenderThemeChromiumSkia::adjustSliderThumbSize(style, element);
 }
 
 bool RenderThemeChromiumLinux::supportsControlTints() const

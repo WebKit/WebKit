@@ -1,3 +1,114 @@
+2012-06-05  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Conditionally enlarge HTML5 video controls in fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=87551
+
+        Reviewed by Antonio Gomes.
+
+        Changes to make media controls larger in fullscreen mode. The
+        BlackBerry media controls used to be sized by a combination
+        of CSS styles specified in mediaControlsBlackBerry.css and
+        hard coded constants in RenderThemeBlackBerry.cpp. This patch
+        moves all the dimensional sizes to a common location, i.e.
+        RenderThemeBlackBerry.cpp. Having all the logic in C++ code allows
+        more complex decision making for when and how much to enlarge the
+        media controls. Currently the controls are enlarged by a factor
+        of 2 if the document is in fullscreen mode, the video element
+        is the current fullscreen element, and the deviceScaleFactor of
+        the page is less than 2.0. This avoids overly large controls
+        on pages which are already at least doubling the size of the
+        controls via viewport meta tag device-width settings. In other
+        words, if the CSS pixels are already enlarged compared to device
+        pixels by a factor of at least 2 in length and width.
+
+        In order to accomplish this, I had to add a new Element* parameter
+        to RenderTheme::adjustSliderThumbSize(). This is needed so
+        that fullscreen mode can be checked and the deviceScaleFactor
+        retrieved. I feel that this does not have a big impact on the
+        code and the other ports, for which I will simply be adding the
+        additional parameter in their platform code.
+
+        Tests:
+        video-controls-enlarged-fullscreen-meta.html
+        video-controls-enlarged-fullscreen-nometa.html
+
+        * css/mediaControlsBlackBerry.css:
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance):
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::determineRenderSlider):
+        (WebCore::determineFullScreenMultiplier):
+        (WebCore::RenderThemeBlackBerry::adjustSliderThumbSize):
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+        (WebCore::RenderThemeBlackBerry::adjustSliderTrackStyle):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderThumb):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQt.h:
+        (RenderThemeQt):
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::RenderThemeQtMobile::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQtMobile.h:
+        (RenderThemeQtMobile):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::adjustSliderThumbSize):
+        * rendering/RenderThemeChromiumLinux.h:
+        (RenderThemeChromiumLinux):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::adjustSliderThumbSize):
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::adjustSliderThumbSize):
+        * rendering/RenderThemeChromiumWin.h:
+        (RenderThemeChromiumWin):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        * rendering/RenderThemeSafari.h:
+        (RenderThemeSafari):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        * rendering/RenderThemeWin.h:
+        (RenderThemeWin):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::adjustSliderThumbSize):
+        * rendering/RenderThemeWinCE.h:
+        (RenderThemeWinCE):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustMediaControlStyle):
+        (WebCore):
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+        (WebCore::RenderTheme::adjustSliderThumbSize):
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+
 2012-06-05  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=88370

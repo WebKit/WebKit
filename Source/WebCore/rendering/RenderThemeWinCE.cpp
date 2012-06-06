@@ -331,7 +331,7 @@ Color RenderThemeWinCE::systemColor(int cssValueId) const
 const int sliderThumbWidth = 7;
 const int sliderThumbHeight = 15;
 
-void RenderThemeWinCE::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeWinCE::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     if (style->appearance() == SliderThumbVerticalPart) {
         style->setWidth(Length(sliderThumbHeight, Fixed));

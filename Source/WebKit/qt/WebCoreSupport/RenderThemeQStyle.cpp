@@ -779,7 +779,7 @@ ControlPart RenderThemeQStyle::initializeCommonQStyleOptions(QStyleOption& optio
     return result;
 }
 
-void RenderThemeQStyle::adjustSliderThumbSize(RenderStyle* style) const
+void RenderThemeQStyle::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     const ControlPart part = style->appearance();
     if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
@@ -799,7 +799,7 @@ void RenderThemeQStyle::adjustSliderThumbSize(RenderStyle* style) const
             style->setHeight(Length(thickness, Fixed));
         }
     } else
-        RenderThemeQt::adjustSliderThumbSize(style);
+        RenderThemeQt::adjustSliderThumbSize(style, element);
 }
 
 }

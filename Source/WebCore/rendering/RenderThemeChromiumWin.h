@@ -61,7 +61,7 @@ namespace WebCore {
         virtual void systemFont(int propId, FontDescription&) const;
         virtual Color systemColor(int cssValueId) const;
 
-        virtual void adjustSliderThumbSize(RenderStyle*) const;
+        virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
         // Various paint functions.
         virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
