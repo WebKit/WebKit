@@ -1,3 +1,17 @@
+2012-06-06  Keyar Hood  <keyar@chromium.org>
+
+        [Chromium] imageSmoothingEnabled should apply to patterns
+        https://bugs.webkit.org/show_bug.cgi?id=88103
+
+        Reviewed by Stephen White.
+
+        Test: fast/canvas/canvas-imageSmoothingEnabled-patterns.html
+
+        When drawing patterns on a Canvas, the imageSmoothingEnabled flag is
+        respected.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setupShader):
+
 2012-06-06  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [JSC] Add WebGL instrumentation support

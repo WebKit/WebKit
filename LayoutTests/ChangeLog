@@ -1,3 +1,21 @@
+2012-06-06  Keyar Hood  <keyar@chromium.org>
+
+        [Chromium] imageSmoothingEnabled should apply to patterns
+        https://bugs.webkit.org/show_bug.cgi?id=88103
+
+        Reviewed by Stephen White.
+
+        Added tests for imageSmoothingEnabled flag applying to patterns.
+
+        Modified the TestExpectations file as tests are failing due to the new
+        change. It makes the pictures prettier (and it agrees with other
+        browsers) so we have decided that the new results are to be considered
+        correct.
+        * fast/canvas/canvas-imageSmoothingEnabled-patterns.html: Added.
+        * platform/chromium-linux/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/chromium-linux/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] http/tests/globalhistory testcases do not pass

@@ -372,6 +372,7 @@ void PlatformContextSkia::setupShader(SkPaint* paint, Gradient* grad, Pattern* p
     } else if (pat) {
         shader = pat->platformPattern(m_gc->getCTM());
         color = SK_ColorBLACK;
+        paint->setFilterBitmap(interpolationQuality() != InterpolationNone);
     }
 
     paint->setColor(m_state->applyAlpha(color));
