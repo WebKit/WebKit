@@ -1289,6 +1289,10 @@ http/tests/security/local-image-from-remote-whitelisted.html
 # https://bugs.webkit.org/show_bug.cgi?id=87168
 fast/forms/input-search-press-escape-key.html
 
+# [WK2] fast/hidpi/device-scale-factor-paint.html crashes
+# https://bugs.webkit.org/show_bug.cgi?id=88350
+fast/hidpi/device-scale-factor-paint.html
+
 # Editing input tests that time out unexpectedly.
 # https://bugs.webkit.org/show_bug.cgi?id=81547
 editing/input/reveal-edit-on-input-vertically.html

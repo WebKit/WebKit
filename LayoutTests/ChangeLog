@@ -1,3 +1,13 @@
+2012-06-06  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [WK2] fast/hidpi/device-scale-factor-paint.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=88350
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/hidpi/device-scale-factor-paint-expected.html: Renamed from LayoutTests/platform/chromium/fast/hidpi/device-scale-factor-paint-expected.html.
+        * platform/wk2/Skipped:
+
 2012-06-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed rebaseline for r119591.
