@@ -1,5 +1,15 @@
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Stop generating image results in the tests added by r114172.
+
+        Rubber-stamped by Simon Fraser.
+
+        * css3/filters/huge-region-composited.html:
+        * css3/filters/huge-region.html:
+        * platform/chromium/TestExpectations:
+
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaselines after r118772.
 
         * platform/chromium-mac-leopard/fast/forms/select/optgroup-rendering-expected.png: Added.

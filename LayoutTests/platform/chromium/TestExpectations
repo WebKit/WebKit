@@ -3512,7 +3512,6 @@ BUGWK83647 WIN LINUX : fast/multicol/cell-shrinkback.html = IMAGE
 BUGWK83941 : fast/canvas/2d.imageDataHD.html = TIMEOUT
 BUGWK83941 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TIMEOUT
 
-BUGWK84055 : css3/filters/huge-region.html = MISSING
 BUGWK84055 : css3/filters/huge-region-composited.html = CRASH
 
 BUGWK84065 MAC DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
