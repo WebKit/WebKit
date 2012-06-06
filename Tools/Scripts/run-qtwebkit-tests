@@ -154,6 +154,8 @@ def run_test(args):
     else:
         test_suite.set_output(tst.communicate()[0])  # takes stdout only, in developer mode it would be None.
     log.info("Finished %s", test_suite.test_file_name())
+    if timeout:
+        timer.cancel()
     return test_suite
 
 

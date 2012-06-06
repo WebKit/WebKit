@@ -1,3 +1,16 @@
+2012-06-06  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] run-qtwebkit-tests hangs with -j1
+        run-qtwebkit-tests used to hang when wk2 API tests were run with -j1 and --timeout.
+        This could happen due to an uncancelled timer after results were returned. This timer was
+        started only if --timeout was set.
+        https://bugs.webkit.org/show_bug.cgi?id=85475
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-qtwebkit-tests:
+        (run_test):
+
 2012-06-06  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Add preferredMinimumContentsWidth to the viewport info in MiniBrowser.
