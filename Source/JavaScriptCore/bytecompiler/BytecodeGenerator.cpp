@@ -1170,6 +1170,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     ScopeChainIterator iter = m_scopeChain->begin();
     ScopeChainIterator end = m_scopeChain->end();
     size_t depth = 0;
+    size_t depthOfFirstScopeWithDynamicChecks = 0;
     unsigned flags = 0;
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = iter->get();
@@ -1199,19 +1200,27 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
         bool scopeRequiresDynamicChecks = false;
         if (currentVariableObject->isDynamicScope(scopeRequiresDynamicChecks))
             break;
-        if (scopeRequiresDynamicChecks)
-            flags |= ResolveResult::DynamicFlag;
+        if (!(flags & ResolveResult::DynamicFlag)) {
+            if (scopeRequiresDynamicChecks)
+                flags |= ResolveResult::DynamicFlag;
+            else
+                ++depthOfFirstScopeWithDynamicChecks;
+        }
     }
 
     // Can't locate the property but we're able to avoid a few lookups.
     JSObject* scope = iter->get();
+    // Step over the function's activation, if it needs one. At this point we
+    // know there is no dynamic scope in the function itself, so this is safe to
+    // do.
     depth += m_codeBlock->needsFullScopeChain();
+    depthOfFirstScopeWithDynamicChecks += m_codeBlock->needsFullScopeChain();
     if (++iter == end) {
         if ((flags & ResolveResult::DynamicFlag) && depth)
             return ResolveResult::dynamicGlobalResolve(depth, scope);
         return ResolveResult::globalResolve(scope);
     }
-    return ResolveResult::dynamicResolve(depth);
+    return ResolveResult::dynamicResolve(depthOfFirstScopeWithDynamicChecks);
 }
 
 ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)

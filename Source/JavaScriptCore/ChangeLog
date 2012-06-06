@@ -1,3 +1,16 @@
+2012-06-06  Andy Wingo  <wingo@igalia.com>
+
+        REGRESSION (r106478): None of the Paper.js JavaScript examples work
+        https://bugs.webkit.org/show_bug.cgi?id=87158
+
+        Reviewed by Michael Saboff.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve): If we have to bail out to
+        dynamicResolve(), only skip static scopes from the head of the
+        scope chain.  Before, we were also skipping activations with
+        direct eval as well, which was incorrect.
+
 2012-06-06  Dan Bernstein  <mitz@apple.com>
 
         Reverted r119567, the fix for <http://webkit.org/b/88378>, because it broke the 32-bit build.
