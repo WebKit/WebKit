@@ -125,11 +125,14 @@ BUGWKGTK SKIP : fast/forms/color = FAIL
 
 // ENABLE_INPUT_TYPE_* are not enabled.
 BUGWK29359 : fast/forms/date = FAIL
+BUGWK29359 : fast/forms/date/date-stepup-stepdown-from-renderer.html = PASS
+BUGWK29359 : fast/forms/date/no-page-popup-controller.html = PASS
 BUGWK29359 : fast/css/pseudo-in-range.html = FAIL
 BUGWK29359 : fast/css/pseudo-out-of-range.html = FAIL
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = FAIL
 BUGWK29359 : fast/forms/datetime = FAIL
 BUGWK29359 : fast/forms/datetimelocal = FAIL
+BUGWK29359 : fast/forms/datetimelocal/input-valueasdate-datetimelocal.html = PASS
 BUGWK29359 : fast/forms/month = FAIL
 BUGWK29359 : fast/forms/time = FAIL
 BUGWK29359 : fast/forms/week = FAIL
@@ -229,6 +232,7 @@ BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-cr
 
 // CSS Grid Layout is not yet enabled.
 BUGWK60731 : fast/css-grid-layout = FAIL
+BUGWK60731 : fast/css-grid-layout/grid-disabled-by-default.html = PASS
 
 // <style scoped> is not yet enabled.
 BUGWK49142 : fast/css/style-scoped = FAIL
@@ -301,6 +305,10 @@ BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm 
 
 // These tests require subpixel layout to be enabled
 BUGWK60318 : fast/sub-pixel = FAIL
+BUGWK60318 : fast/sub-pixel/float-containing-block-with-margin.html = PASS
+BUGWK60318 : fast/sub-pixel/float-with-right-margin-zoom.html = PASS
+BUGWK60318 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
+BUGWK60318 : fast/sub-pixel/inline-block-with-margin.html = PASS
 
 // Mediastream implementation is not complete yet.
 BUGWK79203 SKIP : fast/mediastream = FAIL
@@ -644,9 +652,6 @@ BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
 
 BUGWKGTK : media/video-size-intrinsic-scale.html = FAIL
 
-// Need to implement NPP_HandleEvent() in TestNetscapePlugin
-BUGWKGTK : plugins/plugin-initiate-popup-window.html = FAIL
-
 // This test is for clients that choose to make the missing plugin indicator a button
 BUGWKGTK : plugins/clicking-missing-plugin-fires-delegate.html = FAIL
 
@@ -661,6 +666,7 @@ BUGWK27905 : http/tests/loading/redirect-methods.html = FAIL
 
 // New test infrastructure required -- need isolated worlds
 BUGWK31508 : http/tests/security/isolatedWorld = FAIL
+BUGWK31508 : http/tests/security/isolatedWorld/context-destroy.html = PASS
 BUGWK31508 : storage/websql/open-database-creation-callback-isolated-world.html = FAIL
 BUGWK31508 : storage/websql/statement-error-callback-isolated-world.html = FAIL
 BUGWK31508 : storage/websql/statement-success-callback-isolated-world.html = FAIL
@@ -824,6 +830,8 @@ BUGWK40601 : editing/selection/5354455-1.html = FAIL
 
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
 BUGWK58222 : fast/preloader = FAIL
+BUGWK58222 : fast/preloader/scan-body-from-head-import.html = PASS
+BUGWK58222 : fast/preloader/scan-body-from-head-script.html = PASS
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = FAIL
 
 // The middle circle on both rectangles is missing in the pixel output.
@@ -1118,9 +1126,6 @@ BUGWKGTK SKIP WONTFIX : accessibility/table-with-aria-role.html = FAIL
 BUGWKGTK SKIP WONTFIX : accessibility/table-with-rules.html = FAIL
 BUGWKGTK SKIP WONTFIX : accessibility/plugin.html = FAIL
 
-// viewport meta tag tests that failed because window.devicePixelRatio is not implemented
-BUGWKGTK : fast/viewport/viewport-133.html = FAIL
-
 // [DRT] didDetectXSS is not implemented
 BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = FAIL
 
@@ -1135,7 +1140,6 @@ BUGWK73003 : editing/spelling/spellcheck-async.html = FAIL
 BUGWK62204 : svg/custom/circular-marker-reference-4.svg = FAIL
 BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = FAIL
 BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = FAIL
-BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = FAIL
 BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-04-t.svg = FAIL
 
