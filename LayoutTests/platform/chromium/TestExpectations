@@ -2890,7 +2890,6 @@ BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
 // They're now running them so these need to be triaged.
 BUGWK66989 : transforms/3d/general/perspective-non-layer.html = FAIL
 BUGWK66989 : transforms/3d/general/transform-origin-z-change.html = FAIL
-BUGWK66989 : transforms/3d/hit-testing/perspective-clipped.html = FAIL
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-2.html = FAIL
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-deep.html = FAIL
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-coplanar.html = FAIL
@@ -3755,10 +3754,6 @@ BUGWK87356 : fast/files/workers/worker-read-blob-sync.html = TEXT
 // Shadow DOM drop event tests are very flaky since creation
 BUGWK87364 DEBUG : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT PASS
 BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
-
-
-// Need expected image for each platform
-BUGWK87614 : fast/forms/select/optgroup-rendering.html = FAIL MISSING
 
 // Requires setUseDeferredFrameLoading() API from LayoutTestController.
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = FAIL

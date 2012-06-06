@@ -1,3 +1,15 @@
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines after r118772.
+
+        * platform/chromium-mac-leopard/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select/optgroup-rendering-expected.txt: Added.
+        * platform/chromium-win/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-win/fast/forms/select/optgroup-rendering-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed. Fixing an incorrect path in lion Skipped file.
