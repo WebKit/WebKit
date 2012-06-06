@@ -11,13 +11,16 @@ function test()
 
     shouldBeEqualToString("typeof indexedDB.open", "function");
     shouldBeEqualToString("typeof indexedDB.cmp", "function");
-    shouldBeEqualToString("typeof indexedDB.getDatabaseNames", "function");
-
     shouldBeEqualToString("typeof indexedDB.deleteDatabase", "function");
+
+    // Non-standard, must be prefixed
+    shouldBeEqualToString("typeof indexedDB.webkitGetDatabaseNames", "function");
+    shouldBeEqualToString("typeof indexedDB.getDatabaseNames", "undefined");
+
 
     name = 'storage/indexeddb/factory-basics';
 
-    request = evalAndLog("indexedDB.getDatabaseNames()");
+    request = evalAndLog("indexedDB.webkitGetDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess1;
     request.onerror = unexpectedErrorCallback;
 }
@@ -37,7 +40,7 @@ function getDatabaseNamesSuccess1()
 function openSuccess()
 {
     evalAndLog("event.target.result.close()");
-    request = evalAndLog("indexedDB.getDatabaseNames()");
+    request = evalAndLog("indexedDB.webkitGetDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess2;
     request.onerror = unexpectedErrorCallback;
 }
@@ -56,7 +59,7 @@ function getDatabaseNamesSuccess2()
 
 function deleteDatabaseSuccess()
 {
-    request = evalAndLog("indexedDB.getDatabaseNames()");
+    request = evalAndLog("indexedDB.webkitGetDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess3;
     request.onerror = unexpectedErrorCallback;
 }

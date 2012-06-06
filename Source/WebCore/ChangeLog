@@ -1,3 +1,16 @@
+2012-06-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Rename IDBFactory.getDatabaseNames() to webkitGetDatabaseNames()
+        https://bugs.webkit.org/show_bug.cgi?id=86874
+
+        Reviewed by Ojan Vafai.
+
+        The function is non-standard, and should be prefixed.
+
+        Test: storage/indexeddb/factory-basics.html
+
+        * Modules/indexeddb/IDBFactory.idl:
+
 2012-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add support for direction on table row group with collapsing borders

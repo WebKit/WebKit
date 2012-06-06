@@ -7,20 +7,21 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 PASS typeof indexedDB.open is "function"
 PASS typeof indexedDB.cmp is "function"
-PASS typeof indexedDB.getDatabaseNames is "function"
 PASS typeof indexedDB.deleteDatabase is "function"
-indexedDB.getDatabaseNames()
+PASS typeof indexedDB.webkitGetDatabaseNames is "function"
+PASS typeof indexedDB.getDatabaseNames is "undefined"
+indexedDB.webkitGetDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
 indexedDB.open(name)
 event.target.result.close()
-indexedDB.getDatabaseNames()
+indexedDB.webkitGetDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is true
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
 indexedDB.deleteDatabase('storage/indexeddb/factory-basics')
-indexedDB.getDatabaseNames()
+indexedDB.webkitGetDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false

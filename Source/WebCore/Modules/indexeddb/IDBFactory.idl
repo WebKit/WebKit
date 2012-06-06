@@ -28,7 +28,7 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBFactory {
-        [CallWith=ScriptExecutionContext] IDBRequest getDatabaseNames();
+        [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames();
 
         [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name)
             raises (IDBDatabaseException);

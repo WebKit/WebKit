@@ -1,3 +1,16 @@
+2012-06-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Rename IDBFactory.getDatabaseNames() to webkitGetDatabaseNames()
+        https://bugs.webkit.org/show_bug.cgi?id=86874
+
+        Reviewed by Ojan Vafai.
+
+        * storage/indexeddb/factory-basics-expected.txt:
+        * storage/indexeddb/resources/factory-basics.js:
+        (test):
+        (openSuccess):
+        (deleteDatabaseSuccess):
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r119591 because it was failing with missing results.
