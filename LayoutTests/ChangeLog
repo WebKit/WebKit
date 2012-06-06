@@ -1,3 +1,160 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r119617 part 1.
+
+        * platform/chromium-linux-x86/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-linux-x86/css2.1/20110323: Removed.
+        * platform/chromium-linux/compositing/culling/filter-occlusion-blur-large-expected.png:
+        * platform/chromium-linux/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-linux/compositing/geometry/fixed-position-composited-page-scale-expected.png:
+        * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-linux/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-linux/compositing/masks/multiple-masks-expected.png:
+        * platform/chromium-linux/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-linux/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-linux/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-linux/compositing/scaling: Removed.
+        * platform/chromium-linux/css1/basic/comments-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_left_width-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_right_width-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_style-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_top_width-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_width-expected.png:
+        * platform/chromium-linux/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-linux/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-linux/css1/box_properties/margin-expected.png:
+        * platform/chromium-linux/css1/box_properties/margin_inline-expected.png:
+        * platform/chromium-linux/css1/box_properties/margin_top-expected.png:
+        * platform/chromium-linux/css1/box_properties/padding_bottom-expected.png:
+        * platform/chromium-linux/css1/box_properties/width-expected.png:
+        * platform/chromium-linux/css1/color_and_background/background-expected.png:
+        * platform/chromium-linux/css1/color_and_background/background_position-expected.png:
+        * platform/chromium-linux/css1/font_properties/font-expected.png:
+        * platform/chromium-linux/css1/font_properties/font_size-expected.png:
+        * platform/chromium-linux/css1/font_properties/font_weight-expected.png:
+        * platform/chromium-linux/css1/formatting_model/inline_elements-expected.png:
+        * platform/chromium-linux/css1/pseudo/firstletter-expected.png:
+        * platform/chromium-linux/css1/pseudo/firstline-expected.png:
+        * platform/chromium-linux/css1/text_properties/letter_spacing-expected.png:
+        * platform/chromium-linux/css1/text_properties/line_height-expected.png:
+        * platform/chromium-linux/css1/text_properties/text_decoration-expected.png:
+        * platform/chromium-linux/css1/text_properties/text_transform-expected.png:
+        * platform/chromium-linux/css1/text_properties/word_spacing-expected.png:
+        * platform/chromium-linux/css1/units/color_units-expected.png:
+        * platform/chromium-linux/css2.1/20110323/abspos-containing-block-initial-001-expected.png:
+        * platform/chromium-linux/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.png:
+        * platform/chromium-linux/css2.1/20110323/abspos-replaced-width-margin-000-expected.png:
+        * platform/chromium-linux/css2.1/20110323/block-non-replaced-height-016-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png:
+        * platform/chromium-linux/css2.1/t0905-c5526-fltclr-00-c-ag-expected.png:
+        * platform/chromium-linux/css2.1/t1202-counters-08-b-expected.png:
+        * platform/chromium-linux/css2.1/t140201-c535-bg-fixd-00-b-g-expected.png:
+        * platform/chromium-linux/css2.1/t1508-c527-font-07-b-expected.png:
+        * platform/chromium-linux/editing/inserting/typing-at-end-of-line-expected.png:
+        * platform/chromium-linux/editing/selection/focus_editable_html-expected.png:
+        * platform/chromium-linux/editing/selection/select-all-003-expected.png:
+        * platform/chromium-linux/editing/selection/select-all-004-expected.png:
+        * platform/chromium-mac-leopard/compositing/masks/multiple-masks-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac/compositing/culling/filter-occlusion-alpha-large-expected.png: Added.
+        * platform/chromium-mac/compositing/culling/filter-occlusion-blur-large-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-mac/compositing/iframes/scroll-fixed-transformed-element-expected.png:
+        * platform/chromium-mac/compositing/iframes/scroll-grandchild-iframe-expected.png: Added.
+        * platform/chromium-mac/compositing/layer-creation/fixed-position-and-transform-expected.png: Added.
+        * platform/chromium-mac/compositing/layer-creation/fixed-position-scroll-expected.png:
+        * platform/chromium-mac/compositing/layer-creation/fixed-position-under-transform-expected.png: Added.
+        * platform/chromium-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac/compositing/scaling/tiled-layer-recursion-expected.png: Added.
+        * platform/chromium-win-vista/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-win-vista/css1/formatting_model/inline_elements-expected.png: Removed.
+        * platform/chromium-win-vista/css1/formatting_model/replaced_elements-expected.png: Added.
+        * platform/chromium-win-xp/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-win-xp/css1/formatting_model: Removed.
+        * platform/chromium-win-xp/css1/formatting_model/inline_elements-expected.png: Removed.
+        * platform/chromium-win/compositing/culling/filter-occlusion-alpha-large-expected.png: Added.
+        * platform/chromium-win/compositing/culling/filter-occlusion-blur-large-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-composited-page-scale-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-win/compositing/iframes/scroll-fixed-transformed-element-expected.png:
+        * platform/chromium-win/compositing/iframes/scroll-grandchild-iframe-expected.png: Added.
+        * platform/chromium-win/compositing/layer-creation/fixed-position-and-transform-expected.png: Added.
+        * platform/chromium-win/compositing/layer-creation/fixed-position-scroll-expected.png:
+        * platform/chromium-win/compositing/layer-creation/fixed-position-under-transform-expected.png: Added.
+        * platform/chromium-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-win/compositing/masks/multiple-masks-expected.png:
+        * platform/chromium-win/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-win/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-win/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-win/compositing/scaling/tiled-layer-recursion-expected.png: Added.
+        * platform/chromium-win/css1/basic/comments-expected.png:
+        * platform/chromium-win/css1/basic/inheritance-expected.png:
+        * platform/chromium-win/css1/box_properties/border_bottom_width-expected.png:
+        * platform/chromium-win/css1/box_properties/border_width-expected.png:
+        * platform/chromium-win/css1/box_properties/clear-expected.png:
+        * platform/chromium-win/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-win/css1/box_properties/height-expected.png:
+        * platform/chromium-win/css1/box_properties/margin_inline-expected.png:
+        * platform/chromium-win/css1/box_properties/margin_top-expected.png:
+        * platform/chromium-win/css1/box_properties/padding-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_bottom-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_inline-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_top-expected.png:
+        * platform/chromium-win/css1/classification/white_space-expected.png:
+        * platform/chromium-win/css1/color_and_background/background_attachment-expected.png:
+        * platform/chromium-win/css1/color_and_background/background_position-expected.png:
+        * platform/chromium-win/css1/color_and_background/background_repeat-expected.png:
+        * platform/chromium-win/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/chromium-win/css1/font_properties/font_weight-expected.png:
+        * platform/chromium-win/css1/formatting_model/floating_elements-expected.png:
+        * platform/chromium-win/css1/formatting_model/height_of_lines-expected.png:
+        * platform/chromium-win/css1/formatting_model/replaced_elements-expected.png:
+        * platform/chromium-win/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/chromium-win/css1/pseudo/firstline-expected.png:
+        * platform/chromium-win/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/chromium-win/css1/text_properties/text_decoration-expected.png:
+        * platform/chromium-win/css1/text_properties/text_indent-expected.png:
+        * platform/chromium-win/css1/text_properties/text_transform-expected.png:
+        * platform/chromium-win/css1/units/color_units-expected.png:
+        * platform/chromium-win/css1/units/length_units-expected.png:
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-001-expected.png:
+        * platform/chromium-win/css2.1/20110323/abspos-containing-block-initial-007-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/chromium-win/css2.1/t0905-c5526-fltclr-00-c-ag-expected.png:
+        * platform/chromium-win/css2.1/t1002-c5523-width-02-b-g-expected.png:
+        * platform/chromium-win/css2.1/t140201-c535-bg-fixd-00-b-g-expected.png:
+        * platform/chromium-win/css2.1/t1508-c527-font-07-b-expected.png:
+        * platform/chromium-win/editing/inserting/insert-div-023-expected.png:
+        * platform/chromium-win/editing/selection/focus_editable_html-expected.png:
+        * platform/chromium-win/editing/selection/select-all-003-expected.png:
+        * platform/chromium-win/editing/selection/select-all-004-expected.png:
+        * platform/chromium/compositing/scaling: Removed.
+        * platform/chromium/compositing/scaling/tiled-layer-recursion-expected.png: Removed.
+
 2012-06-06  Gavin Barraclough  <barraclough@apple.com>
 
         Assigning to a static property should not change iteration order
