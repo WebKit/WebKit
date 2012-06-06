@@ -240,3 +240,20 @@ MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/images.
 
         command._tests_to_rebaseline = lambda port: ['userscripts/another-test.html', 'userscripts/images.svg']
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_logs=expected_logs_with_optimize, expected_stderr=expected_stderr_with_optimize)
+
+    def test_overrides_are_included_correctly(self):
+        command = RebaselineExpectations()
+        tool = MockTool()
+        command.bind_to_tool(tool)
+        port = tool.port_factory.get('chromium-mac-lion')
+
+        # This tests that the any tests marked as REBASELINE in the overrides are found, but
+        # that the overrides do not get written into the main file.
+        self.overrides = ('BUGX REBASELINE : userscripts/another-test.html = TEXT\n'
+                          'BUGY : userscripts/test.html = CRASH\n')
+
+        port._filesystem.write_text_file(port.path_to_test_expectations_file(), '')
+        port._filesystem.write_text_file(port.layout_tests_dir() + '/userscripts/another-test.html', '')
+        port.test_expectations_overrides = lambda: self.overrides
+        self.assertEquals(command._tests_to_rebaseline(port), set(['userscripts/another-test.html']))
+        self.assertEquals(port._filesystem.read_text_file(port.path_to_test_expectations_file()), '')

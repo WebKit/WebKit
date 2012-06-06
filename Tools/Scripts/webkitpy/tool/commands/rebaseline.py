@@ -260,19 +260,24 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         # FIXME: Support non-Chromium ports.
         return port_name.startswith('chromium-')
 
-    def _expectations(self, port):
-        return TestExpectations(port)
+    def _expectations(self, port, include_overrides):
+        return TestExpectations(port, include_overrides=include_overrides)
 
     def _update_expectations_file(self, port_name):
         if not self._is_supported_port(port_name):
             return
         port = self._tool.port_factory.get(port_name)
-        expectations = self._expectations(port)
+
+        # FIXME: This will intentionally skip over any REBASELINE expectations that were in an overrides file.
+        # This is not good, but avoids having the overrides getting written into the main file.
+        # See https://bugs.webkit.org/show_bug.cgi?id=88456 for context. This will no longer be needed
+        # once we properly support cascading expectations files.
+        expectations = self._expectations(port, include_overrides=False)
         path = port.path_to_test_expectations_file()
         self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
 
     def _tests_to_rebaseline(self, port):
-        return self._expectations(port).get_rebaselining_failures()
+        return self._expectations(port, include_overrides=True).get_rebaselining_failures()
 
     def _rebaseline_port(self, port_name):
         if not self._is_supported_port(port_name):
