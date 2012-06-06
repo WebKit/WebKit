@@ -1,3 +1,26 @@
+2012-06-06  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r119567, the fix for <http://webkit.org/b/88378>, because it broke the 32-bit build.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalThis.cpp:
+        (JSC::JSGlobalThis::setUnwrappedObject):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::createInheritorID):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::resetInheritorID):
+        (JSC):
+        (JSC::JSObject::offsetOfInheritorID):
+        (JSC::JSObject::inheritorID):
+
 2012-06-05  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Improve Math.round and Math.floor intrinsic

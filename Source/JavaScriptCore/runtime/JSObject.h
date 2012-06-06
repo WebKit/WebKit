@@ -236,6 +236,7 @@ namespace JSC {
         
         static size_t offsetOfInlineStorage();
         static size_t offsetOfPropertyStorage();
+        static size_t offsetOfInheritorID();
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
@@ -263,9 +264,9 @@ namespace JSC {
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
         
-        void resetInheritorID(JSGlobalData& globalData)
+        void resetInheritorID()
         {
-            removeDirect(globalData, globalData.m_inheritorIDKey);
+            m_inheritorID.clear();
         }
 
     private:
@@ -302,6 +303,7 @@ namespace JSC {
         Structure* createInheritorID(JSGlobalData&);
 
         StorageBarrier m_propertyStorage;
+        WriteBarrier<Structure> m_inheritorID;
     };
 
 
@@ -309,8 +311,8 @@ namespace JSC {
 #define JSNonFinalObject_inlineStorageCapacity 4
 #define JSFinalObject_inlineStorageCapacity 6
 #else
-#define JSNonFinalObject_inlineStorageCapacity 3
-#define JSFinalObject_inlineStorageCapacity 5
+#define JSNonFinalObject_inlineStorageCapacity 2
+#define JSFinalObject_inlineStorageCapacity 4
 #endif
 
 COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineStorageCapacity), final_storage_is_at_least_as_large_as_non_final);
@@ -415,6 +417,11 @@ inline size_t JSObject::offsetOfPropertyStorage()
     return OBJECT_OFFSETOF(JSObject, m_propertyStorage);
 }
 
+inline size_t JSObject::offsetOfInheritorID()
+{
+    return OBJECT_OFFSETOF(JSObject, m_inheritorID);
+}
+
 inline bool JSObject::isGlobalObject() const
 {
     return structure()->typeInfo().type() == GlobalObjectType;
@@ -507,10 +514,9 @@ inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 
 inline Structure* JSObject::inheritorID(JSGlobalData& globalData)
 {
-    if (WriteBarrierBase<Unknown>* location = getDirectLocation(globalData, globalData.m_inheritorIDKey)) {
-        Structure* inheritorID = jsCast<Structure*>(location->get());
-        ASSERT(inheritorID->isEmpty());
-        return inheritorID;
+    if (m_inheritorID) {
+        ASSERT(m_inheritorID->isEmpty());
+        return m_inheritorID.get();
     }
     return createInheritorID(globalData);
 }
