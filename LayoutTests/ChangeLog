@@ -1,5 +1,139 @@
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaseline after r119617 part 2.
+
+        * fast/block/float/021-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/auto: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/auto/vertical-lr: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/auto/vertical-lr/007-expected.png: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/auto/vertical-rl: Added.
+        * platform/chromium-linux-x86/fast/block/positioning/auto/vertical-rl/007-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-linux/fast/block/float/019-expected.png:
+        * platform/chromium-linux/fast/block/float/021-expected.png:
+        * platform/chromium-linux/fast/block/float/025-expected.png:
+        * platform/chromium-linux/fast/block/float/026-expected.png:
+        * platform/chromium-linux/fast/block/float/027-expected.png:
+        * platform/chromium-linux/fast/block/float/028-expected.png:
+        * platform/chromium-linux/fast/block/float/033-expected.png:
+        * platform/chromium-linux/fast/block/float/avoidance-percent-width-strict-expected.png:
+        * platform/chromium-linux/fast/block/float/centered-float-avoidance-complexity-expected.png:
+        * platform/chromium-linux/fast/block/float/nested-clearance-expected.png:
+        * platform/chromium-linux/fast/block/float/shrink-to-avoid-float-complexity-expected.png:
+        * platform/chromium-linux/fast/block/lineboxcontain/parsing-invalid-expected.png:
+        * platform/chromium-linux/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/chromium-linux/fast/block/positioning/047-expected.png:
+        * platform/chromium-linux/fast/block/positioning/055-expected.png:
+        * platform/chromium-linux/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/chromium-linux/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/chromium-linux/fast/block/positioning/negative-rel-position-expected.png:
+        * platform/chromium-linux/fast/block/positioning/relative-overflow-block-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/002-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/002-xhtml-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/003-declarative-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/003-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/003-xhtml-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/004-declarative-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/004-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/004-xhtml-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/007-declarative-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/007-expected.png:
+        * platform/chromium-linux/fast/body-propagation/overflow/007-xhtml-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-massive-scale-expected.png:
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-01-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-02-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-03-expected.png:
+        * platform/chromium-linux/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-linux/fast/css/005-expected.png:
+        * platform/chromium-linux/fast/css/bidi-override-in-anonymous-block-expected.png:
+        * platform/chromium-linux/fast/css/clip-text-in-scaled-div-expected.png:
+        * platform/chromium-linux/fast/css/first-child-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/font_property_normal-expected.png:
+        * platform/chromium-linux/fast/css/last-child-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/nested-floating-relative-position-percentages-expected.png:
+        * platform/chromium-linux/fast/css/only-child-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/chromium-linux/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-linux/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png:
+        * platform/chromium-linux/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.png:
+        * platform/chromium-linux/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.png:
+        * platform/chromium-linux/fast/css/relative-positioned-block-with-inline-ancestor-expected.png:
+        * platform/chromium-linux/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.png:
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-expected.png:
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-strict-expected.png:
+        * platform/chromium-linux/fast/dom/clone-node-dynamic-style-expected.png:
+        * platform/chromium-linux/fast/dom/rtl-scroll-to-leftmost-and-resize-expected.png:
+        * platform/chromium-linux/fast/dom/scroll-reveal-top-overflow-expected.png:
+        * platform/chromium-linux/fast/dynamic/008-expected.png:
+        * platform/chromium-linux/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-linux/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/chromium-linux/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/chromium-linux/fast/events/resize-events-expected.png:
+        * platform/chromium-linux/fast/events/standalone-image-drag-to-editable-expected.png:
+        * platform/chromium-linux/fast/flexbox/016-expected.png:
+        * platform/chromium-win-vista/fast/block/positioning/auto/vertical-lr/007-expected.png: Added.
+        * platform/chromium-win-vista/fast/block/positioning/auto/vertical-rl/007-expected.png: Added.
+        * platform/chromium-win-xp/fast/dom/34176-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-win/fast/block/basic/truncation-rtl-expected.png:
+        * platform/chromium-win/fast/block/float/008-expected.png:
+        * platform/chromium-win/fast/block/float/021-expected.png:
+        * platform/chromium-win/fast/block/float/021-expected.txt:
+        * platform/chromium-win/fast/block/float/032-expected.png:
+        * platform/chromium-win/fast/block/float/avoidance-percent-width-strict-expected.png:
+        * platform/chromium-win/fast/block/float/br-with-clear-2-expected.png:
+        * platform/chromium-win/fast/block/float/nested-clearance-expected.png:
+        * platform/chromium-win/fast/block/margin-collapse/104-expected.png:
+        * platform/chromium-win/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/chromium-win/fast/block/positioning/047-expected.png:
+        * platform/chromium-win/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/chromium-win/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/chromium-win/fast/block/positioning/negative-rel-position-expected.png:
+        * platform/chromium-win/fast/block/positioning/relative-overflow-replaced-expected.png:
+        * platform/chromium-win/fast/block/positioning/relative-overflow-replaced-float-expected.png:
+        * platform/chromium-win/fast/block/positioning/vertical-lr/002-expected.png:
+        * platform/chromium-win/fast/block/positioning/vertical-rl/002-expected.png:
+        * platform/chromium-win/fast/borders/border-image-massive-scale-expected.png:
+        * platform/chromium-win/fast/borders/inline-mask-overlay-image-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-01-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-02-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-03-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-win/fast/clip/014-expected.png:
+        * platform/chromium-win/fast/css/clip-text-in-scaled-div-expected.png:
+        * platform/chromium-win/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/chromium-win/fast/css/font_property_normal-expected.png:
+        * platform/chromium-win/fast/css/hsl-color-expected.png:
+        * platform/chromium-win/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/chromium-win/fast/css/nested-floating-relative-position-percentages-expected.png:
+        * platform/chromium-win/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-win/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png:
+        * platform/chromium-win/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.png:
+        * platform/chromium-win/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.png:
+        * platform/chromium-win/fast/css/relative-positioned-block-with-inline-ancestor-expected.png:
+        * platform/chromium-win/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.png:
+        * platform/chromium-win/fast/css/word-space-extra-expected.png:
+        * platform/chromium-win/fast/dom/34176-expected.png:
+        * platform/chromium-win/fast/dom/clone-node-dynamic-style-expected.png:
+        * platform/chromium-win/fast/dom/rtl-scroll-to-leftmost-and-resize-expected.png:
+        * platform/chromium-win/fast/dom/scroll-reveal-left-overflow-expected.png:
+        * platform/chromium-win/fast/dynamic/window-resize-scrollbars-test-expected.png:
+        * platform/chromium-win/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/chromium-win/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/chromium-win/fast/events/pointer-events-2-expected.png:
+        * platform/chromium-win/fast/events/resize-events-expected.png:
+        * platform/chromium-win/fast/events/standalone-image-drag-to-editable-expected.png:
+        * platform/chromium-win/fast/flexbox/016-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/block/float/021-expected.txt: Removed.
+        * platform/gtk/fast/block/float/021-expected.txt: Removed.
+
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaseline after r119617 part 1.
 
         * platform/chromium-linux-x86/compositing/geometry/horizontal-scroll-composited-expected.png:
