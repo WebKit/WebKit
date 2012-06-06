@@ -1,5 +1,19 @@
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaselines after r115091.
+
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/chromium/TestExpectations:
+
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         More Chromium rebaselines after r119528 and r119512.
 
         * platform/chromium-linux/editing/selection/3690703-2-expected.png:
