@@ -1,3 +1,16 @@
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines for r119523 and r119529.
+
+        * platform/chromium-linux/compositing/layer-creation: Removed.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/float-containing-block-with-margin-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-mac/compositing/iframes/scroll-fixed-transformed-element-expected.png: Added.
+        * platform/chromium-mac/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-win/compositing/backing/no-backing-for-perspective-expected.txt:
+        * platform/chromium-win/compositing/iframes/scroll-fixed-transformed-element-expected.png: Added.
+        * platform/chromium-win/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt: Added.
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Fixing two leopard-specific baselines following r119528.
