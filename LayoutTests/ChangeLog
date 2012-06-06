@@ -1,3 +1,22 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r119591 because it was failing with missing results.
+
+        * platform/chromium-linux/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png:
+        * platform/chromium-linux/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Removed.
+        * platform/chromium-mac-leopard/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium-mac/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium-win-vista/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+
 2012-06-06  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [WK2] fast/hidpi/device-scale-factor-paint.html crashes

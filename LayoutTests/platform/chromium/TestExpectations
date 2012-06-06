@@ -3800,6 +3800,3 @@ BUGWK88253 : svg/custom/pattern-skew-transformed.svg = IMAGE
 BUGWK88253 : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGWK88253 : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
 BUGWK88253 : svg/custom/pattern-with-transformation.svg = IMAGE
-BUGWK88253 : fast/canvas/canvas-imageSmoothingEnabled-patterns.html = FAIL
-BUGWK88253 : platform/chromium/virtual/gpu/fast/canvas/canvas-imageSmoothingEnabled-patterns.html = FAIL
-
