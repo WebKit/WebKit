@@ -1,3 +1,23 @@
+2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Compiler] Remove compile-front-end.sh and fix InjectedScriptSource errors.
+        https://bugs.webkit.org/show_bug.cgi?id=87512
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed compile-front-end.sh, compile-front-end.py should be used instead now.
+        Made generate_protocol_externs a python module to call it from compile-front-end.py.
+        Temporary copy of InjectedScriptSource.js is created and modified to
+        avoid "This code lacks side effects" warning.
+
+        * inspector/compile-front-end.py:
+        * inspector/compile-front-end.sh: Removed.
+        * inspector/generate-protocol-externs: Removed.
+        * inspector/generate_protocol_externs.py: Added.
+        (full_qualified_type_id):
+        (param_type):
+        (generate_protocol_externs):
+
 2012-06-06  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt] REGRESSION(r118616): It made all tests crash in debug mode
