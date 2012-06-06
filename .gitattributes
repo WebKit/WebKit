@@ -14,6 +14,10 @@ objc/*.h diff=objcppheader
 */objc/*.h diff=objcppheader
 */*/objc/*.h diff=objcppheader
 
+# To enable smart diffing of *.strings files, run the following command:
+# git config diff.localizablestrings.textconv "iconv -f utf-16 -t utf-8"
+*.strings diff=localizablestrings
+
 *.vcproj eol=crlf
 *.vsprops eol=crlf
 *.sln eol=crlf

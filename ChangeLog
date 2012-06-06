@@ -1,3 +1,14 @@
+2012-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Teach git about localizable *.strings files
+        <http://webkit.org/b/88447>
+
+        Reviewed by Adam Roben.
+
+        * .gitattributes: Set diff attribute for *.strings files so
+        git-diff doesn't complain about them being binary files once the
+        git-config command is run.
+
 2012-06-06  Andy Wingo  <wingo@igalia.com>
 
         [GTK] Enable the LLInt
