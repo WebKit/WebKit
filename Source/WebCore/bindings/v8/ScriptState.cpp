@@ -90,7 +90,7 @@ ScriptState* ScriptState::forContext(v8::Local<v8::Context> context)
 
     v8::Local<v8::Object> global = context->Global();
     // Skip proxy object. The proxy object will survive page navigation while we need
-    // an object whose lifetime consides with that of the inspected context.
+    // an object whose lifetime coincides with that of the inspected context.
     global = v8::Local<v8::Object>::Cast(global->GetPrototype());
 
     v8::Handle<v8::String> key = V8HiddenPropertyName::scriptState();

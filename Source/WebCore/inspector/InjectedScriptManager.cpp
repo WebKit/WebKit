@@ -37,7 +37,11 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
+#if ENABLE(WEBGL)
+#include "InjectedWebGLScriptSource.h"
+#endif
 #include "InspectorValues.h"
+#include "ScriptObject.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
@@ -171,6 +175,18 @@ pair<int, ScriptObject> InjectedScriptManager::injectScript(const String& source
     int id = injectedScriptIdFor(scriptState);
     return std::make_pair(id, createInjectedScript(source, scriptState, id));
 }
+
+#if ENABLE(WEBGL)
+ScriptObject InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation(ScriptObject glContext)
+{
+    return injectWebGLScript(injectedWebGLScriptSource(), glContext);
+}
+
+String InjectedScriptManager::injectedWebGLScriptSource()
+{
+    return String(reinterpret_cast<const char*>(InjectedWebGLScriptSource_js), sizeof(InjectedWebGLScriptSource_js));
+}
+#endif
 
 } // namespace WebCore
 

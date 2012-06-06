@@ -110,9 +110,33 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSou
       v8::Number::New(id),
     };
     v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 3, args);
-    v8::Local<v8::Object> injectedScript(v8::Object::Cast(*injectedScriptValue));
-    return ScriptObject(inspectedScriptState, injectedScript);
+    return ScriptObject(inspectedScriptState, v8::Handle<v8::Object>::Cast(injectedScriptValue));
 }
+
+#if ENABLE(WEBGL)
+ScriptObject InjectedScriptManager::injectWebGLScript(const String& scriptSource, ScriptObject glContext)
+{
+    v8::HandleScope scope;
+
+    ScriptState* inspectedScriptState = glContext.scriptState();
+    v8::Local<v8::Context> inspectedContext = inspectedScriptState->context();
+    v8::Context::Scope contextScope(inspectedContext);
+
+    v8::Local<v8::Object> windowGlobal = inspectedContext->Global();
+
+    v8::Local<v8::Script> script = v8::Script::Compile(v8String(scriptSource));
+    V8RecursionScope::MicrotaskSuppression recursionScope;
+    v8::Local<v8::Value> v = script->Run();
+    ASSERT(!v.IsEmpty());
+    ASSERT(v->IsFunction());
+
+    v8::Handle<v8::Value> args[] = {
+        glContext.v8Value(),
+    };
+    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 1, args);
+    return ScriptObject(inspectedScriptState, v8::Handle<v8::Object>::Cast(injectedScriptValue));
+}
+#endif
 
 void InjectedScriptManager::discardInjectedScript(ScriptState* inspectedScriptState)
 {
@@ -122,7 +146,7 @@ void InjectedScriptManager::discardInjectedScript(ScriptState* inspectedScriptSt
 
     v8::Local<v8::Object> global = context->Global();
     // Skip proxy object. The proxy object will survive page navigation while we need
-    // an object whose lifetime consides with that of the inspected context.
+    // an object whose lifetime coincides with that of the inspected context.
     global = v8::Local<v8::Object>::Cast(global->GetPrototype());
 
     v8::Handle<v8::String> key = V8HiddenPropertyName::devtoolsInjectedScript();
@@ -137,7 +161,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
 
     v8::Local<v8::Object> global = context->Global();
     // Skip proxy object. The proxy object will survive page navigation while we need
-    // an object whose lifetime consides with that of the inspected context.
+    // an object whose lifetime coincides with that of the inspected context.
     global = v8::Local<v8::Object>::Cast(global->GetPrototype());
 
     v8::Handle<v8::String> key = V8HiddenPropertyName::devtoolsInjectedScript();

@@ -61,6 +61,8 @@ INSPECTOR_BACKEND_COMMANDS_QRC = $$PWD/inspector/front-end/InspectorBackendComma
 
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
+INJECTED_WEBGL_SCRIPT_SOURCE = $$PWD/inspector/InjectedWebGLScriptSource.js
+
 DEBUGGER_SCRIPT_SOURCE = $$PWD/bindings/v8/DebuggerScript.js
 
 ARRAY_BUFFER_VIEW_CUSTOM_SCRIPT_SOURCE = $$PWD/bindings/v8/custom/V8ArrayBufferViewCustomScript.js
@@ -768,11 +770,18 @@ GENERATORS += inspectorBackendCommands
 # GENERATOR 2-a: inspector injected script source compiler
 injectedScriptSource.output = InjectedScriptSource.h
 injectedScriptSource.input = INJECTED_SCRIPT_SOURCE
-injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js $$PWD/inspector/InjectedScriptSource.js ${QMAKE_FILE_OUT}
+injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 injectedScriptSource.add_output_to_sources = false
 GENERATORS += injectedScriptSource
 
-# GENERATOR 2-b: inspector debugger script source compiler
+# GENERATOR 2-b: inspector webgl injected script source compiler
+InjectedWebGLScriptSource.output = InjectedWebGLScriptSource.h
+InjectedWebGLScriptSource.input = INJECTED_WEBGL_SCRIPT_SOURCE
+InjectedWebGLScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedWebGLScriptSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+InjectedWebGLScriptSource.add_output_to_sources = false
+GENERATORS += InjectedWebGLScriptSource
+
+# GENERATOR 2-c: inspector debugger script source compiler
 debuggerScriptSource.output = DebuggerScriptSource.h
 debuggerScriptSource.input = DEBUGGER_SCRIPT_SOURCE
 debuggerScriptSource.commands = perl $$PWD/inspector/xxd.pl DebuggerScriptSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}

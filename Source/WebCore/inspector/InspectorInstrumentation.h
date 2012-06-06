@@ -68,6 +68,7 @@ class ResourceResponse;
 class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
+class ScriptObject;
 class ScriptProfile;
 class SecurityOrigin;
 class ShadowRoot;
@@ -234,6 +235,10 @@ public:
     static void didReceiveWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
+#endif
+
+#if ENABLE(WEBGL)
+    static ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, ScriptObject);
 #endif
 
     static void networkStateChanged(Page*);
@@ -975,7 +980,7 @@ inline void InspectorInstrumentation::markResourceAsCached(Page* page, unsigned 
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        markResourceAsCachedImpl(instrumentingAgents, identifier); 
+        markResourceAsCachedImpl(instrumentingAgents, identifier);
 #endif
 }
 

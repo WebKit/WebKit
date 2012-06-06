@@ -52,6 +52,7 @@ class InspectorResourceAgent;
 class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
+class InspectorWebGLAgent;
 class Page;
 class PageRuntimeAgent;
 class WorkerContext;
@@ -85,6 +86,9 @@ public:
 #endif
 #if ENABLE(WORKERS)
         , m_inspectorWorkerAgent(0)
+#endif
+#if ENABLE(WEBGL)
+        , m_inspectorWebGLAgent(0)
 #endif
     { }
     ~InstrumentingAgents() { }
@@ -142,9 +146,15 @@ public:
     InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
     void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
 #endif
+
 #if ENABLE(WORKERS)
     InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
     void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
+#endif
+
+#if ENABLE(WEBGL)
+    InspectorWebGLAgent* inspectorWebGLAgent() const { return m_inspectorWebGLAgent; }
+    void setInspectorWebGLAgent(InspectorWebGLAgent* agent) { m_inspectorWebGLAgent = agent; }
 #endif
 
 private:
@@ -172,6 +182,9 @@ private:
 #endif
 #if ENABLE(WORKERS)
     InspectorWorkerAgent* m_inspectorWorkerAgent;
+#endif
+#if ENABLE(WEBGL)
+    InspectorWebGLAgent* m_inspectorWebGLAgent;
 #endif
 };
 

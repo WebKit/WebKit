@@ -962,6 +962,7 @@ SET(WebCore_SOURCES
     inspector/InspectorStyleTextEditor.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/InspectorValues.cpp
+    inspector/InspectorWebGLAgent.cpp
     inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
     inspector/NetworkResourcesData.cpp
@@ -1693,7 +1694,7 @@ IF (ENABLE_NETWORK_INFO)
         Modules/networkinfo/NetworkInfoConnection.cpp
         Modules/networkinfo/NetworkInfoController.cpp
     )
- 
+
     LIST(APPEND WebCore_IDL_FILES
         Modules/networkinfo/NavigatorNetworkInfoConnection.idl
         Modules/networkinfo/NetworkInfoConnection.idl
@@ -2602,6 +2603,17 @@ ADD_CUSTOM_COMMAND(
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptSource_js ${WEBCORE_DIR}/inspector/InjectedScriptSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h
     VERBATIM)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h)
+
+
+# Generate InjectedWebGLScriptSource.h
+IF (ENABLE_WEBGL)
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h
+        MAIN_DEPENDENCY inspector/InjectedWebGLScriptSource.js
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedWebGLScriptSource_js ${WEBCORE_DIR}/inspector/InjectedWebGLScriptSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h
+        VERBATIM)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h)
+ENDIF ()
 
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)

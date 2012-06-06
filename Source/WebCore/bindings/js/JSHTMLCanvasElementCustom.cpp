@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -31,7 +31,9 @@
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
 #if ENABLE(WEBGL)
+#include "InspectorWebGLInstrumentation.h"
 #include "JSWebGLRenderingContext.h"
+#include "ScriptObject.h"
 #include "WebGLContextAttributes.h"
 #endif
 #include <wtf/GetPtr.h>
@@ -75,7 +77,16 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     CanvasRenderingContext* context = canvas->getContext(ustringToString(contextId), attrs.get());
     if (!context)
         return jsNull();
-    return toJS(exec, globalObject(), WTF::getPtr(context));
+    JSValue jsValue = toJS(exec, globalObject(), WTF::getPtr(context));
+#if ENABLE(WEBGL)
+    if (context->is3d() && InspectorInstrumentation::hasFrontends()) {
+        ScriptObject glContext(exec, jsValue.getObject());
+        ScriptObject wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(canvas->document(), glContext);
+        if (!wrapped.hasNoValue())
+            return wrapped.jsValue();
+    }
+#endif
+    return jsValue;
 }
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
@@ -93,7 +104,7 @@ JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
             qualityPtr = &quality;
         }
     }
-    
+
     JSValue result = jsString(exec, canvas->toDataURL(type, qualityPtr, ec));
     setDOMException(exec, ec);
     return result;

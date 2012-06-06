@@ -42,6 +42,7 @@
 #include "V8Node.h"
 #include "V8Proxy.h"
 #if ENABLE(WEBGL)
+#include "InspectorWebGLInstrumentation.h"
 #include "V8WebGLRenderingContext.h"
 #endif
 #include <wtf/MathExtras.h>
@@ -88,8 +89,17 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());
 #if ENABLE(WEBGL)
-    else if (result->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
+    else if (result->is3d()) {
+        v8::Handle<v8::Value> v8Result = toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
+        if (InspectorInstrumentation::hasFrontends()) {
+            ScriptState* scriptState = ScriptState::forContext(v8::Context::GetCurrent());
+            ScriptObject glContext(scriptState, v8::Handle<v8::Object>::Cast(v8Result));
+            ScriptObject wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(imp->document(), glContext);
+            if (!wrapped.hasNoValue())
+                return wrapped.v8Value();
+        }
+        return v8Result;
+    }
 #endif
     ASSERT_NOT_REACHED();
     return v8::Null(args.GetIsolate());

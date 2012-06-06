@@ -1,3 +1,82 @@
+2012-06-06  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] Add WebGL instrumentation support on the backend
+        https://bugs.webkit.org/show_bug.cgi?id=87960
+
+        Adds a WebGLAgent, injects a WebGL script upon calling the getContext
+        method of a HTMLCanvasElement that will wrap the WebGL rendering context
+        for instrumentation purposes.
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        (WebCore::JSHTMLCanvasElement::toDataURL):
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore):
+        (WebCore::InjectedScriptManager::injectWebGLScript):
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::forContext):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore):
+        (WebCore::InjectedScriptManager::injectWebGLScript):
+        (WebCore::InjectedScriptManager::discardInjectedScript):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore):
+        (WebCore::InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation):
+        (WebCore::InjectedScriptManager::injectedWebGLScriptSource):
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+        * inspector/InjectedWebGLScriptSource.js: Added.
+        * inspector/Inspector.json:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::markResourceAsCached):
+        * inspector/InspectorWebGLAgent.cpp: Added.
+        (WebCore):
+        (WebGLAgentState):
+        (WebCore::InspectorWebGLAgent::InspectorWebGLAgent):
+        (WebCore::InspectorWebGLAgent::~InspectorWebGLAgent):
+        (WebCore::InspectorWebGLAgent::setFrontend):
+        (WebCore::InspectorWebGLAgent::clearFrontend):
+        (WebCore::InspectorWebGLAgent::restore):
+        (WebCore::InspectorWebGLAgent::enable):
+        (WebCore::InspectorWebGLAgent::disable):
+        (WebCore::InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InspectorWebGLAgent.h: Added.
+        (WebCore):
+        (InspectorWebGLAgent):
+        (WebCore::InspectorWebGLAgent::create):
+        (WebCore::InspectorWebGLAgent::enabled):
+        * inspector/InspectorWebGLInstrumentation.h: Added.
+        (WebCore):
+        (WebCore::InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InstrumentingAgents.h:
+        (WebCore):
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorWebGLAgent):
+        (WebCore::InstrumentingAgents::setInspectorWebGLAgent):
+
 2012-06-06  Joone Hur  <joone.hur@intel.com>
 
         [GTK] Build fix for Accelerated Compositing with OpenGL

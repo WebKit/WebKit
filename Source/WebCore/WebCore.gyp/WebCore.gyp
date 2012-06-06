@@ -434,6 +434,29 @@
       ]
     },
     {
+      'target_name': 'injected_webgl_script_source',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateInjectedWebGLScriptSource',
+          'inputs': [
+            '../inspector/InjectedWebGLScriptSource.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedWebGLScriptSource.h',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'InjectedWebGLScriptSource_js',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+          'message': 'Generating InjectedWebGLScriptSource.h from InjectedWebGLScriptSource.js',
+        },
+      ]
+    },
+    {
       'target_name': 'debugger_script_source',
       'type': 'none',
       'actions': [
@@ -1074,6 +1097,7 @@
         'webcore_bindings_sources',
         'inspector_protocol_sources',
         'injected_script_source',
+        'injected_webgl_script_source',
         'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
@@ -1197,6 +1221,7 @@
       'dependencies': [
         'debugger_script_source',
         'injected_script_source',
+        'injected_webgl_script_source',
         'inspector_protocol_sources',
         'webcore_bindings_sources',
         '../../ThirdParty/glu/glu.gyp:libtess',
@@ -1472,9 +1497,9 @@
       'dependencies': [
         'webcore_prerequisites',
       ],
-      'defines': [ 
-        'WEBKIT_IMPLEMENTATION=1', 
-      ], 
+      'defines': [
+        'WEBKIT_IMPLEMENTATION=1',
+      ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,

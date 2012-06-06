@@ -78,6 +78,14 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
     return ScriptObject();
 }
 
+#if ENABLE(WEBGL)
+ScriptObject InjectedScriptManager::injectWebGLScript(const String&, ScriptObject)
+{
+    // FIXME(87975): Implement this!
+    return ScriptObject();
+}
+#endif
+
 void InjectedScriptManager::discardInjectedScript(ScriptState* scriptState)
 {
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());

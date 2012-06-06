@@ -2811,5 +2811,21 @@
                 "name": "disconnectedFromWorker"
             }
         ]
+    },
+    {
+        "domain": "WebGL",
+        "hidden": true,
+        "types": [],
+        "commands": [
+            {
+                "name": "enable",
+                "description": "Enables WebGL inspection."
+            },
+            {
+                "name": "disable",
+                "description": "Disables WebGL inspection."
+            }
+        ],
+        "events": []
     }]
 }
