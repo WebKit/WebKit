@@ -66,6 +66,7 @@ DEFINE_STATIC_LOCAL(String, WebKitFirstScheduledLayoutDelay, ("WebKitFirstSchedu
 DEFINE_STATIC_LOCAL(String, WebKitFixedFontFamily, ("WebKitFixedFontFamily"));
 DEFINE_STATIC_LOCAL(String, WebKitFrameFlatteningEnabled, ("WebKitFrameFlatteningEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitGeolocationEnabled, ("WebKitGeolocationEnabled"));
+DEFINE_STATIC_LOCAL(String, WebKitIndexedDataBasePath, ("WebKitIndexedDataBasePath"));
 DEFINE_STATIC_LOCAL(String, WebKitJavaScriptCanOpenWindowsAutomaticallyEnabled, ("WebKitJavaScriptCanOpenWindowsAutomaticallyEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitJavaScriptEnabled, ("WebKitJavaScriptEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitLoadsImagesAutomatically, ("WebKitLoadsImagesAutomatically"));
@@ -599,6 +600,16 @@ WebString WebSettings::localStoragePath() const
 void WebSettings::setLocalStoragePath(const WebString& path)
 {
     m_private->setString(WebKitLocalStoragePath, path);
+}
+
+WebString WebSettings::indexedDataBasePath() const
+{
+    return m_private->getString(WebKitIndexedDataBasePath);
+}
+
+void WebSettings::setIndexedDataBasePath(const WebString& path)
+{
+    m_private->setString(WebKitIndexedDataBasePath, path);
 }
 
 WebString WebSettings::databasePath() const

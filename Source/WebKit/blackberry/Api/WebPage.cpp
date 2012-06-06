@@ -6195,6 +6195,11 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setFrameFlatteningEnabled(webSettings->isFrameFlatteningEnabled());
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+    m_page->group().groupSettings()->setIndexedDBDatabasePath(webSettings->indexedDataBasePath());
+#endif
+
+
 #if ENABLE(WEB_SOCKETS)
     WebSocket::setIsAvailable(webSettings->areWebSocketsEnabled());
 #endif

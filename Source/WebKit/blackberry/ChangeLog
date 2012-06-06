@@ -1,3 +1,18 @@
+2012-06-06  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] IndexedDB file should be sand-boxed to the application data directory.
+        https://bugs.webkit.org/show_bug.cgi?id=88065
+
+        Reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::indexedDataBasePath):
+        (BlackBerry::WebKit::WebSettings::setIndexedDataBasePath):
+        * Api/WebSettings.h:
+
 2012-06-05  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry]Differentiate options and group options by TypeOption and TypeOptionInGroup

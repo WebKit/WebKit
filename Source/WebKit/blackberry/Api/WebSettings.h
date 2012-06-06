@@ -173,6 +173,9 @@ public:
     WebString localStoragePath() const;
     void setLocalStoragePath(const WebString&);
 
+    WebString indexedDataBasePath() const;
+    void setIndexedDataBasePath(const WebString&);
+
     WebString databasePath() const;
     void setDatabasePath(const WebString&);
 
