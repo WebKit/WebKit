@@ -87,7 +87,7 @@ InputNumber StepRange::alignValueForStep(const InputNumber& currentValue, unsign
         newValue = round(newValue * scale) / scale;
     } else {
         const InputNumber scale = pow(10.0, static_cast<InputNumber>(max(m_stepDecimalPlaces, m_stepBaseDecimalPlaces)));
-        newValue = round((m_stepBase + round((newValue - m_stepBase) / m_step) * m_step) * scale) / scale;
+        newValue = round(roundByStep(newValue, m_stepBase) * scale) / scale;
     }
 
     return newValue;
@@ -99,7 +99,7 @@ InputNumber StepRange::clampValue(const InputNumber& value) const
     if (!m_hasStep)
         return inRangeValue;
     // Rounds inRangeValue to minimum + N * step.
-    const InputNumber roundedValue = m_minimum + round((inRangeValue - m_minimum) / m_step) * m_step;
+    const InputNumber roundedValue = roundByStep(inRangeValue, m_minimum);
     const InputNumber clampedValue = roundedValue > m_maximum ? roundedValue - m_step : roundedValue;
     ASSERT(clampedValue >= m_minimum);
     ASSERT(clampedValue <= m_maximum);
@@ -147,6 +147,11 @@ StepRange::NumberWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling
 
     ASSERT(step.value.value > 0);
     return step;
+}
+
+InputNumber StepRange::roundByStep(const InputNumber& value, const InputNumber& base) const
+{
+    return base + round((value - base) / m_step) * m_step;
 }
 
 bool StepRange::stepMismatch(const InputNumber& valueForCheck) const

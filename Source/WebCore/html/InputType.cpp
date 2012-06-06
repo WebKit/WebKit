@@ -282,12 +282,12 @@ InputNumber InputType::defaultValueForStepUp() const
 
 double InputType::minimum() const
 {
-    return createStepRange(RejectAny).minimum();
+    return convertInputNumberToDouble(createStepRange(RejectAny).minimum());
 }
 
 double InputType::maximum() const
 {
-    return createStepRange(RejectAny).maximum();
+    return convertInputNumberToDouble(createStepRange(RejectAny).maximum());
 }
 
 bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const

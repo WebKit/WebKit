@@ -141,6 +141,7 @@ public:
 
 private:
     StepRange& operator =(const StepRange&);
+    InputNumber roundByStep(const InputNumber& value, const InputNumber& base) const;
 
     const InputNumber m_maximum; // maximum must be >= minimum.
     const InputNumber m_minimum;

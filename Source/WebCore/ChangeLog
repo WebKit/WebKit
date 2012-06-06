@@ -1,3 +1,33 @@
+2012-06-06  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Form] Changes for InputNumber type
+        https://bugs.webkit.org/show_bug.cgi?id=88394
+
+        Reviewed by Kent Tamura.
+
+        This patch changes codes for consitency of InputNumber usage for
+        reducing size of patch when we change InputNumber type alias from
+        double to Decimal.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents): Fixed parameter type for getAllowedValueStep.
+        * html/InputType.cpp:
+        (WebCore::InputType::minimum): Fixed return value type to InputNumber.
+        (WebCore::InputType::maximum): ditto.
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::defaultValueForStepUp): Fix return value type to InputNumber.
+        (WebCore::MonthInputType::parseToNumber): ditto.
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValueAsDouble): Removed extra convertDoubleToInputNumber.
+        * html/StepRange.cpp:
+        (WebCore::StepRange::alignValueForStep): Use roundByStep for code sharing.
+        (WebCore::StepRange::clampValue): ditto.
+        (WebCore::StepRange::roundByStep): Added.
+        * html/StepRange.h:
+        (StepRange): Added a declaration of roundByStep.
+
 2012-06-06  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt] Fix harmattan builds broken by r119247.

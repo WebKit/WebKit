@@ -146,7 +146,7 @@ String BaseDateAndTimeInputType::serialize(const InputNumber& value) const
 
 String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& date) const
 {
-    double step;
+    InputNumber step;
     if (!element()->getAllowedValueStep(&step))
         return date.toString();
     if (!fmod(step, msecPerMinute))

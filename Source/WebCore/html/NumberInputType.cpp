@@ -87,7 +87,7 @@ double NumberInputType::valueAsDouble() const
 void NumberInputType::setValueAsDouble(double newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
 {
     // FIXME: We should use numeric_limits<double>::max for number input type.
-    const double floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
+    const double floatMax = numeric_limits<float>::max();
     if (newValue < -floatMax) {
         ec = INVALID_STATE_ERR;
         return;

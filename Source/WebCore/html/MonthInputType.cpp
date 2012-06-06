@@ -94,7 +94,7 @@ InputNumber MonthInputType::defaultValueForStepUp() const
     date.setMillisecondsSinceEpochForMonth(current);
     double months = date.monthsSinceEpoch();
     ASSERT(isfinite(months));
-    return months;
+    return convertDoubleToInputNumber(months);
 }
 
 StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
@@ -115,7 +115,7 @@ InputNumber MonthInputType::parseToNumber(const String& src, const InputNumber& 
         return defaultValue;
     double months = date.monthsSinceEpoch();
     ASSERT(isfinite(months));
-    return months;
+    return convertDoubleToInputNumber(months);
 }
 
 bool MonthInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
