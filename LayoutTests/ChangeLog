@@ -1,3 +1,12 @@
+2012-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK2] Unreviewed gardening. Skip modified falining test. Rebase a test.
+        [Qt] Fix wrong skipping.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/compositing/backing/no-backing-for-perspective-expected.txt:
+        * platform/qt/Skipped:
+
 2012-06-05  Joe Thomas  <joethomas@motorola.com>
 
         ASSERTION FAILED: ASSERT(!isPercentageIntrinsicSize) in RenderReplaced::computeIntrinsicRatioInformationForRenderBox
