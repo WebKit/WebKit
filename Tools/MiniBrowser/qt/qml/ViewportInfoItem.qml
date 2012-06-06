@@ -3,6 +3,7 @@ import QtWebKit 3.0
 
 Rectangle {
     property var test
+    property var preferredMinimumContentsWidth
 
     color: "black"
     opacity: 0.8
@@ -73,8 +74,15 @@ Rectangle {
             color: parent.fontColor
         }
         Text {
-            id: scalableLabel
+            id: preferredMinimumContentsWidthLabel
             anchors.top: layoutSizeLabel.bottom
+            text: "Preferred minimum contents width: " + preferredMinimumContentsWidth
+            font.family: parent.fontFamily
+            color: parent.fontColor
+        }
+        Text {
+            id: scalableLabel
+            anchors.top: preferredMinimumContentsWidthLabel.bottom
             anchors.topMargin: 30
             text: "View " + (test.isScalable ? "is " : "is not " ) + "scalable."
             font.family: parent.fontFamily

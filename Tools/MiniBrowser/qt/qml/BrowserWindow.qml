@@ -192,6 +192,27 @@ Rectangle {
             }
 
             Rectangle {
+                id: preferredMininumContentsWidthButton
+                height: parent.height
+                width: height
+                color: "#efefef"
+                opacity: { webView.experimental.preferredMinimumContentsWidth === 0 ? 0.1 : 0.6 }
+                radius: 6
+
+                Image {
+                    anchors.centerIn: parent
+                    source: "../icons/contents_width.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        webView.experimental.preferredMinimumContentsWidth = webView.experimental.preferredMinimumContentsWidth === 0 ? 980 : 0
+                    }
+                }
+            }
+
+            Rectangle {
                 id: touchEventsButton
                 height: parent.height
                 width: height
@@ -380,5 +401,6 @@ Rectangle {
         }
         visible: false
         test : webView.experimental.test
+        preferredMinimumContentsWidth: webView.experimental.preferredMinimumContentsWidth
     }
 }

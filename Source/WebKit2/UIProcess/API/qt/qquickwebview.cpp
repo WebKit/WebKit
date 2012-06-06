@@ -961,7 +961,13 @@ int QQuickWebViewExperimental::preferredMinimumContentsWidth() const
 void QQuickWebViewExperimental::setPreferredMinimumContentsWidth(int width)
 {
     Q_D(QQuickWebView);
-    d->webPageProxy->pageGroup()->preferences()->setLayoutFallbackWidth(width);
+    WebPreferences* webPreferences = d->webPageProxy->pageGroup()->preferences();
+
+    if (width == webPreferences->layoutFallbackWidth())
+        return;
+
+    webPreferences->setLayoutFallbackWidth(width);
+    emit preferredMinimumContentsWidthChanged();
 }
 
 void QQuickWebViewExperimental::setFlickableViewportEnabled(bool enable)

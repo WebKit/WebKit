@@ -1,3 +1,15 @@
+2012-06-06  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Add preferredMinimumContentsWidth to the viewport info in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=88327
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/MiniBrowser.qrc: Added contents_width.png.
+        * MiniBrowser/qt/icons/contents_width.png: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml: Added button for toggling preferredMinimumContentsWidth.
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml: Added display of preferredMinimumContentsWidth.
+
 2012-06-05  Jon Lee  <jonlee@apple.com>
 
         Buildbot fix.
