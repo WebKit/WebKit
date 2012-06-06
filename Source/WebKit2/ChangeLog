@@ -1,3 +1,16 @@
+2012-06-05  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Use Component.onCompleted in API tests for single and multi file upload tests.
+        https://bugs.webkit.org/show_bug.cgi?id=88247
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        With r116936, Component.onCompleted can be used for callback instead of the
+        1s timer in single and multi file upload tests.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_multiFileUpload.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_singleFileUpload.qml:
+
 2012-06-04  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=88370

@@ -14,20 +14,16 @@ TestWebView {
     property bool acceptMultiple: false
 
     experimental.filePicker: Item {
-        Timer {
-            running: true
-            interval: 1
-            onTriggered: {
-                var selectedFiles = ["filename1", "filename2"]
-                if (selectFile) {
-                    if (acceptMultiple)
-                        model.accept(selectedFiles)
-                    else
-                        model.accept("acceptedfilename");
-                }
+        Component.onCompleted: {
+            var selectedFiles = ["filename1", "filename2"]
+            if (selectFile) {
+                if (acceptMultiple)
+                    model.accept(selectedFiles)
                 else
-                    model.reject();
+                    model.accept("acceptedfilename");
             }
+            else
+                model.reject();
         }
     }
 

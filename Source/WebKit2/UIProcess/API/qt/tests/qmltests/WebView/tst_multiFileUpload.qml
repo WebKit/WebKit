@@ -13,16 +13,12 @@ TestWebView {
     property bool selectFile
 
     experimental.filePicker: Item {
-        Timer {
-            running: true
-            interval: 1
-            onTriggered: {
-                var selectedFiles = ["filename1", "filename2"]
-                if (selectFile)
-                    model.accept(selectedFiles)
-                else
-                    model.reject();
-            }
+        Component.onCompleted: {
+            var selectedFiles = ["filename1", "filename2"]
+            if (selectFile)
+                model.accept(selectedFiles)
+            else
+                model.reject();
         }
     }
 
