@@ -1,5 +1,27 @@
 2012-06-06  Andy Wingo  <wingo@igalia.com>
 
+        Ensure consistent order of evaluation in LLInt slow paths
+        https://bugs.webkit.org/show_bug.cgi?id=88409
+
+        Reviewed by Geoffrey Garen.
+
+        * llint/LLIntSlowPaths.cpp:
+        (slow_path_mul)
+        (slow_path_sub)
+        (slow_path_div)
+        (slow_path_mod)
+        (slow_path_lshift)
+        (slow_path_rshift)
+        (slow_path_urshift)
+        (slow_path_bitand)
+        (slow_path_bitor)
+        (slow_path_bitxor): Avoid calling toNumber, toInt32, or toUInt32
+        multiple times without intervening sequence points.  Fixes
+        fast/js/exception-sequencing-binops.html with GCC 4.7 on x86-64
+        Linux, which reordered evaluation of the arguments to fmod.
+
+2012-06-06  Andy Wingo  <wingo@igalia.com>
+
         [GTK] Enable the LLInt
         https://bugs.webkit.org/show_bug.cgi?id=88315
 

@@ -621,64 +621,88 @@ LLINT_SLOW_PATH_DECL(slow_path_add)
     LLINT_RETURN(jsAddSlowCase(exec, v1, v2));
 }
 
+// The following arithmetic and bitwise operations need to be sure to run
+// toNumber() on their operands in order.  (A call to toNumber() is idempotent
+// if an exception is already set on the ExecState.)
+
 LLINT_SLOW_PATH_DECL(slow_path_mul)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toNumber(exec) * LLINT_OP_C(3).jsValue().toNumber(exec)));
+    double a = LLINT_OP_C(2).jsValue().toNumber(exec);
+    double b = LLINT_OP_C(3).jsValue().toNumber(exec);
+    LLINT_RETURN(jsNumber(a * b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_sub)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toNumber(exec) - LLINT_OP_C(3).jsValue().toNumber(exec)));
+    double a = LLINT_OP_C(2).jsValue().toNumber(exec);
+    double b = LLINT_OP_C(3).jsValue().toNumber(exec);
+    LLINT_RETURN(jsNumber(a - b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_div)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toNumber(exec) / LLINT_OP_C(3).jsValue().toNumber(exec)));
+    double a = LLINT_OP_C(2).jsValue().toNumber(exec);
+    double b = LLINT_OP_C(3).jsValue().toNumber(exec);
+    LLINT_RETURN(jsNumber(a / b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_mod)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(fmod(LLINT_OP_C(2).jsValue().toNumber(exec), LLINT_OP_C(3).jsValue().toNumber(exec))));
+    double a = LLINT_OP_C(2).jsValue().toNumber(exec);
+    double b = LLINT_OP_C(3).jsValue().toNumber(exec);
+    LLINT_RETURN(jsNumber(fmod(a, b)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_lshift)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) << (LLINT_OP_C(3).jsValue().toUInt32(exec) & 31)));
+    int32_t a = LLINT_OP_C(2).jsValue().toInt32(exec);
+    uint32_t b = LLINT_OP_C(3).jsValue().toUInt32(exec);
+    LLINT_RETURN(jsNumber(a << (b & 31)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_rshift)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) >> (LLINT_OP_C(3).jsValue().toUInt32(exec) & 31)));
+    int32_t a = LLINT_OP_C(2).jsValue().toInt32(exec);
+    uint32_t b = LLINT_OP_C(3).jsValue().toUInt32(exec);
+    LLINT_RETURN(jsNumber(a >> (b & 31)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_urshift)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toUInt32(exec) >> (LLINT_OP_C(3).jsValue().toUInt32(exec) & 31)));
+    uint32_t a = LLINT_OP_C(2).jsValue().toUInt32(exec);
+    uint32_t b = LLINT_OP_C(3).jsValue().toUInt32(exec);
+    LLINT_RETURN(jsNumber(a >> (b & 31)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_bitand)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) & LLINT_OP_C(3).jsValue().toInt32(exec)));
+    int32_t a = LLINT_OP_C(2).jsValue().toInt32(exec);
+    int32_t b = LLINT_OP_C(3).jsValue().toInt32(exec);
+    LLINT_RETURN(jsNumber(a & b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_bitor)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) | LLINT_OP_C(3).jsValue().toInt32(exec)));
+    int32_t a = LLINT_OP_C(2).jsValue().toInt32(exec);
+    int32_t b = LLINT_OP_C(3).jsValue().toInt32(exec);
+    LLINT_RETURN(jsNumber(a | b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_bitxor)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) ^ LLINT_OP_C(3).jsValue().toInt32(exec)));
+    int32_t a = LLINT_OP_C(2).jsValue().toInt32(exec);
+    int32_t b = LLINT_OP_C(3).jsValue().toInt32(exec);
+    LLINT_RETURN(jsNumber(a ^ b));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
