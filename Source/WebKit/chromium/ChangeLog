@@ -1,3 +1,9 @@
+2012-06-06  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Roll Chromium DEPS from r140700 to r140711.
+
+        * DEPS:
+
 2012-06-06  Ami Fischman  <fischman@chromium.org>
 
         [chromium] Add a WebKit::WebMediaPlayer::CORSMode enum in preparation for 88349
