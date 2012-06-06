@@ -36,10 +36,13 @@ import os
 import signal
 import socket
 import subprocess
+import sys
 import time
 
 # Import for auto-install
-import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
+if sys.platform != 'win32':
+    # FIXME: webpagereplay doesn't work on win32. See https://bugs.webkit.org/show_bug.cgi?id=88279.
+    import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.port.driver import DriverInput

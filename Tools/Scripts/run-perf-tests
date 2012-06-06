@@ -36,4 +36,8 @@ from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 if '__main__' == __name__:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    if sys.platform == 'win32':
+        _log.error("run-perf-tests doesn't work on win32; needs webpagereplay support.")
+        sys.exit(1)
     sys.exit(PerfTestsRunner().run())

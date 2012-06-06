@@ -1,3 +1,18 @@
+2012-06-06  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: perf tests unit tests fail on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=88279
+
+        Reviewed by Ryosuke Niwa.
+
+        I'm seeing weird failures running the unit tests in my win32
+        checkout, and we don't really expect webpagereplay to work on
+        win32 anyway, so I'm skipping the import of that module for now
+        and adding a warning.
+
+        * Scripts/run-perf-tests:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+
 2012-06-06  Yong Li <yoli@rim.com>
 
         Unreviewed. Update my email address in committers.py.
