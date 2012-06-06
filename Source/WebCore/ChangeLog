@@ -1,3 +1,18 @@
+2012-06-05  Ojan Vafai  <ojan@chromium.org>
+
+        Nested CSS flexbox renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=87679
+
+        Reviewed by Julien Chaffraix.
+
+        If the containing block with a perpendicular writing mode has an overrideHeight,
+        then its logical height should be based off that instead of its RenderStyle.
+
+        Test: css3/flexbox/perpendicular-writing-modes-inside-flex-item.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+
 2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Need special-case toJS(IDBAny) for IDBCursorWithValue

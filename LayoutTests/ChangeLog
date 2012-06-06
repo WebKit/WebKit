@@ -1,3 +1,13 @@
+2012-06-05  Ojan Vafai  <ojan@chromium.org>
+
+        Nested CSS flexbox renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=87679
+
+        Reviewed by Julien Chaffraix.
+
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item-expected.txt: Added.
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item.html: Added.
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove erroneous expected image added in r119544.

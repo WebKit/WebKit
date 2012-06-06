@@ -1241,6 +1241,9 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidthInRegion(RenderRegion* re
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
     RenderBlock* cb = containingBlock();
+    if (cb->hasOverrideHeight())
+        return cb->overrideLogicalContentHeight();
+
     RenderStyle* containingBlockStyle = cb->style();
     Length logicalHeightLength = containingBlockStyle->logicalHeight();
     
