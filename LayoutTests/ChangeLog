@@ -1,3 +1,45 @@
+2012-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add support for direction on table row group with collapsing borders
+        https://bugs.webkit.org/show_bug.cgi?id=87900
+
+        Reviewed by Ojan Vafai.
+
+        * fast/table/border-collapsing/first-cell-left-border-hidden-table-ltr-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/first-cell-left-border-hidden-table-ltr-section-rtl.html: Added.
+        * fast/table/border-collapsing/last-cell-left-border-hidden-table-ltr-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/last-cell-left-border-hidden-table-ltr-section-rtl.html: Added.
+        * fast/table/border-collapsing/left-border-table-ltr-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/left-border-table-ltr-section-rtl.html: Added.
+        * fast/table/border-collapsing/left-border-table-rtl-section-ltr-expected.html: Added.
+        * fast/table/border-collapsing/left-border-table-rtl-section-ltr.html: Added.
+        * fast/table/border-collapsing/left-border-table-rtl-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/left-border-table-rtl-section-rtl.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-ltr-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-ltr-section-rtl.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-ltr-expected.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-ltr.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-rtl.html: Added.
+        * fast/table/border-collapsing/rtl-table-left-border-hidden-expected.html: Added.
+        * fast/table/border-collapsing/rtl-table-left-border-hidden.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-ltr-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-ltr-section-rtl.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-ltr-expected.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-ltr.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-rtl-expected.html: Added.
+        * fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-rtl.html: Added.
+        Most of those are test are a variation of direction on table and row group along with disabling some
+        borders (either using 'hidden' or just disabling it by setting it to 0px).
+
+        * fast/table/table-ltr-section-rtl-expected.html: Added.
+        * fast/table/table-ltr-section-rtl.html: Added.
+        * fast/table/table-rtl-section-ltr-expected.html: Added.
+        * fast/table/table-rtl-section-ltr.html: Added.
+        * fast/table/table-rtl-section-rtl-expected.html: Added.
+        * fast/table/table-rtl-section-rtl.html: Added.
+        Bonus as there was little testing for mixed direction + separate borders.
+
 2012-06-06  Keyar Hood  <keyar@chromium.org>
 
         [Chromium] imageSmoothingEnabled should apply to patterns

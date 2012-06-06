@@ -1311,4 +1311,22 @@ RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* 
     return newTable;
 }
 
+const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell* cell) const
+{
+    ASSERT(cell->isFirstOrLastCellInRow());
+    if (cell->section()->hasSameDirectionAsTable())
+        return style()->borderStart();
+
+    return style()->borderEnd();
+}
+
+const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCell* cell) const
+{
+    ASSERT(cell->isFirstOrLastCellInRow());
+    if (cell->section()->hasSameDirectionAsTable())
+        return style()->borderEnd();
+
+    return style()->borderStart();
+}
+
 }

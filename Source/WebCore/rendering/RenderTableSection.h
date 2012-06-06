@@ -114,14 +114,25 @@ public:
         Length logicalHeight;
     };
 
+    bool hasSameDirectionAsTable() const
+    {
+        return table()->style()->direction() == style()->direction();
+    }
+
     const BorderValue& borderAdjoiningTableStart() const
     {
-        return style()->borderStart();
+        if (hasSameDirectionAsTable())
+            return style()->borderStart();
+
+        return style()->borderEnd();
     }
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        return style()->borderEnd();
+        if (hasSameDirectionAsTable())
+            return style()->borderEnd();
+
+        return style()->borderStart();
     }
 
     const RenderTableCell* firstRowCellAdjoiningTableStart() const;
@@ -218,6 +229,8 @@ private:
 
     CellSpan dirtiedRows(const LayoutRect& repaintRect) const;
     CellSpan dirtiedColumns(const LayoutRect& repaintRect) const;
+
+    void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
 
     RenderObjectChildList m_children;
 

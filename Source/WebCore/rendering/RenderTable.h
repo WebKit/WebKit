@@ -148,6 +148,8 @@ public:
     // This function returns 0 if the table has no non-empty sections.
     RenderTableSection* topNonEmptySection() const;
 
+    unsigned lastColumnIndex() const { return numEffCols() - 1; }
+
     void splitColumn(unsigned position, unsigned firstSpan);
     void appendColumn(unsigned span);
     unsigned numEffCols() const { return m_columns.size(); }
@@ -219,6 +221,9 @@ public:
     {
         return createAnonymousWithParentRenderer(parent);
     }
+
+    const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell*) const;
+    const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell*) const;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

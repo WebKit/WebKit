@@ -142,19 +142,33 @@ public:
     // on all table parts and writing-mode on cells.
     const RenderStyle* styleForCellFlow() const
     {
-        return table()->style();
+        return section()->style();
     }
 
     const BorderValue& borderAdjoiningTableStart() const
     {
-        return style()->borderStart();
+        ASSERT(isFirstOrLastCellInRow());
+        if (section()->hasSameDirectionAsTable())
+            return style()->borderStart();
+
+        return style()->borderEnd();
     }
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        return style()->borderEnd();
+        ASSERT(isFirstOrLastCellInRow());
+        if (section()->hasSameDirectionAsTable())
+            return style()->borderEnd();
+
+        return style()->borderStart();
     }
 
+#ifndef NDEBUG
+    bool isFirstOrLastCellInRow() const
+    {
+        return !table()->cellAfter(this) || !table()->cellBefore(this);
+    }
+#endif
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

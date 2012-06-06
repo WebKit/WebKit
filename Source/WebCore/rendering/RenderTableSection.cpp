@@ -529,7 +529,6 @@ void RenderTableSection::layoutRows()
     m_overflowingCells.clear();
     m_forceSlowPaintPathWithOverflowingCell = false;
 
-    int hspacing = table()->hBorderSpacing();
     int vspacing = table()->vBorderSpacing();
     unsigned nEffCols = table()->numEffCols();
 
@@ -653,14 +652,7 @@ void RenderTableSection::layoutRows()
 
             LayoutRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
 
-            LayoutPoint cellLocation(0, m_rowPos[rindx]);
-            // FIXME: Switch to cell's styleForCellFlow() for consistency with RenderTableCell, once it supports row group.
-            if (!style()->isLeftToRightDirection())
-                cellLocation.setX(table()->columnPositions()[nEffCols] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + hspacing);
-            else
-                cellLocation.setX(table()->columnPositions()[c] + hspacing);
-            cell->setLogicalLocation(cellLocation);
-            view()->addLayoutDelta(oldCellRect.location() - cell->location());
+            setLogicalPositionForCell(cell, c);
 
             if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
                 cell->setNeedsLayout(true, MarkOnlyThis);
@@ -1278,14 +1270,15 @@ unsigned RenderTableSection::numColumns() const
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
 {
-    return cellAt(0, 0).primaryCell();
+    unsigned adjoiningStartCellColumnIndex = hasSameDirectionAsTable() ? 0 : table()->lastColumnIndex();
+    return cellAt(0, adjoiningStartCellColumnIndex).primaryCell();
 }
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableEnd() const
 {
-    return cellAt(0, table()->numEffCols() - 1).primaryCell();
+    unsigned adjoiningEndCellColumnIndex = hasSameDirectionAsTable() ? table()->lastColumnIndex() : 0;
+    return cellAt(0, adjoiningEndCellColumnIndex).primaryCell();
 }
-
 
 void RenderTableSection::appendColumn(unsigned pos)
 {
@@ -1428,6 +1421,22 @@ RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const 
     RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(parent->document() /* is anonymous */);
     newSection->setStyle(newStyle.release());
     return newSection;
+}
+
+void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsigned effectiveColumn) const
+{
+    LayoutPoint oldCellLocation(cell->x(), cell->y());
+
+    LayoutPoint cellLocation(0, m_rowPos[cell->rowIndex()]);
+    int horizontalBorderSpacing = table()->hBorderSpacing();
+
+    if (!cell->styleForCellFlow()->isLeftToRightDirection())
+        cellLocation.setX(table()->columnPositions()[table()->numEffCols()] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + horizontalBorderSpacing);
+    else
+        cellLocation.setX(table()->columnPositions()[effectiveColumn] + horizontalBorderSpacing);
+
+    cell->setLogicalLocation(cellLocation);
+    view()->addLayoutDelta(oldCellLocation - cell->location());
 }
 
 } // namespace WebCore

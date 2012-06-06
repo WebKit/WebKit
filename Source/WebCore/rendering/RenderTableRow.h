@@ -68,12 +68,18 @@ public:
 
     const BorderValue& borderAdjoiningTableStart() const
     {
-        return style()->borderStart();
+        if (section()->hasSameDirectionAsTable())
+            return style()->borderStart();
+
+        return style()->borderEnd();
     }
 
     const BorderValue& borderAdjoiningTableEnd() const
     {
-        return style()->borderEnd();
+        if (section()->hasSameDirectionAsTable())
+            return style()->borderEnd();
+
+        return style()->borderStart();
     }
 
 private:

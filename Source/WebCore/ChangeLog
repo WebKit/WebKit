@@ -1,3 +1,90 @@
+2012-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add support for direction on table row group with collapsing borders
+        https://bugs.webkit.org/show_bug.cgi?id=87900
+
+        Reviewed by Ojan Vafai.
+
+        Tests: fast/table/border-collapsing/first-cell-left-border-hidden-table-ltr-section-rtl.html
+               fast/table/border-collapsing/last-cell-left-border-hidden-table-ltr-section-rtl.html
+               fast/table/border-collapsing/left-border-table-ltr-section-rtl.html
+               fast/table/border-collapsing/left-border-table-rtl-section-ltr.html
+               fast/table/border-collapsing/left-border-table-rtl-section-rtl.html
+               fast/table/border-collapsing/left-border-vertical-lr-table-ltr-section-rtl.html
+               fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-ltr.html
+               fast/table/border-collapsing/left-border-vertical-lr-table-rtl-section-rtl.html
+               fast/table/border-collapsing/rtl-table-left-border-hidden.html
+               fast/table/border-collapsing/top-border-vertical-rl-table-ltr-section-rtl.html
+               fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-ltr.html
+               fast/table/border-collapsing/top-border-vertical-rl-table-rtl-section-rtl.html
+               fast/table/table-ltr-section-rtl.html
+               fast/table/table-rtl-section-ltr.html
+               fast/table/table-rtl-section-rtl.html
+
+        This change enables proper support for direction on table row group.
+        The current code would allow people to set direction on the row group but would still
+        use the table's code for directionality checks (with surprising consequences).
+
+        The main change involve swapping end / start borders in case of mixed directionality
+        as those 2 are not in sync.
+        
+        Example: <table dir="ltr"><tbody dir="rtl"><td id="cell0"></td><td id="cell1"></td></tbody></table>
+
+        Visually:
+        Table: Start ---------------------> End
+        Tbody: End <---------------------- Start
+        Cell:  | #cell0        |           #cell1 |
+
+        In this example, the end table border should be compared with the tbody's start border
+        and the last cell's (in DOM order) start border.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::tableStartBorderAdjoiningCell):
+        (WebCore::RenderTable::tableEndBorderAdjoiningCell):
+        Same as the other adjoining functions.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::lastColumnIndex):
+        Helper function to get the last column index.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        Updated to call the table's adjoining border helpers.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::styleForCellFlow):
+        Updated to use the table row group's style now that we properly support it.
+
+        (WebCore::RenderTableCell::isFirstOrLastCellInRow):
+        Debug only helper to make sure we don't call the border adjoining function
+        on non-terminal cells.
+
+        (WebCore::RenderTableCell::borderAdjoiningTableStart):
+        (WebCore::RenderTableCell::borderAdjoiningTableEnd):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::borderAdjoiningTableStart):
+        (WebCore::RenderTableRow::borderAdjoiningTableEnd):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstRowCellAdjoiningTableStart):
+        (WebCore::RenderTableSection::firstRowCellAdjoiningTableEnd):
+        Updated the previous function to account for mixed directionality.
+
+        (WebCore::RenderTableSection::layoutRows):
+        Move some of the code to setLogicalPositionForCell to match RenderBlock.
+
+        (WebCore::RenderTableSection::setLogicalPositionForCell):
+        Switched direction checks to styleForCellFlow (this doesn't change anything as we
+        were already properly flipping already but ensure better).
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::hasSameDirectionAsTable):
+        Added this helper to know if we have a mixed direction.
+
+        (WebCore::RenderTableSection::borderAdjoiningTableStart):
+        (WebCore::RenderTableSection::borderAdjoiningTableEnd):
+        Updated to account for mixed directionality.
+
 2012-06-06  Keyar Hood  <keyar@chromium.org>
 
         [Chromium] imageSmoothingEnabled should apply to patterns
