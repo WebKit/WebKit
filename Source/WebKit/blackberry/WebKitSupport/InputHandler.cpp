@@ -1158,7 +1158,7 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
                 labels[i] = option->textIndentedToRespectGroupLabel();
                 enableds[i] = option->disabled() ? 0 : 1;
                 selecteds[i] = option->selected();
-                itemTypes[i] = TypeOption;
+                itemTypes[i] = option->parentNode() && option->parentNode()->hasTagName(HTMLNames::optgroupTag) ? TypeOptionInGroup : TypeOption;
             } else if (listItems[i]->hasTagName(HTMLNames::optgroupTag)) {
                 HTMLOptGroupElement* optGroup = static_cast<HTMLOptGroupElement*>(listItems[i]);
                 labels[i] = optGroup->groupLabelText();

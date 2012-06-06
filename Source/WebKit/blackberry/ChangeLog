@@ -1,3 +1,20 @@
+2012-06-05  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry]Differentiate options and group options by TypeOption and TypeOptionInGroup
+        https://bugs.webkit.org/show_bug.cgi?id=88342
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 163141
+
+        Reviewed internally by Mike Fenton.
+
+        We set all options' type to TypeOption, which can't tell if an option belongs to a group, 
+        introduce TypeOptionInGroup to fix it.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openSelectPopup):
+
 2012-06-05  Adam Barth  <abarth@webkit.org>
 
         Remove support for target-densitydpi in the viewport meta tag
