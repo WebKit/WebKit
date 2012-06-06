@@ -41,6 +41,7 @@
 #include "IDBObjectStore.h"
 #include "JSDOMStringList.h"
 #include "JSIDBCursor.h"
+#include "JSIDBCursorWithValue.h"
 #include "JSIDBDatabase.h"
 #include "JSIDBFactory.h"
 #include "JSIDBIndex.h"
@@ -68,7 +69,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
     case IDBAny::IDBCursorType:
         return toJS(exec, globalObject, idbAny->idbCursor());
     case IDBAny::IDBCursorWithValueType:
-        return toJS(exec, globalObject, idbAny->idbCursorWithValue());
+        return wrap<JSIDBCursorWithValue>(exec, globalObject, idbAny->idbCursorWithValue().get());
     case IDBAny::IDBDatabaseType:
         return toJS(exec, globalObject, idbAny->idbDatabase());
     case IDBAny::IDBFactoryType:

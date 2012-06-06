@@ -1,3 +1,16 @@
+2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Need special-case toJS(IDBAny) for IDBCursorWithValue
+        https://bugs.webkit.org/show_bug.cgi?id=87963
+
+        Reviewed by George Staikos.
+
+        No new tests, this is for indexedDB, which is not working for JSC binding.
+        When indexedDB working for JSC, all the indexdb test cases should apply.
+
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+
 2012-06-05  Michal Mocny  <mmocny@google.com>
 
         [chromium] Set default memory allocation limit bytes when GL_CHROMIUM_gpu_memory_manager is not supported by graphics context.
