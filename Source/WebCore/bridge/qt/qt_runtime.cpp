@@ -998,9 +998,9 @@ QtRuntimeMethodData::~QtRuntimeMethodData()
 {
 }
 
-void QtRuntimeMethodData::finalize(Handle<Unknown> value, void*)
+void QtRuntimeMethodData::finalize(Handle<Unknown>, void*)
 {
-    m_instance->removeCachedMethod(static_cast<JSObject*>(value.get().asCell()));
+    m_instance->removeUnusedMethods();
 }
 
 QtRuntimeMetaMethodData::~QtRuntimeMetaMethodData()

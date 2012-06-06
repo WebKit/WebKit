@@ -21,10 +21,11 @@
 #define qt_instance_h
 
 #include "BridgeJSC.h"
-#include "runtime_root.h"
 #include <QStack>
 #include <QWeakPointer>
 #include <QtScript/qscriptengine.h>
+#include "Weak.h"
+#include "runtime_root.h"
 #include <qhash.h>
 #include <qset.h>
 
@@ -49,8 +50,6 @@ public:
     virtual JSValue valueOf(ExecState*) const;
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    void visitAggregate(SlotVisitor&);
-
     virtual JSValue getMethod(ExecState*, PropertyName);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod*);
 
@@ -68,7 +67,7 @@ public:
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     virtual void put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-    void removeCachedMethod(JSObject*);
+    void removeUnusedMethods();
 
     static QtInstance* getInstance(JSObject*);
 
@@ -85,6 +84,39 @@ public:
     static QtSenderStack* qtSenderStack();
 
 private:
+
+    class QtWeakObjectReference {
+    public:
+        QtWeakObjectReference(JSObject* reference)
+            : m_reference(reference)
+        {
+        }
+
+        QtWeakObjectReference(const QtWeakObjectReference& source)
+            : m_reference(source.m_reference.get())
+        {
+        }
+
+        QtWeakObjectReference()
+            : m_reference()
+        {
+        }
+
+        QtWeakObjectReference& operator=(const QtWeakObjectReference& source)
+        {
+            m_reference = PassWeak<JSObject>(source.m_reference.get());
+            return *this;
+        }
+
+        JSObject* get() const
+        {
+            return m_reference.get();
+        }
+
+    private:
+        Weak<JSObject> m_reference;
+    };
+
     static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
     {
         return adoptRef(new QtInstance(instance, rootObject, ownership));
@@ -96,7 +128,7 @@ private:
     mutable QtClass* m_class;
     QWeakPointer<QObject> m_object;
     QObject* m_hashkey;
-    mutable QHash<QByteArray, WriteBarrier<JSObject> > m_methods;
+    mutable QHash<QByteArray, QtWeakObjectReference> m_methods;
     mutable QHash<QString, QtField*> m_fields;
     QScriptEngine::ValueOwnership m_ownership;
 };

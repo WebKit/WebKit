@@ -61,15 +61,6 @@ public:
     
     static const ClassInfo s_info;
 
-    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
-    {
-        QtRuntimeObject* thisObject = jsCast<QtRuntimeObject*>(cell);
-        RuntimeObject::visitChildren(thisObject, visitor);
-        QtInstance* instance = static_cast<QtInstance*>(thisObject->getInternalInstance());
-        if (instance)
-            instance->visitAggregate(visitor);
-    }
-
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType,  StructureFlags), &s_info);
@@ -158,13 +149,13 @@ void QtInstance::put(JSObject* object, ExecState* exec, PropertyName propertyNam
     JSObject::put(object, exec, propertyName, value, slot);
 }
 
-void QtInstance::removeCachedMethod(JSObject* method)
+void QtInstance::removeUnusedMethods()
 {
-    for (QHash<QByteArray, WriteBarrier<JSObject> >::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ++it) {
-        if (it.value().get() == method) {
-            m_methods.erase(it);
-            return;
-        }
+    for (QHash<QByteArray, QtWeakObjectReference>::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ) {
+        if (!it.value().get())
+            it = m_methods.erase(it);
+        else
+            ++it;
     }
 }
 
@@ -192,12 +183,6 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
     JSLock lock(SilenceAssertionsOnly);
     m_methods.clear();
     return QtRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
-}
-
-void QtInstance::visitAggregate(SlotVisitor& visitor)
-{
-    for (QHash<QByteArray, WriteBarrier<JSObject> >::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ++it)
-        visitor.append(&it.value());
 }
 
 void QtInstance::begin()
