@@ -354,10 +354,12 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread>
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
+    // These tasks must be done asynchronously because this function is called during finalization 
+    // of JS wrappers for Workers and can cause re-entry in JS due to updating the Inspector.
     if (m_workerThread)
-        terminateWorkerContext();
+        workerContextClosed();
     else
-        workerContextDestroyedInternal();
+        workerContextDestroyed();
 }
 
 #if ENABLE(INSPECTOR)

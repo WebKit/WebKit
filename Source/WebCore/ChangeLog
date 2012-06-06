@@ -1,3 +1,19 @@
+2012-06-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Worker tear-down can re-enter JSC during GC finalization
+        https://bugs.webkit.org/show_bug.cgi?id=88449
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests. Current regression tests cover these changes.
+
+        * workers/AbstractWorker.cpp: 
+        (WebCore::AbstractWorker::~AbstractWorker): We don't need to call onDestroyWorker() here, it 
+        will be called elsewhere in contextDestroyed().
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed): We make the call to terminateWorkerContext()
+        and workerContextDestroyed() asynchronous to avoid entering JSC during GC finalization.
+
 2012-06-06  Tony Chang  <tony@chromium.org>
 
         webkit crashes on debug builds when running IETC flexbox-ordinal-group-001.htm

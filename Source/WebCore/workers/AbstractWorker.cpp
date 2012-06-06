@@ -53,7 +53,6 @@ AbstractWorker::AbstractWorker(ScriptExecutionContext* context)
 
 AbstractWorker::~AbstractWorker()
 {
-    onDestroyWorker();
 }
 
 void AbstractWorker::onDestroyWorker()
