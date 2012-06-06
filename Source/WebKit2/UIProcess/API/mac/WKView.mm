@@ -1876,9 +1876,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // update the active state.
     if ([self window]) {
         _data->_windowHasValidBackingStore = NO;
+        [self _updateWindowVisibility];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
-        [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
 
         if (!_data->_flagsChangedEventMonitor) {
@@ -1967,20 +1967,22 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
+    [self _updateWindowVisibility];
+
     // We want to make sure to update the active state while hidden, so since the view is about to be hidden,
     // we hide it first and then update the active state.
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
     _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
-    [self _updateWindowVisibility];
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
+    [self _updateWindowVisibility];
+
     // We want to make sure to update the active state while hidden, so since the view is about to become visible,
     // we update the active state first and then make it visible.
     _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-    [self _updateWindowVisibility];
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification

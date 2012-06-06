@@ -1,3 +1,39 @@
+2012-06-06  Tim Horton  <timothy_horton@apple.com>
+
+        WebPage::windowIsVisible is incorrect during resumePainting
+        https://bugs.webkit.org/show_bug.cgi?id=88374
+        <rdar://problem/11587039>
+
+        Reviewed by Simon Fraser.
+
+        Currently, when changing window visibility, WKView calls viewStateDidChange(ViewIsVisible)
+        and then _updateWindowVisibility. This means that during viewStateDidChange, the WebPage's
+        windowIsVisible state is incorrect.
+
+        viewStateDidChange(ViewIsVisible) can end up in (one of the DrawingArea implementations)::resumePainting(),
+        which uses windowIsVisible to determine whether or not to unpause requestAnimationFrame.
+
+        This results in a state where, with some configurations, doing the following:
+
+            1. requestAnimationFrame()
+            2. requestFullScreen()
+            3. requestAnimationFrame()
+            4. cancelFullScreen()
+            5. requestAnimationFrame()
+
+        Will cause the second and third rAF calls to have no effect. Even after cancelFullScreen() is called,
+        the fact that we have had unpaired suspend/resumeScriptedAnimations will cause the suspend count
+        on the ScriptedAnimationController to never return to zero, which will cause us to never
+        recover rAF functionality.
+
+        The fix is very simple: we should _updateWindowVisibility *before* viewStateDidChange, so that it is
+        always correct for any code called underneath that method.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+
 2012-06-05  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Use Component.onCompleted in API tests for single and multi file upload tests.
