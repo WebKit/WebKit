@@ -1,3 +1,15 @@
+2012-06-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Fix a few spelling mistakes in IconDatabase logging
+
+        Makes debugging harder if the logging is confusing.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::notifyPendingLoadDecisions):
+        (WebCore::IconDatabase::readFromDatabase):
+
 2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Compiler] Remove compile-front-end.sh and fix InjectedScriptSource errors.

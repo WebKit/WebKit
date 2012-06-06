@@ -810,7 +810,7 @@ void IconDatabase::notifyPendingLoadDecisions()
     
     // This method should only be called upon completion of the initial url import from the database
     ASSERT(m_iconURLImportComplete);
-    LOG(IconDatabase, "Notifying all DocumentLoaders that were waiting on a load decision for thier icons");
+    LOG(IconDatabase, "Notifying all DocumentLoaders that were waiting on a load decision for their icons");
     
     HashSet<RefPtr<DocumentLoader> >::iterator i = m_loadersPendingDecision.begin();
     HashSet<RefPtr<DocumentLoader> >::iterator end = m_loadersPendingDecision.end();
@@ -1591,7 +1591,7 @@ bool IconDatabase::readFromDatabase()
                     HashSet<String>::const_iterator end = outerHash->end();
                     for (; iter != end; ++iter) {
                         if (innerHash->contains(*iter)) {
-                            LOG(IconDatabase, "%s is interesting in the icon we just read.  Adding it to the list and removing it from the interested set", urlForLogging(*iter).ascii().data());
+                            LOG(IconDatabase, "%s is interested in the icon we just read. Adding it to the notification list and removing it from the interested set", urlForLogging(*iter).ascii().data());
                             urlsToNotify.add(*iter);
                         }
                         
