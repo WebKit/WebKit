@@ -1,3 +1,22 @@
+2012-06-05  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Improve Math.round and Math.floor intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=88314
+
+        Reviewed by Filip Pizlo.
+
+        Currently we call a native function from the JIT code to complete the
+        "round" and "floor" operations. We could inline some fast paths
+        especially for those positive values on the platforms where floating
+        point truncation is supported.
+        This brings 3% gain on Kraken, especially 32% on audio-oscillator,
+        and slight win on SunSpider, measured on IA32.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::floorThunkGenerator):
+        (JSC):
+        (JSC::roundThunkGenerator):
+
 2012-06-05  Gavin Barraclough  <barraclough@apple.com>
 
         Remove JSObject::m_inheritorID

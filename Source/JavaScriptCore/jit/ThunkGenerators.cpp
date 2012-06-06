@@ -175,6 +175,11 @@ defineUnaryDoubleOpWrapper(log);
 defineUnaryDoubleOpWrapper(floor);
 defineUnaryDoubleOpWrapper(ceil);
 
+static const double oneConstant = 1.0;
+static const double negativeHalfConstant = -0.5;
+static const double zeroConstant = 0.0;
+static const double halfConstant = 0.5;
+    
 MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
 {
     SpecializedThunkJIT jit(1, globalData);
@@ -185,9 +190,22 @@ MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(floor));
+    SpecializedThunkJIT::Jump intResult;
     SpecializedThunkJIT::JumpList doubleResult;
+    if (jit.supportsFloatingPointTruncate()) {
+        jit.loadDouble(&zeroConstant, SpecializedThunkJIT::fpRegT1);
+        doubleResult.append(jit.branchDouble(MacroAssembler::DoubleEqual, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
+        SpecializedThunkJIT::JumpList slowPath;
+        // Handle the negative doubles in the slow path for now.
+        slowPath.append(jit.branchDouble(MacroAssembler::DoubleLessThanOrUnordered, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
+        slowPath.append(jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0));
+        intResult = jit.jump();
+        slowPath.link(&jit);
+    }
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(floor));
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    if (jit.supportsFloatingPointTruncate())
+        intResult.link(&jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
@@ -213,9 +231,6 @@ MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
-static const double oneConstant = 1.0;
-static const double negativeHalfConstant = -0.5;
-    
 MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
 {
     SpecializedThunkJIT jit(1, globalData);
@@ -226,9 +241,24 @@ MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    jit.callDoubleToDouble(UnaryDoubleOpWrapper(jsRound));
+    SpecializedThunkJIT::Jump intResult;
     SpecializedThunkJIT::JumpList doubleResult;
+    if (jit.supportsFloatingPointTruncate()) {
+        jit.loadDouble(&zeroConstant, SpecializedThunkJIT::fpRegT1);
+        doubleResult.append(jit.branchDouble(MacroAssembler::DoubleEqual, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
+        SpecializedThunkJIT::JumpList slowPath;
+        // Handle the negative doubles in the slow path for now.
+        slowPath.append(jit.branchDouble(MacroAssembler::DoubleLessThanOrUnordered, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
+        jit.loadDouble(&halfConstant, SpecializedThunkJIT::fpRegT1);
+        jit.addDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+        slowPath.append(jit.branchTruncateDoubleToInt32(SpecializedThunkJIT::fpRegT1, SpecializedThunkJIT::regT0));
+        intResult = jit.jump();
+        slowPath.link(&jit);
+    }
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(jsRound));
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    if (jit.supportsFloatingPointTruncate())
+        intResult.link(&jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
