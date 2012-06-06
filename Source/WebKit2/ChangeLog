@@ -1,3 +1,23 @@
+2012-06-05  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11575898> and https://bugs.webkit.org/show_bug.cgi?id=88372
+        REGRESSION(110494): Can no longer drag-and-drop links into FileMaker Pro 12
+
+        - Before r110494 we used to write the NSStringPboardType to the pasteboard.
+          After r110494 we write NSURLPboardType instead.
+          That's basically a no-op, but the NSStringPboardType needs to be restored.
+        - Before r110494 we wrote the link destination URL to the pasteboard.
+          After r110494 we write the image src URL if the link is an image.
+          We need to revert to writing the link URL.
+
+        Fortunately these changes can be accomplished with a 2-line fix.
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPromisedData:WebCore::withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:WebCore::forPasteboard:]):
+        n
+
 2012-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Implement log channel initialization for WebKit2
