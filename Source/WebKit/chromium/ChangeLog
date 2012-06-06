@@ -1,3 +1,9 @@
+2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from r140653 to r140700.
+
+        * DEPS:
+
 2012-06-05  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r119494.
